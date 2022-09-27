@@ -41,28 +41,37 @@ We can set up 3 fake ships: ~dev for Developer, ~ter for Curator and ~ser for Us
 Used by Developers, to add or replace all apps they are publishing. As of now, they have to manually input the whole dev-page (a definition can be found in app-store/sur/app-store/data.hoon, and an example can be found in app-store/sample-dev-page).
 
 Let ~dev put up a dev-page. For example, on %dev-server on ~dev you can run:
+
 `:dev-server|put [~ [~dev ~]]`
+
 Or:
+
 `:dev-server|put [~ [dev-name=~dev app-pages=(malt (limo ~[app1+['desc1']]))]]`
 
 We can check the state of the agent with:
+
 `:dev-server +dbug`
 
 #### %sub and %unsub (for Curators and Users)
 
 Let ~ter subscribe to ~dev. On ~ter, run:
+
 `:cur-server|sub ~dev`
 
 Now the state of %cur-server on ~ter will contain the data that ~dev has put up:
+
 `:cur-server +dbug`
 
 Analogously, from %usr-server on ~ser we can subscribe to %cur-server on ~ter.
+
 `:usr-server|sub ~ter`
 
 To unsubscribe User from Curator we can use:
+
 `:usr-server|unsub ~ter` 
 
 and Curator from Developer we can use:
- `:cur-server|unsub ~dev`
+
+`:cur-server|unsub ~dev`
 
 After unsubscribing, previous data from the publisher is deleted.
