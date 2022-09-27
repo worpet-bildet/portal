@@ -38,15 +38,21 @@
   =/  act  !<(cur-action vase)
   =/  dev-name-wire  /(scot %p +.act)
   ?-    -.act
-    %sub    
-      ~&  "%cur-server: subscribing to {(scow %p +.act)}"
-      :_  this
-      [%pass dev-name-wire %agent [+.act %dev-server] %watch /dev-page]~
-    %unsub  
-      ~&  "%cur-server: unsubscribing from {(scow %p +.act)}"
-      :_  this
-      [%pass dev-name-wire %agent [+.act %dev-server] %leave ~]~
-  ==
+      %sub    
+    ~&  "%cur-server: subscribing to {(scow %p +.act)}"
+    :_  this
+    [%pass dev-name-wire %agent [+.act %dev-server] %watch /dev-page]~
+  ::  
+      %unsub  
+    ~&  "%cur-server: unsubscribing from {(scow %p +.act)}" 
+    =/  cur1  cur-data.+.state
+    =/  cur2  cur-data.+.cur-choice.+.state  
+    :-  [%pass dev-name-wire %agent [+.act %dev-server] %leave ~]~
+    %=  this  
+      cur-data.+.state               `^cur-data`(~(del by cur1) +.act)
+      cur-data.+.cur-choice.+.state  `^cur-data`(~(del by cur2) +.act)
+    ==
+  == 
 ::  
 ++  on-arvo   on-arvo:default
 ::

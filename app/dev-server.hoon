@@ -35,10 +35,8 @@
   ?>  =(our.bowl src.bowl)
   ?>  ?=(%app-store-dev-action mark)  
   =/  act  !<(dev-action vase)
-  ?>    =(-.act %put)
-  
-  ::?>  =(dev-name.+.act src.bowl) :: doesn't work
-  
+  ?>  =(-.act %put)
+  ?>  =(dev-name.+>.act src.bowl)
   ~&  "%dev-server: putting dev page"
   :_  this(dev-page.state dev-page.act)
   [%give %fact [/dev-page]~ %app-store-dev-page !>(`^dev-page`dev-page.act)]~
@@ -54,7 +52,7 @@
   :_  this
   [%give %fact ~ %app-store-dev-page !>(`^dev-page`dev-page.state)]~
 ::  
-++  on-leave  on-leave:default  ::  TODO, or is the default enough?
+++  on-leave  on-leave:default
 ++  on-peek   on-peek:default
 ++  on-agent  on-agent:default
 ++  on-fail   on-fail:default
