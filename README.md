@@ -1,4 +1,3 @@
-
 # App Store
 
 ### A tool for decentralized curation and discovery of Urbit applications
