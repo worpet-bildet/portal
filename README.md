@@ -1,3 +1,4 @@
+
 # App Store
 
 ### A tool for decentralized curation and discovery of Urbit applications
@@ -63,6 +64,28 @@ To unsubscribe User from Curator we can use:
 `:usr-server|unsub ~ter` 
 
 and Curator from Developer we can use:
- `:cur-server|unsub ~dev`
+`:cur-server|unsub ~dev`
 
 After unsubscribing, previous data from the publisher is deleted.
+
+### Scries
+
+There is 3 scries that have been built for %usr-server. All have care `x`.
+- %all - returns all usr-data
+	- path: `/all/[ship]`
+	- mark: `usr-data`
+- %is-cur - checks if Curator is in usr-data
+	- path: `/is-cur/[ship]`
+	- mark: `noun`
+- %get-cur - returns cur-data; if Curator doesn't exist, returns ~
+	- path: `/get-cur/[ship]`
+	- mark: `cur-data`
+
+Example, how to use:
+```
+=data -build-file /=app-store=/sur/app-store/data/hoon
+.^(usr-data:data %gx /=usr-server=/all/usr-data)
+.^(? %gx /=usr-server=/is-cur/~ter/noun)
+.^(cur-data:data %gx /=usr-server=/get-cur/~ter/cur-data)
+```
+

@@ -51,7 +51,22 @@
 ++  on-arvo   on-arvo:default
 ++  on-watch  on-watch:default
 ++  on-leave  on-leave:default
-++  on-peek   on-peek:default
+++  on-peek   
+  |=  =path
+  ^-  (unit (unit cage)) 
+  ?+  path  (on-peek:default path)
+      [%x %all ~]  ``usr-data+!>(+.state)
+  ::  
+      [%x %is-cur @ ~]
+    =/  cur=@p  (slav %p i.t.t.path)
+    ``noun+!>(`?`(~(has by `^usr-data`+.state) cur))
+  ::
+      [%x %get-cur @ ~]
+    =/  cur=@p  (slav %p i.t.t.path)
+    =/  maybe-cur  (~(get by `^usr-data`+.state) cur)
+    ?~  maybe-cur  ``cur-data+!>(`^cur-data`maybe-cur)
+    ``cur-data+!>(`^cur-data`u.maybe-cur)
+  ==
 ::
 ::  on-agent is for receiving subscription updates from Curators
 ++  on-agent 
