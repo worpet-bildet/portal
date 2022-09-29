@@ -45,12 +45,16 @@
   ::  
       %unsub  
     ~&  "%cur-server: unsubscribing from {(scow %p +.act)}" 
-    =/  cur1  cur-data.+.state
-    =/  cur2  cur-data.+.cur-choice.+.state  
-    :-  [%pass dev-name-wire %agent [+.act %dev-server] %leave ~]~
+    =/  new-cur-data  (~(del by `^cur-data`cur-data.+.state) +.act)
+    =/  new-cur-choice  [~ [our.bowl new-cur-data]]
+    :_
     %=  this  
-      cur-data.+.state               `^cur-data`(~(del by cur1) +.act)
-      cur-data.+.cur-choice.+.state  `^cur-data`(~(del by cur2) +.act)
+      cur-data.+.state         `^cur-data`new-cur-data
+      cur-choice.+.state       `^cur-choice`new-cur-choice
+    ==
+    :~  
+      [%pass dev-name-wire %agent [+.act %dev-server] %leave ~]
+      [%give %fact [/cur-choice]~ %app-store-cur-choice !>(`^cur-choice`new-cur-choice)]
     ==
   == 
 ::  

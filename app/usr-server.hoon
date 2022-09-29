@@ -76,7 +76,6 @@
     ~&  "%usr-server: received cur-choice from {cur-name-tape}"
     =/  cur-name  `@p`(slav %p -.wire)
     ?>  =(cur-name cur-name.cur-choice)
-    ?~  cur-data.cur-choice  `this  
     `this(+.state (~(put by `^usr-data`+.state) `^cur-name`cur-name.cur-choice `^cur-data`cur-data.cur-choice))
   ==
 ::
@@ -99,4 +98,3 @@
     ``cur-data+!>(`^cur-data`u.maybe-cur)
   ==
 --
-

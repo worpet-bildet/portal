@@ -1,1 +1,1 @@
-[~ [dev-name=~dev app-pages=(malt (limo ~[app1+['desc1']]))]]
+[~ [dev-name=~dev app-pages=(malt (limo ~[app1+['desc1'] app2+['desc2']]))]]

@@ -3,7 +3,7 @@
 |%
 +$  dev-action
   $%
-    [%add =app-name =app-page]
+    [%put =app-name =app-page]
     [%del =app-name]
   ==
 +$  visit-dev-action
@@ -11,8 +11,14 @@
     [%rate =dev-name =app-name =rating]
     [%unrate =dev-name =app-name]
     [%comment =dev-name =app-name text=@t]
-    [%add-eval =dev-name =app-name text=@t is-safe=?(%.y %.n)]
+    [%add-eval =dev-name =app-name text=@t is-safe=?]
     [%del-eval =dev-name =app-name]
+  ==
++$  cur-action
+  $%
+    [%sub =dev-name]
+    [%unsub =dev-name]
+    
   ==
 +$  visitor  @p
 --

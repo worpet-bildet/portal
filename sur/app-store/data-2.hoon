@@ -83,8 +83,8 @@
     date=@da
     text=@t
     hash=@uv
-    is-current=?(%.y %.n)    ::does ? work instead of ?(%.y %.n)
-    is-safe=?(%.y %.n)       ::3rd possibility as no decision?
+    is-current=?    
+    is-safe=?                ::  3rd possibility as no decision?
   ==
 ::
 --
