@@ -1,21 +1,32 @@
-::  building Milestone 2
+::  working on Milestone 2
 |%
 +$  category  @tas
 ::
 +$  usr-data  (map cur-name cur-data)
 ::
-+$  cur-choice  [~ [=cur-name =cur-data]]
+::
++$  cur-page  [~ [=cur-intro =cur-choice]]
+::
++$  cur-intro  @t
+::
++$  cur-choice    [~ [=cur-name =cur-data]]              ::make it a unit?
++$  cur-choice-2  (map [=dev-name =app-name] =app-page)  
+::
+::
 +$  cur-data  (map dev-name app-pages)
 ::
-+$  dev-page  [~ [=dev-name =app-pages]]
++$  cur-name  @p
+::
+::
+::
+::  Dev Page
+::
++$  dev-page  [~ [=dev-name =app-pages]]  ::make it a unit??
 +$  app-pages  (map app-name app-page)
 :: 
-::
-+$  cur-name  @p
 +$  dev-name  @p 
 +$  app-name  @tas
-
-::  App Page
+::
 +$  app-page
   $: 
   ::

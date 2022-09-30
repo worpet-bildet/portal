@@ -75,8 +75,10 @@
     =/  cur-choice  !<(cur-choice q.cage.sign)
     ~&  "%usr-server: received cur-choice from {cur-name-tape}"
     =/  cur-name  `@p`(slav %p -.wire)
-    ?>  =(cur-name cur-name.cur-choice)
-    `this(+.state (~(put by `^usr-data`+.state) `^cur-name`cur-name.cur-choice `^cur-data`cur-data.cur-choice))
+    ?~  cur-choice  
+      `this(+.state (~(del by `^usr-data`+.state) `^cur-name`cur-name))
+    ?>  =(cur-name cur-name.u.cur-choice)
+    `this(+.state (~(put by `^usr-data`+.state) `^cur-name`cur-name.u.cur-choice `^cur-data`cur-data.u.cur-choice))
   ==
 ::
 ++  on-fail   on-fail:default

@@ -20,7 +20,7 @@
     default   ~(. (default-agent this %|) bowl)
 ++  on-init
   ^-  (quip card _this)
-  =.  state  [%0 ~ `^cur-choice`[~ [our.bowl ~]]]
+  =.  state  [%0 ~ ~]
   `this
 ::  
 ++  on-save   !>(state)
@@ -46,7 +46,7 @@
       %unsub  
     ~&  "%cur-server: unsubscribing from {(scow %p +.act)}" 
     =/  new-cur-data  (~(del by `^cur-data`cur-data.+.state) +.act)
-    =/  new-cur-choice  [~ [our.bowl new-cur-data]]
+    =/  new-cur-choice  (some [our.bowl new-cur-data])
     :_
     %=  this  
       cur-data.+.state         `^cur-data`new-cur-data
@@ -95,11 +95,16 @@
     =/  dev-page  !<(dev-page q.cage.sign)
     ~&  "%cur-server: received dev page from {dev-name-tape}"
     =/  dev-name  `@p`(slav %p -.wire)
-    ?>  =(dev-name dev-name.dev-page)
-    =/  key  dev-name.+.dev-page
-    =/  value  app-pages.+.dev-page
+    ?~  dev-page    
+      =/  new-cur-data  (~(del by `^cur-data`cur-data.+.state) dev-name)
+      =/  new-cur-choice  (some [our.bowl new-cur-data])
+      :_  this(cur-data.+.state new-cur-data, cur-choice.+.state new-cur-choice)
+      [%give %fact [/cur-choice]~ %app-store-cur-choice !>(`^cur-choice`new-cur-choice)]~
+    ?>  =(dev-name dev-name.u.dev-page)
+    =/  key  dev-name.u.dev-page
+    =/  value  app-pages.u.dev-page
     =/  new-cur-data  (~(put by `^cur-data`cur-data.+.state) key value)
-    =/  new-cur-choice  [~ [our.bowl new-cur-data]]
+    =/  new-cur-choice  (some [our.bowl new-cur-data])
     :_  this(cur-data.+.state new-cur-data, cur-choice.+.state new-cur-choice)
     [%give %fact [/cur-choice]~ %app-store-cur-choice !>(`^cur-choice`new-cur-choice)]~
   ==

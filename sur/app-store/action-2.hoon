@@ -1,5 +1,5 @@
 /-  *app-store-data
-::  building Milestone 2
+::  working on Milestone 2
 |%
 +$  dev-action
   $%
@@ -18,7 +18,12 @@
   $%
     [%sub =dev-name]
     [%unsub =dev-name]
-    
+    [%choose =cur-data]   ::  assert in cur-server that it's a subset of cur-data
+  ==
++$  usr-action
+  $%
+    [%sub =cur-name]
+    [%unsub =cur-name]
   ==
 +$  visitor  @p
 --

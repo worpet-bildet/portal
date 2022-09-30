@@ -19,7 +19,7 @@
     default   ~(. (default-agent this %|) bowl)
 ++  on-init
   ^-  (quip card _this)
-  =.  state  [%0 `^dev-page`[~ [our.bowl ~]]]
+  =.  state  [%0 ~]
   `this
 ::  
 ++  on-save   !>(state)
@@ -36,8 +36,11 @@
   ?>  ?=(%app-store-dev-action mark)  
   =/  act  !<(dev-action vase)
   ?>  =(-.act %put)
-  ?>  =(dev-name.+>.act src.bowl)
   ~&  "%dev-server: putting dev page"
+  ?~  dev-page.act  
+    :_  this(dev-page.state ~)  
+    [%give %fact [/dev-page]~ %app-store-dev-page !>(`^dev-page`~)]~
+  ?>  =(dev-name.u.dev-page.act src.bowl)
   :_  this(dev-page.state dev-page.act)
   [%give %fact [/dev-page]~ %app-store-dev-page !>(`^dev-page`dev-page.act)]~
 ::

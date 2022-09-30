@@ -1,10 +1,10 @@
 |%
 +$  usr-data  (map cur-name cur-data)
 ::
-+$  cur-choice  [~ [=cur-name =cur-data]]
++$  cur-choice  (unit [=cur-name =cur-data])
 +$  cur-data  (map dev-name app-pages)
 ::
-+$  dev-page  [~ [=dev-name =app-pages]]
++$  dev-page  (unit [=dev-name =app-pages])
 +$  app-pages  (map app-name app-page)
 ::
 +$  app-page  
