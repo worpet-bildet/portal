@@ -35,14 +35,43 @@
   ?>  =(our.bowl src.bowl)
   ?>  ?=(%app-store-dev-action mark)  
   =/  act  !<(dev-action vase)
-  ?>  =(-.act %put)
-  ~&  "%dev-server: putting dev page"
-  ?~  dev-page.act  
-    :_  this(dev-page.state ~)  
-    [%give %fact [/dev-page]~ %app-store-dev-page !>(`^dev-page`~)]~
-  ?>  =(dev-name.u.dev-page.act src.bowl)
-  :_  this(dev-page.state dev-page.act)
-  [%give %fact [/dev-page]~ %app-store-dev-page !>(`^dev-page`dev-page.act)]~
+  
+  ?-    -.act
+      %add
+    =/  key  [our.bowl app-name.act]
+    ~&  "%dev-server: adding app page"
+    ?:  (~(has by dev-page.state) key)  
+      ~&  "dev-server: use %edit (not %add) to change existing app-page"
+      `this
+    =/  new-dev-page  (~(put by dev-page.state) key app-page.act)
+    :_  this(dev-page.state `^dev-page`new-dev-page)
+    [%give %fact [/dev-update]~ %app-store-dev-update !>(`dev-update`(some [`change`[%add key] `^dev-page`new-dev-page]))]~
+  ::
+      %edit
+    =/  key  [our.bowl app-name.act]
+    ~&  "%dev-server: editing app page"
+    ?.  (~(has by dev-page.state) key)  
+      ~&  "dev-server: use %add (not %edit) to add new app-page"
+      `this
+    =/  new-dev-page  (~(put by dev-page.state) [our.bowl app-name.act] app-page.act)
+    :_  this(dev-page.state new-dev-page)  ::usporedi ovu liniju sa onom kod %add
+    [%give %fact [/dev-update]~ %app-store-dev-update !>(`dev-update`(some [`change`[%edit key] `^dev-page`new-dev-page]))]~
+  ::
+      %del
+    =/  key  [our.bowl app-name.act]
+    ~&  "%dev-server: deleting app page"
+    ?.  (~(has by dev-page.state) key)  
+      ~&  "dev-server: app-page does not exist"
+      `this
+    =/  new-dev-page  (~(del by dev-page.state) key)
+    :_  this(dev-page.state new-dev-page)
+    [%give %fact [/dev-update]~ %app-store-dev-update !>(`dev-update`(some [`change`[%del key] new-dev-page]))]~ 
+  ::
+      %wipe
+    ~&  "%dev-server: wiping all data"
+    :_  this(dev-page.state ~)
+    [%give %fact [/dev-update]~ %app-store-dev-update !>(`dev-update`(some [`change`[%wipe ~] `^dev-page`~]))]~ 
+  ==
 ::
 ++  on-arvo   on-arvo:default
 ::
@@ -50,10 +79,10 @@
 ++  on-watch
   |=  =path
   ^-  (quip card _this)
-  ?>  =([%dev-page ~] path)
+  ?>  =([%dev-update ~] path)
   ~&  "%dev-server: received subscription request"
   :_  this
-  [%give %fact ~ %app-store-dev-page !>(`^dev-page`dev-page.state)]~
+  [%give %fact ~ %app-store-dev-update !>(`dev-update`(some [`change`[%init ~] dev-page.state]))]~
 ::  
 ++  on-leave  on-leave:default
 ++  on-peek   on-peek:default

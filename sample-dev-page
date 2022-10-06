@@ -1,1 +1,2 @@
 [~ [dev-name=~dev app-pages=(malt (limo ~[app1+['desc1'] app2+['desc2']]))]]
+::  TODO - new sample dev page. with my, not with malt/limo

@@ -40,7 +40,7 @@
       %sub    
     ~&  "%usr-server: subscribing to {(scow %p +.act)}"
     :_  this
-    [%pass cur-name-wire %agent [+.act %cur-server] %watch /cur-choice]~
+    [%pass cur-name-wire %agent [+.act %cur-server] %watch /cur-page]~
   ::
       %unsub  
     ~&  "%usr-server: unsubscribing from {(scow %p +.act)}"
@@ -69,16 +69,16 @@
     ~&  "%usr-server: got kick from {cur-name-tape}, resubscribing..."
     =/  cur-name  `@p`(slav %p -.wire)
     :_  this
-    [%pass wire %agent [cur-name %cur-server] %watch /cur-choice]~
+    [%pass wire %agent [cur-name %cur-server] %watch /cur-page]~
   ::
       %fact
-    =/  cur-choice  !<(cur-choice q.cage.sign)
-    ~&  "%usr-server: received cur-choice from {cur-name-tape}"
+    =/  cur-page  !<(cur-page q.cage.sign)
+    ~&  "%usr-server: received cur-page from {cur-name-tape}"
     =/  cur-name  `@p`(slav %p -.wire)
-    ?~  cur-choice  
-      `this(+.state (~(del by `^usr-data`+.state) `^cur-name`cur-name))
-    ?>  =(cur-name cur-name.u.cur-choice)
-    `this(+.state (~(put by `^usr-data`+.state) `^cur-name`cur-name.u.cur-choice `^cur-data`cur-data.u.cur-choice))
+    ?~  cur-page  
+      `this(+.state (~(del by `^usr-data`+.state) `^cur-name`cur-name))  ::should it delete key if it receives ~
+    ?>  =(cur-name cur-name.u.cur-page)
+    `this(+.state (~(put by `^usr-data`+.state) `^cur-name`cur-name `^cur-page`cur-page))
   ==
 ::
 ++  on-fail   on-fail:default
@@ -96,7 +96,7 @@
       [%x %get-cur @ ~]
     =/  cur=@p  (slav %p i.t.t.path)
     =/  maybe-cur  (~(get by `^usr-data`+.state) cur)
-    ?~  maybe-cur  ``cur-data+!>(`^cur-data`maybe-cur)
-    ``cur-data+!>(`^cur-data`u.maybe-cur)
+    ?~  maybe-cur  ``cur-page+!>(`^cur-page`maybe-cur)
+    ``cur-page+!>(`^cur-page`u.maybe-cur)
   ==
 --
