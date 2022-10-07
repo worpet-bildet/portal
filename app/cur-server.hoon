@@ -48,13 +48,14 @@
     [%pass dev-name-wire %agent [+.act %dev-server] %watch /dev-update]~
   ::  
       %unsub  ::  removes from cur-choice, put warning before unsubbing on frontend
+      ::  TODO- update/fix because of app-set added to dev-update
 ::::::::::::::::
 ::::::::::::::::
     =/  dev-name-wire  /(scot %p +.act)
     ~&  "%cur-server: unsubscribing from {(scow %p +.act)}" 
-    =/  cur-choice    `cur-choice`cur-choice.cur-data.+.state
-    =/  cur-map             `cur-map`cur-map.cur-data.+.state
-    =/  aux-map          `aux-map`aux-map.cur-data.+.state
+    =/  cur-choice    `cur-choice`cur-choice.cur-data.state
+    =/  cur-map             `cur-map`cur-map.cur-data.state
+    =/  aux-map          `aux-map`aux-map.cur-data.state
     ::
     =/  apps  (~(got by aux-map) dev-name.act)
     =/  n  0
@@ -84,9 +85,9 @@
 ::::::::::::::::
 ::::::::::::::::
     =/  new-cur-page  ^-  cur-page  %-  some
-    :^  our.bowl  `^cur-title`cur-title.+.state  
-    `^cur-intro`cur-intro.+.state  new-cur-choice
-    :_  this(cur-data.+.state new-cur-data)
+    :^  our.bowl  `^cur-title`cur-title.state  
+    `^cur-intro`cur-intro.state  new-cur-choice
+    :_  this(cur-data.state new-cur-data)
     :~  
       [%pass dev-name-wire %agent [+.act %dev-server] %leave ~]
       [%give %fact [/cur-page]~ %app-store-cur-page !>(`^cur-page`new-cur-page)]
@@ -104,8 +105,8 @@
   ?>  =([%cur-page ~] path)
   ~&  "%cur-server: received subscription request"
   =/  cur-page  ^-  cur-page  %-  some
-  :^  our.bowl  `^cur-title`cur-title.+.state  
-  `^cur-intro`cur-intro.+.state  `^cur-choice`cur-choice.cur-data.+.state
+  :^  our.bowl  `^cur-title`cur-title.state  
+  `^cur-intro`cur-intro.state  `^cur-choice`cur-choice.cur-data.state
   :_  this
   [%give %fact ~ %app-store-cur-page !>(`^cur-page`cur-page)]~
 ::  
@@ -131,33 +132,46 @@
     ~&  "%cur-server: got kick from {dev-name-tape}, resubscribing..."
     =/  dev-name  `@p`(slav %p -.wire)
     :_  this
-    [%pass wire %agent [dev-name %dev-server] %watch /dev-page]~
+    [%pass wire %agent [dev-name %dev-server] %watch /dev-update]~
   ::
       %fact
     =/  dev-update  !<(dev-update q.cage.sign)
     ~&  "%cur-server: received dev update from {dev-name-tape}"
     =/  dev-name  `@p`(slav %p -.wire)
     ?~  dev-update  `this
-    ::?~  dev-page.u.dev-update  ::probably remove dev completely, (probly not have his name left)
+    ::?~  dev-map.u.dev-update  ::probably remove dev completely, (probly not have his name left)
       ::`this                         ::subscription stays tho
-      ::=/  new-cur-data  (~(del by `^cur-data`cur-data.+.state) dev-name)
-      :::_  this(cur-data.+.state new-cur-data, cur-choice.+.state new-cur-choice)
+      
+    ::  ?>  =(dev-name dev-name.u.dev-map)  should check for every key in map
+    ::`this
+    ?-    -.change.u.dev-update
+        %init  `this
+      ::  union of cur-map and dev-map
+      ::=/  new-cur-map  (~(uni by cur-map.cur-data.state) dev-map.u.dev-update)
+      ::  updated aux-map
+      ::=/  app-list  ~(tap in ~(key by dev-map.u.dev-update)) 
+      ::=/  new-app-list (snoc `(list app-name)`
+      ::=/  new-aux-map  (~(put by aux-map.cur-data.state) dev-name new-app-list)
+      
+      
+      :::_  this(cur-data.state new-cur-data, cur-choice.state new-cur-choice)
       ::[%give %fact [/cur-page]~ %app-store-cur-page !>(`^cur-choice`new-cur-choice)]~
-    ::  ?>  =(dev-name dev-name.u.dev-page)  should check for every key in map
-    `this
-    ::?-    change.u.dev-update
-    ::    %init  `this
-    ::    %add   `this
-    ::    %edit  `this 
-    ::    %del   `this
-    ::    %wipe  `this
-    ::==
+    ::  
+        %add
+           `this
+    ::  
+        %edit  `this 
+    ::  
+        %del   `this
+    ::  
+        %wipe  `this
+    ==
     
-    ::=/  key  dev-name.dev-page.u.dev-update
-    ::=/  value  app-pages.u.dev-page
-    ::=/  new-cur-data  (~(put by `^cur-data`cur-data.+.state) key value)
+    ::=/  key  dev-name.dev-map.u.dev-update
+    ::=/  value  app-pages.u.dev-map
+    ::=/  new-cur-data  (~(put by `^cur-data`cur-data.state) key value)
     ::=/  new-cur-choice  (some [our.bowl new-cur-data])
-    :::_  this(cur-data.+.state new-cur-data, cur-choice.+.state new-cur-choice)
+    :::_  this(cur-data.state new-cur-data, cur-choice.state new-cur-choice)
     ::[%give %fact [/cur-page]~ %app-store-cur-page !>(`^cur-choice`new-cur-choice)]~
   ==
 ::

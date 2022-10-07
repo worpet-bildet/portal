@@ -44,7 +44,7 @@
 ::
 ::  Dev Page
 ::
-+$  dev-update  (unit [=change =dev-page])
++$  dev-update  (unit [=change =dev-data])
 ::
 +$  change   
   $%
@@ -54,7 +54,17 @@
     [%del [=dev-name =app-name]] 
     [%wipe ~]
   ==
-+$  dev-page  (map [=dev-name =app-name] app-page)  ::  dev-name is the same in all keys
+ 
++$  dev-data
+  $|  [=dev-map =app-set]
+  |=  [=dev-map =app-set]
+  %.y
+  ::  TODO assert their correctness
+::  
+::
++$  dev-map  (map [=dev-name =app-name] app-page)  ::  dev-name is the same in all keys
++$  app-set  (set app-name) 
+::
 :: 
 +$  dev-name  @p 
 +$  app-name  @tas                   ::  up to 30 chars long on Apple Store
@@ -79,7 +89,7 @@
 ::
 +$  visitor-data
   $:
-    avg-rating=@rh
+    ::  avg-rating=@rh  ::render on the front end
     ratings=(map @p rating)
     comments=(list comment)
     reviews=(map reviewer review)
@@ -90,7 +100,7 @@
 +$  auxiliary-data                   ::  (automatically find what's easy to find)
   $:
     desk-hash=@uv    
-    ::  installed-into=@tas          ::  is this same as base in docket data?
+    installed-into=@tas          ::  is this same as base in docket data?
     developer-desk=@t                ::  link is made from this
     last-update=@da
     release-date=@da                 ::  should it be documented or no? (ask hodzod)

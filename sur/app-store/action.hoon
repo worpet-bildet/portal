@@ -6,7 +6,6 @@
     [%add =app-name =app-page]
     [%edit =app-name =app-page]
     [%del =app-name]
-    [%wipe ~]
   ==
 +$  visit-dev-action  :: how to do pokes one by one instead of multiple pokes at the same time?
   $%
