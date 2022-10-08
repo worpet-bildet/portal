@@ -1,5 +1,5 @@
 /-  *app-store-action, *app-store-data
-/+  default-agent, dbug
+/+  default-agent, dbug, app-store
 |%
 +$  versioned-state
   $%  state-0
@@ -30,7 +30,7 @@
   ^-  (quip card _this)
   `this(state !<(state-0 old))
 ::  
-::  on-poke is for subscribing to Developers
+::  on-poke is for subscribing to Developers AND OTHER STUFF
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
@@ -38,62 +38,58 @@
   ?>  ?=(%app-store-cur-action mark)
   =/  act  !<(cur-action vase)  
   ?-    -.act
-      %choose  `this
-      %title  `this
-      %intro  `this
       %sub    
     =/  dev-name-wire  /(scot %p +.act)
     ~&  "%cur-server: subscribing to {(scow %p +.act)}"
     :_  this
     [%pass dev-name-wire %agent [+.act %dev-server] %watch /dev-update]~
   ::  
-      %unsub  ::  removes from cur-choice, put warning before unsubbing on frontend
-      ::  TODO- update/fix because of app-set added to dev-update
-::::::::::::::::
-::::::::::::::::
+      %unsub
     =/  dev-name-wire  /(scot %p +.act)
     ~&  "%cur-server: unsubscribing from {(scow %p +.act)}" 
-    =/  cur-choice    `cur-choice`cur-choice.cur-data.state
-    =/  cur-map             `cur-map`cur-map.cur-data.state
-    =/  aux-map          `aux-map`aux-map.cur-data.state
-    ::
-    =/  apps  (~(got by aux-map) dev-name.act)
-    =/  n  0
-    =/  len  (lent apps)
-    ::
-    =/  new-cur-choice
-      |-
-        ?:  =(n len)  `^cur-choice`cur-choice
-        =/  loc  (find [[dev-name.act (snag n apps)]]~ `dev-app-list`dev-app-list.cur-choice)
-        ?~  loc  !!  ::what if find doesnt find?
-        %=  $
-          n  +(n)
-          dev-app-list.cur-choice   (oust [u.loc 1] `dev-app-list`dev-app-list.cur-choice)
-          app-page-list.cur-choice  (oust [u.loc 1] app-page-list.cur-choice)
-          cat-list.cur-choice       (oust [u.loc 1] cat-list.cur-choice)
-        ==
-    =/  new-cur-map  
-      |-  
-        ?:  =(n len)  `^cur-map`cur-map
-        %=  $
-          n  +(n)
-          cur-map  (~(del by `^cur-map`cur-map) [+.act (snag n apps)])
-        ==
-    =/  new-aux-map  (~(del by `^aux-map`aux-map) +.act)
-    =/  new-cur-data  `^cur-data`[new-cur-choice new-cur-map new-aux-map]
-    ::with or without ^ `cur-data`
-::::::::::::::::
-::::::::::::::::
-    =/  new-cur-page  ^-  cur-page  %-  some
-    :^  our.bowl  `^cur-title`cur-title.state  
-    `^cur-intro`cur-intro.state  new-cur-choice
+    =/  new-cur-data  (unsub:cur:app-store [cur-data.state dev-name.act])
+    =/  new-cur-page  
+      ^-  cur-page  %-  some
+      :^  our.bowl  
+      `^cur-title`cur-title.state  
+      `^cur-intro`cur-intro.state  
+      `^cur-choice`cur-choice.new-cur-data
     :_  this(cur-data.state new-cur-data)
     :~  
       [%pass dev-name-wire %agent [+.act %dev-server] %leave ~]
-      [%give %fact [/cur-page]~ %app-store-cur-page !>(`^cur-page`new-cur-page)]
+      [%give %fact [/cur-page]~ %app-store-cur-page !>(`cur-page`new-cur-page)]
     ==
-    ::  when receiveing a poke for entering cur-choice, it should be asserted that curchoice be subset of cur-data
-    ::  %choose
+  ::
+      %title
+    ~&  "%cur-server: adding title to curator page"
+    =/  new-cur-page  
+      ^-  cur-page  %-  some
+      :^  our.bowl  
+      `^cur-title`+.act  
+      `^cur-intro`cur-intro.state  
+      `^cur-choice`cur-choice.cur-data.state
+    :_  this(cur-title.state +.act)
+    [%give %fact [/cur-page]~ %app-store-cur-page !>(`cur-page`new-cur-page)]~
+  ::
+      %intro
+    ~&  "%cur-server: adding intro to curator page"
+    =/  new-cur-page  
+      ^-  cur-page  %-  some
+      :^  our.bowl  
+      `^cur-title`cur-title.state 
+      `^cur-intro`+.act  
+      `^cur-choice`cur-choice.cur-data.state
+    :_  this(cur-intro.state +.act)
+    [%give %fact [/cur-page]~ %app-store-cur-page !>(`cur-page`new-cur-page)]~
+    ::  when receiveing a poke for entering cur-choice, 
+    ::  should it be asserted that curchoice be subset of cur-data
+    ::  or not if thats already defined in sur file
+      %select  `this
+      %remove  `this
+      %change-cat  `this
+      %order  `this
+
+    ::  cur-choice should also be sent to subscribers after %choose
   == 
 ::  
 ++  on-arvo   on-arvo:default
@@ -115,7 +111,7 @@
 ::
 ::  changes, and deletes of app pages should be forwarded to changes of cur-choice
 ::  adding app pages should not be forwarded to changes of cur-choice
-::  on-agent is for receiving subscriptions updates from Developers
+::  on-agent is for receiving subscriptions updates from Developers AND OTHER STUFF(?)
 ++  on-agent  
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
@@ -138,41 +134,43 @@
     =/  dev-update  !<(dev-update q.cage.sign)
     ~&  "%cur-server: received dev update from {dev-name-tape}"
     =/  dev-name  `@p`(slav %p -.wire)
-    ?~  dev-update  `this
-    ::?~  dev-map.u.dev-update  ::probably remove dev completely, (probly not have his name left)
-      ::`this                         ::subscription stays tho
-      
-    ::  ?>  =(dev-name dev-name.u.dev-map)  should check for every key in map
-    ::`this
+    ?~  dev-update  `this  ::dev-server currently never sends dev-update
+    ?>  (check-dev-map:cur:app-store [dev-name dev-map.dev-data.u.dev-update])  
     ?-    -.change.u.dev-update
-        %init  `this
-      ::  union of cur-map and dev-map
-      ::=/  new-cur-map  (~(uni by cur-map.cur-data.state) dev-map.u.dev-update)
-      ::  updated aux-map
-      ::=/  app-list  ~(tap in ~(key by dev-map.u.dev-update)) 
-      ::=/  new-app-list (snoc `(list app-name)`
-      ::=/  new-aux-map  (~(put by aux-map.cur-data.state) dev-name new-app-list)
-      
-      
-      :::_  this(cur-data.state new-cur-data, cur-choice.state new-cur-choice)
-      ::[%give %fact [/cur-page]~ %app-store-cur-page !>(`^cur-choice`new-cur-choice)]~
+        %init
+      =/  new-cur-data  (init:cur:app-store [cur-data.state dev-name dev-update])
+      `this(cur-data.state new-cur-data)
     ::  
         %add
-           `this
+      =/  new-cur-data  (add:cur:app-store [cur-data.state dev-name dev-update])
+      `this(cur-data.state new-cur-data)
     ::  
-        %edit  `this 
+        %edit  
+      =/  new-cur-data  (edit:cur:app-store [cur-data.state dev-name dev-update])
+      =/  new-cur-page  
+        ^-  cur-page  %-  some
+        :^  our.bowl  
+        `^cur-title`cur-title.state  
+        `^cur-intro`cur-intro.state  
+        `^cur-choice`cur-choice.new-cur-data  
+      :_  this(cur-data.state new-cur-data)
+      [%give %fact [/cur-page]~ %app-store-cur-page !>(`^cur-page`new-cur-page)]~
     ::  
-        %del   `this
+        %del
+      =/  new-cur-data  (del:cur:app-store [cur-data.state dev-name dev-update])
+      =/  new-cur-page  
+        ^-  cur-page  %-  some
+        :^  our.bowl  
+        `^cur-title`cur-title.state  
+        `^cur-intro`cur-intro.state  
+        `^cur-choice`cur-choice.new-cur-data  
+      :_  this(cur-data.state new-cur-data)
+      [%give %fact [/cur-page]~ %app-store-cur-page !>(`^cur-page`new-cur-page)]~
     ::  
+        %usr-visit  `this
+    ::
         %wipe  `this
     ==
-    
-    ::=/  key  dev-name.dev-map.u.dev-update
-    ::=/  value  app-pages.u.dev-map
-    ::=/  new-cur-data  (~(put by `^cur-data`cur-data.state) key value)
-    ::=/  new-cur-choice  (some [our.bowl new-cur-data])
-    :::_  this(cur-data.state new-cur-data, cur-choice.state new-cur-choice)
-    ::[%give %fact [/cur-page]~ %app-store-cur-page !>(`^cur-choice`new-cur-choice)]~
   ==
 ::
 ++  on-fail   on-fail:default

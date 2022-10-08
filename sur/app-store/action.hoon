@@ -9,10 +9,11 @@
   ==
 +$  visit-dev-action  :: how to do pokes one by one instead of multiple pokes at the same time?
   $%
-    [%rate =dev-name =app-name =rating]
+    [%rate [=dev-name =app-name] =rating]
     [%unrate =dev-name =app-name]
-    [%comment =dev-name =app-name text=@t]
-    [%add-rev =dev-name =app-name text=@t is-safe=?]
+    [%add-com [=dev-name =app-name] text=@t]
+    [%del-com =dev-name =app-name] ::  needs to specify somehow which exact comment
+    [%add-rev [=dev-name =app-name] text=@t is-safe=?]
     [%del-rev =dev-name =app-name]
   ==
 +$  cur-action
@@ -21,7 +22,11 @@
     [%unsub =dev-name]
     [%title =cur-title]
     [%intro =cur-intro]
-    [%choose =cur-choice]
+    [%select [=dev-name =app-name] =category] :: should assert app exists in cur data
+    [%remove =dev-name =app-name]  ::  should assert app exists in cur choice
+    [%change-cat [=dev-name =app-name] =category]
+    [%order =dev-app-list]   ::should assert that apps are the same as in cur-choice
+    ::  also needs rearranging algorithm built
   ==
 +$  usr-action
   $%
@@ -38,4 +43,3 @@
 ::  "edit" should display filled in data that can be modified
 ::
 ::
-::  for cur-server and usr-server, %unsub shouold remove appropriate data from cur-choice and usr-data

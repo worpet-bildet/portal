@@ -39,7 +39,7 @@
 +$  category  @tas
 ::
 +$  cur-map  (map [=dev-name =app-name] app-page)
-+$  aux-map  (map dev-name (list app-name))
++$  aux-map  (map dev-name app-set)
 ::
 ::
 ::  Dev Page
@@ -52,6 +52,7 @@
     [%add [=dev-name =app-name]]
     [%edit [=dev-name =app-name]]
     [%del [=dev-name =app-name]] 
+    [%usr-visit [=dev-name =app-name]]
     [%wipe ~]
   ==
  

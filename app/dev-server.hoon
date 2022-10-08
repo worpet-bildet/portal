@@ -28,7 +28,7 @@
   ^-  (quip card _this)
   `this(state !<(state-0 old))
 ::  
-::  on-poke is for entering app data and sending it to subscribers (Curators)
+::  on-poke is for modifiying app data and sending it to subscribers (Curators)
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)

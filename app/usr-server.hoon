@@ -1,5 +1,5 @@
 /-  *app-store-action, *app-store-data
-/+  default-agent, dbug
+/+  default-agent, dbug, app-store
 |%
 +$  versioned-state
   $%  state-0
@@ -72,6 +72,7 @@
     [%pass wire %agent [cur-name %cur-server] %watch /cur-page]~
   ::
       %fact
+    :: doesnt work well
     =/  cur-page  !<(cur-page q.cage.sign)
     ~&  "%usr-server: received cur-page from {cur-name-tape}"
     =/  cur-name  `@p`(slav %p -.wire)
