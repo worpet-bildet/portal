@@ -33,6 +33,11 @@
 ::
 +$  cur-choice  [=dev-app-list =app-page-list =cat-list]
 ::
+::  cur-choice needs to be rewritten. leave just dev-app-list for order,
+::  have a (map [dev-name app-name] category) and retrieve app-page from cur-map
+::  this way changes to app-pages dont need to be propagated to app-page-list
+::  and there is no need to coordinate cat-list with dev-app-list because that's
+::  done more easily with a map.
 +$  dev-app-list  (list [=dev-name =app-name])
 +$  app-page-list  (list app-page)
 +$  cat-list  (list category)
