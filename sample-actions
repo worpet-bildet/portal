@@ -3,7 +3,8 @@
 
 
 ::add/edit app-page example
-:dev-server  &app-store-dev-action  :+  %edit  %app1
+::NEED TO FIX COMMENTS, CHANGED TO MOP
+:dev-server  &app-store-dev-action  :+  %add  %app1
 :*
     description='some description 3'
     keywords=`(list keyword:data)`~[%keyword1 %keyword2]         

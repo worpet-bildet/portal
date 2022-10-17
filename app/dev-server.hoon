@@ -32,12 +32,46 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
+  
+::  
+  ::  when poke is from visitors to app-page (can also be from our.bowl)
+  ?:  ?=(%app-store-visit-dev-action mark) 
+    =/  act  !<(visit-dev-action vase)
+    ?-    -.act
+      %rate  
+    ?.  (~(has in app-set.dev-data.state) app-name.key.act)
+      ~&   "%dev-server: app-page doesn't exist"
+      `this
+    ~&  "%dev-server: rating app"
+    =/  change  `change`[%usr-visit key.act]
+    =/  new-dev-data  (rate:dev:app-store [src.bowl dev-data.state act])
+    :_  this(dev-data new-dev-data)
+    [%give %fact [/dev-update]~ %app-store-dev-update !>(`dev-update``[change new-dev-data])]~    
+      %unrate  
+    ?.  (~(has in app-set.dev-data.state) app-name.key.act)
+      ~&   "%dev-server: app-page doesn't exist"
+      `this
+    ::  currently it also sends sub update even if %unrate
+    ::  was done on a rating that never existed
+    ~&  "%dev-server: removing rating from app"
+    =/  change  `change`[%usr-visit key.act]
+    =/  new-dev-data  (unrate:dev:app-store [src.bowl dev-data.state act])
+    :_  this(dev-data new-dev-data)
+    [%give %fact [/dev-update]~ %app-store-dev-update !>(`dev-update``[change new-dev-data])]~
+    
+      %add-com  `this
+      %del-com  `this
+      %add-rev  `this
+      %del-rev  `this
+  ==
+::  
+  ::  when poke is from our.bowl
   ?>  =(our.bowl src.bowl)
   ?>  ?=(%app-store-dev-action mark)  
   =/  act  !<(dev-action vase)
   ?-    -.act
       %add
-    ?:  (~(has by dev-map.dev-data) [our.bowl app-name.act])  
+    ?:  (~(has in app-set.dev-data.state) app-name.act)  
       ~&  "%dev-server: app-page already exists"
       ~&  "%dev-server: use %edit (not %add) to change existing app-page"
       `this
@@ -48,7 +82,7 @@
     [%give %fact [/dev-update]~ %app-store-dev-update !>(`dev-update``[change new-dev-data])]~
   ::
       %edit
-    ?.  (~(has by dev-map.dev-data) [our.bowl app-name.act])  
+    ?.  (~(has in app-set.dev-data.state) app-name.act)  
       ~&  "dev-server: app-page doesn't exist"
       ~&  "dev-server: use %add (not %edit) to add new app-page"
       `this 
@@ -59,7 +93,7 @@
     [%give %fact [/dev-update]~ %app-store-dev-update !>(`dev-update``[change new-dev-data])]~ 
   ::
       %del
-    ?.  (~(has by dev-map.dev-data.state) [our.bowl app-name.act])  
+    ?.  (~(has in app-set.dev-data.state) app-name.act)  
       ~&  "dev-server: app-page does not exist"
       `this
     ~&  "%dev-server: deleting app page"

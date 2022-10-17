@@ -8,7 +8,7 @@
 ::  Cur Page
 ::
 ::
-+$  cur-page  (unit [=cur-name =cur-title =cur-intro =cur-choice])
++$  cur-page  (unit [=cur-name =cur-title =cur-intro =cur-data])
 ::
 +$  cur-name  @p
 +$  cur-title  @t
@@ -17,33 +17,23 @@
 +$  cur-data
   $|  [=cur-choice =cur-map =aux-map]
   |=  [=cur-choice =cur-map =aux-map]
-  =/  len1  (lent `dev-app-list`dev-app-list.cur-choice)
-  =/  len2  (lent `app-page-list`app-page-list.cur-choice)
-  =/  len3  (lent `cat-list`cat-list.cur-choice)
-  ?.  &(=(len1 len2) =(len2 len3))  %.n  ::  assert correct length amongst lists
+  =/  len1  (lent `key-list`key-list.cur-choice)
+  =/  len2  (lent ~(tap in ~(key by `cat-map`cat-map.cur-choice)))
+  ?.  =(len1 len2)  %.n  ::  assert correct lengths in cur-choice
   =/  n  0
   |-  ::assert cur-choice is subset of cur-map
     ?:  =(n len1)  %.y
-    ?.    .=  
-        (snag n app-page-list.cur-choice)
-        (~(got by cur-map) (snag n dev-app-list.cur-choice))
-      %.n
+    ?.  (~(has by cur-map) (snag n key-list.cur-choice))  %.n
     $(n +(n))
   ::  TODO assert that aux-map and cur-map are correct together
 ::
-+$  cur-choice  [=dev-app-list =app-page-list =cat-list]
++$  cur-choice  [=key-list =cat-map]
 ::
-::  cur-choice needs to be rewritten. leave just dev-app-list for order,
-::  have a (map [dev-name app-name] category) and retrieve app-page from cur-map
-::  this way changes to app-pages dont need to be propagated to app-page-list
-::  and there is no need to coordinate cat-list with dev-app-list because that's
-::  done more easily with a map.
-+$  dev-app-list  (list [=dev-name =app-name])
-+$  app-page-list  (list app-page)
-+$  cat-list  (list category)
++$  key-list  (list key)
++$  cat-map  (map key category)
 +$  category  @tas
 ::
-+$  cur-map  (map [=dev-name =app-name] app-page)
++$  cur-map  (map key app-page)
 +$  aux-map  (map dev-name app-set)
 ::
 ::
@@ -54,10 +44,10 @@
 +$  change   
   $%
     [%init ~]
-    [%add [=dev-name =app-name]]
-    [%edit [=dev-name =app-name]]
-    [%del [=dev-name =app-name]] 
-    [%usr-visit [=dev-name =app-name]]
+    [%add =key]
+    [%edit =key]
+    [%del =key] 
+    [%usr-visit =key]
     [%wipe ~]
   ==
  
@@ -68,10 +58,11 @@
   ::  TODO assert their correctness
 ::  
 ::
-+$  dev-map  (map [=dev-name =app-name] app-page)  ::  dev-name is the same in all keys
++$  dev-map  (map key app-page)  ::  dev-name is the same in all keys
 +$  app-set  (set app-name) 
 ::
 :: 
++$  key  [=dev-name =app-name]
 +$  dev-name  @p 
 +$  app-name  @tas                   ::  up to 30 chars long on Apple Store
 ::
@@ -97,7 +88,7 @@
   $:
     ::  avg-rating=@rh  ::render on the front end
     ratings=(map @p rating)
-    comments=(list comment)
+    comments=(list comment) :: ((mop @da comment) lth)
     reviews=(map reviewer review)
   ==
 ::
@@ -126,22 +117,23 @@
     image=@t                         ::  app icon, should be square
   ==                                 ::  To ensure the icon is legible in all sizes, 
 ::                                   ::  avoid adding unnecessary visual details
-+$  rating  
-  $|  @ud  
-  |=  rating=@ud 
-  &((lte rating 5) (gte rating 1))
++$  rating  @ud
+::  TODO figure out how to make it work
+::  $|  @ud  
+::  |=  r=@ud 
+::  (gte r 5) 
 ::
 +$  comment 
   $:
     commenter=@p
-    date=@da
+    time=@da ::  remove when creating mop
     text=@t
   ==
 ::
 +$  reviewer  @p
 +$  review
   $:
-    date=@da
+    time=@da
     text=@t
     hash=@uv
     is-current=?    

@@ -21,7 +21,7 @@
     default   ~(. (default-agent this %|) bowl)
 ++  on-init
   ^-  (quip card _this)
-  =.  state  [%0 '' '' [[~ ~ ~] ~ ~]]
+  =.  state  [%0 '' '' [[~ ~] ~ ~]]
   `this
 ::  
 ++  on-save   !>(state)
@@ -53,7 +53,7 @@
       :^  our.bowl  
       `^cur-title`cur-title.state  
       `^cur-intro`cur-intro.state  
-      `^cur-choice`cur-choice.new-cur-data
+      `^cur-data`new-cur-data
     :_  this(cur-data.state new-cur-data)
     :~  
       [%pass dev-name-wire %agent [+.act %dev-server] %leave ~]
@@ -67,7 +67,7 @@
       :^  our.bowl  
       `^cur-title`+.act  
       `^cur-intro`cur-intro.state  
-      `^cur-choice`cur-choice.cur-data.state
+      `^cur-data`cur-data.state
     :_  this(cur-title.state +.act)
     [%give %fact [/cur-page]~ %app-store-cur-page !>(`cur-page`new-cur-page)]~
   ::
@@ -78,16 +78,24 @@
       :^  our.bowl  
       `^cur-title`cur-title.state 
       `^cur-intro`+.act  
-      `^cur-choice`cur-choice.cur-data.state
+      `^cur-data`cur-data.state
     :_  this(cur-intro.state +.act)
     [%give %fact [/cur-page]~ %app-store-cur-page !>(`cur-page`new-cur-page)]~
     ::  when receiveing a poke for entering cur-choice, 
     ::  should it be asserted that curchoice be subset of cur-data
     ::  or not if thats already defined in sur file
-      %select  `this
-      %remove  `this
-      %change-cat  `this
-      %order  `this
+  ::
+      %select  
+    ~&  "%cur-server: adding cur-choice to curator page"
+    =/  new-cur-data  (select:cur:app-store [cur-data.state act])
+    =/  new-cur-page  
+      ^-  cur-page  %-  some
+      :^  our.bowl  
+      `^cur-title`cur-title.state 
+      `^cur-intro`cur-intro.state 
+      `^cur-data`new-cur-data
+    :_  this(cur-data.state new-cur-data)
+    [%give %fact [/cur-page]~ %app-store-cur-page !>(`cur-page`new-cur-page)]~
 
     ::  cur-choice should also be sent to subscribers after %choose
   == 
@@ -102,7 +110,7 @@
   ~&  "%cur-server: received subscription request"
   =/  cur-page  ^-  cur-page  %-  some
   :^  our.bowl  `^cur-title`cur-title.state  
-  `^cur-intro`cur-intro.state  `^cur-choice`cur-choice.cur-data.state
+  `^cur-intro`cur-intro.state  `^cur-data`cur-data.state
   :_  this
   [%give %fact ~ %app-store-cur-page !>(`^cur-page`cur-page)]~
 ::  
@@ -152,7 +160,7 @@
         :^  our.bowl  
         `^cur-title`cur-title.state  
         `^cur-intro`cur-intro.state  
-        `^cur-choice`cur-choice.new-cur-data  
+        `^cur-data`new-cur-data  
       :_  this(cur-data.state new-cur-data)
       [%give %fact [/cur-page]~ %app-store-cur-page !>(`^cur-page`new-cur-page)]~
     ::  
@@ -163,11 +171,20 @@
         :^  our.bowl  
         `^cur-title`cur-title.state  
         `^cur-intro`cur-intro.state  
-        `^cur-choice`cur-choice.new-cur-data  
+        `^cur-data`new-cur-data  
       :_  this(cur-data.state new-cur-data)
       [%give %fact [/cur-page]~ %app-store-cur-page !>(`^cur-page`new-cur-page)]~
     ::  
-        %usr-visit  `this
+        %usr-visit
+      =/  new-cur-data  (usr-visit:cur:app-store [cur-data.state dev-name dev-update])
+      =/  new-cur-page  
+        ^-  cur-page  %-  some
+        :^  our.bowl  
+        `^cur-title`cur-title.state  
+        `^cur-intro`cur-intro.state  
+        `^cur-data`new-cur-data  
+      :_  this(cur-data.state new-cur-data)
+      [%give %fact [/cur-page]~ %app-store-cur-page !>(`^cur-page`new-cur-page)]~
     ::
         %wipe  `this
     ==
