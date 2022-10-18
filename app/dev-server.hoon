@@ -36,6 +36,7 @@
 ::  
   ::  when poke is from visitors to app-page (can also be from our.bowl)
   ?:  ?=(%app-store-visit-dev-action mark) 
+  :: TODO maybe create a print if there is a wrong poke?
     =/  act  !<(visit-dev-action vase)
     ?-    -.act
       %rate  
@@ -46,7 +47,8 @@
     =/  change  `change`[%usr-visit key.act]
     =/  new-dev-data  (rate:dev:app-store [src.bowl dev-data.state act])
     :_  this(dev-data new-dev-data)
-    [%give %fact [/dev-update]~ %app-store-dev-update !>(`dev-update``[change new-dev-data])]~    
+    [%give %fact [/dev-update]~ %app-store-dev-update !>(`dev-update``[change new-dev-data])]~
+  ::    
       %unrate  
     ?.  (~(has in app-set.dev-data.state) app-name.key.act)
       ~&   "%dev-server: app-page doesn't exist"
@@ -58,12 +60,24 @@
     =/  new-dev-data  (unrate:dev:app-store [src.bowl dev-data.state act])
     :_  this(dev-data new-dev-data)
     [%give %fact [/dev-update]~ %app-store-dev-update !>(`dev-update``[change new-dev-data])]~
-    
-      %add-com  `this
-      %del-com  `this
+  ::
+      %add-com 
+    ?.  (~(has in app-set.dev-data.state) app-name.key.act)
+      ~&   "%dev-server: app-page doesn't exist"
+      `this
+    ~&  "%dev-server: adding comment"    
+    =/  change  `change`[%usr-visit key.act]
+    =/  new-dev-data  (add-com:dev:app-store [src.bowl dev-data.state act now.bowl])
+    :_  this(dev-data new-dev-data)
+    [%give %fact [/dev-update]~ %app-store-dev-update !>(`dev-update``[change new-dev-data])]~
+      %del-com  
+   =/  new-dev-data  (del-com:dev:app-store [src.bowl dev-data.state act])
+      :: TODO
+      
+      `this(dev-data new-dev-data)
       %add-rev  `this
       %del-rev  `this
-  ==
+    ==
 ::  
   ::  when poke is from our.bowl
   ?>  =(our.bowl src.bowl)

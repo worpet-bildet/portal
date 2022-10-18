@@ -31,6 +31,7 @@
 ::
 +$  key-list  (list key)
 +$  cat-map  (map key category)
+::  SET OF CATEGORIES NEEDS TO BE DONE
 +$  category  @tas
 ::
 +$  cur-map  (map key app-page)
@@ -88,9 +89,10 @@
   $:
     ::  avg-rating=@rh  ::render on the front end
     ratings=(map @p rating)
-    comments=(list comment) :: ((mop @da comment) lth)
-    reviews=(map reviewer review)
+    comments=((mop @da comment) lth)
+    reviews=((mop @da review) lth)
   ==
+::
 ::
 ::                                   ::  nothing automatically yet except docket 
 ::
@@ -126,14 +128,12 @@
 +$  comment 
   $:
     commenter=@p
-    time=@da ::  remove when creating mop
     text=@t
   ==
 ::
-+$  reviewer  @p
 +$  review
   $:
-    time=@da
+    reviewer=@p
     text=@t
     hash=@uv
     is-current=?    

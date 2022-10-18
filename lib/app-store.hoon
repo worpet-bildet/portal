@@ -184,16 +184,59 @@
   ==
   =/  new-dev-map  (~(put by dev-map.dev-data) key.act new-app-page)
   dev-data(dev-map new-dev-map)
-::  TODO
-  ++  add-com  5
-  ::|=  [usr-name=@p =dev-data act=[%unrate =key text=@t] now]
+::  
+  ++  add-com 
+  |=  [usr-name=@p =dev-data act=[%add-com =key text=@t] now=@da]
+  ^-  ^dev-data
+  ?>  ?=([%add-com *] act)
+  =/  key  `^key`key.act
+  =/  new-comment  `comment`[usr-name text.act]
+  =/  app-page  (~(got by dev-map.dev-data) key)   
+  =/  new-comments  (gas:com comments.visitor-data.app-page [now new-comment] ~)
+  =/  new-visitor-data  [ratings.visitor-data.app-page new-comments reviews.visitor-data.app-page]
+  =/  new-app-page  ^-  ^app-page  :*  
+    description.app-page 
+    keywords.app-page 
+    screenshots.app-page 
+    new-visitor-data 
+    auxiliary-data.app-page 
+    docket-data.app-page
+  ==
+  =/  new-dev-map  (~(put by dev-map.dev-data) key.act new-app-page)
+  dev-data(dev-map new-dev-map)
+::
+  ++  del-com  
+  |=  [usr-name=@p =dev-data act=[%del-com =key time=@da]]
+  ^-  ^dev-data
+  ?>  ?=([%del-com *] act)
+  =/  key  `^key`key.act
+  =/  app-page  (~(got by dev-map.dev-data) key)  
+  =/  w-del  (del:com comments.visitor-data.app-page time.act) 
+  =/  new-comments  `((mop @da comment) lth)`+.w-del
+  =/  new-visitor-data  [ratings.visitor-data.app-page `((mop @da comment) lth)`new-comments reviews.visitor-data.app-page]
+  =/  new-app-page  ^-  ^app-page  :*  
+    description.app-page 
+    keywords.app-page 
+    screenshots.app-page 
+    new-visitor-data 
+    auxiliary-data.app-page 
+    docket-data.app-page
+  ==
+  =/  new-dev-map  (~(put by dev-map.dev-data) key.act new-app-page)
+  dev-data(dev-map new-dev-map)
+::
+::  SHOULD I MAKE THESE FUNCTIONS SMALLER, E.G. ONLY TAKE APP PAGE AND OUTPUT APP PAGE.
+::  AND MAKE ONE BIGGER FUNCTION WHICH TAKES THESE SMALLER FUNCITONS
+::  DEPENDING ON HOW MUCH OVERLAP THERE IS BETWEEN THESE FUNCTINOS
+  ++  add-rev  6
+  ::|=  [usr-name=@p =dev-data act=[%add-rev =key text=@t] now=@da]
   ::^-  ^dev-data
   ::?>  ?=([%add-com *] act)
   ::=/  key  `^key`key.act
-  ::=/  new-com  `comment`[`commenter`usr-name now 
-  ::=/  app-page  (~(got by dev-map.dev-data) key)
-  ::=/  new-ratings  (~(put by ratings.visitor-data.app-page) usr-name)
-  ::=/  new-visitor-data  [new-ratings comments.visitor-data.app-page reviews.visitor-data.app-page]
+  ::=/  new-comment  `comment`[usr-name text.act]
+  ::=/  app-page  (~(got by dev-map.dev-data) key)   
+  ::=/  new-comments  (gas:com comments.visitor-data.app-page [now new-comment] ~)
+  ::=/  new-visitor-data  [ratings.visitor-data.app-page new-comments reviews.visitor-data.app-page]
   ::=/  new-app-page  ^-  ^app-page  :*  
   ::  description.app-page 
   ::  keywords.app-page 
@@ -204,9 +247,10 @@
   ::==
   ::=/  new-dev-map  (~(put by dev-map.dev-data) key.act new-app-page)
   ::dev-data(dev-map new-dev-map)
-::  TODO
-  ++  del-com  6
-  ++  add-rev  7
+  
   ++  del-rev  8
+::
   --
+++  com  ((on @da comment) lth)
+++  rev  ((on @da review) lth)
 --

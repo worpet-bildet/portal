@@ -9,7 +9,7 @@
     description='some description 3'
     keywords=`(list keyword:data)`~[%keyword1 %keyword2]         
     screenshots=`(list screenshot:data)`~['screen1' 'screen2']    
-    visitor-data=[`(map @p rating:data)`(malt (limo ~[[~zod 1] [~dilryd-mopreg 4]])) `(list comment:data)`~[[~tex ~2022.1.1 'awesome app'] [~zod ~2022.2.2 'lousy app']] `(map reviewer:data review:data)`(malt (limo ~[[~zod ~2022.3.3 'review text' 0v1df35 %.y %.y]]))]
+    visitor-data=[`(map @p rating:data)`(malt (limo ~[[~zod 1] [~dilryd-mopreg 4]])) `((mop @da comment:data) lth)`*((mop @da comment:data) lth) `((mop @da review:data) lth)`*((mop @da review:data) lth)]
     auxiliary-data=[desk-hash=0v1df64.49beg installed-into=%app-store developer-desk='~dister-dozzod-dilryd-mopreg/app-store' last-update=~2022.2.2 release-date=~2023.1.1 size-mb=.17.2]
     docket-data=[title='App Store' info='A tool for decentralized curation and discovery of Urbit apps' color=0x1231 version=[0 0 1] website='https://github.com/dilryd-mopreg/app-store' license='MIT' base=%app-store image='some-link']
 == 
@@ -18,4 +18,5 @@
 =l2 `dev-app-list:data`~[[~ter %a4] [~dev %a3] [~dev %a2] [~ter %a5] [~dev %a1]]
 =cat-old `cat-list:data`~[%a %b %c %d %e]
 [=cat-list old-order=dev-app-list new-order=dev-app-list]
+
 
