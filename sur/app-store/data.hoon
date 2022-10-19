@@ -1,4 +1,3 @@
-::  working on Milestone 2
 |%
 ::
 +$  usr-data  (map cur-name cur-page)
@@ -14,24 +13,39 @@
 +$  cur-title  @t
 +$  cur-intro  @t
 ::
-+$  cur-data
+::  cur data should also confirm cur-choice like this: %-  ^cur-choice  cur-choice
++$  cur-data  ::  do (^cur-data cur-data) everywhere necessary to assert this 
   $|  [=cur-choice =cur-map =aux-map]
   |=  [=cur-choice =cur-map =aux-map]
-  =/  len1  (lent `key-list`key-list.cur-choice)
-  =/  len2  (lent ~(tap in ~(key by `cat-map`cat-map.cur-choice)))
-  ?.  =(len1 len2)  %.n  ::  assert correct lengths in cur-choice
-  =/  n  0
-  |-  ::assert cur-choice is subset of cur-map
-    ?:  =(n len1)  %.y
-    ?.  (~(has by cur-map) (snag n key-list.cur-choice))  %.n
-    $(n +(n))
+  =/  cur-choice  (^cur-choice cur-choice)  ::  asserts cur-choice correctness
+  =/  cur-map-keys  ~(key by cur-map)
+  =/  dev-name-add  |=  [=dev-name =app-set]  
+  ^-  (set [^dev-name app-name])
+  (~(run in app-set) |=(=app-name [dev-name app-name]))
+  =/  aux-map-1  (~(rut by aux-map) dev-name-add)
+  =/  aux-map-2  (~(run by aux-map-1) |=(set=(set key) ~(tap in set)))
+  =/  vals  (silt `(list key)`(zing ~(val by aux-map-2)))
+  ?&
+    ::  assert cur-choice(key-list) is subset of cur-map
+    (levy key-list.cur-choice |=(=key (~(has in ~(key by cur-map)) key)))
+    ::  assert that keys of cur-map correspond to aux-map
+    =(cur-map-keys vals)
+  ==
   ::  TODO assert that aux-map and cur-map are correct together
 ::
-+$  cur-choice  [=key-list =cat-map]
++$  cur-choice
+  $|  [=key-list =cat-map =cat-set]
+  |=  [=key-list =cat-map =cat-set]
+  ?&  =((silt key-list) ~(key by cat-map))
+  (~(all by cat-map) |=(cat=category (~(has in cat-set) cat))) 
+  ==
+::  select should only take key-list and cat-map, and
+::  all cats in cat-map should have already been added to cat-set
 ::
 +$  key-list  (list key)
 +$  cat-map  (map key category)
-::  SET OF CATEGORIES NEEDS TO BE DONE
++$  cat-set  (set category)
+::
 +$  category  @tas
 ::
 +$  cur-map  (map key app-page)
@@ -55,8 +69,11 @@
 +$  dev-data
   $|  [=dev-map =app-set]
   |=  [=dev-map =app-set]
-  %.y
-  ::  TODO assert their correctness
+  =/  keys  ~(key by dev-map)
+  =/  app-names  `^app-set`(~(run in keys) tail)
+  ?:  =(app-set app-names)
+    %.y
+  %.n
 ::  
 ::
 +$  dev-map  (map key app-page)  ::  dev-name is the same in all keys
@@ -121,11 +138,10 @@
     image=@t                         ::  app icon, should be square
   ==                                 ::  To ensure the icon is legible in all sizes, 
 ::                                   ::  avoid adding unnecessary visual details
-+$  rating  @ud
-::  TODO figure out how to make it work
-::  $|  @ud  
-::  |=  r=@ud 
-::  (gte r 5) 
++$  rating
+  $|  @ud  
+  |=  r=@ud 
+  &((gte r 1) (lte r 5))
 ::
 +$  comment 
   $:

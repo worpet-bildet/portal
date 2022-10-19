@@ -6,7 +6,8 @@
   ::  receiving intial data from dev
   ++  init    
     |=  [=cur-data =dev-name =dev-update]
-    ^-  ^cur-data
+    %-  ^cur-data
+    =/  cur-data  (^cur-data cur-data)
     =/  new-aux-map  (~(put by aux-map.cur-data) dev-name +>+.dev-update)
     =/  new-cur-map  (~(uni by cur-map.cur-data) `dev-map`+>-.dev-update)
     [cur-choice.cur-data new-cur-map new-aux-map]
@@ -16,9 +17,9 @@
   ::  removes dev from cur-choice and cur-map and aux-map
   ++  unsub  
     |=  [=cur-data =dev-name]
-    ^-  ^cur-data
+    %-  ^cur-data
+    =/  cur-data  (^cur-data cur-data)
     =/  new-aux-map  (~(del by aux-map.cur-data) dev-name)
-  ::
     =/  cur-map  cur-map.cur-data
     =/  cur-choice  cur-choice.cur-data
     =/  apps  ~(tap in (~(got by aux-map.cur-data) dev-name))
@@ -32,7 +33,7 @@
       cur-map  (~(del by cur-map) [dev-name (snag n apps)])
     ==
   ::
-    =/  new-cur-choice
+    =/  new-cur-choice  %-  ^cur-choice
     =/  n  0
     |-  ?:  =(n len)  cur-choice
     =/  key  [dev-name (snag n apps)]
@@ -44,19 +45,22 @@
       cat-map.cur-choice     (~(del by cat-map.cur-choice) key)
     ==
   ::
-    `^cur-data`[new-cur-choice new-cur-map new-aux-map]
+  [new-cur-choice new-cur-map new-aux-map]
 ::
   ::  when selecting new cur-choice
   ++  select
-    |=  [=cur-data act=[%select =cur-choice]]
-    ^-  ^cur-data
+    |=  [=cur-data act=[%select =key-list =cat-map]]
+    %-  ^cur-data
+    =/  cur-data  (^cur-data cur-data)
     ?>  ?=([%select *] act)
-    [cur-choice.act cur-map.cur-data aux-map.cur-data]
+    =/  new-cur-choice  (^cur-choice [key-list.act cat-map.act cat-set.cur-choice.cur-data])
+    [new-cur-choice cur-map.cur-data aux-map.cur-data]
 ::    
   :: when dev adds an app
   ++  add  
     |=  [=cur-data =dev-name =dev-update]
-    ^-  ^cur-data
+    %-  ^cur-data
+    =/  cur-data  (^cur-data cur-data)
     =/  new-aux-map  (~(put by aux-map.cur-data) dev-name +>+.dev-update)
     =/  new-cur-map  (~(uni by cur-map.cur-data) `dev-map`+>-.dev-update)
     [cur-choice.cur-data new-cur-map new-aux-map]
@@ -64,7 +68,8 @@
   ::  when dev edits an app
   ++  edit  
     |=  [=cur-data =dev-name =dev-update]
-    ^-  ^cur-data
+    %-  ^cur-data
+    =/  cur-data  (^cur-data cur-data)
     =/  dev-map  `dev-map`+>-.dev-update
     =/  new-cur-map  (~(uni by cur-map.cur-data) dev-map)
     [cur-choice.cur-data new-cur-map aux-map.cur-data]
@@ -72,33 +77,37 @@
   ::  when dev dels an app
   ++  del  
     |=  [=cur-data =dev-name =dev-update]
-    ^-  ^cur-data
+    %-  ^cur-data
+    =/  cur-data  (^cur-data cur-data)
     =/  new-aux-map  (~(put by aux-map.cur-data) dev-name +>+.dev-update)
     =/  dev-map  `dev-map`+>-.dev-update
     =/  app-name  +<+>.dev-update
     =/  key  [dev-name app-name]
     =/  new-cur-map  (~(del by cur-map.cur-data) key)
     =/  cur-choice  cur-choice.cur-data
-    =/  new-cur-choice       
+    =/  new-cur-choice  %-  ^cur-choice 
       =/  loc  (find [key]~ key-list.cur-choice)
       ?~  loc  cur-choice
       =/  new-key-list       (oust [u.loc 1] key-list.cur-choice)
       =/  new-cat-map        (~(del by cat-map.cur-choice) key)
-      [new-key-list new-cat-map] 
+      [new-key-list new-cat-map cat-set.cur-choice] 
     [new-cur-choice new-cur-map new-aux-map]
 ::
   ::  after user leaves comment/review/rating to dev
   ++  usr-visit  
     |=  [=cur-data =dev-name =dev-update]
-    ^-  ^cur-data
+    %-  ^cur-data
+    =/  cur-data  (^cur-data cur-data)
     =/  dev-map  `dev-map`+>-.dev-update
     =/  new-cur-map  (~(uni by cur-map.cur-data) dev-map)
     [cur-choice.cur-data new-cur-map aux-map.cur-data]
 ::
-  ++  check-dev-map  :: verify whether the keys all contain dev-name
-    |=  [=dev-name =dev-map]
+  :: verify whether dev-map keys all contain dev-name
+  ++  check-dev-data  
+    |=  [=dev-name =dev-data]
     ^-  ?
-    =/  keys  ~(tap in ~(key by dev-map))
+    =/  dev-data  (^dev-data dev-data)
+    =/  keys  ~(tap in ~(key by dev-map.dev-data))
     =/  len  (lent keys)
     =/  n  0
     |-  ?:  =(n len)  %.y
@@ -113,8 +122,9 @@
   |%
   ++  add  
   |=  [=dev-name =dev-data act=[%add =app-name =app-page]]
-  ^-  ^dev-data
+  %-  ^dev-data
   ?>  ?=([%add *] act)
+  =/  dev-data  (^dev-data dev-data)
   =/  key  `^key`[dev-name app-name.act]    
   ?:  (~(has by dev-map.dev-data) key)  
     ~&  "dev-server: app-page already exists"
@@ -126,8 +136,9 @@
 ::
   ++  edit  
   |=  [=dev-name =dev-data act=[%edit =app-name =app-page]]
-  ^-  ^dev-data
+  %-  ^dev-data
   ?>  ?=([%edit *] act)
+  =/  dev-data  (^dev-data dev-data)
   =/  key  `^key`[dev-name app-name.act]    
   ?.  (~(has by dev-map.dev-data) key)  
     ~&  "dev-server: app-page doesn't exist"
@@ -139,19 +150,21 @@
 ::  
   ++  del  
   |=  [=dev-name =dev-data act=[%del =app-name]]
-  ^-  ^dev-data
+  %-  ^dev-data
   ?>  ?=([%del *] act)
+  =/  dev-data  (^dev-data dev-data)
   =/  key  `^key`[dev-name app-name.act]        
   :-  
   (~(del by dev-map.dev-data) key)
   (~(del in app-set.dev-data) app-name.act)
 ::
   ++  rate
-  |=  [usr-name=@p =dev-data act=[%rate =key =rating]]
-  ^-  ^dev-data
+  |=  [usr-name=@p =dev-data act=[%rate =key rating=@ud]]
+  %-  ^dev-data
   ?>  ?=([%rate *] act)
+  =/  dev-data  (^dev-data dev-data)
   =/  key  `^key`key.act
-  =/  new-rating  `^rating`rating.act
+  =/  new-rating  (rating rating.act)
   =/  app-page  (~(got by dev-map.dev-data) key)
   =/  new-ratings  (~(put by ratings.visitor-data.app-page) usr-name new-rating)
   =/  new-visitor-data  [new-ratings comments.visitor-data.app-page reviews.visitor-data.app-page]
@@ -168,8 +181,9 @@
 ::
   ++  unrate 
   |=  [usr-name=@p =dev-data act=[%unrate =key]]
-  ^-  ^dev-data
+  %-  ^dev-data
   ?>  ?=([%unrate *] act)
+  =/  dev-data  (^dev-data dev-data)
   =/  key  `^key`key.act
   =/  app-page  (~(got by dev-map.dev-data) key)
   =/  new-ratings  (~(del by ratings.visitor-data.app-page) usr-name)
@@ -187,8 +201,9 @@
 ::  
   ++  add-com 
   |=  [usr-name=@p =dev-data act=[%add-com =key text=@t] now=@da]
-  ^-  ^dev-data
+  %-  ^dev-data
   ?>  ?=([%add-com *] act)
+  =/  dev-data  (^dev-data dev-data)
   =/  key  `^key`key.act
   =/  new-comment  `comment`[usr-name text.act]
   =/  app-page  (~(got by dev-map.dev-data) key)   
@@ -207,8 +222,9 @@
 ::
   ++  del-com  
   |=  [usr-name=@p =dev-data act=[%del-com =key time=@da]]
-  ^-  ^dev-data
+  %-  ^dev-data
   ?>  ?=([%del-com *] act)
+  =/  dev-data  (^dev-data dev-data)
   =/  key  `^key`key.act
   =/  app-page  (~(got by dev-map.dev-data) key)  
   =/  w-del  (del:com comments.visitor-data.app-page time.act) 
@@ -226,12 +242,14 @@
   dev-data(dev-map new-dev-map)
 ::
   ++  add-rev
-  |=  [usr-name=@p =dev-data act=[%add-rev =key text=@t is-safe=?] now=@da]
-  ^-  ^dev-data
+  |=  [usr-name=@p =dev-data act=[%add-rev =key text=@t hash=@uv is-safe=?] now=@da]
+  %-  ^dev-data
   ?>  ?=([%add-rev *] act)
+  =/  dev-data  (^dev-data dev-data)
   =/  key  `^key`key.act
-  =/  new-review  `review`[now text.act *@uv %.y is-safe.act]  :: TODO HASH and IS-CURRENT
-  =/  app-page  (~(got by dev-map.dev-data) key)   
+  =/  app-page  (~(got by dev-map.dev-data) key) 
+  =/  is-current  =(hash.act desk-hash.auxiliary-data.app-page)
+  =/  new-review  `review`[now text.act hash.act is-current is-safe.act]   
   =/  new-reviews  (~(put by reviews.visitor-data.app-page) usr-name new-review)
   =/  new-visitor-data  [ratings.visitor-data.app-page comments.visitor-data.app-page new-reviews]
   =/  new-app-page  ^-  ^app-page  :*  
@@ -247,8 +265,9 @@
 ::  
   ++  del-rev
   |=  [usr-name=@p =dev-data act=[%del-rev =key]]
-  ^-  ^dev-data
+  %-  ^dev-data
   ?>  ?=([%del-rev *] act)
+  =/  dev-data  (^dev-data dev-data)
   =/  key  `^key`key.act
   =/  app-page  (~(got by dev-map.dev-data) key)   
   =/  new-reviews  (~(del by reviews.visitor-data.app-page) usr-name)

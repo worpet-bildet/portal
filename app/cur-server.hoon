@@ -21,14 +21,18 @@
     default   ~(. (default-agent this %|) bowl)
 ++  on-init
   ^-  (quip card _this)
-  =.  state  [%0 '' '' [[~ ~] ~ ~]]
+  =.  state  [%0 '' '' [[~ ~ ~] ~ ~]]
   `this
 ::  
-++  on-save   !>(state)
+++  on-save   
+  ?>  =((^cur-data cur-data.state) cur-data.state)
+  !>(state)
 ++  on-load   
   |=  old=vase
   ^-  (quip card _this)
-  `this(state !<(state-0 old))
+  =/  state-0  !<(state-0 old)
+  ?>  =((^cur-data cur-data.state-0) cur-data.state-0)
+  `this(state state-0)
 ::  
 ::  on-poke is for subscribing to Developers AND OTHER STUFF
 ++  on-poke
@@ -96,7 +100,10 @@
       `^cur-data`new-cur-data
     :_  this(cur-data.state new-cur-data)
     [%give %fact [/cur-page]~ %app-store-cur-page !>(`cur-page`new-cur-page)]~
-
+  ::
+      %cats
+    ~&  "%cur-server: changing categories"
+    `this(cat-set.cur-choice.cur-data.state cat-set.act)
     ::  cur-choice should also be sent to subscribers after %choose
   == 
 ::  
@@ -143,7 +150,7 @@
     ~&  "%cur-server: received dev update from {dev-name-tape}"
     =/  dev-name  `@p`(slav %p -.wire)
     ?~  dev-update  `this  ::dev-server currently never sends dev-update
-    ?>  (check-dev-map:cur:app-store [dev-name dev-map.dev-data.u.dev-update])  
+    ?>  (check-dev-data:cur:app-store [dev-name dev-data.u.dev-update])  
     ?-    -.change.u.dev-update
         %init
       =/  new-cur-data  (init:cur:app-store [cur-data.state dev-name dev-update])

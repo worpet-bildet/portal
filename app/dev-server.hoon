@@ -22,14 +22,19 @@
   =.  state  [%0 [~ ~]]
   `this
 ::  
-++  on-save   !>(state)
+++  on-save   
+  ?>  =((^dev-data dev-data.state) dev-data.state)
+  !>(state)
+::
 ++  on-load   
   |=  old=vase
   ^-  (quip card _this)
-  `this(state !<(state-0 old))
+  =/  state-0  !<(state-0 old)
+  ?>  =((^dev-data dev-data.state-0) dev-data.state-0)
+  `this(state state-0)
 ::  
 ::  on-poke is for modifiying app data and sending it to subscribers (Curators)
-++  on-poke
+++  on-poke 
   |=  [=mark =vase]
   ^-  (quip card _this)  
 ::  
@@ -45,7 +50,7 @@
       `this
     ~&  "%dev-server: rating app"
     =/  change  `change`[%usr-visit key.act]
-    =/  new-dev-data  (rate:dev:app-store [src.bowl dev-data.state act])
+    =/  new-dev-data  (rate:dev:app-store [src.bowl dev-data.state [%rate key.act `rating`rating.act]])
     :_  this(dev-data new-dev-data)
     [%give %fact [/dev-update]~ %app-store-dev-update !>(`dev-update``[change new-dev-data])]~
   ::    
