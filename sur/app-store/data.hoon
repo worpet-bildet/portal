@@ -90,7 +90,9 @@
     ::  avg-rating=@rh  ::render on the front end
     ratings=(map @p rating)
     comments=((mop @da comment) lth)
-    reviews=((mop @da review) lth)
+    reviews=(map @p review)
+    ::  Also, first should be shown is-current=%.y reviews and then others
+    ::  sorted by date
   ==
 ::
 ::
@@ -133,7 +135,7 @@
 ::
 +$  review
   $:
-    reviewer=@p
+    time=@da
     text=@t
     hash=@uv
     is-current=?    

@@ -153,7 +153,7 @@
       =/  new-cur-data  (add:cur:app-store [cur-data.state dev-name dev-update])
       `this(cur-data.state new-cur-data)
     ::  
-        %edit  
+        %edit  :: IF IS VS IS NOT IN CUR CHOICE SHOULD I SEND TO USR
       =/  new-cur-data  (edit:cur:app-store [cur-data.state dev-name dev-update])
       =/  new-cur-page  
         ^-  cur-page  %-  some

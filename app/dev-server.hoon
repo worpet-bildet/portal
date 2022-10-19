@@ -31,11 +31,11 @@
 ::  on-poke is for modifiying app data and sending it to subscribers (Curators)
 ++  on-poke
   |=  [=mark =vase]
-  ^-  (quip card _this)
-  
+  ^-  (quip card _this)  
 ::  
   ::  when poke is from visitors to app-page (can also be from our.bowl)
   ?:  ?=(%app-store-visit-dev-action mark) 
+::
   :: TODO maybe create a print if there is a wrong poke?
     =/  act  !<(visit-dev-action vase)
     ?-    -.act
@@ -70,13 +70,36 @@
     =/  new-dev-data  (add-com:dev:app-store [src.bowl dev-data.state act now.bowl])
     :_  this(dev-data new-dev-data)
     [%give %fact [/dev-update]~ %app-store-dev-update !>(`dev-update``[change new-dev-data])]~
+  ::
       %del-com  
+   ?.  (~(has in app-set.dev-data.state) app-name.key.act)
+      ~&   "%dev-server: app-page doesn't exist"
+      `this
+   ~&  "%dev-server: deleting comment"
+   =/  change  `change`[%usr-visit key.act]
    =/  new-dev-data  (del-com:dev:app-store [src.bowl dev-data.state act])
-      :: TODO
-      
-      `this(dev-data new-dev-data)
-      %add-rev  `this
-      %del-rev  `this
+   :_  this(dev-data new-dev-data)
+   [%give %fact [/dev-update]~ %app-store-dev-update !>(`dev-update``[change new-dev-data])]~
+ ::
+      %add-rev
+    ?.  (~(has in app-set.dev-data.state) app-name.key.act)
+      ~&   "%dev-server: app-page doesn't exist"
+      `this
+    ~&  "%dev-server: adding review"    
+    =/  change  `change`[%usr-visit key.act]
+    =/  new-dev-data  (add-rev:dev:app-store [src.bowl dev-data.state act now.bowl])
+    :_  this(dev-data new-dev-data)
+    [%give %fact [/dev-update]~ %app-store-dev-update !>(`dev-update``[change new-dev-data])]~
+  ::
+      %del-rev
+    ?.  (~(has in app-set.dev-data.state) app-name.key.act)
+      ~&   "%dev-server: app-page doesn't exist"
+      `this
+    ~&  "%dev-server: deleting review"    
+    =/  change  `change`[%usr-visit key.act]
+    =/  new-dev-data  (del-rev:dev:app-store [src.bowl dev-data.state act])
+    :_  this(dev-data new-dev-data)
+    [%give %fact [/dev-update]~ %app-store-dev-update !>(`dev-update``[change new-dev-data])]~
     ==
 ::  
   ::  when poke is from our.bowl

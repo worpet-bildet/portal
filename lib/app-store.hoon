@@ -225,32 +225,45 @@
   =/  new-dev-map  (~(put by dev-map.dev-data) key.act new-app-page)
   dev-data(dev-map new-dev-map)
 ::
-::  SHOULD I MAKE THESE FUNCTIONS SMALLER, E.G. ONLY TAKE APP PAGE AND OUTPUT APP PAGE.
-::  AND MAKE ONE BIGGER FUNCTION WHICH TAKES THESE SMALLER FUNCITONS
-::  DEPENDING ON HOW MUCH OVERLAP THERE IS BETWEEN THESE FUNCTINOS
-  ++  add-rev  6
-  ::|=  [usr-name=@p =dev-data act=[%add-rev =key text=@t] now=@da]
-  ::^-  ^dev-data
-  ::?>  ?=([%add-com *] act)
-  ::=/  key  `^key`key.act
-  ::=/  new-comment  `comment`[usr-name text.act]
-  ::=/  app-page  (~(got by dev-map.dev-data) key)   
-  ::=/  new-comments  (gas:com comments.visitor-data.app-page [now new-comment] ~)
-  ::=/  new-visitor-data  [ratings.visitor-data.app-page new-comments reviews.visitor-data.app-page]
-  ::=/  new-app-page  ^-  ^app-page  :*  
-  ::  description.app-page 
-  ::  keywords.app-page 
-  ::  screenshots.app-page 
-  ::  new-visitor-data 
-  ::  auxiliary-data.app-page 
-  ::  docket-data.app-page
-  ::==
-  ::=/  new-dev-map  (~(put by dev-map.dev-data) key.act new-app-page)
-  ::dev-data(dev-map new-dev-map)
-  
-  ++  del-rev  8
+  ++  add-rev
+  |=  [usr-name=@p =dev-data act=[%add-rev =key text=@t is-safe=?] now=@da]
+  ^-  ^dev-data
+  ?>  ?=([%add-rev *] act)
+  =/  key  `^key`key.act
+  =/  new-review  `review`[now text.act *@uv %.y is-safe.act]  :: TODO HASH and IS-CURRENT
+  =/  app-page  (~(got by dev-map.dev-data) key)   
+  =/  new-reviews  (~(put by reviews.visitor-data.app-page) usr-name new-review)
+  =/  new-visitor-data  [ratings.visitor-data.app-page comments.visitor-data.app-page new-reviews]
+  =/  new-app-page  ^-  ^app-page  :*  
+    description.app-page 
+    keywords.app-page 
+    screenshots.app-page 
+    new-visitor-data 
+    auxiliary-data.app-page 
+    docket-data.app-page
+  ==
+  =/  new-dev-map  (~(put by dev-map.dev-data) key.act new-app-page)
+  dev-data(dev-map new-dev-map)
+::  
+  ++  del-rev
+  |=  [usr-name=@p =dev-data act=[%del-rev =key]]
+  ^-  ^dev-data
+  ?>  ?=([%del-rev *] act)
+  =/  key  `^key`key.act
+  =/  app-page  (~(got by dev-map.dev-data) key)   
+  =/  new-reviews  (~(del by reviews.visitor-data.app-page) usr-name)
+  =/  new-visitor-data  [ratings.visitor-data.app-page comments.visitor-data.app-page new-reviews]
+  =/  new-app-page  ^-  ^app-page  :*  
+    description.app-page 
+    keywords.app-page 
+    screenshots.app-page 
+    new-visitor-data 
+    auxiliary-data.app-page 
+    docket-data.app-page
+  ==
+  =/  new-dev-map  (~(put by dev-map.dev-data) key.act new-app-page)
+  dev-data(dev-map new-dev-map)
 ::
   --
 ++  com  ((on @da comment) lth)
-++  rev  ((on @da review) lth)
 --
