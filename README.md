@@ -54,25 +54,15 @@ We can check the state of the agent with:
 
 #### %sub and %unsub (for Curators and Users)
 
-Let ~ter subscribe to ~dev. On ~ter, run:
+Let ~ter subscribe to ~dev. On ~ter, run: `:cur-server|sub ~dev`
 
-`:cur-server|sub ~dev`
+Now the state of %cur-server on ~ter will contain the data that ~dev has put up: `:cur-server +dbug`
 
-Now the state of %cur-server on ~ter will contain the data that ~dev has put up:
+Analogously, from %usr-server on ~ser we can subscribe to %cur-server on ~ter. `:usr-server|sub ~ter`
 
-`:cur-server +dbug`
+To unsubscribe User from Curator we can use: `:usr-server|unsub ~ter` 
 
-Analogously, from %usr-server on ~ser we can subscribe to %cur-server on ~ter.
-
-`:usr-server|sub ~ter`
-
-To unsubscribe User from Curator we can use:
-
-`:usr-server|unsub ~ter` 
-
-and Curator from Developer we can use:
-
-`:cur-server|unsub ~dev`
+and Curator from Developer we can use: `:cur-server|unsub ~dev`
 
 After unsubscribing, previous data from the publisher is deleted.
 
