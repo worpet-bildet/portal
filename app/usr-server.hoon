@@ -33,6 +33,35 @@
   |=  [=mark =vase]
   ^-  (quip card _this)
   ?>  =(our.bowl src.bowl)
+  
+  ?:  ?=(%app-store-visit-dev-action mark)
+  =/  act  !<(visit-dev-action vase)
+  ?-    -.act  
+      %rate  
+    ~&  "%usr-server: rating app"
+    :_  this
+    [%pass /visit-dev %agent [dev-name.key.act %dev-server] %poke %app-store-visit-dev-action !>(act)]~
+      %unrate
+    ~&  "%usr-server: unrating app"
+    :_  this
+    [%pass /visit-dev %agent [dev-name.key.act %dev-server] %poke %app-store-visit-dev-action !>(act)]~
+      %add-com
+    ~&  "%usr-server: adding comment"
+    :_  this
+    [%pass /visit-dev %agent [dev-name.key.act %dev-server] %poke %app-store-visit-dev-action !>(act)]~
+      %del-com
+    ~&  "%usr-server: deleting comment"
+    :_  this
+    [%pass /visit-dev %agent [dev-name.key.act %dev-server] %poke %app-store-visit-dev-action !>(act)]~  
+      %add-rev
+    ~&  "%usr-server: adding review"
+    :_  this
+    [%pass /visit-dev %agent [dev-name.key.act %dev-server] %poke %app-store-visit-dev-action !>(act)]~
+      %del-rev
+    ~&  "%usr-server: deleting review"
+    :_  this
+    [%pass /visit-dev %agent [dev-name.key.act %dev-server] %poke %app-store-visit-dev-action !>(act)]~ 
+  ==
   ?>  ?=(%app-store-usr-action mark)
   =/  act  !<(usr-action vase)
   =/  cur-name-wire  /(scot %p +.act)

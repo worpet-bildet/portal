@@ -7,14 +7,18 @@
 ::  Cur Page
 ::
 ::
-+$  cur-page  (unit [=cur-name =cur-title =cur-intro =cur-data])
++$  cur-page  (unit [=cur-name =cur-info =cur-data])
+::
++$  cur-info
+  $:
+    cur-title=@t
+    cur-image=@t
+    cur-intro=@t
+  ==
 ::
 +$  cur-name  @p
-+$  cur-title  @t
-+$  cur-intro  @t
 ::
-::  cur data should also confirm cur-choice like this: %-  ^cur-choice  cur-choice
-+$  cur-data  ::  do (^cur-data cur-data) everywhere necessary to assert this 
++$  cur-data 
   $|  [=cur-choice =cur-map =aux-map]
   |=  [=cur-choice =cur-map =aux-map]
   =/  cur-choice  (^cur-choice cur-choice)  ::  asserts cur-choice correctness
@@ -91,7 +95,7 @@
     keywords=(list keyword)          ::  limited to 100 characters total, input with terms
                                      ::  separated by commas and no spaces. For example:         
                                      ::  Property,House,Real Estate
-    screenshots=(list screenshot)    ::  up to 10 screenshots on Apple Store
+    screenshots=(list screenshot)    ::  up to 10 screenshots on Apple Store. 
     =visitor-data
     =auxiliary-data
     =docket-data
@@ -100,7 +104,7 @@
 ::
 +$  keyword  @tas
 ::
-+$  screenshot  @t
++$  screenshot  @t  ::  need to define input screenshot size so they look nice
 ::
 +$  visitor-data
   $:

@@ -6,8 +6,7 @@
   ==
 +$  state-0
   $:  %0
-      =cur-title
-      =cur-intro
+      =cur-info
       =cur-data
   ==
 +$  card  card:agent:gall
@@ -21,9 +20,12 @@
     default   ~(. (default-agent this %|) bowl)
 ++  on-init
   ^-  (quip card _this)
-  =.  state  [%0 '' '' [[~ ~ ~] ~ ~]]
+  =.  state  [%0 ['' '' ''] [[~ ~ ~] ~ ~]]
   `this
-::  
+::
+::  how to make it so that it reverts to the previous state before changes?
+::  if it fails the test of %- ^cur-data.
+::  apply analogously to  dev-server.
 ++  on-save   
   ?>  =((^cur-data cur-data.state) cur-data.state)
   !>(state)
@@ -54,9 +56,8 @@
     =/  new-cur-data  (unsub:cur:app-store [cur-data.state dev-name.act])
     =/  new-cur-page  
       ^-  cur-page  %-  some
-      :^  our.bowl  
-      `^cur-title`cur-title.state  
-      `^cur-intro`cur-intro.state  
+      :+  our.bowl  
+      `^cur-info`cur-info.state 
       `^cur-data`new-cur-data
     :_  this(cur-data.state new-cur-data)
     :~  
@@ -64,27 +65,16 @@
       [%give %fact [/cur-page]~ %app-store-cur-page !>(`cur-page`new-cur-page)]
     ==
   ::
-      %title
+      %cur-info
     ~&  "%cur-server: adding title to curator page"
     =/  new-cur-page  
       ^-  cur-page  %-  some
-      :^  our.bowl  
-      `^cur-title`+.act  
-      `^cur-intro`cur-intro.state  
+      :+  our.bowl  
+      `^cur-info`+.act  
       `^cur-data`cur-data.state
-    :_  this(cur-title.state +.act)
+    :_  this(cur-info.state +.act)
     [%give %fact [/cur-page]~ %app-store-cur-page !>(`cur-page`new-cur-page)]~
   ::
-      %intro
-    ~&  "%cur-server: adding intro to curator page"
-    =/  new-cur-page  
-      ^-  cur-page  %-  some
-      :^  our.bowl  
-      `^cur-title`cur-title.state 
-      `^cur-intro`+.act  
-      `^cur-data`cur-data.state
-    :_  this(cur-intro.state +.act)
-    [%give %fact [/cur-page]~ %app-store-cur-page !>(`cur-page`new-cur-page)]~
     ::  when receiveing a poke for entering cur-choice, 
     ::  should it be asserted that curchoice be subset of cur-data
     ::  or not if thats already defined in sur file
@@ -94,16 +84,16 @@
     =/  new-cur-data  (select:cur:app-store [cur-data.state act])
     =/  new-cur-page  
       ^-  cur-page  %-  some
-      :^  our.bowl  
-      `^cur-title`cur-title.state 
-      `^cur-intro`cur-intro.state 
+      :+  our.bowl  
+      `^cur-info`cur-info.state  
       `^cur-data`new-cur-data
     :_  this(cur-data.state new-cur-data)
     [%give %fact [/cur-page]~ %app-store-cur-page !>(`cur-page`new-cur-page)]~
   ::
       %cats
     ~&  "%cur-server: changing categories"
-    `this(cat-set.cur-choice.cur-data.state cat-set.act)
+    =/  new-cur-data  (^cur-data cur-data.state(cat-set.cur-choice cat-set.act))
+    `this(cur-data new-cur-data)
     ::  cur-choice should also be sent to subscribers after %choose
   == 
 ::  
@@ -116,8 +106,9 @@
   ?>  =([%cur-page ~] path)
   ~&  "%cur-server: received subscription request"
   =/  cur-page  ^-  cur-page  %-  some
-  :^  our.bowl  `^cur-title`cur-title.state  
-  `^cur-intro`cur-intro.state  `^cur-data`cur-data.state
+  :+  our.bowl  
+    `^cur-info`cur-info.state
+    `^cur-data`cur-data.state
   :_  this
   [%give %fact ~ %app-store-cur-page !>(`^cur-page`cur-page)]~
 ::  
@@ -164,9 +155,8 @@
       =/  new-cur-data  (edit:cur:app-store [cur-data.state dev-name dev-update])
       =/  new-cur-page  
         ^-  cur-page  %-  some
-        :^  our.bowl  
-        `^cur-title`cur-title.state  
-        `^cur-intro`cur-intro.state  
+        :+  our.bowl  
+        `^cur-info`cur-info.state
         `^cur-data`new-cur-data  
       :_  this(cur-data.state new-cur-data)
       [%give %fact [/cur-page]~ %app-store-cur-page !>(`^cur-page`new-cur-page)]~
@@ -175,9 +165,8 @@
       =/  new-cur-data  (del:cur:app-store [cur-data.state dev-name dev-update])
       =/  new-cur-page  
         ^-  cur-page  %-  some
-        :^  our.bowl  
-        `^cur-title`cur-title.state  
-        `^cur-intro`cur-intro.state  
+        :+  our.bowl  
+        `^cur-info`cur-info.state  
         `^cur-data`new-cur-data  
       :_  this(cur-data.state new-cur-data)
       [%give %fact [/cur-page]~ %app-store-cur-page !>(`^cur-page`new-cur-page)]~
@@ -186,9 +175,8 @@
       =/  new-cur-data  (usr-visit:cur:app-store [cur-data.state dev-name dev-update])
       =/  new-cur-page  
         ^-  cur-page  %-  some
-        :^  our.bowl  
-        `^cur-title`cur-title.state  
-        `^cur-intro`cur-intro.state  
+        :+  our.bowl  
+        `^cur-info`cur-info.state 
         `^cur-data`new-cur-data  
       :_  this(cur-data.state new-cur-data)
       [%give %fact [/cur-page]~ %app-store-cur-page !>(`^cur-page`new-cur-page)]~
