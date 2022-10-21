@@ -36,21 +36,38 @@ There is a few actions that can be used to test the application. They have been 
 
 We can set up 3 fake ships: ~dev for Developer, ~ter for Curator and ~ser for User.
 
-#### %put (for Developers)
+#### %add, %edit, %del (for Developers)
 
-Used by Developers, to add or replace all apps they are publishing. As of now, they have to manually input the whole dev-page (a definition can be found in app-store/sur/app-store/data.hoon, and an example can be found in app-store/sample-dev-page).
+Used by Developers, to add, edit, or delete an app page.
 
-Let ~dev put up a dev-page. For example, on %dev-server on ~dev you can run:
+In dojo, do the following:
 
-`:dev-server|put [~ [~dev ~]]`
+```
+=data -build-file /=app-store=/sur/app-store/data/hoon
+```
+```
+=app :*
+    description='some description 3'
+    keywords=`(list keyword:data)`~[%keyword1 %keyword2]         
+    screenshots=`(list screenshot:data)`~['screen1' 'screen2']    
+    visitor-data=[`(map @p rating:data)`(malt (limo ~[[~zod 1] [~dilryd-mopreg 4]])) `((mop @da comment:data) lth)`*((mop @da comment:data) lth) `(map @p review:data)`*(map @p review:data)]
+    auxiliary-data=[desk-hash=0v1df64.49beg installed-into=%app-store developer-desk='~dister-dozzod-dilryd-mopreg/app-store' last-update=~2022.2.2 release-date=~2023.1.1 size-mb=.17.2]
+    docket-data=[title='App Store' info='A tool for decentralized curation and discovery of Urbit apps' color=0x1231 version=[0 0 1] website='https://github.com/dilryd-mopreg/app-store' license='MIT' base=%app-store image='some-link']
+== 
+```
+Now you have a sample app-page defined in dojo, so you don't have to manually insert it every time. You can also find it in app-store/sample-actions.
 
-Or:
+%add will create a new app, %edit will overwrite the existing app-page with a new one, and %del will delete an existing app-page.
+```
+:dev-server|add %app1 app
+:dev-server|edit %app1 app
+:dev-server|del %app1
+```
+You can check the state of the agent after each poke with:
 
-`:dev-server|put [~ [dev-name=~dev app-pages=(malt (limo ~[app1+['desc1']]))]]`
-
-We can check the state of the agent with:
-
-`:dev-server +dbug`
+```
+:dev-server +dbug
+```
 
 #### %sub and %unsub (for Curators and Users)
 
