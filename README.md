@@ -57,12 +57,13 @@ In dojo, do the following:
 ```
 Now you have a sample app-page defined in dojo, so you don't have to manually insert it every time. You can also find it in app-store/sample-actions.
 
-%add will create a new app, %edit will overwrite the existing app-page with a new one, and %del will delete an existing app-page.
+`[%add =app-name =app-page]` will create a new app, `[%edit =app-name =app-page]` will overwrite the existing app-page with a new one, and `[%del =app-name]` will delete an existing app-page.
 ```
 :dev-server|add %app1 app
 :dev-server|edit %app1 app
 :dev-server|del %app1
 ```
+
 You can check the state of the agent after each poke with:
 
 ```
@@ -82,6 +83,30 @@ To unsubscribe User from Curator we can use: `:usr-server|unsub ~ter`
 and Curator from Developer we can use: `:cur-server|unsub ~dev`
 
 After unsubscribing, previous data from the publisher is deleted.
+
+#### %cur-info, %cats, %select (for Curators)
+
+`[%cur-info =cur-info]` is used by Curators to insert cur-title, cur-image and cur-intro - i.e. the information which will be displayed on the Curator Page.
+
+```
+:cur-server|cur-info 'Some Title' 'some-image-link' 'Some intro.'
+```
+
+`[%cats =cat-set]` is used by Curators to create a set of categories which will be used to categorize the apps which the Curator displays.
+
+```
+:cur-server|cats `cat-set:data`(silt `(list category:data)`~[%cat1 %cat2 %cat3])
+```
+   
+`[%select =key-list =cat-map]` is used by Curators to select which apps (and in which order and category) are they going to display. `key-list` defines the order in which the apps are displayed, while `cat-map` is a `(map key category)` connecting each app with a corresponding category. Cat-map can only have apps which are in `cur-map` (i.e. came by subscription from a Developer) and categories which were previously defined in `cat-set`.
+
+```
+:cur-server|select `key-list:data`~[[~dev %app1] [~dev %app2]] `cat-map:data`(malt (limo ~[[[~dev %app1] %cat1] [[~dev %app2] %cat2]]))
+```
+ 
+#### %rate, %unrate, %add-com, %del-com, %add-rev, %del-rev (for Users)
+
+
 
 ### Scries
 
@@ -107,4 +132,5 @@ Example, how to use:
 .^(? %gx /=usr-server=/is-cur/~ter/noun)
 .^(cur-data:data %gx /=usr-server=/get-cur/~ter/cur-data)
 ```
+
 
