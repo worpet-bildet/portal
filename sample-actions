@@ -1,11 +1,7 @@
 
 =data -build-file /=app-store=/sur/app-store/data/hoon
 
-
-::add/edit app-page example
-::NEED TO FIX COMMENTS, CHANGED TO MOP
-:dev-server  &app-store-dev-action  :+  %add  %app1
-:*
+=app :*
     description='some description 3'
     keywords=`(list keyword:data)`~[%keyword1 %keyword2]         
     screenshots=`(list screenshot:data)`~['screen1' 'screen2']    
@@ -14,9 +10,8 @@
     docket-data=[title='App Store' info='A tool for decentralized curation and discovery of Urbit apps' color=0x1231 version=[0 0 1] website='https://github.com/dilryd-mopreg/app-store' license='MIT' base=%app-store image='some-link']
 == 
 
-=l1 `dev-app-list:data`~[[~dev %a1] [~dev %a2] [~dev %a3] [~ter %a4] [~ter %a5]]
-=l2 `dev-app-list:data`~[[~ter %a4] [~dev %a3] [~dev %a2] [~ter %a5] [~dev %a1]]
-=cat-old `cat-list:data`~[%a %b %c %d %e]
-[=cat-list old-order=dev-app-list new-order=dev-app-list]
+:dev-server|add %app1 app
+:dev-server|edit %app1 app
+:dev-server|del %app1
 
 

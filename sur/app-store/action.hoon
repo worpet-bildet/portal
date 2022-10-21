@@ -29,6 +29,5 @@
     [%add-rev =key text=@t hash=@uv is-safe=?]
     [%del-rev =key]
   ==
-+$  visitor  @p
 --
 
