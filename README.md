@@ -41,7 +41,6 @@ We can set up 3 fake ships: ~dev for Developer, ~ter for Curator and ~ser for Us
 Used by Developers, to add, edit, or delete an app page.
 
 In dojo, do the following:
-
 ```
 =data -build-file /=app-store=/sur/app-store/data/hoon
 ```
@@ -65,7 +64,6 @@ Now you have a sample app-page defined in dojo, so you don't have to manually in
 ```
 
 You can check the state of the agent after each poke with:
-
 ```
 :dev-server +dbug
 ```
@@ -87,26 +85,51 @@ After unsubscribing, previous data from the publisher is deleted.
 #### %cur-info, %cats, %select (for Curators)
 
 `[%cur-info =cur-info]` is used by Curators to insert cur-title, cur-image and cur-intro - i.e. the information which will be displayed on the Curator Page.
-
 ```
 :cur-server|cur-info 'Some Title' 'some-image-link' 'Some intro.'
 ```
 
 `[%cats =cat-set]` is used by Curators to create a set of categories which will be used to categorize the apps which the Curator displays.
-
 ```
 :cur-server|cats `cat-set:data`(silt `(list category:data)`~[%cat1 %cat2 %cat3])
 ```
    
 `[%select =key-list =cat-map]` is used by Curators to select which apps (and in which order and category) are they going to display. `key-list` defines the order in which the apps are displayed, while `cat-map` is a `(map key category)` connecting each app with a corresponding category. Cat-map can only have apps which are in `cur-map` (i.e. came by subscription from a Developer) and categories which were previously defined in `cat-set`.
-
 ```
 :cur-server|select `key-list:data`~[[~dev %app1] [~dev %app2]] `cat-map:data`(malt (limo ~[[[~dev %app1] %cat1] [[~dev %app2] %cat2]]))
 ```
  
 #### %rate, %unrate, %add-com, %del-com, %add-rev, %del-rev (for Users)
 
+`[%rate =key =rating]` is used by Users to rate an app.
+```
+:usr-server|rate [~dev %app1] 4
+```
 
+`[%unrate =key]` is used by Users to remove their previous rating from an app.
+```
+:usr-server|unrate [~dev %app1]
+```
+
+`[%add-com =key text=@t]` is used by Users to add a comment on an app.
+```
+:usr-server|add-com [~dev %app1] 'Great app!'
+```
+    
+`[%del-com =key =time]` is used by Users to delete their previous comment from an app. Comments are identified by the time when they were made, so the User must input time to delete a desired comment. The time of a comment can be found in the data from `:usr-server +dbug`.
+```
+:usr-server [~dev %app1] ~2022.10.21..16.36.24..21a6
+```
+
+`[%add-rev =key text=@t hash=@uv is-safe=?]` is used to add a review of an app (it also overwrites a previous one). There can only be one review per User. Other than the main text, the review must contain the hash of the exact version of the app which is being reviewed, which is then automatically compared to the hash inserted in the app-page, to determine whether the review is current or not. Also, the reviewer should vet whether the app is safe or not (`is-safe`) with a `%.y` or `%.n`.
+```
+:usr-server [~dev %app1] 'This app contains malware!' 0v1df64.49beg %.n
+```
+
+`[%del-rev =key]` is used by Users to delete their previous review.
+```
+:usr-server [~dev %app1]
+```
 
 ### Scries
 
