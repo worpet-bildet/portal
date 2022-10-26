@@ -28,15 +28,15 @@
   ^-  (quip card _this)
   `this(state !<(state-0 old))
 ::  
-::  on-poke is for modifiying app data and sending it to subscribers (Curators)
+::  on-poke is for receiving pokes from
+::  - visitors (visit-dev-action)
+::  - the Developer (dev-action)
 ++  on-poke 
   |=  [=mark =vase]
-  ^-  (quip card _this)  
-::  
+  ^-  (quip card _this)
+  ::   
   ::  when poke is from visitors to app-page (can also be from our.bowl)
   ?:  ?=(%app-store-visit-dev-action mark) 
-::
-  :: TODO maybe create a print if there is a wrong poke?
     =/  act  !<(visit-dev-action vase)
     ?-    -.act
       %rate  
@@ -44,51 +44,45 @@
     =^  changed  dev-data
     (usr-visit:dev:app-store [dev-data.state src.bowl key.act act now.bowl])
     ?:  =(changed %unchanged)  `this  :_  this
-    [%give %fact [/dev-update]~ %app-store-dev-update !>(`dev-update``[[%usr-visit key.act] dev-data])]~
+    [%give %fact [/dev-update]~ %app-store-dev-update !>(`[[%usr-visit key.act] dev-data])]~
   ::    
       %unrate  
-    ::  currently it also sends sub update even if %unrate
-    ::  was done on a rating that never existed
     ~&  "%dev-server: removing rating from app"
     =^  changed  dev-data
     (usr-visit:dev:app-store [dev-data.state src.bowl key.act act now.bowl])
     ?:  =(changed %unchanged)  `this  :_  this
-    [%give %fact [/dev-update]~ %app-store-dev-update !>(`dev-update``[[%usr-visit key.act] dev-data])]~
+    [%give %fact [/dev-update]~ %app-store-dev-update !>(`[[%usr-visit key.act] dev-data])]~
   ::
       %add-com 
-    
     ~&  "%dev-server: adding comment"    
     =^  changed  dev-data
     (usr-visit:dev:app-store [dev-data.state src.bowl key.act act now.bowl])
     ?:  =(changed %unchanged)  `this  :_  this
-    [%give %fact [/dev-update]~ %app-store-dev-update !>(`dev-update``[[%usr-visit key.act] dev-data])]~
+    [%give %fact [/dev-update]~ %app-store-dev-update !>(`[[%usr-visit key.act] dev-data])]~
   ::
       %del-com  
-   
-   ~&  "%dev-server: deleting comment"
-  =^  changed  dev-data
+    ~&  "%dev-server: deleting comment"
+    =^  changed  dev-data
     (usr-visit:dev:app-store [dev-data.state src.bowl key.act act now.bowl])
     ?:  =(changed %unchanged)  `this  :_  this
-    [%give %fact [/dev-update]~ %app-store-dev-update !>(`dev-update``[[%usr-visit key.act] dev-data])]~
- ::
+    [%give %fact [/dev-update]~ %app-store-dev-update !>(`[[%usr-visit key.act] dev-data])]~
+  ::
       %add-rev
-   
     ~&  "%dev-server: adding review"    
     =^  changed  dev-data
     (usr-visit:dev:app-store [dev-data.state src.bowl key.act act now.bowl])
     ?:  =(changed %unchanged)  `this  :_  this
-    [%give %fact [/dev-update]~ %app-store-dev-update !>(`dev-update``[[%usr-visit key.act] dev-data])]~
+    [%give %fact [/dev-update]~ %app-store-dev-update !>(`[[%usr-visit key.act] dev-data])]~
   ::
       %del-rev
-    
     ~&  "%dev-server: deleting review"    
     =^  changed  dev-data
     (usr-visit:dev:app-store [dev-data.state src.bowl key.act act now.bowl])
     ?:  =(changed %unchanged)  `this  :_  this
-    [%give %fact [/dev-update]~ %app-store-dev-update !>(`dev-update``[[%usr-visit key.act] dev-data])]~
+    [%give %fact [/dev-update]~ %app-store-dev-update !>(`[[%usr-visit key.act] dev-data])]~
     ==
 ::  
-  ::  when poke is from our.bowl
+  ::  when Developer is modifying data
   ?>  =(our.bowl src.bowl)
   ?>  ?=(%app-store-dev-action mark)  
   =/  act  !<(dev-action vase)
@@ -98,24 +92,23 @@
     =^  changed  dev-data
     (add:dev:app-store [our.bowl dev-data.state act])
     ?:  =(changed %unchanged)  `this  :_  this
-    [%give %fact [/dev-update]~ %app-store-dev-update !>(`dev-update``[[%add our.bowl app-name.act] dev-data])]~
+    [%give %fact [/dev-update]~ %app-store-dev-update !>(`[[%add our.bowl app-name.act] dev-data])]~
   ::
       %edit
     ~&  "%dev-server: editing app page"
     =^  changed  dev-data
     (edit:dev:app-store [our.bowl dev-data.state act])
     ?:  =(changed %unchanged)  `this  :_  this
-    [%give %fact [/dev-update]~ %app-store-dev-update !>(`dev-update``[[%edit our.bowl app-name.act] dev-data])]~ 
+    [%give %fact [/dev-update]~ %app-store-dev-update !>(`[[%edit our.bowl app-name.act] dev-data])]~ 
   ::
       %del
     ~&  "%dev-server: deleting app page"
     =^  changed  dev-data
     (del:dev:app-store [our.bowl dev-data.state act])
     ?:  =(changed %unchanged)  `this  :_  this
-    [%give %fact [/dev-update]~ %app-store-dev-update !>(`dev-update``[[%del our.bowl app-name.act] dev-data])]~ 
+    [%give %fact [/dev-update]~ %app-store-dev-update !>(`[[%del our.bowl app-name.act] dev-data])]~ 
   ::
       ::%get-docket
-
   ==
 ::
 ++  on-arvo   on-arvo:default
@@ -126,9 +119,9 @@
   ^-  (quip card _this)
   ?>  =([%dev-update ~] path)
   ~&  "%dev-server: received subscription request"
-  =/  dev-update  (some [`change`[%init ~] dev-data.state])
+  =/  dev-update  (some [[%init ~] dev-data.state])
   :_  this
-  [%give %fact ~ %app-store-dev-update !>(`^dev-update`dev-update)]~
+  [%give %fact ~ %app-store-dev-update !>(dev-update)]~
 ::  
 ++  on-leave  on-leave:default
 ++  on-peek   on-peek:default

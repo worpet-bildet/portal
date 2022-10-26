@@ -28,17 +28,13 @@
   ^-  (quip card _this)
   `this(state !<(state-0 old))
 ::  
-::  on-poke is for subscribing to Curators
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
   ?>  =(our.bowl src.bowl)
-  
   ?:  ?=(%app-store-visit-dev-action mark)
-  =/  act  !<(visit-dev-action vase)
-
-  ::[%rate %unrate %add-com %del-com %add-rev %del-rev]
-  ?-    -.act  
+    =/  act  !<(visit-dev-action vase)
+    ?-    -.act  
       %rate  
     ~&  "%usr-server: rating app"
     :_  this
@@ -63,7 +59,8 @@
     ~&  "%usr-server: deleting review"
     :_  this
     [%pass /visit-dev %agent [dev-name.key.act %dev-server] %poke %app-store-visit-dev-action !>(act)]~ 
-  ==
+    ==
+  ::
   ?>  ?=(%app-store-usr-action mark)
   =/  act  !<(usr-action vase)
   =/  cur-name-wire  /(scot %p +.act)
@@ -103,14 +100,12 @@
     [%pass wire %agent [cur-name %cur-server] %watch /cur-page]~
   ::
       %fact
-    :: doesnt work well
     =/  cur-page  !<(cur-page q.cage.sign)
     ~&  "%usr-server: received cur-page from {cur-name-tape}"
     =/  cur-name  `@p`(slav %p -.wire)
-    ?~  cur-page  
-      `this(+.state (~(del by `^usr-data`+.state) `^cur-name`cur-name))  ::should it delete key if it receives ~
+    ?~  cur-page  `this(usr-data.state (~(del by usr-data.state) cur-name))
     ?>  =(cur-name cur-name.u.cur-page)
-    `this(+.state (~(put by `^usr-data`+.state) `^cur-name`cur-name `^cur-page`cur-page))
+    `this(usr-data.state (~(put by usr-data.state) cur-name cur-page))
   ==
 ::
 ++  on-fail   on-fail:default

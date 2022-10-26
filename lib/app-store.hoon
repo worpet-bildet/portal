@@ -1,6 +1,7 @@
 /-  *app-store-data, *app-store-action
 |%
-++  usr  1
+++  com  ((on @da comment) lth)
+++  usr  ~
 ++  cur
   |%
   ::  receiving intial data from dev
@@ -13,9 +14,7 @@
   ?>  (cur-map-aux-map:validator new-cur-map new-aux-map)
   [cur-choice.cur-data new-cur-map new-aux-map]
 ::
-  ::  maybe smaller functions: del dev from cur-choice, from cur-map...
-  ::  after unsubbing from dev
-  ::  removes dev from cur-choice and cur-map and aux-map
+  ::  after unsubbing from dev removes dev from cur-choice and cur-map and aux-map
   ++  unsub  
   |=  [=cur-data =dev-name]
   ^-  ^cur-data
@@ -270,7 +269,6 @@
   --
 ::
 ::
-++  com  ((on @da comment) lth)
 ::
 ++  validator
   |%

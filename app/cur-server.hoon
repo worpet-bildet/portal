@@ -28,8 +28,7 @@
   |=  old=vase
   ^-  (quip card _this)
   `this(state !<(state-0 old))
-::  
-::  on-poke is for subscribing to Developers AND OTHER STUFF
+::
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
@@ -47,11 +46,7 @@
     =/  dev-name-wire  /(scot %p +.act)
     ~&  "%cur-server: unsubscribing from {(scow %p +.act)}" 
     =/  new-cur-data  (unsub:cur:app-store [cur-data.state dev-name.act])
-    =/  new-cur-page  
-      ^-  cur-page  %-  some
-      :+  our.bowl  
-      `^cur-info`cur-info.state 
-      `^cur-data`new-cur-data
+    =/  new-cur-page  `cur-page`(some [our.bowl cur-info.state new-cur-data])
     :_  this(cur-data.state new-cur-data)
     :~  
       [%pass dev-name-wire %agent [+.act %dev-server] %leave ~]
@@ -60,26 +55,14 @@
   ::
       %cur-info
     ~&  "%cur-server: adding title to curator page"
-    =/  new-cur-page  
-      ^-  cur-page  %-  some
-      :+  our.bowl  
-      `^cur-info`+.act  
-      `^cur-data`cur-data.state
+    =/  new-cur-page  `cur-page`(some [our.bowl +.act cur-data.state])
     :_  this(cur-info.state +.act)
     [%give %fact [/cur-page]~ %app-store-cur-page !>(new-cur-page)]~
-  ::
-    ::  when receiveing a poke for entering cur-choice, 
-    ::  should it be asserted that curchoice be subset of cur-data
-    ::  or not if thats already defined in sur file
   ::
       %select  
     ~&  "%cur-server: adding cur-choice to curator page"
     =/  new-cur-data  (select:cur:app-store [cur-data.state act])
-    =/  new-cur-page  
-      ^-  cur-page  %-  some
-      :+  our.bowl  
-      `^cur-info`cur-info.state  
-      `^cur-data`new-cur-data
+    =/  new-cur-page  `cur-page`(some [our.bowl cur-info.state new-cur-data])
     :_  this(cur-data.state new-cur-data)
     [%give %fact [/cur-page]~ %app-store-cur-page !>(new-cur-page)]~
   ::
@@ -98,19 +81,14 @@
   ^-  (quip card _this)
   ?>  =([%cur-page ~] path)
   ~&  "%cur-server: received subscription request"
-  =/  cur-page  ^-  cur-page  %-  some
-  :+  our.bowl  
-    `^cur-info`cur-info.state
-    `^cur-data`cur-data.state
+  =/  cur-page  `cur-page`(some [our.bowl cur-info.state cur-data.state])
   :_  this
   [%give %fact ~ %app-store-cur-page !>(cur-page)]~
 ::  
 ++  on-leave  on-leave:default
 ++  on-peek   on-peek:default
 ::
-::  changes, and deletes of app pages should be forwarded to changes of cur-choice
-::  adding app pages should not be forwarded to changes of cur-choice
-::  on-agent is for receiving subscriptions updates from Developers AND OTHER STUFF(?)
+::  on-agent is for receiving subscriptions updates from Developers
 ++  on-agent  
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
@@ -133,7 +111,7 @@
     =/  dev-update  !<(dev-update q.cage.sign)
     ~&  "%cur-server: received dev update from {dev-name-tape}"
     =/  dev-name  `@p`(slav %p -.wire)
-    ?~  dev-update  `this  ::dev-server currently never sends dev-update
+    ?~  dev-update  `this
     ?>  (check-dev-data:cur:app-store [dev-name dev-data.u.dev-update])  
     ?-    -.change.u.dev-update
         %init
@@ -144,33 +122,27 @@
       =/  new-cur-data  (add:cur:app-store [cur-data.state dev-name dev-update])
       `this(cur-data.state new-cur-data)
     ::  
-        %edit  :: IF IS VS IS NOT IN CUR CHOICE SHOULD I SEND TO USR
+        %edit
       =/  new-cur-data  (edit:cur:app-store [cur-data.state dev-name dev-update])
-      =/  new-cur-page  
-        ^-  cur-page  %-  some
-        :+  our.bowl  
-        `^cur-info`cur-info.state
-        `^cur-data`new-cur-data  
+      ?~  (find [key.change.u.dev-update]~ key-list.cur-choice.cur-data.state)
+        `this(cur-data new-cur-data)
+      =/  new-cur-page  `cur-page`(some [our.bowl cur-info.state new-cur-data]) 
       :_  this(cur-data.state new-cur-data)
       [%give %fact [/cur-page]~ %app-store-cur-page !>(new-cur-page)]~
     ::  
         %del
       =/  new-cur-data  (del:cur:app-store [cur-data.state dev-name dev-update])
-      =/  new-cur-page  
-        ^-  cur-page  %-  some
-        :+  our.bowl  
-        `^cur-info`cur-info.state  
-        `^cur-data`new-cur-data  
+      ?~  (find [key.change.u.dev-update]~ key-list.cur-choice.cur-data.state)
+        `this(cur-data new-cur-data)
+      =/  new-cur-page  `cur-page`(some [our.bowl cur-info.state new-cur-data])
       :_  this(cur-data.state new-cur-data)
       [%give %fact [/cur-page]~ %app-store-cur-page !>(new-cur-page)]~
     ::  
         %usr-visit
       =/  new-cur-data  (usr-visit:cur:app-store [cur-data.state dev-name dev-update])
-      =/  new-cur-page  
-        ^-  cur-page  %-  some
-        :+  our.bowl  
-        `^cur-info`cur-info.state 
-        `^cur-data`new-cur-data  
+      ?~  (find [key.change.u.dev-update]~ key-list.cur-choice.cur-data.state)
+        `this(cur-data new-cur-data)
+      =/  new-cur-page  `cur-page`(some [our.bowl cur-info.state new-cur-data])
       :_  this(cur-data.state new-cur-data)
       [%give %fact [/cur-page]~ %app-store-cur-page !>(new-cur-page)]~
     ::

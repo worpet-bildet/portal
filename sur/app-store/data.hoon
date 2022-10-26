@@ -1,33 +1,23 @@
 |%
-::
 +$  usr-data  (map cur-name cur-page)
-::
 ::
 ::
 ::  Cur Page
 ::
-::
 +$  cur-page  (unit [=cur-name =cur-info =cur-data])
-::
++$  cur-name  @p
 +$  cur-info
   $:
     cur-title=@t
     cur-image=@t
     cur-intro=@t
   ==
-::
-+$  cur-name  @p
-::
 +$  cur-data  [=cur-choice =cur-map =aux-map]
-
 ::
 +$  cur-choice  [=key-list =cat-map =cat-set]
-
-::
 +$  key-list  (list key)
 +$  cat-map  (map key category)
 +$  cat-set  (set category)
-::
 +$  category  @tas
 ::
 +$  cur-map  (map key app-page)
@@ -37,7 +27,6 @@
 ::  Dev Page
 ::
 +$  dev-update  (unit [=change =dev-data])
-::
 +$  change   
   $%
     [%init ~]
@@ -47,21 +36,16 @@
     [%usr-visit =key]
     [%wipe ~]
   ==
-::
 +$  dev-data  [=dev-map =app-set]
-::  
-::
 +$  dev-map  (map key app-page)  ::  dev-name is the same in all keys
 +$  app-set  (set app-name) 
 ::
-:: 
 +$  key  [=dev-name =app-name]
 +$  dev-name  @p 
 +$  app-name  @tas                   ::  up to 30 chars long on Apple Store
 ::
 +$  app-page
   $: 
-  ::
     description=@t
     keywords=(list keyword)          ::  limited to 100 characters total, input with terms
                                      ::  separated by commas and no spaces. For example:         
@@ -71,25 +55,19 @@
     =auxiliary-data
     =docket-data
   == 
-::
-::
 +$  keyword  @tas
-::
 +$  screenshot  @t  ::  need to define input screenshot size so they look nice
 ::
 +$  visitor-data
   $:
-    ::  avg-rating=@rh  ::render on the front end
     ratings=(map @p rating)
     comments=((mop @da comment) lth)
     reviews=(map @p review)
-    ::  Also, first should be shown is-current=%.y reviews and then others
+    ::  First should be shown is-current=%.y reviews and then others
     ::  sorted by date
   ==
-::
-::
-::                                   ::  nothing automatically yet except docket 
-::
+::   
+::  nothing automatically obtained yet except docket
 +$  auxiliary-data                   ::  (automatically find what's easy to find)
   $:
     desk-hash=@uv    
@@ -99,7 +77,6 @@
     release-date=@da                 ::  MOVE TO APP PAGE
     size-mb=@rs
   ==
-::
 ::
 +$  docket-data                      ::  should it automatically add it from docket file?
   $:
@@ -112,18 +89,16 @@
     base=@t                          ::  same as installed into(@tas)?
     image=@t                         ::  app icon, should be square
   ==                                 ::  To ensure the icon is legible in all sizes, 
-::                                   ::  avoid adding unnecessary visual details
+::                                     ::  avoid adding unnecessary visual details
 +$  rating
   $|  @ud  
   |=  r=@ud 
   &((gte r 1) (lte r 5))
-::
 +$  comment 
   $:
     commenter=@p
     text=@t
   ==
-::
 +$  review
   $:
     time=@da
@@ -132,6 +107,5 @@
     is-current=?    
     is-safe=?                        ::  3rd possibility as no decision?
   ==
-::
 --
 
