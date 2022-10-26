@@ -23,18 +23,11 @@
   =.  state  [%0 ['' '' ''] [[~ ~ ~] ~ ~]]
   `this
 ::
-::  how to make it so that it reverts to the previous state before changes?
-::  if it fails the test of %- ^cur-data.
-::  apply analogously to  dev-server.
-++  on-save   
-  ?>  =((^cur-data cur-data.state) cur-data.state)
-  !>(state)
+++  on-save  !>(state)
 ++  on-load   
   |=  old=vase
   ^-  (quip card _this)
-  =/  state-0  !<(state-0 old)
-  ?>  =((^cur-data cur-data.state-0) cur-data.state-0)
-  `this(state state-0)
+  `this(state !<(state-0 old))
 ::  
 ::  on-poke is for subscribing to Developers AND OTHER STUFF
 ++  on-poke
@@ -62,7 +55,7 @@
     :_  this(cur-data.state new-cur-data)
     :~  
       [%pass dev-name-wire %agent [+.act %dev-server] %leave ~]
-      [%give %fact [/cur-page]~ %app-store-cur-page !>(`cur-page`new-cur-page)]
+      [%give %fact [/cur-page]~ %app-store-cur-page !>(new-cur-page)]
     ==
   ::
       %cur-info
@@ -73,7 +66,7 @@
       `^cur-info`+.act  
       `^cur-data`cur-data.state
     :_  this(cur-info.state +.act)
-    [%give %fact [/cur-page]~ %app-store-cur-page !>(`cur-page`new-cur-page)]~
+    [%give %fact [/cur-page]~ %app-store-cur-page !>(new-cur-page)]~
   ::
     ::  when receiveing a poke for entering cur-choice, 
     ::  should it be asserted that curchoice be subset of cur-data
@@ -88,11 +81,11 @@
       `^cur-info`cur-info.state  
       `^cur-data`new-cur-data
     :_  this(cur-data.state new-cur-data)
-    [%give %fact [/cur-page]~ %app-store-cur-page !>(`cur-page`new-cur-page)]~
+    [%give %fact [/cur-page]~ %app-store-cur-page !>(new-cur-page)]~
   ::
       %cats
     ~&  "%cur-server: changing categories"
-    =/  new-cur-data  (^cur-data cur-data.state(cat-set.cur-choice cat-set.act))
+    =/  new-cur-data  (cats:cur:app-store [cur-data.state act])
     `this(cur-data new-cur-data)
     ::  cur-choice should also be sent to subscribers after %choose
   == 
@@ -110,7 +103,7 @@
     `^cur-info`cur-info.state
     `^cur-data`cur-data.state
   :_  this
-  [%give %fact ~ %app-store-cur-page !>(`^cur-page`cur-page)]~
+  [%give %fact ~ %app-store-cur-page !>(cur-page)]~
 ::  
 ++  on-leave  on-leave:default
 ++  on-peek   on-peek:default
@@ -159,7 +152,7 @@
         `^cur-info`cur-info.state
         `^cur-data`new-cur-data  
       :_  this(cur-data.state new-cur-data)
-      [%give %fact [/cur-page]~ %app-store-cur-page !>(`^cur-page`new-cur-page)]~
+      [%give %fact [/cur-page]~ %app-store-cur-page !>(new-cur-page)]~
     ::  
         %del
       =/  new-cur-data  (del:cur:app-store [cur-data.state dev-name dev-update])
@@ -169,7 +162,7 @@
         `^cur-info`cur-info.state  
         `^cur-data`new-cur-data  
       :_  this(cur-data.state new-cur-data)
-      [%give %fact [/cur-page]~ %app-store-cur-page !>(`^cur-page`new-cur-page)]~
+      [%give %fact [/cur-page]~ %app-store-cur-page !>(new-cur-page)]~
     ::  
         %usr-visit
       =/  new-cur-data  (usr-visit:cur:app-store [cur-data.state dev-name dev-update])
@@ -179,7 +172,7 @@
         `^cur-info`cur-info.state 
         `^cur-data`new-cur-data  
       :_  this(cur-data.state new-cur-data)
-      [%give %fact [/cur-page]~ %app-store-cur-page !>(`^cur-page`new-cur-page)]~
+      [%give %fact [/cur-page]~ %app-store-cur-page !>(new-cur-page)]~
     ::
         %wipe  `this
     ==

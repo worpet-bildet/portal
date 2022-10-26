@@ -18,33 +18,11 @@
 ::
 +$  cur-name  @p
 ::
-+$  cur-data 
-  $|  [=cur-choice =cur-map =aux-map]
-  |=  [=cur-choice =cur-map =aux-map]
-  =/  cur-choice  (^cur-choice cur-choice)  ::  asserts cur-choice correctness
-  =/  cur-map-keys  ~(key by cur-map)
-  =/  dev-name-add  |=  [=dev-name =app-set]  
-  ^-  (set [^dev-name app-name])
-  (~(run in app-set) |=(=app-name [dev-name app-name]))
-  =/  aux-map-1  (~(rut by aux-map) dev-name-add)
-  =/  aux-map-2  (~(run by aux-map-1) |=(set=(set key) ~(tap in set)))
-  =/  vals  (silt `(list key)`(zing ~(val by aux-map-2)))
-  ?&
-    ::  assert cur-choice(key-list) is subset of cur-map
-    (levy key-list.cur-choice |=(=key (~(has in ~(key by cur-map)) key)))
-    ::  assert that keys of cur-map correspond to aux-map
-    =(cur-map-keys vals)
-  ==
-  ::  TODO assert that aux-map and cur-map are correct together
++$  cur-data  [=cur-choice =cur-map =aux-map]
+
 ::
-+$  cur-choice
-  $|  [=key-list =cat-map =cat-set]
-  |=  [=key-list =cat-map =cat-set]
-  ?&  =((silt key-list) ~(key by cat-map))
-  (~(all by cat-map) |=(cat=category (~(has in cat-set) cat))) 
-  ==
-::  select should only take key-list and cat-map, and
-::  all cats in cat-map should have already been added to cat-set
++$  cur-choice  [=key-list =cat-map =cat-set]
+
 ::
 +$  key-list  (list key)
 +$  cat-map  (map key category)
@@ -69,15 +47,8 @@
     [%usr-visit =key]
     [%wipe ~]
   ==
- 
-+$  dev-data
-  $|  [=dev-map =app-set]
-  |=  [=dev-map =app-set]
-  =/  keys  ~(key by dev-map)
-  =/  app-names  `^app-set`(~(run in keys) tail)
-  ?:  =(app-set app-names)
-    %.y
-  %.n
+::
++$  dev-data  [=dev-map =app-set]
 ::  
 ::
 +$  dev-map  (map key app-page)  ::  dev-name is the same in all keys
@@ -122,10 +93,10 @@
 +$  auxiliary-data                   ::  (automatically find what's easy to find)
   $:
     desk-hash=@uv    
-    installed-into=@tas          ::  is this same as base in docket data?
-    developer-desk=@t                ::  link is made from this
+    installed-into=@tas          ::  is this same as base in docket data? ERASE
+    developer-desk=@t                ::  link is made from this ERASE
     last-update=@da
-    release-date=@da                 ::  should it be documented or no? (ask hodzod)
+    release-date=@da                 ::  MOVE TO APP PAGE
     size-mb=@rs
   ==
 ::

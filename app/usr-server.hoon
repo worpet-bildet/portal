@@ -36,6 +36,8 @@
   
   ?:  ?=(%app-store-visit-dev-action mark)
   =/  act  !<(visit-dev-action vase)
+
+  ::[%rate %unrate %add-com %del-com %add-rev %del-rev]
   ?-    -.act  
       %rate  
     ~&  "%usr-server: rating app"
