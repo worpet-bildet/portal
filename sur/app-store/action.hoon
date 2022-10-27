@@ -7,7 +7,7 @@
     [%add =app-name =app-page]
     [%edit =app-name =app-page]
     [%del =app-name]
-    ::[%get-docket =dev-name =app-name]
+    [%get-docket =dev-name =app-name]
   ==
 ::
 ::  actions which Curators use to

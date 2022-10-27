@@ -1,5 +1,6 @@
-/-  *app-store-action, *app-store-data
+/-  *app-store-action, *app-store-data, docket, spider
 /+  default-agent, dbug, app-store
+=,  clay
 |%
 +$  versioned-state
   $%  state-0
@@ -108,7 +109,17 @@
     ?:  =(changed %unchanged)  `this  :_  this
     [%give %fact [/dev-update]~ %app-store-dev-update !>(`[[%del our.bowl app-name.act] dev-data])]~ 
   ::
-      ::%get-docket
+      %get-docket
+    ~&  "%dev-server: getting docket data"
+    =/  tid  `@ta`(cat 3 'thread_' (scot %uv (sham eny.bowl)))
+    =/  ta-now  `@ta`(scot %da now.bowl)
+    =/  clay-task  (some [%warp dev-name.act app-name.act ~ %sing %x da+now.bowl /desk/docket-0])
+    =/  start-args  [~ `tid byk.bowl(r da+now.bowl) %get-docket !>(clay-task)]
+    :_  this
+    :~
+      [%pass /thread/[ta-now] %agent [our.bowl %spider] %watch /thread-result/[tid]]
+      [%pass /thread/[ta-now] %agent [our.bowl %spider] %poke %spider-start !>(start-args)]
+    ==
   ==
 ::
 ++  on-arvo   on-arvo:default
@@ -125,7 +136,34 @@
 ::  
 ++  on-leave  on-leave:default
 ++  on-peek   on-peek:default
-++  on-agent  on-agent:default
+++  on-agent  
+  |=  [=wire =sign:agent:gall]
+  ^-  (quip card _this)
+  ?+    -.wire  (on-agent:default wire sign)
+      %thread
+    ?+    -.sign  (on-agent:default wire sign)
+        %poke-ack
+      ?~  p.sign
+        %-  (slog leaf+"Thread started successfully" ~)
+        `this
+      %-  (slog leaf+"Thread failed to start" u.p.sign)
+      `this
+    ::
+        %fact
+      ?+    p.cage.sign  (on-agent:default wire sign)
+          %thread-fail
+        =/  err  !<  (pair term tang)  q.cage.sign
+        %-  (slog leaf+"Thread failed: {(trip p.err)}" q.err)
+        `this
+          %thread-done
+        ~&  !<(gift-arvo q.cage.sign)
+        ::~&  !<(strand:spider q.cage.sign)
+        ::=/  res  (trip !<(term q.cage.sign))
+        ::%-  (slog leaf+"Result: {res}" ~)
+        `this
+      ==
+    ==
+  ==
 ++  on-fail   on-fail:default
 --
 

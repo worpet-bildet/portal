@@ -6,7 +6,7 @@
   --
 ++  grab
   |%
-  ++  noun  usrs-data
+  ++  noun  usr-data
   --
 ++  grad  %noun
 --
