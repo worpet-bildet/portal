@@ -250,7 +250,7 @@
     ++  add-rev
     |=  [=app-page usr-name=@p now=@da text=@t hash=@uv is-safe=?]
     ^-  ^app-page
-    =/  is-current  =(hash desk-hash.auxiliary-data.app-page)
+    =/  is-current  =(hash desk-hash.app-page)
     =/  new-reviews  %+  ~(put by reviews.visitor-data.app-page)  
       usr-name  `review`[now text hash is-current is-safe] 
     %=  app-page

@@ -4,14 +4,17 @@
 =app :*
     description='some description 3'
     keywords=`(list keyword:data)`~[%keyword1 %keyword2]         
-    screenshots=`(list screenshot:data)`~['screen1' 'screen2']    
+    screenshots=`(list screenshot:data)`~['screen1' 'screen2']
+    desk-hash=0v1df64.49beg
+    distributor-desk='~dister-dozzod-dilryd-mopreg/app-store'
+    signature=*signature:data  
     visitor-data=[`(map @p rating:data)`(malt (limo ~[[~zod 1] [~dilryd-mopreg 4]])) `((mop @da comment:data) lth)`*((mop @da comment:data) lth) `(map @p review:data)`*(map @p review:data)]
-    auxiliary-data=[desk-hash=0v1df64.49beg installed-into=%app-store developer-desk='~dister-dozzod-dilryd-mopreg/app-store' last-update=~2022.2.2 release-date=~2023.1.1 size-mb=.17.2]
-    docket-data=[title='App Store' info='A tool for decentralized curation and discovery of Urbit apps' color=0x1231 version=[0 0 1] website='https://github.com/dilryd-mopreg/app-store' license='MIT' base=%app-store image='some-link']
+    docket-data=*docket:data
 == 
+
 
 :dev-server|add %app1 app
 :dev-server|edit %app1 app
 :dev-server|del %app1
 
-
+#docket-data=[title='App Store' info='A tool for decentralized curation and discovery of Urbit apps' color=0x1231 version=[0 0 1] website='https://github.com/dilryd-mopreg/app-store' license='MIT' base=%app-store image='some-link']

@@ -7,7 +7,17 @@
     [%add =app-name =app-page]
     [%edit =app-name =app-page]
     [%del =app-name]
-    [%get-docket =dev-name =app-name]
+    ::[%get-desk =key]    
+  ==
+::
+::  actions between the Developer and the ship which hosts the app
+::  SUB and/or POKE RELATIONSHIP DEVA I DISTERA
++$  dister-action  
+  $%
+    [%sign =key hash=@uv]
+    [%send-sig =key =signature]
+    ::[%request-data 
+    ::[%send-data =key docket-data=docket]
   ==
 ::
 ::  actions which Curators use to

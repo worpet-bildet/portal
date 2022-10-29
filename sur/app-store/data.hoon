@@ -1,4 +1,7 @@
+/-  *docket
 |%
++$  dister-sig  [=key =signature]
+
 +$  usr-data  (map cur-name cur-page)
 ::
 ::
@@ -25,6 +28,7 @@
 ::
 ::
 ::  Dev Page
+
 ::
 +$  dev-update  (unit [=change =dev-data])
 +$  change   
@@ -51,10 +55,14 @@
                                      ::  separated by commas and no spaces. For example:         
                                      ::  Property,House,Real Estate
     screenshots=(list screenshot)    ::  up to 10 screenshots on Apple Store. 
+    desk-hash=@uv    
+    distributor-desk=@t                ::==key,  link is made from this (dev-name + app-name)
+    =signature
     =visitor-data
-    =auxiliary-data
-    =docket-data
+    docket-data=docket
   == 
+::
++$  signature   [p=@ux q=ship r=life]
 +$  keyword  @tas
 +$  screenshot  @t  ::  need to define input screenshot size so they look nice
 ::
@@ -66,30 +74,7 @@
     ::  First should be shown is-current=%.y reviews and then others
     ::  sorted by date
   ==
-::   
-::  nothing automatically obtained yet except docket
-+$  auxiliary-data                   ::  (automatically find what's easy to find)
-  $:
-    desk-hash=@uv    
-    installed-into=@tas          ::  is this same as base in docket data? ERASE
-    developer-desk=@t                ::  link is made from this ERASE
-    last-update=@da
-    release-date=@da                 ::  MOVE TO APP PAGE
-    size-mb=@rs
-  ==
-::
-+$  docket-data                      ::  should it automatically add it from docket file?
-  $:
-    title=@t
-    info=@t                          ::  subtitle/summary, up to 30 chars long in apple
-    color=@ux                        ::    store, here maybe it can be longer?
-    version=[@ud @ud @ud]
-    website=@t
-    license=@t
-    base=@t                          ::  same as installed into(@tas)?
-    image=@t                         ::  app icon, should be square
-  ==                                 ::  To ensure the icon is legible in all sizes, 
-::                                     ::  avoid adding unnecessary visual details
+::                                 
 +$  rating
   $|  @ud  
   |=  r=@ud 
@@ -107,5 +92,24 @@
     is-current=?    
     is-safe=?                        ::  3rd possibility as no decision?
   ==
+  
+::  METADATA TO ADD LATER
+::    last-update=@da
+::    release-date=@da                 ::  MOVE TO APP PAGE
+::    size-mb=@rs
+::
+::  OLD, BUT COMMENTS ARE RELEVANT
+::+$  docket-data                      ::  should it automatically add it from docket file?
+::  $:
+::    title=@t
+::    info=@t                          ::  subtitle/summary, up to 30 chars long in apple
+::    color=@ux                        ::    store, here maybe it can be longer?
+::    version=[@ud @ud @ud]
+::    website=@t
+::    license=@t
+::    base=@t                          ::  same as installed into(@tas)?
+::    image=@t                         ::  app icon, should be square
+::  ==                                 ::  To ensure the icon is legible in all sizes, 
+::                                     ::  avoid adding unnecessary visual details
 --
 
