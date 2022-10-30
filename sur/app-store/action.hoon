@@ -12,9 +12,9 @@
 ::
 ::  actions between the Developer and the ship which hosts the app
 ::  SUB and/or POKE RELATIONSHIP DEVA I DISTERA
-+$  dister-action  
++$  dst-action  
   $%
-    [%sign =key hash=@uv]
+    [%sign =key]
     [%send-sig =key =signature]
     ::[%request-data 
     ::[%send-data =key docket-data=docket]

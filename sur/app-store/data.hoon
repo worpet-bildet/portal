@@ -1,6 +1,6 @@
 /-  *docket
 |%
-+$  dister-sig  [=key =signature]
++$  dst-sig  [=key =signature]
 
 +$  usr-data  (map cur-name cur-page)
 ::
@@ -31,6 +31,8 @@
 
 ::
 +$  dev-update  (unit [=change =dev-data])
+
+::  ADD SIGNATURE TO CHANGE. fix the mechanics so dev doesnt send %add app without having a signature
 +$  change   
   $%
     [%init ~]
@@ -39,6 +41,7 @@
     [%del =key] 
     [%usr-visit =key]
     [%wipe ~]
+    [%sig =key]
   ==
 +$  dev-data  [=dev-map =app-set]
 +$  dev-map  (map key app-page)  ::  dev-name is the same in all keys

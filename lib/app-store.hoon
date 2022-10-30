@@ -1,17 +1,23 @@
 /-  *app-store-data, *app-store-action
+/+  sig
 |%
 ++  com  ((on @da comment) lth)
 ++  usr  ~
 ++  cur
   |%
+  :: TODO VALIDATE SIG
   ::  receiving intial data from dev
   ++  init    
   |=  [=cur-data =dev-name dev-update=[~ [[%init ~] =dev-data]]]
   ^-  ^cur-data
   =/  dev-update  (need dev-update) 
   =/  new-aux-map  (~(put by aux-map.cur-data) dev-name app-set.dev-data.dev-update)
+  ::  cur should only use %init when not having dev-data and then adding it
+  ::  if cur-receives less data on dev than he had, ~(uni by cur-map) doesn't work
   =/  new-cur-map  (~(uni by cur-map.cur-data) `dev-map`dev-map.dev-data.dev-update)
-  ?>  (cur-map-aux-map:validator new-cur-map new-aux-map)
+  ?.  (cur-map-aux-map:validator new-cur-map new-aux-map)
+    ~&  "%cur-server: receiving data failed"
+    cur-data
   [cur-choice.cur-data new-cur-map new-aux-map]
 ::
   ::  after unsubbing from dev removes dev from cur-choice and cur-map and aux-map
@@ -43,22 +49,26 @@
     key-list.cur-choice    (oust [u.loc 1] key-list.cur-choice)
     cat-map.cur-choice     (~(del by cat-map.cur-choice) key)   ==
   ::
-  ?>  ?&
+  ?.  ?&
     (key-list-cat-map:validator key-list.new-cur-choice cat-map.new-cur-choice)
     (key-list-cur-map:validator key-list.new-cur-choice new-cur-map)
     (cur-map-aux-map:validator new-cur-map new-aux-map)
   ==
+    ~&  "%cur-server: updating cur-data after unsub, failed"
+    cur-data
   [new-cur-choice new-cur-map new-aux-map]
 ::
   ::  when selecting new cur-choice
   ++  select
   |=  [=cur-data act=[%select =key-list =cat-map]]
   ^-  ^cur-data
-  ?>  ?&
+  ?.  ?&
     (cat-map-cat-set:validator cat-map.act cat-set.cur-choice.cur-data)
     (key-list-cat-map:validator key-list.act cat-map.act)
     (key-list-cur-map:validator key-list.act cur-map.cur-data)
   ==
+    ~&  "%cur-server: select failed"
+    cur-data
   %=  cur-data
     cur-choice  [key-list.act cat-map.act cat-set.cur-choice.cur-data]
   ==
@@ -67,32 +77,46 @@
   ++  cats
   |=  [=cur-data act=[%cats =cat-set]]
   ^-  ^cur-data
-  ?>  (cat-map-cat-set:validator cat-map.cur-choice.cur-data cat-set.act)
+  ?.  (cat-map-cat-set:validator cat-map.cur-choice.cur-data cat-set.act)
+    ~&  "%cur-server: adding categories failed"
+    cur-data
   cur-data(cat-set.cur-choice cat-set.act)
 ::
   :: when dev adds an app
   ++  add  
-  |=  [=cur-data =dev-name dev-update=[~ [[%add =key] =dev-data]]]
+  |=  [=cur-data our=@p now=@da =dev-name dev-update=[~ [[%add =key] =dev-data]]]
   ^-  ^cur-data
   =/  dev-update  (need dev-update)
+  =/  app-page  (need (~(get by dev-map.dev-data.dev-update) key.dev-update))
+  ?.  (validate:sig [our signature.app-page key.dev-update now])
+    ~&  "%cur-server: distributor signature validation failed, not adding new app by dev"
+    cur-data
   =/  new-cur-map  (~(uni by cur-map.cur-data) `dev-map`dev-map.dev-data.dev-update)
   =/  new-aux-map  (~(put by aux-map.cur-data) dev-name app-set.dev-data.dev-update)
-  ?>  ?&
+  ?.  ?&
     (cur-map-aux-map:validator new-cur-map new-aux-map)
     (key-list-cur-map:validator key-list.cur-choice.cur-data new-cur-map)
   ==
+    ~&  "%cur-server: updating cur-data after dev adding an app, failed"
+    cur-data
   cur-data(cur-map new-cur-map, aux-map new-aux-map)
 ::
   ::  when dev edits an app
   ++  edit  
-  |=  [=cur-data =dev-name dev-update=[~ [[%edit =key] =dev-data]]]
+  |=  [=cur-data our=@p now=@da =dev-name dev-update=[~ [[%edit =key] =dev-data]]]
   ^-  ^cur-data
   =/  dev-update  (need dev-update)
+  =/  app-page  (need (~(get by dev-map.dev-data.dev-update) key.dev-update))
+  ?.  (validate:sig [our signature.app-page key.dev-update now])
+    ~&  "%cur-server: distributor signature validation failed, not adding new app by dev"
+    cur-data
   =/  new-cur-map  (~(uni by cur-map.cur-data) dev-map.dev-data.dev-update)
-  ?>  ?&
+  ?.  ?&
     (cur-map-aux-map:validator new-cur-map aux-map.cur-data)
     (key-list-cur-map:validator key-list.cur-choice.cur-data new-cur-map)
   ==
+    ~&  "%cur-server: updating cur-data after dev editing an app, failed"
+    cur-data
   cur-data(cur-map new-cur-map)
 ::
   ::  when dev dels an app
@@ -100,18 +124,30 @@
   |=  [=cur-data =dev-name dev-update=[~ [change=[%del =key] =dev-data]]]
   ^-  ^cur-data
   =/  dev-update  (need dev-update)
-  =/  loc  (find [key]~ key-list.cur-choice.cur-data)
-  ?~  loc  !!
-  =/  new-key-list  (oust [u.loc 1] key-list.cur-choice.cur-data)
-  =/  new-cat-map  (~(del by cat-map.cur-choice.cur-data) key)
-  =/  new-cur-map  (~(del by cur-map.cur-data) [dev-name app-name.key.change.dev-update])
+  =/  new-cat-map  (~(del by cat-map.cur-choice.cur-data) key.change.dev-update)
+  =/  new-cur-map  (~(del by cur-map.cur-data) key.change.dev-update)
   =/  new-aux-map  (~(put by aux-map.cur-data) dev-name app-set.dev-data.dev-update)
-  ?>  ?&
+  =/  loc  (find [key.change.dev-update]~ key-list.cur-choice.cur-data)
+  ?~  loc  
+    ?.  ?&
+      (cat-map-cat-set:validator new-cat-map cat-set.cur-choice.cur-data)
+      (key-list-cat-map:validator key-list.cur-choice.cur-data new-cat-map)
+      (key-list-cur-map:validator key-list.cur-choice.cur-data new-cur-map)
+      (cur-map-aux-map:validator new-cur-map new-aux-map)
+    ==
+      ~&  "%cur-server: updating cur-data after dev deleting an app, failed"
+      cur-data
+    :+  [key-list.cur-choice.cur-data new-cat-map cat-set.cur-choice.cur-data] 
+        new-cur-map  new-aux-map
+  =/  new-key-list  (oust [u.loc 1] key-list.cur-choice.cur-data)
+  ?.  ?&
     (cat-map-cat-set:validator new-cat-map cat-set.cur-choice.cur-data)
     (key-list-cat-map:validator new-key-list new-cat-map)
     (key-list-cur-map:validator new-key-list new-cur-map)
     (cur-map-aux-map:validator new-cur-map new-aux-map)
   ==
+    ~&  "%cur-server: updating cur-data after dev deleting an app, failed"
+    cur-data
   [[new-key-list new-cat-map cat-set.cur-choice.cur-data] new-cur-map new-aux-map]
 ::
   ::  after user leaves comment/review/rating to dev
@@ -150,7 +186,9 @@
     [%unchanged dev-data]
   =/  new-dev-map  (~(put by dev-map.dev-data) key app-page.act)
   =/  new-app-set  (~(put in app-set.dev-data) app-name.act)
-  ?>  (dev-map-app-set:validator [new-dev-map new-app-set])
+  ?.  (dev-map-app-set:validator [new-dev-map new-app-set])
+    ~&  "%dev-server: updating dev-data failed"
+    [%unchanged dev-data]
   [%changed new-dev-map new-app-set]
 ::
   ++  edit  
@@ -163,7 +201,9 @@
     [%unchanged dev-data]     
   =/  new-dev-map  (~(put by dev-map.dev-data) key app-page.act)
   =/  new-app-set  (~(put in app-set.dev-data) app-name.act)
-  ?>  (dev-map-app-set:validator [new-dev-map new-app-set])
+  ?.  (dev-map-app-set:validator [new-dev-map new-app-set])
+    ~&  "%dev-server: updating dev-data failed"
+    [%unchanged dev-data]
   [%changed new-dev-map new-app-set]
 ::  
   ++  del  
@@ -175,7 +215,9 @@
     [%unchanged dev-data]         
   =/  new-dev-map  (~(del by dev-map.dev-data) key)
   =/  new-app-set  (~(del in app-set.dev-data) app-name.act)
-  ?>  (dev-map-app-set:validator [new-dev-map new-app-set])
+  ?.  (dev-map-app-set:validator [new-dev-map new-app-set])
+    ~&  "%dev-server: updating dev-data failed"
+    [%unchanged dev-data]
   [%changed new-dev-map new-app-set]
 ::
   ++  usr-visit

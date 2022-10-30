@@ -111,17 +111,18 @@
     == 
   ::
       ::  receiving a signature from distributor ship to dev-server
-      %app-store-dister-action  
-    =/  act  !<(dister-action vase)
+      %app-store-dst-action  
+    =/  act  !<(dst-action vase)
     ?+    -.act    (on-poke:default mark vase)
         %send-sig  
       ~&  "%dev-server: receiving signature"
       =/  app-page  (need (~(get by dev-map.dev-data.state) key.act))
-      :-  ~
+      :_
       %=  this 
         dev-map.dev-data
       (~(put by dev-map.dev-data.state) key.act app-page(signature signature.act))
       ==
+      [%give %fact [/dev-update]~ %app-store-dev-update !>(`[[%sig key.act] dev-data])]~ 
     ==
     ::  ::TODO  assert (?) that dister that sends sig is the same as in dev-desk in app-page 
     ::  ::  assert =(developer-desk src.bowl)  

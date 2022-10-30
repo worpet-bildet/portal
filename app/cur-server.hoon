@@ -1,5 +1,5 @@
 /-  *app-store-action, *app-store-data
-/+  default-agent, dbug, app-store
+/+  default-agent, dbug, app-store, sig
 |%
 +$  versioned-state
   $%  state-0
@@ -114,16 +114,24 @@
     ?~  dev-update  `this
     ?>  (check-dev-data:cur:app-store [dev-name dev-data.u.dev-update])  
     ?-    -.change.u.dev-update
+        %sig
+      =/  dev-update  (need dev-update)
+      =/  app-page  (need (~(get by dev-map.dev-data.dev-update) key.change.dev-update))
+      ?:  (validate:sig [our.bowl signature.app-page key.change.dev-update now.bowl])
+        ~&  "PASSED VALIDATION"
+        `this
+      ~&  "FAILED VALIDATION"
+      `this 
         %init
       =/  new-cur-data  (init:cur:app-store [cur-data.state dev-name dev-update])
       `this(cur-data.state new-cur-data)
     ::  
         %add
-      =/  new-cur-data  (add:cur:app-store [cur-data.state dev-name dev-update])
+      =/  new-cur-data  (add:cur:app-store [cur-data.state our.bowl now.bowl dev-name dev-update])
       `this(cur-data.state new-cur-data)
     ::  
         %edit
-      =/  new-cur-data  (edit:cur:app-store [cur-data.state dev-name dev-update])
+      =/  new-cur-data  (edit:cur:app-store [cur-data.state our.bowl now.bowl dev-name dev-update])
       ?~  (find [key.change.u.dev-update]~ key-list.cur-choice.cur-data.state)
         `this(cur-data new-cur-data)
       =/  new-cur-page  `cur-page`(some [our.bowl cur-info.state new-cur-data]) 
@@ -147,6 +155,7 @@
       [%give %fact [/cur-page]~ %app-store-cur-page !>(new-cur-page)]~
     ::
         %wipe  `this
+        
     ==
   ==
 ::

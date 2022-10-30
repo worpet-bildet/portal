@@ -33,21 +33,22 @@
   |=  [=mark =vase]
   ^-  (quip card _this)
   ?+    mark   (on-poke:default mark vase) 
-      %app-store-dister-action
-    =/  act  !<(dister-action vase)
+      %app-store-dst-action
+    ::  TODO  what when app doesnt exist
+    =/  act  !<(dst-action vase)
     ?+    -.act    (on-poke:default mark vase)
         %sign  
       ?>  =(src.bowl our.bowl)
-      ~&  "distributor ship: sending signature to %dev-server"
-      =/  signature  (sign:sig [our.bowl now.bowl hash.act])
+      ~&  "%dst-server: sending signature to %dev-server"
+      =/  signature  (sign:sig [our.bowl now.bowl key.act])
       :_  this
-      [%pass /send-sig %agent [dev-name.key.act %dev-server] %poke %app-store-dister-action !>([%send-sig key.act signature])]~
+      [%pass /send-sig %agent [dev-name.key.act %dev-server] %poke %app-store-dst-action !>([%send-sig key.act signature])]~
     ::
     ==  
   ::
     
     ::  %get-desk
-    ::~&  "%dev-server: getting desk data"
+    ::~&  "%dst-server: getting desk data"
     ::=/  tid  `@ta`(cat 3 'thread_' (scot %uv (sham eny.bowl)))
     ::=/  ta-now  `@ta`(scot %da now.bowl)
     ::=/  clay-task  (some [%warp dev-name.act app-name.act ~ %sing %z da+now.bowl /])

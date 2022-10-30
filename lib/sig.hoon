@@ -14,32 +14,38 @@
   ==
 ::
 ++  sign
-  |=  [our=ship now=time hash=@]
+  |=  [our=ship now=time =key]
   ^-  signature
   =+  (jael-scry ,=life our %life now /(scot %p our))
   =+  (jael-scry ,=ring our %vein now /(scot %ud life))
-  :+  `@ux`(sign:as:(nol:nu:crub:crypto ring) hash)
+  =/  val  (add `@`dev-name.key `@`app-name.key)
+  :+  `@ux`(sign:as:(nol:nu:crub:crypto ring) val)
     our
   life
 ::
 ++  validate
-  |=  [our=ship =signature hash=@ now=time]
+  |=  [our=ship =signature =key now=time]
   ^-  ?
   =+  (jael-scry ,lyf=(unit @) our %lyfe now /(scot %p q.signature))
   ::  we do not have a public key from ship at this life
   ::
-  ?~  lyf  %.y
-  ?.  =(u.lyf r.signature)  %.y
+  ~&  >>  "1"
+  ?~  lyf  %.n
+  ~&  >>  "1.1"
+  ?.  =(u.lyf r.signature)  %.n
   =+  %:  jael-scry
         ,deed=[a=life b=pass c=(unit @ux)]
         our  %deed  now  /(scot %p q.signature)/(scot %ud r.signature)
       ==
   ::  if signature is from a past life, skip validation
   ::  XX: should be visualised on frontend, not great.
-  ?.  =(a.deed r.signature)  %.y
+  ~&  >>  "2"
+  ?.  =(a.deed r.signature)  %.n
   ::  verify signature from ship at life
   ::
-  =/  them
-    (com:nu:crub:crypto b.deed)
-  =(`hash (sure:as.them p.signature))
+  ~&  >>  "3"
+  =/  them  (com:nu:crub:crypto b.deed)
+  =/  val  (add `@`dev-name.key `@`app-name.key)
+  =(`val (sure:as.them p.signature))
+::
 --

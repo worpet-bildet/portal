@@ -1,12 +1,12 @@
 /-  *app-store-action
-|_  dis=dister-action
+|_  dst=dst-action
 ++  grow
   |%
-  ++  noun  dis
+  ++  noun  dst
   --
 ++  grab
   |%
-  ++  noun  dister-action
+  ++  noun  dst-action
   --
 ++  grad  %noun
 --
