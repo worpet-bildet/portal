@@ -16,6 +16,7 @@
   $%
     [%sign =key]
     [%send-sig =key =signature]
+    [%get-desk =app-name]
     ::[%request-data 
     ::[%send-data =key docket-data=docket]
   ==

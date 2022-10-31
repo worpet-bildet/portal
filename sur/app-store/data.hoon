@@ -29,19 +29,16 @@
 ::
 ::  Dev Page
 
-::
-+$  dev-update  (unit [=change =dev-data])
-
-::  ADD SIGNATURE TO CHANGE. fix the mechanics so dev doesnt send %add app without having a signature
-+$  change   
+::  fix the mechanics so dev doesnt send %add app without having a signature
++$  dev-update   
   $%
-    [%init ~]
-    [%add =key]
-    [%edit =key]
+    [%init =dev-data]
+    [%add =key =app-page]
+    [%edit =key =app-page]
     [%del =key] 
-    [%usr-visit =key]
+    [%usr-visit =key =app-page]
     [%wipe ~]
-    [%sig =key]
+    [%sig =key =app-page]
   ==
 +$  dev-data  [=dev-map =app-set]
 +$  dev-map  (map key app-page)  ::  dev-name is the same in all keys
@@ -59,7 +56,7 @@
                                      ::  Property,House,Real Estate
     screenshots=(list screenshot)    ::  up to 10 screenshots on Apple Store. 
     desk-hash=@uv    
-    distributor-desk=@t                ::==key,  link is made from this (dev-name + app-name)
+    dst-desk=@t                ::==key,  link is made from this (dev-name + app-name)
     =signature
     =visitor-data
     docket-data=docket
@@ -95,7 +92,10 @@
     is-current=?    
     is-safe=?                        ::  3rd possibility as no decision?
   ==
-  
+::
+::  Dst Data Types
++$  dst-name  @p
+::
 ::  METADATA TO ADD LATER
 ::    last-update=@da
 ::    release-date=@da                 ::  MOVE TO APP PAGE
@@ -114,5 +114,7 @@
 ::    image=@t                         ::  app icon, should be square
 ::  ==                                 ::  To ensure the icon is legible in all sizes, 
 ::                                     ::  avoid adding unnecessary visual details
+
+
 --
 

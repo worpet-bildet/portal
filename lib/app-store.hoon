@@ -5,16 +5,37 @@
 ++  usr  ~
 ++  cur
   |%
-  :: TODO VALIDATE SIG
   ::  receiving intial data from dev
   ++  init    
-  |=  [=cur-data =dev-name dev-update=[~ [[%init ~] =dev-data]]]
+  |=  [=cur-data our=@p now=@da =dev-name dev-update=[%init =dev-data]]
   ^-  ^cur-data
-  =/  dev-update  (need dev-update) 
-  =/  new-aux-map  (~(put by aux-map.cur-data) dev-name app-set.dev-data.dev-update)
+  =/  apps  ~(tap in app-set.dev-data.dev-update)
+  =/  signed-app-set  *app-set
+  =/  signed-dev-map  *dev-map
+  =/  n  0
+  =/  len  ~(wyt in app-set.dev-data.dev-update)
+  =/  validated-dev-data
+  |-  ?:  =(n len)  [signed-dev-map signed-app-set]
+    =/  app-name  (snag n apps)
+    =/  key  [dev-name app-name]
+    =/  app-page  (~(get by dev-map.dev-data.dev-update) key)
+    ?~  app-page  ~&("%cur-server: error adding data" [*dev-map *app-set])
+    ?.  =(q.signature.u.app-page -:(parse-dst-desk dst-desk.u.app-page))
+      $(n +(n))
+    ?.  (validate:sig [our signature.u.app-page key now])
+      $(n +(n))
+    %=  $
+      n  +(n)
+      signed-app-set  (~(put in signed-app-set) app-name)
+      signed-dev-map  (~(put by signed-dev-map) key u.app-page)
+    ==  
+  ?.  (dev-map-app-set:validator -.validated-dev-data +.validated-dev-data)
+    ~&  "cur-server: new dev-map and app-set inconsistent"
+    cur-data  
+  =/  new-aux-map  (~(put by aux-map.cur-data) dev-name +.validated-dev-data)
   ::  cur should only use %init when not having dev-data and then adding it
   ::  if cur-receives less data on dev than he had, ~(uni by cur-map) doesn't work
-  =/  new-cur-map  (~(uni by cur-map.cur-data) `dev-map`dev-map.dev-data.dev-update)
+  =/  new-cur-map  (~(uni by cur-map.cur-data) `dev-map`-.validated-dev-data)
   ?.  (cur-map-aux-map:validator new-cur-map new-aux-map)
     ~&  "%cur-server: receiving data failed"
     cur-data
@@ -47,7 +68,8 @@
   %=  $
     n  +(n)
     key-list.cur-choice    (oust [u.loc 1] key-list.cur-choice)
-    cat-map.cur-choice     (~(del by cat-map.cur-choice) key)   ==
+    cat-map.cur-choice     (~(del by cat-map.cur-choice) key)   
+  ==
   ::
   ?.  ?&
     (key-list-cat-map:validator key-list.new-cur-choice cat-map.new-cur-choice)
@@ -82,17 +104,17 @@
     cur-data
   cur-data(cat-set.cur-choice cat-set.act)
 ::
+
   :: when dev adds an app
   ++  add  
-  |=  [=cur-data our=@p now=@da =dev-name dev-update=[~ [[%add =key] =dev-data]]]
+  |=  [=cur-data our=@p now=@da =dev-name dev-update=[%add =key =app-page]]
   ^-  ^cur-data
-  =/  dev-update  (need dev-update)
-  =/  app-page  (need (~(get by dev-map.dev-data.dev-update) key.dev-update))
-  ?.  (validate:sig [our signature.app-page key.dev-update now])
-    ~&  "%cur-server: distributor signature validation failed, not adding new app by dev"
-    cur-data
-  =/  new-cur-map  (~(uni by cur-map.cur-data) `dev-map`dev-map.dev-data.dev-update)
-  =/  new-aux-map  (~(put by aux-map.cur-data) dev-name app-set.dev-data.dev-update)
+  ?.  (verify-dev-update [dev-name our now dev-update])  cur-data
+  =/  new-cur-map  (~(put by cur-map.cur-data) key.dev-update app-page.dev-update)
+  =/  app-set  (~(get by aux-map.cur-data) dev-name)
+  ?~  app-set  ~&("%cur-server: error" cur-data)
+  =/  new-app-set  (~(put in u.app-set) app-name.key.dev-update)
+  =/  new-aux-map  (~(put by aux-map.cur-data) dev-name new-app-set)
   ?.  ?&
     (cur-map-aux-map:validator new-cur-map new-aux-map)
     (key-list-cur-map:validator key-list.cur-choice.cur-data new-cur-map)
@@ -103,31 +125,36 @@
 ::
   ::  when dev edits an app
   ++  edit  
-  |=  [=cur-data our=@p now=@da =dev-name dev-update=[~ [[%edit =key] =dev-data]]]
+  |=  [=cur-data our=@p now=@da =dev-name dev-update=[%edit =key =app-page]]
   ^-  ^cur-data
-  =/  dev-update  (need dev-update)
-  =/  app-page  (need (~(get by dev-map.dev-data.dev-update) key.dev-update))
-  ?.  (validate:sig [our signature.app-page key.dev-update now])
-    ~&  "%cur-server: distributor signature validation failed, not adding new app by dev"
-    cur-data
-  =/  new-cur-map  (~(uni by cur-map.cur-data) dev-map.dev-data.dev-update)
+  ?.  (verify-dev-update [dev-name our now dev-update])  cur-data
+  =/  new-cur-map  (~(put by cur-map.cur-data) key.dev-update app-page.dev-update)
+  =/  app-set  (~(get by aux-map.cur-data) dev-name)
+  ?~  app-set  ~&("%cur-server: error" cur-data)
+  =/  new-app-set  (~(put in u.app-set) app-name.key.dev-update)
+  =/  new-aux-map  (~(put by aux-map.cur-data) dev-name new-app-set)
   ?.  ?&
-    (cur-map-aux-map:validator new-cur-map aux-map.cur-data)
+    (cur-map-aux-map:validator new-cur-map new-aux-map)
     (key-list-cur-map:validator key-list.cur-choice.cur-data new-cur-map)
   ==
     ~&  "%cur-server: updating cur-data after dev editing an app, failed"
     cur-data
-  cur-data(cur-map new-cur-map)
+  cur-data(cur-map new-cur-map, aux-map new-aux-map)
 ::
   ::  when dev dels an app
   ++  del  
-  |=  [=cur-data =dev-name dev-update=[~ [change=[%del =key] =dev-data]]]
+  |=  [=cur-data =dev-name dev-update=[%del =key]]
   ^-  ^cur-data
-  =/  dev-update  (need dev-update)
-  =/  new-cat-map  (~(del by cat-map.cur-choice.cur-data) key.change.dev-update)
-  =/  new-cur-map  (~(del by cur-map.cur-data) key.change.dev-update)
-  =/  new-aux-map  (~(put by aux-map.cur-data) dev-name app-set.dev-data.dev-update)
-  =/  loc  (find [key.change.dev-update]~ key-list.cur-choice.cur-data)
+  ?.  =(dev-name dev-name.key.dev-update)
+    ~&  "%cur-server: dev-name and key don't correspond"
+    cur-data
+  =/  new-cat-map  (~(del by cat-map.cur-choice.cur-data) key.dev-update)
+  =/  new-cur-map  (~(del by cur-map.cur-data) key.dev-update)
+  =/  app-set  (~(get by aux-map.cur-data) dev-name)
+  ?~  app-set  ~&("%cur-server: error" cur-data)
+  =/  new-app-set  (~(del in u.app-set) app-name.key.dev-update)
+  =/  new-aux-map  (~(put by aux-map.cur-data) dev-name new-app-set)
+  =/  loc  (find [key.dev-update]~ key-list.cur-choice.cur-data)
   ?~  loc  
     ?.  ?&
       (cat-map-cat-set:validator new-cat-map cat-set.cur-choice.cur-data)
@@ -152,11 +179,43 @@
 ::
   ::  after user leaves comment/review/rating to dev
   ++  usr-visit  
-  |=  [=cur-data =dev-name dev-update=[~ [change=[%usr-visit =key] =dev-data]]]
-  ^-  ^cur-data
+  |=  [=cur-data our=@p now=@da =dev-name dev-update=[%usr-visit =key =app-page]]
+  ?.  (verify-dev-update [dev-name our now dev-update])  cur-data
   %=  cur-data
-    cur-map  (~(uni by cur-map.cur-data) `dev-map`dev-map.dev-data.dev-update)
+    cur-map  (~(put by cur-map.cur-data) key.dev-update app-page.dev-update)
   ==
+::
+  :: when dev sends signed app-page
+  ++  sign
+  |=  [=cur-data our=@p now=@da =dev-name dev-update=[%sig =key =app-page]]
+  ^-  ^cur-data
+  ?.  (verify-dev-update [dev-name our now dev-update])  cur-data
+  =/  new-cur-map  (~(put by cur-map.cur-data) key.dev-update app-page.dev-update)
+  =/  app-set  (~(get by aux-map.cur-data) dev-name)
+  ?~  app-set  ~&("%cur-server: error" cur-data)
+  =/  new-app-set  (~(put in u.app-set) app-name.key.dev-update)
+  =/  new-aux-map  (~(put by aux-map.cur-data) dev-name new-app-set)
+  ?.  ?&
+    (cur-map-aux-map:validator new-cur-map new-aux-map)
+    (key-list-cur-map:validator key-list.cur-choice.cur-data new-cur-map)
+  ==
+    ~&  "%cur-server: updating cur-data after dev editing an app, failed"
+    cur-data
+  cur-data(cur-map new-cur-map, aux-map new-aux-map)
+::
+  ++  verify-dev-update
+  |=  [=dev-name our=@p now=@da dev-update=[?(%add %edit %sig %usr-visit) =key =app-page]]
+  ^-  ?
+  ?.  =(dev-name dev-name.key.dev-update)
+    ~&  "%cur-server: dev-name and key don't correspond"
+    %.n
+  ?.  =(q.signature.app-page.dev-update -:(parse-dst-desk dst-desk.app-page.dev-update))
+    ~&  "%cur-server: ship in sig and distributor ship are not the same"
+    %.n
+  ?.  (validate:sig [our signature.app-page.dev-update key.dev-update now])
+    ~&  "%cur-server: distributor signature validation failed, not adding new app by dev"
+    %.n
+  %.y  
 ::
   :: verify whether dev-map keys all contain dev-name
   ++  check-dev-data  
@@ -220,37 +279,53 @@
     [%unchanged dev-data]
   [%changed new-dev-map new-app-set]
 ::
+  ++  sign
+  |=  [=dev-data act=[%send-sig =key =signature]]
+  ^-  [?(%changed %unchanged) ^app-page ^dev-data]
+  =/  app-page  (need (~(get by dev-map.dev-data) key.act))
+  ?.  (~(has in app-set.dev-data) app-name.key.act)  
+    ~&  "dev-server: app-page does not exist"
+    [%unchanged app-page dev-data]  
+  =/  dst-desk  (parse-dst-desk dst-desk.app-page)
+  ?.  =(-.dst-desk q.signature.act)
+    ~&  "%dev-server: dst-desk and ship in signature don't correspond"
+    [%unchanged app-page dev-data]
+  =/  new-app-page  app-page(signature signature.act)
+  =/  new-dev-map
+    (~(put by dev-map.dev-data) key.act new-app-page)
+  [%changed new-app-page dev-data(dev-map new-dev-map)]
+::
   ++  usr-visit
   |=  [=dev-data usr-name=@p =key act=visit-dev-action now=@da]
-  ^-  [?(%changed %unchanged) ^dev-data]
+  ^-  [?(%changed %unchanged) ^app-page ^dev-data]
+  =/  app-page  (~(got by dev-map.dev-data) key)
   ?.  (~(has in app-set.dev-data) app-name.key)
       ~&   "%dev-server: app-page doesn't exist"
-      [%unchanged dev-data]
-  =/  app-page  (~(got by dev-map.dev-data) key)
+      [%unchanged app-page dev-data]
   ?-    -.act
     %rate
   =/  new-app-page  (rate:visit-app-page app-page usr-name rating.act)
-  :-  %changed
+  :+  %changed  new-app-page
   dev-data(dev-map (~(put by dev-map.dev-data) key.act new-app-page))
     %unrate 
   =/  new-app-page  (unrate:visit-app-page app-page usr-name)
-  :-  %changed
+  :+  %changed  new-app-page
   dev-data(dev-map (~(put by dev-map.dev-data) key.act new-app-page))
     %add-com
   =/  new-app-page  (add-com:visit-app-page app-page now [usr-name text.act])
-  :-  %changed
+  :+  %changed  new-app-page
   dev-data(dev-map (~(put by dev-map.dev-data) key.act new-app-page))
     %del-com
   =/  new-app-page  (del-com:visit-app-page app-page usr-name time.act)
-  :-  %changed
+  :+  %changed  new-app-page
   dev-data(dev-map (~(put by dev-map.dev-data) key.act new-app-page))
     %add-rev
   =/  new-app-page  (add-rev:visit-app-page app-page usr-name now text.act hash.act is-safe.act)
-  :-  %changed
+  :+  %changed  new-app-page
   dev-data(dev-map (~(put by dev-map.dev-data) key.act new-app-page))
     %del-rev
   =/  new-app-page  (del-rev:visit-app-page app-page usr-name)
-  :-  %changed
+  :+  %changed  new-app-page
   dev-data(dev-map (~(put by dev-map.dev-data) key.act new-app-page))
   ==
 ::  
@@ -260,56 +335,59 @@
     |=  [=app-page usr-name=@p rating=@ud]
     ^-  ^app-page
     =/  new-ratings  (~(put by ratings.visitor-data.app-page) usr-name (^rating rating))
-    %=  app-page
-      visitor-data
-    [new-ratings comments.visitor-data.app-page reviews.visitor-data.app-page]
-    ==
+    =/  new-visitor-data  visitor-data.app-page(ratings new-ratings)
+    app-page(visitor-data new-visitor-data)
+    ::
     ++  unrate
     |=  [=app-page usr-name=@p]
     ^-  ^app-page
     =/  new-ratings  (~(del by ratings.visitor-data.app-page) usr-name)
-    %=  app-page
-      visitor-data  
-    [new-ratings comments.visitor-data.app-page reviews.visitor-data.app-page]
-    ==
+    =/  new-visitor-data  visitor-data.app-page(ratings new-ratings)
+    app-page(visitor-data new-visitor-data)
+    ::
     ++  add-com
     |=  [=app-page now=@da =comment]
     ^-  ^app-page
     =/  new-comments  (put:com comments.visitor-data.app-page now comment)
-    %=  app-page
-      visitor-data  
-    [ratings.visitor-data.app-page new-comments reviews.visitor-data.app-page]
-    ==
+    =/  new-visitor-data  visitor-data.app-page(comments new-comments)
+    app-page(visitor-data new-visitor-data)
+    ::
     ++  del-com
     |=  [=app-page usr-name=@p time=@da]
     ^-  ^app-page
     ?>  =(usr-name (head (got:com comments.visitor-data.app-page time)))
     =/  new-comments  (tail (del:com comments.visitor-data.app-page time))
-    %=  app-page
-      visitor-data
-    [ratings.visitor-data.app-page new-comments reviews.visitor-data.app-page]
-    ==
+    =/  new-visitor-data  visitor-data.app-page(comments new-comments)
+    app-page(visitor-data new-visitor-data)
+    ::
     ++  add-rev
     |=  [=app-page usr-name=@p now=@da text=@t hash=@uv is-safe=?]
     ^-  ^app-page
     =/  is-current  =(hash desk-hash.app-page)
     =/  new-reviews  %+  ~(put by reviews.visitor-data.app-page)  
       usr-name  `review`[now text hash is-current is-safe] 
-    %=  app-page
-      visitor-data
-    [ratings.visitor-data.app-page comments.visitor-data.app-page new-reviews]
-    ==
+    =/  new-visitor-data  visitor-data.app-page(reviews new-reviews)
+    app-page(visitor-data new-visitor-data)
+    ::
     ++  del-rev
     |=  [=app-page usr-name=@p]
     ^-  ^app-page
     =/  new-reviews  (~(del by reviews.visitor-data.app-page) usr-name)
-    %=  app-page
-      visitor-data
-    [ratings.visitor-data.app-page comments.visitor-data.app-page new-reviews]
-    ==
+    =/  new-visitor-data  visitor-data.app-page(reviews new-reviews)
+    app-page(visitor-data new-visitor-data)
     --
   --
 ::
+::
+++  parse-dst-desk
+  |=  [dst-desk=@t]
+  ^-  [dst-name app-name]
+  =/  dst-desk  (trip dst-desk)
+  =/  loc  (find ['/']~ dst-desk)
+  ?~  loc  !!
+  :-  
+  (slav %p (crip (scag u.loc dst-desk)))
+  (crip (slag +(u.loc) dst-desk))
 ::
 ::
 ++  validator

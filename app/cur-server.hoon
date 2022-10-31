@@ -70,7 +70,6 @@
     ~&  "%cur-server: changing categories"
     =/  new-cur-data  (cats:cur:app-store [cur-data.state act])
     `this(cur-data new-cur-data)
-    ::  cur-choice should also be sent to subscribers after %choose
   == 
 ::  
 ++  on-arvo   on-arvo:default
@@ -111,28 +110,22 @@
     =/  dev-update  !<(dev-update q.cage.sign)
     ~&  "%cur-server: received dev update from {dev-name-tape}"
     =/  dev-name  `@p`(slav %p -.wire)
-    ?~  dev-update  `this
-    ?>  (check-dev-data:cur:app-store [dev-name dev-data.u.dev-update])  
-    ?-    -.change.u.dev-update
+    ?-    -.dev-update
         %sig
-      =/  dev-update  (need dev-update)
-      =/  app-page  (need (~(get by dev-map.dev-data.dev-update) key.change.dev-update))
-      ?:  (validate:sig [our.bowl signature.app-page key.change.dev-update now.bowl])
-        ~&  "PASSED VALIDATION"
-        `this
-      ~&  "FAILED VALIDATION"
-      `this 
+      =/  new-cur-data  (sign:cur:app-store [cur-data.state our.bowl now.bowl dev-name dev-update])
+      `this(cur-data.state new-cur-data)
         %init
-      =/  new-cur-data  (init:cur:app-store [cur-data.state dev-name dev-update])
+      =/  new-cur-data  (init:cur:app-store [cur-data.state our.bowl now.bowl dev-name dev-update])
       `this(cur-data.state new-cur-data)
     ::  
         %add
-      =/  new-cur-data  (add:cur:app-store [cur-data.state our.bowl now.bowl dev-name dev-update])
-      `this(cur-data.state new-cur-data)
+      `this
+      ::=/  new-cur-data  (add:cur:app-store [cur-data.state our.bowl now.bowl dev-name dev-update])
+      ::`this(cur-data.state new-cur-data)
     ::  
         %edit
       =/  new-cur-data  (edit:cur:app-store [cur-data.state our.bowl now.bowl dev-name dev-update])
-      ?~  (find [key.change.u.dev-update]~ key-list.cur-choice.cur-data.state)
+      ?~  (find [key.dev-update]~ key-list.cur-choice.cur-data.state)
         `this(cur-data new-cur-data)
       =/  new-cur-page  `cur-page`(some [our.bowl cur-info.state new-cur-data]) 
       :_  this(cur-data.state new-cur-data)
@@ -140,15 +133,15 @@
     ::  
         %del
       =/  new-cur-data  (del:cur:app-store [cur-data.state dev-name dev-update])
-      ?~  (find [key.change.u.dev-update]~ key-list.cur-choice.cur-data.state)
+      ?~  (find [key.dev-update]~ key-list.cur-choice.cur-data.state)
         `this(cur-data new-cur-data)
       =/  new-cur-page  `cur-page`(some [our.bowl cur-info.state new-cur-data])
       :_  this(cur-data.state new-cur-data)
       [%give %fact [/cur-page]~ %app-store-cur-page !>(new-cur-page)]~
     ::  
         %usr-visit
-      =/  new-cur-data  (usr-visit:cur:app-store [cur-data.state dev-name dev-update])
-      ?~  (find [key.change.u.dev-update]~ key-list.cur-choice.cur-data.state)
+      =/  new-cur-data  (usr-visit:cur:app-store [cur-data.state our.bowl now.bowl dev-name dev-update])
+      ?~  (find [key.dev-update]~ key-list.cur-choice.cur-data.state)
         `this(cur-data new-cur-data)
       =/  new-cur-page  `cur-page`(some [our.bowl cur-info.state new-cur-data])
       :_  this(cur-data.state new-cur-data)
