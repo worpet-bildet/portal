@@ -1,24 +1,21 @@
 /-  *app-store-data
 |%
 ::
+::  actions between the Developer and the ship which hosts the app
++$  dst-action  
+  $%
+    [%sign =key]
+    [%sent-sig =key =signature]
+    [%send-data =key]
+    [%sent-data =key =docket hash=@uvI]
+  ==
+::
 ::  actions which Developers use to add/edit/delete app-pages
 +$  dev-action
   $%
     [%add =app-name =app-page]
     [%edit =app-name =app-page]
     [%del =app-name]
-    ::[%get-desk =key]    
-  ==
-::
-::  actions between the Developer and the ship which hosts the app
-::  SUB and/or POKE RELATIONSHIP DEVA I DISTERA
-+$  dst-action  
-  $%
-    [%sign =key]
-    [%send-sig =key =signature]
-    [%get-desk =app-name]
-    ::[%request-data 
-    ::[%send-data =key docket-data=docket]
   ==
 ::
 ::  actions which Curators use to

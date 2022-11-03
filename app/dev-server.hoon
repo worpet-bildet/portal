@@ -36,53 +36,6 @@
   |=  [=mark =vase]
   ^-  (quip card _this)
   ?+    mark   (on-poke:default mark vase)  
-      ::  when poke is from visitors to app-page (can also be from our.bowl)
-      %app-store-visit-dev-action
-    =/  act  !<(visit-dev-action vase)
-    ?-    -.act
-        %rate  
-      ~&  "%dev-server: rating app"
-      =/  [changed=@tas =app-page dev-data=^dev-data]
-      (usr-visit:dev:app-store [dev-data.state src.bowl key.act act now.bowl])
-      ?:  =(changed %unchanged)  `this  :_  this(dev-data dev-data)
-      [%give %fact [/dev-update]~ %app-store-dev-update !>([%usr-visit key.act app-page])]~
-    ::    
-        %unrate  
-      ~&  "%dev-server: removing rating from app"
-      =/  [changed=@tas =app-page dev-data=^dev-data]
-      (usr-visit:dev:app-store [dev-data.state src.bowl key.act act now.bowl])
-      ?:  =(changed %unchanged)  `this  :_  this(dev-data dev-data)
-      [%give %fact [/dev-update]~ %app-store-dev-update !>([%usr-visit key.act app-page])]~
-    ::
-        %add-com 
-      ~&  "%dev-server: adding comment"    
-      =/  [changed=@tas =app-page dev-data=^dev-data]
-      (usr-visit:dev:app-store [dev-data.state src.bowl key.act act now.bowl])
-      ?:  =(changed %unchanged)  `this  :_  this(dev-data dev-data)
-      [%give %fact [/dev-update]~ %app-store-dev-update !>([%usr-visit key.act app-page])]~
-    ::
-        %del-com  
-      ~&  "%dev-server: deleting comment"
-      =/  [changed=@tas =app-page dev-data=^dev-data]
-      (usr-visit:dev:app-store [dev-data.state src.bowl key.act act now.bowl])
-      ?:  =(changed %unchanged)  `this  :_  this(dev-data dev-data)
-      [%give %fact [/dev-update]~ %app-store-dev-update !>([%usr-visit key.act app-page])]~
-    ::
-        %add-rev
-      ~&  "%dev-server: adding review"    
-      =/  [changed=@tas =app-page dev-data=^dev-data]
-      (usr-visit:dev:app-store [dev-data.state src.bowl key.act act now.bowl])
-      ?:  =(changed %unchanged)  `this  :_  this(dev-data dev-data)
-      [%give %fact [/dev-update]~ %app-store-dev-update !>([%usr-visit key.act app-page])]~
-    ::
-        %del-rev
-      ~&  "%dev-server: deleting review"    
-      =/  [changed=@tas =app-page dev-data=^dev-data]
-      (usr-visit:dev:app-store [dev-data.state src.bowl key.act act now.bowl])
-      ?:  =(changed %unchanged)  `this  :_  this(dev-data dev-data)
-      [%give %fact [/dev-update]~ %app-store-dev-update !>([%usr-visit key.act app-page])]~
-    ==
-  ::
       ::  when Developer is modifying data
       %app-store-dev-action
     ?>  =(our.bowl src.bowl)
@@ -92,14 +45,15 @@
       ~&  "%dev-server: adding app page"
       =^  changed  dev-data
       (add:dev:app-store [our.bowl dev-data.state act])
-      `this
+      ?:  =(changed %unchanged)  `this  :_  this
+      [%give %fact [/dev-update]~ %app-store-dev-update !>([%add [our.bowl app-name.act] app-page.act])]~
     ::
         %edit
       ~&  "%dev-server: editing app page"
       =^  changed  dev-data
       (edit:dev:app-store [our.bowl dev-data.state act])
       ?:  =(changed %unchanged)  `this  :_  this
-      [%give %fact [/dev-update]~ %app-store-dev-update !>([%edit [our.bowl app-name.act] app-page.act])]~ 
+      [%give %fact [/dev-update]~ %app-store-dev-update !>([%change [our.bowl app-name.act] app-page.act])]~ 
     ::
         %del
       ~&  "%dev-server: deleting app page"
@@ -109,18 +63,71 @@
       [%give %fact [/dev-update]~ %app-store-dev-update !>([%del our.bowl app-name.act])]~ 
     == 
   ::
-      ::  receiving a signature from distributor ship to dev-server
+      ::  when receiving data from distributor ship to dev-server
       %app-store-dst-action  
     =/  act  !<(dst-action vase)
     ?+    -.act    (on-poke:default mark vase)
-        %send-sig  
+        %sent-sig  
       ~&  "%dev-server: receiving signature"
       ?.  =(src.bowl q.signature.act)
         ~&  "%dev-server: ship in sig is different than src.bowl"
         `this
-      =/  [changed=@tas =app-page dev-data=^dev-data]  (sign:dev:app-store [dev-data.state act])
+      =/  [changed=@tas =app-page dev-data=^dev-data]  (sign:dev:app-store [dev-data.state src.bowl act])
       ?:  =(changed %unchanged)  `this  :_  this(dev-data dev-data)
-      [%give %fact [/dev-update]~ %app-store-dev-update !>([%sig key.act app-page])]~ 
+      [%give %fact [/dev-update]~ %app-store-dev-update !>([%change key.act app-page])]~ 
+    ::
+        %sent-data
+      ~&  "%dev-server: receiving data from dst-server"
+      =/  [changed=@tas =app-page dev-data=^dev-data]  (data:dev:app-store [dev-data.state src.bowl act])
+      ?:  =(changed %unchanged)  `this  :_  this(dev-data dev-data)
+      [%give %fact [/dev-update]~ %app-store-dev-update !>([%change key.act app-page])]~ 
+    ==
+  ::
+      ::  when poke is from visitors to app-page (can also be from our.bowl)
+      %app-store-visit-dev-action
+    =/  act  !<(visit-dev-action vase)
+    ?-    -.act
+        %rate  
+      ~&  "%dev-server: rating app"
+      =/  [changed=@tas =app-page dev-data=^dev-data]
+      (usr-visit:dev:app-store [dev-data.state src.bowl key.act act now.bowl])
+      ?:  =(changed %unchanged)  `this  :_  this(dev-data dev-data)
+      [%give %fact [/dev-update]~ %app-store-dev-update !>([%change key.act app-page])]~
+    ::    
+        %unrate  
+      ~&  "%dev-server: removing rating from app"
+      =/  [changed=@tas =app-page dev-data=^dev-data]
+      (usr-visit:dev:app-store [dev-data.state src.bowl key.act act now.bowl])
+      ?:  =(changed %unchanged)  `this  :_  this(dev-data dev-data)
+      [%give %fact [/dev-update]~ %app-store-dev-update !>([%change key.act app-page])]~
+    ::
+        %add-com 
+      ~&  "%dev-server: adding comment"    
+      =/  [changed=@tas =app-page dev-data=^dev-data]
+      (usr-visit:dev:app-store [dev-data.state src.bowl key.act act now.bowl])
+      ?:  =(changed %unchanged)  `this  :_  this(dev-data dev-data)
+      [%give %fact [/dev-update]~ %app-store-dev-update !>([%change key.act app-page])]~
+    ::
+        %del-com  
+      ~&  "%dev-server: deleting comment"
+      =/  [changed=@tas =app-page dev-data=^dev-data]
+      (usr-visit:dev:app-store [dev-data.state src.bowl key.act act now.bowl])
+      ?:  =(changed %unchanged)  `this  :_  this(dev-data dev-data)
+      [%give %fact [/dev-update]~ %app-store-dev-update !>([%change key.act app-page])]~
+    ::
+        %add-rev
+      ~&  "%dev-server: adding review"    
+      =/  [changed=@tas =app-page dev-data=^dev-data]
+      (usr-visit:dev:app-store [dev-data.state src.bowl key.act act now.bowl])
+      ?:  =(changed %unchanged)  `this  :_  this(dev-data dev-data)
+      [%give %fact [/dev-update]~ %app-store-dev-update !>([%change key.act app-page])]~
+    ::
+        %del-rev
+      ~&  "%dev-server: deleting review"    
+      =/  [changed=@tas =app-page dev-data=^dev-data]
+      (usr-visit:dev:app-store [dev-data.state src.bowl key.act act now.bowl])
+      ?:  =(changed %unchanged)  `this  :_  this(dev-data dev-data)
+      [%give %fact [/dev-update]~ %app-store-dev-update !>([%change key.act app-page])]~
     ==
   ==
 

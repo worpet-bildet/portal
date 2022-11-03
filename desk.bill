@@ -1,4 +1,5 @@
 :~  %usr-server
     %dev-server
     %cur-server
+    %dst-server
 ==

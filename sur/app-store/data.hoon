@@ -1,7 +1,5 @@
 /-  *docket
 |%
-+$  dst-sig  [=key =signature]
-
 +$  usr-data  (map cur-name cur-page)
 ::
 ::
@@ -34,11 +32,9 @@
   $%
     [%init =dev-data]
     [%add =key =app-page]
-    [%edit =key =app-page]
+    [%change =key =app-page]
     [%del =key] 
-    [%usr-visit =key =app-page]
     [%wipe ~]
-    [%sig =key =app-page]
   ==
 +$  dev-data  [=dev-map =app-set]
 +$  dev-map  (map key app-page)  ::  dev-name is the same in all keys
@@ -56,10 +52,10 @@
                                      ::  Property,House,Real Estate
     screenshots=(list screenshot)    ::  up to 10 screenshots on Apple Store. 
     desk-hash=@uv    
-    dst-desk=@t                ::==key,  link is made from this (dev-name + app-name)
+    dst-desk=@t                      ::  link is made from this
     =signature
     =visitor-data
-    docket-data=docket
+    =docket
   == 
 ::
 +$  signature   [p=@ux q=ship r=life]
@@ -96,13 +92,17 @@
 ::  Dst Data Types
 +$  dst-name  @p
 ::
+::
+::
+::
+::
 ::  METADATA TO ADD LATER
 ::    last-update=@da
-::    release-date=@da                 ::  MOVE TO APP PAGE
+::    release-date=@da
 ::    size-mb=@rs
 ::
 ::  OLD, BUT COMMENTS ARE RELEVANT
-::+$  docket-data                      ::  should it automatically add it from docket file?
+::+$  docket-data                      
 ::  $:
 ::    title=@t
 ::    info=@t                          ::  subtitle/summary, up to 30 chars long in apple
@@ -110,7 +110,7 @@
 ::    version=[@ud @ud @ud]
 ::    website=@t
 ::    license=@t
-::    base=@t                          ::  same as installed into(@tas)?
+::    base=@t                          
 ::    image=@t                         ::  app icon, should be square
 ::  ==                                 ::  To ensure the icon is legible in all sizes, 
 ::                                     ::  avoid adding unnecessary visual details

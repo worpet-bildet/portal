@@ -6,7 +6,7 @@
     keywords=`(list keyword:data)`~[%keyword1 %keyword2]         
     screenshots=`(list screenshot:data)`~['screen1' 'screen2']
     desk-hash=0v1df64.49beg
-    distributor-desk='~zod/app-store'
+    distributor-desk='~doznec-dozzod-dozdev/app-store'
     signature=*signature:data  
     visitor-data=[`(map @p rating:data)`(malt (limo ~[[~zod 1] [~dilryd-mopreg 4]])) `((mop @da comment:data) lth)`*((mop @da comment:data) lth) `(map @p review:data)`*(map @p review:data)]
     docket-data=*docket:data

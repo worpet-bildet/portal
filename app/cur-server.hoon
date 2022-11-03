@@ -37,17 +37,20 @@
   =/  act  !<(cur-action vase)  
   ?-    -.act
       %sub    
-    =/  dev-name-wire  /(scot %p +.act)
     ~&  "%cur-server: subscribing to {(scow %p +.act)}"
+    =/  dev-name-wire  /(scot %p +.act)
     :_  this
     [%pass dev-name-wire %agent [+.act %dev-server] %watch /dev-update]~
   ::  
       %unsub
-    =/  dev-name-wire  /(scot %p +.act)
     ~&  "%cur-server: unsubscribing from {(scow %p +.act)}" 
-    =/  new-cur-data  (unsub:cur:app-store [cur-data.state dev-name.act])
-    =/  new-cur-page  `cur-page`(some [our.bowl cur-info.state new-cur-data])
-    :_  this(cur-data.state new-cur-data)
+    =^  changed  cur-data  
+    (unsub:cur:app-store [cur-data.state dev-name.act])
+    ?:  =(changed %unchanged)
+      `this
+    =/  new-cur-page  `cur-page`(some [our.bowl cur-info.state cur-data])
+    =/  dev-name-wire  /(scot %p +.act)
+    :_  this
     :~  
       [%pass dev-name-wire %agent [+.act %dev-server] %leave ~]
       [%give %fact [/cur-page]~ %app-store-cur-page !>(new-cur-page)]
@@ -61,9 +64,12 @@
   ::
       %select  
     ~&  "%cur-server: adding cur-choice to curator page"
-    =/  new-cur-data  (select:cur:app-store [cur-data.state act])
-    =/  new-cur-page  `cur-page`(some [our.bowl cur-info.state new-cur-data])
-    :_  this(cur-data.state new-cur-data)
+    =^  changed  cur-data  
+    (select:cur:app-store [cur-data.state act])
+    ?:  =(changed %unchanged)
+      `this
+    =/  new-cur-page  `cur-page`(some [our.bowl cur-info.state cur-data])
+    :_  this
     [%give %fact [/cur-page]~ %app-store-cur-page !>(new-cur-page)]~
   ::
       %cats
@@ -111,44 +117,38 @@
     ~&  "%cur-server: received dev update from {dev-name-tape}"
     =/  dev-name  `@p`(slav %p -.wire)
     ?-    -.dev-update
-        %sig
-      =/  new-cur-data  (sign:cur:app-store [cur-data.state our.bowl now.bowl dev-name dev-update])
-      `this(cur-data.state new-cur-data)
         %init
       =/  new-cur-data  (init:cur:app-store [cur-data.state our.bowl now.bowl dev-name dev-update])
       `this(cur-data.state new-cur-data)
     ::  
         %add
+      =^  changed  cur-data  
+      (put:cur:app-store [cur-data.state our.bowl now.bowl dev-name dev-update])
       `this
-      ::=/  new-cur-data  (add:cur:app-store [cur-data.state our.bowl now.bowl dev-name dev-update])
-      ::`this(cur-data.state new-cur-data)
     ::  
-        %edit
-      =/  new-cur-data  (edit:cur:app-store [cur-data.state our.bowl now.bowl dev-name dev-update])
+        %change
+      =^  changed  cur-data
+      (put:cur:app-store [cur-data.state our.bowl now.bowl dev-name dev-update])
+      ?:  =(changed %unchanged)
+        `this
       ?~  (find [key.dev-update]~ key-list.cur-choice.cur-data.state)
-        `this(cur-data new-cur-data)
-      =/  new-cur-page  `cur-page`(some [our.bowl cur-info.state new-cur-data]) 
-      :_  this(cur-data.state new-cur-data)
+        `this
+      =/  new-cur-page  `cur-page`(some [our.bowl cur-info.state cur-data]) 
+      :_  this
       [%give %fact [/cur-page]~ %app-store-cur-page !>(new-cur-page)]~
     ::  
         %del
-      =/  new-cur-data  (del:cur:app-store [cur-data.state dev-name dev-update])
+      =^  changed  cur-data
+      (del:cur:app-store [cur-data.state dev-name dev-update])
+      ?:  =(changed %unchanged)
+        `this
       ?~  (find [key.dev-update]~ key-list.cur-choice.cur-data.state)
-        `this(cur-data new-cur-data)
-      =/  new-cur-page  `cur-page`(some [our.bowl cur-info.state new-cur-data])
-      :_  this(cur-data.state new-cur-data)
-      [%give %fact [/cur-page]~ %app-store-cur-page !>(new-cur-page)]~
-    ::  
-        %usr-visit
-      =/  new-cur-data  (usr-visit:cur:app-store [cur-data.state our.bowl now.bowl dev-name dev-update])
-      ?~  (find [key.dev-update]~ key-list.cur-choice.cur-data.state)
-        `this(cur-data new-cur-data)
-      =/  new-cur-page  `cur-page`(some [our.bowl cur-info.state new-cur-data])
-      :_  this(cur-data.state new-cur-data)
+        `this
+      =/  new-cur-page  `cur-page`(some [our.bowl cur-info.state cur-data])
+      :_  this
       [%give %fact [/cur-page]~ %app-store-cur-page !>(new-cur-page)]~
     ::
         %wipe  `this
-        
     ==
   ==
 ::
