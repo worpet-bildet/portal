@@ -74,7 +74,7 @@ You can check the state of the agent after each poke with:
 
 #### %sign and %send-data (for Distributors)
 
-The Developer is required to receive a signature from the Distributor, verifying that the Developer is allowed to share the app. The exception to this rule is when the Distributor is a moon of the Developer (or vice versa) or when the are the same ship.
+The Developer is required to receive a signature from the Distributor, verifying that the Developer is allowed to share the app. The exception to this rule is when the Distributor is a moon of the Developer (or vice versa) or when they are the same ship.
 
 If the Developer has not received proper permission, the Curator will reject the data sent to him via `dev-update`.
 
