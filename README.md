@@ -5,7 +5,7 @@
 For details see:
 https://github.com/urbit/urbit.org/blob/master/content/grants/app-store.md
 
-For discussion visit on Urbit:
+For discussion, visit on Urbit:
 ~dilryd-mopreg/app-store
 
 ### How to install
@@ -22,19 +22,21 @@ Download the zip file from github, and extract it to your fake ship. Delete the 
 |commit %app-store
 |install our %app-store
 ```
-Now %app-store has been installed on one fake ship. To see more clearly how it works, you can install it on multiple ships and assume different roles (Developer, Curator, User) for each ship
+Now %app-store has been installed on one fake ship. To see more clearly how it works, you can install it on multiple ships and assume different roles (Distributor, Developer, Curator, User) for each ship.
 
 ### How it works
 
-There are 3 agents: %dev-server, %cur-server and %usr-server. %usr-server can subscribe to multiple %cur-servers, and %cur-server can subscribe to multiple %dev-servers.
+There are 4 agents: %dst-server, %dev-server, %cur-server and %usr-server. %usr-server can subscribe to multiple %cur-servers, and %cur-server can subscribe to multiple %dev-servers. %dev-server receives data from %dst-server who is the app distributor.
 
-%dev-server publishes app pages (one for each of his apps), and %cur-server receives and stores them in cur-data. Then the Curator can choose a subset of those he wants to present, in cur-choice. %cur-server publishes cur-choice, and %usr-server receives and stores them in usr-data. 
+%dst-server hosts the app for download, %dev-server publishes app pages (one for each of his apps), and %cur-server receives and stores them in cur-data. Then the Curator can choose a subset of those he wants to present, in cur-choice. %cur-server publishes cur-choice, and %usr-server receives and stores them in usr-data. 
+
+
 
 ### How to use
 
 There is a few actions that can be used to test the application. They have been made into generators.
 
-We can set up 3 fake ships: ~dev for Developer, ~ter for Curator and ~ser for User.
+We can set up 4 fake ships: ~des for Distributor, ~dev for Developer, ~ter for Curator and ~ser for User.
 
 #### %add, %edit, %del (for Developers)
 
@@ -45,21 +47,23 @@ In dojo, do the following:
 =data -build-file /=app-store=/sur/app-store/data/hoon
 ```
 ```
-=app :*
+=app1 :*
     description='some description 3'
     keywords=`(list keyword:data)`~[%keyword1 %keyword2]         
     screenshots=`(list screenshot:data)`~['screen1' 'screen2']    
+    desk-hash=*@uv
+    dst-desk='~dev/app1' 
+    signature=[*@ux ~dev 0]
     visitor-data=[`(map @p rating:data)`(malt (limo ~[[~zod 1] [~dilryd-mopreg 4]])) `((mop @da comment:data) lth)`*((mop @da comment:data) lth) `(map @p review:data)`*(map @p review:data)]
-    auxiliary-data=[desk-hash=0v1df64.49beg installed-into=%app-store developer-desk='~dister-dozzod-dilryd-mopreg/app-store' last-update=~2022.2.2 release-date=~2023.1.1 size-mb=.17.2]
-    docket-data=[title='App Store' info='A tool for decentralized curation and discovery of Urbit apps' color=0x1231 version=[0 0 1] website='https://github.com/dilryd-mopreg/app-store' license='MIT' base=%app-store image='some-link']
+    docket=*docket:data
 == 
 ```
 Now you have a sample app-page defined in dojo, so you don't have to manually insert it every time. You can also find it in app-store/sample-actions.
 
 `[%add =app-name =app-page]` will create a new app, `[%edit =app-name =app-page]` will overwrite the existing app-page with a new one, and `[%del =app-name]` will delete an existing app-page.
 ```
-:dev-server|add %app1 app
-:dev-server|edit %app1 app
+:dev-server|add %app1 app1
+:dev-server|edit %app1 app1
 :dev-server|del %app1
 ```
 
@@ -67,6 +71,56 @@ You can check the state of the agent after each poke with:
 ```
 :dev-server +dbug
 ```
+
+#### %sign and %send-data (for Distributors)
+
+The Developer is required to receive a signature from the Distributor, verifying that the Developer is allowed to share the app. The exception to this rule is when the Distributor is a moon of the Developer (or vice versa) or when the are the same ship.
+
+If the Developer has not received proper permission, the Curator will reject the data sent to him via `dev-update`.
+
+In order to demonstrate this, we need the Developer to add an app hosted by the Distributor. So let's take `%app-store` since it is already installed. 
+
+First, ~dev needs to create and `app-page` called `%app-store`, with `dst-desk` being '~des/app-store'.
+
+```
+=app-store :*
+    description='some description 3'
+    keywords=`(list keyword:data)`~[%keyword1 %keyword2]         
+    screenshots=`(list screenshot:data)`~['screen1' 'screen2']    
+    desk-hash=*@uv
+    dst-desk='~des/app-store' 
+    signature=[*@ux ~dev 0]
+    visitor-data=[`(map @p rating:data)`(malt (limo ~[[~zod 1] [~dilryd-mopreg 4]])) `((mop @da comment:data) lth)`*((mop @da comment:data) lth) `(map @p review:data)`*(map @p review:data)]
+    docket=*docket:data
+== 
+```
+`:dev-server|add %app-store app-store`
+
+Then, ~des needs to add a valid desk.docket-0 file to the `%app-store` desk and a desk.ship file containing `~des`. For the desk.docket-0 file, the important part is that `glob-ames` has `~des` at the head of the cell, like so:
+```
+:~  title+'App Store'
+    info+'Urbit's decentralized App Store.'
+    color+0x81.88c9
+    image+'https://media.urbit.org/guides/additional/dist/wut.svg'
+    base+'blabla'
+    glob-ames+[~des 0v0]
+    version+[0 0 1]
+    website+'https://developers.urbit.org/guides/additional/dist/guide'
+    license+'MIT'
+==
+```
+
+Then, from ~des we can send the docket data and desk hash to ~dev, so he can display it on the app-page.
+```
+:dst-server|send-data [~dev %app-store]
+```
+
+Further, ~des also needs to send ~dev a signature, so that Curators can accept ~dev's app-page.
+```
+:dst-server|sign [~dev %app-store]
+```
+
+If, for example, the Distributor was ~doznec-dozzod-dozdev (a moon of ~dev), a signature would not be required.
 
 #### %sub and %unsub (for Curators and Users)
 
@@ -96,7 +150,7 @@ After unsubscribing, previous data from the publisher is deleted.
    
 `[%select =key-list =cat-map]` is used by Curators to select which apps (and in which order and category) are they going to display. `key-list` defines the order in which the apps are displayed, while `cat-map` is a `(map key category)` connecting each app with a corresponding category. Cat-map can only have apps which are in `cur-map` (i.e. came by subscription from a Developer) and categories which were previously defined in `cat-set`.
 ```
-:cur-server|select `key-list:data`~[[~dev %app1] [~dev %app2]] `cat-map:data`(malt (limo ~[[[~dev %app1] %cat1] [[~dev %app2] %cat2]]))
+:cur-server|select `key-list:data`~[[~dev %app1] [~dev %app-store]] `cat-map:data`(malt (limo ~[[[~dev %app1] %cat1] [[~dev %app-store] %cat2]]))
 ```
  
 #### %rate, %unrate, %add-com, %del-com, %add-rev, %del-rev (for Users)
