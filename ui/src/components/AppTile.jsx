@@ -18,11 +18,11 @@ export class AppTile extends React.Component {
 
   render() {
     return (
-      <Card href="#" className="w-full">
+      <Card href="#" className="w-full rounded border-black drop-shadow-none hover:bg-gray-200 shadow-none">
         <div className="flex flex-row justify-between">
           <div className='flex flex-row'>
             <div
-            className="flex-none relative w-12 h-12 mr-3 rounded-lg bg-gray-200 overflow-hidden"
+            className="flex-none relative w-20 h-20 mr-10 rounded-lg bg-gray-200 overflow-hidden"
             style={{ backgroundColor: normalizeUrbitColor(this.props.color) }}
           >
             <img
@@ -33,9 +33,9 @@ export class AppTile extends React.Component {
             />
           </div>
           <div className='flex flex-col space-y-3'>
-            <h3>
+            <p className='text-2xl font-bold'>
               {this.props.title}
-            </h3>
+            </p>
             {
               this.props.keywords && <ul className="flex flex-wrap gap-2">
                 {this.props.keywords.map((tag, i) => <li key={`${this.props.title}_${tag}_${i}`}>
