@@ -1,4 +1,4 @@
-/-  *app-store-action, *app-store-data, docket, spider
+/-  *app-store-action, *app-store-data, docket
 /+  default-agent, dbug, app-store, sig
 =,  clay
 |%
@@ -45,15 +45,19 @@
       ~&  "%dev-server: adding app page"
       =^  changed  dev-data
       (add:dev:app-store [our.bowl dev-data.state act])
-      ?:  =(changed %unchanged)  `this  :_  this
-      [%give %fact [/dev-update]~ %app-store-dev-update !>([%add [our.bowl app-name.act] app-page.act])]~
+      ?:  =(changed %unchanged)  `this  
+      =/  new-app-page  (~(got by dev-map.dev-data.state) [our.bowl app-name.act])
+      :_  this
+      [%give %fact [/dev-update]~ %app-store-dev-update !>([%add [our.bowl app-name.act] new-app-page])]~
     ::
         %edit
       ~&  "%dev-server: editing app page"
       =^  changed  dev-data
       (edit:dev:app-store [our.bowl dev-data.state act])
-      ?:  =(changed %unchanged)  `this  :_  this
-      [%give %fact [/dev-update]~ %app-store-dev-update !>([%change [our.bowl app-name.act] app-page.act])]~ 
+      ?:  =(changed %unchanged)  `this  
+      =/  new-app-page  (~(got by dev-map.dev-data.state) [our.bowl app-name.act])
+      :_  this
+      [%give %fact [/dev-update]~ %app-store-dev-update !>([%change [our.bowl app-name.act] new-app-page])]~ 
     ::
         %del
       ~&  "%dev-server: deleting app page"
@@ -64,10 +68,10 @@
     == 
   ::
       ::  when receiving data from distributor ship to dev-server
-      %app-store-dst-action  
-    =/  act  !<(dst-action vase)
-    ?+    -.act    (on-poke:default mark vase)
-        %sent-sig  
+      %app-store-dst-update  
+    =/  act  !<(dst-update vase)
+    ?-    -.act
+        %sig  
       ~&  "%dev-server: receiving signature"
       ?.  =(src.bowl q.signature.act)
         ~&  "%dev-server: ship in sig is different than src.bowl"
@@ -76,7 +80,7 @@
       ?:  =(changed %unchanged)  `this  :_  this(dev-data dev-data)
       [%give %fact [/dev-update]~ %app-store-dev-update !>([%change key.act app-page])]~ 
     ::
-        %sent-data
+        %data
       ~&  "%dev-server: receiving data from dst-server"
       =/  [changed=@tas =app-page dev-data=^dev-data]  (data:dev:app-store [dev-data.state src.bowl act])
       ?:  =(changed %unchanged)  `this  :_  this(dev-data dev-data)

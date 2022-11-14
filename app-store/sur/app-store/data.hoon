@@ -1,12 +1,25 @@
 /-  *docket
 |%
 +$  usr-data  (map cur-name cur-page)
++$  cur-name  @p
 ::
 ::
 ::  Cur Page
 ::
-+$  cur-page  (unit [=cur-name =cur-info =cur-data])
-+$  cur-name  @p
++$  cur-update
+  $%
+    [%init =cur-page]
+    [%info =cur-info]
+    [%choice =cur-choice]
+    [%new-dev =cur-map =aux-map]
+    [%del-dev =cur-data]
+    [%new-app-page =key =app-page]
+    [%edit-app-page =key =app-page]
+    [%del-app-page =key]
+  ==
+::
++$  cur-page  [=cur-info =cur-data]
+::
 +$  cur-info
   $:
     cur-title=@t
@@ -26,8 +39,7 @@
 ::
 ::
 ::  Dev Page
-
-::  fix the mechanics so dev doesnt send %add app without having a signature
+::
 +$  dev-update   
   $%
     [%init =dev-data]
@@ -37,40 +49,44 @@
     [%wipe ~]
   ==
 +$  dev-data  [=dev-map =app-set]
-+$  dev-map  (map key app-page)  ::  dev-name is the same in all keys
++$  dev-map  (map key app-page)      ::  dev-name is the same in all keys
 +$  app-set  (set app-name) 
 ::
 +$  key  [=dev-name =app-name]
 +$  dev-name  @p 
-+$  app-name  @tas                   ::  up to 30 chars long on Apple Store
++$  app-name  @tas                   
 ::
 +$  app-page
-  $: 
-    description=@t
-    keywords=(list keyword)          ::  limited to 100 characters total, input with terms
-                                     ::  separated by commas and no spaces. For example:         
-                                     ::  Property,House,Real Estate
-    screenshots=(list screenshot)    ::  up to 10 screenshots on Apple Store. 
-    desk-hash=@uv    
-    dst-desk=@t                      ::  link is made from this
-    =signature
-    =visitor-data
-    =docket
+  $:
+    =dev-input
+    =dst-input
+    =usr-input  
   == 
 ::
-+$  signature   [p=@ux q=ship r=life]
++$  dev-input
+  $:
+    description=@t
+    keywords=(list keyword)          
+    screenshots=(list screenshot)    
+    dst-desk=@t                      ::  link is made from this
+  == 
 +$  keyword  @tas
-+$  screenshot  @t  ::  need to define input screenshot size so they look nice
++$  screenshot  @t  
 ::
-+$  visitor-data
++$  dst-input
+  $:
+    =signature  
+    desk-hash=@uv
+    =docket
+  ==
++$  signature   [p=@ux q=ship r=life]
+::
++$  usr-input
   $:
     ratings=(map @p rating)
     comments=((mop @da comment) lth)
     reviews=(map @p review)
-    ::  First should be shown is-current=%.y reviews and then others
-    ::  sorted by date
-  ==
-::                                 
+  ==                            
 +$  rating
   $|  @ud  
   |=  r=@ud 
@@ -86,35 +102,17 @@
     text=@t
     hash=@uv
     is-current=?    
-    is-safe=?                        ::  3rd possibility as no decision?
+    is-safe=?                        
   ==
 ::
 ::  Dst Data Types
+::
 +$  dst-name  @p
-::
-::
-::
-::
-::
-::  METADATA TO ADD LATER
-::    last-update=@da
-::    release-date=@da
-::    size-mb=@rs
-::
-::  OLD, BUT COMMENTS ARE RELEVANT
-::+$  docket-data                      
-::  $:
-::    title=@t
-::    info=@t                          ::  subtitle/summary, up to 30 chars long in apple
-::    color=@ux                        ::    store, here maybe it can be longer?
-::    version=[@ud @ud @ud]
-::    website=@t
-::    license=@t
-::    base=@t                          
-::    image=@t                         ::  app icon, should be square
-::  ==                                 ::  To ensure the icon is legible in all sizes, 
-::                                     ::  avoid adding unnecessary visual details
-
++$  dst-update   
+  $%
+    [%sig =key =signature]
+    [%data =key =docket hash=@uvI]
+  ==
 
 --
 

@@ -5,16 +5,14 @@
 +$  dst-action  
   $%
     [%sign =key]
-    [%sent-sig =key =signature]
     [%send-data =key]
-    [%sent-data =key =docket hash=@uvI]
   ==
 ::
 ::  actions which Developers use to add/edit/delete app-pages
 +$  dev-action
   $%
-    [%add =app-name =app-page]
-    [%edit =app-name =app-page]
+    [%add =app-name =dev-input]
+    [%edit =app-name =dev-input]
     [%del =app-name]
   ==
 ::
