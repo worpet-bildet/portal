@@ -68,7 +68,7 @@
       %sub    
     ~&  "%usr-server: subscribing to {(scow %p +.act)}"
     :_  this
-    [%pass cur-name-wire %agent [+.act %cur-server] %watch /cur-page]~
+    [%pass cur-name-wire %agent [+.act %cur-server] %watch /cur-update]~
   ::
       %unsub  
     ~&  "%usr-server: unsubscribing from {(scow %p +.act)}"
@@ -97,15 +97,57 @@
     ~&  "%usr-server: got kick from {cur-name-tape}, resubscribing..."
     =/  cur-name  `@p`(slav %p -.wire)
     :_  this
-    [%pass wire %agent [cur-name %cur-server] %watch /cur-page]~
+    [%pass wire %agent [cur-name %cur-server] %watch /cur-update]~
   ::
       %fact
-    =/  cur-page  !<(cur-page q.cage.sign)
-    ~&  "%usr-server: received cur-page from {cur-name-tape}"
+    =/  cur-update  !<(cur-update q.cage.sign)
+    ~&  "%usr-server: received cur-update from {cur-name-tape}"
     =/  cur-name  `@p`(slav %p -.wire)
-    ?~  cur-page  `this(usr-data.state (~(del by usr-data.state) cur-name))
-    ?>  =(cur-name cur-name.u.cur-page)
-    `this(usr-data.state (~(put by usr-data.state) cur-name cur-page))
+    ?-    -.cur-update
+        %init  
+      `this(usr-data (~(put by usr-data) cur-name cur-page.cur-update))
+    ::
+        %info  
+      `this(usr-data (~(jab by usr-data) cur-name |=(=cur-page cur-page(cur-info cur-info.cur-update))))
+    ::  
+        %choice
+      `this(usr-data (~(jab by usr-data) cur-name |=(=cur-page cur-page(cur-choice.cur-data cur-choice.cur-update))))
+    ::  
+        %new-dev  
+      `this(usr-data (~(jab by usr-data) cur-name |=(=cur-page cur-page(cur-map.cur-data cur-map.cur-update, aux-map.cur-data aux-map.cur-update))))
+    ::  
+        %del-dev  
+      `this(usr-data (~(jab by usr-data) cur-name |=(=cur-page cur-page(cur-data cur-data.cur-update))))
+    ::  
+        %new-app-page  
+      =/  cur-data  +:(~(got by usr-data) cur-name)
+      =^  changed  cur-data  
+      (put:cur:app-store [cur-data our.bowl now.bowl dev-name.key.cur-update [%add key.cur-update app-page.cur-update]])
+      ?:  =(changed %unchanged)  `this
+      `this(usr-data (~(jab by usr-data) cur-name |=(=cur-page cur-page(cur-data cur-data))))
+    ::
+        %edit-app-page  
+      =/  cur-data  +:(~(got by usr-data) cur-name)
+      =^  changed  cur-data  
+      (put:cur:app-store [cur-data our.bowl now.bowl dev-name.key.cur-update [%change key.cur-update app-page.cur-update]])
+      ?-    changed 
+          %unchanged
+        `this
+      ::
+          %deleted
+        `this(usr-data (~(jab by usr-data) cur-name |=(=cur-page cur-page(cur-data cur-data))))
+      ::
+          %changed
+        `this(usr-data (~(jab by usr-data) cur-name |=(=cur-page cur-page(cur-data cur-data))))
+      ==
+    ::
+        %del-app-page
+      =/  cur-data  +:(~(got by usr-data) cur-name)
+      =^  changed  cur-data
+      (del:cur:app-store [cur-data dev-name.key.cur-update [%del key.cur-update]])
+      ?:  =(changed %unchanged)  `this
+      `this(usr-data (~(jab by usr-data) cur-name |=(=cur-page cur-page(cur-data cur-data))))
+    ==
   ==
 ::
 ++  on-fail   on-fail:default
@@ -123,7 +165,7 @@
       [%x %get-cur @ ~]
     =/  cur=@p  (slav %p i.t.t.path)
     =/  maybe-cur  (~(get by `^usr-data`+.state) cur)
-    ?~  maybe-cur  ``cur-page+!>(`^cur-page`maybe-cur)
+    ?~  maybe-cur  ``noun+!>(~)
     ``cur-page+!>(`^cur-page`u.maybe-cur)
   ==
 --

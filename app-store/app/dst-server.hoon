@@ -31,27 +31,25 @@
 ++  on-poke 
   |=  [=mark =vase]
   ^-  (quip card _this)
-  ?+    mark   (on-poke:default mark vase)    
-      %app-store-dst-action
-    =/  act  !<(dst-action vase)
-    ?+    -.act    (on-poke:default mark vase)
-        ::  sending a signature from distributor ship to dev-server
-        %sign  
-      ?>  =(src.bowl our.bowl)
-      ~&  "%dst-server: sending signature to %dev-server"
-      =/  signature  (sign:sig [our.bowl now.bowl key.act])
-      :_  this
-      [%pass /sent-sig %agent [dev-name.key.act %dev-server] %poke %app-store-dst-action !>([%sent-sig key.act signature])]~
+  ?.  ?=(%app-store-dst-action mark)  (on-poke:default mark vase)
+  =/  act  !<(dst-action vase)
+  ?-    -.act
+      ::  sending a signature from distributor ship to dev-server
+      %sign  
+    ?>  =(src.bowl our.bowl)
+    ~&  "%dst-server: sending signature to %dev-server"
+    =/  signature  (sign:sig [our.bowl now.bowl key.act])
+    :_  this
+    [%pass /sig %agent [dev-name.key.act %dev-server] %poke %app-store-dst-update !>([%sig key.act signature])]~
   ::
-        %send-data
-      ?>  =(src.bowl our.bowl)
-      ~&  "%dst-server: getting docket data"
-      =/  app-name  `@t`app-name.key.act
-      =/  hash  .^(@uvI %cz /(scot %p our.bowl)/(scot %tas app-name)/(scot %da now.bowl))
-      =/  docket  .^(docket %cx /(scot %p our.bowl)/(scot %tas app-name)/(scot %da now.bowl)/desk/docket-0)
-      :_  this
-      [%pass /send-sig %agent [dev-name.key.act %dev-server] %poke %app-store-dst-action !>([%sent-data key.act docket hash])]~
-    ==
+      %send-data
+    ?>  =(src.bowl our.bowl)
+    ~&  "%dst-server: getting docket data"
+    =/  app-name  `@t`app-name.key.act
+    =/  hash  .^(@uvI %cz /(scot %p our.bowl)/(scot %tas app-name)/(scot %da now.bowl))
+    =/  docket  .^(docket %cx /(scot %p our.bowl)/(scot %tas app-name)/(scot %da now.bowl)/desk/docket-0)
+    :_  this
+    [%pass /data %agent [dev-name.key.act %dev-server] %poke %app-store-dst-update !>([%data key.act docket hash])]~
   ==
 ::
 ++  on-arvo   on-arvo:default

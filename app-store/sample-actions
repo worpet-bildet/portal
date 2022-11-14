@@ -1,15 +1,18 @@
 
 =data -build-file /=app-store=/sur/app-store/data/hoon
 
-=app :*
-    description='some description 3'
+=app2 :*
+    description='some description 1'
     keywords=`(list keyword:data)`~[%keyword1 %keyword2]         
-    screenshots=`(list screenshot:data)`~['screen1' 'screen2']
-    desk-hash=0v1df64.49beg
-    distributor-desk='~doznec-dozzod-dozdev/app-store'
-    signature=*signature:data  
+    screenshots=`(list screenshot:data)`~['screen1' 'screen2']    
+    dst-desk='~dev/app2' 
+==
+
+______________
+    desk-hash=*@uv
+    signature=[*@ux ~dev 0]
     visitor-data=[`(map @p rating:data)`(malt (limo ~[[~zod 1] [~dilryd-mopreg 4]])) `((mop @da comment:data) lth)`*((mop @da comment:data) lth) `(map @p review:data)`*(map @p review:data)]
-    docket-data=*docket:data
+    docket=*docket:data
 == 
 
 

@@ -1,12 +1,12 @@
 /-  *app-store-data
-|_  cpg=cur-page
+|_  dup=dst-update
 ++  grow
   |%
-  ++  noun  cpg
+  ++  noun  dup
   --
 ++  grab
   |%
-  ++  noun  cur-page
+  ++  noun  dst-update
   --
 ++  grad  %noun
 --
