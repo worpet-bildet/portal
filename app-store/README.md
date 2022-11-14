@@ -99,7 +99,7 @@ First, ~dev needs to create and `app-page` called `%app-store`, with `dst-desk` 
 Then, ~des needs to add a valid desk.docket-0 file to the `%app-store` desk and a desk.ship file containing `~des`. For the desk.docket-0 file, the important part is that `glob-ames` has `~des` at the head of the cell, like so:
 ```
 :~  title+'App Store'
-    info+'Urbit's decentralized App Store.'
+    info+'Decentralized App Store on Urbit.'
     color+0x81.88c9
     image+'https://media.urbit.org/guides/additional/dist/wut.svg'
     base+'blabla'
