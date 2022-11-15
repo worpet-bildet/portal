@@ -36,12 +36,12 @@ export class App extends React.Component {
         <div className='flex flex-row'>
           <Sidebar buttons={this.state.buttons} />
           <main className="basis-3/4 flex items-center w-full justify-center min-h-screen">
-            <div className="w-4/5 space-y-6 py-20">
+            <div className="w-4/5 space-y-6 py-14">
               <h1 className="text-3xl font-bold">My applications</h1>
               {this.state.apps.length && (
                 <ul className="space-y-4">
                   <li>
-                    <AddButtonTile buttonName="Add App Page"/>
+                    <AddButtonTile buttonName="Add App page"/>
                   </li>
                   {Object.entries(this.state.apps).map((applicationName) => (
                     <li key={applicationName[1]} className="flex items-center space-x-3 text-sm leading-tight">

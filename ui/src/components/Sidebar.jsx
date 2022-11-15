@@ -8,16 +8,16 @@ export class Sidebar extends React.Component {
   }
   render() {
     return (
-      <aside className="flex flex-col justify-between w-80 h-screen sticky top-0 bg-gray-100" aria-label="Sidebar">
-        <div className="overflow-y-auto py-4 px-3 bg-gray-100 rounded dark:bg-gray-800">
-            <ul className="space-y-2 py-10">
+      <aside className="flex flex-col justify-between w-56 h-screen sticky top-0 bg-primary border-r border-black" aria-label="Sidebar">
+        <div className="overflow-y-auto py-4 px-3">
+            <div className="flex flex-col items-center space-y-2 py-10">
               {this.props.buttons && this.props.buttons.map((buttonName, index) =>
                 <SidebarItem
                   key={`${buttonName}-${index}`}
                   buttonName={buttonName}
                 />
               )}
-            </ul>
+            </div>
         </div>
         <div>
           <SwitchAccounts />
@@ -35,11 +35,12 @@ class SidebarItem extends React.Component {
 
   render() {
     return (
-      <li>
-        <a href="#" className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-          <span className="ml-3">{this.props.buttonName}</span>
+        <a
+          href="#"
+          className="w-48 p-1 border border-black text-gray-900 bg-white dark:text-white hover:border-2 hover:font-semibold dark:hover:bg-gray-700"
+        >
+          <span className="ml-3 font-md">{this.props.buttonName}</span>
         </a>
-      </li>
     );
   }
 }
@@ -51,21 +52,21 @@ class SwitchAccounts extends React.Component {
 
   render() {
     return (
-      <div className='flex flex-col gap-y-2'>
+      <div className='flex flex-col gap-y-4'>
         <p className='self-center'>Switch account</p>
-        <div className="flex justify-center gap-2 w-2/4 self-center">
+        <div className="flex justify-center gap-6 w-2/4 self-center">
           <a href='#'>
-            <div className="rounded-full border-2 flex p-7 relative">
-              <div className="absolute top-4 left-6">
+            <div className="rounded-full border border-black bg-white flex p-7 relative hover:border-2">
+              <span className="absolute top-4 left-5 font-bold text-3xl">
                   C
-              </div>
+              </span>
             </div>
           </a>
           <a href='#'>
-            <div className="rounded-full border-2 flex p-7 relative">
-              <div className="absolute top-4 left-6">
+            <div className="rounded-full border border-black bg-white flex p-7 relative hover:border-2">
+              <span className="absolute top-4 left-5 font-bold text-3xl">
                   U
-              </div>
+              </span>
             </div>
           </a>
         </div>
