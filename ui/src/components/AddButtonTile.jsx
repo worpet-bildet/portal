@@ -1,15 +1,11 @@
-import { Card } from 'flowbite-react';
 import React from 'react';
 
-export class AddButtonTile extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+export function AddButtonTile (props) {
   
-  render() {
-    return (
+  return (
+    <li>
       <a
-        href='#'
+      href='#'
       >
         <div className='w-full p-4 bg-secondary rounded hover:bg-gray-300'>
           <div className="flex flex-auto flex-row">
@@ -21,11 +17,11 @@ export class AddButtonTile extends React.Component {
               </svg>
             </div>
             <span className='self-center font-bold text-2xl'>
-              {this.props.buttonName}
+              {props.buttonName}
             </span>
           </div>
         </div>
       </a>
-    );
-  }
+    </li>
+  );
 }
