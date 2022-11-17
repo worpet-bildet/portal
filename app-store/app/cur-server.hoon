@@ -45,13 +45,13 @@
       %unsub
     ~&  "%cur-server: unsubscribing from {(scow %p +.act)}" 
     =^  changed  cur-data  
-    (unsub:cur:app-store [cur-data.state dev-name.act])
+    (del-dev:cur:app-store [cur-data.state dev-name.act])
     ?:  =(changed %unchanged)  `this
     =/  dev-name-wire  /(scot %p +.act)
     :_  this
     :~  
       [%pass dev-name-wire %agent [+.act %dev-server] %leave ~]
-      [%give %fact [/cur-update]~ %app-store-cur-update !>([%del-dev cur-data])]
+      [%give %fact [/cur-update]~ %app-store-cur-update !>([%del-dev +.act])]
     ==
   ::
       %cur-info
@@ -65,7 +65,7 @@
     (select:cur:app-store [cur-data.state act])
     ?:  =(changed %unchanged)  `this
     :_  this
-    [%give %fact [/cur-update]~ %app-store-cur-update !>([%choice cur-choice.cur-data])]~
+    [%give %fact [/cur-update]~ %app-store-cur-update !>(act)]~
   ::
       %cats
     ~&  "%cur-server: changing categories"
@@ -113,46 +113,44 @@
     =/  dev-name  `@p`(slav %p -.wire)
     ?-    -.dev-update
         %init
-      =/  new-cur-data  (init:cur:app-store [cur-data.state our.bowl now.bowl dev-name dev-update])
-      =/  cur-update  [%new-dev cur-map.new-cur-data aux-map.new-cur-data]
+      =/  new-cur-data  (add-dev:cur:app-store [cur-data.state our.bowl now.bowl dev-name dev-data.dev-update])
+      =/  cur-update  [%add-dev dev-name dev-data.dev-update]
       :_  this(cur-data.state new-cur-data)
       [%give %fact [/cur-update]~ %app-store-cur-update !>(cur-update)]~
     ::  
         %add
       =^  changed  cur-data  
-      (put:cur:app-store [cur-data.state our.bowl now.bowl dev-name dev-update])
+      (put-app:cur:app-store [cur-data.state our.bowl now.bowl dev-name key.dev-update app-page.dev-update])
       ?:  =(changed %unchanged)  `this
-      =/  cur-update  [%new-app-page key.dev-update app-page.dev-update]
+      =/  cur-update  [%add-app key.dev-update app-page.dev-update]
       :_  this
       [%give %fact [/cur-update]~ %app-store-cur-update !>(cur-update)]~
     ::  
         %change
       =^  changed  cur-data
-      (put:cur:app-store [cur-data.state our.bowl now.bowl dev-name dev-update])
+      (put-app:cur:app-store [cur-data.state our.bowl now.bowl dev-name key.dev-update app-page.dev-update])
       ?-    changed 
           %unchanged
         `this
       ::
           %deleted
-        =/  cur-update  [%del-app-page key.dev-update]
+        =/  cur-update  [%del-app key.dev-update]
         :_  this
         [%give %fact [/cur-update]~ %app-store-cur-update !>(cur-update)]~
       ::
           %changed     
-        =/  cur-update  [%edit-app-page key.dev-update app-page.dev-update]
+        =/  cur-update  [%edit-app key.dev-update app-page.dev-update]
         :_  this
         [%give %fact [/cur-update]~ %app-store-cur-update !>(cur-update)]~
       ==
     ::  
         %del
       =^  changed  cur-data
-      (del:cur:app-store [cur-data.state dev-name dev-update])
+      (del-app:cur:app-store [cur-data.state dev-name key.dev-update])
       ?:  =(changed %unchanged)  `this
-      =/  cur-update  [%del-app-page key.dev-update]
+      =/  cur-update  [%del-app key.dev-update]
       :_  this
       [%give %fact [/cur-update]~ %app-store-cur-update !>(cur-update)]~
-    ::
-        %wipe  `this
     ==
   ==
 ::
