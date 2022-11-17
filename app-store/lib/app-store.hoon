@@ -4,7 +4,8 @@
 ++  usr  2
 ::
 ::
-::
+::  includes functions that are used on cur-data
+::  in the context of both Curator and User
 ++  cur
   |%
   ::  when selecting new cur-choice
@@ -33,19 +34,19 @@
     cur-data(cat-set.cur-choice cat-set.act)
 ::
   ::  when dev adds an app-page, or app-page is changed
-  ++  put  
-    |=  [=cur-data our=@p now=@da =dev-name dev-update=[?(%add %change) =key =app-page]]
+  ++  put-app  
+    |=  [=cur-data our=@p now=@da =dev-name =key =app-page]
     ^-  [?(%changed %unchanged %deleted) ^cur-data]
-    ?.  (new-app-page:validator [dev-name our now key.dev-update app-page.dev-update])
-      =^  changed  cur-data  (del [cur-data dev-name [%del key.dev-update]])
+    ?.  (new-app-page:validator [dev-name our now key app-page])
+      =^  changed  cur-data  (del-app [cur-data dev-name key])
       ?:  =(changed %unchanged)  [%unchanged cur-data]
       [%deleted cur-data]
-    =/  new-cur-map  (~(put by cur-map.cur-data) key.dev-update app-page.dev-update)
+    =/  new-cur-map  (~(put by cur-map.cur-data) key app-page)
     =/  app-set  (~(get by aux-map.cur-data) dev-name)
     ?~  app-set  
       ~&  "error" 
       [%unchanged cur-data]
-    =/  new-app-set  (~(put in u.app-set) app-name.key.dev-update)
+    =/  new-app-set  (~(put in u.app-set) app-name.key)
     =/  new-aux-map  (~(put by aux-map.cur-data) dev-name new-app-set)
     ?.  ?&
       (cur-map-aux-map:validator new-cur-map new-aux-map)
@@ -60,10 +61,10 @@
   ::  cur should only use %init when not having dev-data and then adding it
   ::  if cur-receives less data from dev than he already had,
   :: ~(uni by cur-map) doesn't work
-  ++  init    
-    |=  [=cur-data our=@p now=@da =dev-name dev-update=[%init =dev-data]]
+  ++  add-dev 
+    |=  [=cur-data our=@p now=@da =dev-name =dev-data]
     ^-  ^cur-data
-    =/  new-dev-data  (dev-data-init:validator [dev-name dev-data.dev-update our now])
+    =/  new-dev-data  (dev-data-init:validator [dev-name dev-data our now])
     ?.  (dev-map-app-set:validator dev-map.new-dev-data app-set.new-dev-data)
       ~&  "%cur-server: new dev-map and app-set inconsistent"
       cur-data
@@ -75,7 +76,7 @@
     [cur-choice.cur-data new-cur-map new-aux-map]
 ::
   ::  after unsubbing from dev removes dev from cur-choice and cur-map and aux-map
-  ++  unsub  
+  ++  del-dev 
     |=  [=cur-data =dev-name]
     ^-  [?(%changed %unchanged) ^cur-data]
     ?.  (~(has by aux-map.cur-data) dev-name)
@@ -95,21 +96,21 @@
     [new-cur-choice new-cur-map new-aux-map]
 ::
   ::  when dev dels an app
-  ++  del  
-    |=  [=cur-data =dev-name dev-update=[%del =key]]
+  ++  del-app 
+    |=  [=cur-data =dev-name =key]
     ^-  [?(%changed %unchanged) ^cur-data]
-    ?.  =(dev-name dev-name.key.dev-update)
+    ?.  =(dev-name dev-name.key)
       ~&  "error: dev-name and key don't correspond"
       [%unchanged cur-data]
-    =/  new-cat-map  (~(del by cat-map.cur-choice.cur-data) key.dev-update)
-    =/  new-cur-map  (~(del by cur-map.cur-data) key.dev-update)
+    =/  new-cat-map  (~(del by cat-map.cur-choice.cur-data) key)
+    =/  new-cur-map  (~(del by cur-map.cur-data) key)
     =/  app-set  (~(get by aux-map.cur-data) dev-name)
     ?~  app-set  
       ~&  "error" 
       [%unchanged cur-data]
-    =/  new-app-set  (~(del in u.app-set) app-name.key.dev-update)
+    =/  new-app-set  (~(del in u.app-set) app-name.key)
     =/  new-aux-map  (~(put by aux-map.cur-data) dev-name new-app-set)
-    =/  loc  (find [key.dev-update]~ key-list.cur-choice.cur-data)
+    =/  loc  (find [key]~ key-list.cur-choice.cur-data)
     ?~  loc  
       ?.  ?&
         (cat-map-cat-set:validator new-cat-map cat-set.cur-choice.cur-data)

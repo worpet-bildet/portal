@@ -10,12 +10,13 @@
   $%
     [%init =cur-page]
     [%info =cur-info]
-    [%choice =cur-choice]
-    [%new-dev =cur-map =aux-map]
-    [%del-dev =cur-data]
-    [%new-app-page =key =app-page]
-    [%edit-app-page =key =app-page]
-    [%del-app-page =key]
+    [%select =key-list =cat-map]
+    [%cats =cat-set]
+    [%add-dev =dev-name =dev-data]
+    [%del-dev =dev-name]
+    [%add-app =key =app-page]
+    [%edit-app =key =app-page]
+    [%del-app =key]
   ==
 ::
 +$  cur-page  [=cur-info =cur-data]
@@ -46,7 +47,6 @@
     [%add =key =app-page]
     [%change =key =app-page]
     [%del =key] 
-    [%wipe ~]
   ==
 +$  dev-data  [=dev-map =app-set]
 +$  dev-map  (map key app-page)      ::  dev-name is the same in all keys
