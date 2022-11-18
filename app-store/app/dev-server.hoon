@@ -50,7 +50,7 @@
       :_  this
       :~
       [%give %fact [/dev-update]~ %app-store-dev-update !>([%add [our.bowl app-name.act] new-app-page])]
-      [%give %fact [/render]~ %app-store-dev-update !>([%init dev-data])]
+      [%give %fact [/render]~ %app-store-dev-update !>([%all dev-data])]
       ==
     ::
         %edit
@@ -61,7 +61,7 @@
       =/  new-app-page  (~(got by dev-map.dev-data.state) [our.bowl app-name.act])
       :_  this  :~
       [%give %fact [/dev-update]~ %app-store-dev-update !>([%change [our.bowl app-name.act] new-app-page])]
-      [%give %fact [/render]~ %app-store-dev-update !>([%init dev-data])]
+      [%give %fact [/render]~ %app-store-dev-update !>([%all dev-data])]
       ==
     ::
         %del
@@ -71,7 +71,7 @@
       ?:  =(changed %unchanged)  `this
       :_  this  :~
       [%give %fact [/dev-update]~ %app-store-dev-update !>([%del our.bowl app-name.act])]
-      [%give %fact [/render]~ %app-store-dev-update !>([%init dev-data])]
+      [%give %fact [/render]~ %app-store-dev-update !>([%all dev-data])]
       ==
     ==
   ::
@@ -88,7 +88,7 @@
       ?:  =(changed %unchanged)  `this
       :_  this(dev-data dev-data)  :~
       [%give %fact [/dev-update]~ %app-store-dev-update !>([%change key.act app-page])]
-      [%give %fact [/render]~ %app-store-dev-update !>([%init dev-data])]
+      [%give %fact [/render]~ %app-store-dev-update !>([%all dev-data])]
       ==
     ::
         %data
@@ -97,7 +97,7 @@
       ?:  =(changed %unchanged)  `this
       :_  this(dev-data dev-data)  :~
       [%give %fact [/dev-update]~ %app-store-dev-update !>([%change key.act app-page])]
-      [%give %fact [/render]~ %app-store-dev-update !>([%init dev-data])]
+      [%give %fact [/render]~ %app-store-dev-update !>([%all dev-data])]
       ==
     ==
   ::
@@ -112,7 +112,7 @@
       ?:  =(changed %unchanged)  `this
       :_  this(dev-data dev-data)  :~
       [%give %fact [/dev-update]~ %app-store-dev-update !>([%change key.act app-page])]
-      [%give %fact [/render]~ %app-store-dev-update !>([%init dev-data])]
+      [%give %fact [/render]~ %app-store-dev-update !>([%all dev-data])]
       ==
     ::
         %unrate
@@ -122,7 +122,7 @@
       ?:  =(changed %unchanged)  `this
       :_  this(dev-data dev-data)  :~
       [%give %fact [/dev-update]~ %app-store-dev-update !>([%change key.act app-page])]
-      [%give %fact [/render]~ %app-store-dev-update !>([%init dev-data])]
+      [%give %fact [/render]~ %app-store-dev-update !>([%all dev-data])]
       ==
     ::
         %add-com
@@ -132,7 +132,7 @@
       ?:  =(changed %unchanged)  `this
       :_  this(dev-data dev-data)  :~
       [%give %fact [/dev-update]~ %app-store-dev-update !>([%change key.act app-page])]
-      [%give %fact [/render]~ %app-store-dev-update !>([%init dev-data])]
+      [%give %fact [/render]~ %app-store-dev-update !>([%all dev-data])]
       ==
     ::
         %del-com
@@ -142,7 +142,7 @@
       ?:  =(changed %unchanged)  `this
       :_  this(dev-data dev-data)  :~
       [%give %fact [/dev-update]~ %app-store-dev-update !>([%change key.act app-page])]
-      [%give %fact [/render]~ %app-store-dev-update !>([%init dev-data])]
+      [%give %fact [/render]~ %app-store-dev-update !>([%all dev-data])]
       ==
     ::
         %add-rev
@@ -152,7 +152,7 @@
       ?:  =(changed %unchanged)  `this
       :_  this(dev-data dev-data)  :~
       [%give %fact [/dev-update]~ %app-store-dev-update !>([%change key.act app-page])]
-      [%give %fact [/render]~ %app-store-dev-update !>([%init dev-data])]
+      [%give %fact [/render]~ %app-store-dev-update !>([%all dev-data])]
       ==
     ::
         %del-rev
@@ -162,7 +162,7 @@
       ?:  =(changed %unchanged)  `this
       :_  this(dev-data dev-data)  :~
       [%give %fact [/dev-update]~ %app-store-dev-update !>([%change key.act app-page])]
-      [%give %fact [/render]~ %app-store-dev-update !>([%init dev-data])]
+      [%give %fact [/render]~ %app-store-dev-update !>([%all dev-data])]
       ==
     ==
   ==

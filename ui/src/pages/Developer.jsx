@@ -19,7 +19,30 @@ export class Developer extends React.Component {
     };
   }
 
+  subscribe = () => {
+    try {
+      api.subscribe({
+        app: "dev-server",
+        path: "/render",
+        event: this.handleUpdate,
+        err: () => this.setErrorMsg("Subscription rejected"),
+        quit: () => this.setErrorMsg("Kicked from subscription"),
+        cancel: () => this.setErrorMsg("Subscription cancelled"),
+      });
+    } catch {
+      this.setErrorMsg("Subscription failed");
+    }
+  };
+
+  handleUpdate = (upd) => {
+    console.log(upd);
+  }
+
+  setErrorMsg = (msg) => { throw new Error(msg); }
+  
+
   async componentDidMount() {
+    this.subscribe();
     this.setState({
       apps: this.getApplications(),
       buttons: ["Application", "Upload an App"]
