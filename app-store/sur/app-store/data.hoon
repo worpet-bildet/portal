@@ -41,41 +41,41 @@
 ::
 ::  Dev Page
 ::
-+$  dev-update   
++$  dev-update
   $%
-    [%init =dev-data]
+    [%all =dev-data]
     [%add =key =app-page]
     [%change =key =app-page]
-    [%del =key] 
+    [%del =key]
   ==
 +$  dev-data  [=dev-map =app-set]
 +$  dev-map  (map key app-page)      ::  dev-name is the same in all keys
-+$  app-set  (set app-name) 
++$  app-set  (set app-name)
 ::
 +$  key  [=dev-name =app-name]
-+$  dev-name  @p 
-+$  app-name  @tas                   
++$  dev-name  @p
++$  app-name  @tas
 ::
 +$  app-page
   $:
     =dev-input
     =dst-input
-    =usr-input  
-  == 
+    =usr-input
+  ==
 ::
 +$  dev-input
   $:
     description=@t
-    keywords=(list keyword)          
-    screenshots=(list screenshot)    
+    =keywords
+    =screenshots
     dst-desk=@t                      ::  link is made from this
-  == 
-+$  keyword  @tas
-+$  screenshot  @t  
+  ==
++$  keywords  (list @tas)
++$  screenshots  (list @t)
 ::
 +$  dst-input
   $:
-    =signature  
+    =signature
     desk-hash=@uv
     =docket
   ==
@@ -83,15 +83,20 @@
 ::
 +$  usr-input
   $:
-    ratings=(map @p rating)
-    comments=((mop @da comment) lth)
-    reviews=(map @p review)
-  ==                            
+    =ratings
+    =comments
+    =reviews
+  ==
+::
++$  ratings  (map @p rating)
++$  comments  ((mop @da comment) lth)
++$  reviews  (map @p review)
+::
 +$  rating
-  $|  @ud  
-  |=  r=@ud 
+  $|  @ud
+  |=  r=@ud
   &((gte r 1) (lte r 5))
-+$  comment 
++$  comment
   $:
     commenter=@p
     text=@t
@@ -101,18 +106,17 @@
     time=@da
     text=@t
     hash=@uv
-    is-current=?    
-    is-safe=?                        
+    is-current=?
+    is-safe=?
   ==
 ::
 ::  Dst Data Types
 ::
 +$  dst-name  @p
-+$  dst-update   
++$  dst-update
   $%
     [%sig =key =signature]
     [%data =key =docket hash=@uvI]
   ==
 
 --
-

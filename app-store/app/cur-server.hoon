@@ -24,7 +24,7 @@
   `this
 ::
 ++  on-save  !>(state)
-++  on-load   
+++  on-load
   |=  old=vase
   ^-  (quip card _this)
   `this(state !<(state-0 old))
@@ -34,22 +34,22 @@
   ^-  (quip card _this)
   ?>  =(our.bowl src.bowl)
   ?>  ?=(%app-store-cur-action mark)
-  =/  act  !<(cur-action vase)  
+  =/  act  !<(cur-action vase)
   ?-    -.act
-      %sub    
+      %sub
     ~&  "%cur-server: subscribing to {(scow %p +.act)}"
     =/  dev-name-wire  /(scot %p +.act)
     :_  this
     [%pass dev-name-wire %agent [+.act %dev-server] %watch /dev-update]~
-  ::  
+  ::
       %unsub
-    ~&  "%cur-server: unsubscribing from {(scow %p +.act)}" 
-    =^  changed  cur-data  
+    ~&  "%cur-server: unsubscribing from {(scow %p +.act)}"
+    =^  changed  cur-data
     (del-dev:cur:app-store [cur-data.state dev-name.act])
     ?:  =(changed %unchanged)  `this
     =/  dev-name-wire  /(scot %p +.act)
     :_  this
-    :~  
+    :~
       [%pass dev-name-wire %agent [+.act %dev-server] %leave ~]
       [%give %fact [/cur-update]~ %app-store-cur-update !>([%del-dev +.act])]
     ==
@@ -59,9 +59,9 @@
     :_  this(cur-info.state +.act)
     [%give %fact [/cur-update]~ %app-store-cur-update !>([%info +.act])]~
   ::
-      %select  
+      %select
     ~&  "%cur-server: adding cur-choice to curator page"
-    =^  changed  cur-data  
+    =^  changed  cur-data
     (select:cur:app-store [cur-data.state act])
     ?:  =(changed %unchanged)  `this
     :_  this
@@ -71,8 +71,8 @@
     ~&  "%cur-server: changing categories"
     =/  new-cur-data  (cats:cur:app-store [cur-data.state act])
     `this(cur-data new-cur-data)
-  == 
-::  
+  ==
+::
 ++  on-arvo   on-arvo:default
 ::
 ::  on-watch is for receiving Users' subscription requests
@@ -84,12 +84,12 @@
   =/  cur-update  `cur-update`[%init cur-info.state cur-data.state]
   :_  this
   [%give %fact ~ %app-store-cur-update !>(cur-update)]~
-::  
+::
 ++  on-leave  on-leave:default
 ++  on-peek   on-peek:default
 ::
 ::  on-agent is for receiving subscriptions updates from Developers
-++  on-agent  
+++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
   =/  dev-name-tape  (trip `@t`-.wire)
@@ -112,24 +112,24 @@
     ~&  "%cur-server: received dev update from {dev-name-tape}"
     =/  dev-name  `@p`(slav %p -.wire)
     ?-    -.dev-update
-        %init
+        %all
       =/  new-cur-data  (add-dev:cur:app-store [cur-data.state our.bowl now.bowl dev-name dev-data.dev-update])
       =/  cur-update  [%add-dev dev-name dev-data.dev-update]
       :_  this(cur-data.state new-cur-data)
       [%give %fact [/cur-update]~ %app-store-cur-update !>(cur-update)]~
-    ::  
+    ::
         %add
-      =^  changed  cur-data  
+      =^  changed  cur-data
       (put-app:cur:app-store [cur-data.state our.bowl now.bowl dev-name key.dev-update app-page.dev-update])
       ?:  =(changed %unchanged)  `this
       =/  cur-update  [%add-app key.dev-update app-page.dev-update]
       :_  this
       [%give %fact [/cur-update]~ %app-store-cur-update !>(cur-update)]~
-    ::  
+    ::
         %change
       =^  changed  cur-data
       (put-app:cur:app-store [cur-data.state our.bowl now.bowl dev-name key.dev-update app-page.dev-update])
-      ?-    changed 
+      ?-    changed
           %unchanged
         `this
       ::
@@ -138,12 +138,12 @@
         :_  this
         [%give %fact [/cur-update]~ %app-store-cur-update !>(cur-update)]~
       ::
-          %changed     
+          %changed
         =/  cur-update  [%edit-app key.dev-update app-page.dev-update]
         :_  this
         [%give %fact [/cur-update]~ %app-store-cur-update !>(cur-update)]~
       ==
-    ::  
+    ::
         %del
       =^  changed  cur-data
       (del-app:cur:app-store [cur-data.state dev-name key.dev-update])
@@ -156,4 +156,3 @@
 ::
 ++  on-fail   on-fail:default
 --
-
