@@ -3,8 +3,8 @@
 
 =app2 :*
     description='some description 1'
-    keywords=`(list keyword:data)`~[%keyword1 %keyword2]         
-    screenshots=`(list screenshot:data)`~['screen1' 'screen2']    
+    keywords=`keywords:data`~[%keyword1 %keyword2]         
+    screenshots=`screenshots:data`~['screen1' 'screen2']    
     dst-desk='~dev/app2' 
 ==
 

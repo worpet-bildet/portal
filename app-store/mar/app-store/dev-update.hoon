@@ -1,5 +1,5 @@
 /-  *app-store-data
-/+  *app-store-conversions
+/+  *app-store-marks
 |_  dup=dev-update
 ++  grow
   |%
