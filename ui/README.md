@@ -8,6 +8,18 @@ If you want to contribute on the development, you will need to have installed ap
 
 Boot your fake ship. Make sure that your ship is running on localhost:8080. Otherswise, go to `.env.local` and change `VITE_SHIP_URL` to the actual running port.
 
+Communications between backend and front end are not allowed by default because of the fake's ship CORS policy. We need to allow the port 3000 to be able to receive requests from the react application.
+
+```hoon
+:: INSIDE YOUR FAKE SHIP
+
+:: Check which urls the ship has approved
+> +cors-registry
+
+:: Add localhost:3000 to the list of allowed urls
+> |cors-approve 'http://localhost:3000'
+```
+
 ### React Front End
 
 Inside **/ui** folder run the following command.
@@ -20,7 +32,7 @@ This will generate our react application compiled in a **/dist** folder. Now, we
 
 Inside **/ui** start the react application.
 
-```shell
+```sh
 npm run dev
 ```
 
