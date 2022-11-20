@@ -3,10 +3,12 @@ import React from 'react';
 import {
   createBrowserRouter, RouterProvider
 } from 'react-router-dom';
+import { Sidebar } from './components/Sidebar';
 import './index.css';
-import { Curator } from './pages/Curator';
-import { Developer } from './pages/Developer';
-import { User } from './pages/User';
+import { Curator } from './pages/curator/Curator';
+import { Developer } from './pages/developer/Developer';
+import { UploadApplication } from './pages/developer/UploadApp';
+import { User } from './pages/user/User';
 const api = new Urbit('', '', window.desk);
 api.ship = window.ship;
 
@@ -26,12 +28,18 @@ const router = createBrowserRouter([
   {
     path: '/apps/app-store/dev',
     element: <Developer />
+  },
+  {
+    path: '/apps/app-store/dev/upload-app',
+    element: <UploadApplication />
   }
 ]);
 
 export function App () {
   return (
-    <RouterProvider router={router} />
+    <React.Fragment>
+      <RouterProvider router={router} />  
+    </React.Fragment>
   );
 }
 
