@@ -36,7 +36,7 @@ function SidebarItem(props) {
 function SwitchAccounts(props) {
   return (
     <div className='flex flex-col gap-y-4'>
-      <p className='self-center'>Switch account</p>
+      <p className='self-center'>Switch role</p>
       <div className="flex justify-center gap-6 w-2/4 self-center">
         <a href='#'>
           <div className="rounded-full border border-black bg-white flex p-7 relative hover:border-2">
