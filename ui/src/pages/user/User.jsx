@@ -1,10 +1,10 @@
 import { scryCharges } from '@urbit/api';
 import Urbit from '@urbit/http-api';
 import React, { useEffect, useState } from 'react';
-import mockApi from "../../mocks/dev-view.json";
-import { AddButtonTile } from '../components/AddButtonTile';
-import { AppTile } from '../components/AppTile';
-import { Sidebar } from '../components/Sidebar';
+import mockApi from "../../../mocks/dev-view.json";
+import { AddButtonTile } from '../../components/AddButtonTile';
+import { AppTile } from '../../components/AppTile';
+import { Sidebar } from '../../components/Sidebar';
 
 const api = new Urbit('', '', window.desk);
 api.ship = window.ship;

@@ -1,11 +1,12 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export function AddButtonTile (props) {
   
   return (
     <li>
-      <a
-      href='#'
+      <Link
+        to='/apps/app-store/dev/upload-app'
       >
         <div className='w-full p-4 bg-secondary rounded hover:bg-gray-300'>
           <div className="flex flex-auto flex-row">
@@ -21,7 +22,7 @@ export function AddButtonTile (props) {
             </span>
           </div>
         </div>
-      </a>
+      </Link>
     </li>
   );
 }
