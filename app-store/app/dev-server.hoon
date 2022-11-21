@@ -135,6 +135,16 @@
       [%give %fact [/render]~ %app-store-dev-update !>([%all dev-data])]
       ==
     ::
+        %edit-com
+      ~&  "%dev-server: editing comment"
+      =/  [changed=@tas =app-page dev-data=^dev-data]
+      (usr-visit:dev:app-store [dev-data.state src.bowl key.act act now.bowl])
+      ?:  =(changed %unchanged)  `this
+      :_  this(dev-data dev-data)  :~
+      [%give %fact [/dev-update]~ %app-store-dev-update !>([%change key.act app-page])]
+      [%give %fact [/render]~ %app-store-dev-update !>([%all dev-data])]
+      ==
+    ::
         %del-com
       ~&  "%dev-server: deleting comment"
       =/  [changed=@tas =app-page dev-data=^dev-data]
@@ -145,8 +155,8 @@
       [%give %fact [/render]~ %app-store-dev-update !>([%all dev-data])]
       ==
     ::
-        %add-rev
-      ~&  "%dev-server: adding review"
+        %put-rev
+      ~&  "%dev-server: putting review"
       =/  [changed=@tas =app-page dev-data=^dev-data]
       (usr-visit:dev:app-store [dev-data.state src.bowl key.act act now.bowl])
       ?:  =(changed %unchanged)  `this

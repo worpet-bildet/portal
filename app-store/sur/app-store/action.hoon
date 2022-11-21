@@ -2,7 +2,7 @@
 |%
 ::
 ::  actions between the Developer and the ship which hosts the app
-+$  dst-action  
++$  dst-action
   $%
     [%sign =key]
     [%send-data =key]
@@ -38,12 +38,12 @@
 ::  actions which Users can do on app-pages
 +$  visit-dev-action
   $%
-    [%rate =key =rating]
+    [%rate =key rating-num=@ud]
     [%unrate =key]
     [%add-com =key text=@t]
+    [%edit-com =key =time text=@t]
     [%del-com =key =time]
-    [%add-rev =key text=@t hash=@uv is-safe=?]
+    [%put-rev =key text=@t hash=@uv is-safe=?]
     [%del-rev =key]
   ==
 --
-
