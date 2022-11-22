@@ -89,26 +89,32 @@
   ==
 ::
 +$  ratings  (map @p rating)
-+$  comments  ((mop @da comment) lth)
++$  comments  ((mop created-at comment) lth)
 +$  reviews  (map @p review)
 ::
+::  if updated-at == ~2000.1.1., it was never updated
 +$  rating
-  $|  @ud
-  |=  r=@ud
-  &((gte r 1) (lte r 5))
+  $|  [rating-num=@ud =updated-at =created-at]
+  |=  r=[@ud =updated-at =created-at]
+  &((gte -.r 1) (lte -.r 5))
+::
 +$  comment
-  $:
-    commenter=@p
-    text=@t
+  $:  commenter=@p
+      text=@t
+      =updated-at
   ==
+::
 +$  review
-  $:
-    time=@da
-    text=@t
-    hash=@uv
-    is-current=?
-    is-safe=?
+  $:  text=@t
+      hash=@uv
+      is-current=?
+      is-safe=?
+      =updated-at
+      =created-at
   ==
+::
++$  updated-at  @da
++$  created-at  @da
 ::
 ::  Dst Data Types
 ::
