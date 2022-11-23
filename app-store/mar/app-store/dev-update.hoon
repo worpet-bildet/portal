@@ -1,10 +1,10 @@
 /-  *app-store-data
-/+  *app-store-marks
+/+  app-store-marks
 |_  dup=dev-update
 ++  grow
   |%
   ++  noun  dup
-  ++  json  (enjs-dev-update dup)
+  ++  json  (enjs-dev-update:enjs:app-store-marks dup)
   --
 ++  grab
   |%

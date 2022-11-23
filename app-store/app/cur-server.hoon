@@ -45,32 +45,44 @@
       %unsub
     ~&  "%cur-server: unsubscribing from {(scow %p +.act)}"
     =^  changed  cur-data
-    (del-dev:cur:app-store [cur-data.state dev-name.act])
+    (del-dev:cur-data-lib:app-store [cur-data.state dev-name.act])
     ?:  =(changed %unchanged)  `this
     =/  dev-name-wire  /(scot %p +.act)
     :_  this
     :~
       [%pass dev-name-wire %agent [+.act %dev-server] %leave ~]
       [%give %fact [/cur-update]~ %app-store-cur-update !>([%del-dev +.act])]
+      [%give %fact [/render]~ %app-store-cur-update !>([%all +.state])]
     ==
   ::
       %cur-info
     ~&  "%cur-server: adding title to curator page"
-    :_  this(cur-info.state +.act)
-    [%give %fact [/cur-update]~ %app-store-cur-update !>([%info +.act])]~
+    =/  new-cur-page  +.state(cur-info +.act)
+    :_  this(+.state new-cur-page)
+    :~
+      [%give %fact [/cur-update]~ %app-store-cur-update !>([%info +.act])]
+      [%give %fact [/render]~ %app-store-cur-update !>([%all new-cur-page])]
+    ==
   ::
       %select
     ~&  "%cur-server: adding cur-choice to curator page"
     =^  changed  cur-data
-    (select:cur:app-store [cur-data.state act])
+    (select:cur-data-lib:app-store [cur-data.state act])
     ?:  =(changed %unchanged)  `this
     :_  this
-    [%give %fact [/cur-update]~ %app-store-cur-update !>(act)]~
+    :~
+      [%give %fact [/cur-update]~ %app-store-cur-update !>(act)]
+      [%give %fact [/render]~ %app-store-cur-update !>([%all +.state])]
+    ==
   ::
       %cats
     ~&  "%cur-server: changing categories"
-    =/  new-cur-data  (cats:cur:app-store [cur-data.state act])
-    `this(cur-data new-cur-data)
+    =/  new-cur-data  (cats:cur-data-lib:app-store [cur-data.state act])
+    :_  this(cur-data new-cur-data)
+    :~
+      [%give %fact [/cur-update]~ %app-store-cur-update !>(act)]
+      [%give %fact [/render]~ %app-store-cur-update !>([%all cur-info.state new-cur-data])]
+    ==
   ==
 ::
 ++  on-arvo   on-arvo:default
@@ -79,11 +91,18 @@
 ++  on-watch
   |=  =path
   ^-  (quip card _this)
-  ?>  =([%cur-update ~] path)
-  ~&  "%cur-server: received subscription request"
-  =/  cur-update  `cur-update`[%init cur-info.state cur-data.state]
-  :_  this
-  [%give %fact ~ %app-store-cur-update !>(cur-update)]~
+  ?+    -.path    (on-watch:default path)
+      %cur-update
+    ~&  "%cur-server: received subscription request"
+    =/  cur-update  `cur-update`[%all cur-info.state cur-data.state]
+    :_  this
+    [%give %fact ~ %app-store-cur-update !>(cur-update)]~
+      %render
+    ~&  "%cur-server: received subscription request from front-end"
+    =/  cur-update  `cur-update`[%all cur-info.state cur-data.state]
+    :_  this
+    [%give %fact ~ %app-store-cur-update !>(cur-update)]~
+  ==
 ::
 ++  on-leave  on-leave:default
 ++  on-peek   on-peek:default
@@ -113,22 +132,29 @@
     =/  dev-name  `@p`(slav %p -.wire)
     ?-    -.dev-update
         %all
-      =/  new-cur-data  (add-dev:cur:app-store [cur-data.state our.bowl now.bowl dev-name dev-data.dev-update])
+      =/  new-cur-data
+        (add-dev:cur-data-lib:app-store [cur-data.state our.bowl now.bowl dev-name dev-data.dev-update])
       =/  cur-update  [%add-dev dev-name dev-data.dev-update]
       :_  this(cur-data.state new-cur-data)
-      [%give %fact [/cur-update]~ %app-store-cur-update !>(cur-update)]~
+      :~
+        [%give %fact [/cur-update]~ %app-store-cur-update !>(cur-update)]
+        [%give %fact [/render]~ %app-store-cur-update !>([%all cur-info.state new-cur-data])]
+      ==
     ::
         %add
       =^  changed  cur-data
-      (put-app:cur:app-store [cur-data.state our.bowl now.bowl dev-name key.dev-update app-page.dev-update])
+      (put-app:cur-data-lib:app-store [cur-data.state our.bowl now.bowl dev-name key.dev-update app-page.dev-update])
       ?:  =(changed %unchanged)  `this
       =/  cur-update  [%add-app key.dev-update app-page.dev-update]
       :_  this
-      [%give %fact [/cur-update]~ %app-store-cur-update !>(cur-update)]~
+      :~
+        [%give %fact [/cur-update]~ %app-store-cur-update !>(cur-update)]
+        [%give %fact [/render]~ %app-store-cur-update !>([%all +.state])]
+      ==
     ::
         %change
       =^  changed  cur-data
-      (put-app:cur:app-store [cur-data.state our.bowl now.bowl dev-name key.dev-update app-page.dev-update])
+      (put-app:cur-data-lib:app-store [cur-data.state our.bowl now.bowl dev-name key.dev-update app-page.dev-update])
       ?-    changed
           %unchanged
         `this
@@ -136,21 +162,30 @@
           %deleted
         =/  cur-update  [%del-app key.dev-update]
         :_  this
-        [%give %fact [/cur-update]~ %app-store-cur-update !>(cur-update)]~
+        :~
+          [%give %fact [/cur-update]~ %app-store-cur-update !>(cur-update)]
+          [%give %fact [/render]~ %app-store-cur-update !>([%all +.state])]
+        ==
       ::
           %changed
         =/  cur-update  [%edit-app key.dev-update app-page.dev-update]
         :_  this
-        [%give %fact [/cur-update]~ %app-store-cur-update !>(cur-update)]~
+        :~
+          [%give %fact [/cur-update]~ %app-store-cur-update !>(cur-update)]
+          [%give %fact [/render]~ %app-store-cur-update !>([%all +.state])]
+        ==
       ==
     ::
         %del
       =^  changed  cur-data
-      (del-app:cur:app-store [cur-data.state dev-name key.dev-update])
+      (del-app:cur-data-lib:app-store [cur-data.state dev-name key.dev-update])
       ?:  =(changed %unchanged)  `this
       =/  cur-update  [%del-app key.dev-update]
       :_  this
-      [%give %fact [/cur-update]~ %app-store-cur-update !>(cur-update)]~
+      :~
+        [%give %fact [/cur-update]~ %app-store-cur-update !>(cur-update)]
+        [%give %fact [/render]~ %app-store-cur-update !>([%all +.state])]
+      ==
     ==
   ==
 ::

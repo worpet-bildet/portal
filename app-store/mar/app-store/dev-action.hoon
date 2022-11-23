@@ -1,5 +1,5 @@
 /-  *app-store-action
-/+  *app-store-marks
+/+  app-store-marks
 |_  act=dev-action
 ++  grow
   |%
@@ -8,7 +8,7 @@
 ++  grab
   |%
   ++  noun  dev-action
-  ++  json  dejs-dev-action
+  ++  json  dejs-dev-action:dejs:app-store-marks
   --
 ++  grad  %noun
 --
