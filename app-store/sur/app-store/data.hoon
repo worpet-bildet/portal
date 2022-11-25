@@ -2,27 +2,11 @@
 |%
 ::  Usr Page
 ::
-+$  usr-update
-  $%  [%all =usr-data]
-  ==
-::
 +$  usr-data  (map cur-name cur-page)
 +$  cur-name  @p
 ::
 ::
 ::  Cur Page
-::
-+$  cur-update
-  $%  [%all =cur-page]
-      [%info =cur-info]
-      [%select =key-list =cat-map]
-      [%cats =cat-set]
-      [%add-dev =dev-name =dev-data]
-      [%del-dev =dev-name]
-      [%add-app =key =app-page]
-      [%edit-app =key =app-page]
-      [%del-app =key]
-  ==
 ::
 +$  cur-page  [=cur-info =cur-data]
 ::
@@ -45,12 +29,6 @@
 ::
 ::  Dev Page
 ::
-+$  dev-update
-  $%  [%all =dev-data]
-      [%add =key =app-page]
-      [%change =key =app-page]
-      [%del =key]
-  ==
 +$  dev-data  [=dev-map =app-set]
 +$  dev-map  (map key app-page)      ::  dev-name is the same in all keys
 +$  app-set  (set app-name)
@@ -119,9 +97,37 @@
 ::  Dst Data Types
 ::
 +$  dst-name  @p
+
+::
+::
+::  Updates
+::  used when sending data from one agent to another,
+::  or from backend to frontend
++$  usr-update
+  $%  [%all =usr-data]
+  ==
+::
++$  cur-update
+  $%  [%all =cur-page]
+      [%info =cur-info]
+      [%select =key-list =cat-map]
+      [%cats =cat-set]
+      [%add-dev =dev-name =dev-data]
+      [%del-dev =dev-name]
+      [%add-app =key =app-page]
+      [%edit-app =key =app-page]
+      [%del-app =key]
+  ==
+::
++$  dev-update
+  $%  [%all =dev-data]
+      [%add =key =app-page]
+      [%change =key =app-page]
+      [%del =key]
+  ==
+::
 +$  dst-update
   $%  [%sig =key =signature]
       [%data =key =docket hash=@uvI]
   ==
-
 --

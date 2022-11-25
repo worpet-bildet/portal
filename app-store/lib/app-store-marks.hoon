@@ -271,23 +271,31 @@
           dst-desk+so
       ==
     --
-  ::
-  :: ++  dejs-cur-action
-  ::   |=  jon=json
-  ::   ^-  cur-action
-  ::   |^
-  ::   %.  jon
-  ::   %-  of
-  ::   :~  [%sub (ot ~[dev-name+dejs-ship])]
-  ::       [%unsub (ot ~[dev-name+dejs-ship])]
-  ::       [%cur-info (ot ~[cur-info+so])]
-  ::   ==
-  ::   ++  dejs-key-list
-  ::     |=  jon=json
-  ::     ^-  key-list
-  ::     %.  jon
-  ::     (ar dejs-key)
-  ::   --
+  ++  dejs-cur-action
+    |=  jon=json
+    ^-  cur-action
+    %.  jon
+    %-  of
+    :~  [%sub (ot ~[dev-name+dejs-ship])]
+        [%unsub (ot ~[dev-name+dejs-ship])]
+        [%cur-info (ot ~[cur-info+dejs-cur-info])]
+        [%select (ot ~[key-list+dejs-key-list cat-map+dejs-cat-map])]
+        [%cats (ot ~[cat-set+dejs-cat-set])]
+    ==
+  ++  dejs-cur-info
+    |=  jon=json
+    ^-  cur-info
+    %.  jon
+    %-  ot
+    :~  cur-title+so
+        cur-image+so
+        cur-intro+so
+    ==
+  ++  dejs-key-list
+    |=  jon=json
+    ^-  key-list
+    %.  jon
+    (ar dejs-key)
   ++  dejs-key
     |=  jon=json
     ^-  key
@@ -296,6 +304,46 @@
     :~  dev-name+dejs-ship
         app-name+so
     ==
+  ++  dejs-key-string-list
+    |=  jon=json
+    ^-  key-list
+    %.  jon
+    (ar dejs-key-string)
+  ++  dejs-cat-map-string
+    |=  jon=json
+    ^-  cat-map
+    =/  cm  ((om so) jon)
+    =/  lis  ~(tap by cm)
+    (malt (turn lis |=(cel=[@t @t] [(key-from-string -.cel) `@tas`+.cel])))
+  ++  dejs-cat-map
+    |=  jon=json
+    ^-  cat-map
+    (malt ((ar dejs-key-cat) jon))
+  ++  dejs-key-cat
+    |=  jon=json
+    ^-  [=key =category]
+    %.  jon
+    %-  ot
+    :~  key+dejs-key
+        category+so
+    ==
+  ++  dejs-cat-set
+    |=  jon=json
+    ^-  cat-set
+    %-  silt
+    %.  jon
+    (ar so)
+  ++  dejs-key-string
+    |=  jon=json
+    ^-  key
+    (key-from-string (so jon))
+  ++  key-from-string
+    |=  key-str=@t
+    ^-  key
+    =/  taep  (trip key-str)
+    =/  locs  (fand "\0a" taep)
+    =/  cel  (trim (snag 0 `(list @ud)`locs) taep)
+    [(slav %p (crip -.cel)) (crip (snip `tape`(slag 0 `tape`+.cel)))]
   ::
   ++  dejs-ship
     |=  jon=json
