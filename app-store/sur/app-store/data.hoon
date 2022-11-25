@@ -1,31 +1,19 @@
 /-  *docket
 |%
+::  Usr Page
+::
 +$  usr-data  (map cur-name cur-page)
 +$  cur-name  @p
 ::
 ::
 ::  Cur Page
 ::
-+$  cur-update
-  $%
-    [%init =cur-page]
-    [%info =cur-info]
-    [%select =key-list =cat-map]
-    [%cats =cat-set]
-    [%add-dev =dev-name =dev-data]
-    [%del-dev =dev-name]
-    [%add-app =key =app-page]
-    [%edit-app =key =app-page]
-    [%del-app =key]
-  ==
-::
 +$  cur-page  [=cur-info =cur-data]
 ::
 +$  cur-info
-  $:
-    cur-title=@t
-    cur-image=@t
-    cur-intro=@t
+  $:  cur-title=@t
+      cur-image=@t
+      cur-intro=@t
   ==
 +$  cur-data  [=cur-choice =cur-map =aux-map]
 ::
@@ -41,13 +29,6 @@
 ::
 ::  Dev Page
 ::
-+$  dev-update
-  $%
-    [%all =dev-data]
-    [%add =key =app-page]
-    [%change =key =app-page]
-    [%del =key]
-  ==
 +$  dev-data  [=dev-map =app-set]
 +$  dev-map  (map key app-page)      ::  dev-name is the same in all keys
 +$  app-set  (set app-name)
@@ -57,35 +38,31 @@
 +$  app-name  @tas
 ::
 +$  app-page
-  $:
-    =dev-input
-    =dst-input
-    =usr-input
+  $:  =dev-input
+      =dst-input
+      =usr-input
   ==
 ::
 +$  dev-input
-  $:
-    description=@t
-    =keywords
-    =screenshots
-    dst-desk=@t                      ::  link is made from this
+  $:  description=@t
+      =keywords
+      =screenshots
+      dst-desk=@t                      ::  link is made from this
   ==
 +$  keywords  (list @tas)
 +$  screenshots  (list @t)
 ::
 +$  dst-input
-  $:
-    =signature
-    desk-hash=@uv
-    =docket
+  $:  =signature
+      desk-hash=@uv
+      =docket
   ==
 +$  signature   [p=@ux q=ship r=life]
 ::
 +$  usr-input
-  $:
-    =ratings
-    =comments
-    =reviews
+  $:  =ratings
+      =comments
+      =reviews
   ==
 ::
 +$  ratings  (map @p rating)
@@ -94,9 +71,10 @@
 ::
 ::  if updated-at == ~2000.1.1., it was never updated
 +$  rating
-  $|  [rating-num=@ud =updated-at =created-at]
-  |=  r=[@ud =updated-at =created-at]
-  &((gte -.r 1) (lte -.r 5))
+  $:  rating-num=@ud
+      =updated-at
+      =created-at
+  ==
 ::
 +$  comment
   $:  commenter=@p
@@ -119,10 +97,37 @@
 ::  Dst Data Types
 ::
 +$  dst-name  @p
-+$  dst-update
-  $%
-    [%sig =key =signature]
-    [%data =key =docket hash=@uvI]
-  ==
 
+::
+::
+::  Updates
+::  used when sending data from one agent to another,
+::  or from backend to frontend
++$  usr-update
+  $%  [%all =usr-data]
+  ==
+::
++$  cur-update
+  $%  [%all =cur-page]
+      [%info =cur-info]
+      [%select =key-list =cat-map]
+      [%cats =cat-set]
+      [%add-dev =dev-name =dev-data]
+      [%del-dev =dev-name]
+      [%add-app =key =app-page]
+      [%edit-app =key =app-page]
+      [%del-app =key]
+  ==
+::
++$  dev-update
+  $%  [%all =dev-data]
+      [%add =key =app-page]
+      [%change =key =app-page]
+      [%del =key]
+  ==
+::
++$  dst-update
+  $%  [%sig =key =signature]
+      [%data =key =docket hash=@uvI]
+  ==
 --
