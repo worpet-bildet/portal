@@ -108,9 +108,9 @@
     ~&  "%usr-server: received cur-update from {cur-name-tape}"
     =/  cur-name  `@p`(slav %p -.wire)
     ?-    -.cur-update
-        %init
-      ::  doesn't validate incoming cur-page
-      `this(usr-data (~(put by usr-data) cur-name cur-page.cur-update))
+        %all
+      =/  args  [usr-data.state cur-name cur-page.cur-update our.bowl now.bowl]
+      `this(usr-data (add-cur:usr:app-store args))
     ::
         %info
       =/  replace  |=(=cur-page cur-page(cur-info cur-info.cur-update))
@@ -120,14 +120,14 @@
       =/  replace
         |=  =cur-page
         =^  changed  cur-data.cur-page
-        (select:cur:app-store [cur-data.cur-page cur-update])
+        (select:cur-data-lib:app-store [cur-data.cur-page cur-update])
         cur-page
       `this(usr-data (~(jab by usr-data) cur-name replace))
     ::
         %cats
       =/  replace
         |=  =cur-page
-        =/  new-cur-data  (cats:cur:app-store [cur-data.cur-page cur-update])
+        =/  new-cur-data  (cats:cur-data-lib:app-store [cur-data.cur-page cur-update])
         cur-page(cur-data new-cur-data)
       `this(usr-data (~(jab by usr-data) cur-name replace))
     ::
@@ -135,7 +135,7 @@
       =/  replace
         |=  =cur-page
         =/  new-cur-data
-          %-  add-dev:cur:app-store
+          %-  add-dev:cur-data-lib:app-store
           :*  cur-data.cur-page  our.bowl
           now.bowl  dev-name.cur-update
           dev-data.cur-update  ==
@@ -146,7 +146,7 @@
       =/  replace
         |=  =cur-page
         =^  changed  cur-data.cur-page
-        (del-dev:cur:app-store [cur-data.cur-page dev-name.cur-update])
+        (del-dev:cur-data-lib:app-store [cur-data.cur-page dev-name.cur-update])
         cur-page
       `this(usr-data (~(jab by usr-data) cur-name replace))
     ::
@@ -154,7 +154,7 @@
       =/  replace
         |=  =cur-page
         =^  changed  cur-data.cur-page
-        %-  put-app:cur:app-store
+        %-  put-app:cur-data-lib:app-store
         :*  cur-data.cur-page  our.bowl
         now.bowl  dev-name.key.cur-update
         key.cur-update  app-page.cur-update  ==
@@ -165,7 +165,7 @@
       =/  replace
         |=  =cur-page
         =^  changed  cur-data.cur-page
-        %-  put-app:cur:app-store
+        %-  put-app:cur-data-lib:app-store
         :*  cur-data.cur-page  our.bowl
         now.bowl  dev-name.key.cur-update
         key.cur-update  app-page.cur-update  ==
@@ -176,7 +176,7 @@
       =/  replace
         |=  =cur-page
         =^  changed  cur-data.cur-page
-        %-  del-app:cur:app-store
+        %-  del-app:cur-data-lib:app-store
         [cur-data.cur-page dev-name.key.cur-update key.cur-update]
         cur-page
       `this(usr-data (~(jab by usr-data) cur-name replace))
