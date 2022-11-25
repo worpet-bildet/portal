@@ -7,6 +7,7 @@
 ++  grab
   |%
   ++  noun  cur-update
+  ++  json  (enjs-cur-update:enjs:app-store-marks cup)
   --
 ++  grad  %noun
 --
