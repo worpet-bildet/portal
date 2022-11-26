@@ -7,6 +7,7 @@
 ++  grab
   |%
   ++  noun  action
+  ++  json  dejs-cur-action:dejs:app-store-marks
   --
 ++  grad  %noun
 --
