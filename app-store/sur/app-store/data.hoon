@@ -1,9 +1,13 @@
 /-  *docket
 |%
+::
+::
+::
 ::  Usr Page
 ::
 +$  usr-data  (map cur-name cur-page)
 +$  cur-name  @p
+::
 ::
 ::
 ::  Cur Page
@@ -27,6 +31,7 @@
 +$  aux-map  (map dev-name app-set)
 ::
 ::
+::
 ::  Dev Page
 ::
 +$  dev-data  [=dev-map =app-set]
@@ -47,7 +52,7 @@
   $:  description=@t
       =keywords
       =screenshots
-      dst-desk=@t                      ::  link is made from this
+      dst-desk=@t               ::  link is made from this
   ==
 +$  keywords  (list @tas)
 +$  screenshots  (list @t)
@@ -66,22 +71,20 @@
   ==
 ::
 +$  ratings  (map @p rating)
-+$  comments  ((mop created-at comment) lth)
-+$  reviews  (map @p review)
-::
-::  if updated-at == ~2000.1.1., it was never updated
 +$  rating
   $:  rating-num=@ud
       =updated-at
       =created-at
   ==
 ::
++$  comments  ((mop created-at comment) lth)
 +$  comment
   $:  commenter=@p
       text=@t
       =updated-at
   ==
 ::
++$  reviews  (map @p review)
 +$  review
   $:  text=@t
       hash=@uv
@@ -91,31 +94,34 @@
       =created-at
   ==
 ::
+::  if updated-at == ~2000.1.1., it was never updated
 +$  updated-at  @da
 +$  created-at  @da
+::
+::
 ::
 ::  Dst Data Types
 ::
 +$  dst-name  @p
-
+::
 ::
 ::
 ::  Updates
-::  used when sending data from one agent to another,
-::  or from backend to frontend
+::  used when sending data from one agent to another, or from backend to frontend
+::
 +$  usr-update
   $%  [%all =usr-data]
   ==
 ::
 +$  cur-update
   $%  [%all =cur-page]
-      [%info =cur-info]
-      [%select =key-list =cat-map]
+      [%cur-info =cur-info]
       [%cats =cat-set]
+      [%select =key-list =cat-map]
       [%add-dev =dev-name =dev-data]
       [%del-dev =dev-name]
       [%add-app =key =app-page]
-      [%edit-app =key =app-page]
+      [%change-app =key =app-page]
       [%del-app =key]
   ==
 ::

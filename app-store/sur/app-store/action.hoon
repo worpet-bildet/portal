@@ -21,8 +21,8 @@
   $%  [%sub =dev-name]
       [%unsub =dev-name]
       [%cur-info =cur-info]
-      [%select =key-list =cat-map]
       [%cats =cat-set]
+      [%select =key-list =cat-map]
   ==
 ::
 ::  actions which Users use to subscribe to Curators
