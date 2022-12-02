@@ -7,20 +7,21 @@
   ++  enjs-usr-update
     |=  uup=usr-update
     ^-  json
+    |^
     ?-    -.uup
         %all
       =/  lis  ~(tap by usr-data.uup)
       [%a (turn lis enjs-cur-name-cur-page)]
     ==
-  ++  enjs-cur-name-cur-page
-    |=  [=cur-name =cur-page]
-    ^-  json
-    %-  pairs
-    :~  ['id' s+`@t`(scot %p cur-name)]
-        ['cur-name' s+`@t`(scot %p cur-name)]
-        ['cur-page' (enjs-cur-page cur-page)]
-    ==
-  ::
+    ++  enjs-cur-name-cur-page
+      |=  [=cur-name =cur-page]
+      ^-  json
+      %-  pairs
+      :~  ['id' s+`@t`(scot %p cur-name)]
+          ['cur-name' s+`@t`(scot %p cur-name)]
+          ['cur-page' (enjs-cur-page cur-page)]
+      ==
+    --
   ++  enjs-cur-update
     |=  cup=cur-update
     ^-  json
@@ -28,114 +29,103 @@
         %all
       (enjs-cur-page cur-page.cup)
     ==
-  ::
-  ++  enjs-cur-page
-    |=  =cur-page
-    ^-  json
-    %-  pairs
-    :~  ['cur-info' (enjs-cur-info cur-info.cur-page)]
-        ['cur-data' (enjs-cur-data cur-data.cur-page)]
-    ==
-  ::
-  ++  enjs-cur-info
-    |=  =cur-info
-    ^-  json
-    %-  pairs
-    :~  ['cur-title' s+cur-title.cur-info]
-        ['cur-image' s+cur-image.cur-info]
-        ['cur-intro' s+cur-intro.cur-info]
-    ==
-  ::
-  ++  enjs-cur-data
-    |=  =cur-data
-    ^-  json
-    %-  pairs
-    :~  ['cur-choice' (enjs-cur-choice cur-choice.cur-data)]
-        ['cur-map' (enjs-cur-map cur-map.cur-data)]
-        ['aux-map' (enjs-aux-map aux-map.cur-data)]
-    ==
-  ::
-  ++  enjs-cur-choice
-    |=  =cur-choice
-    ^-  json
-    %-  pairs
-    :~  ['key-list' (enjs-key-list key-list.cur-choice)]
-        ['cat-map' (enjs-cat-map cat-map.cur-choice)]
-        ['cat-set' (enjs-cat-set cat-set.cur-choice)]
-    ==
-  ++  enjs-key-list
-    |=  =key-list
-    ^-  json
-    [%a (turn key-list enjs-key)]
-  ++  enjs-cat-map
-    |=  =cat-map
-    ^-  json
-    =/  lis  ~(tap by cat-map)
-    [%a (turn lis enjs-key-and-cat)]
-  ++  enjs-cat-set
-    |=  =cat-set
-    ^-  json
-    =/  cat-list  ~(tap in cat-set)
-    [%a (turn cat-list |=(=category s+`@t`category))]
-  ++  enjs-cur-map
-    |=  =cur-map
-    ^-  json
-    =/  lis  ~(tap by cur-map)
-    [%a (turn lis enjs-key-and-app-page)]
-  ++  enjs-aux-map
-    |=  =aux-map
-    ^-  json
-    =/  lis  ~(tap by aux-map)
-    =/  modify
-      |=  [=dev-name =app-set]
-      [`@t`(scot %p dev-name) (enjs-app-set app-set)]
-    (pairs (turn lis modify))
-  ::
   ++  enjs-dev-update
     |=  dup=dev-update
     ^-  json
-    ?+    -.dup    ~  ::  todo %add, %edit, %del if necessary
+    |^
+    ?+    -.dup    ~
         %all
       %-  pairs
       :~  ['dev-map' (enjs-dev-map dev-map.dev-data.dup)]
           ['app-set' (enjs-app-set app-set.dev-data.dup)]
       ==
     ==
-  ++  enjs-dev-map
-    |=  =dev-map
-    ^-  json
-    =/  lis  ~(tap by dev-map)
-    [%a (turn lis enjs-key-and-app-page)]
+    ++  enjs-dev-map
+      |=  =dev-map
+      ^-  json
+      =/  lis  ~(tap by dev-map)
+      [%a (turn lis enjs-key-and-app-page)]
+    --
   ::
+  ++  enjs-cur-page
+    |=  =cur-page
+    ^-  json
+    |^
+    %-  pairs
+    :~  ['cur-info' (enjs-cur-info cur-info.cur-page)]
+        ['cur-data' (enjs-cur-data cur-data.cur-page)]
+    ==
+    ++  enjs-cur-info
+      |=  =cur-info
+      ^-  json
+      %-  pairs
+      :~  ['cur-title' s+cur-title.cur-info]
+          ['cur-image' s+cur-image.cur-info]
+          ['cur-intro' s+cur-intro.cur-info]
+      ==
+    ++  enjs-cur-data
+      |=  =cur-data
+      ^-  json
+      |^
+      %-  pairs
+      :~  ['cur-choice' (enjs-cur-choice cur-choice.cur-data)]
+          ['cur-map' (enjs-cur-map cur-map.cur-data)]
+          ['aux-map' (enjs-aux-map aux-map.cur-data)]
+      ==
+      ++  enjs-cur-choice
+        |=  =cur-choice
+        ^-  json
+        |^
+        %-  pairs
+        :~  ['key-list' (enjs-key-list key-list.cur-choice)]
+            ['cat-map' (enjs-cat-map cat-map.cur-choice)]
+            ['cat-set' (enjs-cat-set cat-set.cur-choice)]
+        ==
+        ++  enjs-key-list
+          |=  =key-list
+          ^-  json
+          [%a (turn key-list enjs-key)]
+        ++  enjs-cat-map
+          |=  =cat-map
+          ^-  json
+          |^
+          =/  lis  ~(tap by cat-map)
+          [%a (turn lis enjs-key-and-cat)]
+          ++  enjs-key-and-cat
+            |=  [=key =category]
+            ^-  json
+            %-  pairs
+            :~  ['id' (enjs-jam-key key)]
+                ['key' (enjs-key key)]
+                ['category' s+`@t`category]
+            ==
+          --
+        ++  enjs-cat-set
+          |=  =cat-set
+          ^-  json
+          =/  cat-list  ~(tap in cat-set)
+          [%a (turn cat-list |=(=category s+`@t`category))]
+        --
+      ++  enjs-cur-map
+        |=  =cur-map
+        ^-  json
+        =/  lis  ~(tap by cur-map)
+        [%a (turn lis enjs-key-and-app-page)]
+      ++  enjs-aux-map
+        |=  =aux-map
+        ^-  json
+        =/  lis  ~(tap by aux-map)
+        =/  modify
+          |=  [=dev-name =app-set]
+          [`@t`(scot %p dev-name) (enjs-app-set app-set)]
+        (pairs (turn lis modify))
+      --
+    --
   ++  enjs-app-set
     |=  =app-set
     ^-  json
     =/  app-list  ~(tap in app-set)
     [%a (turn app-list |=(app=@tas s+`@t`app))]
-  ::
-  ++  enjs-jam-key
-    |=  =key
-    ^-  json
-    %-  wall
-    ~[(scow %p -.key) (trip +.key)]
-  ::
-  ++  enjs-key
-    |=  =key
-    ^-  json
-    %-  pairs
-    :~  ['dev-name' s+`@t`(scot %p dev-name.key)]
-        ['app-name' s+`@t`app-name.key]
-    ==
-  ::
-  ++  enjs-key-and-cat
-    |=  [=key =category]
-    ^-  json
-    %-  pairs
-    :~  ['id' (enjs-jam-key key)]
-        ['key' (enjs-key key)]
-        ['category' s+`@t`category]
-    ==
-  ::
   ++  enjs-key-and-app-page
     |=  [=key =app-page]
     ^-  json
@@ -229,6 +219,19 @@
         ==
       --
     --
+  ++  enjs-jam-key
+    |=  =key
+    ^-  json
+    %-  wall
+    ~[(scow %p -.key) (trip +.key)]
+  ++  enjs-key
+    |=  =key
+    ^-  json
+    %-  pairs
+    :~  ['dev-name' s+`@t`(scot %p dev-name.key)]
+        ['app-name' s+`@t`app-name.key]
+    ==
+    ::
   --
 ::
 ::
@@ -288,10 +291,8 @@
         [%put-rev (ot ~[key+dejs-key text+so hash+dejs-hash is-safe+bo])]
         [%del-rev (ot ~[key+dejs-key])]
     ==
-  ++  dejs-hash
-    |=  jon=json
-    ^-  @uv
-    `@uv`(slav %uv (so jon))
+  ::
+  ::  helper dejs arms
   ++  dejs-cur-info
     |=  jon=json
     ^-  cur-info
@@ -306,6 +307,28 @@
     ^-  key-list
     %.  jon
     (ar dejs-key)
+  ++  dejs-cat-map
+    |=  jon=json
+    ^-  cat-map
+    |^
+    (malt ((ar dejs-key-cat) jon))
+    ++  dejs-key-cat
+      |=  jon=json
+      ^-  [=key =category]
+      %.  jon
+      %-  ot
+      :~  key+dejs-key
+          category+so
+      ==
+    --
+  ++  dejs-cat-set
+    |=  jon=json
+    ^-  cat-set
+    %-  silt
+    %.  jon
+    (ar so)
+  ::
+  ::  helper dejs arms
   ++  dejs-key
     |=  jon=json
     ^-  key
@@ -314,31 +337,13 @@
     :~  dev-name+dejs-ship
         app-name+so
     ==
-  ++  dejs-cat-map
-    |=  jon=json
-    ^-  cat-map
-    (malt ((ar dejs-key-cat) jon))
-  ++  dejs-key-cat
-    |=  jon=json
-    ^-  [=key =category]
-    %.  jon
-    %-  ot
-    :~  key+dejs-key
-        category+so
-    ==
-  ++  dejs-cat-set
-    |=  jon=json
-    ^-  cat-set
-    %-  silt
-    %.  jon
-    (ar so)
-  ::
   ++  dejs-ship
     |=  jon=json
     ^-  @p
     ((se %p) jon)
-  ::
-
-  ::
+  ++  dejs-hash
+    |=  jon=json
+    ^-  @uv
+    `@uv`(slav %uv (so jon))
   --
 --

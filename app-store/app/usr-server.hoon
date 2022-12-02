@@ -112,7 +112,7 @@
       =/  args  [usr-data.state cur-name cur-page.cur-update our.bowl now.bowl]
       `this(usr-data (add-cur:usr:app-store args))
     ::
-        %info
+        %cur-info
       =/  replace  |=(=cur-page cur-page(cur-info cur-info.cur-update))
       `this(usr-data (~(jab by usr-data) cur-name replace))
     ::
@@ -161,7 +161,7 @@
         cur-page
       `this(usr-data (~(jab by usr-data) cur-name replace))
     ::
-        %edit-app
+        %change-app
       =/  replace
         |=  =cur-page
         =^  changed  cur-data.cur-page
