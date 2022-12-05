@@ -1,23 +1,55 @@
+TODO defaults for all actions
 
+DOCKET DATA TO ADD TO THE DST SHIP (kad cu pisat readme)
+#docket-data=[title='App Store' info='A tool for decentralized curation and discovery of Urbit apps' color=0x1231 version=[0 0 1] website='https://github.com/dilryd-mopreg/app-store' license='MIT' base=%app-store image='some-link']
+
+CONVENIENCE STUFF IN DOJO
 =data -build-file /=app-store=/sur/app-store/data/hoon
 
-=app2 :*
+=some-app :*
     description='some description 1'
     keywords=`keywords:data`~[%keyword1 %keyword2]
     screenshots=`screenshots:data`~['screen1' 'screen2']
-    dst-desk='~dev/app1'
+    dst-desk='~des/app1'
 ==
+ - note - it's important to make sure that dst-desk is written correctly
 
-______________
-    desk-hash=*@uv
-    signature=[*@ux ~dev 0]
-    visitor-data=[`(map @p rating:data)`(malt (limo ~[[~zod 1] [~dilryd-mopreg 4]])) `((mop @da comment:data) lth)`*((mop @da comment:data) lth) `(map @p review:data)`*(map @p review:data)]
-    docket=*docket:data
-==
+DEV ACTIONS
 
-
-:dev-server|add %app1 app
-:dev-server|edit %app1 app
+:dev-server|add %app1 some-app
+:dev-server|edit %app1 some-app
 :dev-server|del %app1
 
-#docket-data=[title='App Store' info='A tool for decentralized curation and discovery of Urbit apps' color=0x1231 version=[0 0 1] website='https://github.com/dilryd-mopreg/app-store' license='MIT' base=%app-store image='some-link']
+DST ACTIONS
+
+:dst-server|sign [~dev %app1]
+:dst-server|send-data [~dev %app1]
+
+CUR ACTIONS
+
+:cur-server|sub ~dev
+:cur-server|unsub ~dev
+:cur-server|cur-info ['Title' 'image link' 'Intro text']
+:cur-server|cats (silt `(list @tas)`~[%cat1 %cat2])
+:cur-server|select ~[[~dev %app1]] (malt (limo ~[[[~dev %app1] %cat1]]))
+
+USR ACTIONS
+
+:usr-server|sub ~ter
+:usr-server|unsub ~ter
+
+VISIT-DEV ACTIONS
+
+:usr-server|rate [~dev %app1] 5
+:usr-server|unrate [~dev %app1]
+:usr-server|add-com [~dev %app1] 'this app is great'
+:usr-server|edit-com [~dev %app1] ~2022.11.30..00.15.20..cd08 'this app is not that good after all'
+:usr-server|del-com [~dev %app1] ~2022.11.30..00.15.20..cd08
+:usr-server|put-rev [~dev %app1] 'this app is not malicious' 0v123 %.y
+:usr-server|del-rev [~dev %app1]
+
+ - note - insert the exact timestamp of the comment you want to edit/delete,
+          since comments are keyed by timestamp
+        - the hash inputted in the review is compared to the hash in the app-page
+          to ensure that the correct version of the app has been reviewed. this
+          is visible in the is-current value in a review

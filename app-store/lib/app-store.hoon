@@ -1,9 +1,21 @@
 /-  *app-store-data, *app-store-action
 /+  sig
 |%
-::  includes arms which usr-server uses
+::
+::
+::
+::  for comments, ordered map
+++  com  ((on @da comment) lth)
+::
+::
+::
+::  includes arms which %usr-server uses
 ++  usr
   |%
+  ::
+  ::
+  ::
+  ::  when User adds (subscribes to) a Curator
   ++  add-cur
     |=  [=usr-data =cur-name =cur-page our=@p now=@da]
     ^-  ^usr-data
@@ -21,8 +33,8 @@
   --
 ::
 ::
-::  includes functions that are used on cur-data
-::  in the context of both Curator and User
+::
+::  includes arms that are used on cur-data in the context of both Curator and User
 ++  cur-data-lib
   |%
   ::  when selecting new cur-choice
@@ -40,7 +52,7 @@
     %=  cur-data
       cur-choice  [key-list.act cat-map.act cat-set.cur-choice.cur-data]
     ==
-::
+  ::
   ::  when writing categories
   ++  cats
     |=  [=cur-data act=[%cats =cat-set]]
@@ -49,7 +61,7 @@
       ~&  "%cur-server: adding categories failed"
       cur-data
     cur-data(cat-set.cur-choice cat-set.act)
-::
+  ::
   ::  when dev adds an app-page, or app-page is changed
   ++  put-app
     |=  [=cur-data our=@p now=@da =dev-name =key =app-page]
@@ -73,11 +85,8 @@
       [%unchanged cur-data]
     :-  %changed
     cur-data(cur-map new-cur-map, aux-map new-aux-map)
-::
-  ::  receiving intial data from dev
-  ::  cur should only use add-dev when not having dev-data and then adding it
-  ::  if cur-receives less data from dev than he already had,
-  :: ~(uni by cur-map) doesn't work
+  ::
+  ::  receives intial data from dev. otherwise, won't work because it uses ~(uni by cur-map)
   ++  add-dev
     |=  [=cur-data our=@p now=@da =dev-name =dev-data]
     ^-  ^cur-data
@@ -91,8 +100,8 @@
       ~&  "%cur-server: receiving data failed"
       cur-data
     [cur-choice.cur-data new-cur-map new-aux-map]
-::
-  ::  after unsubbing from dev removes dev from cur-choice and cur-map and aux-map
+  ::
+  ::  after unsubbing from dev, removes dev from cur-data
   ++  del-dev
     |=  [=cur-data =dev-name]
     ^-  [?(%changed %unchanged) ^cur-data]
@@ -110,7 +119,7 @@
       ~&  "%cur-server: updating cur-data after unsub, failed"
       [%unchanged cur-data]
     [%changed [new-cur-choice new-cur-map new-aux-map]]
-::
+  ::
   ::  when dev dels an app
   ++  del-app
     |=  [=cur-data =dev-name =key]
@@ -152,6 +161,7 @@
     :-  %changed
     [[new-key-list new-cat-map cat-set.cur-choice.cur-data] new-cur-map new-aux-map]
   ::
+  ::  contains helper arms for manipulating cur-data
   ++  aux
     |%
     ++  del-dev-from-cur-choice
@@ -181,17 +191,19 @@
         n  +(n)
         cur-map  (~(del by cur-map) [dev-name (snag n apps)])
       ==
-    ::
-
     --
   --
 ::
 ::
 ::
 ::  includes arms which dev-server uses
-::
 ++  dev
   |%
+  ::
+  ::
+  ::
+  ::  on dev-action
+  ::
   ::  when dev adds an app-page
   ++  add
     |=  [=dev-name =dev-data act=[%add =app-name =dev-input]]
@@ -247,6 +259,10 @@
       [%unchanged dev-data]
     [%changed new-dev-map new-app-set]
   ::
+  ::
+  ::
+  ::  on dst-action
+  ::
   ::  when dev receives a signature from %dst-server
   ++  sign
     |=  [=dev-data dst-ship=@p act=[%sig =key =signature]]
@@ -255,11 +271,13 @@
       ~&  "%dev-server: app-page does not exist"
       [%unchanged *app-page dev-data]
     =/  app-page  (need (~(get by dev-map.dev-data) key.act))
-    =/  dst-desk  (parse-dst-desk dst-desk.dev-input.app-page)
+    =/  dst-desk  (parse-dst-desk:validator dst-desk.dev-input.app-page)
+    ?~  dst-desk
+      ~&  "%dev-server: bad distributor desk"
+      [%unchanged app-page dev-data]
     ?.  ?&
-      -.dst-desk
-      =(dst-name.+.dst-desk q.signature.act)
-      =(dst-name.+.dst-desk dst-ship)
+      =(dst-name.u.dst-desk q.signature.act)
+      =(dst-name.u.dst-desk dst-ship)
     ==
       ~&  "%dev-server: bad distributor ship or signature or desk"
       [%unchanged app-page dev-data]
@@ -276,8 +294,11 @@
       ~&  "%dev-server: app-page does not exist"
       [%unchanged *app-page dev-data]
     =/  app-page  (need (~(get by dev-map.dev-data) key.act))
-    =/  dst-desk  (parse-dst-desk dst-desk.dev-input.app-page)
-    ?.  &(=(dst-name.+.dst-desk dst-ship) -.dst-desk)
+    =/  dst-desk  (parse-dst-desk:validator dst-desk.dev-input.app-page)
+    ?~  dst-desk
+      ~&  "%dev-server: bad distributor desk"
+      [%unchanged app-page dev-data]
+    ?.  =(dst-name.u.dst-desk dst-ship)
       ~&  "%dev-server: bad distributor ship or desk"
       [%unchanged app-page dev-data]
     =/  new-reviews  %-  ~(run by reviews.usr-input.app-page)
@@ -290,6 +311,10 @@
       ==
     =/  new-dev-map  (~(put by dev-map.dev-data) key.act new-app-page)
     [%changed new-app-page dev-data(dev-map new-dev-map)]
+  ::
+  ::
+  ::
+  ::  on visit-dev-action
   ::
   ::  when user visits an app page and (un)rates, (un)comments or (un)reviews it
   ++  usr-visit
@@ -398,47 +423,25 @@
 ::
 ::
 ::
-::
-::
-::  for comments, ordered map
-++  com  ((on @da comment) lth)
-::
-::  %.y if one ship is moon of another
-++  ships-related
-  |=  [=dev-name dst-name=@p]
-  ^-  ?
-  ?:  (gte dev-name dst-name)
-    ?:  =(0 (mod (sub dev-name dst-name) 4.294.967.296))
-      %.y
-    %.n
-  ?:  =(0 (mod (sub dst-name dev-name) 4.294.967.296))
-    %.y
-  %.n
-::
-++  parse-dst-desk
-  |=  [dst-desk=@t]
-  ^-  [? [=dst-name =app-name]]
-  =/  dst-desk  (trip dst-desk)
-  =/  loc  (find ['/']~ dst-desk)
-  ?~  loc  [%.n [~zod %fail]]
-  :+  %.y
-  (slav %p (crip (scag u.loc dst-desk)))
-  `@tas`(crip (slag +(u.loc) dst-desk))
-::
-::
+::  includes arms which are used to validate data
 ++  validator
   |%
+  ::
+  ::
+  ::
+  ::  helper arms
+  ::
+  ::  validates app-page for key, dst-desk and signature correctness
   ++  new-app-page
     |=  [our=@p now=@da =dev-name =key =app-page]
     ^-  ?
     ?.  (dev-name-in-key dev-name key)
       %.n
     =/  dst-desk  (parse-dst-desk dst-desk.dev-input.app-page)
-    ?.  -.dst-desk
+    ?~  dst-desk  %.n
+    ?.  =(app-name.u.dst-desk app-name.key)
       %.n
-    ?.  =(app-name.+.dst-desk app-name.key)
-      %.n
-    (sig key dst-name.+.dst-desk signature.dst-input.app-page our now)
+    (sig key dst-name.u.dst-desk signature.dst-input.app-page our now)
   ::
   ::  validates whether dev-name is in key
   ++  dev-name-in-key
@@ -447,20 +450,6 @@
       ~&  "fail: dev-name and key don't correspond"
       %.n
     %.y
-  ::
-  ::  check whether app is in cur-choice
-  ++  app-in-cur-choice
-    |=  [=key =cur-choice]
-    ^-  ?
-    ?~  (fand ~[key] key-list.cur-choice)
-      %.n
-    %.y
-  ::
-  ::  check whether app is in cur-data
-  ++  app-in-cur-data
-    |=  [=key =cur-data]
-    ^-  ?
-    (~(has by cur-map.cur-data) key)
   ::
   ::  validates signature
   ++  sig
@@ -475,27 +464,32 @@
       %.n
     %.y
   ::
-  ::  takes cur-map and aux-map and outputs the subset of cur-map with valid signatures
-  ++  cur-map-aux-map-all
-    |=  [=cur-map =aux-map our=@p now=@da]
-    ^-  [^cur-map ^aux-map]
-    =/  keys  ~(tap in ~(key by cur-map))
-    =/  signed-cur-map  *^cur-map
-    =/  signed-aux-map  *^aux-map
-    =/  n  0
-    =/  len  (lent keys)
-    |-  ?:  =(n len)  [signed-cur-map signed-aux-map]
-      =/  key  (snag n keys)
-      =/  app-page  (~(get by cur-map) key)
-      ?~  app-page  !!
-      ?.  (new-app-page [our now dev-name.key key u.app-page])  $(n +(n))
-      =/  app-set  (~(got by aux-map) dev-name.key)
-      =/  new-app-set  (~(put in app-set) app-name.key)
-      %=  $
-        n  +(n)
-        signed-cur-map  (~(put by signed-cur-map) key u.app-page)
-        signed-aux-map  (~(put by signed-aux-map) dev-name.key new-app-set)
-      ==
+  ::  %.y if one ship is moon of another
+  ++  ships-related
+    |=  [=dev-name dst-name=@p]
+    ^-  ?
+    ?:  (gte dev-name dst-name)
+      ?:  =(0 (mod (sub dev-name dst-name) 4.294.967.296))
+        %.y
+      %.n
+    ?:  =(0 (mod (sub dst-name dev-name) 4.294.967.296))
+      %.y
+    %.n
+  ::
+  ::  takes dst-desk, outputs unit of dst-name and app-name
+  ++  parse-dst-desk
+    |=  [dst-desk=@t]
+    ^-  (unit [=dst-name =app-name])
+    =/  dst-desk  (trip dst-desk)
+    =/  loc  (find ['/']~ dst-desk)
+    ?~  loc  ~
+    %-  some  :-
+    (slav %p (crip (scag u.loc dst-desk)))
+    `@tas`(crip (slag +(u.loc) dst-desk))
+  ::
+  ::
+  ::
+  ::  dev-data validators
   ::
   ::  takes dev-data and outputs the subset of dev-data with valid signatures
   ++  dev-data-all
@@ -551,6 +545,46 @@
     ?:  =(app-set app-names)
       %.y
     %.n
+  ::
+  ::
+  ::
+  ::  cur-data validators
+  ::
+  ::  check whether app is in cur-choice
+  ++  app-in-cur-choice
+    |=  [=key =cur-choice]
+    ^-  ?
+    ?~  (fand ~[key] key-list.cur-choice)
+      %.n
+    %.y
+  ::
+  ::  check whether app is in cur-data
+  ++  app-in-cur-data
+    |=  [=key =cur-data]
+    ^-  ?
+    (~(has by cur-map.cur-data) key)
+  ::
+  ::  takes cur-map and aux-map and outputs the subset of cur-map with valid signatures
+  ++  cur-map-aux-map-all
+    |=  [=cur-map =aux-map our=@p now=@da]
+    ^-  [^cur-map ^aux-map]
+    =/  keys  ~(tap in ~(key by cur-map))
+    =/  signed-cur-map  *^cur-map
+    =/  signed-aux-map  *^aux-map
+    =/  n  0
+    =/  len  (lent keys)
+    |-  ?:  =(n len)  [signed-cur-map signed-aux-map]
+      =/  key  (snag n keys)
+      =/  app-page  (~(get by cur-map) key)
+      ?~  app-page  !!
+      ?.  (new-app-page [our now dev-name.key key u.app-page])  $(n +(n))
+      =/  app-set  (~(got by aux-map) dev-name.key)
+      =/  new-app-set  (~(put in app-set) app-name.key)
+      %=  $
+        n  +(n)
+        signed-cur-map  (~(put by signed-cur-map) key u.app-page)
+        signed-aux-map  (~(put by signed-aux-map) dev-name.key new-app-set)
+      ==
   ::
   ::  verify whether cats in cat-map exist in cat-set
   ++  cat-map-cat-set
