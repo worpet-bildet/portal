@@ -3,6 +3,7 @@
 ++  grow
   |%
   ++  noun  cup
+  ++  json  (enjs-cur-update:enjs:app-store-marks cup)
   --
 ++  grab
   |%

@@ -6,6 +6,7 @@ import {
 import { Sidebar } from './components/Sidebar';
 import './index.css';
 import { Curator } from './pages/curator/Curator';
+import { DeveloperApplications } from './pages/curator/DeveloperApplications';
 import { Developer } from './pages/developer/Developer';
 import { UploadApplication } from './pages/developer/UploadApp';
 import { User } from './pages/user/User';
@@ -24,6 +25,15 @@ const router = createBrowserRouter([
   {
     path: '/apps/app-store/cur',
     element: <Curator />
+  },
+  {
+    path: '/apps/app-store/cur/me',
+    element: <UploadApplication />
+  },
+  ,
+  {
+    path: '/apps/app-store/cur/devs/:id',
+    element: <DeveloperApplications />
   },
   {
     path: '/apps/app-store/dev',
