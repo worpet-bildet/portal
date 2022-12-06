@@ -1,7 +1,7 @@
 import Urbit from '@urbit/http-api';
-import React, { useEffect, useState } from 'react';
-import mockApi from "../../../mocks/dev-view.json";
-import { AppTile } from '../../components/AppTile';
+import React, { useEffect } from 'react';
+import { AddButtonTile } from '../../components/AddButtonTile';
+import { CuratorTile } from '../../components/CuratorTile';
 import { SearchBar } from '../../components/SearchBar';
 import { Sidebar } from '../../components/Sidebar';
 
@@ -9,12 +9,10 @@ const api = new Urbit('', '', window.desk);
 api.ship = window.ship;
 
 // TODO(adrian): Add api call from ship to get applications
-export function User(props) {
-  const [apps, setApps] = useState([]);
+export function UserCurators(props) {
 
   useEffect(() => {
     subscribe();
-    setApps(getApplications());
   }, []);
 
   const subscribe = async () => {
@@ -38,25 +36,28 @@ export function User(props) {
 
   const setErrorMsg = (msg) => { throw new Error(msg); };
 
-  // This will be an async function to make the calls to urbit ship.
-  const getApplications = () => {
-    return Object.keys(mockApi);
-  }
+  const curators = [
+    {name: 'Curator', description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.'},
+    {name: 'Curator', description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.'},
+    {name: 'Curator', description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.'},
+    {name: 'Curator', description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.'},
+    {name: 'Curator', description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.'},
+    {name: 'Curator', description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.'},
+  ];
 
   return (
       <div className='flex flex-row'>
-        <Sidebar />
+        <Sidebar/>
         <main className="basis-3/4 flex items-center w-full justify-center min-h-screen">
           <div className="w-4/5 space-y-6 py-14">
-            <h1 className="text-3xl font-bold">My applications</h1>
+            <h1 className="text-3xl font-bold">Curators</h1>
             <SearchBar />
-            {apps.length && (
-              <ul className="space-y-4">
-                { Object.entries(apps).map((applicationName) =>
-                    <AppTile key={applicationName[1]} {...mockApi[applicationName[1]]} />
+              <ul className="grid grid-cols-3 gap-2 space-y-4">
+                <AddButtonTile buttonName="Add a curator" />
+                { curators.map((curator, i) =>
+                    <CuratorTile key={curator.name + i} curator={curator} />
                   ) }
               </ul>
-            )}
           </div>
       </main>
       </div>

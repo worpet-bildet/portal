@@ -12,12 +12,10 @@ api.ship = window.ship;
 // TODO(adrian): Add api call from ship to get applications
 export function Developer(props) {
   const [apps, setApps] = useState([]);
-  const [buttons, setButtons] = useState([]);
 
   useEffect(() => {
     subscribe();
     setApps(getApplications());
-    setButtons(sidebarButtons);
   }, []);
 
   const subscribe = async () => {
@@ -61,15 +59,6 @@ export function Developer(props) {
 
   const setErrorMsg = (msg) => { throw new Error(msg); };
 
-  const sidebarButtons = [{
-      buttonName: "Application",
-      link: '/apps/app-store/dev'
-    }, {
-      buttonName: "Upload an App",
-      link: '/apps/app-store/dev/upload-app'
-    }
-  ];
-
   // This will be an async function to make the calls to urbit ship.
   const getApplications = () => {
     return Object.keys(mockApi);
@@ -77,7 +66,7 @@ export function Developer(props) {
 
   return (
       <div className='flex flex-row'>
-        <Sidebar buttons={buttons} />
+        <Sidebar/>
         <main className="basis-3/4 flex items-center w-full justify-center min-h-screen">
           <div className="w-4/5 space-y-6 py-14">
             <h1 className="text-3xl font-bold">My applications</h1>

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Options } from './Options';
-import { Tag } from './Tag';
 
 function normalizeUrbitColor(color) {
   if (color.startsWith('#')) {
@@ -10,17 +9,17 @@ function normalizeUrbitColor(color) {
   return `#${color.slice(2).replace('.', '').toUpperCase()}`;
 }
 
-export function AppTile (props) {
+export function CuratorTile (props) {
   const [imageError, setImageError] = useState(false);
 
   return (
     <li className="flex items-center space-x-3 text-sm leading-tight">
-      <Link to={`/apps/app-store/usr/apps/${props.title}`} className="w-full p-4 rounded border border-black hover:bg-gray-200">
+      <Link to={`/apps/app-store/usr/curs/${props.curator.name}`} className="w-full p-4 rounded border border-black hover:bg-gray-200">
         <div className="flex flex-row flex-auto justify-between">
           <div className='flex flex-row'>
             <div
-            className="flex-none relative w-20 h-20 mr-10 rounded-lg bg-gray-200 overflow-hidden"
-            style={{ backgroundColor: normalizeUrbitColor(props.color) }}
+            className="flex-none relative w-16 h-16 mr-4 rounded-lg bg-gray-200 overflow-hidden"
+            style={{ backgroundColor: 'blueviolet' }}
             >
             {!imageError &&
               <img
@@ -31,18 +30,13 @@ export function AppTile (props) {
               />
             }
             </div>
-            <div className='flex flex-col space-y-3'>
-              <p className='text-2xl font-bold'>
-                {props.title}
+            <div className='flex flex-col space-y-1'>
+              <p className='text-lg font-bold'>
+                {props.curator.name}
               </p>
-              {
-                props.keywords &&
-                  <ul className="flex flex-wrap gap-2">
-                    { props.keywords.map((tag, i) =>
-                      <Tag key={`${props.title}_${tag}_${i}`} name={tag}/>
-                    ) }
-                  </ul>
-              }
+              <p className='text-xs font-medium'>
+                {props.curator.description}
+              </p>
             </div>
           </div>
           <Options />
