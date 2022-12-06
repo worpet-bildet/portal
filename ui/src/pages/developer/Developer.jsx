@@ -35,6 +35,26 @@ export function Developer(props) {
     }
   };
 
+  const mockAppPage = {
+    "app-name": "app-store",
+    "dev-input": {
+      description: "blahblah",
+      screenshots: ["link1", "link2"],
+      keywords: ["kyw1", "kyw2"],
+      "dst-desk": "~zod/app-store"
+    }
+  }
+
+  const submitNew = () => {
+    api.poke({
+      app: "dev-server",
+      mark: "app-store-dev-action",
+      json: { add: mockAppPage },
+      onSuccess: () => console.log('Successfully done'),
+      onError: () => this.setErrorMsg("Va a ser que no"),
+    });
+  };
+
   const handleUpdate = (upd) => {
     console.log(upd);
   }
@@ -63,6 +83,7 @@ export function Developer(props) {
             <h1 className="text-3xl font-bold">My applications</h1>
             {apps.length && (
               <ul className="space-y-4">
+                <button onClick={() => submitNew()} >Add Mock Page</button>
                 <AddButtonTile buttonName="Add App page"/>
                 { Object.entries(apps).map((applicationName) =>
                     <AppTile key={applicationName[1]} {...mockApi[applicationName[1]]} />
