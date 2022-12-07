@@ -1,19 +1,11 @@
 import React from 'react';
+import { IconImageInput } from '../../components/IconImageInput';
 import { Sidebar } from '../../components/Sidebar';
 
 export function UploadApplication(props) {
-  const buttons = [{
-      buttonName: "Application",
-      link: '/apps/app-store/dev'
-    }, {
-      buttonName: "Upload an App",
-      link: '/apps/app-store/dev/upload-app'
-    }
-  ]
-
   return (
     <div className='flex flex-row'>
-      <Sidebar buttons={buttons} />
+      <Sidebar/>
       <main className="basis-3/4 flex items-center w-full justify-center min-h-screen">
         <div className="w-4/5 space-y-6 py-14">
           <h1 className="text-3xl font-bold">Upload an application</h1>
@@ -145,18 +137,6 @@ function ImageInput(props) {
         </div>
         <input id="dropzone-file" type="file" className="hidden" />
       </label>
-    </div>
-  );
-}
-
-function IconImageInput(props) {
-  return (
-    <div className="flex flex-col justify-between">
-      <label htmlFor="dropzone-file" className="flex flex-col justify-center items-center h-36 border border-black cursor-pointer dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
-        <p className="mb-2 text-xs text-center w-3/4 text-gray-500 dark:text-gray-400">The format should be 40x40 px</p>
-        <input className='hidden' id="dropzone-file" type="file"/>
-      </label>
-      <button className="text-xs block font-bold border-2 border-black hover:bg-gray-800 hover:text-white py-1 w-full"> Upload an icon</button>
     </div>
   );
 }
