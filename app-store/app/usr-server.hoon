@@ -81,7 +81,17 @@
   ==
 ::
 ++  on-arvo   on-arvo:default
-++  on-watch  on-watch:default
+++  on-watch
+  |=  =path
+  ^-  (quip card _this)
+  ?+    -.path    (on-watch:default path)
+      %render
+    ~&  "%usr-server: received subscription request from front-end"
+    =/  usr-update  `usr-update`[%all usr-data.state]
+    :_  this
+    [%give %fact ~ %app-store-usr-update !>(usr-update)]~
+  ==
+::
 ++  on-leave  on-leave:default
 ::
 ::  on-agent is for receiving subscription updates from Curators

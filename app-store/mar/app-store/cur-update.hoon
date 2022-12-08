@@ -1,4 +1,5 @@
 /-  *app-store-data
+/+  app-store-marks
 |_  cup=cur-update
 ++  grow
   |%
@@ -8,7 +9,6 @@
 ++  grab
   |%
   ++  noun  cur-update
-  ++  json  (enjs-cur-update:enjs:app-store-marks cup)
   --
 ++  grad  %noun
 --
