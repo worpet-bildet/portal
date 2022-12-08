@@ -93,12 +93,12 @@
   ?+    -.path    (on-watch:default path)
       %cur-update
     ~&  "%cur-server: received subscription request"
-    =/  cur-update  `cur-update`[%all cur-info.cur-page.state cur-data.cur-page.state]
+    =/  cur-update  `cur-update`[%all cur-page.state]
     :_  this
     [%give %fact ~ %app-store-cur-update !>(cur-update)]~
       %render
     ~&  "%cur-server: received subscription request from front-end"
-    =/  cur-update  `cur-update`[%all cur-info.cur-page.state cur-data.cur-page.state]
+    =/  cur-update  `cur-update`[%all cur-page.state]
     :_  this
     [%give %fact ~ %app-store-cur-update !>(cur-update)]~
   ==
