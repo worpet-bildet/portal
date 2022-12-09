@@ -10,7 +10,6 @@ export function Sidebar(props) {
   useEffect(() => {
     setCurrentLocation(location.pathname);
     setButtons(getButtons(currentLocation));
-    console.log(buttons);
   });
   
   return (
@@ -59,24 +58,24 @@ function SidebarItem(props) {
   );
 }
 
-function SwitchAccounts(props) {
+function SwitchAccounts({accounts}) {
   return (
     <div className='flex flex-col gap-y-4'>
       <p className='self-center'>Switch role</p>
       <ul className="flex justify-center gap-6 w-2/4 self-center">
-        { props.accounts.map((account) => <Account {...account} />) }
+        { accounts.map((account) => <Account key={account.name} {...account} />) }
       </ul>
     </div>
   );
 }
 
-function Account(props) {
+function Account({link, name}) {
   return (
     <li>
-      <Link to={props.link}>
+      <Link to={link}>
         <div className="rounded-full border border-black bg-white flex p-7 relative hover:border-2">
           <span className="absolute top-4 left-5 font-bold text-3xl">
-              {props.name}
+              {name}
           </span>
         </div>
       </Link>
