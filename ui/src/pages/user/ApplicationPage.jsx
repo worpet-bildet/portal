@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
+import { AddReviewModal } from "../../components/AddReviewModal";
 import { GoBack } from "../../components/GoBack";
 import { Sidebar } from "../../components/Sidebar";
 import { Tabs } from "../../components/Tabs";
@@ -91,9 +92,9 @@ function ApplicationImage(props) {
 function Reviews(props) {
   return (
     <div className="flex flex-col space-y-2">
-      <button type="submit" className="block ml-auto rigth-10 font-bold border-2 border-black hover:bg-gray-800 hover:text-white py-0.5 px-5" href="">Add a review</button>
+      <AddReviewModal />
       <ul className="flex flex-col space-y-2">
-        { props.comments.map((comment) => <Comment key={comment.user.name} user={comment.user} comment={comment.comment} /> )}
+        { props.comments.map((comment, i) => <Comment key={comment.user.name + i} user={comment.user} comment={comment.comment} /> )}
       </ul>
     </div>
   );
@@ -104,7 +105,7 @@ function Comments(props) {
     <>
       <CommentForm />
       <ul className="flex flex-col space-y-2">
-        { props.comments.map((comment) => <Comment ey={comment.user.name} user={comment.user} comment={comment.comment} /> )}
+        { props.comments.map((comment, i) => <Comment key={comment.user.name + i} user={comment.user} comment={comment.comment} /> )}
       </ul>
     </>
   );
@@ -144,7 +145,7 @@ function Comment(props) {
 function CommentForm(props) {
   return (
     <form className="relative">
-      <textarea rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 border border-gray-900" placeholder="Leave a comment...">
+      <textarea rows="4" className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 border border-gray-900" placeholder="Leave a comment...">
       </textarea>
       <button type="submit" className="absolute bottom-2.5 right-2.5 font-bold border-2 border-black hover:bg-gray-800 hover:text-white py-0.5 px-5" href="">Comment</button>
     </form>
