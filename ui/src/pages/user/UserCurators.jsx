@@ -1,6 +1,7 @@
 import Urbit from '@urbit/http-api';
 import React, { useEffect } from 'react';
 import { AddButtonTile } from '../../components/AddButtonTile';
+import { AddCuratorModal } from '../../components/AddCuratorModal';
 import { CuratorTile } from '../../components/CuratorTile';
 import { SearchBar } from '../../components/SearchBar';
 import { Sidebar } from '../../components/Sidebar';
@@ -53,7 +54,7 @@ export function UserCurators(props) {
             <h1 className="text-3xl font-bold">Curators</h1>
             <SearchBar />
               <ul className="grid grid-cols-3 gap-2 space-y-4">
-                <AddButtonTile buttonName="Add a curator" />
+                <AddCuratorModal />
                 { curators.map((curator, i) =>
                     <CuratorTile key={curator.name + i} curator={curator} />
                   ) }

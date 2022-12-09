@@ -1,6 +1,15 @@
+import Urbit from '@urbit/http-api';
 import React from 'react';
+import { Controller, FormProvider, useFieldArray, useForm, useFormContext } from 'react-hook-form';
+import { redirect } from 'react-router-dom';
 import { IconImageInput } from '../../components/IconImageInput';
+import { Input } from '../../components/Input';
 import { Sidebar } from '../../components/Sidebar';
+import { Tag } from '../../components/Tag';
+import { TextAreaInput } from '../../components/TextAreaInput';
+
+const api = new Urbit('', '', window.desk);
+api.ship = window.ship;
 
 export function UploadApplication(props) {
   return (
@@ -19,50 +28,107 @@ export function UploadApplication(props) {
 }
 
 function Form(props) {
+  const methods = useForm({
+    defaultValues: {
+      "app-name": "",
+      "dev-input": {
+        description: "",
+        screenshots: ['Introduce a url'],
+        keywords: [],
+        "dst-desk": "~zod/name-desk"
+      }
+    }
+  });
+  const { handleSubmit, watch } = methods;
+  const watchAllFields = watch();
+  const onSubmit = (data) => {
+    submitNew(data);
+    return redirect('/apps/app-store/dev');
+  };
+
+  const submitNew = (appPage) => {
+    api.poke({
+      app: "dev-server",
+      mark: "app-store-dev-action",
+      json: { add: appPage },
+      onSuccess: () => console.log('Successfully done'),
+      onError: () => setErrorMsg("Va a ser que no"),
+    });
+  };
+
+  const setErrorMsg = (msg) => { throw new Error(msg); };
+
   return (
-    <form>
-      <AppPageInformation />
+    <FormProvider {...methods}> 
+      <AppPageInformation/>
       <Signature />
       <Docket />
-      <button type="submit" className="block ml-auto font-bold border-2 border-black hover:bg-gray-800 hover:text-white py-0.5 px-5" href="">save</button>
-    </form>
+      <button
+        type="submit"
+        className="block ml-auto font-bold border-2 border-black hover:bg-gray-800 hover:text-white py-0.5 px-5"
+        onClick={handleSubmit(onSubmit)}
+      >save</button>
+    </FormProvider>
   );
 }
 
 function AppPageInformation(props) {
+  const { register, control } = useFormContext();
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name:"dev-input.screenshots"
+  })
+
   return (
     <div>
       <div className='mb-6'>
-        <AppInformation />
-      </div>
-      <div className='flex flex-row gap-3 mb-6'>
-        <ImageInput className="basis-1/3" />
-        <ImageInput className="basis-1/3" />
-        <ImageInput className="basis-1/3" />
-      </div>
-      <Input label="Distributor desk" />
-    </div>
-  );
-}
-
-function AppInformation(props) {
-  return (
-    <div className='flex flex-row gap-14'>
-      <IconImageInput />
-      <div>
-        <div className="flex flex-row gap-10">
-              <div className="mb-3 basis-1/2">
-                <Input label="Distributor desk" placeholder="~sampel/desk?" />
-              </div>
-              <div className="mb-3 basis-1/2">
-                <Input label="Keywords" />
-              </div>
-        </div>
-        <div>
-          <label htmlFor="description" className="block text-sm font-semibold text-gray-800 dark:text-white">Description</label>
-          <input type="text" id="description" className="border border-gray-800 text-gray-800 text-sm  focus:ring-gray-900 focus:border-gray-900 block w-full py-10 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-900 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+        <div className='flex flex-row gap-14'>
+        <IconImageInput />
+        <div className='w-full'>
+          <div className="flex flex-row gap-10">
+            <div className="mb-3 basis-1/2">
+              <Input name='app-name' label="Application name" {...register('app-name')} />
+            </div>
+            <div className="mb-3 basis-1/2">
+              <Controller
+                name="dev-input.keywords"
+                control={control}
+                render={({field: { ref, onChange, ...field }}) => (
+                  <ArrayInput
+                    {...field}
+                    name="keywords"
+                    label="Keywords"
+                    placeholder="something something"
+                  />
+                  )
+                }
+              />
+            </div>
+          </div>
+          <TextAreaInput name="description" label="Description" rows="10" {...register('dev-input.description')}/>
         </div>
       </div>
+      </div>
+      <ul className='flex flex-col gap-3 mb-6 w-full'>
+        { fields.map((field, index) => (
+            <li key={field.id} className="flex w-full">
+              <ImageInput
+                name={`Screenshot ${index}`}
+                label={`Screenshot ${index}`}
+                index={index}
+                onClick={remove}
+                {...register(`dev-input.screenshots.${index}`)}
+              />
+            </li>
+          ))
+        }
+        <button
+          type="button"
+          className='block ml-auto font-bold border-2 border-black hover:bg-gray-800 hover:text-white px-5'
+          onClick={() => append('Introduce a new url')}
+        >Add Screenshot</button>
+      </ul>
+      <Input label="Distributor desk" placeholder="~sampel/desk?" {...register('dev-input.dst-desk')}/>
     </div>
   );
 }
@@ -118,25 +184,60 @@ function Docket(props) {
   );
 }
 
-function Input(props) {
+const ArrayInput = React.forwardRef(({label, name, placeholder, ...rest}, ref) => {
+  const { setValue, getValues } = useFormContext();
+  const setArrayValues = (value) => {
+    const previousValue = getValues('dev-input.keywords');
+    let currentValue;
+    currentValue = value.split(' ');
+    if(previousValue.length > 1) {
+      currentValue = currentValue.join().split(',');
+    }
+    setValue('dev-input.keywords', currentValue)
+  }
   return (
-    <div>
-      <label className="text-sm font-semibold text-gray-800 dark:text-white">{props.label}</label>
-      <input type="text" className="border border-gray-800 text-gray-800 text-sm  focus:ring-gray-900 focus:border-gray-900 w-full p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-900 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={props.placeholder} />
-    </div>
+    <>
+      <div>
+        <label className="text-sm font-semibold text-gray-800" htmlFor={name}>{label}</label>
+        <input
+          name={name}
+          type="text"
+          className="border border-gray-800 text-gray-800 text-sm  focus:ring-gray-900 focus:border-gray-900 w-full p-1.5"
+          placeholder={placeholder}
+          onChange={(e) => setArrayValues(e.target.value)}
+          {...rest}
+          ref={ref}
+        />
+      </div>
+      <ul className='flex justify-start gap-x-1 flex-wrap'>
+        { getValues('dev-input.keywords')
+          ? getValues('dev-input.keywords').map((keyword, index) => <Tag key={keyword + index} name={keyword} />)
+          : null
+        }
+      </ul>
+    </>
   );
-}
+});
 
-function ImageInput(props) {
+const ImageInput = React.forwardRef(({name, label, placeholder, onClick, index, ...rest}, ref) => {
   return (
-    <div className="flex items-center justify-center w-full">
-      <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-40 border border-black rounded cursor-pointer dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
-        <div className="flex flex-col items-center justify-center">
-            <svg aria-hidden="true" className="w-12 h-12 mb-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-            <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">Screenshot</p>
-        </div>
-        <input id="dropzone-file" type="file" className="hidden" />
-      </label>
+    <div className='flex flex-col w-full'>
+      <label className="text-sm font-semibold text-gray-800" htmlFor={name}>{label}</label>
+      <div className='flex w-full'>
+        <input
+          name={name}
+          className="w-full text-xs text-gray-900 border border-gray-900 focus:ring-gray-900 focus:border-gray-900"
+          type="text"
+          placeholder={placeholder}
+          {...rest}
+          ref={ref}
+        />
+        <button
+          type="button"
+          className='block font-bold border-2 border-black hover:bg-gray-800 hover:text-white px-5'
+          onClick={() => onClick(index)}
+        >Delete</button>
+      </div>
     </div>
   );
-}
+});
