@@ -3,6 +3,7 @@ import React from 'react';
 import { Controller, FormProvider, useFieldArray, useForm, useFormContext } from 'react-hook-form';
 import { redirect } from 'react-router-dom';
 import { IconImageInput } from '../../components/IconImageInput';
+import { Input } from '../../components/Input';
 import { Sidebar } from '../../components/Sidebar';
 import { Tag } from '../../components/Tag';
 
@@ -190,22 +191,6 @@ function Docket(props) {
     </div>
   );
 }
-
-const Input = React.forwardRef(({label, name, placeholder, ...rest}, ref) => {
-  return (
-    <div>
-      <label className="text-sm font-semibold text-gray-800" htmlFor={name}>{label}</label>
-      <input
-        name={name}
-        type="text"
-        className="border border-gray-800 text-gray-800 text-sm focus:ring-gray-900 focus:border-gray-900 w-full p-1.5"
-        placeholder={placeholder}
-        {...rest}
-        ref={ref}
-      />
-    </div>
-  );
-});
 
 const ArrayInput = React.forwardRef(({label, name, placeholder, ...rest}, ref) => {
   const { setValue, getValues } = useFormContext();
