@@ -2,6 +2,7 @@ import { scryCharges } from '@urbit/api';
 import Urbit from '@urbit/http-api';
 import React, { useEffect, useState } from 'react';
 import mockApi from "../../../mocks/dev-view.json";
+import { AddDeveloperModal } from '../../components/AddDeveloperModal';
 import { AppTile } from '../../components/AppTile';
 import { DeveloperTile } from '../../components/DeveloperTile';
 import { SearchBar } from '../../components/SearchBar';
@@ -14,7 +15,7 @@ api.ship = window.ship;
 // TODO(adrian): Add api call from ship to get applications
 export function Curator(props) {
   const [apps, setApps] = useState([]);
-  const [selectedButton, setSelectedButton] = useState('Apps');
+  const [selectedButton, setSelectedButton] = useState('Developer');
 
   useEffect(() => {
     subscribe();
@@ -77,6 +78,7 @@ export function Curator(props) {
           )}
           { selectedButton === 'Developer' && (
             <ul className='grid grid-cols-4 gap-2'>
+              <AddDeveloperModal />
               { developers.map((developer, i) =>
                 // Change key to just name. It shouldn't be duplicated
                 <DeveloperTile key={developer.name + i} name={developer.name} />

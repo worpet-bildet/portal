@@ -15,6 +15,7 @@
     "flowbite-react": "^0.3.3",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-hook-form": "^7.40.0",
     "react-router-dom": "^6.4.3"
   },
   "devDependencies": {

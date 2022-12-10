@@ -11,11 +11,11 @@ api.ship = window.ship;
 
 // TODO(adrian): Add api call from ship to get applications
 export function Developer(props) {
-  const [apps, setApps] = useState([]);
+  const [applicationNames, setApplicationNames] = useState([]);
+  const [applications, setApplications] = useState([]);
 
   useEffect(() => {
     subscribe();
-    setApps(getApplications());
   }, []);
 
   const subscribe = async () => {
@@ -33,36 +33,16 @@ export function Developer(props) {
     }
   };
 
-  const mockAppPage = {
-    "app-name": "app-store",
-    "dev-input": {
-      description: "blahblah",
-      screenshots: ["link1", "link2"],
-      keywords: ["kyw1", "kyw2"],
-      "dst-desk": "~zod/app-store"
-    }
-  }
-
-  const submitNew = () => {
-    api.poke({
-      app: "dev-server",
-      mark: "app-store-dev-action",
-      json: { add: mockAppPage },
-      onSuccess: () => console.log('Successfully done'),
-      onError: () => this.setErrorMsg("Va a ser que no"),
-    });
-  };
-
-  const handleUpdate = (upd) => {
-    console.log(upd);
+  const handleUpdate = (data) => {
+    setApplicationNames(data["app-set"]);
+    setApplications(data["dev-map"]);
   }
 
   const setErrorMsg = (msg) => { throw new Error(msg); };
 
-  // This will be an async function to make the calls to urbit ship.
-  const getApplications = () => {
-    return Object.keys(mockApi);
-  }
+  const findApplication = (name) => (applications.find((app) => app.key['app-name'] === name));
+
+  const getAppId = (name) => findApplication(name).id;
 
   return (
       <div className='flex flex-row'>
@@ -70,13 +50,13 @@ export function Developer(props) {
         <main className="basis-3/4 flex items-center w-full justify-center min-h-screen">
           <div className="w-4/5 space-y-6 py-14">
             <h1 className="text-3xl font-bold">My applications</h1>
-            {apps.length && (
+            {applications.length && (
               <ul className="space-y-4">
-                <button onClick={() => submitNew()} >Add Mock Page</button>
                 <AddButtonTile buttonName="Add App page"/>
-                { Object.entries(apps).map((applicationName) =>
-                    <AppTile key={applicationName[1]} {...mockApi[applicationName[1]]} />
-                  ) }
+                { applicationNames.map((appName) =>
+                    <AppTile key={getAppId(appName)} appName={appName} {...findApplication(appName)}/>
+                  )
+                }
               </ul>
             )}
           </div>
