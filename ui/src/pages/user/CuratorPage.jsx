@@ -1,13 +1,58 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { GoBack } from "../../components/GoBack";
 import { Sidebar } from "../../components/Sidebar";
 import { Tag } from '../../components/Tag';
+import { getUrbitApi } from "../../utils/urbitApi";
+
+const api = getUrbitApi();
 
 export function CuratorPage(props) {
+  const [info, setCuratorInfo] = useState();
   const {curator} = useParams();
 
-  const info = [{
+  useEffect(() => {
+    subscribe();
+  }, []);
+
+  const subscribe = async () => {
+    try {
+      api.subscribe({
+        app: "usr-server",
+        path: "/render",
+        event: handleUpdate,
+        err: () => setErrorMsg("Subscription rejected"),
+        quit: () => setErrorMsg("Kicked from subscription"),
+        cancel: () => setErrorMsg("Subscription cancelled"),
+      });
+    } catch {
+      setErrorMsg("Subscription failed");
+    }
+  };
+
+  const handleUpdate = (upd) => {
+    console.log(upd);
+    setCuratorInfo(getCuratorInfo(upd));
+  }
+
+  const setErrorMsg = (msg) => { throw new Error(msg); };
+
+  const getCuratorInfo = (curatorsList) => {
+    const currentCurator = getCurator(curatorsList);
+    const curatorInfo = currentCurator['cur-page']['cur-info'];
+    const curatorData = currentCurator['cur-page']['cur-data'];
+    return {
+      curator: { name: curator, description: curatorInfo['cur-intro'] },
+      categories: curatorData['cur-choice']['cat-set'],
+      applications: curatorData['cur-choice']['cat-map']
+    }
+  }
+
+  const getCurator = (curatorList) => {
+    return curatorList.find((curatorInfo) => curatorInfo['cur-page']['cur-info']['cur-title'] === curator);
+  }
+
+  const app = [{
     curator: {
       name: curator,
       description: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ducimus sapiente suscipit quae tempora laudantium, maiores nesciunt. Amet eaque deleniti odit dolor pariatur omnis. Ab perferendis ullam debitis asperiores. Esse, ullam.'
@@ -32,14 +77,13 @@ export function CuratorPage(props) {
         <div className="absolute top-0 w-4/5 space-y-14 py-14">
           <GoBack titlePreviousPage="Curators" />
           <div className="flex flex-col space-y-10">
-            <CuratorIntroduction curator={info[0].curator} image='' />
+          { info && <CuratorIntroduction curator={info.curator} image='' /> }
             <ul className="flex flex-wrap gap-4">
-              { info[0].categories.map((tag, i) =>
-                <Tag key={`${props.title}_${tag}_${i}`} name={tag}/>
-              ) }
+              { info && info.categories.map((tag) => <Tag key={tag} name={tag}/>) }
             </ul>
             <ul className="grid grid-cols-6 place-items-center gap-y-6">
-              { info[0].applications.map((app, i) => <SmallApplicationTile key={app + i} {...app} />) }
+              { info && info.applications.map((app) => 
+                  <SmallApplicationTile key={app.id} name={app.key['app-name']} /> ) }
             </ul>
           </div>
         </div>
@@ -48,7 +92,7 @@ export function CuratorPage(props) {
   );
 }
 
-function CuratorIntroduction(props) {
+function CuratorIntroduction({curator}) {
   return(
     <div className="w-full p-8 rounded border border-black">
         <div className="flex flex-row flex-auto justify-between">
@@ -59,15 +103,15 @@ function CuratorIntroduction(props) {
             >
               <img
               className="h-full w-full object-cover"
-              src={props.image}
+              src={curator.image}
               alt=""
               />
             </div>
             <div className='flex flex-col space-y-3'>
               <p className='text-2xl font-bold'>
-                {props.curator.name}
+                {curator.name}
               </p>
-              <p className="text-base">{props.curator.description}</p>
+              <p className="text-base">{curator.description}</p>
             </div>
           </div>
         </div>
@@ -75,7 +119,7 @@ function CuratorIntroduction(props) {
   );
 }
 
-function SmallApplicationTile(props) {
+function SmallApplicationTile({name, image}) {
   return(
     <div className="flex flex-col gap-1 justify-content-center">
       <div
@@ -84,11 +128,11 @@ function SmallApplicationTile(props) {
       >
         <img
         className="h-full w-full object-cover"
-        src={props.image}
+        src={image}
         alt=""
         />
       </div>
-      <p className="text-xl text-center font-bold">{props.name}</p>
+      <p className="text-xl text-center font-bold">{name}</p>
     </div>
   );
 }

@@ -1,20 +1,56 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { AddReviewModal } from "../../components/AddReviewModal";
 import { GoBack } from "../../components/GoBack";
 import { Sidebar } from "../../components/Sidebar";
 import { Tabs } from "../../components/Tabs";
+import { getUrbitApi } from "../../utils/urbitApi";
+
+const api = getUrbitApi();
 
 export function ApplicationPage(props) {
   const {application} = useParams();
-  const [selectedButton, setSelectedButton] = useState('Reviews');
+  const [appInfo, setAppInfo] = useState();
+  const [selectedButton, setSelectedButton] = useState('Comments');
+
+  useEffect(() => {
+    subscribe();
+  }, []);
+
+  const subscribe = async () => {
+    try {
+      api.subscribe({
+        app: "usr-server",
+        path: "/render",
+        event: handleUpdate,
+        err: () => setErrorMsg("Subscription rejected"),
+        quit: () => setErrorMsg("Kicked from subscription"),
+        cancel: () => setErrorMsg("Subscription cancelled"),
+      });
+    } catch {
+      setErrorMsg("Subscription failed");
+    }
+  };
+
+  const handleUpdate = (curators) => {
+    const currentApp = getApplications(curators).find((app) => app.key['app-name'] === application);
+    setAppInfo(currentApp);
+    console.log(currentApp);
+  }
+
+  const setErrorMsg = (msg) => { throw new Error(msg); };
+
+  const getApplications = (curators) => {
+    let apps = [];
+    curators.map((curator) => {
+      const curatorApps = curator['cur-page']['cur-data']['cur-map'];
+      apps = apps.concat(curatorApps);
+    });
+    return apps;
+  }
 
   const tabs = [{name: 'Reviews'}, {name: 'Comments'}];
-
-  const comments = [
-    {user: { image: '', name: '~sampel-palnet'}, comment: 'This is a sample for a comment well explained and with lots of sense as the real life.'},
-    {user: { image: '', name: '~sampel-palnet'}, comment: 'This is a sample for a comment well explained and with lots of sense as the real life.'}
-  ];
 
   const selectButton = (event) => {
     setSelectedButton(event.target.textContent);
@@ -30,18 +66,24 @@ export function ApplicationPage(props) {
             <div className="flex justify-between">
               <div className="flex flex-col">
                 <h1 className="text-5xl font-bold">{application}</h1>
-                <h3 className="text-2xl">Meta, Inc.</h3>
+                { appInfo ?
+                  <h3 className="text-2xl">{appInfo.key['dev-name']}</h3>
+                  : null }
               </div>
               <button type="submit" className="text-2xl h-1/2 mt-auto font-bold bg-gray-800 text-white py-2 px-5" href="">Download</button>
             </div>
-            <Rating />
-            <CarouselApplicationImages />
-            <p className="text-lg text-justify mt-5">
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ut maiores laborum exercitationem deserunt doloremque quae sed itaque earum rerum nostrum quia facere, debitis, molestiae excepturi atque quaerat repellat! Quidem, tempora.
-            </p>
-            <Tabs selectButton={selectButton} tabs={tabs}/>
-            { selectedButton === 'Reviews' && <Reviews comments={comments} />}
-            { selectedButton === 'Comments' && <Comments comments={comments} />}
+            { appInfo ? (
+              <>
+                <Rating ratings={appInfo.ratings}/>
+                <CarouselApplicationImages links={appInfo.screenshots}/>
+                <p className="text-lg text-justify mt-5">
+                  {appInfo.description}
+                </p>
+                <Tabs selectButton={selectButton} tabs={tabs}/>
+                { selectedButton === 'Reviews' && <Reviews reviews={appInfo.reviews} appKey={appInfo.key} hash={appInfo['desk-hash']}/>}
+                { selectedButton === 'Comments' && <Comments comments={appInfo.comments} appKey={appInfo.key} />}
+              </>
+            ) : null }
           </div>
         </div>
       </main>
@@ -49,32 +91,82 @@ export function ApplicationPage(props) {
   );
 }
 
-function Rating(props) {
-  // Change the number for the actual rate from the application
+function Rating({ratings}) {
+  const [rating, setRating] = useState(5);
+  const [filledStars, setFilledStars] = useState([]);
+  const [emptyStars, setEmptyStars] = useState([]);
+  
+  useEffect(() => {
+    const currentRating = avgRating();
+    setRating(currentRating);
+    
+    const fillStars = Math.floor(currentRating);
+    setFilledStars([...Array(currentRating).keys()]);
+    
+    const empStars = 5 - fillStars;    
+    setEmptyStars([...Array(empStars).keys()]);
+  }, []);
+  const avgRating = () => {
+    const total = ratings.reduce((prev, curr) => prev + curr['rating-num'], 0);
+    const avg = (total / ratings.length);
+    if (!Number.isFinite(avg) || Number.isNaN(avg)) {
+      return 0;
+    }
+    return avg;
+  }
   return (
     <div className="flex items-center mb-5">
-      <svg aria-hidden="true" className="text-yellow-400 w-10 h-10" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>First star</title><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-      <svg aria-hidden="true" className="text-yellow-400 w-10 h-10" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>Second star</title><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-      <svg aria-hidden="true" className="text-yellow-400 w-10 h-10" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>Third star</title><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-      <svg aria-hidden="true" className="text-yellow-400 w-10 h-10" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>Fourth star</title><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-      <svg aria-hidden="true" className="text-gray-300 w-10 h-10 dark:text-gray-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>Fifth star</title><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-      <p className="ml-2 text-2xl font-medium dark:text-gray-400">4.8/5</p>
+      { filledStars.length ? (
+          <ul className="flex">
+            { filledStars.map((star) => 
+            <li key={star}>
+              <svg
+                aria-hidden="true"
+                className="text-gray-600 w-10 h-10"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+              </svg>
+            </li>
+          ) }
+          </ul>
+        ) : null }
+      { emptyStars.length ? (
+          <ul className="flex">
+            { emptyStars.map((empStar, i) => 
+          <li key={empStar + i}>
+            <svg
+              aria-hidden="true"
+              className="text-gray-200 w-10 h-10"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+            </svg>
+          </li> ) }
+          </ul>
+        ) : null }
+      
+      <p className="ml-2 text-2xl font-medium dark:text-gray-400">{rating}/5</p>
   </div>
   );
 }
 
-function CarouselApplicationImages(props) {
+function CarouselApplicationImages({links}) {
   // Make an actual carousel
   return (
     <div className="grid grid-cols-3 w-full gap-3">
-      <ApplicationImage />
-      <ApplicationImage />
+      <ApplicationImage src={links[0]}/>
+      <ApplicationImage src={links[1]}/>
       <ApplicationImage />
     </div>
   );
 }
 
-function ApplicationImage(props) {
+function ApplicationImage({src, alt}) {
   return (
     <div
     className="relative w-full h-56 md:h-64 mr-10 rounded-lg overflow-hidden border border-black"
@@ -82,36 +174,28 @@ function ApplicationImage(props) {
   >
     <img
       className="h-full w-full object-cover"
-      src={props.src}
-      alt={props.alt}
+      src={src}
+      alt={alt}
       />
   </div>
   );
 }
 
-function Reviews(props) {
+function Reviews({reviews, appKey, hash}) {
   return (
     <div className="flex flex-col space-y-2">
-      <AddReviewModal />
+      <AddReviewModal appKey={appKey} hash={hash}/>
       <ul className="flex flex-col space-y-2">
-        { props.comments.map((comment, i) => <Comment key={comment.user.name + i} user={comment.user} comment={comment.comment} /> )}
+        { reviews.length ?
+          reviews.map((review) => <Review key={review['updated-at']} user={review.user} text={review.text} />
+          ) : null
+        }
       </ul>
     </div>
   );
 }
 
-function Comments(props) {
-  return (
-    <>
-      <CommentForm />
-      <ul className="flex flex-col space-y-2">
-        { props.comments.map((comment, i) => <Comment key={comment.user.name + i} user={comment.user} comment={comment.comment} /> )}
-      </ul>
-    </>
-  );
-}
-
-function Comment(props) {
+function Review({text, user}) {
   return (
     <li className="flex items-center space-x-3 text-sm leading-tight">
       <div className="h-28 w-full p-4 rounded bg-gray-200">
@@ -122,17 +206,12 @@ function Comment(props) {
               className="flex-none relative w-8 h-8 mr-2 rounded-full bg-gray-200 overflow-hidden"
               style={{ backgroundColor: 'grey' }}
               >
-                <img
-                className="h-full w-full object-cover"
-                src={props.user.image}
-                alt=""
-                />
               </div>
-              <p className="text-lg font-bold">{props.user.name}</p>
+              <p className="text-lg font-bold">{user}</p>
             </div>
             <div className='flex flex-col space-y-3'>
               <p className='text-base'>
-                {props.comment}
+                {text}
               </p>
             </div>
           </div>
@@ -142,12 +221,82 @@ function Comment(props) {
   );
 }
 
-function CommentForm(props) {
+
+function Comments({comments, appKey}) {
+  return (
+    <>
+      <CommentForm appKey={appKey} />
+      <ul className="flex flex-col space-y-2">
+        { comments.map((comment) => <Comment key={comment.id} user={comment.user} text={comment.text} /> )}
+      </ul>
+    </>
+  );
+}
+
+function Comment({text, user}) {
+  return (
+    <li className="flex items-center space-x-3 text-sm leading-tight">
+      <div className="h-28 w-full p-4 rounded bg-gray-200">
+        <div className="flex flex-row flex-auto justify-between">
+          <div className='flex flex-col space-y-3'>
+            <div className="flex">
+              <div
+              className="flex-none relative w-8 h-8 mr-2 rounded-full bg-gray-200 overflow-hidden"
+              style={{ backgroundColor: 'grey' }}
+              >
+              </div>
+              <p className="text-lg font-bold">{user}</p>
+            </div>
+            <div className='flex flex-col space-y-3'>
+              <p className='text-base'>
+                {text}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+  );
+}
+
+function CommentForm({appKey}) {
+  const { register, handleSubmit } = useForm({
+    defaultValues: {
+      key: appKey,
+      text: ''
+    }
+  });
+  const onSubmit = (comment) => {
+    console.log(comment);
+    submitNew(comment);
+  };
+
+  const submitNew = (comment) => {
+    api.poke({
+      app: "usr-server",
+      mark: "app-store-visit-dev-action",
+      json: { 'add-com': comment },
+      onSuccess: () => console.log('Successfully done'),
+      onError: (err) => setErrorMsg(err),
+    });
+  };
+
+  const setErrorMsg = (msg) => { throw new Error(msg); };
+
   return (
     <form className="relative">
-      <textarea rows="4" className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 border border-gray-900" placeholder="Leave a comment...">
+      <textarea
+        rows="4"
+        className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 border border-gray-900"
+        placeholder="Leave a comment..."
+        {...register('text')}
+      >
       </textarea>
-      <button type="submit" className="absolute bottom-2.5 right-2.5 font-bold border-2 border-black hover:bg-gray-800 hover:text-white py-0.5 px-5" href="">Comment</button>
+      <button
+        type="submit"
+        className="absolute bottom-2.5 right-2.5 font-bold border-2 border-black hover:bg-gray-800 hover:text-white py-0.5 px-5"
+        onClick={handleSubmit(onSubmit)}
+      >Comment</button>
     </form>
   );
 }

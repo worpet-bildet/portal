@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { getUrbitApi } from "../utils/urbitApi";
 import { Input } from "./Input";
+
+const api = getUrbitApi();
 
 export function AddDeveloperModal(props) {
   const { register, handleSubmit } = useForm({
@@ -11,9 +14,28 @@ export function AddDeveloperModal(props) {
   const [showModal, setShowModal] = useState(false);
 
   const onSubmit = (data) => {
-    console.log(data);
+     subscribeToNewDev(data);
     setShowModal(false);
   };
+
+  const subscribeToNewDev = (developer) => {
+    try {
+      api.poke({
+        app: "cur-server",
+        mark: "app-store-cur-action",
+        json: { sub: developer },
+        onSuccess: (err) => console.log(err),
+        onError: (err) => setErrorMsg(err),
+        onCancel: (err) => setErrorMsg(err)
+      });
+    }
+    catch(err) {
+      setErrorMsg(err);
+    }
+  };
+
+  const setErrorMsg = (msg) => { throw new Error(msg); };
+
   return (
     <>
       <button

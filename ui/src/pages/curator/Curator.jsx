@@ -1,5 +1,3 @@
-import { scryCharges } from '@urbit/api';
-import Urbit from '@urbit/http-api';
 import React, { useEffect, useState } from 'react';
 import mockApi from "../../../mocks/dev-view.json";
 import { AddDeveloperModal } from '../../components/AddDeveloperModal';
@@ -8,9 +6,9 @@ import { DeveloperTile } from '../../components/DeveloperTile';
 import { SearchBar } from '../../components/SearchBar';
 import { Sidebar } from '../../components/Sidebar';
 import { Tabs } from '../../components/Tabs';
+import { getUrbitApi } from '../../utils/urbitApi';
 
-const api = new Urbit('', '', window.desk);
-api.ship = window.ship;
+const api = getUrbitApi();
 
 // TODO(adrian): Add api call from ship to get applications
 export function Curator(props) {

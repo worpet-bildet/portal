@@ -1,4 +1,3 @@
-import Urbit from '@urbit/http-api';
 import React from 'react';
 import { Controller, FormProvider, useFieldArray, useForm, useFormContext } from 'react-hook-form';
 import { redirect } from 'react-router-dom';
@@ -7,9 +6,9 @@ import { Input } from '../../components/Input';
 import { Sidebar } from '../../components/Sidebar';
 import { Tag } from '../../components/Tag';
 import { TextAreaInput } from '../../components/TextAreaInput';
+import { getUrbitApi } from '../../utils/urbitApi';
 
-const api = new Urbit('', '', window.desk);
-api.ship = window.ship;
+const api = getUrbitApi();
 
 export function UploadApplication(props) {
   return (
@@ -43,7 +42,6 @@ function Form(props) {
   const watchAllFields = watch();
   const onSubmit = (data) => {
     submitNew(data);
-    return redirect('/apps/app-store/dev');
   };
 
   const submitNew = (appPage) => {

@@ -1,16 +1,15 @@
-import Urbit from '@urbit/http-api';
-import React, { useEffect } from 'react';
-import { AddButtonTile } from '../../components/AddButtonTile';
+import React, { useEffect, useState } from 'react';
 import { AddCuratorModal } from '../../components/AddCuratorModal';
 import { CuratorTile } from '../../components/CuratorTile';
 import { SearchBar } from '../../components/SearchBar';
 import { Sidebar } from '../../components/Sidebar';
+import { getUrbitApi } from '../../utils/urbitApi';
 
-const api = new Urbit('', '', window.desk);
-api.ship = window.ship;
+const api = getUrbitApi();
 
 // TODO(adrian): Add api call from ship to get applications
 export function UserCurators(props) {
+  const [curators, setCurators] = useState([]);
 
   useEffect(() => {
     subscribe();
@@ -32,19 +31,21 @@ export function UserCurators(props) {
   };
 
   const handleUpdate = (upd) => {
-    console.log(upd);
+    const curatorsInfo = getCuratorsInfo(upd);
+    setCurators(curatorsInfo);
   }
 
   const setErrorMsg = (msg) => { throw new Error(msg); };
 
-  const curators = [
-    {name: 'Curator', description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.'},
-    {name: 'Curator', description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.'},
-    {name: 'Curator', description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.'},
-    {name: 'Curator', description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.'},
-    {name: 'Curator', description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.'},
-    {name: 'Curator', description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.'},
-  ];
+  const getCuratorsInfo = (curatorsList) => {
+    return curatorsList.map((curator) => {
+      const curatorInfo = { name: '', description: '', id: '' };
+      curatorInfo.id = curator.id;
+      curatorInfo.name = curator['cur-page']['cur-info']['cur-title'];
+      curatorInfo.description = curator['cur-page']['cur-info']['cur-intro'];
+      return curatorInfo;
+    });
+  }
 
   return (
       <div className='flex flex-row'>
@@ -55,12 +56,15 @@ export function UserCurators(props) {
             <SearchBar />
               <ul className="grid grid-cols-3 gap-2 space-y-4">
                 <AddCuratorModal />
-                { curators.map((curator, i) =>
-                    <CuratorTile key={curator.name + i} curator={curator} />
-                  ) }
+                { curators.length
+                    ? curators.map((curator) =>
+                      <CuratorTile key={curator.id} curator={curator} />
+                    )
+                    : null
+                }
               </ul>
           </div>
-      </main>
+        </main>
       </div>
   );
 }
