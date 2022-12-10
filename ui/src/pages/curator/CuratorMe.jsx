@@ -1,17 +1,54 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from 'react-hook-form';
 import { IconImageInput } from "../../components/IconImageInput";
 import { Input } from "../../components/Input";
 import { Sidebar } from "../../components/Sidebar";
 import { TextAreaInput } from "../../components/TextAreaInput";
+import { getUrbitApi } from "../../utils/urbitApi";
+
+const api = getUrbitApi();
 
 export function CuratorMe(props) {
   const [isEditMode, setEditMode] = useState(false);
-  const curator = {
-    name: 'Curator name',
-    image: "http//:something",
-    description: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus neque consequuntur ullam officia, architecto voluptate aperiam reiciendis obcaecati delectus necessitatibus. Inventore pariatur odio amet debitis nesciunt ratione libero voluptatem iure?'
+  const [curator, setCuratorInfo] = useState({name: '', image: '', description: ''});
+  
+  useEffect(() => {
+    subscribe();
+  }, []);
+
+  const subscribe = async () => {
+    try {
+      api.subscribe({
+        app: "cur-server",
+        path: "/render",
+        event: handleUpdate,
+        err: () => setErrorMsg("Subscription rejected"),
+        quit: () => setErrorMsg("Kicked from subscription"),
+        cancel: () => setErrorMsg("Subscription cancelled"),
+      });
+    } catch {
+      setErrorMsg("Subscription failed");
+    }
   };
+
+  const handleUpdate = (data) => {
+    console.log(data);
+    const curatorInfo = data['cur-info'];
+    const curator = {
+      name: curatorInfo['cur-title'],
+      image: curatorInfo['cur-image'],
+      description: curatorInfo['cur-intro']
+    }
+    const curatorNoInfo = () => Object.keys(curator).every(property => {
+      console.log(curator[property] === '')
+      return curator[property] === '';
+    })
+    setEditMode(curatorNoInfo);
+    setCuratorInfo(curator);
+  }
+
+  const setErrorMsg = (msg) => { throw new Error(msg); }
+
   return(
     <div className='flex flex-row'>
       <Sidebar/>
@@ -23,7 +60,7 @@ export function CuratorMe(props) {
             : (
               <div className="flex flex-row gap-24">
                 <IconImageInput />
-                <InputEditable {...curator} onClick={() => setEditMode(true)} />
+                <Info {...curator} onClick={() => setEditMode(true)} />
               </div>
             )
           }
@@ -33,7 +70,7 @@ export function CuratorMe(props) {
   );
 }
 
-function InputEditable({name, description, onClick}) {
+function Info({name, description, onClick}) {
 
   return (
     <div className="flex flex-col basis-2/3 gap-4">
@@ -54,16 +91,28 @@ function InputEditable({name, description, onClick}) {
 function Editable({ name, description, image, onClick }) {
   const { register, handleSubmit } = useForm();
 
+  const submitNew = (curatorInfo) => {
+    api.poke({
+      app: "cur-server",
+      mark: "app-store-cur-action",
+      json: { 'cur-info': curatorInfo },
+      onSuccess: () => console.log('Successfully done'),
+      onError: () => setErrorMsg("Va a ser que no"),
+    });
+  };
+
+  const setErrorMsg = (msg) => { throw new Error(msg); };
+
   const onSubmit = (data) => {
-    console.log(data);
+    submitNew(data);
     onClick();
   }
 
   return (
     <div className="flex flex-col gap-4 w-full">
-      <Input name="curator_name" label="Curator name" value={name} {...register('cur-info.cur-title')} />
-      <Input name="curator_image" label="Curator image" value={image} {...register('cur-info.cur-image')} />
-      <TextAreaInput name="description" rows="5" label="Description" value={description} {...register('cur-info.cur-intro')} />
+      <Input name="curator_name" label="Curator name" placeholder={name} {...register('cur-info.cur-title')} />
+      <Input name="curator_image" label="Curator image" placeholder={image} {...register('cur-info.cur-image')} />
+      <TextAreaInput name="description" rows="5" label="Description" placeholder={description} {...register('cur-info.cur-intro')} />
       <div className="flex justify-end">
         <button
           className="text-gray-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"

@@ -1,13 +1,12 @@
-import Urbit from '@urbit/http-api';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import mockApi from "../../../mocks/dev-view.json";
 import { AppTile } from '../../components/AppTile';
 import { GoBack } from '../../components/GoBack';
 import { Sidebar } from '../../components/Sidebar';
+import { getUrbitApi } from '../../utils/urbitApi';
 
-const api = new Urbit('', '', window.desk);
-api.ship = window.ship;
+const api = getUrbitApi();
 
 // TODO(adrian): Add api call from ship to get applications
 export function DeveloperApplications(props) {

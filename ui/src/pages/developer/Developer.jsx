@@ -1,13 +1,11 @@
 import { scryCharges } from '@urbit/api';
-import Urbit from '@urbit/http-api';
 import React, { useEffect, useState } from 'react';
-import mockApi from "../../../mocks/dev-view.json";
 import { AddButtonTile } from '../../components/AddButtonTile';
 import { AppTile } from '../../components/AppTile';
 import { Sidebar } from '../../components/Sidebar';
+import { getUrbitApi } from '../../utils/urbitApi';
 
-const api = new Urbit('', '', window.desk);
-api.ship = window.ship;
+const api = getUrbitApi();
 
 // TODO(adrian): Add api call from ship to get applications
 export function Developer(props) {
@@ -24,12 +22,12 @@ export function Developer(props) {
         app: "dev-server",
         path: "/render",
         event: handleUpdate,
-        err: () => setErrorMsg("Subscription rejected"),
-        quit: () => setErrorMsg("Kicked from subscription"),
-        cancel: () => setErrorMsg("Subscription cancelled"),
+        err: (err) => setErrorMsg(err),
+        quit: (err) => setErrorMsg(err),
+        cancel: (err) => setErrorMsg(err),
       });
-    } catch {
-      setErrorMsg("Subscription failed");
+    } catch (err) {
+      setErrorMsg(err);
     }
   };
 
@@ -50,15 +48,16 @@ export function Developer(props) {
         <main className="basis-3/4 flex items-center w-full justify-center min-h-screen">
           <div className="w-4/5 space-y-6 py-14">
             <h1 className="text-3xl font-bold">My applications</h1>
-            {applications.length && (
-              <ul className="space-y-4">
-                <AddButtonTile buttonName="Add App page"/>
-                { applicationNames.map((appName) =>
-                    <AppTile key={getAppId(appName)} appName={appName} {...findApplication(appName)}/>
-                  )
-                }
-              </ul>
-            )}
+            {applications.length
+              ? (
+                <ul className="space-y-4">
+                  <AddButtonTile buttonName="Add App page"/>
+                  { applicationNames.map((appName) =>
+                      <AppTile key={getAppId(appName)} appName={appName} {...findApplication(appName)}/>
+                    )
+                  }
+                </ul>
+              ): null }
           </div>
       </main>
       </div>

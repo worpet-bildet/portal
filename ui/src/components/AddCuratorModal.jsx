@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { getUrbitApi } from "../utils/urbitApi";
 import { Input } from "./Input";
+
+const api = getUrbitApi();
 
 export function AddCuratorModal(props) {
   const { register, handleSubmit } = useForm({
@@ -10,8 +13,26 @@ export function AddCuratorModal(props) {
   });
   const [showModal, setShowModal] = useState(false);
 
+  const subscribeToNewCur = (curator) => {
+    try {
+      api.poke({
+        app: "usr-server",
+        mark: "app-store-usr-action",
+        json: { sub: curator },
+        onSuccess: (success) => console.log(success),
+        onError: (err) => setErrorMsg(err),
+        onCancel: (err) => setErrorMsg(err)
+      });
+    }
+    catch(err) {
+      setErrorMsg(err);
+    }
+  };
+
+  const setErrorMsg = (msg) => { throw new Error(msg); };
+
   const onSubmit = (data) => {
-    console.log(data);
+    subscribeToNewCur(data);
     setShowModal(false);
   };
   return (

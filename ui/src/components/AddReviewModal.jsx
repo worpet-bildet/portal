@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import { FormProvider, useForm, useFormContext } from "react-hook-form";
+import { getUrbitApi } from "../utils/urbitApi";
 import { Input } from "./Input";
 
+const api = getUrbitApi();
+
 // We need to send the dev name and app name to the component. Also the hash.
-export function AddReviewModal(props) {
+export function AddReviewModal({appKey, hash}) {
   const methods = useForm({
     defaultValues: {
-      key: {
-        "dev-name": "",
-        "app-name": ""
-      },
+      key: appKey,
+      hash,
       text: "",
-      hash: "",
       "is-safe": true
     }
   });
@@ -26,10 +26,23 @@ export function AddReviewModal(props) {
     ]
   };
   
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = (review) => {
+    submitNew(review);
     setShowModal(false);
   };
+
+  const submitNew = (review) => {
+    api.poke({
+      app: "usr-server",
+      mark: "app-store-visit-dev-action",
+      json: { "put-rev": review },
+      onSuccess: () => console.log('Successfully done'),
+      onError: (err) => setErrorMsg(err),
+    });
+  };
+
+  const setErrorMsg = (msg) => { throw new Error(msg); };
+
   return (
     <FormProvider {...methods}>
       <button

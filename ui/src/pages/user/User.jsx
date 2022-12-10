@@ -1,20 +1,18 @@
-import Urbit from '@urbit/http-api';
 import React, { useEffect, useState } from 'react';
 import mockApi from "../../../mocks/dev-view.json";
 import { AppTile } from '../../components/AppTile';
 import { SearchBar } from '../../components/SearchBar';
 import { Sidebar } from '../../components/Sidebar';
+import { getUrbitApi } from '../../utils/urbitApi';
 
-const api = new Urbit('', '', window.desk);
-api.ship = window.ship;
+const api = getUrbitApi();
 
 // TODO(adrian): Add api call from ship to get applications
 export function User(props) {
-  const [apps, setApps] = useState([]);
+  const [applications, setApplications] = useState([]);
 
   useEffect(() => {
     subscribe();
-    setApps(getApplications());
   }, []);
 
   const subscribe = async () => {
@@ -32,15 +30,21 @@ export function User(props) {
     }
   };
 
-  const handleUpdate = (upd) => {
-    console.log(upd);
+  const handleUpdate = (curators) => {
+    const apps = getApplications(curators);
+    console.log(apps);
+    setApplications(apps);
   }
 
   const setErrorMsg = (msg) => { throw new Error(msg); };
 
-  // This will be an async function to make the calls to urbit ship.
-  const getApplications = () => {
-    return Object.keys(mockApi);
+  const getApplications = (curators) => {
+    let apps = [];
+    curators.map((curator) => {
+      const curatorApps = curator['cur-page']['cur-data']['cur-map'];
+      apps = apps.concat(curatorApps);
+    });
+    return apps;
   }
 
   return (
@@ -50,13 +54,13 @@ export function User(props) {
           <div className="w-4/5 space-y-6 py-14">
             <h1 className="text-3xl font-bold">My applications</h1>
             <SearchBar />
-            {apps.length && (
+            { applications.length ? (
               <ul className="space-y-4">
-                { Object.entries(apps).map((applicationName) =>
-                    <AppTile key={applicationName[1]} {...mockApi[applicationName[1]]} />
+                { applications.map((app) =>
+                    <AppTile key={app.id} appName={app.key['app-name']} {...app} />
                   ) }
               </ul>
-            )}
+              ): null }
           </div>
       </main>
       </div>
