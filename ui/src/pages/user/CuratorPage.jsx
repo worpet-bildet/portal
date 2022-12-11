@@ -31,7 +31,6 @@ export function CuratorPage(props) {
   };
 
   const handleUpdate = (upd) => {
-    console.log(upd);
     setCuratorInfo(getCuratorInfo(upd));
   }
 
@@ -51,30 +50,12 @@ export function CuratorPage(props) {
   const getCurator = (curatorList) => {
     return curatorList.find((curatorInfo) => curatorInfo['cur-page']['cur-info']['cur-title'] === curator);
   }
-
-  const app = [{
-    curator: {
-      name: curator,
-      description: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ducimus sapiente suscipit quae tempora laudantium, maiores nesciunt. Amet eaque deleniti odit dolor pariatur omnis. Ab perferendis ullam debitis asperiores. Esse, ullam.'
-    },
-    categories: ['this', 'that', 'other'],
-    applications: [
-      { image: '', name: 'App name' },
-      { image: '', name: 'App name' },
-      { image: '', name: 'App name' },
-      { image: '', name: 'App name' },
-      { image: '', name: 'App name' },
-      { image: '', name: 'App name' },
-      { image: '', name: 'App name' }
-    ]
-  }];
-
-
+  
   return(
     <div className='flex flex-row'>
       <Sidebar />
-      <main className="relative basis-3/4 flex items-center w-full justify-center min-h-screen">
-        <div className="absolute top-0 w-4/5 space-y-14 py-14">
+      <main className="ml-32 basis-3/4 w-full min-h-screen">
+        <div className="w-4/5 space-y-14 py-14">
           <GoBack titlePreviousPage="Curators" />
           <div className="flex flex-col space-y-10">
           { info && <CuratorIntroduction curator={info.curator} image='' /> }

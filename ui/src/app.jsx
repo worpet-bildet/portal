@@ -57,6 +57,10 @@ const router = createBrowserRouter([
   {
     path: '/apps/app-store/dev/upload-app',
     element: <UploadApplication />
+  },
+  {
+    path: '/apps/app-store/dev/edit-app/:application',
+    element: <UploadApplication />
   }
 ]);
 

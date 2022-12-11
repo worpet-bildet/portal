@@ -32,17 +32,13 @@ export function CuratorMe(props) {
   };
 
   const handleUpdate = (data) => {
-    console.log(data);
     const curatorInfo = data['cur-info'];
     const curator = {
       name: curatorInfo['cur-title'],
       image: curatorInfo['cur-image'],
       description: curatorInfo['cur-intro']
     }
-    const curatorNoInfo = () => Object.keys(curator).every(property => {
-      console.log(curator[property] === '')
-      return curator[property] === '';
-    })
+    const curatorNoInfo = () => Object.keys(curator).every(property => curator[property] === '')
     setEditMode(curatorNoInfo);
     setCuratorInfo(curator);
   }
@@ -52,8 +48,8 @@ export function CuratorMe(props) {
   return(
     <div className='flex flex-row'>
       <Sidebar/>
-      <main className="relative basis-3/4 flex items-center w-full justify-center min-h-screen">
-        <div className="absolute flex flex-row gap-20 top-0 w-4/5 space-y-6 py-14">
+      <main className="ml-32 basis-3/4 w-full min-h-screen">
+        <div className="w-4/5 space-y-6 py-14">
           {/** Here goes curator image or maybe inside the else*/}
           { isEditMode ?
             <Editable {...curator} onClick={() => setEditMode(false)} />

@@ -36,7 +36,6 @@ export function ApplicationPage(props) {
   const handleUpdate = (curators) => {
     const currentApp = getApplications(curators).find((app) => app.key['app-name'] === application);
     setAppInfo(currentApp);
-    console.log(currentApp);
   }
 
   const setErrorMsg = (msg) => { throw new Error(msg); };
@@ -59,8 +58,8 @@ export function ApplicationPage(props) {
   return (
     <div className='flex flex-row'>
       <Sidebar/>
-      <main className="relative basis-3/4 flex items-center w-full justify-center min-h-screen">
-        <div className="absolute top-0 w-4/5 space-y-14 py-14">
+      <main className="ml-32 basis-3/4 w-full min-h-screen">
+        <div className="w-4/5 space-y-14 py-14">
           <GoBack titlePreviousPage="My Curated Apps" />
           <div className="flex flex-col gap-2">
             <div className="flex justify-between">
@@ -187,7 +186,14 @@ function Reviews({reviews, appKey, hash}) {
       <AddReviewModal appKey={appKey} hash={hash}/>
       <ul className="flex flex-col space-y-2">
         { reviews.length ?
-          reviews.map((review) => <Review key={review['updated-at']} user={review.user} text={review.text} />
+          reviews.map((review) => 
+            <Review 
+              key={review.id} 
+              user={review.user}
+              text={review.text}
+              isSafe={review['is-safe']}
+              appKey={appKey}
+            />
           ) : null
         }
       </ul>
@@ -195,7 +201,117 @@ function Reviews({reviews, appKey, hash}) {
   );
 }
 
-function Review({text, user}) {
+function Review({text, user, appKey, isSafe}) {
+
+  const deleteReview = () => {
+    const review = { key: appKey };
+    executeAction(review);
+  }
+
+  const executeAction = (review) => {
+    api.poke({
+      app: "usr-server",
+      mark: "app-store-visit-dev-action",
+      json: { "del-rev": review },
+      onSuccess: () => console.log('Successfully done'),
+      onError: (err) => setErrorMsg(err),
+    });
+  }
+
+  const setErrorMsg = (msg) => { throw new Error(msg); };
+  return (
+    <li className="flex items-center space-x-3 text-sm leading-tight">
+      <div className="h-28 w-full p-4 rounded bg-gray-200">
+        <div className="flex flex-row flex-auto justify-between">
+          <div className='flex flex-col space-y-3'>
+            <div className="flex">
+              <div
+                className="flex-none relative w-8 h-8 mr-2 rounded-full bg-gray-200 overflow-hidden"
+                style={{ backgroundColor: 'grey' }}
+                >
+              </div>
+              <p className="text-lg font-bold mr-5">{user}</p>
+              { !isSafe ?
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                : <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                  </svg>
+              }
+            </div>
+            <div className='flex flex-col space-y-3'>
+              <p className='text-base'>
+                {text}
+              </p>
+            </div>
+          </div>
+          <div>
+            { user.includes(window.ship) ? 
+              <button
+                type="button"
+                className="block ml-auto font-bold border-2 border-black hover:bg-gray-800 hover:text-white py-0.5 px-5"
+                onClick={() => deleteReview()}
+              >
+                delete
+              </button>
+              : null
+            }
+          </div>
+        </div>
+      </div>
+    </li>
+  );
+}
+
+
+function Comments({comments, appKey}) {
+  return (
+    <>
+      <CommentForm appKey={appKey} />
+      <ul className="flex flex-col space-y-2">
+        { comments.map((comment) =>
+          <Comment
+            key={comment.id}
+            user={comment.user}
+            text={comment.text}
+            id={comment['created-at']}
+            appKey={appKey}
+          /> )}
+      </ul>
+    </>
+  );
+}
+
+function Comment({text, user, id, appKey}) {
+  const deleteComment = () => {
+    const comment = {
+      key: appKey,
+      time: id
+    }
+    executeAction(comment);
+  }
+
+  const executeAction = (comment) => {
+    api.poke({
+      app: "usr-server",
+      mark: "app-store-visit-dev-action",
+      json: { "del-com": comment },
+      onSuccess: () => console.log('Successfully done'),
+      onError: (err) => setErrorMsg(err),
+    });
+  }
+
+  const setErrorMsg = (msg) => { throw new Error(msg); };
+
   return (
     <li className="flex items-center space-x-3 text-sm leading-tight">
       <div className="h-28 w-full p-4 rounded bg-gray-200">
@@ -215,43 +331,17 @@ function Review({text, user}) {
               </p>
             </div>
           </div>
-        </div>
-      </div>
-    </li>
-  );
-}
-
-
-function Comments({comments, appKey}) {
-  return (
-    <>
-      <CommentForm appKey={appKey} />
-      <ul className="flex flex-col space-y-2">
-        { comments.map((comment) => <Comment key={comment.id} user={comment.user} text={comment.text} /> )}
-      </ul>
-    </>
-  );
-}
-
-function Comment({text, user}) {
-  return (
-    <li className="flex items-center space-x-3 text-sm leading-tight">
-      <div className="h-28 w-full p-4 rounded bg-gray-200">
-        <div className="flex flex-row flex-auto justify-between">
-          <div className='flex flex-col space-y-3'>
-            <div className="flex">
-              <div
-              className="flex-none relative w-8 h-8 mr-2 rounded-full bg-gray-200 overflow-hidden"
-              style={{ backgroundColor: 'grey' }}
+          <div>
+          { user.includes(window.ship) ? 
+              <button
+                type="button"
+                className="block ml-auto font-bold border-2 border-black hover:bg-gray-800 hover:text-white py-0.5 px-5"
+                onClick={() => deleteComment()}
               >
-              </div>
-              <p className="text-lg font-bold">{user}</p>
-            </div>
-            <div className='flex flex-col space-y-3'>
-              <p className='text-base'>
-                {text}
-              </p>
-            </div>
+                delete
+              </button>
+              : null
+            }
           </div>
         </div>
       </div>
