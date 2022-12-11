@@ -77,11 +77,11 @@
       =created-at
   ==
 ::
-+$  comments  ((mop created-at comment) lth)
++$  comments  (map created-at-str comment)
 +$  comment
   $:  commenter=@p
       text=@t
-      =updated-at
+      =updated-at-str
   ==
 ::
 +$  reviews  (map @p review)
@@ -97,6 +97,8 @@
 ::  if updated-at == ~2000.1.1., it was never updated
 +$  updated-at  @da
 +$  created-at  @da
++$  created-at-str  @t
++$  updated-at-str  @t
 ::
 ::
 ::

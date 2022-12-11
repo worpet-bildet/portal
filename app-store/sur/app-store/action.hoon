@@ -36,8 +36,8 @@
   $%  [%rate =key rating-num=@ud]
       [%unrate =key]
       [%add-com =key text=@t]
-      [%edit-com =key =time text=@t]
-      [%del-com =key =time]
+      [%edit-com =key =created-at-str text=@t]
+      [%del-com =key =created-at-str]
       [%put-rev =key text=@t hash=@uv is-safe=?]
       [%del-rev =key]
   ==

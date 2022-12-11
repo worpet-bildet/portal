@@ -1,4 +1,4 @@
-/-  *app-store-action, *app-store-data, spider
+/-  *app-store-action, *app-store-data
 /+  default-agent, dbug, app-store, sig
 =,  clay
 |%
@@ -20,22 +20,22 @@
   ^-  (quip card _this)
   =.  state  ~
   `this
-::  
+::
 ++  on-save  !>(state)
-++  on-load   
+++  on-load
   |=  old=vase
   ^-  (quip card _this)
   `this(state !<(state-0 old))
-::  
+::
 ::  on-poke is for receiving pokes from
-++  on-poke 
+++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
   ?.  ?=(%app-store-dst-action mark)  (on-poke:default mark vase)
   =/  act  !<(dst-action vase)
   ?-    -.act
       ::  sending a signature from distributor ship to dev-server
-      %sign  
+      %sign
     ?>  =(src.bowl our.bowl)
     ~&  "%dst-server: sending signature to %dev-server"
     =/  signature  (sign:sig [our.bowl now.bowl key.act])
@@ -53,10 +53,9 @@
   ==
 ::
 ++  on-arvo   on-arvo:default
-++  on-watch  on-watch:default  
+++  on-watch  on-watch:default
 ++  on-leave  on-leave:default
 ++  on-peek   on-peek:default
 ++  on-agent  on-agent:default
 ++  on-fail   on-fail:default
 --
-

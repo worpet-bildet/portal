@@ -185,17 +185,17 @@
       |=  =comments
       ^-  json
       |^
-      =/  lis  (tap:com:app-store comments)
+      =/  lis  ~(tap by comments)
       [%a (turn lis enjs-com)]
       ++  enjs-com
-        |=  [=created-at =comment]
+        |=  [=created-at-str =comment]
         ^-  json
         %-  pairs
-        :~  ['id' s+(crip (en-json:html (time created-at)))]
+        :~  ['id' s+created-at-str]
             ['user' s+`@t`(scot %p commenter.comment)]
             ['text' s+text.comment]
-            ['updated-at' (time updated-at.comment)]
-            ['created-at' (time created-at)]
+            ['updated-at-str' s+updated-at-str.comment]
+            ['created-at-str' s+created-at-str]
         ==
       --
     ++  enjs-revs
@@ -286,8 +286,8 @@
     :~  [%rate (ot ~[key+dejs-key rating-num+ni])]
         [%unrate (ot ~[key+dejs-key])]
         [%add-com (ot ~[key+dejs-key text+so])]
-        [%edit-com (ot ~[key+dejs-key time+di text+so])]
-        [%del-com (ot ~[key+dejs-key time+di])]
+        [%edit-com (ot ~[key+dejs-key created-at-str+so text+so])]
+        [%del-com (ot ~[key+dejs-key created-at-str+so])]
         [%put-rev (ot ~[key+dejs-key text+so hash+dejs-hash is-safe+bo])]
         [%del-rev (ot ~[key+dejs-key])]
     ==
