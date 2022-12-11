@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import mockApi from "../../../mocks/dev-view.json";
 import { AddDeveloperModal } from '../../components/AddDeveloperModal';
 import { AppTile } from '../../components/AppTile';
+import { CuratorAppTile } from '../../components/CuratorAppTile';
 import { DeveloperTile } from '../../components/DeveloperTile';
 import { SearchBar } from '../../components/SearchBar';
 import { Sidebar } from '../../components/Sidebar';
@@ -13,11 +13,14 @@ const api = getUrbitApi();
 // TODO(adrian): Add api call from ship to get applications
 export function Curator(props) {
   const [apps, setApps] = useState([]);
+  const [developers, setDevelopers] = useState([]);
   const [selectedButton, setSelectedButton] = useState('Developer');
+  const [categorySet, setCategorySet] = useState([]);
+  const [catMapApps, setCatMapApps] = useState([]);
+  const [keyAppList, setKeyAppList] = useState([]);
 
   useEffect(() => {
     subscribe();
-    setApps(getApplications());
   }, []);
 
   const subscribe = async () => {
@@ -35,23 +38,41 @@ export function Curator(props) {
     }
   };
 
-  const handleUpdate = (upd) => {
-    console.log(upd);
+  const handleUpdate = (curator) => {
+    setDevelopers(getDevelopers(curator));
+    setApps(getApplications(curator));
+  }
+
+  const getApplications = (curator) => {
+    const curatorData = curator['cur-data'];
+    const curatorApps = curatorData['cur-map'];
+    const curatorChoice = curatorData['cur-choice']['key-list'];
+    const catMap = curator['cur-data']['cur-choice']['cat-map'];
+    setCatMapApps(catMap);
+    const keyList = curator['cur-data']['cur-choice']['key-list'];
+    setKeyAppList(keyList);
+    const categorySet = curator['cur-data']['cur-choice']['cat-set'];
+    setCategorySet(categorySet);
+    return curatorChoice.map((key) => {
+      const appName = key['app-name'];
+      const application = curatorApps.find((app) => app.key['app-name'] === appName);
+      const category = catMap.find((category) => {
+        return category.key['app-name'] === application.key['app-name'];
+      });
+      let curatorApplication = { application };
+      if (category) {
+        curatorApplication.category = category.category;
+      }
+      return curatorApplication;
+    });
+  }
+
+  const getDevelopers = (curator) => {
+    const developers = Object.keys(curator['cur-data']['aux-map']);
+    return developers;
   }
 
   const setErrorMsg = (msg) => { throw new Error(msg); }
-
-  const getApplications = () => {
-    return Object.keys(mockApi);
-  }
-
-  const developers = [
-    { name: 'John' },
-    { name: 'John Smith' },
-    { name: 'John' },
-    { name: 'John' },
-    { name: 'John' }
-  ]
 
   const tabs = [{name: 'Developer'}, {name: 'Apps'}];
 
@@ -62,24 +83,31 @@ export function Curator(props) {
   return (
     <div className='flex flex-row'>
       <Sidebar />
-      <main className="relative basis-3/4 flex items-center w-full justify-center min-h-screen">
-        <div className="absolute top-0 w-4/5 space-y-6 py-14">
+      <main className="ml-32 basis-3/4 w-full min-h-screen">
+        <div className="w-4/5 space-y-6 py-14">
           <h1 className="text-3xl font-bold">My Curated Apps</h1>
           <Tabs selectButton={selectButton} tabs={tabs} />
           <SearchBar />
           {apps.length && selectedButton === 'Apps' && (
             <ul className="space-y-4">
-              { Object.entries(apps).map((applicationName) =>
-                  <AppTile key={applicationName[1]} {...mockApi[applicationName[1]]} />
+              { apps.map((curatorApp) =>
+                  <CuratorAppTile
+                  key={curatorApp.application.id}
+                  appKey={curatorApp.application.key}
+                  category={curatorApp.category}
+                  categorySet={categorySet}
+                  keyList={keyAppList}
+                  catMap={catMapApps}
+                  {...curatorApp.application}
+                />
                 ) }
             </ul>
           )}
           { selectedButton === 'Developer' && (
             <ul className='grid grid-cols-4 gap-2'>
               <AddDeveloperModal />
-              { developers.map((developer, i) =>
-                // Change key to just name. It shouldn't be duplicated
-                <DeveloperTile key={developer.name + i} name={developer.name} />
+              { developers.map((developer) =>
+                <DeveloperTile key={developer} name={developer} />
               )}
             </ul>
           )}

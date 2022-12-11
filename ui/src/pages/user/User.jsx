@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import mockApi from "../../../mocks/dev-view.json";
 import { AppTile } from '../../components/AppTile';
 import { SearchBar } from '../../components/SearchBar';
 import { Sidebar } from '../../components/Sidebar';
@@ -31,9 +30,7 @@ export function User(props) {
   };
 
   const handleUpdate = (curators) => {
-    const apps = getApplications(curators);
-    console.log(apps);
-    setApplications(apps);
+    setApplications(getApplications(curators));
   }
 
   const setErrorMsg = (msg) => { throw new Error(msg); };
@@ -50,7 +47,7 @@ export function User(props) {
   return (
       <div className='flex flex-row'>
         <Sidebar />
-        <main className="basis-3/4 flex items-center w-full justify-center min-h-screen">
+        <main className="ml-32 basis-3/4 w-full min-h-screen">
           <div className="w-4/5 space-y-6 py-14">
             <h1 className="text-3xl font-bold">My applications</h1>
             <SearchBar />
