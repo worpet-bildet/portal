@@ -30,16 +30,27 @@ export function User(props) {
   };
 
   const handleUpdate = (curators) => {
+    console.log(curators)
     setApplications(getApplications(curators));
   }
 
   const setErrorMsg = (msg) => { throw new Error(msg); };
 
+
   const getApplications = (curators) => {
     let apps = [];
+    //select a subset from cur-map which is defined with key-list
     curators.map((curator) => {
       const curatorApps = curator['cur-page']['cur-data']['cur-map'];
-      apps = apps.concat(curatorApps);
+      const keyList = curator['cur-page']['cur-data']['cur-choice']['key-list']
+      let curatorChoice=[];
+      keyList.forEach((key) => {
+      let appPage = curatorApps.find((app) => (app.key['app-name'] === key['app-name'] &&  app.key['dev-name'] === key['dev-name']));
+        if(!appPage) {
+          return;
+        } curatorChoice.push(appPage);
+      });
+      apps = apps.concat(curatorChoice);
     });
     return apps;
   }
