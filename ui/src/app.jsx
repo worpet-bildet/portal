@@ -14,10 +14,14 @@ import { ApplicationPage } from './pages/user/ApplicationPage';
 import { CuratorPage } from './pages/user/CuratorPage';
 import { User } from './pages/user/User';
 import { UserCurators } from './pages/user/UserCurators';
+import { CuratorWelcome } from './pages/curator/CuratorWelcome';
+import { DeveloperWelcome } from './pages/developer/DeveloperWelcome';
+import { UserWelcome } from './pages/user/UserWelcome';
+
 const api = new Urbit('', '', window.desk);
 api.ship = window.ship;
 
-/* 
+/*
   We'll have to create 3 main routes for each page
   and child routes for each page as many sidebar buttons they have
 */
@@ -61,13 +65,25 @@ const router = createBrowserRouter([
   {
     path: '/apps/app-store/dev/edit-app/:application',
     element: <UploadApplication />
+  },
+  {
+    path: '/apps/app-store/usr/welcome',
+    element: <UserWelcome />
+  },
+  {
+    path: '/apps/app-store/cur/welcome',
+    element: <CuratorWelcome />
+  },
+  {
+    path: '/apps/app-store/dev/welcome',
+    element: <DeveloperWelcome />
   }
 ]);
 
 export function App () {
   return (
     <React.Fragment>
-      <RouterProvider router={router} />  
+      <RouterProvider router={router} />
     </React.Fragment>
   );
 }
