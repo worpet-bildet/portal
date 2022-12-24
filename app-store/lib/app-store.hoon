@@ -40,6 +40,8 @@
   ::  when selecting new cur-choice
   ++  select
     |=  [=cur-data act=[%select =key-list =cat-map]]
+    ~&  >  "SELECT ACTION"
+    ~&  >  act
     ^-  [?(%changed %unchanged) ^cur-data]
     ?.  ?&
       (cat-map-cat-set:validator cat-map.act cat-set.cur-choice.cur-data)
@@ -56,6 +58,8 @@
   ::  when writing categories
   ++  cats
     |=  [=cur-data act=[%cats =cat-set]]
+    ~&  >  "CATS ACTION"
+    ~&  >  act
     ^-  ^cur-data
     ?.  (cat-map-cat-set:validator cat-map.cur-choice.cur-data cat-set.act)
       ~&  "%cur-server: adding categories failed"
@@ -83,8 +87,13 @@
     ==
       ~&  "error: updating cur-data after dev adding/editing an app, failed"
       [%unchanged cur-data]
-    :-  %changed
-    cur-data(cur-map new-cur-map, aux-map new-aux-map)
+    =/  new-cur-data  cur-data(cur-map new-cur-map, aux-map new-aux-map)
+    ?.  =(~dilryd-mopreg our)  [%changed new-cur-data]
+    ::  this is where default Curator automatically selects the new app
+    =/  sel  :+  %select
+      (snoc key-list.cur-choice.new-cur-data key)
+      (~(put by cat-map.cur-choice.new-cur-data) key %all)
+    [%changed +:(select new-cur-data sel)]
   ::
   ::  receives intial data from dev. otherwise, won't work because it uses ~(uni by cur-map)
   ++  add-dev
@@ -99,7 +108,13 @@
     ?.  (cur-map-aux-map:validator new-cur-map new-aux-map)
       ~&  "%cur-server: receiving data failed"
       cur-data
-    [cur-choice.cur-data new-cur-map new-aux-map]
+    =/  new-cur-data  `^cur-data`[cur-choice.cur-data new-cur-map new-aux-map]
+    ?.  =(~dilryd-mopreg our)  new-cur-data
+    ::  this is where default Curator automatically selects all apps
+    =/  sel  :+  %select
+      (weld key-list.cur-choice.new-cur-data ~(tap in ~(key by dev-map.new-dev-data)))
+      (~(uni by cat-map.cur-choice.new-cur-data) `cat-map`(malt (turn ~(tap in app-set.new-dev-data) |=(=app-name [[dev-name app-name] %all]))))
+    +:(select new-cur-data sel)
   ::
   ::  after unsubbing from dev, removes dev from cur-data
   ++  del-dev

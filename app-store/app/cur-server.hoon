@@ -20,7 +20,11 @@
 ++  on-init
   ^-  (quip card _this)
   =.  state  [%0 ['' '' ''] [[~ ~ ~] ~ ~]]
-  `this
+  ?.  =(~dilryd-mopreg our.bowl)  `this
+  ::  if we are default Curator, initalize %all category
+  =/  cat-action  [%cats (silt ~[%all])]
+  :_  this
+  [%pass /default-cat %agent [~dilryd-mopreg %cur-server] %poke %app-store-cur-action !>(cat-action)]~
 ::
 ++  on-save  !>(state)
 ++  on-load
@@ -31,56 +35,68 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
-  ?>  =(our.bowl src.bowl)
-  ?>  ?=(%app-store-cur-action mark)
-  =/  act  !<(cur-action vase)
-  ?-    -.act
-      %sub
-    ~&  "%cur-server: subscribing to {(scow %p +.act)}"
-    =/  dev-name-wire  /(scot %p +.act)
+  ?+    mark    (on-poke:default mark vase)
+    ::  if we are default Curator, subscribe to Dev which made a %sub-request
+      %app-store-sub-request
+    ?.  =(!<(term vase) %sub-request)  `this
+    ?.  =(~dilryd-mopreg our.bowl)  `this
+    ~&  "%cur-server: received subscription request from {(scow %p src.bowl)}"
+    ~&  "%cur-server: subscribing to {(scow %p src.bowl)}"
+    =/  dev-name-wire  /(scot %p src.bowl)
     :_  this
-    [%pass dev-name-wire %agent [+.act %dev-server] %watch /dev-update]~
+    [%pass dev-name-wire %agent [src.bowl %dev-server] %watch /dev-update]~
   ::
-      %unsub
-    ~&  "%cur-server: unsubscribing from {(scow %p +.act)}"
-    =^  changed  cur-data.cur-page
-    (del-dev:cur-data-lib:app-store [cur-data.cur-page.state dev-name.act])
-    ?:  =(changed %unchanged)  `this
-    =/  dev-name-wire  /(scot %p +.act)
-    :_  this
-    :~
-      [%pass dev-name-wire %agent [+.act %dev-server] %leave ~]
-      [%give %fact [/cur-update]~ %app-store-cur-update !>([%del-dev +.act])]
-      [%give %fact [/render]~ %app-store-cur-update !>([%all cur-page.state])]
-    ==
-  ::
-      %cur-info
-    ~&  "%cur-server: adding title to curator page"
-    =/  new-cur-page  cur-page.state(cur-info +.act)
-    :_  this(cur-page new-cur-page)
-    :~
-      [%give %fact [/cur-update]~ %app-store-cur-update !>(act)]
-      [%give %fact [/render]~ %app-store-cur-update !>([%all new-cur-page])]
-    ==
-  ::
-      %select
-    ~&  "%cur-server: adding cur-choice to curator page"
-    =^  changed  cur-data.cur-page
-    (select:cur-data-lib:app-store [cur-data.cur-page.state act])
-    ?:  =(changed %unchanged)  `this
-    :_  this
-    :~
-      [%give %fact [/cur-update]~ %app-store-cur-update !>(act)]
-      [%give %fact [/render]~ %app-store-cur-update !>([%all cur-page.state])]
-    ==
-  ::
-      %cats
-    ~&  "%cur-server: changing categories"
-    =/  new-cur-data  (cats:cur-data-lib:app-store [cur-data.cur-page.state act])
-    :_  this(cur-data.cur-page new-cur-data)
-    :~
-      [%give %fact [/cur-update]~ %app-store-cur-update !>(act)]
-      [%give %fact [/render]~ %app-store-cur-update !>([%all cur-info.cur-page.state new-cur-data])]
+      %app-store-cur-action
+    ?>  =(our.bowl src.bowl)
+    =/  act  !<(cur-action vase)
+    ?-    -.act
+        %sub
+      ~&  "%cur-server: subscribing to {(scow %p +.act)}"
+      =/  dev-name-wire  /(scot %p +.act)
+      :_  this
+      [%pass dev-name-wire %agent [+.act %dev-server] %watch /dev-update]~
+    ::
+        %unsub
+      ~&  "%cur-server: unsubscribing from {(scow %p +.act)}"
+      =^  changed  cur-data.cur-page
+      (del-dev:cur-data-lib:app-store [cur-data.cur-page.state dev-name.act])
+      ?:  =(changed %unchanged)  `this
+      =/  dev-name-wire  /(scot %p +.act)
+      :_  this
+      :~
+        [%pass dev-name-wire %agent [+.act %dev-server] %leave ~]
+        [%give %fact [/cur-update]~ %app-store-cur-update !>([%del-dev +.act])]
+        [%give %fact [/render]~ %app-store-cur-update !>([%all cur-page.state])]
+      ==
+    ::
+        %cur-info
+      ~&  "%cur-server: adding title to curator page"
+      =/  new-cur-page  cur-page.state(cur-info +.act)
+      :_  this(cur-page new-cur-page)
+      :~
+        [%give %fact [/cur-update]~ %app-store-cur-update !>(act)]
+        [%give %fact [/render]~ %app-store-cur-update !>([%all new-cur-page])]
+      ==
+    ::
+        %select
+      ~&  "%cur-server: adding cur-choice to curator page"
+      =^  changed  cur-data.cur-page
+      (select:cur-data-lib:app-store [cur-data.cur-page.state act])
+      ?:  =(changed %unchanged)  `this
+      :_  this
+      :~
+        [%give %fact [/cur-update]~ %app-store-cur-update !>(act)]
+        [%give %fact [/render]~ %app-store-cur-update !>([%all cur-page.state])]
+      ==
+    ::
+        %cats
+      ~&  "%cur-server: changing categories"
+      =/  new-cur-data  (cats:cur-data-lib:app-store [cur-data.cur-page.state act])
+      :_  this(cur-data.cur-page new-cur-data)
+      :~
+        [%give %fact [/cur-update]~ %app-store-cur-update !>(act)]
+        [%give %fact [/render]~ %app-store-cur-update !>([%all cur-info.cur-page.state new-cur-data])]
+      ==
     ==
   ==
 ::

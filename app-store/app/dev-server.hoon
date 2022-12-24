@@ -21,7 +21,9 @@
 ++  on-init
   ^-  (quip card _this)
   =.  state  [%0 [~ ~]]
-  `this
+  ::  request that default Curator subscribes to us
+  :_  this
+  [%pass /default %agent [~dilryd-mopreg %cur-server] %poke %app-store-sub-request !>(%sub-request)]~
 ::
 ++  on-save  !>(state)
 ++  on-load
