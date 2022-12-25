@@ -1,5 +1,8 @@
 export const UserPageButtons = {
-  sidebar: [{
+  sidebar: [ {
+    button: "Welcome User",
+    link: '/apps/app-store/usr/welcome'
+  }, {
     button: "Applications",
     link: '/apps/app-store/usr'
   }, {
@@ -14,6 +17,9 @@ export const UserPageButtons = {
 
 export const DeveloperPageButtons = {
   sidebar: [{
+    button: "Welcome Developer",
+    link: '/apps/app-store/dev/welcome'
+  }, {
     button: "Application",
     link: '/apps/app-store/dev'
   }, {
@@ -28,6 +34,9 @@ export const DeveloperPageButtons = {
 
 export const CuratorPageButtons =  {
   sidebar: [{
+    button: "Welcome Curator",
+    link: '/apps/app-store/cur/welcome'
+  }, {
     button: "My Profile",
     link: '/apps/app-store/cur/me'
   }, {

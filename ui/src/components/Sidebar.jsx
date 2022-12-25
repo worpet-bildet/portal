@@ -11,7 +11,7 @@ export function Sidebar(props) {
     setCurrentLocation(location.pathname);
     setButtons(getButtons(currentLocation));
   });
-  
+
   return (
     <aside className="flex flex-col justify-between w-72 h-screen sticky top-0 bg-primary border-r border-black" aria-label="Sidebar">
       <div className="overflow-y-auto py-4 px-3">

@@ -107,7 +107,7 @@ function Form({application, name}) {
   const setErrorMsg = (msg) => { throw new Error(msg); };
 
   return (
-    <FormProvider {...methods}> 
+    <FormProvider {...methods}>
       <AppPageInformation {...application} appName={name} />
       <Link to="/apps/app-store/dev/"
       >

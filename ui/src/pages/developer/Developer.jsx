@@ -47,7 +47,7 @@ export function Developer(props) {
         <Sidebar/>
         <main className="ml-32 basis-3/4 w-full min-h-screen">
           <div className="w-4/5 space-y-6 py-14">
-            <h1 className="text-3xl font-bold">My applications</h1>
+            <h1 className="text-3xl font-bold">My Apps</h1>
             {applications.length
               ? (
                 <ul className="space-y-4">
