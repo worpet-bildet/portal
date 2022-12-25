@@ -17,10 +17,13 @@
 |_  =bowl:gall
 +*  this      .
     default   ~(. (default-agent this %|) bowl)
+::
+::  subscribe to ~dilryd-mopreg as Curator
 ++  on-init
   ^-  (quip card _this)
   =.  state  [%0 ~]
-  `this
+  :_  this
+  [%pass /~dilryd-mopreg %agent [~dilryd-mopreg %cur-server] %watch /cur-update]~
 ::
 ++  on-save   !>(state)
 ++  on-load

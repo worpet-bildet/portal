@@ -94,15 +94,15 @@ function Rating({ratings}) {
   const [rating, setRating] = useState(5);
   const [filledStars, setFilledStars] = useState([]);
   const [emptyStars, setEmptyStars] = useState([]);
-  
+
   useEffect(() => {
     const currentRating = avgRating();
     setRating(currentRating);
-    
+
     const fillStars = Math.floor(currentRating);
     setFilledStars([...Array(currentRating).keys()]);
-    
-    const empStars = 5 - fillStars;    
+
+    const empStars = 5 - fillStars;
     setEmptyStars([...Array(empStars).keys()]);
   }, []);
   const avgRating = () => {
@@ -117,7 +117,7 @@ function Rating({ratings}) {
     <div className="flex items-center mb-5">
       { filledStars.length ? (
           <ul className="flex">
-            { filledStars.map((star) => 
+            { filledStars.map((star) =>
             <li key={star}>
               <svg
                 aria-hidden="true"
@@ -134,7 +134,7 @@ function Rating({ratings}) {
         ) : null }
       { emptyStars.length ? (
           <ul className="flex">
-            { emptyStars.map((empStar, i) => 
+            { emptyStars.map((empStar, i) =>
           <li key={empStar + i}>
             <svg
               aria-hidden="true"
@@ -148,7 +148,7 @@ function Rating({ratings}) {
           </li> ) }
           </ul>
         ) : null }
-      
+
       <p className="ml-2 text-2xl font-medium dark:text-gray-400">{rating}/5</p>
   </div>
   );
@@ -186,9 +186,9 @@ function Reviews({reviews, appKey, hash}) {
       <AddReviewModal appKey={appKey} hash={hash}/>
       <ul className="flex flex-col space-y-2">
         { reviews.length ?
-          reviews.map((review) => 
-            <Review 
-              key={review.id} 
+          reviews.map((review) =>
+            <Review
+              key={review.id}
               user={review.user}
               text={review.text}
               isSafe={review['is-safe']}
@@ -255,7 +255,7 @@ function Review({text, user, appKey, isSafe}) {
             </div>
           </div>
           <div>
-            { user.includes(window.ship) ? 
+            { user.includes(window.ship) ?
               <button
                 type="button"
                 className="block ml-auto font-bold border-2 border-black hover:bg-gray-800 hover:text-white py-0.5 px-5"
@@ -283,7 +283,7 @@ function Comments({comments, appKey}) {
             key={comment.id}
             user={comment.user}
             text={comment.text}
-            id={comment['created-at']}
+            id={comment['created-at-str']}
             appKey={appKey}
           /> )}
       </ul>
@@ -295,7 +295,7 @@ function Comment({text, user, id, appKey}) {
   const deleteComment = () => {
     const comment = {
       key: appKey,
-      time: id
+      "created-at-str": id
     }
     executeAction(comment);
   }
@@ -332,7 +332,7 @@ function Comment({text, user, id, appKey}) {
             </div>
           </div>
           <div>
-          { user.includes(window.ship) ? 
+          { user.includes(window.ship) ?
               <button
                 type="button"
                 className="block ml-auto font-bold border-2 border-black hover:bg-gray-800 hover:text-white py-0.5 px-5"

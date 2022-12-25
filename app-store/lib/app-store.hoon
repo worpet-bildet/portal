@@ -339,11 +339,11 @@
       ?:  =(changed %unchanged)  [%unchanged app-page dev-data]
       [%changed app-page dev-data(dev-map (~(put by dev-map.dev-data) key.act app-page))]
         %edit-com
-      =^  changed  app-page  (edit-com:visit-app-page app-page now usr-name text.act time.act)
+      =^  changed  app-page  (edit-com:visit-app-page app-page now usr-name text.act created-at-str.act)
       ?:  =(changed %unchanged)  [%unchanged app-page dev-data]
       [%changed app-page dev-data(dev-map (~(put by dev-map.dev-data) key.act app-page))]
         %del-com
-      =^  changed  app-page  (del-com:visit-app-page app-page usr-name time.act)
+      =^  changed  app-page  (del-com:visit-app-page app-page usr-name created-at-str.act)
       ?:  =(changed %unchanged)  [%unchanged app-page dev-data]
       [%changed app-page dev-data(dev-map (~(put by dev-map.dev-data) key.act app-page))]
         %put-rev
@@ -380,23 +380,24 @@
       ++  add-com
         |=  [=app-page now=@da usr-name=@p text=@t]
         ^-  [%changed ^app-page]
-        =/  new-comments  (put:com comments.usr-input.app-page now [usr-name text *@da])
+        =/  new-comments  (~(put by comments.usr-input.app-page) `@t`(scot %da now) [usr-name text *@t])
         [%changed app-page(comments.usr-input new-comments)]
       ::
       ++  edit-com
-        |=  [=app-page now=@da usr-name=@p text=@t time=@da]
+        |=  [=app-page now=@da usr-name=@p text=@t created-at-str=@t]
         ^-  [?(%changed %unchanged) ^app-page]
-        ?.  =(usr-name (head (got:com comments.usr-input.app-page time)))
+        ?.  =(usr-name commenter:(~(got by comments.usr-input.app-page) created-at-str))
           [%unchanged app-page]
-        =/  new-comments  (put:com comments.usr-input.app-page time [usr-name text now])
+        =/  new-comments  (~(put by comments.usr-input.app-page) created-at-str [usr-name text `@t`(scot %da now)])
         [%changed app-page(comments.usr-input new-comments)]
       ::
       ++  del-com
-        |=  [=app-page usr-name=@p time=@da]
+        |=  [=app-page usr-name=@p created-at-str=@t]
         ^-  [?(%changed %unchanged) ^app-page]
-        ?.  =(usr-name (head (got:com comments.usr-input.app-page time)))
+        ?.  =(usr-name commenter:(~(got by comments.usr-input.app-page) created-at-str))
+          ~&  [%unchanged app-page]
           [%unchanged app-page]
-        =/  new-comments  (tail (del:com comments.usr-input.app-page time))
+        =/  new-comments  (~(del by comments.usr-input.app-page) created-at-str)
         [%changed app-page(comments.usr-input new-comments)]
       ::
       ++  put-rev
