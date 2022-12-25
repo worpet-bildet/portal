@@ -38,10 +38,11 @@ export function UserCurators(props) {
 
   const getCuratorsInfo = (curatorsList) => {
     return curatorsList.map((curator) => {
-      const curatorInfo = { name: '', description: '', id: '' };
+      const curatorInfo = { name: '', description: '', id: '', cur_name: '' };
       curatorInfo.id = curator.id;
       curatorInfo.name = curator['cur-page']['cur-info']['cur-title'];
       curatorInfo.description = curator['cur-page']['cur-info']['cur-intro'];
+      curatorInfo.cur_name = curator['cur-name'];
       return curatorInfo;
     });
   }

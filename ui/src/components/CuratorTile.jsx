@@ -40,7 +40,7 @@ export function CuratorTile ({curator, image}) {
                 {curator.name}
               </p>
               <p className='text-xs font-medium'>
-                {curator.description}
+                {curator.cur_name}
               </p>
             </div>
           </div>
