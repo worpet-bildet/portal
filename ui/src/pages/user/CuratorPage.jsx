@@ -4,6 +4,7 @@ import { GoBack } from "../../components/GoBack";
 import { Sidebar } from "../../components/Sidebar";
 import { Tag } from '../../components/Tag';
 import { getUrbitApi } from "../../utils/urbitApi";
+import { Link, useLocation } from 'react-router-dom';
 
 const api = getUrbitApi();
 
@@ -50,7 +51,7 @@ export function CuratorPage(props) {
   const getCurator = (curatorList) => {
     return curatorList.find((curatorInfo) => curatorInfo['cur-page']['cur-info']['cur-title'] === curator);
   }
-  
+
   return(
     <div className='flex flex-row'>
       <Sidebar />
@@ -63,7 +64,7 @@ export function CuratorPage(props) {
               { info && info.categories.map((tag) => <Tag key={tag} name={tag}/>) }
             </ul>
             <ul className="grid grid-cols-6 place-items-center gap-y-6">
-              { info && info.applications.map((app) => 
+              { info && info.applications.map((app) =>
                   <SmallApplicationTile key={app.id} name={app.key['app-name']} /> ) }
             </ul>
           </div>
@@ -102,6 +103,7 @@ function CuratorIntroduction({curator}) {
 
 function SmallApplicationTile({name, image}) {
   return(
+  <Link to={`/apps/app-store/usr/apps/${name}`}>
     <div className="flex flex-col gap-1 justify-content-center">
       <div
         className="block w-32 h-32 rounded-lg bg-gray-200 overflow-hidden"
@@ -115,5 +117,6 @@ function SmallApplicationTile({name, image}) {
       </div>
       <p className="text-xl text-center font-bold">{name}</p>
     </div>
+  </Link>
   );
 }
