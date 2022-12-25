@@ -10,7 +10,7 @@ export function CuratorAppTile ({ category, categorySet, appKey, catMap, keyList
     delete app.id;
     return app;
   }).filter((app) => app.key['app-name'] !== appKey['app-name'])
-  
+
   const { handleSubmit } = useForm({
     defaultValues: {
       select: {
