@@ -1,9 +1,9 @@
 import Urbit from '@urbit/http-api';
+import 'font-awesome/css/font-awesome.min.css';
 import React from 'react';
 import {
   createBrowserRouter, RouterProvider
 } from 'react-router-dom';
-import { Sidebar } from './components/Sidebar';
 import './index.css';
 import { Curator } from './pages/curator/Curator';
 import { CuratorMe } from './pages/curator/CuratorMe';

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Controller, FormProvider, useFieldArray, useForm, useFormContext } from 'react-hook-form';
 import { Link, useParams } from 'react-router-dom';
+import Alert from '../../components/Alert';
 import { IconImageInput } from '../../components/IconImageInput';
 import { Input } from '../../components/Input';
 import { Sidebar } from '../../components/Sidebar';
@@ -62,6 +63,7 @@ export function UploadApplication(props) {
 }
 
 function Form({application, name}) {
+  const [disableForm, setDisableForm] = useState(false);
   const methods = useForm({
     defaultValues: {
       "app-name": "",
@@ -107,14 +109,15 @@ function Form({application, name}) {
   const setErrorMsg = (msg) => { throw new Error(msg); };
 
   return (
-    <FormProvider {...methods}>
-      <AppPageInformation {...application} appName={name} />
+    <FormProvider {...methods}> 
+      <AppPageInformation setDisableForm={setDisableForm}/>
       <Link to="/apps/app-store/dev/"
       >
         <button
           type="button"
           className="block ml-auto mt-5 font-bold border-2 border-black hover:bg-gray-800 hover:text-white py-0.5 px-5"
           onClick={handleSubmit(onSubmit)}
+          disabled={disableForm}
         >
         { application ? 'edit' : 'save' }
         </button>
@@ -129,7 +132,7 @@ function Form({application, name}) {
   );
 }
 
-function AppPageInformation({...otherInfo}) {
+function AppPageInformation({setDisableForm}) {
   const { register, control } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
@@ -156,6 +159,7 @@ function AppPageInformation({...otherInfo}) {
                     name="keywords"
                     label="Keywords"
                     placeholder="something something"
+                    setDisableForm={setDisableForm}
                   />
                   )
                 }
@@ -241,7 +245,8 @@ function Docket({color, href, image, info, license, title, version, website}) {
   );
 }
 
-const ArrayInput = React.forwardRef(({label, name, placeholder, ...rest}, ref) => {
+const ArrayInput = React.forwardRef(({label, name, placeholder, setDisableForm, ...rest}, ref) => {
+  const [startsWithNumber, setStartsWithNumber] = useState(false);
   const { setValue, getValues } = useFormContext();
 
   const setArrayValues = (value) => {
@@ -251,7 +256,19 @@ const ArrayInput = React.forwardRef(({label, name, placeholder, ...rest}, ref) =
     if(previousValue.length > 1) {
       currentValue = currentValue.join().split(',');
     }
+    isStartingWithNumber(currentValue);
     setValue('dev-input.keywords', currentValue)
+  }
+
+  const isStartingWithNumber = (keywords) => {
+    const startsWithNumber = keywords.map((keyword) => !!keyword.match(/^[0-9]/)).filter((startsWithNumber) => startsWithNumber);
+    if (startsWithNumber.length > 0) {
+      setStartsWithNumber(true);
+      setDisableForm(true);
+      return;
+    }
+    setStartsWithNumber(false);
+    setDisableForm(false);
   }
 
   return (
@@ -266,10 +283,10 @@ const ArrayInput = React.forwardRef(({label, name, placeholder, ...rest}, ref) =
           {...rest}
         />
       </div>
-      <ul className='flex justify-start gap-x-1 flex-wrap'>
-        { getValues('dev-input.keywords')
+      <ul className='flex justify-start mt-2 gap-x-1 flex-wrap'>
+        { getValues('dev-input.keywords') && !startsWithNumber
           ? getValues('dev-input.keywords').map((keyword, index) => <Tag key={keyword + index} name={keyword} />)
-          : null
+          : <Alert color='red' message='Keywords cannot start with a number' icon="exclamation-triangle" />
         }
       </ul>
     </>
