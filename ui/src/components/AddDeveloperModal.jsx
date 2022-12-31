@@ -5,7 +5,7 @@ import { Input } from "./Input";
 
 const api = getUrbitApi();
 
-export function AddDeveloperModal(props) {
+export function AddDeveloperModal({notification}) {
   const { register, handleSubmit } = useForm({
     defaultValues: {
       "dev-name": ""
@@ -19,22 +19,15 @@ export function AddDeveloperModal(props) {
   };
 
   const subscribeToNewDev = (developer) => {
-    try {
-      api.poke({
-        app: "cur-server",
-        mark: "app-store-cur-action",
-        json: { sub: developer },
-        onSuccess: (err) => console.log(err),
-        onError: (err) => setErrorMsg(err),
-        onCancel: (err) => setErrorMsg(err)
-      });
-    }
-    catch(err) {
-      setErrorMsg(err);
-    }
+    api.poke({
+      app: "cur-server",
+      mark: "app-store-cur-action",
+      json: { sub: developer },
+      onSuccess: () => notification.success('The developer has been added succesfully, please refresh the page'),
+      onError: (err) => notification.error(err),
+      onCancel: (err) => notification.error(err)
+    });
   };
-
-  const setErrorMsg = (msg) => { throw new Error(msg); };
 
   return (
     <>

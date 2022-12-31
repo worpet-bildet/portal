@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from 'react-hook-form';
-import { IconImageInput } from "../../components/IconImageInput";
+import { IconImage } from "../../components/IconImage";
 import { Input } from "../../components/Input";
 import { Sidebar } from "../../components/Sidebar";
 import { TextAreaInput } from "../../components/TextAreaInput";
@@ -50,12 +50,10 @@ export function CuratorMe(props) {
       <Sidebar/>
       <main className="ml-32 basis-3/4 w-full min-h-screen">
         <div className="w-4/5 space-y-6 py-14">
-          {/** Here goes curator image or maybe inside the else*/}
           { isEditMode ?
-            <Editable {...curator} onClick={() => setEditMode(false)} />
+            <Editable curator={curator} onClick={() => setEditMode(false)} />
             : (
               <div className="flex flex-row gap-24">
-                <IconImageInput />
                 <Info {...curator} onClick={() => setEditMode(true)} />
               </div>
             )
@@ -67,9 +65,8 @@ export function CuratorMe(props) {
 }
 
 function Info({name, description, onClick}) {
-
   return (
-    <div className="flex flex-col basis-2/3 gap-4">
+    <div className="flex flex-col w-full gap-4">
       <h1 className="text-3xl font-bold">{name}</h1>
       <div>
         <h3 className="text-lg font-bold">Description</h3>
@@ -84,10 +81,19 @@ function Info({name, description, onClick}) {
   );
 }
 
-function Editable({ name, description, image, onClick }) {
-  const { register, handleSubmit } = useForm();
+function Editable({ curator, onClick }) {
+  const { register, handleSubmit, setValue } = useForm();
+
+  useEffect(() => {
+    if(curator) {
+      setValue('cur-info.cur-title', curator.name);
+      setValue('cur-info.cur-image', curator.image);
+      setValue('cur-info.cur-intro', curator.description);
+    }
+  }, [curator]);
 
   const submitNew = (curatorInfo) => {
+    console.log(curatorInfo);
     api.poke({
       app: "cur-server",
       mark: "app-store-cur-action",
@@ -106,9 +112,9 @@ function Editable({ name, description, image, onClick }) {
 
   return (
     <div className="flex flex-col gap-4 w-full">
-      <Input name="curator_name" label="Curator name" placeholder={name} {...register('cur-info.cur-title')} />
-      <Input name="curator_image" label="Curator image" placeholder={image} {...register('cur-info.cur-image')} />
-      <TextAreaInput name="description" rows="5" label="Description" placeholder={description} {...register('cur-info.cur-intro')} />
+      <Input name="curator_name" label="Curator name" {...register('cur-info.cur-title')} />
+      <Input name="curator_image" label="Curator image" {...register('cur-info.cur-image')} />
+      <TextAreaInput name="description" rows="5" label="Description" {...register('cur-info.cur-intro')} />
       <div className="flex justify-end">
         <button
           className="text-gray-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
@@ -126,20 +132,3 @@ function Editable({ name, description, image, onClick }) {
     </div>
   );
 }
-
-const CuratorImageInput = React.forwardRef(({name, label, value, ...rest}, ref) => {
-  return (
-    <div className='flex flex-col w-full'>
-      <label className="text-sm font-semibold text-gray-800" htmlFor={name}>{label}</label>
-        <input
-          type="text"
-          name={name}
-          className="w-full text-xs text-gray-900 border border-gray-900 focus:ring-gray-900 focus:border-gray-900"
-          placeholder={placeholder}
-          value={value}
-          {...rest}
-          ref={ref}
-        />
-    </div>
-  );
-});

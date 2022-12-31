@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Controller, FormProvider, useFieldArray, useForm, useFormContext } from 'react-hook-form';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import Alert from '../../components/Alert';
-import { IconImageInput } from '../../components/IconImageInput';
 import { Input } from '../../components/Input';
 import { Sidebar } from '../../components/Sidebar';
 import { Tag } from '../../components/Tag';
@@ -63,6 +62,7 @@ export function UploadApplication(props) {
 }
 
 function Form({application, name}) {
+  const navigate = useNavigate();
   const [disableForm, setDisableForm] = useState(false);
   const methods = useForm({
     defaultValues: {
@@ -104,24 +104,33 @@ function Form({application, name}) {
       onSuccess: () => console.log('Successfully done'),
       onError: () => setErrorMsg("Va a ser que no"),
     });
+    redirectToMain();
   };
 
   const setErrorMsg = (msg) => { throw new Error(msg); };
 
+  const redirectToMain = () => navigate('/apps/app-store/dev/');
+
   return (
     <FormProvider {...methods}> 
       <AppPageInformation setDisableForm={setDisableForm}/>
-      <Link to="/apps/app-store/dev/"
-      >
+      <div className='mt-5 flex justify-items-end'>
+        <button
+            type="button"
+            className="block ml-auto font-bold text-gray-500 py-0.5 px-5"
+            onClick={redirectToMain}
+          >
+          CANCEL
+        </button>
         <button
           type="button"
-          className="block ml-auto mt-5 font-bold border-2 border-black hover:bg-gray-800 hover:text-white py-0.5 px-5"
+          className="block font-bold border-2 border-black hover:bg-gray-800 hover:text-white py-0.5 px-5"
           onClick={handleSubmit(onSubmit)}
           disabled={disableForm}
         >
         { application ? 'edit' : 'save' }
         </button>
-      </Link>
+      </div>
       { application ?
         (<>
           <Signature {...application.signature}/>
@@ -143,7 +152,6 @@ function AppPageInformation({setDisableForm}) {
     <div>
       <div className='mb-6'>
         <div className='flex flex-row gap-14'>
-        <IconImageInput />
         <div className='w-full'>
           <div className="flex flex-row gap-10">
             <div className="mb-3 basis-1/2">

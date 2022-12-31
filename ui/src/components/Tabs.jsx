@@ -1,19 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-export function Tabs(props) {
+export function Tabs({tabs, selectButton, selectedButton}) {
   return (
     <div>
       <ul className='flex border border-gray-900 w-full'>
-        { props.tabs.map((tab) => <Tab key={tab.name} name={tab.name} selectButton={props.selectButton}/>) }
+        { tabs.map((tab) => <Tab key={tab.name} name={tab.name} selectButton={selectButton} selectedButton={selectedButton}/>) }
       </ul>
     </div>
   );
 }
 
-function Tab(props) {
+function Tab({selectButton, name, selectedButton}) {
+  const isThisSelected = () => {
+    if (name === selectedButton) {
+      return true;
+    }
+    return false
+  }
   return (
     <li className='w-full'>
-      <button className='w-full block m-auto py-0.5 font-bold focus:border focus:border-gray-900 focus:bg-gray-300' onClick={props.selectButton}>{props.name}</button>
+      <button className={`w-full block m-auto py-0.5 font-bold ${ isThisSelected() ? 'border border-gray-900 bg-gray-300' : ''}`} onClick={selectButton}>{name}</button>
     </li>
   );
 }

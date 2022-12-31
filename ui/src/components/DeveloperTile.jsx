@@ -10,8 +10,8 @@ export function DeveloperTile({ name }) {
       app: "cur-server",
       mark: "app-store-cur-action",
       json: { unsub: { "dev-name": name } },
-      onSuccess: () => console.log('Successfully done'),
-      onError: (err) => setErrorMsg(err),
+      onSuccess: () => notification.success(`You have been unsubscribed from ${name}, please refresh the page`),
+      onError: (err) => notification.error(err),
     });
   }
 

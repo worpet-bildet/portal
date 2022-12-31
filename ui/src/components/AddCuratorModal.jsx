@@ -5,7 +5,7 @@ import { Input } from "./Input";
 
 const api = getUrbitApi();
 
-export function AddCuratorModal(props) {
+export function AddCuratorModal({notification}) {
   const { register, handleSubmit } = useForm({
     defaultValues: {
       "cur-name": ""
@@ -14,22 +14,15 @@ export function AddCuratorModal(props) {
   const [showModal, setShowModal] = useState(false);
 
   const subscribeToNewCur = (curator) => {
-    try {
-      api.poke({
-        app: "usr-server",
-        mark: "app-store-usr-action",
-        json: { sub: curator },
-        onSuccess: (success) => console.log(success),
-        onError: (err) => setErrorMsg(err),
-        onCancel: (err) => setErrorMsg(err)
-      });
-    }
-    catch(err) {
-      setErrorMsg(err);
-    }
+    api.poke({
+      app: "usr-server",
+      mark: "app-store-usr-action",
+      json: { sub: curator },
+      onSuccess: () => notification.success('The curator has been added succesfully, please refresh the page'),
+      onError: (err) => notification.error(err),
+      onCancel: (err) => notification.error(err)
+    });
   };
-
-  const setErrorMsg = (msg) => { throw new Error(msg); };
 
   const onSubmit = (data) => {
     subscribeToNewCur(data);

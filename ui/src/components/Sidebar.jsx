@@ -15,6 +15,7 @@ export function Sidebar(props) {
   return (
     <aside className="flex flex-col justify-between w-72 h-screen sticky top-0 bg-primary border-r border-black" aria-label="Sidebar">
       <div className="overflow-y-auto py-4 px-3">
+          <div  className='font-bold text-3xl'>Galleria</div>
           <ul className="flex flex-col items-center space-y-2 py-10">
             { buttons.sidebar && buttons.sidebar.map(({button, link}) =>
               <SidebarItem
