@@ -23,6 +23,7 @@
       (cur-map-aux-map-all:validator cur-map.cur-data.cur-page aux-map.cur-data.cur-page our now)
     ?.  ?&
       (cat-map-cat-set:validator cat-map.cur-choice.cur-data.cur-page cat-set.cur-choice.cur-data.cur-page)
+      (key-list-duplicates:validator key-list.cur-choice.cur-data.cur-page)
       (key-list-cat-map:validator key-list.cur-choice.cur-data.cur-page cat-map.cur-choice.cur-data.cur-page)
       (key-list-cur-map:validator key-list.cur-choice.cur-data.cur-page cur-map)
       (cur-map-aux-map:validator cur-map aux-map)
@@ -40,11 +41,10 @@
   ::  when selecting new cur-choice
   ++  select
     |=  [=cur-data act=[%select =key-list =cat-map]]
-    ~&  >  "SELECT ACTION"
-    ~&  >  act
     ^-  [?(%changed %unchanged) ^cur-data]
     ?.  ?&
       (cat-map-cat-set:validator cat-map.act cat-set.cur-choice.cur-data)
+      (key-list-duplicates:validator key-list.cur-choice.cur-data)
       (key-list-cat-map:validator key-list.act cat-map.act)
       (key-list-cur-map:validator key-list.act cur-map.cur-data)
     ==
@@ -58,8 +58,6 @@
   ::  when writing categories
   ++  cats
     |=  [=cur-data act=[%cats =cat-set]]
-    ~&  >  "CATS ACTION"
-    ~&  >  act
     ^-  ^cur-data
     ?.  (cat-map-cat-set:validator cat-map.cur-choice.cur-data cat-set.act)
       ~&  "%cur-server: adding categories failed"
@@ -127,6 +125,7 @@
     =/  new-cur-map  (del-dev-from-cur-map:aux [dev-name cur-map.cur-data aux-map.cur-data])
     =/  new-cur-choice  (del-dev-from-cur-choice:aux [dev-name cur-choice.cur-data aux-map.cur-data])
     ?.  ?&
+      (key-list-duplicates:validator key-list.cur-choice.cur-data)
       (key-list-cat-map:validator key-list.new-cur-choice cat-map.new-cur-choice)
       (key-list-cur-map:validator key-list.new-cur-choice new-cur-map)
       (cur-map-aux-map:validator new-cur-map new-aux-map)
@@ -155,6 +154,7 @@
     ?~  loc
       ?.  ?&
         (cat-map-cat-set:validator new-cat-map cat-set.cur-choice.cur-data)
+        (key-list-duplicates:validator key-list.cur-choice.cur-data)
         (key-list-cat-map:validator key-list.cur-choice.cur-data new-cat-map)
         (key-list-cur-map:validator key-list.cur-choice.cur-data new-cur-map)
         (cur-map-aux-map:validator new-cur-map new-aux-map)
@@ -167,6 +167,7 @@
     =/  new-key-list  (oust [u.loc 1] key-list.cur-choice.cur-data)
     ?.  ?&
       (cat-map-cat-set:validator new-cat-map cat-set.cur-choice.cur-data)
+      (key-list-duplicates:validator key-list.cur-choice.cur-data)
       (key-list-cat-map:validator new-key-list new-cat-map)
       (key-list-cur-map:validator new-key-list new-cur-map)
       (cur-map-aux-map:validator new-cur-map new-aux-map)
@@ -628,5 +629,12 @@
     =/  aux-map-2  (~(run by aux-map-1) |=(set=(set key) ~(tap in set)))
     =/  vals  (silt `(list key)`(zing ~(val by aux-map-2)))
     =(cur-map-keys vals)
+  ::
+  ::  verify that key-list doesn't repeat apps
+  ++  key-list-duplicates
+    |=  [=key-list]
+    ^-  ?
+    =(~(wyt in (silt key-list)) (lent key-list))
+  ::
   --
 --
