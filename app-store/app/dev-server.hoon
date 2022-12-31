@@ -189,7 +189,7 @@
     :_  this
     [%give %fact ~ %app-store-dev-update !>([%all dev-data.state])]~
       %render
-    ~&  "%dev-server: received subscription request from front-end"
+    ::~&  "%dev-server: received subscription request from front-end"
     :_  this
     [%give %fact ~ %app-store-dev-update !>([%all dev-data.state])]~
   ==

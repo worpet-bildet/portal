@@ -89,7 +89,7 @@
   ^-  (quip card _this)
   ?+    -.path    (on-watch:default path)
       %render
-    ~&  "%usr-server: received subscription request from front-end"
+    ::~&  "%usr-server: received subscription request from front-end"
     =/  usr-update  `usr-update`[%all usr-data.state]
     :_  this
     [%give %fact ~ %app-store-usr-update !>(usr-update)]~
