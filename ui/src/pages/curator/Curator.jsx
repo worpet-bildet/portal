@@ -6,6 +6,7 @@ import { DeveloperTile } from '../../components/DeveloperTile';
 import { SearchBar } from '../../components/SearchBar';
 import { Sidebar } from '../../components/Sidebar';
 import { Tabs } from '../../components/Tabs';
+import { Notify } from '../../utils/notifications';
 import { getUrbitApi } from '../../utils/urbitApi';
 
 const api = getUrbitApi();
@@ -86,9 +87,8 @@ export function Curator(props) {
       <main className="ml-32 basis-3/4 w-full min-h-screen">
         <div className="w-4/5 space-y-6 py-14">
           <h1 className="text-3xl font-bold">My Curated Apps</h1>
-          <Tabs selectButton={selectButton} tabs={tabs} />
-          <SearchBar />
-          {apps.length && selectedButton === 'Apps' && (
+          <Tabs selectButton={selectButton} selectedButton={selectedButton} tabs={tabs} />
+          {apps.length && selectedButton === 'Apps' ? (
             <ul className="space-y-4">
               { apps.map((curatorApp) =>
                   <CuratorAppTile
@@ -102,12 +102,12 @@ export function Curator(props) {
                 />
                 ) }
             </ul>
-          )}
+          ) : null}
           { selectedButton === 'Developer' && (
             <ul className='grid grid-cols-4 gap-2'>
-              <AddDeveloperModal />
+              <AddDeveloperModal notification={Notify}/>
               { developers.map((developer) =>
-                <DeveloperTile key={developer} name={developer} />
+                <DeveloperTile key={developer} name={developer} notification={Notify}/>
               )}
             </ul>
           )}

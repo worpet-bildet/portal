@@ -6,7 +6,7 @@ import { Input } from "./Input";
 const api = getUrbitApi();
 
 // We need to send the dev name and app name to the component. Also the hash.
-export function AddReviewModal({appKey, hash}) {
+export function AddReviewModal({appKey, hash, notification}) {
   const methods = useForm({
     defaultValues: {
       key: appKey,
@@ -36,8 +36,8 @@ export function AddReviewModal({appKey, hash}) {
       app: "usr-server",
       mark: "app-store-visit-dev-action",
       json: { "put-rev": review },
-      onSuccess: () => console.log('Successfully done'),
-      onError: (err) => setErrorMsg(err),
+      onSuccess: () => notification.success('Your review has been processed succesfully, please refresh the page'),
+      onError: (err) => notification.error(err),
     });
   };
 

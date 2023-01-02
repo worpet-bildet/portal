@@ -5,12 +5,11 @@ import { AddReviewModal } from "../../components/AddReviewModal";
 import { GoBack } from "../../components/GoBack";
 import { Sidebar } from "../../components/Sidebar";
 import { Tabs } from "../../components/Tabs";
-import { Notify } from "../../utils/notifications";
 import { getUrbitApi } from "../../utils/urbitApi";
 
 const api = getUrbitApi();
 
-export function ApplicationPage(props) {
+export function CurApplicationPage(props) {
   const {application} = useParams();
   const [appInfo, setAppInfo] = useState();
   const [downloadLink, setDownloadLink] = useState('');
@@ -23,7 +22,7 @@ export function ApplicationPage(props) {
   const subscribe = async () => {
     try {
       api.subscribe({
-        app: "usr-server",
+        app: "cur-server",
         path: "/render",
         event: handleUpdate,
         err: () => setErrorMsg("Subscription rejected"),
@@ -39,7 +38,6 @@ export function ApplicationPage(props) {
     // We need to check for key too
     const currentApp = getApplications(curators).find((app) => app.key['app-name'] === application);
     setAppInfo(currentApp);
-    setDownloadLink(currentApp['dst-desk']);
   }
 
   const setErrorMsg = (msg) => { throw new Error(msg); };
@@ -191,7 +189,7 @@ function ApplicationImage({src, alt}) {
 function Reviews({reviews, appKey, hash}) {
   return (
     <div className="flex flex-col space-y-2">
-      <AddReviewModal appKey={appKey} hash={hash} notification={Notify}/>
+      <AddReviewModal appKey={appKey} hash={hash}/>
       <ul className="flex flex-col space-y-2">
         { reviews.length ?
           reviews.map((review) =>
@@ -221,11 +219,12 @@ function Review({text, user, appKey, isSafe}) {
       app: "usr-server",
       mark: "app-store-visit-dev-action",
       json: { "del-rev": review },
-      onSuccess: () => Notify.success('Your review has been deleted, please refresh the page'),
-      onError: (err) => Notify.error(err),
+      onSuccess: () => console.log('Successfully done'),
+      onError: (err) => setErrorMsg(err),
     });
   }
 
+  const setErrorMsg = (msg) => { throw new Error(msg); };
   return (
     <li className="flex items-center space-x-3 text-sm leading-tight">
       <div className="h-28 w-full p-4 rounded bg-gray-200">
@@ -278,6 +277,7 @@ function Review({text, user, appKey, isSafe}) {
     </li>
   );
 }
+
 
 function Comments({comments, appKey}) {
   return (
@@ -363,6 +363,7 @@ function CommentForm({appKey}) {
     }
   });
   const onSubmit = (comment) => {
+    console.log(comment);
     submitNew(comment);
   };
 
@@ -371,10 +372,12 @@ function CommentForm({appKey}) {
       app: "usr-server",
       mark: "app-store-visit-dev-action",
       json: { 'add-com': comment },
-      onSuccess: () => Notify.success('Your comment has been processed succesfully, please refresh the page'),
-      onError: (err) => Notify.error(err),
+      onSuccess: () => console.log('Successfully done'),
+      onError: (err) => setErrorMsg(err),
     });
   };
+
+  const setErrorMsg = (msg) => { throw new Error(msg); };
 
   return (
     <form className="relative">

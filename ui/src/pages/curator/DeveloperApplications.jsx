@@ -48,6 +48,7 @@ export function DeveloperApplications(props) {
     const categorySet = curator['cur-data']['cur-choice']['cat-set'];
     setCategorySet(categorySet);
     return developerApps.map((appName) => {
+      // Change to check developer too
       const application = curatorApps.find((app) => app.key['app-name'] === appName);
       const category = catMap.find((category) => {
         return category.key['app-name'] === application.key['app-name'];

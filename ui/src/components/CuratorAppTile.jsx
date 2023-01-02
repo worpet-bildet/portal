@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { getUrbitApi } from '../utils/urbitApi';
+import { Tag } from './Tag';
 
 const api = getUrbitApi();
 
-export function CuratorAppTile ({ category, categorySet, appKey, catMap, keyList }) {
+export function CuratorAppTile ({ category, categorySet, appKey, catMap, keyList, refresh }) {
   const [imageError, setImageError] = useState(false);
   const getCatMap = catMap.map((app) => {
     delete app.id;
@@ -29,7 +30,7 @@ export function CuratorAppTile ({ category, categorySet, appKey, catMap, keyList
       app: "cur-server",
       mark: "app-store-cur-action",
       json: app,
-      onSuccess: () => console.log('Successfully done'),
+      onSuccess: () => refresh(),
       onError: (err) => setErrorMsg(err),
     });
   };
@@ -58,8 +59,8 @@ export function CuratorAppTile ({ category, categorySet, appKey, catMap, keyList
               {appKey['app-name']}
             </p>
             { category ?
-              <Category name={category} categorySet={categorySet} />
-              : <AddCategory categorySet={categorySet} appKey={appKey} catMap={catMap} keyList={keyList} />
+              <Tag name={category}/>
+              : <AddCategory categorySet={categorySet} appKey={appKey} catMap={catMap} keyList={keyList} refresh={refresh} />
             }
           </div>
         </div>
@@ -78,48 +79,8 @@ export function CuratorAppTile ({ category, categorySet, appKey, catMap, keyList
   );
 }
 
-function Category({name, categorySet}) {
-  const deleteCategory = (targetCategory) => categorySet.filter((category) => category !== targetCategory)
-  const { handleSubmit } = useForm({
-    defaultValues: {
-      cats: {
-        "cat-set": deleteCategory(name)
-      }
-    }
-  });
-
-  const onSubmit = (data) => {
-    submitNew(data)
-  };
-
-  const submitNew = (categories) => {
-    api.poke({
-      app: "cur-server",
-      mark: "app-store-cur-action",
-      json: categories,
-      onSuccess: () => console.log('Successfully done'),
-      onError: () => setErrorMsg("Va a ser que no"),
-    });
-  };
-
-  const setErrorMsg = (msg) => { throw new Error(msg); };
-
-  return (
-    <li>
-      <div className='flex flex-row justify-between border border-black font-semibold hover:bg-gray-400 gap-2 p-2'>
-        <span className='flex items-center capitalize'><p>{name}</p></span>
-        <button
-        className='text-xl hover:bg-gray-200 pl-1 pr-1'
-          onClick={handleSubmit(onSubmit)}
-        >
-          x
-        </button>
-      </div>
-    </li>
-  );
-}
-
-function AddCategory({categorySet, appKey, catMap, keyList}) {
+function AddCategory({categorySet, appKey, catMap, keyList, refresh}) {
+  const [startsWithNumber, setStartsWithNumber] = useState(false);
   const { handleSubmit, setValue, getValues } = useForm({
     defaultValues: {
       cats: {
@@ -136,17 +97,26 @@ function AddCategory({categorySet, appKey, catMap, keyList}) {
   };
 
   const onChange = (name) => {
+    isStartingWithNumber(name);
+    if (startsWithNumber) {
+      return;
+    }
     const array = [name];
     const newArray = categorySet.concat(array);
     setValue('cats.cat-set', newArray);
   };
+
+  const isStartingWithNumber = (category) => {
+    const startsWithNumber = !!category.match(/^[0-9]/);
+    setStartsWithNumber(startsWithNumber);
+  }
 
   const submitNew = (categories) => {
     api.poke({
       app: "cur-server",
       mark: "app-store-cur-action",
       json: categories,
-      onSuccess: () => console.log('Successfully done'),
+      onSuccess: () => refresh(),
       onError: (err) => setErrorMsg(err),
     });
   };
@@ -174,18 +144,29 @@ function AddCategory({categorySet, appKey, catMap, keyList}) {
   const setErrorMsg = (msg) => { throw new Error(msg); };
 
   return (
-    <div className='relative'>
+    <div className='flex'>
+      <div className='relative'>
       <input
         type="text"
         className="border border-gray-800 text-gray-800 text-sm focus:ring-gray-900 focus:border-gray-900 w-full p-1.5"
         onChange={(e) => onChange(e.target.value)}
       />
-      <button
+      { !startsWithNumber ? <button
         className='absolute right-2 top-0 font-bold text-4xl hover:bg-gray-200'
         onClick={handleSubmit(onSubmit)}
       >
         +
-      </button>
+      </button> : null
+      }
+    </div>
+      { startsWithNumber ? <div
+          className='text-red-600 text-lg mt-1.5'
+        >
+          <i className={`fa fa-exclamation-triangle ml-2 mr-2`}></i>
+          A category cannot start with a number
+        </div> : null
+
+      }
     </div>
   );
 }

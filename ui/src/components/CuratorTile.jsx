@@ -4,7 +4,7 @@ import { getUrbitApi } from '../utils/urbitApi';
 
 const api = getUrbitApi();
 
-export function CuratorTile ({curator, image}) {
+export function CuratorTile ({curator, image, notification}) {
   const [imageError, setImageError] = useState(false);
 
   const unsubscribe = () => {
@@ -12,14 +12,14 @@ export function CuratorTile ({curator, image}) {
       app: "usr-server",
       mark: "app-store-usr-action",
       json: { unsub: { "cur-name": curator.id } },
-      onSuccess: () => console.log('Successfully done'),
-      onError: (err) => setErrorMsg(err),
+      onSuccess: () => notification.success(`You have been unsubscribed from ${curator.id}, please refresh the page`),
+      onError: (err) => notification.error(err),
     });
   }
 
   return (
     <li className="flex items-center space-x-3 text-sm leading-tight">
-      <Link to={`/apps/app-store/usr/curs/${curator.name}`} className="w-full p-4 rounded border border-black hover:bg-gray-200">
+      <Link to={`/apps/app-store/usr/curs/${curator.id}`} className="w-full p-4 rounded border border-black hover:bg-gray-200">
         <div className="flex flex-row flex-auto justify-between">
           <div className='flex flex-row'>
             <div

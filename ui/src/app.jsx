@@ -2,21 +2,22 @@ import Urbit from '@urbit/http-api';
 import 'font-awesome/css/font-awesome.min.css';
 import React from 'react';
 import {
-  createBrowserRouter, RouterProvider
+  createBrowserRouter, Navigate, RouterProvider
 } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './index.css';
+import { CurApplicationPage } from './pages/curator/CurApplicationPage';
 import { Curator } from './pages/curator/Curator';
 import { CuratorMe } from './pages/curator/CuratorMe';
 import { DeveloperApplications } from './pages/curator/DeveloperApplications';
+import { DevApplicationPage } from './pages/developer/DevApplicationPage';
 import { Developer } from './pages/developer/Developer';
 import { UploadApplication } from './pages/developer/UploadApp';
 import { ApplicationPage } from './pages/user/ApplicationPage';
 import { CuratorPage } from './pages/user/CuratorPage';
 import { User } from './pages/user/User';
 import { UserCurators } from './pages/user/UserCurators';
-import { CuratorWelcome } from './pages/curator/CuratorWelcome';
-import { DeveloperWelcome } from './pages/developer/DeveloperWelcome';
-import { UserWelcome } from './pages/user/UserWelcome';
 
 const api = new Urbit('', '', window.desk);
 api.ship = window.ship;
@@ -26,6 +27,10 @@ api.ship = window.ship;
   and child routes for each page as many sidebar buttons they have
 */
 const router = createBrowserRouter([
+  {
+    path: 'apps/app-store/',
+    element:<Navigate replace to='/apps/app-store/usr'/>
+  },
   {
     path: '/apps/app-store/usr',
     element: <User />
@@ -45,6 +50,10 @@ const router = createBrowserRouter([
   {
     path: '/apps/app-store/cur/me',
     element: <CuratorMe />
+  },
+  {
+    path: '/apps/app-store/cur/apps/:application',
+    element: <CurApplicationPage />
   },
   {
     path: 'apps/app-store/usr/apps/:application',
@@ -67,16 +76,8 @@ const router = createBrowserRouter([
     element: <UploadApplication />
   },
   {
-    path: '/apps/app-store/usr/welcome',
-    element: <UserWelcome />
-  },
-  {
-    path: '/apps/app-store/cur/welcome',
-    element: <CuratorWelcome />
-  },
-  {
-    path: '/apps/app-store/dev/welcome',
-    element: <DeveloperWelcome />
+    path: '/apps/app-store/dev/apps/:application',
+    element: <DevApplicationPage />
   }
 ]);
 
@@ -84,11 +85,16 @@ export function App () {
   return (
     <React.Fragment>
       <RouterProvider router={router} />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        theme="colored"
+      />
     </React.Fragment>
   );
 }
-
-// Example function call api
-// async function init() {
-//   return (await api.scry(scryCharges)).initial;
-// }

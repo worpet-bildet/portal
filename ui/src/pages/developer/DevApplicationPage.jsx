@@ -5,15 +5,15 @@ import { AddReviewModal } from "../../components/AddReviewModal";
 import { GoBack } from "../../components/GoBack";
 import { Sidebar } from "../../components/Sidebar";
 import { Tabs } from "../../components/Tabs";
-import { Notify } from "../../utils/notifications";
 import { getUrbitApi } from "../../utils/urbitApi";
 
 const api = getUrbitApi();
 
-export function ApplicationPage(props) {
+export function DevApplicationPage(props) {
   const {application} = useParams();
   const [appInfo, setAppInfo] = useState();
   const [downloadLink, setDownloadLink] = useState('');
+  const [applications, setApplications] = useState([]);
   const [selectedButton, setSelectedButton] = useState('Comments');
 
   useEffect(() => {
@@ -21,37 +21,30 @@ export function ApplicationPage(props) {
   }, []);
 
   const subscribe = async () => {
-    try {
-      api.subscribe({
-        app: "usr-server",
+   
+      await api.subscribe({
+        app: "dev-server",
         path: "/render",
         event: handleUpdate,
-        err: () => setErrorMsg("Subscription rejected"),
-        quit: () => setErrorMsg("Kicked from subscription"),
-        cancel: () => setErrorMsg("Subscription cancelled"),
-      });
-    } catch {
-      setErrorMsg("Subscription failed");
-    }
+        err: (err) => setErrorMsg(err),
+        quit: (err) => setErrorMsg(err),
+        cancel: (err) => setErrorMsg(err),
+      })
   };
 
-  const handleUpdate = (curators) => {
-    // We need to check for key too
-    const currentApp = getApplications(curators).find((app) => app.key['app-name'] === application);
-    setAppInfo(currentApp);
-    setDownloadLink(currentApp['dst-desk']);
+  const handleUpdate = (data) => {
+    if (data) {
+      setApplications(data["dev-map"]);
+      const app = findApplication(application);
+      // app is undefined
+      console.log(app);
+      setAppInfo(app);
+    }
   }
 
   const setErrorMsg = (msg) => { throw new Error(msg); };
 
-  const getApplications = (curators) => {
-    let apps = [];
-    curators.map((curator) => {
-      const curatorApps = curator['cur-page']['cur-data']['cur-map'];
-      apps = apps.concat(curatorApps);
-    });
-    return apps;
-  }
+  const findApplication = (name) => (applications.find((app) => app.key['app-name'] === name));
 
   const tabs = [{name: 'Reviews'}, {name: 'Comments'}];
 
@@ -191,7 +184,7 @@ function ApplicationImage({src, alt}) {
 function Reviews({reviews, appKey, hash}) {
   return (
     <div className="flex flex-col space-y-2">
-      <AddReviewModal appKey={appKey} hash={hash} notification={Notify}/>
+      <AddReviewModal appKey={appKey} hash={hash}/>
       <ul className="flex flex-col space-y-2">
         { reviews.length ?
           reviews.map((review) =>
@@ -221,11 +214,12 @@ function Review({text, user, appKey, isSafe}) {
       app: "usr-server",
       mark: "app-store-visit-dev-action",
       json: { "del-rev": review },
-      onSuccess: () => Notify.success('Your review has been deleted, please refresh the page'),
-      onError: (err) => Notify.error(err),
+      onSuccess: () => console.log('Successfully done'),
+      onError: (err) => setErrorMsg(err),
     });
   }
 
+  const setErrorMsg = (msg) => { throw new Error(msg); };
   return (
     <li className="flex items-center space-x-3 text-sm leading-tight">
       <div className="h-28 w-full p-4 rounded bg-gray-200">
@@ -278,6 +272,7 @@ function Review({text, user, appKey, isSafe}) {
     </li>
   );
 }
+
 
 function Comments({comments, appKey}) {
   return (
@@ -363,6 +358,7 @@ function CommentForm({appKey}) {
     }
   });
   const onSubmit = (comment) => {
+    console.log(comment);
     submitNew(comment);
   };
 
@@ -371,10 +367,12 @@ function CommentForm({appKey}) {
       app: "usr-server",
       mark: "app-store-visit-dev-action",
       json: { 'add-com': comment },
-      onSuccess: () => Notify.success('Your comment has been processed succesfully, please refresh the page'),
-      onError: (err) => Notify.error(err),
+      onSuccess: () => console.log('Successfully done'),
+      onError: (err) => setErrorMsg(err),
     });
   };
+
+  const setErrorMsg = (msg) => { throw new Error(msg); };
 
   return (
     <form className="relative">

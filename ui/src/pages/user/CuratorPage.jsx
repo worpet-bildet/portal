@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { GoBack } from "../../components/GoBack";
 import { Sidebar } from "../../components/Sidebar";
 import { Tag } from '../../components/Tag';
 import { getUrbitApi } from "../../utils/urbitApi";
-import { Link, useLocation } from 'react-router-dom';
 
 const api = getUrbitApi();
 
@@ -41,15 +40,16 @@ export function CuratorPage(props) {
     const currentCurator = getCurator(curatorsList);
     const curatorInfo = currentCurator['cur-page']['cur-info'];
     const curatorData = currentCurator['cur-page']['cur-data'];
+    const curatorTitle = currentCurator['cur-page']['cur-info']['cur-title'];
     return {
-      curator: { name: curator, description: curatorInfo['cur-intro'] },
+      curator: { name: curatorTitle || curator, description: curatorInfo['cur-intro'] },
       categories: curatorData['cur-choice']['cat-set'],
       applications: curatorData['cur-choice']['cat-map']
     }
   }
 
   const getCurator = (curatorList) => {
-    return curatorList.find((curatorInfo) => curatorInfo['cur-page']['cur-info']['cur-title'] === curator);
+    return curatorList.find((curatorInfo) => curatorInfo.id === curator);
   }
 
   return(
@@ -61,11 +61,16 @@ export function CuratorPage(props) {
           <div className="flex flex-col space-y-10">
           { info && <CuratorIntroduction curator={info.curator} image='' /> }
             <ul className="flex flex-wrap gap-4">
-              { info && info.categories.map((tag) => <Tag key={tag} name={tag}/>) }
+              { info && info.applications.length ?
+                  info.categories.map((tag) => <Tag key={tag} name={tag}/>)
+                  : null
+              }
             </ul>
             <ul className="grid grid-cols-6 place-items-center gap-y-6">
-              { info && info.applications.map((app) =>
-                  <SmallApplicationTile key={app.id} name={app.key['app-name']} /> ) }
+              { info ? info.applications.map((app) =>
+                  <SmallApplicationTile key={app.id} name={app.key['app-name']} /> )
+                  : null
+              }
             </ul>
           </div>
         </div>
