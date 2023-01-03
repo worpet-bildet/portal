@@ -55,26 +55,28 @@ export function CuratorPage(props) {
   return(
     <div className='flex flex-row'>
       <Sidebar />
-      <main className="ml-32 basis-3/4 w-full min-h-screen">
-        <div className="w-4/5 space-y-14 py-14">
-          <GoBack titlePreviousPage="Curators" />
-          <div className="flex flex-col space-y-10">
-          { info && <CuratorIntroduction curator={info.curator} image='' /> }
-            <ul className="flex flex-wrap gap-4">
-              { info && info.applications.length ?
-                  info.categories.map((tag) => <Tag key={tag} name={tag}/>)
-                  : null
-              }
-            </ul>
-            <ul className="grid grid-cols-6 place-items-center gap-y-6">
-              { info ? info.applications.map((app) =>
-                  <SmallApplicationTile key={app.id} name={app.key['app-name']} /> )
-                  : null
-              }
-            </ul>
+      <div className="flex flex-col w-full min-h-screen">
+        <main className="ml-32 basis-3/4 w-full h-full">
+          <div className="w-4/5 space-y-14 py-14">
+            <GoBack titlePreviousPage="Curators" />
+            <div className="flex flex-col space-y-10">
+            { info && <CuratorIntroduction curator={info.curator} image='' /> }
+              <ul className="flex flex-wrap gap-4">
+                { info && info.applications.length ?
+                    info.categories.map((tag) => <Tag key={tag} name={tag}/>)
+                    : null
+                }
+              </ul>
+              <ul className="grid grid-cols-6 place-items-center gap-y-6">
+                { info ? info.applications.map((app) =>
+                    <SmallApplicationTile key={app.id} name={app.key['app-name']} /> )
+                    : null
+                }
+              </ul>
+            </div>
           </div>
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }

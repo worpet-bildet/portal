@@ -7,8 +7,8 @@ export const UserPageButtons = {
     link: '/apps/app-store/usr/curs'
   }],
   accounts: [
-    { name: 'C', link: '/apps/app-store/cur' },
-    { name: 'D', link: '/apps/app-store/dev' }
+    { name: 'Curator', link: '/apps/app-store/cur' },
+    { name: 'Developer', link: '/apps/app-store/dev' }
   ]
 };
 
@@ -21,8 +21,8 @@ export const DeveloperPageButtons = {
     link: '/apps/app-store/dev/upload-app'
   }],
   accounts: [
-    { name: 'C', link: '/apps/app-store/cur' },
-    { name: 'U', link: '/apps/app-store/' }
+    { name: 'Curator', link: '/apps/app-store/cur' },
+    { name: 'User', link: '/apps/app-store/' }
   ]
 };
 
@@ -35,7 +35,7 @@ export const CuratorPageButtons =  {
     link: '/apps/app-store/cur'
   }],
   accounts: [
-    { name: 'D', link: '/apps/app-store/dev' },
-    { name: 'U', link: '/apps/app-store/' }
+    { name: 'Developer', link: '/apps/app-store/dev' },
+    { name: 'User', link: '/apps/app-store/' }
   ]
 };

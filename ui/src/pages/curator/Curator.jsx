@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { AddDeveloperModal } from '../../components/AddDeveloperModal';
-import { AppTile } from '../../components/AppTile';
 import { CuratorAppTile } from '../../components/CuratorAppTile';
 import { DeveloperTile } from '../../components/DeveloperTile';
-import { SearchBar } from '../../components/SearchBar';
+import { Disclaimer } from '../../components/Disclaimer';
+import { Footer } from '../../components/Footer';
 import { Sidebar } from '../../components/Sidebar';
 import { Tabs } from '../../components/Tabs';
 import { Notify } from '../../utils/notifications';
@@ -84,35 +84,42 @@ export function Curator(props) {
   return (
     <div className='flex flex-row'>
       <Sidebar />
-      <main className="ml-32 basis-3/4 w-full min-h-screen">
-        <div className="w-4/5 space-y-6 py-14">
-          <h1 className="text-3xl font-bold">My Curated Apps</h1>
-          <Tabs selectButton={selectButton} selectedButton={selectedButton} tabs={tabs} />
-          {apps.length && selectedButton === 'Apps' ? (
-            <ul className="space-y-4">
-              { apps.map((curatorApp) =>
-                  <CuratorAppTile
-                  key={curatorApp.application.id}
-                  appKey={curatorApp.application.key}
-                  category={curatorApp.category}
-                  categorySet={categorySet}
-                  keyList={keyAppList}
-                  catMap={catMapApps}
-                  {...curatorApp.application}
-                />
-                ) }
-            </ul>
-          ) : null}
-          { selectedButton === 'Developer' && (
-            <ul className='grid grid-cols-4 gap-2'>
-              <AddDeveloperModal notification={Notify}/>
-              { developers.map((developer) =>
-                <DeveloperTile key={developer} name={developer} notification={Notify}/>
-              )}
-            </ul>
-          )}
-        </div>
-      </main>
+      <div className="flex flex-col w-full min-h-screen">
+        <main className="ml-32 basis-3/4 w-full h-full">
+          <div className="w-4/5 space-y-6 py-14">
+            <h1 className="text-3xl font-bold">My Curated Apps</h1>
+            <Disclaimer
+              color='blue'
+              message={'Curators create collections of apps. Users who subscribe to curator(s) will see their collection(s) upon opening Galleria.'}
+            />
+            <Tabs selectButton={selectButton} selectedButton={selectedButton} tabs={tabs} />
+            {apps.length && selectedButton === 'Apps' ? (
+              <ul className="space-y-4">
+                { apps.map((curatorApp) =>
+                    <CuratorAppTile
+                    key={curatorApp.application.id}
+                    appKey={curatorApp.application.key}
+                    category={curatorApp.category}
+                    categorySet={categorySet}
+                    keyList={keyAppList}
+                    catMap={catMapApps}
+                    {...curatorApp.application}
+                  />
+                  ) }
+              </ul>
+            ) : null}
+            { selectedButton === 'Developer' && (
+              <ul className='grid grid-cols-4 gap-2'>
+                <AddDeveloperModal notification={Notify}/>
+                { developers.map((developer) =>
+                  <DeveloperTile key={developer} name={developer} notification={Notify}/>
+                )}
+              </ul>
+            )}
+          </div>
+        </main>
+        <Footer />
+      </div>
     </div>
   );
 }

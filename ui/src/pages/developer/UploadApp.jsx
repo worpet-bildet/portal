@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Controller, FormProvider, useFieldArray, useForm, useFormContext } from 'react-hook-form';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Alert from '../../components/Alert';
+import { Disclaimer } from '../../components/Disclaimer';
+import { Footer } from '../../components/Footer';
 import { Input } from '../../components/Input';
 import { Sidebar } from '../../components/Sidebar';
 import { Tag } from '../../components/Tag';
@@ -47,16 +49,19 @@ export function UploadApplication(props) {
   return (
     <div className='flex flex-row'>
       <Sidebar/>
-      <main className="ml-32 basis-3/4 w-full min-h-screen">
-        <div className="w-4/5 space-y-6 py-14">
-          <h1 className="text-3xl font-bold">
-            { application ? `Edit ${application}` : 'Upload an application' }
-          </h1>
-          <div className="border border-grey-200 rounded p-8">
-            <Form application={appInfo} name={application}/>
+      <div className='flex flex-col w-full min-h-screen'>
+        <main className="ml-32 basis-3/4 w-full h-full">
+          <div className="w-4/5 space-y-6 py-14">
+            <h1 className="text-3xl font-bold">
+              { application ? `Edit ${application}` : 'Upload an application' }
+            </h1>
+            <div className="border border-grey-200 rounded p-8">
+              <Form application={appInfo} name={application}/>
+            </div>
           </div>
-        </div>
-    </main>
+        </main>
+        <Footer />
+      </div>
     </div>
 );
 }
@@ -131,12 +136,10 @@ function Form({application, name}) {
         { application ? 'edit' : 'save' }
         </button>
       </div>
-      { application ?
-        (<>
-          <Signature {...application.signature}/>
-          <Docket {...application.docket}/>
-        </>)
-        :null }
+      <>
+        <Signature application={application}/>
+        <Docket application={application}/>
+      </>
     </FormProvider>
   );
 }
@@ -155,7 +158,12 @@ function AppPageInformation({setDisableForm}) {
         <div className='w-full'>
           <div className="flex flex-row gap-10">
             <div className="mb-3 basis-1/2">
-              <Input name='app-name' label="Application name" {...register('app-name')} />
+              <Input
+                name='app-name'
+                label="Application name"
+                placeholder='This must be the same as your desk name, e.g. "app-name"'
+                {...register('app-name')}
+              />
             </div>
             <div className="mb-3 basis-1/2">
               <Controller
@@ -202,54 +210,77 @@ function AppPageInformation({setDisableForm}) {
   );
 }
 
-function Signature({p, q, r}) {
+function Signature({application}) {
   return (
     <div className='mb-3'>
       <h2 className='text-xl font-semibold mb-4 mt-10'>Signature</h2>
-      <div className="flex flex-row gap-10">
-        <div className="mb-3 basis-1/2">
-          <Input label="Ship" placeholder={q} disabled={true} />
-        </div>
-        <div className="mb-3 basis-1/2">
-          <Input label="Life" placeholder={r} disabled={true} />
-        </div>
-      </div>
-      <Input label="Sig" placeholder={p} disabled={true} />
+      <a
+        className='flex justify-center font-bold text-lg p-2 border hover:bg-gray-800 hover:text-white'
+        href='https://github.com/dilryd-mopreg/app-store/tree/development/app-store#sign-and-send-data-for-distributors'
+        target='_blank'
+      >
+        <i className='fa fa-github mr-2 fa-1x'></i>Signature for non-related planet
+      </a>
+      { application ?
+        (
+          <div className='mt-4'>
+            <div className="flex flex-row gap-10">
+              <div className="mb-3 basis-1/2">
+                <Input label="Ship" placeholder={application.signature.q} disabled={true} />
+              </div>
+              <div className="mb-3 basis-1/2">
+                <Input label="Life" placeholder={application.signature.r} disabled={true} />
+              </div>
+            </div>
+            <Input label="Sig" placeholder={application.signature.p} disabled={true} />
+          </div>
+        ) : null }
     </div>
   );
 }
 
-function Docket({color, href, image, info, license, title, version, website}) {
+function Docket({application}) {
+
   return (
-    <div className='mb-6'>
-      <h2 className='text-xl font-semibold mb-4 mt-10'>Docket</h2>
-      <div className="grid grid-cols-2 gap-x-8">
-        <div className="mb-3 basis-1/2">
-          <Input label="Title" placeholder={title} disabled={true} />
+    <>
+      { application ?
+        <div className='mb-6 mt-10'>
+          <Disclaimer
+            color='blue'
+            message="Docket data isn't displayed to users yet"
+            textSize='sm'
+          />
+          <h2 className='text-xl font-semibold mt-5'>Docket</h2>
+          <div className="grid grid-cols-2 gap-x-8 mt-3">
+            <div className="mb-3 basis-1/2">
+              <Input label="Title" placeholder={application.docket.title} disabled={true} />
+            </div>
+            <div className="mb-3 basis-1/2">
+              <Input label="Info" placeholder={application.docket.info} disabled={true} />
+            </div>
+            <div className="mb-3 basis-1/2">
+              <Input label="Color" placeholder={application.docket.color} disabled={true} />
+            </div>
+            <div className="mb-3 basis-1/2">
+              <Input label="Href" placeholder={application.docket.href.site} disabled={true} />
+            </div>
+            <div className="mb-3 basis-1/2">
+              <Input label="Image" placeholder={application.docket.image} disabled={true} />
+            </div>
+            <div className="mb-3 basis-1/2">
+              <Input label="Version" placeholder={application.docket.version} disabled={true} />
+            </div>
+            <div className="mb-3 basis-1/2">
+              <Input label="Website" placeholder={application.docket.website} disabled={true} />
+            </div>
+            <div className="mb-3 basis-1/2">
+              <Input label="License" placeholder={application.docket.license} disabled={true} />
+            </div>
+          </div>
         </div>
-        <div className="mb-3 basis-1/2">
-          <Input label="Info" placeholder={info} disabled={true} />
-        </div>
-        <div className="mb-3 basis-1/2">
-          <Input label="Color" placeholder={color} disabled={true} />
-        </div>
-        <div className="mb-3 basis-1/2">
-          <Input label="Href" placeholder={href.site} disabled={true} />
-        </div>
-        <div className="mb-3 basis-1/2">
-          <Input label="Image" placeholder={image} disabled={true} />
-        </div>
-        <div className="mb-3 basis-1/2">
-          <Input label="Version" placeholder={version} disabled={true} />
-        </div>
-        <div className="mb-3 basis-1/2">
-          <Input label="Website" placeholder={website} disabled={true} />
-        </div>
-        <div className="mb-3 basis-1/2">
-          <Input label="License" placeholder={license} disabled={true} />
-        </div>
-      </div>
-    </div>
+        : null
+      }
+    </>
   );
 }
 

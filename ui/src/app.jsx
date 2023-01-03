@@ -7,7 +7,6 @@ import {
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './index.css';
-import { CurApplicationPage } from './pages/curator/CurApplicationPage';
 import { Curator } from './pages/curator/Curator';
 import { CuratorMe } from './pages/curator/CuratorMe';
 import { DeveloperApplications } from './pages/curator/DeveloperApplications';
@@ -50,10 +49,6 @@ const router = createBrowserRouter([
   {
     path: '/apps/app-store/cur/me',
     element: <CuratorMe />
-  },
-  {
-    path: '/apps/app-store/cur/apps/:application',
-    element: <CurApplicationPage />
   },
   {
     path: 'apps/app-store/usr/apps/:application',
