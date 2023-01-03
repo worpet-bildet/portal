@@ -634,8 +634,7 @@
   ?:  &((gte hex 0x100) (lte hex 0xffff))  %star
   ?:  &((gte hex 0x1.0000) (lte hex 0xffff.ffff))  %planet
   ?:  &((gte hex 0x1.0000.0000) (lte hex 0xffff.ffff.ffff.ffff))  %moon
-  ?:  &((gte hex 0x1.0000.0000.0000.0000) (lte hex 0xffff.ffff.ffff.ffff.ffff.ffff.ffff.ffff))  %comet
-  !!
+  %comet
 ::
 ::
 ::
