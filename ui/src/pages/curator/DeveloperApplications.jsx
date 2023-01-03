@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { CuratorAppTile } from '../../components/CuratorAppTile';
+import { Footer } from '../../components/Footer';
 import { GoBack } from '../../components/GoBack';
 import { Sidebar } from '../../components/Sidebar';
 import { getUrbitApi } from '../../utils/urbitApi';
@@ -66,27 +67,30 @@ export function DeveloperApplications(props) {
   return (
       <div className='flex flex-row'>
         <Sidebar/>
-        <main className="ml-32 basis-3/4 w-full min-h-screen">
-          <div className="w-4/5 space-y-6 py-14">
-            <GoBack titlePreviousPage="My Curated Apps" />
-            <h1 className="text-3xl font-bold">{developer}</h1>
-            {curatorApps.length ? (
-              <ul className="space-y-4">
-                { curatorApps.map((curatorApp) =>
-                    <CuratorAppTile
-                      key={curatorApp.application.id}
-                      appKey={curatorApp.application.key}
-                      category={curatorApp.category}
-                      categorySet={categorySet}
-                      keyList={keyAppList}
-                      catMap={catMapApps}
-                      {...curatorApp.application}
-                    />
-                  ) }
-              </ul>
-            ) : null }
-          </div>
-      </main>
+        <div className='flex flex-col w-full min-h-screen'>
+          <main className="ml-32 basis-3/4 w-full h-full">
+            <div className="w-4/5 space-y-6 py-14">
+              <GoBack titlePreviousPage="My Curated Apps" />
+              <h1 className="text-3xl font-bold">{developer}</h1>
+              {curatorApps.length ? (
+                <ul className="space-y-4">
+                  { curatorApps.map((curatorApp) =>
+                      <CuratorAppTile
+                        key={curatorApp.application.id}
+                        appKey={curatorApp.application.key}
+                        category={curatorApp.category}
+                        categorySet={categorySet}
+                        keyList={keyAppList}
+                        catMap={catMapApps}
+                        {...curatorApp.application}
+                      />
+                    ) }
+                </ul>
+              ) : null }
+              <Footer />
+            </div>
+          </main>
+        </div>
       </div>
   );
 }

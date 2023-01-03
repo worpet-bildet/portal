@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AppTile } from '../../components/AppTile';
+import { Footer } from '../../components/Footer';
 import { SearchBar } from '../../components/SearchBar';
 import { Sidebar } from '../../components/Sidebar';
 import { getUrbitApi } from '../../utils/urbitApi';
@@ -58,18 +59,21 @@ export function User(props) {
   return (
       <div className='flex flex-row'>
         <Sidebar />
-        <main className="ml-32 basis-3/4 w-full min-h-screen">
-          <div className="w-4/5 space-y-6 py-14">
-            <h1 className="text-3xl font-bold">Discover Apps</h1>
-            { applications.length ? (
-              <ul className="space-y-4">
-                { applications.map((app) =>
-                    <AppTile key={app.id} appName={app.key['app-name']} {...app} />
-                  ) }
-              </ul>
-              ): null }
-          </div>
-      </main>
+        <div className='flex flex-col w-full min-h-screen'>
+          <main className="ml-32 basis-3/4 w-full h-full">
+            <div className="w-4/5 space-y-6 py-14">
+              <h1 className="text-3xl font-bold">Discover Apps</h1>
+              { applications.length ? (
+                <ul className="space-y-4">
+                  { applications.map((app) =>
+                      <AppTile key={app.id} appName={app.key['app-name']} {...app} />
+                    ) }
+                </ul>
+                ): null }
+            </div>
+          </main>
+          <Footer />
+        </div>
       </div>
   );
 }

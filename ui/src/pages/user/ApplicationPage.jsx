@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { AddReviewModal } from "../../components/AddReviewModal";
+import { Footer } from "../../components/Footer";
 import { GoBack } from "../../components/GoBack";
 import { Sidebar } from "../../components/Sidebar";
 import { Tabs } from "../../components/Tabs";
@@ -62,38 +63,41 @@ export function ApplicationPage(props) {
   return (
     <div className='flex flex-row'>
       <Sidebar/>
-      <main className="ml-32 basis-3/4 w-full min-h-screen">
-        <div className="w-4/5 space-y-14 py-14">
-          <GoBack titlePreviousPage="My Curated Apps" />
-          <div className="flex flex-col gap-2">
-            <div className="flex justify-between">
-              <div className="flex flex-col">
-                <h1 className="text-5xl font-bold">{application}</h1>
-                { appInfo ?
-                  <h3 className="text-2xl">{appInfo.key['dev-name']}</h3>
-                  : null }
+      <div className="flex flex-col w-full min-h-screen">
+        <main className="ml-32 basis-3/4 w-full h-full">
+          <div className="w-4/5 space-y-14 py-14">
+            <GoBack titlePreviousPage="My Curated Apps" />
+            <div className="flex flex-col gap-2">
+              <div className="flex justify-between">
+                <div className="flex flex-col">
+                  <h1 className="text-5xl font-bold">{application}</h1>
+                  { appInfo ?
+                    <h3 className="text-2xl">{appInfo.key['dev-name']}</h3>
+                    : null }
+                </div>
+                <button
+                  type="submit"
+                  className="text-2xl h-1/2 mt-auto font-bold bg-gray-800 text-white py-2 px-5"
+                  onClick={() => navigator.clipboard.writeText(downloadLink)}
+                >Copy to clipboard</button>
               </div>
-              <button
-                type="submit"
-                className="text-2xl h-1/2 mt-auto font-bold bg-gray-800 text-white py-2 px-5"
-                onClick={() => navigator.clipboard.writeText(downloadLink)}
-              >Copy to clipboard</button>
+              { appInfo ? (
+                <>
+                  <Rating ratings={appInfo.ratings}/>
+                  <CarouselApplicationImages links={appInfo.screenshots}/>
+                  <p className="text-lg text-justify mt-5">
+                    {appInfo.description}
+                  </p>
+                  <Tabs selectButton={selectButton} selectedButton={selectedButton} tabs={tabs}/>
+                  { selectedButton === 'Reviews' && <Reviews reviews={appInfo.reviews} appKey={appInfo.key} hash={appInfo['desk-hash']}/>}
+                  { selectedButton === 'Comments' && <Comments comments={appInfo.comments} appKey={appInfo.key} />}
+                </>
+              ) : null }
             </div>
-            { appInfo ? (
-              <>
-                <Rating ratings={appInfo.ratings}/>
-                <CarouselApplicationImages links={appInfo.screenshots}/>
-                <p className="text-lg text-justify mt-5">
-                  {appInfo.description}
-                </p>
-                <Tabs selectButton={selectButton} selectedButton={selectedButton} tabs={tabs}/>
-                { selectedButton === 'Reviews' && <Reviews reviews={appInfo.reviews} appKey={appInfo.key} hash={appInfo['desk-hash']}/>}
-                { selectedButton === 'Comments' && <Comments comments={appInfo.comments} appKey={appInfo.key} />}
-              </>
-            ) : null }
           </div>
-        </div>
-      </main>
+        </main>
+        <Footer disclaimer={true} />
+      </div>
     </div>
   );
 }

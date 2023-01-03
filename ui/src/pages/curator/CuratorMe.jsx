@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from 'react-hook-form';
+import { Footer } from "../../components/Footer";
 import { IconImage } from "../../components/IconImage";
 import { Input } from "../../components/Input";
 import { Sidebar } from "../../components/Sidebar";
@@ -48,18 +49,21 @@ export function CuratorMe(props) {
   return(
     <div className='flex flex-row'>
       <Sidebar/>
-      <main className="ml-32 basis-3/4 w-full min-h-screen">
-        <div className="w-4/5 space-y-6 py-14">
-          { isEditMode ?
-            <Editable curator={curator} onClick={() => setEditMode(false)} />
-            : (
-              <div className="flex flex-row gap-24">
-                <Info {...curator} onClick={() => setEditMode(true)} />
-              </div>
-            )
-          }
-        </div>
-      </main>
+      <div className="flex flex-col w-full min-h-screen">
+        <main className="ml-32 basis-3/4 w-full h-full">
+          <div className="w-4/5 space-y-6 py-14">
+            { isEditMode ?
+              <Editable curator={curator} onClick={() => setEditMode(false)} />
+              : (
+                <div className="flex flex-row gap-24">
+                  <Info {...curator} onClick={() => setEditMode(true)} />
+                </div>
+              )
+            }
+          </div>
+        </main>
+        <Footer />
+      </div>
     </div>
   );
 }

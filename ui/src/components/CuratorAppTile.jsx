@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { Notify } from '../utils/notifications';
 import { getUrbitApi } from '../utils/urbitApi';
 import { Tag } from './Tag';
 
 const api = getUrbitApi();
 
-export function CuratorAppTile ({ category, categorySet, appKey, catMap, keyList, refresh }) {
+export function CuratorAppTile ({ category, categorySet, appKey, catMap, keyList }) {
   const [imageError, setImageError] = useState(false);
   const getCatMap = catMap.map((app) => {
     delete app.id;
@@ -30,12 +31,9 @@ export function CuratorAppTile ({ category, categorySet, appKey, catMap, keyList
       app: "cur-server",
       mark: "app-store-cur-action",
       json: app,
-      onSuccess: () => refresh(),
-      onError: (err) => setErrorMsg(err),
+      onError: (err) => Notify.error(err),
     });
   };
-
-  const setErrorMsg = (msg) => { throw new Error(msg); };
 
   return (
     <div className="w-full p-4 rounded border border-black hover:bg-gray-200">
@@ -60,7 +58,7 @@ export function CuratorAppTile ({ category, categorySet, appKey, catMap, keyList
             </p>
             { category ?
               <Tag name={category}/>
-              : <AddCategory categorySet={categorySet} appKey={appKey} catMap={catMap} keyList={keyList} refresh={refresh} />
+              : <AddCategory categorySet={categorySet} appKey={appKey} catMap={catMap} keyList={keyList}/>
             }
           </div>
         </div>
@@ -79,7 +77,7 @@ export function CuratorAppTile ({ category, categorySet, appKey, catMap, keyList
   );
 }
 
-function AddCategory({categorySet, appKey, catMap, keyList, refresh}) {
+function AddCategory({categorySet, appKey, catMap, keyList}) {
   const [startsWithNumber, setStartsWithNumber] = useState(false);
   const { handleSubmit, setValue, getValues } = useForm({
     defaultValues: {
@@ -116,8 +114,7 @@ function AddCategory({categorySet, appKey, catMap, keyList, refresh}) {
       app: "cur-server",
       mark: "app-store-cur-action",
       json: categories,
-      onSuccess: () => refresh(),
-      onError: (err) => setErrorMsg(err),
+      onError: (err) => Notify.error(err),
     });
   };
 
@@ -136,12 +133,9 @@ function AddCategory({categorySet, appKey, catMap, keyList, refresh}) {
           "cat-map": getCatMap(category)
         }
       },
-      onSuccess: () => console.log('Successfully done'),
-      onError: (err) => setErrorMsg(err),
+      onError: (err) => notification.error(err),
     });
   };
-
-  const setErrorMsg = (msg) => { throw new Error(msg); };
 
   return (
     <div className='flex'>
