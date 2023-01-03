@@ -64,7 +64,7 @@ export function ApplicationPage(props) {
     <div className='flex flex-row'>
       <Sidebar/>
       <div className="flex flex-col w-full min-h-screen">
-        <main className="ml-32 basis-3/4 w-full h-full">
+        <main className="ml-32 basis-3/4 h-full">
           <div className="w-4/5 space-y-14 py-14">
             <GoBack titlePreviousPage="My Curated Apps" />
             <div className="flex flex-col gap-2">

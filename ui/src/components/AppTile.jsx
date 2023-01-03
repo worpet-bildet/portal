@@ -5,7 +5,7 @@ import { Tag } from './Tag';
 
 const api = getUrbitApi();
 
-export function AppTile ({ appName, keywords }) {
+export function AppTile ({ appName, keywords, docket }) {
   const [imageError, setImageError] = useState(false);
   const [isUser, setIsUser] = useState(false);
   const location = useLocation();
@@ -37,7 +37,7 @@ export function AppTile ({ appName, keywords }) {
             {!imageError &&
               <img
               className="h-full w-full object-cover"
-              src=""
+              src={docket.image}
               alt=""
               onError={() => setImageError(true)}
               />
