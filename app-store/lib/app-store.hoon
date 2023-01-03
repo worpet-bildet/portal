@@ -81,12 +81,7 @@
       ~&  "error: updating cur-data after dev adding/editing an app, failed"
       [%unchanged cur-data]
     =/  new-cur-data  cur-data(cur-map new-cur-map, aux-map new-aux-map)
-    ?.  =(~dister-dilryd-mopreg our)  [%changed new-cur-data]
-    ::  this is where default Curator automatically selects the new app
-    =/  sel  :+  %select
-      (snoc key-list.cur-choice.new-cur-data key)
-      (~(put by cat-map.cur-choice.new-cur-data) key %all)
-    [%changed +:(select new-cur-data sel)]
+    [%changed new-cur-data]
   ::
   ::  receives intial data from dev. otherwise, won't work because it uses ~(uni by cur-map)
   ++  add-dev
@@ -102,12 +97,7 @@
       ~&  "%cur-server: receiving data failed"
       cur-data
     =/  new-cur-data  `^cur-data`[cur-choice.cur-data new-cur-map new-aux-map]
-    ?.  =(~dister-dilryd-mopreg our)  new-cur-data
-    ::  this is where default Curator automatically selects all apps
-    =/  sel  :+  %select
-      (weld key-list.cur-choice.new-cur-data ~(tap in ~(key by dev-map.new-dev-data)))
-      (~(uni by cat-map.cur-choice.new-cur-data) `cat-map`(malt (turn ~(tap in app-set.new-dev-data) |=(=app-name [[dev-name app-name] %all]))))
-    +:(select new-cur-data sel)
+    new-cur-data
   ::
   ::  after unsubbing from dev, removes dev from cur-data
   ++  del-dev
@@ -644,7 +634,8 @@
   ?:  &((gte hex 0x100) (lte hex 0xffff))  %star
   ?:  &((gte hex 0x1.0000) (lte hex 0xffff.ffff))  %planet
   ?:  &((gte hex 0x1.0000.0000) (lte hex 0xffff.ffff.ffff.ffff))  %moon
-  %comet
+  ?:  &((gte hex 0x1.0000.0000.0000.0000) (lte hex 0xffff.ffff.ffff.ffff.ffff.ffff.ffff.ffff))  %comet
+  !!
 ::
 ::
 ::
