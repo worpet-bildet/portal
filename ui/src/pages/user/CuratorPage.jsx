@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
+import { Footer } from "../../components/Footer";
 import { GoBack } from "../../components/GoBack";
 import { Sidebar } from "../../components/Sidebar";
 import { Tag } from '../../components/Tag';
@@ -31,6 +32,7 @@ export function CuratorPage(props) {
   };
 
   const handleUpdate = (upd) => {
+    console.log(upd)
     setCuratorInfo(getCuratorInfo(upd));
   }
 
@@ -44,7 +46,7 @@ export function CuratorPage(props) {
     return {
       curator: { name: curatorTitle || curator, description: curatorInfo['cur-intro'] },
       categories: curatorData['cur-choice']['cat-set'],
-      applications: curatorData['cur-choice']['cat-map']
+      applications: curatorData['cur-map']
     }
   }
 
@@ -56,7 +58,7 @@ export function CuratorPage(props) {
     <div className='flex flex-row'>
       <Sidebar />
       <div className="flex flex-col w-full min-h-screen">
-        <main className="ml-32 basis-3/4 w-full h-full">
+        <main className="ml-32 basis-3/4 h-full">
           <div className="w-4/5 space-y-14 py-14">
             <GoBack titlePreviousPage="Curators" />
             <div className="flex flex-col space-y-10">
@@ -69,13 +71,14 @@ export function CuratorPage(props) {
               </ul>
               <ul className="grid grid-cols-6 place-items-center gap-y-6">
                 { info ? info.applications.map((app) =>
-                    <SmallApplicationTile key={app.id} name={app.key['app-name']} /> )
+                    <SmallApplicationTile key={app.id} name={app.key['app-name']} image={app.docket.image} /> )
                     : null
                 }
               </ul>
             </div>
           </div>
         </main>
+        <Footer />
       </div>
     </div>
   );

@@ -60,13 +60,15 @@ export function User(props) {
       <div className='flex flex-row'>
         <Sidebar />
         <div className='flex flex-col w-full min-h-screen'>
-          <main className="ml-32 basis-3/4 w-full h-full">
+          <main className="ml-32 basis-3/4 h-full">
             <div className="w-4/5 space-y-6 py-14">
               <h1 className="text-3xl font-bold">Discover Apps</h1>
               { applications.length ? (
                 <ul className="space-y-4">
                   { applications.map((app) =>
-                      <AppTile key={app.id} appName={app.key['app-name']} {...app} />
+                      {
+                      console.log(app);
+                      return <AppTile key={app.id} appName={app.key['app-name']} {...app} />}
                     ) }
                 </ul>
                 ): null }
