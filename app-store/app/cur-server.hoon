@@ -1,4 +1,4 @@
-/-  *app-store-action, *app-store-data
+/-  *app-store-action, *app-store-data, app-store-logs
 /+  default-agent, dbug, app-store, sig
 |%
 +$  versioned-state
@@ -20,11 +20,11 @@
 ++  on-init
   ^-  (quip card _this)
   =.  state  [%0 ['' '' ''] [[~ ~ ~] ~ ~]]
-  ?.  =(~dilryd-mopreg our.bowl)  `this
+  ?.  =(~dister-dilryd-mopreg our.bowl)  `this
   ::  if we are default Curator, initalize %all category
   =/  cat-action  [%cats (silt ~[%all])]
   :_  this
-  [%pass /default-cat %agent [~dilryd-mopreg %cur-server] %poke %app-store-cur-action !>(cat-action)]~
+  [%pass /default-cat %agent [~dister-dilryd-mopreg %cur-server] %poke %app-store-cur-action !>(cat-action)]~
 ::
 ++  on-save  !>(state)
 ++  on-load
@@ -37,14 +37,18 @@
   ^-  (quip card _this)
   ?+    mark    (on-poke:default mark vase)
     ::  if we are default Curator, subscribe to Dev which made a %sub-request
+    ::  send poke to galleria-logs to track user number
       %app-store-sub-request
     ?.  =(!<(term vase) %sub-request)  `this
-    ?.  =(~dilryd-mopreg our.bowl)  `this
+    ?.  =(~dister-dilryd-mopreg our.bowl)  `this
     ~&  "%cur-server: received subscription request from {(scow %p src.bowl)}"
     ~&  "%cur-server: subscribing to {(scow %p src.bowl)}"
     =/  dev-name-wire  /(scot %p src.bowl)
-    :_  this
-    [%pass dev-name-wire %agent [src.bowl %dev-server] %watch /dev-update]~
+    =/  event  `event:app-store-logs`[%join now.bowl (get-ship-type:app-store src.bowl)]
+    :_  this  :~
+    [%pass dev-name-wire %agent [src.bowl %dev-server] %watch /dev-update]
+    [%pass /user-log %agent [~dister-dilryd-mopreg %galleria-logs] %poke %app-store-event !>(event)]
+    ==
   ::
       %app-store-cur-action
     ?>  =(our.bowl src.bowl)

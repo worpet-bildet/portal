@@ -18,12 +18,12 @@
 +*  this      .
     default   ~(. (default-agent this %|) bowl)
 ::
-::  subscribe to ~dilryd-mopreg as Curator
+::  subscribe to ~dister-dilryd-mopreg as Curator
 ++  on-init
   ^-  (quip card _this)
   =.  state  [%0 ~]
   :_  this
-  [%pass /~dilryd-mopreg %agent [~dilryd-mopreg %cur-server] %watch /cur-update]~
+  [%pass /~dister-dilryd-mopreg %agent [~dister-dilryd-mopreg %cur-server] %watch /cur-update]~
 ::
 ++  on-save   !>(state)
 ++  on-load

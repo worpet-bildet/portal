@@ -59,7 +59,7 @@ In dojo, do the following:
     desk-hash=*@uv
     dst-desk='~dev/app1'
     signature=[*@ux ~dev 0]
-    visitor-data=[`(map @p rating:data)`(malt (limo ~[[~zod 1] [~dilryd-mopreg 4]])) `((mop @da comment:data) lth)`*((mop @da comment:data) lth) `(map @p review:data)`*(map @p review:data)]
+    visitor-data=[`(map @p rating:data)`(malt (limo ~[[~zod 1] [~dister-dilryd-mopreg 4]])) `((mop @da comment:data) lth)`*((mop @da comment:data) lth) `(map @p review:data)`*(map @p review:data)]
     docket=*docket:data
 ==
 ```
@@ -98,7 +98,7 @@ First, ~dev needs to create and `app-page` called `%app-store`, with `dst-desk` 
     desk-hash=*@uv
     dst-desk='~des/app-store'
     signature=[*@ux ~dev 0]
-    visitor-data=[`(map @p rating:data)`(malt (limo ~[[~zod 1] [~dilryd-mopreg 4]])) `((mop @da comment:data) lth)`*((mop @da comment:data) lth) `(map @p review:data)`*(map @p review:data)]
+    visitor-data=[`(map @p rating:data)`(malt (limo ~[[~zod 1] [~dister-dilryd-mopreg 4]])) `((mop @da comment:data) lth)`*((mop @da comment:data) lth) `(map @p review:data)`*(map @p review:data)]
     docket=*docket:data
 ==
 ```

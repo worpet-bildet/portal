@@ -1,11 +1,6 @@
-/-  *app-store-data, *app-store-action
+/-  *app-store-data, *app-store-action, app-store-logs
 /+  sig
 |%
-::
-::
-::
-::  for comments, ordered map
-++  com  ((on @da comment) lth)
 ::
 ::
 ::
@@ -86,7 +81,7 @@
       ~&  "error: updating cur-data after dev adding/editing an app, failed"
       [%unchanged cur-data]
     =/  new-cur-data  cur-data(cur-map new-cur-map, aux-map new-aux-map)
-    ?.  =(~dilryd-mopreg our)  [%changed new-cur-data]
+    ?.  =(~dister-dilryd-mopreg our)  [%changed new-cur-data]
     ::  this is where default Curator automatically selects the new app
     =/  sel  :+  %select
       (snoc key-list.cur-choice.new-cur-data key)
@@ -107,7 +102,7 @@
       ~&  "%cur-server: receiving data failed"
       cur-data
     =/  new-cur-data  `^cur-data`[cur-choice.cur-data new-cur-map new-aux-map]
-    ?.  =(~dilryd-mopreg our)  new-cur-data
+    ?.  =(~dister-dilryd-mopreg our)  new-cur-data
     ::  this is where default Curator automatically selects all apps
     =/  sel  :+  %select
       (weld key-list.cur-choice.new-cur-data ~(tap in ~(key by dev-map.new-dev-data)))
@@ -637,4 +632,25 @@
     =(~(wyt in (silt key-list)) (lent key-list))
   ::
   --
+::
+::
+::
+::  input @p, output ship-type:app-store-logs
+++  get-ship-type
+  |=  =ship
+  ^-  ship-type:app-store-logs
+  =/  hex  `@ux`ship
+  ?:  &((gte hex 0x0) (lte hex 0xff))  %galaxy
+  ?:  &((gte hex 0x100) (lte hex 0xffff))  %star
+  ?:  &((gte hex 0x1.0000) (lte hex 0xffff.ffff))  %planet
+  ?:  &((gte hex 0x1.0000.0000) (lte hex 0xffff.ffff.ffff.ffff))  %moon
+  %comet
+::
+::
+::
+::  for comments, ordered map
+++  com  ((on @da comment) lth)
+::
+::
+::
 --
