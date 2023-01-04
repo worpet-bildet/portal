@@ -4,7 +4,7 @@
 
 ### Fake ship
 
-If you want to contribute on the development, you will need to have installed app-store in your urbit development ship. If you don't have it, please go to **README.md from the app-store** folder.
+If you want to contribute on the development, you will need to have installed galleria in your urbit development ship. If you don't have it, please go to **README.md from the app-store** folder.
 
 Boot your fake ship. Make sure that your ship is running on localhost:8080. Otherswise, go to `.env.local` and change `VITE_SHIP_URL` to the actual running port.
 
@@ -36,4 +36,4 @@ Inside **/ui** start the react application.
 npm run dev
 ```
 
-The application will be accessible on `localhost:3000/apps/app-store`.
+The application will be accessible on `localhost:3000/apps/galleria`.

@@ -17,7 +17,7 @@ export function DeveloperTile({ name }) {
 
   return (
     <li className='flex flex-row justify-items-center'>
-      <Link to={`/apps/app-store/cur/devs/${name}`} className='w-full border border-gray-900 flex justify-between py-3'>
+      <Link to={`/apps/galleria/cur/devs/${name}`} className='w-full border border-gray-900 flex justify-between py-3'>
         <div className='pl-3 font-bold'>{name}</div>
       </Link>
       <div className='relative'>
