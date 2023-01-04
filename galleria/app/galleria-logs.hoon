@@ -23,11 +23,7 @@
   ^-  (quip card _this)
   =.  state  :-  %0
   ^-  event-log:app-store-logs
-  :~  [%join ~2023.1.3 %moon]
-      [%join ~2023.1.3 %planet]
-      [%join ~2023.1.3 %planet]
-      [%join ~2023.1.3 %planet]
-  ==
+  *event-log:app-store-logs
   `this
 ::
 ++  on-save  !>(state)
