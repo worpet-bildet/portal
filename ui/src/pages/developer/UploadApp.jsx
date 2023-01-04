@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Controller, FormProvider, useFieldArray, useForm, useFormContext } from 'react-hook-form';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Alert from '../../components/Alert';
 import { Disclaimer } from '../../components/Disclaimer';
 import { Footer } from '../../components/Footer';
@@ -8,6 +8,7 @@ import { Input } from '../../components/Input';
 import { Sidebar } from '../../components/Sidebar';
 import { Tag } from '../../components/Tag';
 import { TextAreaInput } from '../../components/TextAreaInput';
+import { Notify } from '../../utils/notifications';
 import { getUrbitApi } from '../../utils/urbitApi';
 
 const api = getUrbitApi();
@@ -114,7 +115,10 @@ function Form({application, name}) {
 
   const setErrorMsg = (msg) => { throw new Error(msg); };
 
-  const redirectToMain = () => navigate('/apps/galleria/dev/');
+  const redirectToMain = () => {
+    navigate('/apps/app-store/dev/');
+    Notify.success(`To upload app icon from docket data use the following command from terminal of the ship which hosts the app and type :dst-server|send-data [~<this ship> %<app-name>]`);
+  };
 
   return (
     <FormProvider {...methods}>

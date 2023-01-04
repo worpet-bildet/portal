@@ -1,4 +1,3 @@
-import { scryCharges } from '@urbit/api';
 import React, { useEffect, useState } from 'react';
 import { AddButtonTile } from '../../components/AddButtonTile';
 import { AppTile } from '../../components/AppTile';
@@ -8,7 +7,6 @@ import { getUrbitApi } from '../../utils/urbitApi';
 
 const api = getUrbitApi();
 
-// TODO(adrian): Add api call from ship to get applications
 export function Developer(props) {
   const [applicationNames, setApplicationNames] = useState([]);
   const [applications, setApplications] = useState([]);

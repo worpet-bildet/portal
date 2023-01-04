@@ -6,7 +6,7 @@ import { Tag } from './Tag';
 
 const api = getUrbitApi();
 
-export function CuratorAppTile ({ category, categorySet, appKey, catMap, keyList }) {
+export function CuratorAppTile ({ category, categorySet, appKey, catMap, keyList, docket }) {
   const [imageError, setImageError] = useState(false);
   const getCatMap = catMap.map((app) => {
     delete app.id;
@@ -46,7 +46,7 @@ export function CuratorAppTile ({ category, categorySet, appKey, catMap, keyList
             {!imageError &&
               <img
               className="h-full w-full object-cover"
-              src=""
+              src={docket.image}
               alt=""
               onError={() => setImageError(true)}
               />
