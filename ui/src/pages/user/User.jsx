@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AppTile } from '../../components/AppTile';
 import { Footer } from '../../components/Footer';
-import { SearchBar } from '../../components/SearchBar';
 import { Sidebar } from '../../components/Sidebar';
 import { getUrbitApi } from '../../utils/urbitApi';
 
