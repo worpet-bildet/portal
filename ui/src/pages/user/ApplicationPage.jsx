@@ -6,6 +6,7 @@ import { Footer } from "../../components/Footer";
 import { GoBack } from "../../components/GoBack";
 import { Sidebar } from "../../components/Sidebar";
 import { Tabs } from "../../components/Tabs";
+import useCopy from "../../hooks/useCopy";
 import { Notify } from "../../utils/notifications";
 import { getUrbitApi } from "../../utils/urbitApi";
 
@@ -16,6 +17,7 @@ export function ApplicationPage(props) {
   const [appInfo, setAppInfo] = useState();
   const [downloadLink, setDownloadLink] = useState('');
   const [selectedButton, setSelectedButton] = useState('Comments');
+  const [copied, copyAction, setCopied] = useCopy(downloadLink);
 
   useEffect(() => {
     subscribe();
@@ -60,6 +62,15 @@ export function ApplicationPage(props) {
     setSelectedButton(event.target.textContent);
   }
 
+  const copyText = () => {
+    copyAction();
+
+    setTimeout(() => {
+      Notify.success('Link copied');
+      setCopied(false);
+    }, 1000);
+  }
+
   return (
     <div className='flex flex-row'>
       <Sidebar/>
@@ -78,7 +89,7 @@ export function ApplicationPage(props) {
                 <button
                   type="submit"
                   className="text-2xl h-1/2 mt-auto font-bold bg-gray-800 text-white py-2 px-5"
-                  onClick={() => navigator.clipboard.writeText(downloadLink)}
+                  onClick={copyText}
                 >Copy to clipboard</button>
               </div>
               { appInfo ? (
