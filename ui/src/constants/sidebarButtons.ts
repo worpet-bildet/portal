@@ -1,41 +1,41 @@
 export const UserPageButtons = {
   sidebar: [{
     button: "Applications",
-    link: '/apps/app-store/'
+    link: '/apps/galleria/'
   }, {
     button: "Curators",
-    link: '/apps/app-store/usr/curs'
+    link: '/apps/galleria/usr/curs'
   }],
   accounts: [
-    { name: 'Curator', link: '/apps/app-store/cur' },
-    { name: 'Developer', link: '/apps/app-store/dev' }
+    { name: 'Curator', link: '/apps/galleria/cur' },
+    { name: 'Developer', link: '/apps/galleria/dev' }
   ]
 };
 
 export const DeveloperPageButtons = {
   sidebar: [{
     button: "Application",
-    link: '/apps/app-store/dev'
+    link: '/apps/galleria/dev'
   }, {
     button: "Upload an App",
-    link: '/apps/app-store/dev/upload-app'
+    link: '/apps/galleria/dev/upload-app'
   }],
   accounts: [
-    { name: 'Curator', link: '/apps/app-store/cur' },
-    { name: 'User', link: '/apps/app-store/' }
+    { name: 'Curator', link: '/apps/galleria/cur' },
+    { name: 'User', link: '/apps/galleria/' }
   ]
 };
 
 export const CuratorPageButtons =  {
   sidebar: [ {
     button: "My Profile",
-    link: '/apps/app-store/cur/me'
+    link: '/apps/galleria/cur/me'
   }, {
     button: "My Curated Apps",
-    link: '/apps/app-store/cur'
+    link: '/apps/galleria/cur'
   }],
   accounts: [
-    { name: 'Developer', link: '/apps/app-store/dev' },
-    { name: 'User', link: '/apps/app-store/' }
+    { name: 'Developer', link: '/apps/galleria/dev' },
+    { name: 'User', link: '/apps/galleria/' }
   ]
 };

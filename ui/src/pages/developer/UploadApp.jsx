@@ -114,10 +114,10 @@ function Form({application, name}) {
 
   const setErrorMsg = (msg) => { throw new Error(msg); };
 
-  const redirectToMain = () => navigate('/apps/app-store/dev/');
+  const redirectToMain = () => navigate('/apps/galleria/dev/');
 
   return (
-    <FormProvider {...methods}> 
+    <FormProvider {...methods}>
       <AppPageInformation setDisableForm={setDisableForm}/>
       <div className='mt-5 flex justify-items-end'>
         <button

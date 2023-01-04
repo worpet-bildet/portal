@@ -113,7 +113,7 @@ function CuratorIntroduction({curator}) {
 
 function SmallApplicationTile({name, image}) {
   return(
-  <Link to={`/apps/app-store/usr/apps/${name}`}>
+  <Link to={`/apps/galleria/usr/apps/${name}`}>
     <div className="flex flex-col gap-1 justify-content-center">
       <div
         className="block w-32 h-32 rounded-lg bg-gray-200 overflow-hidden"

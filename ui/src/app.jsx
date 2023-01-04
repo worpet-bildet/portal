@@ -27,51 +27,51 @@ api.ship = window.ship;
 */
 const router = createBrowserRouter([
   {
-    path: 'apps/app-store/',
-    element:<Navigate replace to='/apps/app-store/usr'/>
+    path: '/apps/galleria/',
+    element:<Navigate replace to='/apps/galleria/usr'/>
   },
   {
-    path: '/apps/app-store/usr',
+    path: '/apps/galleria/usr',
     element: <User />
   },
   {
-    path: 'apps/app-store/usr/curs',
+    path: '/apps/galleria/usr/curs',
     element: <UserCurators />
   },
   {
-    path: 'apps/app-store/usr/curs/:curator',
+    path: '/apps/galleria/usr/curs/:curator',
     element: <CuratorPage />
   },
   {
-    path: '/apps/app-store/cur',
+    path: '/apps/galleria/cur',
     element: <Curator />
   },
   {
-    path: '/apps/app-store/cur/me',
+    path: '/apps/galleria/cur/me',
     element: <CuratorMe />
   },
   {
-    path: 'apps/app-store/usr/apps/:application',
+    path: '/apps/galleria/usr/apps/:application',
     element: <ApplicationPage />
   },
   {
-    path: '/apps/app-store/cur/devs/:developer',
+    path: '/apps/galleria/cur/devs/:developer',
     element: <DeveloperApplications />
   },
   {
-    path: '/apps/app-store/dev',
+    path: '/apps/galleria/dev',
     element: <Developer />
   },
   {
-    path: '/apps/app-store/dev/upload-app',
+    path: '/apps/galleria/dev/upload-app',
     element: <UploadApplication />
   },
   {
-    path: '/apps/app-store/dev/edit-app/:application',
+    path: '/apps/galleria/dev/edit-app/:application',
     element: <UploadApplication />
   },
   {
-    path: '/apps/app-store/dev/apps/:application',
+    path: '/apps/galleria/dev/apps/:application',
     element: <DevApplicationPage />
   }
 ]);

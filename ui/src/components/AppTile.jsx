@@ -27,7 +27,7 @@ export function AppTile ({ appName, keywords, docket }) {
 
   return (
     <li className="flex items-center space-x-3 text-sm leading-tight">
-      <Link to={`/apps/app-store/usr/apps/${appName}`} className="w-full p-4 rounded border border-black hover:bg-gray-200">
+      <Link to={`/apps/galleria/usr/apps/${appName}`} className="w-full p-4 rounded border border-black hover:bg-gray-200">
         <div className="flex flex-row flex-auto justify-between">
           <div className='flex flex-row'>
             <div
@@ -63,7 +63,7 @@ export function AppTile ({ appName, keywords, docket }) {
         <div className='flex'>
           <div className='relative'>
             <Link
-              to={`/apps/app-store/dev/edit-app/${appName}`}
+              to={`/apps/galleria/dev/edit-app/${appName}`}
               className="absolute right-32 top-0 mt-auto mb-auto ml-auto font-bold border-2 border-black hover:bg-gray-800 hover:text-white py-2 px-5"
             >
               edit

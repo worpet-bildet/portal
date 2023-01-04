@@ -1,6 +1,6 @@
 {
-  "name": "app-store",
-  "short_name": "app-store",
+  "name": "galleria",
+  "short_name": "galleria",
   "icons": [
     {
       "src": "/apps/grid/android-chrome-512x512.png",
