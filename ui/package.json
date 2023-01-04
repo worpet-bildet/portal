@@ -11,6 +11,7 @@
   "dependencies": {
     "@urbit/api": "^2.0.0",
     "@urbit/http-api": "^2.3.0",
+    "copy-to-clipboard": "^3.3.3",
     "flowbite": "^1.5.3",
     "flowbite-react": "^0.3.3",
     "font-awesome": "^4.7.0",
