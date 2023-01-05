@@ -116,7 +116,7 @@ function Form({application, name}) {
   const setErrorMsg = (msg) => { throw new Error(msg); };
 
   const redirectToMain = () => {
-    navigate('/apps/app-store/dev/');
+    navigate('/apps/galleria/dev/');
     Notify.success(`To upload app icon from docket data use the following command from terminal of the ship which hosts the app and type :dst-server|send-data [~<this ship> %<app-name>]`);
   };
 
