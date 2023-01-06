@@ -220,7 +220,7 @@ function Signature({application}) {
       <h2 className='text-xl font-semibold mb-4 mt-10'>Signature</h2>
       <a
         className='flex justify-center font-bold text-lg p-2 border hover:bg-gray-800 hover:text-white'
-        href='https://github.com/dilryd-mopreg/app-store/tree/development/app-store#sign-and-send-data-for-distributors'
+        href='https://github.com/dilryd-mopreg/app-store/tree/development/galleria#sign-and-send-data-for-distributors'
         target='_blank'
       >
         <i className='fa fa-github mr-2 fa-1x'></i>Signature for non-related planet

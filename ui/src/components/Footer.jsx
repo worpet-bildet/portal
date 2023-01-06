@@ -16,7 +16,7 @@ export function Footer({disclaimer}) {
           <h3 className="mt-4">Tell us what you think in the Galleria group at ~dilryd-mopreg</h3>
           <a
           className='flex justify-center justify-items-center hover:underline my-3'
-          href='https://github.com/dilryd-mopreg/app-store/tree/development/app-store'
+          href='https://github.com/dilryd-mopreg/app-store/tree/development'
           target='_blank'
           >
             <div>
