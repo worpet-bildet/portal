@@ -14,18 +14,17 @@
   ++  add-cur
     |=  [=usr-data =cur-name =cur-page our=@p now=@da]
     ^-  ^usr-data
-    =/  [=cur-map =aux-map]
-      (cur-map-aux-map-all:validator cur-map.cur-data.cur-page aux-map.cur-data.cur-page our now)
+    =/  new-cur-data  (cur-data-all:validator cur-data.cur-page our now)
     ?.  ?&
-      (cat-map-cat-set:validator cat-map.cur-choice.cur-data.cur-page cat-set.cur-choice.cur-data.cur-page)
-      (key-list-duplicates:validator key-list.cur-choice.cur-data.cur-page)
-      (key-list-cat-map:validator key-list.cur-choice.cur-data.cur-page cat-map.cur-choice.cur-data.cur-page)
-      (key-list-cur-map:validator key-list.cur-choice.cur-data.cur-page cur-map)
-      (cur-map-aux-map:validator cur-map aux-map)
+      (cat-map-cat-set:validator cat-map.cur-choice.new-cur-data cat-set.cur-choice.new-cur-data)
+      (key-list-duplicates:validator key-list.cur-choice.new-cur-data)
+      (key-list-cat-map:validator key-list.cur-choice.new-cur-data cat-map.cur-choice.new-cur-data)
+      (key-list-cur-map:validator key-list.cur-choice.new-cur-data cur-map.new-cur-data)
+      (cur-map-aux-map:validator cur-map.new-cur-data aux-map.new-cur-data)
     ==
-      ~&  "%usr-server: cur-data invalid"
+      ~&  "%usr-server: cur-data from {(scow %p cur-name)} invalid"
       usr-data
-    (~(put by usr-data) cur-name cur-page(cur-map.cur-data cur-map, aux-map.cur-data aux-map))
+    (~(put by usr-data) cur-name cur-page(cur-data new-cur-data))
   --
 ::
 ::
@@ -78,7 +77,7 @@
       (cur-map-aux-map:validator new-cur-map new-aux-map)
       (key-list-cur-map:validator key-list.cur-choice.cur-data new-cur-map)
     ==
-      ~&  "error: updating cur-data after dev adding/editing an app, failed"
+      ~&  "error: updating cur-data after {(scow %p dev-name)} adding/editing an app, failed"
       [%unchanged cur-data]
     =/  new-cur-data  cur-data(cur-map new-cur-map, aux-map new-aux-map)
     [%changed new-cur-data]
@@ -89,12 +88,12 @@
     ^-  ^cur-data
     =/  new-dev-data  (dev-data-all:validator [dev-name dev-data our now])
     ?.  (dev-map-app-set:validator dev-map.new-dev-data app-set.new-dev-data)
-      ~&  "%cur-server: new dev-map and app-set inconsistent"
+      ~&  "%cur-server: new dev-map and app-set from {(scow %p dev-name)} inconsistent"
       cur-data
     =/  new-aux-map  (~(put by aux-map.cur-data) dev-name app-set.new-dev-data)
     =/  new-cur-map  (~(uni by cur-map.cur-data) `dev-map`dev-map.new-dev-data)
     ?.  (cur-map-aux-map:validator new-cur-map new-aux-map)
-      ~&  "%cur-server: receiving data failed"
+      ~&  "%cur-server: receiving data from {(scow %p dev-name)} failed"
       cur-data
     =/  new-cur-data  `^cur-data`[cur-choice.cur-data new-cur-map new-aux-map]
     new-cur-data
@@ -104,7 +103,7 @@
     |=  [=cur-data =dev-name]
     ^-  [?(%changed %unchanged) ^cur-data]
     ?.  (~(has by aux-map.cur-data) dev-name)
-      ~&  "%cur-server: already not subscribed to dev"
+      ~&  "%cur-server: already not subscribed to {(scow %p dev-name)}"
       [%unchanged cur-data]
     =/  new-aux-map  (~(del by aux-map.cur-data) dev-name)
     =/  new-cur-map  (del-dev-from-cur-map:aux [dev-name cur-map.cur-data aux-map.cur-data])
@@ -115,7 +114,7 @@
       (key-list-cur-map:validator key-list.new-cur-choice new-cur-map)
       (cur-map-aux-map:validator new-cur-map new-aux-map)
     ==
-      ~&  "%cur-server: updating cur-data after unsub, failed"
+      ~&  "%cur-server: updating cur-data after unsub from {(scow %p dev-name)}, failed"
       [%unchanged cur-data]
     [%changed [new-cur-choice new-cur-map new-aux-map]]
   ::
@@ -131,7 +130,7 @@
     =/  new-cur-map  (~(del by cur-map.cur-data) key)
     =/  app-set  (~(get by aux-map.cur-data) dev-name.key)
     ?~  app-set
-      ~&  "error"
+      ~&  "error when deleting app"
       [%unchanged cur-data]
     =/  new-app-set  (~(del in u.app-set) app-name.key)
     =/  new-aux-map  (~(put by aux-map.cur-data) dev-name.key new-app-set)
@@ -144,7 +143,7 @@
         (key-list-cur-map:validator key-list.cur-choice.cur-data new-cur-map)
         (cur-map-aux-map:validator new-cur-map new-aux-map)
       ==
-        ~&  "error: updating cur-data after dev deleting an app, failed"
+        ~&  "error: updating cur-data after {(scow %p dev-name)} deleting an app, failed"
         [%unchanged cur-data]
       :^  %changed
       [key-list.cur-choice.cur-data new-cat-map cat-set.cur-choice.cur-data]
@@ -157,7 +156,7 @@
       (key-list-cur-map:validator new-key-list new-cur-map)
       (cur-map-aux-map:validator new-cur-map new-aux-map)
     ==
-      ~&  "error: updating cur-data after dev deleting an app, failed"
+      ~&  "error: updating cur-data after {(scow %p dev-name)} deleting an app, failed"
       [%unchanged cur-data]
     :-  %changed
     [[new-key-list new-cat-map cat-set.cur-choice.cur-data] new-cur-map new-aux-map]
@@ -211,7 +210,7 @@
     ^-  [?(%changed %unchanged) ^dev-data]
     =/  key  `^key`[dev-name app-name.act]
     ?:  (~(has by dev-map.dev-data) key)
-      ~&  "%dev-server: app-page already exists"
+      ~&  "%dev-server: app-page {(trip app-name.act)} already exists"
       ~&  "%dev-server: use %edit (not %add) to change existing app-page"
       [%unchanged dev-data]
     =/  new-app-page  :+
@@ -234,7 +233,7 @@
     ^-  [?(%changed %unchanged) ^dev-data]
     =/  key  `^key`[dev-name app-name.act]
     ?.  (~(has by dev-map.dev-data) key)
-      ~&  "%dev-server: app-page doesn't exist"
+      ~&  "%dev-server: app-page {(trip app-name.act)} doesn't exist"
       ~&  "%dev-server: use %add (not %edit) to add new app-page"
       [%unchanged dev-data]
     =/  app-page  (~(got by dev-map.dev-data) key)
@@ -251,7 +250,7 @@
     ^-  [?(%changed %unchanged) ^dev-data]
     =/  key  `^key`[dev-name app-name.act]
     ?.  (~(has in app-set.dev-data) app-name.act)
-      ~&  "%dev-server: app-page does not exist"
+      ~&  "%dev-server: app-page {(trip app-name.act)} does not exist"
       [%unchanged dev-data]
     =/  new-dev-map  (~(del by dev-map.dev-data) key)
     =/  new-app-set  (~(del in app-set.dev-data) app-name.act)
@@ -269,18 +268,18 @@
     |=  [=dev-data dst-ship=@p act=[%sig =key =signature]]
     ^-  [?(%changed %unchanged) ^app-page ^dev-data]
     ?.  (~(has in app-set.dev-data) app-name.key.act)
-      ~&  "%dev-server: app-page does not exist"
+      ~&  "%dev-server: app-page {(trip app-name.key.act)} does not exist"
       [%unchanged *app-page dev-data]
     =/  app-page  (need (~(get by dev-map.dev-data) key.act))
     =/  dst-desk  (parse-dst-desk:validator dst-desk.dev-input.app-page)
     ?~  dst-desk
-      ~&  "%dev-server: bad distributor desk"
+      ~&  "%dev-server: bad distributor desk - {(trip dst-desk.dev-input.app-page)}"
       [%unchanged app-page dev-data]
     ?.  ?&
       =(dst-name.u.dst-desk q.signature.act)
       =(dst-name.u.dst-desk dst-ship)
     ==
-      ~&  "%dev-server: bad distributor ship or signature or desk"
+      ~&  "%dev-server: bad distributor ship ({(scow %p dst-ship)}) or signature"
       [%unchanged app-page dev-data]
     =/  new-app-page  app-page(signature.dst-input signature.act)
     =/  new-dev-map
@@ -292,15 +291,15 @@
     |=  [=dev-data dst-ship=@p act=[%data =key =docket hash=@uvI]]
     ^-  [?(%changed %unchanged) ^app-page ^dev-data]
     ?.  (~(has in app-set.dev-data) app-name.key.act)
-      ~&  "%dev-server: app-page does not exist"
+      ~&  "%dev-server: app-page {(trip app-name.key.act)}does not exist"
       [%unchanged *app-page dev-data]
     =/  app-page  (need (~(get by dev-map.dev-data) key.act))
     =/  dst-desk  (parse-dst-desk:validator dst-desk.dev-input.app-page)
     ?~  dst-desk
-      ~&  "%dev-server: bad distributor desk"
+      ~&  "%dev-server: bad distributor desk - {(trip dst-desk.dev-input.app-page)}"
       [%unchanged app-page dev-data]
     ?.  =(dst-name.u.dst-desk dst-ship)
-      ~&  "%dev-server: bad distributor ship or desk"
+      ~&  "%dev-server: bad distributor ship - {(scow %p dst-ship)}"
       [%unchanged app-page dev-data]
     =/  new-reviews  %-  ~(run by reviews.usr-input.app-page)
       |=(=review review(is-current =(hash.act desk-hash.dst-input.app-page)))
@@ -323,7 +322,7 @@
     ^-  [?(%changed %unchanged) ^app-page ^dev-data]
     |^
     ?.  (~(has in app-set.dev-data) app-name.key)
-      ~&   "%dev-server: app-page doesn't exist"
+      ~&   "%dev-server: app-page {(trip app-name.key)} doesn't exist"
       [%unchanged *app-page dev-data]
     =/  app-page  (~(got by dev-map.dev-data) key)
     ?-    -.act
@@ -449,20 +448,22 @@
   ++  dev-name-in-key
     |=  [=dev-name =key]
     ?.  =(dev-name dev-name.key)
-      ~&  "fail: dev-name and key don't correspond"
+      ~&  "fail: dev-name ({(scow %p dev-name)}) and dev-name from key ({(scow %p dev-name.key)}) don't correspond"
       %.n
     %.y
   ::
   ::  validates signature
   ++  sig
     |=  [=key =dst-name =signature our=@p now=@da]
+    ~&  >  key
     ?:  (ships-related dev-name.key dst-name)
       %.y
     ?.  =(q.signature dst-name)
-      ~&  "signature fail: ship in sig and distributor ship are not the same"
+      ~&  "signature fail: ship in sig ({(scow %p q.signature)}) and distributor ship ({(scow %p dst-name)}) are not the same"
       %.n
     ?.  (validate:^sig [our signature key now])
-      ~&  "signature fail: distributor signature validation failed, not adding new app by dev"
+      ~&  "signature fail: distributor signature validation failed, not adding new app {(trip app-name.key)} by {(scow %p dev-name.key)}"
+      ~&  >>>  signature
       %.n
     %.y
   ::
@@ -566,26 +567,27 @@
     ^-  ?
     (~(has by cur-map.cur-data) key)
   ::
-  ::  takes cur-map and aux-map and outputs the subset of cur-map with valid signatures
-  ++  cur-map-aux-map-all
-    |=  [=cur-map =aux-map our=@p now=@da]
-    ^-  [^cur-map ^aux-map]
-    =/  keys  ~(tap in ~(key by cur-map))
-    =/  signed-cur-map  *^cur-map
-    =/  signed-aux-map  *^aux-map
+  ::  takes cur-data and outputs the subset of cur-data with valid signatures
+  ++  cur-data-all
+    |=  [=cur-data our=@p now=@da]
+    ^-  ^cur-data
+    =/  keys  ~(tap in ~(key by cur-map.cur-data))
     =/  n  0
     =/  len  (lent keys)
-    |-  ?:  =(n len)  [signed-cur-map signed-aux-map]
+    |-  ?:  =(n len)  cur-data
       =/  key  (snag n keys)
-      =/  app-page  (~(get by cur-map) key)
+      =/  app-page  (~(get by cur-map.cur-data) key)
       ?~  app-page  !!
-      ?.  (new-app-page [our now dev-name.key key u.app-page])  $(n +(n))
-      =/  app-set  (~(got by aux-map) dev-name.key)
-      =/  new-app-set  (~(put in app-set) app-name.key)
+      ?:  (new-app-page [our now dev-name.key key u.app-page])  $(n +(n))
+      :: cat-set stays redundant, categories are not deleted if their app page is invalid
+      =/  app-set  (~(got by aux-map.cur-data) dev-name.key)
+      =/  new-app-set  (~(del in app-set) app-name.key)
       %=  $
         n  +(n)
-        signed-cur-map  (~(put by signed-cur-map) key u.app-page)
-        signed-aux-map  (~(put by signed-aux-map) dev-name.key new-app-set)
+        cur-map.cur-data  (~(del by cur-map.cur-data) key)
+        aux-map.cur-data  (~(put by aux-map.cur-data) dev-name.key new-app-set)
+        key-list.cur-choice.cur-data  (skip key-list.cur-choice.cur-data |=(k=^key =(k key)))
+        cat-map.cur-choice.cur-data  (~(del by cat-map.cur-choice.cur-data) key)
       ==
   ::
   ::  verify whether cats in cat-map exist in cat-set

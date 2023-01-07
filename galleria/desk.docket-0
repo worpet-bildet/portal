@@ -1,10 +1,11 @@
-:~  title+'Galleria'
-    info+'A tool for decentralized curation and discovery of Urbit apps.'
-    color+0x78.7e68
-    image+'https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og_smaller.png'
-    base+'galleria'
-    glob-ames+[~dister-dilryd-mopreg 0v0]
-    version+[0 0 1]
-    website+'https://github.com/dilryd-mopreg/app-store'
-    license+'MIT'
+:~
+  title+'Galleria'
+  info+'A tool for decentralized curation and discovery of Urbit apps.'
+  color+0x78.7e68
+  version+[0 0 1]
+  website+'https://github.com/dilryd-mopreg/app-store'
+  license+'MIT'
+  image+'https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og_smaller.png'
+  base+'galleria'
+  glob-ames+[~dister-dilryd-mopreg 0v0]
 ==

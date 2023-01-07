@@ -42,6 +42,7 @@
   ::
   =/  them  (com:nu:crub:crypto b.deed)
   =/  val  `@`(crip (weld (scow %p dev-name.key) (trip `@t`app-name.key)))
+  ~&  (crip (weld (scow %p dev-name.key) (trip `@t`app-name.key)))
   =(`val (sure:as.them p.signature))
 ::
 --
