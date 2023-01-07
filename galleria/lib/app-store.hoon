@@ -455,7 +455,6 @@
   ::  validates signature
   ++  sig
     |=  [=key =dst-name =signature our=@p now=@da]
-    ~&  >  key
     ?:  (ships-related dev-name.key dst-name)
       %.y
     ?.  =(q.signature dst-name)
