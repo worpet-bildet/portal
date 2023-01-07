@@ -1,7 +1,7 @@
 :~  title+'Galleria'
     info+'A tool for decentralized curation and discovery of Urbit apps.'
-    color+0x81.88c9
-    image+'https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og.png'
+    color+0x78.7e68
+    image+'https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og_smaller.png'
     base+'galleria'
     glob-ames+[~dister-dilryd-mopreg 0v0]
     version+[0 0 1]

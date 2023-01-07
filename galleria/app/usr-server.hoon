@@ -126,73 +126,51 @@
       `this(usr-data (add-cur:usr:app-store args))
     ::
         %cur-info
-      =/  replace  |=(=cur-page cur-page(cur-info cur-info.cur-update))
-      `this(usr-data (~(jab by usr-data) cur-name replace))
+      =/  cur-page  (~(got by usr-data) cur-name)
+      `this(usr-data (~(put by usr-data) cur-name cur-page(cur-info cur-info.cur-update)))
     ::
         %select
-      =/  replace
-        |=  =cur-page
-        =^  changed  cur-data.cur-page
-        (select:cur-data-lib:app-store [cur-data.cur-page cur-update])
-        cur-page
-      `this(usr-data (~(jab by usr-data) cur-name replace))
+      =/  cur-page  (~(got by usr-data) cur-name)
+      =^  changed  cur-data.cur-page
+      (select:cur-data-lib:app-store [cur-data.cur-page cur-update])
+      `this(usr-data (~(put by usr-data) cur-name cur-page))
     ::
         %cats
-      =/  replace
-        |=  =cur-page
-        =/  new-cur-data  (cats:cur-data-lib:app-store [cur-data.cur-page cur-update])
-        cur-page(cur-data new-cur-data)
-      `this(usr-data (~(jab by usr-data) cur-name replace))
+      =/  cur-page  (~(got by usr-data) cur-name)
+      =/  new-cur-data  (cats:cur-data-lib:app-store [cur-data.cur-page cur-update])
+      `this(usr-data (~(put by usr-data) cur-name cur-page(cur-data new-cur-data)))
     ::
         %add-dev
-      =/  replace
-        |=  =cur-page
-        =/  new-cur-data
-          %-  add-dev:cur-data-lib:app-store
-          :*  cur-data.cur-page  our.bowl
-          now.bowl  dev-name.cur-update
-          dev-data.cur-update  ==
-          cur-page(cur-data new-cur-data)
-      `this(usr-data (~(jab by usr-data) cur-name replace))
+      =/  cur-page  (~(got by usr-data) cur-name)
+      =/  cel  [cur-data.cur-page our.bowl now.bowl dev-name.cur-update dev-data.cur-update]
+      =/  new-cur-data  (add-dev:cur-data-lib:app-store cel)
+      `this(usr-data (~(put by usr-data) cur-name cur-page(cur-data new-cur-data)))
     ::
         %del-dev
-      =/  replace
-        |=  =cur-page
-        =^  changed  cur-data.cur-page
-        (del-dev:cur-data-lib:app-store [cur-data.cur-page dev-name.cur-update])
-        cur-page
-      `this(usr-data (~(jab by usr-data) cur-name replace))
+      =/  cur-page  (~(got by usr-data) cur-name)
+      =^  changed  cur-data.cur-page
+      (del-dev:cur-data-lib:app-store [cur-data.cur-page dev-name.cur-update])
+      `this(usr-data (~(put by usr-data) cur-name cur-page))
     ::
         %add-app
-      =/  replace
-        |=  =cur-page
-        =^  changed  cur-data.cur-page
-        %-  put-app:cur-data-lib:app-store
-        :*  cur-data.cur-page  our.bowl
-        now.bowl  dev-name.key.cur-update
-        key.cur-update  app-page.cur-update  ==
-        cur-page
-      `this(usr-data (~(jab by usr-data) cur-name replace))
+      =/  cur-page  (~(got by usr-data) cur-name)
+      =/  cel  [cur-data.cur-page our.bowl now.bowl dev-name.key.cur-update key.cur-update app-page.cur-update]
+      =^  changed  cur-data.cur-page
+      (put-app:cur-data-lib:app-store cel)
+      `this(usr-data (~(put by usr-data) cur-name cur-page))
     ::
         %change-app
-      =/  replace
-        |=  =cur-page
-        =^  changed  cur-data.cur-page
-        %-  put-app:cur-data-lib:app-store
-        :*  cur-data.cur-page  our.bowl
-        now.bowl  dev-name.key.cur-update
-        key.cur-update  app-page.cur-update  ==
-        cur-page
-      `this(usr-data (~(jab by usr-data) cur-name replace))
+      =/  cur-page  (~(got by usr-data) cur-name)
+      =/  cel  [cur-data.cur-page our.bowl now.bowl dev-name.key.cur-update key.cur-update app-page.cur-update]
+      =^  changed  cur-data.cur-page
+      (put-app:cur-data-lib:app-store cel)
+      `this(usr-data (~(put by usr-data) cur-name cur-page))
     ::
         %del-app
-      =/  replace
-        |=  =cur-page
-        =^  changed  cur-data.cur-page
-        %-  del-app:cur-data-lib:app-store
-        [cur-data.cur-page dev-name.key.cur-update key.cur-update]
-        cur-page
-      `this(usr-data (~(jab by usr-data) cur-name replace))
+      =/  cur-page  (~(got by usr-data) cur-name)
+      =^  changed  cur-data.cur-page
+      (del-app:cur-data-lib:app-store [cur-data.cur-page dev-name.key.cur-update key.cur-update])
+      `this(usr-data (~(put by usr-data) cur-name cur-page))
     ==
   ==
 ::
