@@ -43,10 +43,18 @@ export function CuratorPage(props) {
     const curatorInfo = currentCurator['cur-page']['cur-info'];
     const curatorData = currentCurator['cur-page']['cur-data'];
     const curatorTitle = currentCurator['cur-page']['cur-info']['cur-title'];
+    const curatorKeys = curatorData['cur-choice']['key-list'];
+    const curatorSelectedApplications = curatorData['cur-map'].filter((application) => {
+      const hasSelectedApplication = curatorKeys.find(curatorKey => {
+        return application.key['app-name'] === curatorKey['app-name'] &&
+          application.key['dev-name'] === curatorKey['dev-name'];
+      });
+      return hasSelectedApplication
+    });
     return {
-      curator: { name: curatorTitle || curator, description: curatorInfo['cur-intro'] },
+      curator: { name: curatorTitle || curator, description: curatorInfo['cur-intro'], image: curatorInfo['cur-image'] },
       categories: curatorData['cur-choice']['cat-set'],
-      applications: curatorData['cur-map']
+      applications: curatorSelectedApplications
     }
   }
 
@@ -62,7 +70,7 @@ export function CuratorPage(props) {
           <div className="w-4/5 space-y-14 py-14">
             <GoBack titlePreviousPage="Curators" />
             <div className="flex flex-col space-y-10">
-            { info && <CuratorIntroduction curator={info.curator} image='' /> }
+            { info && <CuratorIntroduction curator={info.curator} /> }
               <ul className="flex flex-wrap gap-4">
                 { info && info.applications.length ?
                     info.categories.map((tag) => <Tag key={tag} name={tag}/>)
