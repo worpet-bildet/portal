@@ -41,6 +41,7 @@ export function ApplicationPage(props) {
   const handleUpdate = (curators) => {
     // We need to check for key too
     const currentApp = getApplications(curators).find((app) => app.key['app-name'] === application);
+    console.log(currentApp);
     setAppInfo(currentApp);
     setDownloadLink(currentApp['dst-desk']);
   }

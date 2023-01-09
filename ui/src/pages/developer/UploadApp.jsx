@@ -77,7 +77,7 @@ function Form({application, name}) {
         description: "",
         screenshots: ['Introduce a url'],
         keywords: [],
-        "dst-desk": "~zod/name-desk"
+        "dst-desk": ""
       }
     }
   });
@@ -117,7 +117,8 @@ function Form({application, name}) {
 
   const redirectToMain = () => {
     navigate('/apps/galleria/dev/');
-    Notify.success(`To upload app icon from docket data use the following command from terminal of the ship which hosts the app and type :dst-server|send-data [~<this ship> %<app-name>]`);
+    Notify.success(`To upload app icon from docket data use the following command from the ship which hosts the app: :dst-server|send-data [~sampel-dozdev %app-name]`);
+    Notify.success(`If necessary, send a signature from the ship which hosts the app with: :dst-server|sign [~sampel-dozdev %app-name]`);
   };
 
   return (
@@ -160,12 +161,15 @@ function AppPageInformation({setDisableForm}) {
       <div className='mb-6'>
         <div className='flex flex-row gap-14'>
         <div className='w-full'>
+          <div><small>*must be the same as your desk name, e.g. app-name</small>
+          </div>
+          <small>*must be lowercase</small>
           <div className="flex flex-row gap-10">
             <div className="mb-3 basis-1/2">
               <Input
                 name='app-name'
                 label="Application name"
-                placeholder='This must be the same as your desk name, e.g. "app-name"'
+                placeholder=''
                 {...register('app-name')}
               />
             </div>
@@ -209,15 +213,22 @@ function AppPageInformation({setDisableForm}) {
           onClick={() => append('Introduce a new url')}
         >Add Screenshot</button>
       </ul>
-      <Input label="Distributor desk" placeholder="~sampel/{your app name}" {...register('dev-input.dst-desk')}/>
+      <div><small>If this isn't your current ship, add a signature after saving the app, or fill out this form from the distributor ship.</small>
+      </div>
+      <Input
+        label="Distributor desk "
+        placeholder="~sampel/{your app name}" {...register('dev-input.dst-desk')}
+      />
     </div>
   );
 }
 
 function Signature({application}) {
   return (
-    <div className='mb-3'>
+      <div className='mb-3'>
       <h2 className='text-xl font-semibold mb-4 mt-10'>Signature</h2>
+      <h1 className='text-1xl mb-4'>Signatures are only required when you fill out this form from a ship other than the one that hosts the app desk. They ensure that the ship filling out the form has the correct permission to distribute the desk.
+      </h1>
       <a
         className='flex justify-center font-bold text-lg p-2 border hover:bg-gray-800 hover:text-white'
         href='https://github.com/dilryd-mopreg/app-store/tree/development/galleria#sign-and-send-data-for-distributors'
