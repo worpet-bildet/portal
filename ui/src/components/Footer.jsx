@@ -7,8 +7,7 @@ export function Footer({disclaimer}) {
         { disclaimer ?
           <span className="border border-2 text-lg text-gray-500 p-2 mb-4">
           <i className={`fa fa-exclamation-triangle fa-x mr-4`}></i>
-            We will not be liable for any issues related to malicious or insecure software distributed via Galleria.
-            By clicking the "Copy to clipboard" button you agree on this.
+             Disclaimer: Applications may not be audited for security and might contain malicious code or vulnerabilities that could lead to unwanted interaction with your ship. Explore at your own risk.
           </span>
           : null
         }

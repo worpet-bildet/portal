@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { AddReviewModal } from "../../components/AddReviewModal";
+import { Footer } from "../../components/Footer";
 import { GoBack } from "../../components/GoBack";
 import { Sidebar } from "../../components/Sidebar";
 import { Tabs } from "../../components/Tabs";
+import useCopy from "../../hooks/useCopy";
+import { Notify } from "../../utils/notifications";
 import { getUrbitApi } from "../../utils/urbitApi";
 
 const api = getUrbitApi();
@@ -13,38 +16,42 @@ export function DevApplicationPage(props) {
   const {application} = useParams();
   const [appInfo, setAppInfo] = useState();
   const [downloadLink, setDownloadLink] = useState('');
-  const [applications, setApplications] = useState([]);
   const [selectedButton, setSelectedButton] = useState('Comments');
+  const [copied, copyAction, setCopied] = useCopy(downloadLink);
 
   useEffect(() => {
     subscribe();
   }, []);
 
   const subscribe = async () => {
-   
-      await api.subscribe({
+    try {
+      api.subscribe({
         app: "dev-server",
         path: "/render",
         event: handleUpdate,
-        err: (err) => setErrorMsg(err),
-        quit: (err) => setErrorMsg(err),
-        cancel: (err) => setErrorMsg(err),
-      })
+        err: (err) => setErrorMsg("Subscription rejected"),
+        quit: (err) => setErrorMsg("Kicked from subscription"),
+        cancel: (err) => setErrorMsg("Subscription cancelled"),
+      });
+    } catch {
+      setErrorMsg("Subscription failed");
+    }
   };
 
   const handleUpdate = (data) => {
     if (data) {
-      setApplications(data["dev-map"]);
-      const app = findApplication(application);
-      // app is undefined
-      console.log(app);
-      setAppInfo(app);
+      console.log("DATA");
+      console.log(data);
+      console.log("APPLICATION");
+      console.log(application);
+      //We need to check for key too
+      const currentApp = data['dev-map'].find((app) => app.key['app-name'] === application);
+      setAppInfo(currentApp);
+      setDownloadLink(currentApp['dst-desk']);
     }
   }
 
   const setErrorMsg = (msg) => { throw new Error(msg); };
-
-  const findApplication = (name) => (applications.find((app) => app.key['app-name'] === name));
 
   const tabs = [{name: 'Reviews'}, {name: 'Comments'}];
 
@@ -52,7 +59,17 @@ export function DevApplicationPage(props) {
     setSelectedButton(event.target.textContent);
   }
 
+  const copyText = () => {
+    copyAction();
+
+    setTimeout(() => {
+      Notify.success('Link copied');
+      setCopied(false);
+    }, 1000);
+  }
+
   return (
+
     <div className='flex flex-row'>
       <Sidebar/>
       <div className="flex flex-col w-full min-h-screen">
@@ -70,7 +87,7 @@ export function DevApplicationPage(props) {
                 <button
                   type="submit"
                   className="text-2xl h-1/2 mt-auto font-bold bg-gray-800 text-white py-2 px-5"
-                  onClick={() => navigator.clipboard.writeText(downloadLink)}
+                  onClick={copyText}
                 >Copy to clipboard</button>
               </div>
               { appInfo ? (
@@ -88,6 +105,7 @@ export function DevApplicationPage(props) {
             </div>
           </div>
         </main>
+        <Footer disclaimer={true} />
       </div>
     </div>
   );
@@ -186,7 +204,7 @@ function ApplicationImage({src, alt}) {
 function Reviews({reviews, appKey, hash}) {
   return (
     <div className="flex flex-col space-y-2">
-      <AddReviewModal appKey={appKey} hash={hash}/>
+      <AddReviewModal appKey={appKey} hash={hash} notification={Notify}/>
       <ul className="flex flex-col space-y-2">
         { reviews.length ?
           reviews.map((review) =>
@@ -216,12 +234,11 @@ function Review({text, user, appKey, isSafe}) {
       app: "usr-server",
       mark: "app-store-visit-dev-action",
       json: { "del-rev": review },
-      onSuccess: () => console.log('Successfully done'),
-      onError: (err) => setErrorMsg(err),
+      onSuccess: () => Notify.success('Your review has been deleted, please refresh the page'),
+      onError: (err) => Notify.error(err),
     });
   }
 
-  const setErrorMsg = (msg) => { throw new Error(msg); };
   return (
     <li className="flex items-center space-x-3 text-sm leading-tight">
       <div className="h-28 w-full p-4 rounded bg-gray-200">
@@ -274,7 +291,6 @@ function Review({text, user, appKey, isSafe}) {
     </li>
   );
 }
-
 
 function Comments({comments, appKey}) {
   return (
@@ -360,7 +376,6 @@ function CommentForm({appKey}) {
     }
   });
   const onSubmit = (comment) => {
-    console.log(comment);
     submitNew(comment);
   };
 
@@ -369,12 +384,10 @@ function CommentForm({appKey}) {
       app: "usr-server",
       mark: "app-store-visit-dev-action",
       json: { 'add-com': comment },
-      onSuccess: () => console.log('Successfully done'),
-      onError: (err) => setErrorMsg(err),
+      onSuccess: () => Notify.success('Your comment has been processed succesfully, please refresh the page'),
+      onError: (err) => Notify.error(err),
     });
   };
-
-  const setErrorMsg = (msg) => { throw new Error(msg); };
 
   return (
     <form className="relative">

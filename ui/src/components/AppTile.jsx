@@ -27,7 +27,7 @@ export function AppTile ({ appName, keywords, docket }) {
 
   return (
     <li className="flex items-center space-x-3 text-sm leading-tight">
-      <Link to={`/apps/galleria/usr/apps/${appName}`} className="w-full p-4 rounded border border-black hover:bg-gray-200">
+      <Link to={`/apps/galleria/${!isUser ? `dev` : `usr`}/apps/${appName}`} className="w-full p-4 rounded border border-black hover:bg-gray-200">
         <div className="flex flex-row flex-auto justify-between">
           <div className='flex flex-row'>
             <div

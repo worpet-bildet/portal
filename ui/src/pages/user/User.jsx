@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { AppTile } from '../../components/AppTile';
 import { Footer } from '../../components/Footer';
 import { Sidebar } from '../../components/Sidebar';
+import { Disclaimer } from '../../components/Disclaimer';
 import { getUrbitApi } from '../../utils/urbitApi';
 
 const api = getUrbitApi();
@@ -62,11 +63,14 @@ export function User(props) {
           <main className="ml-32 basis-3/4 h-full">
             <div className="w-4/5 space-y-6 py-14">
               <h1 className="text-3xl font-bold">Discover Apps</h1>
+               <Disclaimer
+                 color='blue'
+                 message={'Below are apps in your curator\'s collection. By default, you are subscribed to the Galleria Curator. You can subscribe to other curators at /usr/curs'}
+               />
               { applications.length ? (
                 <ul className="space-y-4">
                   { applications.map((app) =>
                       {
-                      console.log(app);
                       return <AppTile key={app.id} appName={app.key['app-name']} {...app} />}
                     ) }
                 </ul>
