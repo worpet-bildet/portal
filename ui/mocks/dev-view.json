@@ -1,0 +1,65 @@
+{
+  "zod_whatsapp": {
+    "title": "Whatsapp",
+    "description": "",
+    "color": "0xd9.b06d",
+    "keywords": ["social", "chat"],
+    "screenshots": [],
+    "desk-hash": "",
+    "dst-desk": ""
+  },
+  "zod_facebook": {
+    "title": "Facebook",
+    "description": "",
+    "color": "0xd9.b06d",
+    "keywords": [],
+    "screenshots": ["social", "evil", "money"],
+    "desk-hash": "",
+    "dst-desk": ""
+  },
+  "zod_discord": {
+    "title": "Discord",
+    "description": "",
+    "color": "0xd9.b06d",
+    "keywords": ["social", "chat", "memes"],
+    "screenshots": [],
+    "desk-hash": "",
+    "dst-desk": ""
+  },
+  "zod_test": {
+    "title": "Test",
+    "description": "",
+    "color": "0xd9.b06d",
+    "keywords": ["test"],
+    "screenshots": [],
+    "desk-hash": "",
+    "dst-desk": ""
+  },
+  "zod_test1": {
+    "title": "Test1",
+    "description": "",
+    "color": "0xd9.b06d",
+    "keywords": [],
+    "screenshots": [],
+    "desk-hash": "",
+    "dst-desk": ""
+  },
+  "zod_test2": {
+    "title": "Test2",
+    "description": "",
+    "color": "0xd9.b06d",
+    "keywords": [],
+    "screenshots": [],
+    "desk-hash": "",
+    "dst-desk": ""
+  },
+  "zod_test3": {
+    "title": "Test3",
+    "description": "",
+    "color": "0xd9.b06d",
+    "keywords": ["social", "chat", "test", "test", "test", "test", "test"],
+    "screenshots": [],
+    "desk-hash": "",
+    "dst-desk": ""
+  }
+}
