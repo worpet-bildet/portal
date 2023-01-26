@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "copy-dist": "cp -r ../galleria/* ../../ships/trozod115/app-store"
   },
   "dependencies": {
     "@urbit/api": "^2.0.0",
