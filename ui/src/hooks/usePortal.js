@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Urbit from "@urbit/http-api";
+import { urbitConfig as config } from "../config";
 
 export const usePortalSubscription = () => {
   const [ship, urbit] = useUrbit();
@@ -22,7 +23,7 @@ export const useUrbit = () => {
 
   useEffect(() => {
     if (!ship) {
-      const urbit = getUrbitApi("portal");
+      const urbit = getUrbitApi(config.desk);
       setUrbit(urbit);
       setShip(urbit.ship);
     }
@@ -30,7 +31,7 @@ export const useUrbit = () => {
   return [ship, urbit];
 };
 
-export const getUrbitApi = (desk = "portal") => {
+export const getUrbitApi = (desk = config.desk) => {
   const api = new Urbit("", "", desk);
   api.ship = window.ship;
   return api;
@@ -44,8 +45,8 @@ export const getSubscription = (urbit, eventHandler = console.log) =>
   });
 
 export const subscription = {
-  app: "portal-manager",
-  path: "/all-items",
+  app: config.agent,
+  path: config.path,
   ship: window?.ship || "",
   verbose: true,
   event: console.log,
