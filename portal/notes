@@ -1,3 +1,60 @@
+MARKS
+- curator page duplo nestan u curaor pageu. renameat unutarnjeg u "main" ako trebam zadrzat
+- napravit map iz marka (uz list)
+- actions sethu
+- popravit marks nakon promjene podataka
+
+ASSERTIONS/SPECIFIC TYPES
+-- %app needs
+Num downloads
+Header photo
+Version
+FAQ
+Avg star rating
+Dev info dropdown w/ Link to Dev/org homepage in portal, github, urbit group, desk, website, contact email, address, TOS/privacy
+Tags
+Data permissions
+Similar content
+Markdown compatible descriptions
+
+- how to make bespoke-data consistent with item type?
+
+- list only point to not list/not curator. (maybe say only to app or group)
+- cur page only point to lists
+- how to add a default/bunt value in the data type? (we should add it for color, see where else. where for bespoke?)
+- how to look for e.g. ships. canonical pointer or canonical title?
+
+%curator type za subscribing, su other curs can be recommended
+(samo recommendas curator page)
+
+FIXES AFTER DATA CHANGE
+- gens popravit
+
+ARCH
+- remove extra files which come from base
+
+SCRYS/SUBS
+- all items by ship to FE
+
+VALIDATION!!
+- respond-to-update (subs + validator)
+
+ERROR HANDLING?
+ - what happens if scries fail? (look where they are all used)
+ - make sre you dont !!, but return sth like ~
+
+TESTING
+- BOOTAT NEKOLIKO MJESECA ASAP, I TESTIRAT NA LIVE NETWORKU
+
+
+
+TODO LATER
+ - purges on a daily/weekly basis or sth
+ - TODO printove popravit u portal storeu/manageru i u libu da da kazu title a ne samo pointer
+   tj da budu i na vise mjesta di trebaju bit (pomoc ce za debugging kad ljudi krenu koristit)
+ - make cards from portal.hoon, and almost dont use any from portal-manager/portal-store explicitly
+   or is that less clear? or more clear?
+
 mock data commands:
 =data -build-file /=portal=/sur/portal/data/hoon
 =lib -build-file /=portal=/lib/portal/hoon
@@ -9,7 +66,7 @@ ADD OTHER
 :portal-manager &portal-action [%add our %other *editable-data:data [%other ~]]
 
 ADD APPS
-:portal-manager &portal-action [%add our %app *editable-data:data [%app ~]]
+:portal-manager &portal-action [%add our %app *editable-data:data [%app '~zod/portal']]
 
 ADD MIXED LIST FROM ALL ITEMS (except curator page and validity store)
 :portal-manager|make-all-list
@@ -48,6 +105,52 @@ mock item:
 ]
 
 _____
+
+::but it'd be useful to get all the ships someone follows, and from there, get all the items from those ships
+
+::  FAQ za data types
+
+::  TODO  annotate code everywhere with comments
+
+::  should bespoke-read only read bespoke-data?
+::  or should it be able to interpret the whole item based on its type?
+::  whole item is better
+::++  bespoke-read
+::  |=  [=item]
+::  ^-  what should it output???
+::
+
+::  how to separate type layer
+::  SECURITY  ??
+
+::  - a default peer which we monitor to see the growth of the size and number items, and if we should do sth
+
+::  POINTER parsing rules:
+::
+::    if =(points-to-item %.n)
+::  %app  ->  (weld (weld (scow %p ship) "/") (trip title))  ->  ~zod/app-name
+::  %group  ->  (weld (weld (scow %p ship) "/") (trip title))  ->  ~zod/group-name
+::  %ship  ->  ship  ->  ~zodž
+::  depending on type, q has different meaning
+::
+::    if =(points-to-item %.y)
+::  you can find any item in the global portal namespace with the pointer
+::  (assuming right permissions)
+::  q means time created-at
+::
+::
+::  ITEM parsing rules:
+::
+::    if =(type %app)
+::  link  ->  distributor desk
+::  pictures  ->  screenshots
+::  reviews  ->  hash should be compared to hash.docket.bespoke-data
+::  name  ->  should be same as in desk
+
+
+::  (is necessary?)curator can only add apps with valid sigs to app list (whether its %curator-page or %list)?
+::  curator can only put apps which are properly validated into another list? (or that doesnt matter and it should be validated locally by any person)
+
 ::  item versioning?
 
 ::  auto item update (dev-server subbed to dst-server)??

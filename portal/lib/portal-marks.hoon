@@ -1,8 +1,6 @@
 /-  *portal-data
 /+  portal, docket
 |%
-:: QUESTION ZA SETHA - dal da se suba na portal store ili portal manager?
-::  mozda bolje portal store ako ide direktno po podatke?
 ++  enjs
   =,  enjs:format
   |%
@@ -17,89 +15,91 @@
     |^
     %-  pairs
     :~  ['key' (enjs-jam-pointer pointer)]
-        ['hard-data' (enjs-hard-data hard-data.item)]
+        ['data' (enjs-data data.item)]
         ['meta-data' (enjs-meta-data meta-data.item)]
-        ['editable-data' (enjs-editable-data editable-data.item)]
-        ['bespoke-data' (enjs-bespoke-data bespoke-data.item)]
-        ['usr-data' (enjs-usr-data usr-data.item)]
+        ['social' (enjs-social social.item)]
         ['item-sig' (enjs-sig item-sig.item)]
     ==
-    ++  enjs-hard-data
-      |=  [=hard-data]
-      ^-  json
-      %-  pairs
-      :~  ['id' (enjs-id id.hard-data)]
-      ==
     ++  enjs-meta-data
       |=  [=meta-data]
       ^-  json
       %-  pairs
-      :~  ['permissions N/A' s+'']
+      :~  ['id' (enjs-id id.meta-data)]
           ['updated-at' s+updated-at.meta-data]
+          ['permissions N/A' s+'']
           ['reach N/A' s+'']
-          ['outside-sig N/A' s+'']
+          ['outside-sigs N/A' s+'']
       ==
-    ++  enjs-editable-data
-      |=  [=editable-data]
-      ^-  json
-      %-  pairs
-      :~  ['title' s+title.editable-data]
-          ['link' s+link.editable-data]
-          ['description' s+description.editable-data]
-          ['tags' (enjs-cord-list tags.editable-data)]
-          ['properties N/A' s+'']
-          ['pictures' (enjs-cord-list pictures.editable-data)]
-          ['image' s+image.editable-data]
-          ['color' s+color.editable-data]
-      ==
-    ++  enjs-bespoke-data
-      |=  [=bespoke-data]
+    ++  enjs-data
+      |=  [=data]
       ^-  json
       |^
       %-  pairs
-      :~  :-  -.bespoke-data
-          ?-    -.bespoke-data
-              %app
-            %-  pairs
-            :~  ['dist-desk' s+dist-desk.bespoke-data]
-                ['signature' (enjs-sig sig.bespoke-data)]
-                ['desk-hash' s+`@t`(scot %uv desk-hash.bespoke-data)]
-                ['docket' (docket:enjs:docket docket.bespoke-data)]
-            ==
-              %curator-page
-            %-  pairs
-            :~  ['curator-page' (enjs-recommendations recommendations.bespoke-data)]
-            ==
-              %validity-store
-            %-  pairs
-            :~  ['validity-store N/A' s+'']
-            ==
-              %list
-            %-  pairs
-            :~  ['list' (enjs-recommendations recommendations.bespoke-data)]
-            ==
-              %other
-            %-  pairs
-            :~  ['other' s+'']
-            ==
-          ==
+      :~  ['general' (enjs-general general.data)]
+          ['bespoke' (enjs-bespoke bespoke.data)]
       ==
-      ++  enjs-recommendations
-        |=  =recommendations
+      ++  enjs-general
+        |=  [=general]
         ^-  json
         %-  pairs
-        :~  ['type' s+`@t`-.recommendations]
-            ['pointer-list' (enjs-jammed-pointer-list pointer-list.recommendations)]
+        :~  ['title' s+title.general]
+            ['link' s+link.general]
+            ['description' s+description.general]
+            ['tags' (enjs-cord-list tags.general)]
+            ['properties N/A' s+'']
+            ['pictures' (enjs-cord-list pictures.general)]
+            ['image' s+image.general]
+            ['color' s+color.general]
         ==
+      ++  enjs-bespoke
+        |=  [=bespoke]
+        ^-  json
+        |^
+        %-  pairs
+        :~  :-  -.bespoke
+            ?-    -.bespoke
+                %app
+              %-  pairs
+              :~  ['dist-desk' s+dist-desk.bespoke]
+                  ['signature' (enjs-sig sig.bespoke)]
+                  ['desk-hash' s+`@t`(scot %uv desk-hash.bespoke)]
+                  ['docket' (docket:enjs:docket docket.bespoke)]
+              ==
+                %curator-page
+              %-  pairs
+              :~  ['curator-page' (enjs-recommendations recommendations.bespoke)]
+              ==
+                %validity-store
+              %-  pairs
+              :~  ['validity-store N/A' s+'']
+              ==
+                %list
+              %-  pairs
+              :~  ['list' (enjs-recommendations recommendations.bespoke)]
+              ==
+                %other
+              %-  pairs
+              :~  ['other' s+'']
+              ==
+            ==
+        ==
+        ++  enjs-recommendations
+          |=  =recommendations
+          ^-  json
+          %-  pairs
+          :~  ['type' s+`@t`-.recommendations]
+              ['pointer-list' (enjs-jammed-pointer-list pointer-list.recommendations)]
+          ==
+        --
       --
-    ++  enjs-usr-data
-      |=  =usr-data
+    ++  enjs-social
+      |=  =social
       ^-  json
       |^
       %-  pairs
-      :~  ['ratings' (enjs-rats ratings.usr-data.item)]
-          ['comments' (enjs-coms comments.usr-data.item)]
-          ['reviews' (enjs-revs reviews.usr-data.item)]
+      :~  ['ratings' (enjs-rats ratings.social.item)]
+          ['comments' (enjs-coms comments.social.item)]
+          ['reviews' (enjs-revs reviews.social.item)]
       ==
       ++  enjs-rats
         |=  =ratings

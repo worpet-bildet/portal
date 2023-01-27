@@ -8,4 +8,3 @@
 =/  pointer-list  ~(tap in pointer-set)
 =/  pointer-list  (skip-pointers-of-types:helper-arms pointer-list ~[%curator-page %validity-store])
 [%edit [p.bek '~2000.1.1' %curator-page] *editable-data [%curator-page [%mixed pointer-list]]]
-:: SEE IF CUR PGAE TYPES/CONTENT NEED TO BE LIMITED TO JUST LISTS?
