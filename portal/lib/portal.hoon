@@ -3,9 +3,9 @@
 |%
 +$  card  card:agent:gall
 ::
-++  helper-arms
+++  conv
   |%
-  ++  pointer-to-path
+  ++  pointer-to-sub-path
     |=  [=pointer]
     ^-  path
     :~  (scot %ud `@`-:pointer)
@@ -14,7 +14,7 @@
         r.id.pointer
     ==
   ::
-  ++  path-to-pointer
+  ++  sub-path-to-pointer
     |=  [=path]
     ^-  pointer
     :^  ?:(=(0 (slav %ud -.path)) %.y %.n)
@@ -22,11 +22,15 @@
         +>-.path
         +>+<.path
   ::
+  --
+::
+++  scry
+  |%
   ::  gets item locally (no remote scry yet)
   ++  get-item
     |=  [our=ship now=time =pointer]
     ^-  item
-    =/  path  (weld (weld /(scot %p our)/portal-store/(scot %da now) (pointer-to-path pointer)) /item)
+    =/  path  (weld (weld /(scot %p our)/portal-store/(scot %da now) (pointer-to-sub-path:conv pointer)) /item)
     .^(item %gx path)
   ::
   ::  gets all pointers in local all-items
@@ -36,58 +40,38 @@
     =/  path  /(scot %p our)/portal-store/(scot %da now)/all/pointers/pointer-set
     .^(pointer-set %gx path)
   ::
-  ++  pointer-set-difference
+  ::  TODO  get-verified-items scry
+
+  ::  TODO scry all-items (as map, as list?)
+  --
+::
+++  pointers
+  |%
+  ++  set-difference
     |=  [set-1=pointer-set set-2=pointer-set]
     ^-  pointer-set
     (~(dif in set-1) set-2)
   ::
-  ++  skip-cen-no-pointers
+  ++  skip-cen-no
     |=  [=pointer-list]
     ^-  ^pointer-list
     (skip pointer-list |=([=pointer] ?:(=(-.pointer %.n) %.y %.n)))
   ::
-  ++  skip-pointers-of-types
+  ++  skip-types
     |=  [=pointer-list types=(list type)]
     ^-  ^pointer-list
     (skip pointer-list |=([=pointer] ?~((find [r.id.pointer]~ types) %.n %.y)))
   ::
-  ++  skim-pointers-of-types
+  ++  skim-types
     |=  [=pointer-list types=(list type)]
     ^-  ^pointer-list
     (skim pointer-list |=([=pointer] ?~((find [r.id.pointer]~ types) %.n %.y)))
-
-
   ::
-  ::  figure out where to assert %.y on pointer
-  ::  doing like pointer=[%.y =id] complicates things elsewhere
-  ++  pointer-to-sub-card
-    |=  [our=ship =pointer]
-    ^-  card
-    [%pass /sub %agent [our %portal-manager] %poke %portal-action !>([%sub pointer])]
-    ::
+  --
 
-  ::  verify that a list doesn't repeat apps
-  ++  list-has-duplicates
-    |=  [=pointer-list]
-    ^-  ?
-    =(~(wyt in (silt pointer-list)) (lent pointer-list))
-
-  ::  input @p, output ship-type:portal-data
-  ++  get-ship-type
-    |=  [=ship]
-    ^-  ship-type
-    =/  hex  `@ux`ship
-    ?:  &((gte hex 0x0) (lte hex 0xff))  %galaxy
-    ?:  &((gte hex 0x100) (lte hex 0xffff))  %star
-    ?:  &((gte hex 0x1.0000) (lte hex 0xffff.ffff))  %planet
-    ?:  &((gte hex 0x1.0000.0000) (lte hex 0xffff.ffff.ffff.ffff))  %moon
-    %comet
-
-  ::  verify whether pointer-list is subset of all-items
-  ++  pointer-list-subset-of-all-items
-    |=  [=pointer-list =all-items]
-    (levy pointer-list |=(=pointer (~(has in ~(key by all-items)) pointer)))
-
+::
+++  loob
+  |%
   ::  check whether pointer is in pointer-list
   ++  pointer-in-pointer-list
     |=  [=pointer =pointer-list]
@@ -101,9 +85,45 @@
     |=  [=pointer =all-items]
     ^-  ?
     (~(has by all-items) pointer)
-
-
-
+  ::
+  ::  verify that a list doesn't repeat apps
+  ++  list-has-duplicates
+    |=  [=pointer-list]
+    ^-  ?
+    =(~(wyt in (silt pointer-list)) (lent pointer-list))
+  ::
+  ::  verify whether pointer-list is subset of all-items
+  ++  pointer-list-subset-of-all-items
+    |=  [=pointer-list =all-items]
+    (levy pointer-list |=(=pointer (~(has in ~(key by all-items)) pointer)))
+  ::
+  --
+::
+++  misc
+  |%
+  ::  input @p, output ship-type:portal-data
+  ++  get-ship-type
+    |=  [=ship]
+    ^-  ship-type
+    =/  hex  `@ux`ship
+    ?:  &((gte hex 0x0) (lte hex 0xff))  %galaxy
+    ?:  &((gte hex 0x100) (lte hex 0xffff))  %star
+    ?:  &((gte hex 0x1.0000) (lte hex 0xffff.ffff))  %planet
+    ?:  &((gte hex 0x1.0000.0000) (lte hex 0xffff.ffff.ffff.ffff))  %moon
+    %comet
+  ::
+  ::  %.y if one ship is moon of another
+  ++  ships-related
+    |=  [ship1=ship ship2=ship]
+    ^-  ?
+    ?:  (gte ship1 ship2)
+      ?:  =(0 (mod (sub ship1 ship2) 4.294.967.296))
+        %.y
+      %.n
+    ?:  =(0 (mod (sub ship2 ship1) 4.294.967.296))
+      %.y
+    %.n
+  ::
   ::  takes dst-desk, outputs unit of dst-name and app-name
   ++  parse-dist-desk
     |=  [dist-desk=@t]
@@ -115,19 +135,6 @@
     (slav %p (crip (scag u.loc dist-desk)))
     `@tas`(crip (slag +(u.loc) dist-desk))
   --
-
-:: ::  verify whether keys of cur-map correspond to aux-map
-:: ::  relevant if we create aux-maps by type or ship
-:: ++  cur-map-aux-map
-::   |=  [=cur-map =aux-map]
-::   =/  cur-map-keys  ~(key by cur-map)
-::   =/  dev-name-add  |=  [=dev-name =app-set]
-::   ^-  (set [^dev-name app-name])
-::   (~(run in app-set) |=(=app-name [dev-name app-name]))
-::   =/  aux-map-1  (~(rut by aux-map) dev-name-add)
-::   =/  aux-map-2  (~(run by aux-map-1) |=(set=(set key) ~(tap in set)))
-::   =/  vals  (silt `(list key)`(zing ~(val by aux-map-2)))
-::   =(cur-map-keys vals)
 ::
 ++  portal-store
   |%
@@ -141,133 +148,86 @@
       [%unchanged all-items]
     [%changed (~(del by all-items) pointer.upd)]
   ::
-  ::  for sub updates (%edit to foreign items) also to local
-  ::  eventually should have different inputs (e.g. just take soft data + bespoke data)
-  ::  assert that you can only edit your item
-  ::__
-  ::  assert in pointer that it must be yours. or no? both for sub init and for your add
-  ::  make signature
+  ::  for receiving items, from local %portal-manager or foreign %portal-store
   ++  put-item
     |=  [our=ship =all-items upd=[%put =item]]
-    ~&  "%portal: putting {(trip q.id.hard-data.item.upd)}"
-    =/  pointer  `^pointer`[%.y id.hard-data.item.upd]
+    ~&  "%portal: putting {(trip q.id.meta-data.item.upd)}"
+    =/  pointer  `^pointer`[%.y id.meta-data.item.upd]
     (~(put by all-items) pointer item.upd)
-  ::
   --
 ::
-::
-::  think about all the assertions which need to happen in each of these arms
-++  portal-manager
+++  cards
   |%
-  ++  respond-to-update
-    |%
-    :: TODO THISTHISHTISTHIS + VALIDATOR
-    ::  you need to run validation, and then save it, and then take the cache an use it
-    ::  how to do validator - writes , validator reads
-    ::  or just use it in the same run as validating it. Probably it's cleaner to separate them
-    ++  put
-      |=  [our=ship now=time upd=[%put =item]]
-      ^-  (list card)
-      :: :-
-      :: =/  validity-store  (get-item:helper-arms our now [%.y our '~2000.1.1' %validity-store])
-      :: =/  validity-records  validity-records.bespoke-data.validity-store
-      :: =/  validation-by-time
-      :: (~(put by validity-records) [%.y id.hard-data.item.upd] validation-by-time)
-      :: :-
-      ::   pointer: [%.y id.hard-data.item.upd]
-      ::   check-date: now
-      ::   validity-checker: 'default-v1'
-      ::   validation-result: [?(%.y %.n) reason='default']
-      ::[%put validity-store]
-      ?+    r.id.hard-data.item.upd     ~
-          %curator-page
-        (sub-to-cur-page-pointers:portal-manager our now item.upd)
-      ::
-          %list
-        (sub-to-list-pointers:portal-manager our now item.upd)
-      ==
-  ::
-    ++  del
-      |=  [upd=[%del =pointer]]
-      ^-  (list card)
-      ~
-  ::
-    ++  empty-init
-      |=  [upd=[%empty-init ~]]
-      ^-  (list card)
-      ~
-    --
-
-  ::
-  ::  define the funciton for traversing/subs (dont write it inline, so its easier to chagne later)
-  ::
-  ::
-  ::  get-verified-items scry
-
-  ::  do validation on each sub update
-
-  ::  separate validation function, so we can do arbitrary stuff later
-  ::  then diff validation based on type
-  ::  how to abstract type layer which people can edit, and not have to go everywhere to do it
-  ::
-  ::  - a default peer which we monitor to see the growth of the size and number items, and if we should do sth
-
-::  let's keep ONE curator page per person. for now.
-::  BOOTAT NEKOLIKO MJESECA ASAP, I TESTIRAT NA LIVE NETWORKU
-  ::  poke from FE to sub to some item
-  ::  purges on a daily/weekly basis or sth
   ++  sub-to-cur-page-pointers
     |=  [our=ship now=time =item]
     ^-  (list card)
-    ?>  =(r.id.hard-data.item %curator-page)
-    ?+    -.bespoke-data.item    !!
+    ?>  =(r.id.meta-data.item %curator-page)
+    ?+    -.bespoke.data.item    !!
         %curator-page
-      ::  maybe it doesnt help us much technically to say that cur-page has to be a bunch of lists
-      ::  it is a bunch of lists?, so you need to sub to all of them
-      ::  ?>  =(%list -.recommendations.bespoke-data.item)
-
+      ::  ?>  =(%list -.recommendations.bespoke.data.item) - assert this here or somewhere else (likely on input)
+      ::  and also on input confirm that all pointers are of type list
+      ::
       ::  filter out %.n pointers
-      =/  filtered-list  (skip-cen-no-pointers:helper-arms pointer-list.recommendations.bespoke-data.item)
+      =/  filtered-list  (skip-cen-no:pointers pointer-list.recommendations.bespoke.data.item)
       ::
       ::  filter out pointers already subbed to
-      =/  filtered-set  (pointer-set-difference:helper-arms (silt filtered-list) (get-all-pointers:helper-arms our now))
+      =/  filtered-set  (set-difference:pointers (silt filtered-list) (get-all-pointers:scry our now))
       ::
       ::  it can point to %curator-page, the only problem is if the number of curator pages severely escalates
-
+      ::  make sure that you can have only one curator page for now (e.g. no action to create a curator page except the init one)
       =/  filtered-list  ~(tap in filtered-set)
-
-      (turn filtered-list (cury pointer-to-sub-card:helper-arms our))
+      (turn filtered-list (cury pointer-to-sub-card:cards our))
     ==
   ::
   ::  current criterion: fetch all from this list which are not list
   ::  another possible criterion: fetch all only if this list is in one of curator pages
-  ::  or we can make %list not allowed to have lists (maybe something for the validator)
+  ::  make recommendations assert type of each items somehow in the right place
   ++  sub-to-list-pointers
     |=  [our=ship now=time =item]
     ^-  (list card)
-    ?>  =(r.id.hard-data.item %list)
-    ?+    -.bespoke-data.item    !!
+    ?>  =(r.id.meta-data.item %list)
+    ?+    -.bespoke.data.item    !!
         %list
       ::  filter out %.n pointers
-      =/  filtered-list  (skip-cen-no-pointers:helper-arms pointer-list.recommendations.bespoke-data.item)
+      =/  filtered-list  (skip-cen-no:pointers pointer-list.recommendations.bespoke.data.item)
       ::
       ::  filtered-recommendations excludes pointers to lists
-      =/  filtered-list  (skip-pointers-of-types:helper-arms filtered-list ~[%list])
+      =/  filtered-list  (skip-types:pointers filtered-list ~[%list])
       ::
       ::  filter out pointers already subbed to
-      =/  filtered-set  (pointer-set-difference:helper-arms (silt filtered-list) (get-all-pointers:helper-arms our now))
+      =/  filtered-set  (set-difference:pointers (silt filtered-list) (get-all-pointers:scry our now))
       ::
       ::  filter our pointers to lists
       =/  filtered-list  ~(tap in filtered-set)
-
-      (turn filtered-list (cury pointer-to-sub-card:helper-arms our))
+      (turn filtered-list (cury pointer-to-sub-card:cards our))
     ==
-  ::  the only way for this to get messed up is to have too many curator pages which point to more curator pages
   ::
+  ++  pointers-to-sub-cards
+    |=  [our=ship =pointer-list]
+    ^-  (list card)
+    (turn pointer-list (cury pointer-to-sub-card our))
+  ::
+  ::  TODO figure out where to assert %.y on pointer
+  ::  doing like pointer=[%.y =id] complicates things elsewhere
+  ++  pointer-to-sub-card
+    |=  [our=ship =pointer]
+    ^-  card
+    [%pass /sub %agent [our %portal-manager] %poke %portal-action !>([%sub pointer])]
+  ::
+  ++  item-to-put-card
+    |=  [our=ship =item]
+    ^-  card
+    [%pass /put %agent [our %portal-manager] %poke %portal-action !>([%put item])]
+  ::
+  --
+::
+::  TODO think about all the assertions which need to happen in each of these arms
+++  portal-manager
+  |%
   ::
   ++  bespoke-write
     |=  [=bespoke-input]
-    ^-  bespoke-data
+    ^-  bespoke
     ?-    -.bespoke-input
         %other
       bespoke-input
@@ -281,61 +241,89 @@
       bespoke-input
     ==
   ::
-
-
-
-  ++  make-default-cur-page
-    |=  [our=ship now=time]
-    ^-  update
-    =/  editable-data  ['Main Curator Page' '' 'Your first curator page.' *tags *properties *pictures '' '#e8e8e8']
-    =/  act  [%add our %curator-page editable-data [%curator-page [%list ~]]]
-    (add:make-update [our our now %.y act])
-
-  ++  make-default-validity-store
-    |=  [our=ship now=time]
-    ^-  update
-    =/  editable-data  ['Main Validity Store' '' 'Storage of validity of your items.' *tags *properties *pictures '' '#e8e8e8']
-    =/  act  [%add our %validity-store editable-data [%validity-store *validity-records]]
-    (add:make-update [our our now %.y act])
-
-
-  ::  should bespoke-read only read bespoke-data?
-  ::  or should it be able to interpret the whole item based on its type?
-  ::  whole item is better
-  ::++  bespoke-read
-  ::  |=  [=item]
-  ::  ^-  what should it output???
+  ++  respond-to-update
+    |%
+    ::  does this has to respond to foreign
+    ::  or it can also respond to us?
+    ::  how do we as a user/curator go around discovering/addign items
+    ::  do lists from those items get auto fetched if we added them?
+    ++  put
+      |=  [our=ship now=time upd=[%put =item]]
+      ^-  (list card)
+      %+  weld
+        ?+    r.id.meta-data.item.upd    ~
+            %curator-page
+          (sub-to-cur-page-pointers:cards our now item.upd)
+        ::
+            %list
+          (sub-to-list-pointers:cards our now item.upd)
+        ==
+      =/  val  (default-v1:validator our now item.upd)
+      ?~  val  ~
+      val
   ::
-
+    ++  del
+      |=  [upd=[%del =pointer]]
+      ^-  (list card)
+      ~
+  ::
+    ++  empty-init
+      |=  [upd=[%empty-init ~]]
+      ^-  (list card)
+      ~
+    --
+  ::
   ++  make-update
     |%
-    ::  TODO add, edit etc should have ?+ that branches based on type/bespoke-data
-    ::  %other, %curator-page, %list, %validity-store?, %app
-    ::  TODO write a separate type specific - bespoke data handler arm??
+    ++  default-cur-page
+      |=  [our=ship now=time]
+      ^-  update
+      =/  general  ['Main Curator Page' '' 'Your first curator page.' *tags *properties *pictures '' '#e8e8e8']
+      =/  act  [%add our %curator-page general [%curator-page [%list ~]]]
+      (add:make-update [our our now %.y act])
+  ::
+    ++  default-validity-store
+      |=  [our=ship now=time]
+      ^-  update
+      =/  general  ['Main Validity Store' '' 'Storage of validity of your items.' *tags *properties *pictures '' '#e8e8e8']
+      =/  act  [%add our %validity-store general [%validity-store *validity-records]]
+      (add:make-update [our our now %.y act])
+  ::
+    ::  these are not the right places to assert -.bespoke correspond to type.id
     ::  if =(%.y default), created-at becomes '~2000.1.1'
     ++  add
-      |=  [our=ship src=ship now=time default=?(%.y %.n) act=[%add p=@p r=type =editable-data =bespoke-input]]
+      |=  [our=ship src=ship now=time default=?(%.y %.n) act=[%add p=@p r=type =general =bespoke-input]]
       ^-  update
       ?>  =(our src)
       ?>  =(p.act our)
       ?>  =(r.act -.bespoke-input.act)
-      =/  hard-data  [id=`id`[p=p.act q=?:(=(default %.y) '~2000.1.1' `@t`(scot %da now)) r=r.act]]
-      =/  meta-data  [permissions=~[our] updated-at='~2000.1.1' reach=[%public blacklist=~] outside-sig=*signature]
-      =/  bespoke-data  (bespoke-write bespoke-input.act)
-      =/  item-sig  (sign:sig our now [%item hard-data meta-data editable-data.act bespoke-data *usr-data])
-      [%put [hard-data meta-data editable-data.act bespoke-data *usr-data item-sig]]
+      =/  data  [general.act (bespoke-write bespoke-input.act)]
+      =/  meta-data
+        :*  id=[p=p.act q=?:(=(default %.y) '~2000.1.1' `@t`(scot %da now)) r=r.act]
+            updated-at='~2000.1.1'
+            permissions=~[our]
+            reach=[%public blacklist=~]
+            outside-sigs=~
+        ==
+      =/  item-sig  (sign:sig our now `sig-input`[%item data meta-data *social])
+      [%put [data meta-data *social item-sig]]
   ::
   ::  we can make edits more granular if necessary, e.g. edit only some part of bespoke data
     ++  edit
-      |=  [our=ship src=ship now=time act=[%edit =id =editable-data =bespoke-input]]
+      |=  [our=ship src=ship now=time act=[%edit =id =general =bespoke-input]]
       ^-  update
       ?>  =(our src)
       ?>  =(p.id.act our)
       ?>  =(r.id.act -.bespoke-input.act)
-      =/  meta-data  [permissions=~[our] updated-at=`@t`(scot %da now) reach=[%public blacklist=~] outside-sig=*signature]
-      =/  bespoke-data  (bespoke-write bespoke-input.act)
-      =/  item-sig  (sign:sig our now [%item id.act meta-data editable-data.act bespoke-data *usr-data])
-      [%put [id.act meta-data editable-data.act bespoke-data *usr-data item-sig]]
+      =/  data  [general.act (bespoke-write bespoke-input.act)]
+      =/  item  `item`(get-item:scry our now [%.y id.act])
+      =/  item
+        %=  item
+          updated-at.meta-data  `@t`(scot %da now)
+          data                  data
+        ==
+      =/  item-sig  (sign:sig our now [%item data meta-data.item social.item])
+      [%put [data meta-data.item social.item item-sig]]
   ::
     ++  sub
       |=  [our=ship act=[%sub =pointer]]
@@ -350,90 +338,86 @@
       ?>  =(points-to-item.pointer.act %.y)
       act
 ::
-::  what happens when you try to comment on an item you are not subbed to?
-::  TODO razmislit o error handlingu
-  ::  pogotovo sa ovim scryevima ako failaju
     ++  comment
       |=  [our=ship src=ship now=time act=[%comment =pointer text=@t]]
       ^-  update
-      =/  item  (get-item:helper-arms our now pointer.act)
-      =/  new-comments  (~(put by comments.usr-data.item) [src `@t`(scot %da now)] [text.act '~2000.1.1'])
-      [%put item(comments.usr-data new-comments)]
+      =/  item  `item`(get-item:scry our now pointer.act)
+      =/  new-comments  (~(put by comments.social.item) [src `@t`(scot %da now)] [text.act '~2000.1.1'])
+      [%put item(comments.social new-comments)]
   ::
   ::  TODO test wrong pointer, on every action, local and foreign
     ++  edit-comment
       |=  [our=ship src=ship now=time act=[%edit-comment =pointer =created-at text=@t]]
       ^-  update
-      =/  item  (get-item:helper-arms our now pointer.act)
-      ?.  (~(has by comments.usr-data.item) [src created-at.act])  !!
-      =/  new-comments  (~(put by comments.usr-data.item) [src created-at.act] [text.act `@t`(scot %da now)])
-      [%put item(comments.usr-data new-comments)]
+      =/  item  `item`(get-item:scry our now pointer.act)
+      ?.  (~(has by comments.social.item) [src created-at.act])  !!
+      =/  new-comments  (~(put by comments.social.item) [src created-at.act] [text.act `@t`(scot %da now)])
+      [%put item(comments.social new-comments)]
   ::
     ++  del-comment
       |=  [our=ship src=ship now=time act=[%del-comment =pointer =created-at]]
       ^-  update
-      =/  item  (get-item:helper-arms our now pointer.act)
-      ?.  (~(has by comments.usr-data.item) [src created-at.act])  !!
-      =/  new-comments  (~(del by comments.usr-data.item) [src created-at.act])
-      [%put item(comments.usr-data new-comments)]
+      =/  item  `item`(get-item:scry our now pointer.act)
+      ?.  (~(has by comments.social.item) [src created-at.act])  !!
+      =/  new-comments  (~(del by comments.social.item) [src created-at.act])
+      [%put item(comments.social new-comments)]
   ::
     ++  rate
       |=  [our=ship src=ship now=time act=[%rate =pointer rating-num=@ud]]
       ^-  update
       ?>  &((gte rating-num.act 1) (lte rating-num.act 5))
-      =/  item  (get-item:helper-arms our now pointer.act)
-      =/  rating  (~(get by ratings.usr-data.item) src)
+      =/  item  `item`(get-item:scry our now pointer.act)
+      =/  rating  (~(get by ratings.social.item) src)
       =/  new-rating
         ?~  rating  [rating-num.act '~2000.1.1' `@t`(scot %da now)]
         [rating-num.act `@t`(scot %da now) created-at.u.rating]
-      =/  new-ratings  (~(put by ratings.usr-data.item) src new-rating)
-      [%put item(ratings.usr-data new-ratings)]
+      =/  new-ratings  (~(put by ratings.social.item) src new-rating)
+      [%put item(ratings.social new-ratings)]
   ::
     ++  unrate
       |=  [our=ship src=ship now=time act=[%unrate =pointer]]
       ^-  update
-      =/  item  (get-item:helper-arms our now pointer.act)
-      ?.  (~(has by ratings.usr-data.item) src)  !!
-      =/  new-ratings  (~(del by ratings.usr-data.item) src)
-      [%put item(ratings.usr-data new-ratings)]
+      =/  item  `item`(get-item:scry our now pointer.act)
+      ?.  (~(has by ratings.social.item) src)  !!
+      =/  new-ratings  (~(del by ratings.social.item) src)
+      [%put item(ratings.social new-ratings)]
   ::
   ::  no review signatures for now
     ++  review
       |=  [our=ship src=ship now=time act=[%review =pointer text=@t hash=@uv is-safe=?]]
       ^-  update
-      =/  item  (get-item:helper-arms our now pointer.act)
+      =/  item  `item`(get-item:scry our now pointer.act)
       :: TODO is-current for apps
       ::=/  is-current  =(hash desk-hash.dst-input.app-page)
       =/  is-current  %.n
-      =/  rev  (~(get by reviews.usr-data.item) src)
+      =/  rev  (~(get by reviews.social.item) src)
       =/  new-review
         ?~  rev  [text.act hash.act is-current is-safe.act '~2000.1.1' `@t`(scot %da now) *signature]
         [text.act hash.act is-current is-safe.act `@t`(scot %da now) created-at.u.rev *signature]
-      =/  new-reviews  (~(put by reviews.usr-data.item) src new-review)
-      [%put item(reviews.usr-data new-reviews)]
+      =/  new-reviews  (~(put by reviews.social.item) src new-review)
+      [%put item(reviews.social new-reviews)]
   ::
     ++  del-review
       |=  [our=ship src=ship now=time act=[%del-review =pointer]]
       ^-  update
-      =/  item  (get-item:helper-arms our now pointer.act)
-      ?.  (~(has by reviews.usr-data.item) src)  !!
-      =/  new-reviews  (~(del by reviews.usr-data.item) src)
-      [%put item(reviews.usr-data new-reviews)]
+      =/  item  `item`(get-item:scry our now pointer.act)
+      ?.  (~(has by reviews.social.item) src)  !!
+      =/  new-reviews  (~(del by reviews.social.item) src)
+      [%put item(reviews.social new-reviews)]
 
-    ::  TODO VALIDATION OF APPS, SIGN-APP POKE DOESNT WORK
-    ::  TODO  prebacit cijelu logiku, idealno i sa cardovima ovdje
+    ::  TODO  should I put the whole logic in here? (including making cards etc)
     ++  sign-app
       |=  [our=ship src=ship now=time msg=[%sign-app =pointer sig=signature]]
       ^-  update
       ?>  =(our p.id.pointer.msg)
       ::  what if item doesnt exist?
-      =/  item  (get-item:helper-arms our now pointer.msg)
+      =/  item  `item`(get-item:scry our now pointer.msg)
       ?>  ?=(signature sig.msg)
-      ?>  =(r.id.hard-data.item %app)
-      ?+    -.bespoke-data.item    !!
+      ?>  =(r.id.meta-data.item %app)
+      ?+    -.bespoke.data.item    !!
           %app
-        ?>  =(src -:(parse-dist-desk:helper-arms dist-desk.bespoke-data.item))
-        [%put item(sig.bespoke-data sig.msg)]
+        ?>  =(src -:(need (parse-dist-desk:misc dist-desk.bespoke.data.item)))
+        [%put item(sig.bespoke.data sig.msg)]
       ==
   ::
   ::  how to do correct item type assertions etc?
@@ -442,20 +426,20 @@
       ^-  update
       ?>  =(our p.id.pointer.act)
       ::  what if item doesnt exist?
-      =/  item  (get-item:helper-arms our now pointer.act)
+      =/  item  `item`(get-item:scry our now pointer.act)
       ?<  ?=(@tas data.act)
       ::  ?=([@uv docket] data.act)
-      =/  bespoke-data  bespoke-data.item
-      ?+    -.bespoke-data   !!
+      =/  bespoke  bespoke.data.item
+      ?+    -.bespoke   !!
           %app
-        =/  bespoke-data  bespoke-data(desk-hash desk-hash.data.act)
-        =/  bespoke-data  bespoke-data(docket docket.data.act)
-        [%put item(bespoke-data bespoke-data)]
+        =/  bespoke  bespoke(desk-hash desk-hash.data.act)
+        =/  bespoke  bespoke(docket docket.data.act)
+        [%put item(bespoke.data bespoke)]
       ==
     --
   --
 
-::  TODO
+::  TODO IN REGARDS TO VALIDATION
 ::  build send and receive for
 ::  1. app signature (see how it generalizes to outside signature), and where is it specified from whom the signature needs to come
 ::  2. app data, where is it specced from whom it needs to  come? (when generalized)
@@ -508,58 +492,64 @@
 ::  includes arms which are used to validate data
 ++  validator
   |%
-  ++  default-v1  ~
-  ::
-  ::
-::   ::
-::   ::  helper arms
-::   ::
-::   ::  validates app-page for key, dst-desk and signature correctness
-::   ++  new-app-page
-::     |=  [our=@p now=@da =dev-name =key =app-page]
-::     ^-  ?
-::     ?.  (dev-name-in-key dev-name key)
-::       %.n
-::     =/  dst-desk  (parse-dst-desk dst-desk.dev-input.app-page)
-::     ?~  dst-desk  %.n
-::     ?.  =(app-name.u.dst-desk app-name.key)
-::       %.n
-::     (sig key dst-name.u.dst-desk signature.dst-input.app-page our now)
-:: +
-::   ::
-::   ::  validates signature
-::   ++  sig
-::     |=  [=key =dst-name =signature our=@p now=@da]
-::     ?:  (ships-related dev-name.key dst-name)
-::       %.y
-::     ?.  =(q.signature dst-name)
-::       ~&  "signature fail: ship in sig ({(scow %p q.signature)}) and distributor ship ({(scow %p dst-name)}) are not the same"
-::       %.n
-::     ?:  =((get-ship-type our) %comet)
-::       ~&  "our ship is a comet - skipping signature validation of {(trip app-name.key)} by {(scow %p dev-name.key)}. beware, apps may be unsafe and/or pirated"
-::       %.y
-::     ?.  (validate:^sig [our signature key now])
-::       ~&  "signature fail: distributor signature validation failed, not adding new app {(trip app-name.key)} by {(scow %p dev-name.key)}"
-::       ~&  >>>  signature
-::       %.n
-::     %.y
-::   ::
-::   ::  %.y if one ship is moon of another
-::   ++  ships-related
-::     |=  [=dev-name dst-name=@p]
-::     ^-  ?
-::     ?:  (gte dev-name dst-name)
-::       ?:  =(0 (mod (sub dev-name dst-name) 4.294.967.296))
-::         %.y
-::       %.n
-::     ?:  =(0 (mod (sub dst-name dev-name) 4.294.967.296))
-::       %.y
-::     %.n
-::   ::
-::   ::
+  ++  default-v1
+    |=  [our=ship now=time =item]
+    ^-  (list card)
+    =/  validity-store  `^item`(get-item:scry our now [%.y our '~2000.1.1' %validity-store])
+    ?+    -.bespoke.data.validity-store    ~
+        %validity-store
+      =/  validity-records  validity-records.bespoke.data.validity-store
+      =/  validation-by-time  (~(gut by validity-records) [%.y id.meta-data.item] ~)
+      ?~  validation-by-time  ~
+      =/  validation-result  ['default-v1' (new-item our now [%.y id.meta-data.item] item) 'default']
+      =/  validation-by-time  (put:valid-mop validation-by-time now validation-result)
+      =/  validity-records  (~(put by validity-records) [%.y id.meta-data.item] validation-by-time)
+      :: TODO bolji nacin za handleat typeove da nemoram svugdje ?+
+      ::  mozda izvuc sve ?+  na jedno mjesto, i za svaki type definirat sve funkcije koje se onda nestaju okolo
+      ~[(item-to-put-card:cards our validity-store(validity-records.bespoke.data validity-records))]
+      ::
+    ==
 
+  ::
+  ::  validates item for
+  ::  signature
+  ::  if app- dist-desk, signature, id
+  ++  new-item
+    |=  [our=@p now=@da =pointer =item]
+    ^-  ?
+    ?+    -.bespoke.data.item    %.y
+        %other
+      %.y
+        %app
+      =/  dist-desk  (parse-dist-desk:misc dist-desk.bespoke.data.item)
+      ?~  dist-desk  %.n
+      (sig pointer dist-name.u.dist-desk desk-name.u.dist-desk sig.bespoke.data.item our now)
+        %list
+      %.y
+        %curator-page
+      %.y
+    ==
+
+  ::
+  ::  validates signature
+  ++  sig
+    |=  [=pointer dist-ship=@p desk-name=@tas =signature our=@p now=@da]
+    ?:  (ships-related:misc p.id.pointer dist-ship)
+      %.y
+    ?.  =(ship.signature dist-ship)
+      ~&  "signature fail: ship in sig ({(scow %p ship.signature)}) and distributor ship ({(scow %p dist-ship)}) are not the same"
+      %.n
+    ?:  =((get-ship-type:misc our) %comet)
+      ~&  "our ship is a comet - skipping signature validation of {(trip desk-name)} by {(scow %p dist-ship)}. beware, apps may be unsafe and/or pirated"
+      %.y
+    ?.  (validate:^sig [our signature [%app id.pointer desk-name] now])
+      ~&  "signature fail: distributor signature validation failed, not adding new app {(trip desk-name)} by {(scow %p dist-ship)}"
+      ~&  >>>  signature
+      %.n
+    %.y
+::
 ::   ::
-::   ::
+::   ::  app store legacy
 ::   ::
 ::   ::  dev-data validators
 ::   ::
@@ -606,13 +596,19 @@
 ::         key-list.cur-choice.cur-data  (skip key-list.cur-choice.cur-data |=(k=^key =(k key)))
 ::         cat-map.cur-choice.cur-data  (~(del by cat-map.cur-choice.cur-data) key)
 ::       ==
-::   ::
-::   ::
-::   ::
+::
+::
+:: ::  verify whether keys of cur-map correspond to aux-map
+:: ::  relevant if we create aux-maps by type or ship
+:: ++  cur-map-aux-map
+::   |=  [=cur-map =aux-map]
+::   =/  cur-map-keys  ~(key by cur-map)
+::   =/  dev-name-add  |=  [=dev-name =app-set]
+::   ^-  (set [^dev-name app-name])
+::   (~(run in app-set) |=(=app-name [dev-name app-name]))
+::   =/  aux-map-1  (~(rut by aux-map) dev-name-add)
+::   =/  aux-map-2  (~(run by aux-map-1) |=(set=(set key) ~(tap in set)))
+::   =/  vals  (silt `(list key)`(zing ~(val by aux-map-2)))
+::   =(cur-map-keys vals)
   --
-::
-::
-::
-
-
 --

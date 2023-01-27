@@ -19,8 +19,8 @@
 ++  on-init
   ^-  (quip card _this)
   =.  state  *state-0
-  =/  cur-page-upd  (make-default-cur-page:portal-manager our.bowl now.bowl)
-  =/  validity-store-upd  (make-default-validity-store:portal-manager our.bowl now.bowl)
+  =/  cur-page-upd  (default-cur-page:make-update:portal-manager our.bowl now.bowl)
+  =/  validity-store-upd  (default-validity-store:make-update:portal-manager our.bowl now.bowl)
   :_  this
   :~
     [%pass /add-cur %agent [our.bowl %portal-store] %poke %portal-update !>(cur-page-upd)]
@@ -32,14 +32,6 @@
   |=  old=vase
   ^-  (quip card _this)
   `this(state !<(state-0 old))
-::
-::  this agent needs to manage lists
-::  should -> add %list, %curator-page
-::        -> edit %list, %curator-page
-::
-::  posebni agent za usr-visit?
-::  usr-visit comment -> portal-list-manager -> edit %list -> [%edit =item]
-::
 ::
 ++  on-poke
   |=  [=mark =vase]
@@ -192,8 +184,6 @@
       :_  this
       (empty-init:respond-to-update:portal-manager upd)
     ==
-::  TODO KURATOR LISTA LISTI ASSERT?
-::  jer savrseno pase sa vertical/horizontal
   ==
 ::
 ++  on-arvo   on-arvo:default
