@@ -1,0 +1,70 @@
+mock data commands:
+=data -build-file /=portal=/sur/portal/data/hoon
+=lib -build-file /=portal=/lib/portal/hoon
+
+=groups-list [%group ~[[%.n ~dilryd-mopreg 'app-store' %group] [%.n ~toptyr-bilder 'random-group' %group] [%.n ~doplyr-harbur 'hacker-house']]]
+
+
+ADD OTHER
+:portal-manager &portal-action [%add our %other *editable-data:data [%other ~]]
+
+ADD APPS
+:portal-manager &portal-action [%add our %app *editable-data:data [%app ~]]
+
+ADD MIXED LIST FROM ALL ITEMS (except curator page and validity store)
+:portal-manager|make-all-list
+
+ADD APPS LIST FROM APPS IN ALL ITEMS
+:portal-manager|make-app-list
+
+EDIT CUR-PAGE
+:portal-manager|seed-cur-page
+
+SCRIES
+.^(item:data %gx /=portal-store=/0/~zod/~2023.1.21..21.25.50..88d0/other/item)
+.^(pointer-set:data %gx /=portal-store=/all/pointers/pointer-set)
+
+
+mock item:
+[ ~zod
+  'item'
+  %other
+  [%other ~]
+  'item.link'
+  'some description'
+  ~['tag1' 'tag2' 'tag3']
+  (malt (limo ~[['hoon' 'awesome'] ['wut' 'zap']]))
+  *comments:sur
+  *ratings:sur
+  *reviews:sur
+  ~['pic-link1' 'pic-link2']
+  'image-link'
+  '#e4eaef'
+  *created-at:sur
+  *updated-at:sur
+  *signature:sur
+  [%public ~]
+  =price
+]
+
+_____
+::  item versioning?
+
+::  auto item update (dev-server subbed to dst-server)??
+
+
+Whatever you add is auto added to your collection (cur=dev)?
+
+how to follow a curator? (e.g. you can find their default %curated easily just by their @p because you know it's '~2000.1.1'
+
+version control such that curator recommends a specific version of it
+curator should unrecommend something if it updates?
+
+Curator subs to dev's cur page (change name), receives a list of his items from which he can choose what he puts on his on cur page
+
+extra command for practicality: add pointer to list-of-pointers when you want (so it's like edit item, but specific to the item type)
+- in different situations, e.g. auto add a pointer, for all received data for example
+
+specificna mapa/lista itema koji su prikazani? (ako zelis neki hopping algo u buducnosti mozemo)
+
+eventually we want to add "price" property to items.
