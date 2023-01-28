@@ -1,4 +1,5 @@
 /-   *docket
+/+  mip
 |%
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
@@ -18,6 +19,13 @@
 ::  only %.y pointers
 +$  all-items  (map pointer item)
 ::
+::  delivered to the frontend
++$  nested-all-items  (map pointer cur-obj)
+::
++$  cur-obj  [=item =lis-map]
++$  lis-map  (map pointer lis-obj)
++$  lis-obj  [=item =end-map]
++$  end-map  (map pointer item)
 ::
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -78,8 +86,8 @@
 ::  data specific to the item type
 +$  bespoke
   $%  [%other ~]
-      [%curator-page =recommendations]
-      [%list =recommendations]
+      [%curator-page recommendations=[type=%list =list-pointer-list]]
+      [%list recommendations=[type=?(%other %app %group %ship) =end-item-pointer-list]]
       [%app dist-desk=@t sig=signature desk-hash=@uv =docket]
       [%validity-store =validity-records]
   ==
@@ -87,17 +95,21 @@
 ::  when inputting bespoke data, you sometimes don't need to input all of it
 +$  bespoke-input
   $%  [%other ~]
-      [%curator-page =recommendations]
-      [%list =recommendations]
+      [%curator-page recommendations=[type=%list =list-pointer-list]]
+      [%list recommendations=[type=?(%other %app %group %ship) =end-item-pointer-list]]
       [%app dist-desk=@t]
       [%validity-store =validity-records]
   ==
 ::
++$  list-pointer-list       (list pointer=[points-to-item=%.y id=[p=@p q=@t r=%list]])
++$  end-item-pointer-list   (list pointer=[points-to-item=?(%.y %.n) id=[p=@p q=@t r=?(%other %app %group %ship)]])
+::
+::  recommendations not used currently
 ::  type defines the type of where pointers point to
-+$  recommendations
-  $%  [type =pointer-list]
-      [%mixed =pointer-list]
-  ==
+:: +$  recommendations
+::   $%  [type =pointer-list]
+::       [%mixed =pointer-list]
+::   ==
 ::
 +$  pointer-list  (list pointer)
 +$  pointer-set  (set pointer)

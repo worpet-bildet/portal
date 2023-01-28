@@ -72,6 +72,9 @@
   ?:  =(path /all-items)
     :_  this
     [%give %fact ~ %portal-all-items !>(`^all-items`all-items)]~
+  ?:  =(path /nested-all-items)
+    :_  this
+    [%give %fact ~ %portal-nested-all-items !>(`^nested-all-items`(all-items-to-nested:conv our.bowl now.bowl))]~
   =/  item  (~(gut by all-items) (sub-path-to-pointer:conv path) ~)
   :_  this
   ?~  item
@@ -132,6 +135,8 @@
     ``all-items+!>(all-items)
   ?:  =(path [%x %all %pointers ~])
     ``pointer-set+!>(~(key by all-items))
+  ?:  =(path [%x %all %nested ~])
+    ``nested-all-items+!>((all-items-to-nested:conv our.bowl now.bowl))
   ::
   ::  jel mogu pattern match, e.g. [%x %0 *]?
   =/  pointer  (sub-path-to-pointer:conv +.path)

@@ -1,9 +1,65 @@
 /-  *portal-data
-/+  portal, docket
+/+  portal, docket, mip
 |%
 ++  enjs
   =,  enjs:format
   |%
+
+
+
+  :: ++  enjs-pointer-item-pair
+  ::   |=  [=item]
+  ::   ^-  json
+  ::   %-  frond
+  ::   [+:(enjs-jam-pointer [%.y id.meta-data.item]) (enjs-item item)]
+  ++  enjs-nested-all-items
+    |=  =nested-all-items
+    ^-  json
+    =/  transform
+      |=  [=pointer =cur-obj]
+      [(@t p.+:(enjs-jam-pointer pointer)) (enjs-cur-object cur-obj)]
+    =/  l  (turn ~(tap by nested-all-items) transform)
+    [%o `(map @t json)`(malt l)]
+  ++  enjs-cur-object
+    |=  =cur-obj
+    ^-  json
+    %-  pairs
+    :~  ['cur-item' (enjs-item item.cur-obj)]
+        ['list-map' (enjs-list-map lis-map.cur-obj)]
+    ==
+  ++  enjs-list-map
+    |=  =lis-map
+    ^-  json
+    =/  transform
+      |=  [=pointer =lis-obj]
+      [(@t p.+:(enjs-jam-pointer pointer)) (enjs-list-object lis-obj)]
+    =/  l  (turn ~(tap by lis-map) transform)
+    [%o `(map @t json)`(malt l)]
+  ++  enjs-list-object
+    |=  =lis-obj
+    ^-  json
+    %-  pairs
+    :~  ['list-item' (enjs-item item.lis-obj)]
+        ['end-map' (enjs-end-map end-map.lis-obj)]
+    ==
+  ++  enjs-end-map
+    |=  =end-map
+    ^-  json
+    =/  transform
+      |=  [=pointer =item]
+      [(@t p.+:(enjs-jam-pointer pointer)) (enjs-item item)]
+    =/  l  (turn ~(tap by end-map) transform)
+    [%o `(map @t json)`(malt l)]
+  ++  enjs-item
+    |=  [=item]
+    ^-  json
+    %-  pairs
+    :~  ['key' (enjs-jam-pointer [%.y id.meta-data.item])]
+        ['data' (enjs-data data.item)]
+        ['meta-data' (enjs-meta-data meta-data.item)]
+        ['social' (enjs-social social.item)]
+        ['item-sig' (enjs-sig item-sig.item)]
+    ==
   ++  enjs-all-items
     |=  =all-items
     ^-  json
@@ -12,7 +68,6 @@
   ++  enjs-pointer-and-item
     |=  [=pointer =item]
     ^-  json
-    |^
     %-  pairs
     :~  ['key' (enjs-jam-pointer pointer)]
         ['data' (enjs-data data.item)]
@@ -20,146 +75,152 @@
         ['social' (enjs-social social.item)]
         ['item-sig' (enjs-sig item-sig.item)]
     ==
-    ++  enjs-meta-data
-      |=  [=meta-data]
+  ++  enjs-meta-data
+    |=  [=meta-data]
+    ^-  json
+    %-  pairs
+    :~  ['id' (enjs-id id.meta-data)]
+        ['updated-at' s+updated-at.meta-data]
+        ['permissions N/A' s+'']
+        ['reach N/A' s+'']
+        ['outside-sigs N/A' s+'']
+    ==
+  ++  enjs-data
+    |=  [=data]
+    ^-  json
+    |^
+    %-  pairs
+    :~  ['general' (enjs-general general.data)]
+        ['bespoke' (enjs-bespoke bespoke.data)]
+    ==
+    ++  enjs-general
+      |=  [=general]
       ^-  json
       %-  pairs
-      :~  ['id' (enjs-id id.meta-data)]
-          ['updated-at' s+updated-at.meta-data]
-          ['permissions N/A' s+'']
-          ['reach N/A' s+'']
-          ['outside-sigs N/A' s+'']
+      :~  ['title' s+title.general]
+          ['link' s+link.general]
+          ['description' s+description.general]
+          ['tags' (enjs-cord-list tags.general)]
+          ['properties N/A' s+'']
+          ['pictures' (enjs-cord-list pictures.general)]
+          ['image' s+image.general]
+          ['color' s+color.general]
       ==
-    ++  enjs-data
-      |=  [=data]
+    ++  enjs-bespoke
+      |=  [=bespoke]
       ^-  json
       |^
       %-  pairs
-      :~  ['general' (enjs-general general.data)]
-          ['bespoke' (enjs-bespoke bespoke.data)]
-      ==
-      ++  enjs-general
-        |=  [=general]
-        ^-  json
-        %-  pairs
-        :~  ['title' s+title.general]
-            ['link' s+link.general]
-            ['description' s+description.general]
-            ['tags' (enjs-cord-list tags.general)]
-            ['properties N/A' s+'']
-            ['pictures' (enjs-cord-list pictures.general)]
-            ['image' s+image.general]
-            ['color' s+color.general]
-        ==
-      ++  enjs-bespoke
-        |=  [=bespoke]
-        ^-  json
-        |^
-        %-  pairs
-        :~  :-  -.bespoke
-            ?-    -.bespoke
-                %app
-              %-  pairs
-              :~  ['dist-desk' s+dist-desk.bespoke]
-                  ['signature' (enjs-sig sig.bespoke)]
-                  ['desk-hash' s+`@t`(scot %uv desk-hash.bespoke)]
-                  ['docket' (docket:enjs:docket docket.bespoke)]
-              ==
-                %curator-page
-              %-  pairs
-              :~  ['curator-page' (enjs-recommendations recommendations.bespoke)]
-              ==
-                %validity-store
-              %-  pairs
-              :~  ['validity-store N/A' s+'']
-              ==
-                %list
-              %-  pairs
-              :~  ['list' (enjs-recommendations recommendations.bespoke)]
-              ==
-                %other
-              %-  pairs
-              :~  ['other' s+'']
-              ==
+      :~  :-  -.bespoke
+          ?-    -.bespoke
+              %app
+            %-  pairs
+            :~  ['dist-desk' s+dist-desk.bespoke]
+                ['signature' (enjs-sig sig.bespoke)]
+                ['desk-hash' s+`@t`(scot %uv desk-hash.bespoke)]
+                ['docket' (docket:enjs:docket docket.bespoke)]
             ==
-        ==
-        ++  enjs-recommendations
-          |=  =recommendations
-          ^-  json
-          %-  pairs
-          :~  ['type' s+`@t`-.recommendations]
-              ['pointer-list' (enjs-jammed-pointer-list pointer-list.recommendations)]
+              %curator-page
+            %-  pairs
+            :~  ['curator-page' (enjs-cur-page-recs recommendations.bespoke)]
+            ==
+              %validity-store
+            %-  pairs
+            :~  ['validity-store N/A' s+'']
+            ==
+              %list
+            %-  pairs
+            :~  ['list' (enjs-list-recs recommendations.bespoke)]
+            ==
+              %other
+            %-  pairs
+            :~  ['other' s+'']
+            ==
           ==
-        --
+      ==
+      ++  enjs-list-recs
+        |=  list-recs=[type=?(%other %app %ship %group) =end-item-pointer-list]
+        ^-  json
+        %-  pairs
+        :~  ['type' s+`@t`type.list-recs]
+            ['pointer-list' (enjs-jammed-pointer-list end-item-pointer-list.list-recs)]
+        ==
+      ++  enjs-cur-page-recs
+        |=  cur-page-recs=[type=%list =list-pointer-list]
+        ^-  json
+        %-  pairs
+        :~  ['type' s+`@t`type.cur-page-recs]
+            ['pointer-list' (enjs-jammed-pointer-list list-pointer-list.cur-page-recs)]
+        ==
       --
-    ++  enjs-social
-      |=  =social
+    --
+  ++  enjs-social
+    |=  =social
+    ^-  json
+    |^
+    %-  pairs
+    :~  ['ratings' (enjs-rats ratings.social)]
+        ['comments' (enjs-coms comments.social)]
+        ['reviews' (enjs-revs reviews.social)]
+    ==
+    ++  enjs-rats
+      |=  =ratings
       ^-  json
       |^
-      %-  pairs
-      :~  ['ratings' (enjs-rats ratings.social.item)]
-          ['comments' (enjs-coms comments.social.item)]
-          ['reviews' (enjs-revs reviews.social.item)]
-      ==
-      ++  enjs-rats
-        |=  =ratings
+      =/  lis  ~(tap by ratings)
+      [%a (turn lis enjs-rat)]
+      ++  enjs-rat
+        |=  [usr-name=@p rating=[rating-num=@ud =updated-at =created-at]]
         ^-  json
-        |^
-        =/  lis  ~(tap by ratings)
-        [%a (turn lis enjs-rat)]
-        ++  enjs-rat
-          |=  [usr-name=@p rating=[rating-num=@ud =updated-at =created-at]]
-          ^-  json
-          %-  pairs
-          :~  ['key' s+`@t`(scot %p usr-name)]
-              ['ship' s+`@t`(scot %p usr-name)]
-              ['rating-num' (numb rating-num.rating)]
-              ['updated-at' s+updated-at.rating]
-              ['created-at' s+created-at.rating]
-          ==
-        --
-      ++  enjs-coms
-        |=  =comments
+        %-  pairs
+        :~  ['key' s+`@t`(scot %p usr-name)]
+            ['ship' s+`@t`(scot %p usr-name)]
+            ['rating-num' (numb rating-num.rating)]
+            ['updated-at' s+updated-at.rating]
+            ['created-at' s+created-at.rating]
+        ==
+      --
+    ++  enjs-coms
+      |=  =comments
+      ^-  json
+      |^
+      =/  lis  ~(tap by comments)
+      [%a (turn `(list [com-key comment])`lis enjs-com)]
+      ++  enjs-com
+        |=  [=com-key =comment]
         ^-  json
-        |^
-        =/  lis  ~(tap by comments)
-        [%a (turn `(list [com-key comment])`lis enjs-com)]
-        ++  enjs-com
-          |=  [=com-key =comment]
-          ^-  json
-          %-  pairs
-          :~  ['key' (enjs-jam-com-key com-key)]
-              ['ship' s+`@t`(scot %p ship.com-key)]
-              ['text' s+text.comment]
-              ['updated-at' s+updated-at.comment]
-              ['created-at' s+created-at.com-key]
-          ==
-        ++  enjs-jam-com-key
-          |=  =com-key
-          ^-  json
-          %-  wall
-          ~[(scow %p ship.com-key) (trip created-at.com-key)]
-        --
-      ++  enjs-revs
-        |=  =reviews
+        %-  pairs
+        :~  ['key' (enjs-jam-com-key com-key)]
+            ['ship' s+`@t`(scot %p ship.com-key)]
+            ['text' s+text.comment]
+            ['updated-at' s+updated-at.comment]
+            ['created-at' s+created-at.com-key]
+        ==
+      ++  enjs-jam-com-key
+        |=  =com-key
         ^-  json
-        |^
-        =/  lis  ~(tap by reviews)
-        [%a (turn lis enjs-rev)]
-        ++  enjs-rev
-          |=  [reviewer=@p =review]
-          ^-  json
-          %-  pairs
-          :~  ['key' s+`@t`(scot %p reviewer)]
-              ['ship' s+`@t`(scot %p reviewer)]
-              ['text' s+text.review]
-              ['hash' s+`@t`(scot %uv hash.review)]
-              ['is-current' b+is-current.review]
-              ['is-safe' b+is-safe.review]
-              ['updated-at' s+updated-at.review]
-              ['created-at' s+created-at.review]
-          ==
-        --
+        %-  wall
+        ~[(scow %p ship.com-key) (trip created-at.com-key)]
+      --
+    ++  enjs-revs
+      |=  =reviews
+      ^-  json
+      |^
+      =/  lis  ~(tap by reviews)
+      [%a (turn lis enjs-rev)]
+      ++  enjs-rev
+        |=  [reviewer=@p =review]
+        ^-  json
+        %-  pairs
+        :~  ['key' s+`@t`(scot %p reviewer)]
+            ['ship' s+`@t`(scot %p reviewer)]
+            ['text' s+text.review]
+            ['hash' s+`@t`(scot %uv hash.review)]
+            ['is-current' b+is-current.review]
+            ['is-safe' b+is-safe.review]
+            ['updated-at' s+updated-at.review]
+            ['created-at' s+created-at.review]
+        ==
       --
     --
   ++  enjs-jammed-pointer-list
