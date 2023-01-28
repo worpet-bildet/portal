@@ -1,43 +1,48 @@
+TO SEED DATA USE FOLLOWING COMMANDS
+=data -build-file /=portal=/sur/portal/data/hoon
+=lib -build-file /=portal=/lib/portal/hoon
+ADD OTHER
+:portal-manager &portal-action [%add our %other *general:data [%other ~]]
+ADD APPS
+:portal-manager &portal-action [%add our %app *general:data [%app '~zod/portal']]
+ADD APPS LIST FROM APPS IN ALL ITEMS
+:portal-manager|make-app-list
+ADD OTHER LIST FROM OTHER ITEMS IN ALL ITEMS
+:portal-manager|make-other-list
+EDIT CUR-PAGE
+:portal-manager|seed-cur-page
+
+
+
+
+
 MARKS
 - curator page duplo nestan u curaor pageu. renameat unutarnjeg u "main" ako trebam zadrzat
-- napravit map iz marka (uz list)
-- actions sethu
+- actions (dejs)
 - popravit marks nakon promjene podataka
 
-ASSERTIONS/SPECIFIC TYPES
--- %app needs
-Num downloads
-Header photo
-Version
-FAQ
-Avg star rating
-Dev info dropdown w/ Link to Dev/org homepage in portal, github, urbit group, desk, website, contact email, address, TOS/privacy
-Tags
-Data permissions
-Similar content
-Markdown compatible descriptions
-
-- how to make bespoke-data consistent with item type?
-
-- list only point to not list/not curator. (maybe say only to app or group)
-- cur page only point to lists
-- how to add a default/bunt value in the data type? (we should add it for color, see where else. where for bespoke?)
-- how to look for e.g. ships. canonical pointer or canonical title?
-
-%curator type za subscribing, su other curs can be recommended
-(samo recommendas curator page)
 
 FIXES AFTER DATA CHANGE
 - gens popravit
 
-ARCH
-- remove extra files which come from base
-
-SCRYS/SUBS
-- all items by ship to FE
+SCRYS/SUBS - vidjet dii ih sve zovem i vidjet kad crashaju
+- scry error kod inita
+- scry- (map cur-page (map list item))
+- sub - item + (list [cur-page list]
 
 VALIDATION!!
 - respond-to-update (subs + validator)
+
+ASSERTIONS/SPECIFIC TYPES
+- how to add a default/bunt value in the data type? (we should add it for color, see where else. where for bespoke?)
+- how to look for e.g. ships(for curators and other things)/groups canonical pointer or canonical title?
+-
+%curator type za subscribing, so other curs can be recommended
+how to recommend other curator pages in lists? will it fuck things up with subs?
+->  better to recommend just curator ship, so that you dont automatically fetch the curator page and everything? (for now)
+
+ARCH
+- remove extra files which come from base
 
 ERROR HANDLING?
  - what happens if scries fail? (look where they are all used)
@@ -55,31 +60,18 @@ TODO LATER
  - make cards from portal.hoon, and almost dont use any from portal-manager/portal-store explicitly
    or is that less clear? or more clear?
 
-mock data commands:
-=data -build-file /=portal=/sur/portal/data/hoon
-=lib -build-file /=portal=/lib/portal/hoon
 
 =groups-list [%group ~[[%.n ~dilryd-mopreg 'app-store' %group] [%.n ~toptyr-bilder 'random-group' %group] [%.n ~doplyr-harbur 'hacker-house']]]
 
 
-ADD OTHER
-:portal-manager &portal-action [%add our %other *editable-data:data [%other ~]]
-
-ADD APPS
-:portal-manager &portal-action [%add our %app *editable-data:data [%app '~zod/portal']]
-
+::  doesnt work
 ADD MIXED LIST FROM ALL ITEMS (except curator page and validity store)
 :portal-manager|make-all-list
-
-ADD APPS LIST FROM APPS IN ALL ITEMS
-:portal-manager|make-app-list
-
-EDIT CUR-PAGE
-:portal-manager|seed-cur-page
 
 SCRIES
 .^(item:data %gx /=portal-store=/0/~zod/~2023.1.21..21.25.50..88d0/other/item)
 .^(pointer-set:data %gx /=portal-store=/all/pointers/pointer-set)
+.^(nested-all-items:conv:lib %gx /=portal-store=/all/nested/nested-all-items)
 
 
 mock item:

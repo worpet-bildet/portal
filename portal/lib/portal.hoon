@@ -1,5 +1,5 @@
 /-  *portal-data, *portal-update
-/+  sig
+/+  sig, mip
 |%
 +$  card  card:agent:gall
 ::
@@ -22,6 +22,43 @@
         +>-.path
         +>+<.path
   ::
+  ::  find all cur pages
+  ::  for each,create a map with lists
+  ::  for each list, create a map with list of end items
+  ++  all-items-to-nested
+    |=  [our=ship now=time]
+    ^-  nested-all-items
+    ::=/  all-items  (get-all-items:scry our now) (ovo crasha? mozda kad je pije inita?)
+    =/  pointer-set  (get-all-pointers:scry our now)
+    =/  cur-page-pointer-list  (skim-types:pointers ~(tap in pointer-set) ~[%curator-page])
+
+    ::  (map cur-pointer cur-item)
+    =/  cur-map  (malt (turn cur-page-pointer-list |=(=pointer [pointer (get-item:scry our now pointer)])))
+
+    ::  (map cur-pointer [cur-item (map liss-pointer lis-item)])
+    =/  cur-lis-map  (~(run by cur-map) |=(=item (list-item-to-map our now item)))
+    ::
+    ::  (map cur-pointer [cur-item (map liss-pointer [lis-item (map end-pointer end-item)])])
+    =/  cur-lis-end-map  (~(run by cur-lis-map) |=(val=[=item (map pointer item)] (inner-maps-transform our now val)))
+
+    cur-lis-end-map
+  ::
+  ++  inner-maps-transform
+    |=  [our=ship now=time val=[=item mapp=(map pointer item)]]
+    ^-  [^item (map pointer [^item (map pointer item)])]
+    [item.val (~(run by mapp.val) |=(=item (list-item-to-map our now item)))]
+  ::
+  ++  list-item-to-map
+    |=  [our=ship now=time =item]
+    ^-  [^item (map pointer ^item)]
+    ?+    -.bespoke.data.item    !!
+        %curator-page
+      =/  lists-map  (malt (turn list-pointer-list.recommendations.bespoke.data.item |=(=pointer [pointer (get-item:scry our now pointer)])))
+      [item lists-map]
+        %list
+      =/  items-map  (malt (turn end-item-pointer-list.recommendations.bespoke.data.item |=(=pointer [pointer (get-item:scry our now pointer)])))
+      [item items-map]
+    ==
   --
 ::
 ++  scry
@@ -32,6 +69,13 @@
     ^-  item
     =/  path  (weld (weld /(scot %p our)/portal-store/(scot %da now) (pointer-to-sub-path:conv pointer)) /item)
     .^(item %gx path)
+  ::
+  ::  gets all-items
+  ++  get-all-items
+    |=  [our=ship now=time]
+    ^-  all-items
+    =/  path  /(scot %p our)/portal-store/(scot %da now)/all/items/all-items
+    .^(all-items %gx path)
   ::
   ::  gets all pointers in local all-items
   ++  get-all-pointers
@@ -168,10 +212,10 @@
       ::  and also on input confirm that all pointers are of type list
       ::
       ::  filter out %.n pointers
-      =/  filtered-list  (skip-cen-no:pointers pointer-list.recommendations.bespoke.data.item)
+      ::=/  filtered-list  (skip-cen-no:pointers pointer-list.recommendations.bespoke.data.item)
       ::
       ::  filter out pointers already subbed to
-      =/  filtered-set  (set-difference:pointers (silt filtered-list) (get-all-pointers:scry our now))
+      =/  filtered-set  (set-difference:pointers (silt list-pointer-list.recommendations.bespoke.data.item) (get-all-pointers:scry our now))
       ::
       ::  it can point to %curator-page, the only problem is if the number of curator pages severely escalates
       ::  make sure that you can have only one curator page for now (e.g. no action to create a curator page except the init one)
@@ -189,7 +233,7 @@
     ?+    -.bespoke.data.item    !!
         %list
       ::  filter out %.n pointers
-      =/  filtered-list  (skip-cen-no:pointers pointer-list.recommendations.bespoke.data.item)
+      =/  filtered-list  (skip-cen-no:pointers end-item-pointer-list.recommendations.bespoke.data.item)
       ::
       ::  filtered-recommendations excludes pointers to lists
       =/  filtered-list  (skip-types:pointers filtered-list ~[%list])
