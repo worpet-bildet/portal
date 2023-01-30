@@ -9,7 +9,7 @@
 +$  type  ?(%app %curator-page %validity-store %list %group %ship %other @tas)
 ::
 ::  id of an item
-+$  id  [p=@p q=@t r=type]
++$  id  [p=@p q=type r=@t]
 ::
 ::  unique pointer to an item in whole portal namespace
 ::  if points-to-item is %.n, then it points to something outside of portal
@@ -101,9 +101,13 @@
       [%validity-store =validity-records]
   ==
 ::
-+$  list-pointer-list       (list pointer=[points-to-item=%.y id=[p=@p q=@t r=%list]])
-+$  end-item-pointer-list   (list pointer=[points-to-item=?(%.y %.n) id=[p=@p q=@t r=?(%other %app %group %ship)]])
++$  list-pointer-list       (list pointer=[points-to-item=%.y id=[p=@p q=%list r=@t]])
++$  end-item-pointer-list   (list pointer=[points-to-item=?(%.y %.n) id=[p=@p q=?(%other %app %group %ship) r=@t]])
 ::
++$  recommendations
+  $%  [type=%list =list-pointer-list]
+      [type=?(%other %app %group %ship) =end-item-pointer-list]
+  ==
 ::  recommendations not used currently
 ::  type defines the type of where pointers point to
 :: +$  recommendations
@@ -163,8 +167,8 @@
 +$  check-date  @da
 +$  validation-result  [validity-checker=@t result=?(%.y %.n) reason=@t]
 ::
-+$  validation-time-map  ((mop check-date validation-result) lth)
-++  valid-mop  ((on check-date validation-result) lth)
++$  validation-time-map  ((mop check-date validation-result) gth)
+++  valid-mop  ((on check-date validation-result) gth)
 ::
 +$  validity-records  (map pointer validation-time-map)
 ::

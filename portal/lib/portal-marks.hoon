@@ -1,17 +1,11 @@
-/-  *portal-data
-/+  portal, docket, mip
+/-  *portal-data, *portal-action
+/+  *portal, docket, mip
 |%
+::  TODO  fix pointer fix, p q r, type on q
+::  do fixes for seth
 ++  enjs
   =,  enjs:format
   |%
-
-
-
-  :: ++  enjs-pointer-item-pair
-  ::   |=  [=item]
-  ::   ^-  json
-  ::   %-  frond
-  ::   [+:(enjs-jam-pointer [%.y id.meta-data.item]) (enjs-item item)]
   ++  enjs-nested-all-items
     |=  =nested-all-items
     ^-  json
@@ -24,8 +18,8 @@
     |=  =cur-obj
     ^-  json
     %-  pairs
-    :~  ['cur-item' (enjs-item item.cur-obj)]
-        ['list-map' (enjs-list-map lis-map.cur-obj)]
+    :~  ['item' (enjs-item item.cur-obj)]
+        ['map' (enjs-list-map lis-map.cur-obj)]
     ==
   ++  enjs-list-map
     |=  =lis-map
@@ -39,8 +33,8 @@
     |=  =lis-obj
     ^-  json
     %-  pairs
-    :~  ['list-item' (enjs-item item.lis-obj)]
-        ['end-map' (enjs-end-map end-map.lis-obj)]
+    :~  ['item' (enjs-item item.lis-obj)]
+        ['map' (enjs-end-map end-map.lis-obj)]
     ==
   ++  enjs-end-map
     |=  =end-map
@@ -101,7 +95,7 @@
           ['link' s+link.general]
           ['description' s+description.general]
           ['tags' (enjs-cord-list tags.general)]
-          ['properties N/A' s+'']
+          ::['properties' o+properties.general]
           ['pictures' (enjs-cord-list pictures.general)]
           ['image' s+image.general]
           ['color' s+color.general]
@@ -252,8 +246,7 @@
   ++  enjs-jam-pointer
     |=  =pointer
     ^-  json
-    %-  wall
-    ~[?~(points-to-item.pointer "0" "1") (scow %p p.id.pointer) (trip q.id.pointer) (trip r.id.pointer)]
+    s+(spat (pointer-to-sub-path:conv pointer))
   ++  enjs-pointer
     |=  =pointer
     ^-  json
@@ -266,8 +259,8 @@
     ^-  json
     %-  pairs
     :~  ['ship' s+`@t`(scot %p p.id)]
-        ['time' s+q.id]
-        ['type' s+`@t`r.id]
+        ['type' s+`@t`q.id]
+        ['time' s+r.id]
     ==
     ::
 
@@ -292,115 +285,111 @@
   --
 ::
 ::
-:: ++  dejs
-::   =,  dejs:format
-::   |%
-::   ++  dejs-dev-action
-::     |=  jon=json
-::     ^-  dev-action
-::     |^
-::     %.  jon
-::     %-  of
-::     :~  [%add (ot ~[app-name+so dev-input+dev-input])]
-::         [%edit (ot ~[app-name+so dev-input+dev-input])]
-::         [%del (ot ~[app-name+so])]
-::     ==
-::     ++  dev-input
-::       |=  jon=json
-::       ^-  ^dev-input
-::       %.  jon
-::       %-  ot
-::       :~  description+so
-::           keywords+(ar so)
-::           screenshots+(ar so)
-::           dst-desk+so
-::       ==
-::     --
-::   ++  dejs-cur-action
-::     |=  jon=json
-::     ^-  cur-action
-::     %.  jon
-::     %-  of
-::     :~  [%sub (ot ~[dev-name+dejs-ship])]
-::         [%unsub (ot ~[dev-name+dejs-ship])]
-::         [%cur-info (ot ~[cur-info+dejs-cur-info])]
-::         [%select (ot ~[key-list+dejs-key-list cat-map+dejs-cat-map])]
-::         [%cats (ot ~[cat-set+dejs-cat-set])]
-::     ==
-::   ++  dejs-usr-action
-::     |=  jon=json
-::     ^-  usr-action
-::     %.  jon
-::     %-  of
-::     :~  [%sub (ot ~[cur-name+dejs-ship])]
-::         [%unsub (ot ~[cur-name+dejs-ship])]
-::     ==
-::   ++  dejs-visit-dev-action
-::     |=  jon=json
-::     ^-  visit-dev-action
-::     %.  jon
-::     %-  of
-::     :~  [%rate (ot ~[key+dejs-key rating-num+ni])]
-::         [%unrate (ot ~[key+dejs-key])]
-::         [%add-com (ot ~[key+dejs-key text+so])]
-::         [%edit-com (ot ~[key+dejs-key created-at-str+so text+so])]
-::         [%del-com (ot ~[key+dejs-key created-at-str+so])]
-::         [%put-rev (ot ~[key+dejs-key text+so hash+dejs-hash is-safe+bo])]
-::         [%del-rev (ot ~[key+dejs-key])]
-::     ==
-::   ::
-::   ::  helper dejs arms
-::   ++  dejs-cur-info
-::     |=  jon=json
-::     ^-  cur-info
-::     %.  jon
-::     %-  ot
-::     :~  cur-title+so
-::         cur-image+so
-::         cur-intro+so
-::     ==
-::   ++  dejs-key-list
-::     |=  jon=json
-::     ^-  key-list
-::     %.  jon
-::     (ar dejs-key)
-::   ++  dejs-cat-map
-::     |=  jon=json
-::     ^-  cat-map
-::     |^
-::     (malt ((ar dejs-key-cat) jon))
-::     ++  dejs-key-cat
-::       |=  jon=json
-::       ^-  [=key =category]
-::       %.  jon
-::       %-  ot
-::       :~  key+dejs-key
-::           category+so
-::       ==
-::     --
-::   ++  dejs-cat-set
-::     |=  jon=json
-::     ^-  cat-set
-::     %-  silt
-::     %.  jon
-::     (ar so)
-::   ::
-::   ::  helper dejs arms
-::   ++  dejs-key
-::     |=  jon=json
-::     ^-  key
-::     %.  jon
-::     %-  ot
-::     :~  dev-name+dejs-ship
-::         app-name+so
-::     ==
-::   ++  dejs-ship
-::     |=  jon=json
-::     ^-  @p
-::     ((se %p) jon)
-::   ++  dejs-hash
-::     |=  jon=json
-::     ^-  @uv
-::     `@uv`(slav %uv (so jon))
-::   --
+++  dejs
+  =,  dejs:format
+  |%
+  ++  dejs-action
+    |=  jon=json
+    ^-  action
+    %.  jon
+    %-  of
+    :~  [%add (ot ~[p+dejs-ship r+so general+dejs-general bespoke-input+dejs-bespoke-input])]
+        [%edit (ot ~[id+dejs-id general+dejs-general bespoke-input+dejs-bespoke-input])]
+        [%sub (ot ~[pointer+dejs-pointer])]
+        [%del (ot ~[pointer+dejs-pointer])]
+        [%comment (ot ~[pointer+dejs-pointer text+so])]
+        [%edit-comment (ot ~[pointer+dejs-pointer created-at+so text+so])]
+        [%del-comment (ot ~[pointer+dejs-pointer created-at+so])]
+        [%rate (ot ~[pointer+dejs-pointer rating-num+ni])]
+        [%unrate (ot ~[pointer+dejs-pointer])]
+        [%review (ot ~[pointer+dejs-pointer text+so hash+dejs-hash is-safe+bo])]
+        [%del-review (ot ~[pointer+dejs-pointer])]
+    ==
+  ++  dejs-general
+    |=  jon=json
+    ^-  general
+    %.  jon
+    %-  ot
+    :~  title+so
+        link+so
+        description+so
+        tags+(ar so)
+        properties+(om so)
+        pictures+(ar so)
+        image+so
+        color+so
+    ==
+  ++  dejs-bespoke-input
+    |=  jon=json
+    %-  bespoke-input
+    %.  jon
+    %-  of
+    :~  [%curator-page (ot ~[recommendations+dejs-recommendations])]
+        [%list (ot ~[recommendations+dejs-recommendations])]
+        [%app (ot ~[dist-desk+so])]
+        [%other so]
+    ==
+  ++  dejs-recommendations
+    |=  jon=json
+    %-  recommendations
+    %.  jon
+    %-  of
+    :~  [%list (ot ~[list-pointer-list+dejs-pointer-list])]
+        [%other (ot ~[end-item-pointer-list+dejs-pointer-list])]
+        [%app (ot ~[end-item-pointer-list+dejs-pointer-list])]
+        [%group (ot ~[end-item-pointer-list+dejs-pointer-list])]
+        [%ship (ot ~[end-item-pointer-list+dejs-pointer-list])]
+    ==
+  ++  dejs-pointer-list
+    |=  jon=json
+    ^-  pointer-list
+    %.  jon
+    (ar dejs-pointer)
+  ++  dejs-pointer
+    |=  jon=json
+    ^-  pointer
+    %.  jon
+    %-  ot
+    :~  points-to-item+bo
+        id+dejs-id
+    ==
+  ++  dejs-id
+    |=  jon=json
+    ^-  id
+    %.  jon
+    %-  ot
+    :~  p+dejs-ship
+        q+so
+        r+so
+    ==
+  ++  dejs-ship
+    |=  jon=json
+    ^-  @p
+    ((se %p) jon)
+  ++  dejs-hash
+    |=  jon=json
+    ^-  @uv
+    `@uv`(slav %uv (so jon))
+  :: ++  dejs-cat-map
+  ::   |=  jon=json
+  ::   ^-  cat-map
+  ::   |^
+  ::   (malt ((ar dejs-key-cat) jon))
+  ::   ++  dejs-key-cat
+  ::     |=  jon=json
+  ::     ^-  [=key =category]
+  ::     %.  jon
+  ::     %-  ot
+  ::     :~  key+dejs-key
+  ::         category+so
+  ::     ==
+  ::   --
+  :: ++  dejs-cat-set
+  ::   |=  jon=json
+  ::   ^-  cat-set
+  ::   %-  silt
+  ::   %.  jon
+  ::   (ar so)
+  ::
+  --
 --

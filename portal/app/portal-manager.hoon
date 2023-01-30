@@ -23,8 +23,8 @@
   =/  validity-store-upd  (default-validity-store:make-update:portal-manager our.bowl now.bowl)
   :_  this
   :~
-    [%pass /add-cur %agent [our.bowl %portal-store] %poke %portal-update !>(cur-page-upd)]
     [%pass /add-valid %agent [our.bowl %portal-store] %poke %portal-update !>(validity-store-upd)]
+    [%pass /add-cur %agent [our.bowl %portal-store] %poke %portal-update !>(cur-page-upd)]
   ==
 ::
 ++  on-save  !>(state)
@@ -102,7 +102,7 @@
       =/  hash  .^(@uvI %cz /(scot %p our.bowl)/(scot %tas desk-name.act)/(scot %da now.bowl))
       =/  docket  .^(docket %cx /(scot %p our.bowl)/(scot %tas desk-name.act)/(scot %da now.bowl)/desk/docket-0)
       :_  this
-      [%pass /send-send-app-data %agent [p.id.pointer.act %portal-manager] %poke %portal-action !>([%send-app-data pointer.act hash docket])]~
+      [%pass /send-send-app-data %agent [p.id.pointer.act %portal-manager] %poke %portal-message !>([%send-app-data pointer.act hash docket])]~
 
     ==
   ::
@@ -149,7 +149,7 @@
       [%pass /del-review %agent [our.bowl %portal-store] %poke %portal-update !>(upd)]~
     ::
     ::  should assert/specify that can only receive signature from specific ship, as defined in link for %app items
-    ::  for other types a different definition which ship can send an outside-sigž
+    ::  for other types a different definition which ship can send an outside-sig
     ::  TODO look thru ++sig from app-store.hoon
         %sign-app
       =/  upd  (sign-app:make-update:portal-manager our.bowl src.bowl now.bowl msg)

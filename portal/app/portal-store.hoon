@@ -130,20 +130,40 @@
 ++  on-peek
   |=  =path
   ^-  (unit (unit cage))
-  ::  maybe add all-paths scry?
-  ?:   =(path [%x %all %items ~])
+  ::  maybe add all-item-paths scry?
+  ?+    path    !!
+  ::
+      [%x %all %items ~]
     ``all-items+!>(all-items)
-  ?:  =(path [%x %all %pointers ~])
+  ::
+      [%x %all %pointers ~]
     ``pointer-set+!>(~(key by all-items))
-  ?:  =(path [%x %all %nested ~])
+  ::
+      [%x %all %nested ~]
     ``nested-all-items+!>((all-items-to-nested:conv our.bowl now.bowl))
   ::
-  ::  jel mogu pattern match, e.g. [%x %0 *]?
-  =/  pointer  (sub-path-to-pointer:conv +.path)
-  =/  maybe-item  (~(get by all-items) pointer)
-  ?~  maybe-item  ``noun+!>(~)
-  ``item+!>(u.maybe-item)
-  ::==
+      [%x %valid %latest @ @ @ @ ~]
+    ::  TODO  make this into ++get-latest lib arm for lib
+    =/  pointer  (sub-path-to-pointer:conv t.t.t.path)
+    =/  validity-store  (~(gut by all-items) [%.y our.bowl %validity-store '~2000.1.1'] ~)
+    ?~  validity-store  !!
+    ?+    -.bespoke.data.validity-store    !!
+        %validity-store
+      =/  validity-records  validity-records.bespoke.data.validity-store
+      =/  validation-time-map  (~(gut by validity-records) pointer *validation-time-map ~)
+      ?~  validation-time-map  !!
+      =/  maybe-valid  (pry:valid-mop (^validation-time-map validation-time-map))
+      ?~  maybe-valid  ``noun+!>(~)
+      =/  maybe-valid  `validation-result`val.u.maybe-valid
+      ``noun+!>(result.maybe-valid)
+    ==
+  ::
+      [%x %item @ @ @ @ ~]
+    =/  pointer  (sub-path-to-pointer:conv t.t.path)
+    =/  maybe-item  (~(get by all-items) pointer)
+    ?~  maybe-item  ``noun+!>(~)
+    ``item+!>(u.maybe-item)
+  ==
   ::
 ++  on-fail   on-fail:default
 --

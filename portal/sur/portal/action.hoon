@@ -3,7 +3,7 @@
 ::
 +$  action
   $%
-      [%add p=@p r=type =general =bespoke-input]
+      [%add p=@p q=type =general =bespoke-input]
       [%edit =id =general =bespoke-input]
       ::
       [%sub =pointer]
