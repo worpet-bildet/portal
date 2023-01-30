@@ -1,4 +1,4 @@
-/-  *portal-data, *portal-update
+/-  *portal-data, *portal-update, *portal-action
 /+  sig, mip
 |%
 +$  card  card:agent:gall
@@ -67,7 +67,7 @@
   ++  get-item
     |=  [our=ship now=time =pointer]
     ^-  item
-    =/  path  (weld (weld /(scot %p our)/portal-store/(scot %da now) (pointer-to-sub-path:conv pointer)) /item)
+    =/  path  (weld (weld /(scot %p our)/portal-store/(scot %da now)/item (pointer-to-sub-path:conv pointer)) /item)
     .^(item %gx path)
   ::
   ::  gets all-items
@@ -104,12 +104,12 @@
   ++  skip-types
     |=  [=pointer-list types=(list type)]
     ^-  ^pointer-list
-    (skip pointer-list |=([=pointer] ?~((find [r.id.pointer]~ types) %.n %.y)))
+    (skip pointer-list |=([=pointer] ?~((find [q.id.pointer]~ types) %.n %.y)))
   ::
   ++  skim-types
     |=  [=pointer-list types=(list type)]
     ^-  ^pointer-list
-    (skim pointer-list |=([=pointer] ?~((find [r.id.pointer]~ types) %.n %.y)))
+    (skim pointer-list |=([=pointer] ?~((find [q.id.pointer]~ types) %.n %.y)))
   ::
   --
 
@@ -186,16 +186,16 @@
   ++  del-item
     |=  [src=ship our=ship =all-items upd=[%del =pointer]]
     ^-  [?(%changed %unchanged) ^all-items]
-    ~&  "%portal: deleting {(trip q.id.pointer.upd)}"
+    ~&  "%portal: deleting {(trip r.id.pointer.upd)}"
     ?.  (~(has by all-items) pointer.upd)
-      ~&  "%portal: item {(trip q.id.pointer.upd)} does not exist"
+      ~&  "%portal: item {(trip r.id.pointer.upd)} does not exist"
       [%unchanged all-items]
     [%changed (~(del by all-items) pointer.upd)]
   ::
   ::  for receiving items, from local %portal-manager or foreign %portal-store
   ++  put-item
     |=  [our=ship =all-items upd=[%put =item]]
-    ~&  "%portal: putting {(trip q.id.meta-data.item.upd)}"
+    ~&  "%portal: putting {(trip r.id.meta-data.item.upd)}"
     =/  pointer  `^pointer`[%.y id.meta-data.item.upd]
     (~(put by all-items) pointer item.upd)
   --
@@ -205,7 +205,7 @@
   ++  sub-to-cur-page-pointers
     |=  [our=ship now=time =item]
     ^-  (list card)
-    ?>  =(r.id.meta-data.item %curator-page)
+    ?>  =(q.id.meta-data.item %curator-page)
     ?+    -.bespoke.data.item    !!
         %curator-page
       ::  ?>  =(%list -.recommendations.bespoke.data.item) - assert this here or somewhere else (likely on input)
@@ -229,7 +229,7 @@
   ++  sub-to-list-pointers
     |=  [our=ship now=time =item]
     ^-  (list card)
-    ?>  =(r.id.meta-data.item %list)
+    ?>  =(q.id.meta-data.item %list)
     ?+    -.bespoke.data.item    !!
         %list
       ::  filter out %.n pointers
@@ -258,10 +258,6 @@
     ^-  card
     [%pass /sub %agent [our %portal-manager] %poke %portal-action !>([%sub pointer])]
   ::
-  ++  item-to-put-card
-    |=  [our=ship =item]
-    ^-  card
-    [%pass /put %agent [our %portal-manager] %poke %portal-action !>([%put item])]
   ::
   --
 ::
@@ -270,7 +266,7 @@
   |%
   ::
   ++  bespoke-write
-    |=  [=bespoke-input]
+    |=  [=bespoke-input act=?([%add ~] [%edit =item])]
     ^-  bespoke
     ?-    -.bespoke-input
         %other
@@ -280,7 +276,16 @@
         %list
       bespoke-input
         %app
-      [%app dist-desk.bespoke-input *signature 0v0 *docket]
+      ?-    -.act
+          %add
+        [%app dist-desk.bespoke-input *signature 0v0 *docket]
+          %edit
+        ?+    -.bespoke.data.item.act    !!  ::  this really needs to be done smarter (the whole type system)
+           %app                              ::  I shouldn't need to confirm things twice. (maybe better sur?)
+        bespoke.data.item.act(dist-desk dist-desk.bespoke.data.item.act)
+        ==
+      ==
+
         %validity-store
       bespoke-input
     ==
@@ -294,8 +299,10 @@
     ++  put
       |=  [our=ship now=time upd=[%put =item]]
       ^-  (list card)
+      ?:  =(q.id.meta-data.item.upd %validity-store)
+        ~
       %+  weld
-        ?+    r.id.meta-data.item.upd    ~
+        ?+    q.id.meta-data.item.upd    ~
             %curator-page
           (sub-to-cur-page-pointers:cards our now item.upd)
         ::
@@ -336,14 +343,14 @@
     ::  these are not the right places to assert -.bespoke correspond to type.id
     ::  if =(%.y default), created-at becomes '~2000.1.1'
     ++  add
-      |=  [our=ship src=ship now=time default=?(%.y %.n) act=[%add p=@p r=type =general =bespoke-input]]
+      |=  [our=ship src=ship now=time default=?(%.y %.n) act=[%add p=@p q=type =general =bespoke-input]]
       ^-  update
       ?>  =(our src)
       ?>  =(p.act our)
-      ?>  =(r.act -.bespoke-input.act)
-      =/  data  [general.act (bespoke-write bespoke-input.act)]
+      ?>  =(q.act -.bespoke-input.act)
+      =/  data  [general.act (bespoke-write bespoke-input.act [%add ~])]
       =/  meta-data
-        :*  id=[p=p.act q=?:(=(default %.y) '~2000.1.1' `@t`(scot %da now)) r=r.act]
+        :*  id=[p=p.act q=q.act r=?:(=(default %.y) '~2000.1.1' `@t`(scot %da now))]
             updated-at='~2000.1.1'
             permissions=~[our]
             reach=[%public blacklist=~]
@@ -358,9 +365,9 @@
       ^-  update
       ?>  =(our src)
       ?>  =(p.id.act our)
-      ?>  =(r.id.act -.bespoke-input.act)
-      =/  data  [general.act (bespoke-write bespoke-input.act)]
+      ?>  =(q.id.act -.bespoke-input.act)
       =/  item  `item`(get-item:scry our now [%.y id.act])
+      =/  data  [general.act (bespoke-write bespoke-input.act [%edit item])]
       =/  item
         %=  item
           updated-at.meta-data  `@t`(scot %da now)
@@ -457,7 +464,7 @@
       ::  what if item doesnt exist?
       =/  item  `item`(get-item:scry our now pointer.msg)
       ?>  ?=(signature sig.msg)
-      ?>  =(r.id.meta-data.item %app)
+      ?>  =(q.id.meta-data.item %app)
       ?+    -.bespoke.data.item    !!
           %app
         ?>  =(src -:(need (parse-dist-desk:misc dist-desk.bespoke.data.item)))
@@ -473,11 +480,10 @@
       =/  item  `item`(get-item:scry our now pointer.act)
       ?<  ?=(@tas data.act)
       ::  ?=([@uv docket] data.act)
-      =/  bespoke  bespoke.data.item
-      ?+    -.bespoke   !!
+      ?+    -.bespoke.data.item   !!
           %app
-        =/  bespoke  bespoke(desk-hash desk-hash.data.act)
-        =/  bespoke  bespoke(docket docket.data.act)
+        ?>  =(src -:(need (parse-dist-desk:misc dist-desk.bespoke.data.item)))
+        =/  bespoke  bespoke.data.item(desk-hash desk-hash.data.act, docket docket.data.act)
         [%put item(bespoke.data bespoke)]
       ==
     --
@@ -539,19 +545,20 @@
   ++  default-v1
     |=  [our=ship now=time =item]
     ^-  (list card)
-    =/  validity-store  `^item`(get-item:scry our now [%.y our '~2000.1.1' %validity-store])
+    =/  pointer  `pointer`[%.y our %validity-store '~2000.1.1']
+    =/  validity-store  `^item`(get-item:scry our now pointer)
     ?+    -.bespoke.data.validity-store    ~
         %validity-store
-      =/  validity-records  validity-records.bespoke.data.validity-store
-      =/  validation-by-time  (~(gut by validity-records) [%.y id.meta-data.item] ~)
-      ?~  validation-by-time  ~
       =/  validation-result  ['default-v1' (new-item our now [%.y id.meta-data.item] item) 'default']
-      =/  validation-by-time  (put:valid-mop validation-by-time now validation-result)
-      =/  validity-records  (~(put by validity-records) [%.y id.meta-data.item] validation-by-time)
+      =/  validity-records  validity-records.bespoke.data.validity-store
+      =/  validation-time-map  (~(gut by validity-records) [%.y id.meta-data.item] *validation-time-map)
+      =/  validation-time-map  (put:valid-mop validation-time-map now validation-result)
+      =/  validity-records  (~(put by validity-records) [%.y id.meta-data.item] validation-time-map)
       :: TODO bolji nacin za handleat typeove da nemoram svugdje ?+
       ::  mozda izvuc sve ?+  na jedno mjesto, i za svaki type definirat sve funkcije koje se onda nestaju okolo
-      ~[(item-to-put-card:cards our validity-store(validity-records.bespoke.data validity-records))]
-      ::
+      =/  edit-action  `action`[%edit id.pointer general.data.item [%validity-store validity-records]]
+      [%pass /edit %agent [our %portal-manager] %poke %portal-action !>(edit-action)]~
+
     ==
 
   ::
