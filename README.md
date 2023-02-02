@@ -27,6 +27,12 @@ Download the zip file from github, and extract it to your fake ship. Delete the 
 |install our %portal
 ```
 
+on nuke
+
+```
+|rein %portal [& %portal-manager]
+```
+
 Now %app-store has been installed on one fake ship. To see more clearly how it works, you can install it on multiple ships and assume different roles (Distributor, Developer, Curator, User) for each ship.
 
 ### How it works

@@ -1,5 +1,5 @@
 export const urbitConfig = {
   desk: "portal",
-  path: "/nested-all-items",
+  path: "/front-end-update",
   agent: "portal-store",
 };
