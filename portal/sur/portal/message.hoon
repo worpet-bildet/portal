@@ -2,15 +2,15 @@
 |%
 +$  message
   $%
-      [%comment =pointer text=@t]
-      [%edit-comment =pointer =created-at text=@t]
-      [%del-comment =pointer =created-at]
-      [%rate =pointer rating-num=@ud]
-      [%unrate =pointer]
-      [%review =pointer text=@t hash=@uv is-safe=?]
-      [%del-review =pointer]
+      [%comment =key text=@t]
+      [%edit-comment =key =created-at text=@t]
+      [%del-comment =key =created-at]
+      [%rate =key rating-num=@ud]
+      [%unrate =key]
+      [%review =key text=@t hash=@uv is-safe=?]
+      [%del-review =key]
       ::
-      [%sign-app =pointer =signature]
-      [%send-app-data =pointer data=[desk-hash=@uv =docket]]
+      [%sign-app =key =signature]
+      [%send-app-data =key data=[desk-hash=@uv =docket]]
   ==
 --

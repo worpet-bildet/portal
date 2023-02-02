@@ -6,33 +6,47 @@
 ::  Basic Outline
 ::
 ::  item types
-+$  type  ?(%app %curator-page %validity-store %list %group %ship %other @tas)
++$  type
+  $%  path
+      [%nonitem ~]
+        [%nonitem %group ~]
+        [%nonitem %ship ~]
+    ::
+      [%enditem ~]
+        [%enditem %app ~]
+        [%enditem %other ~]
+    ::
+      [%list ~]
+        [%list %nonitem ~]
+          [%list %nonitem %group ~]
+          [%list %nonitem %ship ~]
+        [%list %enditem ~]
+          [%list %enditem %other ~]
+          [%list %enditem %app ~]
+        [%list %list ~]
+    ::
+      [%validity-store ~]
+  ==
 ::
-::  id of an item
-+$  id  [p=@p q=type r=@t]
-::
-::  unique pointer to an item in whole portal namespace
-::  if points-to-item is %.n, then it points to something outside of portal
-+$  pointer  [points-to-item=? =id]
+::  key of an item
++$  key  [=ship =type =cord]
 ::
 ::  all-items is the state of %portal-store
 ::  only %.y pointers
-+$  all-items  (map pointer item)
++$  all-items  (map key item)
 ::
 ::  delivered to the frontend
-+$  nested-all-items  (map pointer cur-obj)
++$  nested-all-items  (map key cur-obj)
 ::
 +$  cur-obj  [=item =lis-map]
-+$  lis-map  (map pointer lis-obj)
++$  lis-map  (map key lis-obj)
 +$  lis-obj  [=item =end-map]
-+$  end-map  (map pointer item)
++$  end-map  (map key item)
 ::
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
 ::  Item Parts
-::
-::
 ::
 +$  item
   $:  =data
@@ -43,13 +57,12 @@
 ::
 ::
 +$  data
-  $:  =general
-      =bespoke
+  $:  =bespoke
+      =general
   ==
 ::
 +$  meta-data
-  $:  =id
-      =updated-at                      ::  when '~2000.1.1' means it has not been updated
+  $:  =updated-at                      ::  when '~2000.1.1' means it has not been updated
       permissions=(list @p)            ::  not used yet. auto- ~[our.bowl].
       =reach                           ::  not used yet
       outside-sigs=(list signature)    ::  not used yet
@@ -84,39 +97,39 @@
 +$  pictures  (list @t)
 ::
 ::  data specific to the item type
+::  TODO how to branch on path instead of just tag?
 +$  bespoke
-  $%  [%other ~]
-      [%curator-page recommendations=[type=%list =list-pointer-list]]
-      [%list recommendations=[type=?(%other %app %group %ship) =end-item-pointer-list]]
-      [%app dist-desk=@t sig=signature desk-hash=@uv =docket]
-      [%validity-store =validity-records]
+  $%  [%enditem-other key=[=ship type=[%enditem %other ~] =cord] ~]
+      [%enditem-app key=[=ship type=[%enditem %app ~] =cord] dist-desk=@t sig=signature desk-hash=@uv =docket]
+      [%list-enditem-other key=[=ship type=[%list %enditem %other ~] =cord] =other-key-list]
+      [%list-enditem-app key=[=ship type=[%list %enditem %app ~] =cord] =app-key-list]
+      [%list-nonitem-group key=[=ship type=[%list %nonitem %group ~] =cord] =group-key-list]
+      [%list-nonitem-ship key=[=ship type=[%list %nonitem %ship ~] =cord] =ship-key-list]
+      [%list-list key=[=ship type=[%list %list ~] =cord] =list-key-list]
+      [%validity-store key=[=ship type=[%validity-store ~] =cord] =validity-records]
   ==
 ::
 ::  when inputting bespoke data, you sometimes don't need to input all of it
 +$  bespoke-input
-  $%  [%other ~]
-      [%curator-page recommendations=[type=%list =list-pointer-list]]
-      [%list recommendations=[type=?(%other %app %group %ship) =end-item-pointer-list]]
-      [%app dist-desk=@t]
+  $%  [%enditem-other ~]
+      [%enditem-app dist-desk=@t]
+      [%list-enditem-other =other-key-list]
+      [%list-enditem-app =app-key-list]
+      [%list-nonitem-group =group-key-list]
+      [%list-nonitem-ship =ship-key-list]
+      [%list-list =list-key-list]
       [%validity-store =validity-records]
   ==
 ::
-+$  list-pointer-list       (list pointer=[points-to-item=%.y id=[p=@p q=%list r=@t]])
-+$  end-item-pointer-list   (list pointer=[points-to-item=?(%.y %.n) id=[p=@p q=?(%other %app %group %ship) r=@t]])
++$  list-key-list       (list key=[=ship type=[%list ~] =cord])
++$  app-key-list        (list key=[=ship type=[%enditem %app ~] =cord])
++$  other-key-list      (list key=[=ship type=[%enditem %other ~] =cord])
++$  group-key-list      (list key=[=ship type=[%nonitem %group ~] =cord])
++$  ship-key-list       (list key=[=ship type=[%nonitem %ship ~] =cord])
 ::
-+$  recommendations
-  $%  [type=%list =list-pointer-list]
-      [type=?(%other %app %group %ship) =end-item-pointer-list]
-  ==
-::  recommendations not used currently
-::  type defines the type of where pointers point to
-:: +$  recommendations
-::   $%  [type =pointer-list]
-::       [%mixed =pointer-list]
-::   ==
 ::
-+$  pointer-list  (list pointer)
-+$  pointer-set  (set pointer)
++$  key-list  (list key)
++$  key-set  (set key)
 ::
 ::
 ::
@@ -170,7 +183,7 @@
 +$  validation-time-map  ((mop check-date validation-result) gth)
 ++  valid-mop  ((on check-date validation-result) gth)
 ::
-+$  validity-records  (map pointer validation-time-map)
++$  validity-records  (map key validation-time-map)
 ::
 ::
 ::
@@ -182,8 +195,8 @@
 ::
 +$  sig-input
   $%  [%item =data =meta-data =social]     ::  for signing the item each time it is edited
-      [%id =id]                            ::  for signing item by somebody from the outside (not in use yet)
-      [%app =id desk-name=@tas]            ::  for signing apps by the distributor ship
+      [%key =key]                            ::  for signing item by somebody from the outside (not in use yet)
+      [%app =key desk-name=@tas]            ::  for signing apps by the distributor ship
   ==
 ::
 ::

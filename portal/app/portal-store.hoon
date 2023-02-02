@@ -1,4 +1,4 @@
-/-  *portal-data, *portal-update
+/-  *portal-data, *portal-update, *portal-front-end-update
 /+  default-agent, dbug, *portal, *agentio
 |%
 +$  versioned-state
@@ -41,25 +41,25 @@
       :_  this(all-items new)
       :~
         [%pass /put %agent [our.bowl %portal-manager] %poke %portal-update !>(upd)]
-        [(fact [%portal-update !>(upd)] [(pointer-to-sub-path:conv [%.y id.meta-data.item.upd])]~)]
+        [(fact [%portal-update !>(upd)] [(key-to-sub-path:conv key.upd)]~)]
       ==
     ::
         %del
       =^  changed  all-items  (del-item:portal-store src.bowl our.bowl all-items upd)
-      ~&  "%portal-store: unsubscribing from {(pointer-to-sub-path:conv pointer.upd)}"
+      ~&  "%portal-store: unsubscribing from {(key-to-sub-path:conv key.upd)}"
       :_  this
       :~
         [%pass /del %agent [our.bowl %portal-manager] %poke %portal-update !>(upd)]
-        [(fact [%portal-update !>(upd)] [(pointer-to-sub-path:conv pointer.upd)]~)]
-        [%pass (pointer-to-sub-path:conv pointer.upd) %agent [p.id.pointer.upd %portal-store] %leave ~]
+        [(fact [%portal-update !>(upd)] [(key-to-sub-path:conv key.upd)]~)]
+        [%pass (key-to-sub-path:conv key.upd) %agent [ship.key.upd %portal-store] %leave ~]
       ==
     ::
     ::  you can only sub to /0/ pointers
         %sub
-      =/  wire  (pointer-to-sub-path:conv pointer.upd)
+      =/  wire  (key-to-sub-path:conv key.upd)
       ~&  "%portal-store: subscribing to {wire}"
       :_  this
-      [%pass wire %agent [p.id.pointer.upd %portal-store] %watch wire]~
+      [%pass wire %agent [ship.key.upd %portal-store] %watch wire]~
     ::
     ==
   ==
@@ -72,14 +72,15 @@
   ?:  =(path /all-items)
     :_  this
     [%give %fact ~ %portal-all-items !>(`^all-items`all-items)]~
-  ?:  =(path /nested-all-items)
+  ~&  "1"
+  ?:  =(path /front-end-update)
     :_  this
     [%give %fact ~ %portal-nested-all-items !>(`^nested-all-items`(all-items-to-nested:conv our.bowl now.bowl))]~
-  =/  item  (~(gut by all-items) (sub-path-to-pointer:conv path) ~)
+  =/  item  (~(gut by all-items) (sub-path-to-key:conv path) ~)
   :_  this
   ?~  item
     [%give %fact ~ %portal-update !>(`update`[%empty-init ~])]~
-  [%give %fact ~ %portal-update !>(`update`[%put item])]~
+  [%give %fact ~ %portal-update !>(`update`[%put key.bespoke.data.item item])]~
 ::
 ++  on-leave  on-leave:default
 ::
@@ -95,35 +96,38 @@
     `this
   ::
       %kick
-    =/  pointer  (sub-path-to-pointer:conv wire)
+    =/  key  (sub-path-to-key:conv wire)
     ~&  "%portal-store: got kick from {wire}, resubscribing..."
     :_  this
-    [%pass wire %agent [p.id.pointer %portal-store] %watch wire]~
+    [%pass wire %agent [ship.key %portal-store] %watch wire]~
   ::
       %fact
-    =/  pointer  (sub-path-to-pointer:conv wire)
+    =/  key  (sub-path-to-key:conv wire)
     =/  upd  !<(update q.cage.sign)
     ~&  "%portal-store: received update from {wire}"
     ?+    -.upd    `this
         %empty-init
       ~&  "%portal-store: item doesn't exist"
       :_  this
-      :~
-        [%pass /empty-init %agent [our.bowl %portal-manager] %poke %portal-update !>(upd)]
-        [%pass wire %agent [p.id.pointer %portal-store] %leave ~]
-      ==
+      [%pass /empty-init %agent [our.bowl %portal-manager] %poke %portal-update !>(upd)]~
       ::
       ::  basically %init/%add/%edit
         %put
       =/  new  (put-item:portal-store our.bowl all-items upd)
       :_  this(all-items new)
-      [%pass /put %agent [our.bowl %portal-manager] %poke %portal-update !>(upd)]~
+      :~
+      [%pass /put %agent [our.bowl %portal-manager] %poke %portal-update !>(upd)]
+      [%give %fact [/front-end-update]~ %portal-front-end-update !>([%put key.upd])]
+      ==
     ::
     ::  receiving a delete (distinct from unsubbing)
         %del
       =^  changed  all-items  (del-item:portal-store src.bowl our.bowl all-items upd)
       :_  this
-      [%pass /del %agent [our.bowl %portal-manager] %poke %portal-update !>(upd)]~
+      :~
+      [%pass /del %agent [our.bowl %portal-manager] %poke %portal-update !>(upd)]
+      [%give %fact [/front-end-update]~ %portal-front-end-update !>([%del key.upd])]
+      ==
     ==
   ==
 ::
@@ -136,31 +140,20 @@
       [%x %all %items ~]
     ``all-items+!>(all-items)
   ::
-      [%x %all %pointers ~]
-    ``pointer-set+!>(~(key by all-items))
+      [%x %all %keys ~]
+    ``key-set+!>(~(key by all-items))
   ::
       [%x %all %nested ~]
     ``nested-all-items+!>((all-items-to-nested:conv our.bowl now.bowl))
   ::
+  ::  TODO
       [%x %valid %latest @ @ @ @ ~]
-    ::  TODO  make this into ++get-latest lib arm for lib
-    =/  pointer  (sub-path-to-pointer:conv t.t.t.path)
-    =/  validity-store  (~(gut by all-items) [%.y our.bowl %validity-store '~2000.1.1'] ~)
-    ?~  validity-store  !!
-    ?+    -.bespoke.data.validity-store    !!
-        %validity-store
-      =/  validity-records  validity-records.bespoke.data.validity-store
-      =/  validation-time-map  (~(gut by validity-records) pointer *validation-time-map ~)
-      ?~  validation-time-map  !!
-      =/  maybe-valid  (pry:valid-mop (^validation-time-map validation-time-map))
-      ?~  maybe-valid  ``noun+!>(~)
-      =/  maybe-valid  `validation-result`val.u.maybe-valid
-      ``noun+!>(result.maybe-valid)
-    ==
+    =/  key  (sub-path-to-key:conv t.t.t.path)
+    ``noun+!>((get-latest:validator our.bowl now.bowl key))
   ::
-      [%x %item @ @ @ @ ~]
-    =/  pointer  (sub-path-to-pointer:conv t.t.path)
-    =/  maybe-item  (~(get by all-items) pointer)
+      [%x %item *]
+    =/  key  (sub-path-to-key:conv t.t.path)
+    =/  maybe-item  (~(get by all-items) key)
     ?~  maybe-item  ``noun+!>(~)
     ``item+!>(u.maybe-item)
   ==

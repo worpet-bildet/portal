@@ -3,22 +3,24 @@
 ::
 +$  action
   $%
-      [%add p=@p q=type =general =bespoke-input]
-      [%edit =id =general =bespoke-input]
+      [%add =ship =type =general =bespoke-input]
+      [%edit =key =general =bespoke-input]
       ::
-      [%sub =pointer]
-      [%del =pointer]
+      [%sub =key]
+      [%del =key]
       ::
-      [%comment =pointer text=@t]
-      [%edit-comment =pointer =created-at text=@t]
-      [%del-comment =pointer =created-at]
-      [%rate =pointer rating-num=@ud]
-      [%unrate =pointer]
-      [%review =pointer text=@t hash=@uv is-safe=?]
-      [%del-review =pointer]
+      [%comment =key text=@t]
+      [%edit-comment =key =created-at text=@t]
+      [%del-comment =key =created-at]
+      [%rate =key rating-num=@ud]
+      [%unrate =key]
+      [%review =key text=@t hash=@uv is-safe=?]
+      [%del-review =key]
       ::
-      [%sign-app =pointer desk-name=@tas]
-      [%send-app-data =pointer desk-name=@tas]
+      [%sign-app =key desk-name=@tas]
+      [%send-app-data =key desk-name=@tas]
+      ::
+      [%join-group =key]  :: pointer would be: [%.n ~rondev %group 'group-discovery']
   ==
 ::
 ::  %add and %edit contain @p so that in the future they can be generalized
