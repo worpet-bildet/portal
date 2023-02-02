@@ -19,12 +19,20 @@
 ++  on-init
   ^-  (quip card _this)
   =.  state  *state-0
-  =/  cur-page-upd  (default-cur-page:make-update:portal-manager our.bowl now.bowl)
+  =/  groups-list-upd  (default-groups-list:make-update:portal-manager our.bowl now.bowl)
+  =/  apps-list-upd  (default-apps-list:make-update:portal-manager our.bowl now.bowl)
+  =/  ships-list-upd  (default-ships-list:make-update:portal-manager our.bowl now.bowl)
+  =/  other-list-upd  (default-other-list:make-update:portal-manager our.bowl now.bowl)
+  =/  list-list-upd  (default-list-list:make-update:portal-manager our.bowl now.bowl)
   =/  validity-store-upd  (default-validity-store:make-update:portal-manager our.bowl now.bowl)
   :_  this
   :~
     [%pass /add-valid %agent [our.bowl %portal-store] %poke %portal-update !>(validity-store-upd)]
-    [%pass /add-cur %agent [our.bowl %portal-store] %poke %portal-update !>(cur-page-upd)]
+    [%pass /add-groups %agent [our.bowl %portal-store] %poke %portal-update !>(groups-list-upd)]
+    [%pass /add-apps %agent [our.bowl %portal-store] %poke %portal-update !>(apps-list-upd)]
+    [%pass /add-ships %agent [our.bowl %portal-store] %poke %portal-update !>(ships-list-upd)]
+    [%pass /add-others %agent [our.bowl %portal-store] %poke %portal-update !>(other-list-upd)]
+    [%pass /add-cur %agent [our.bowl %portal-store] %poke %portal-update !>(list-list-upd)]
   ==
 ::
 ++  on-save  !>(state)
@@ -67,43 +75,47 @@
 ::  skontat kak da mogu cardove slat iz libraryja, da izgleda ljepse (da ne moram svugdje ?. radit)
         %comment
       :_  this
-      [%pass /comment %agent [p.id.pointer.act %portal-manager] %poke %portal-message !>(act)]~
+      [%pass /comment %agent [ship.key.act %portal-manager] %poke %portal-message !>(act)]~
     ::
         %edit-comment
       :_  this
-      [%pass /edit-comment %agent [p.id.pointer.act %portal-manager] %poke %portal-message !>(act)]~
+      [%pass /edit-comment %agent [ship.key.act %portal-manager] %poke %portal-message !>(act)]~
     ::
         %del-comment
       :_  this
-      [%pass /del-comment %agent [p.id.pointer.act %portal-manager] %poke %portal-message !>(act)]~
+      [%pass /del-comment %agent [ship.key.act %portal-manager] %poke %portal-message !>(act)]~
     ::
         %rate
       :_  this
-      [%pass /rate %agent [p.id.pointer.act %portal-manager] %poke %portal-message !>(act)]~
+      [%pass /rate %agent [ship.key.act %portal-manager] %poke %portal-message !>(act)]~
     ::
         %unrate
       :_  this
-      [%pass /unrate %agent [p.id.pointer.act %portal-manager] %poke %portal-message !>(act)]~
+      [%pass /unrate %agent [ship.key.act %portal-manager] %poke %portal-message !>(act)]~
     ::
         %review
       :_  this
-      [%pass /review %agent [p.id.pointer.act %portal-manager] %poke %portal-message !>(act)]~
+      [%pass /review %agent [ship.key.act %portal-manager] %poke %portal-message !>(act)]~
     ::
         %del-review
       :_  this
-      [%pass /del-review %agent [p.id.pointer.act %portal-manager] %poke %portal-message !>(act)]~
+      [%pass /del-review %agent [ship.key.act %portal-manager] %poke %portal-message !>(act)]~
     ::
         %sign-app
-      =/  msg  [%sign-app pointer.act (sign:sig our.bowl now.bowl [%app id.pointer.act desk-name.act])]
+      =/  msg  [%sign-app key.act (sign:sig our.bowl now.bowl [%app key.act desk-name.act])]
       :_  this
-      [%pass /sign-app %agent [p.id.pointer.act %portal-manager] %poke %portal-message !>(msg)]~
-
+      [%pass /sign-app %agent [ship.key.act %portal-manager] %poke %portal-message !>(msg)]~
+    ::
         %send-app-data
       =/  hash  .^(@uvI %cz /(scot %p our.bowl)/(scot %tas desk-name.act)/(scot %da now.bowl))
       =/  docket  .^(docket %cx /(scot %p our.bowl)/(scot %tas desk-name.act)/(scot %da now.bowl)/desk/docket-0)
       :_  this
-      [%pass /send-send-app-data %agent [p.id.pointer.act %portal-manager] %poke %portal-message !>([%send-app-data pointer.act hash docket])]~
-
+      [%pass /send-send-app-data %agent [ship.key.act %portal-manager] %poke %portal-message !>([%send-app-data key.act hash docket])]~
+    ::
+        %join-group
+      ?>  ?=([%nonitem %group *] type.key.act)
+      :_  this
+      [%pass /group-join %agent [our.bowl %groups] %poke %group-join !>([flag=[ship.key.act `@tas`cord.key.act] join-all=&])]~
     ==
   ::
   ::  eventually should also be able to receive a message which can add/edit an item. with the right perms obviously
@@ -154,14 +166,14 @@
         %sign-app
       =/  upd  (sign-app:make-update:portal-manager our.bowl src.bowl now.bowl msg)
       :_  this
-      [%pass /sign-app %agent [p.id.pointer.msg %portal-store] %poke %portal-update !>(upd)]~
+      [%pass /sign-app %agent [ship.key.msg %portal-store] %poke %portal-update !>(upd)]~
     ::
     :: look thru ++data in app-store.hoon
     ::  needs a bunch of assertions etc. probably try to systematically figure out what needs to go where
         %send-app-data
       =/  upd  (send-app-data:make-update:portal-manager our.bowl src.bowl now.bowl msg)
       :_  this
-      [%pass /send-app-data %agent [p.id.pointer.msg %portal-store] %poke %portal-update !>(upd)]~
+      [%pass /send-app-data %agent [ship.key.msg %portal-store] %poke %portal-update !>(upd)]~
     ==
   ::
     ::  when %portal-store receives an update, sometimes it is necessary to notify portal manager
