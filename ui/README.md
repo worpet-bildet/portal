@@ -4,7 +4,7 @@
 
 ### Fake ship
 
-If you want to contribute on the development, you will need to have installed galleria in your urbit development ship. If you don't have it, please go to **README.md from the app-store** folder.
+If you want to contribute on the development, you will need to have installed portal in your urbit development ship. If you don't have it, please go to **README.md from the app-store** folder.
 
 Boot your fake ship. Make sure that your ship is running on localhost:8080. Otherswise, go to `.env.local` and change `VITE_SHIP_URL` to the actual running port.
 
@@ -17,7 +17,7 @@ Communications between backend and front end are not allowed by default because 
 > +cors-registry
 
 :: Add localhost:3000 to the list of allowed urls
-> |cors-approve 'http://localhost:3000'
+> |cors-approve 'http://localhost:5173'
 ```
 
 ### React Front End
@@ -36,4 +36,5 @@ Inside **/ui** start the react application.
 npm run dev
 ```
 
-The application will be accessible on `localhost:3000/apps/galleria`.
+The application will be accessible on `localhost:3000/apps/portal`.
+    "@urbit/vite-plugin-urbit": "git+https://git@github.com/sethfork/vite-plugin-urbit.git#02bcdf7",
