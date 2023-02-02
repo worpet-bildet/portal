@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import Urbit from "@urbit/http-api";
 import { urbitConfig as config } from "../config";
+import { handleEvent } from "./events";
+import { onInitialLoad as _onInitialLoad, useStore } from "./store";
 
 export const usePortalSubscription = () => {
   const [ship, urbit] = useUrbit();
   const [portalSub, setPortalSub] = useState(null);
+  const onInitialLoad = useStore(_onInitialLoad);
 
   useEffect(() => {
     if (urbit && ship && !portalSub) {
-      const portalSub = getSubscription(urbit);
+      const portalSub = getSubscription(urbit, handleEvent(urbit, { onInitialLoad }));
       setPortalSub(portalSub);
     }
     return () => {

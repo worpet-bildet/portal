@@ -1,24 +1,23 @@
-import Urbit from '@urbit/http-api';
-import 'font-awesome/css/font-awesome.min.css';
-import React from 'react';
-import {
-  createBrowserRouter, Navigate, RouterProvider
-} from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import './index.css';
-import { Curator } from './pages/curator/Curator';
-import { CuratorMe } from './pages/curator/CuratorMe';
-import { DeveloperApplications } from './pages/curator/DeveloperApplications';
-import { DevApplicationPage } from './pages/developer/DevApplicationPage';
-import { Developer } from './pages/developer/Developer';
-import { UploadApplication } from './pages/developer/UploadApp';
-import { ApplicationPage } from './pages/user/ApplicationPage';
-import { CuratorPage } from './pages/user/CuratorPage';
-import { User } from './pages/user/User';
-import { UserCurators } from './pages/user/UserCurators';
+import Urbit from "@urbit/http-api";
+import "font-awesome/css/font-awesome.min.css";
+import React from "react";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { usePortalSubscription } from "./state/usePortal";
+import "./index.css";
+import { Curator } from "./pages/curator/Curator";
+import { CuratorMe } from "./pages/curator/CuratorMe";
+import { DeveloperApplications } from "./pages/curator/DeveloperApplications";
+import { DevApplicationPage } from "./pages/developer/DevApplicationPage";
+import { Developer } from "./pages/developer/Developer";
+import { UploadApplication } from "./pages/developer/UploadApp";
+import { ApplicationPage } from "./pages/user/ApplicationPage";
+import { CuratorPage } from "./pages/user/CuratorPage";
+import { User } from "./pages/user/User";
+import { UserCurators } from "./pages/user/UserCurators";
 
-const api = new Urbit('', '', window.desk);
+const api = new Urbit("", "", window.desk);
 api.ship = window.ship;
 
 /*
@@ -27,56 +26,57 @@ api.ship = window.ship;
 */
 const router = createBrowserRouter([
   {
-    path: '/apps/galleria/',
-    element:<Navigate replace to='/apps/galleria/usr'/>
+    path: "/apps/portal/",
+    element: <Navigate replace to="/apps/portal/usr" />,
   },
   {
-    path: '/apps/galleria/usr',
-    element: <User />
+    path: "/apps/portal/usr",
+    element: <User />,
   },
   {
-    path: '/apps/galleria/usr/curs',
-    element: <UserCurators />
+    path: "/apps/portal/usr/curs",
+    element: <UserCurators />,
   },
   {
-    path: '/apps/galleria/usr/curs/:curator',
-    element: <CuratorPage />
+    path: "/apps/portal/usr/curs/:curator",
+    element: <CuratorPage />,
   },
   {
-    path: '/apps/galleria/cur',
-    element: <Curator />
+    path: "/apps/portal/cur",
+    element: <Curator />,
   },
   {
-    path: '/apps/galleria/cur/me',
-    element: <CuratorMe />
+    path: "/apps/portal/cur/me",
+    element: <CuratorMe />,
   },
   {
-    path: '/apps/galleria/usr/apps/:application',
-    element: <ApplicationPage />
+    path: "/apps/portal/usr/apps/:application",
+    element: <ApplicationPage />,
   },
   {
-    path: '/apps/galleria/cur/devs/:developer',
-    element: <DeveloperApplications />
+    path: "/apps/portal/cur/devs/:developer",
+    element: <DeveloperApplications />,
   },
   {
-    path: '/apps/galleria/dev',
-    element: <Developer />
+    path: "/apps/portal/dev",
+    element: <Developer />,
   },
   {
-    path: '/apps/galleria/dev/upload-app',
-    element: <UploadApplication />
+    path: "/apps/portal/dev/upload-app",
+    element: <UploadApplication />,
   },
   {
-    path: '/apps/galleria/dev/edit-app/:application',
-    element: <UploadApplication />
+    path: "/apps/portal/dev/edit-app/:application",
+    element: <UploadApplication />,
   },
   {
-    path: '/apps/galleria/dev/apps/:application',
-    element: <DevApplicationPage />
-  }
+    path: "/apps/portal/dev/apps/:application",
+    element: <DevApplicationPage />,
+  },
 ]);
 
-export function App () {
+export function App() {
+  usePortalSubscription();
   return (
     <React.Fragment>
       <RouterProvider router={router} />
