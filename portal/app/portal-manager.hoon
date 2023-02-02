@@ -69,6 +69,12 @@
       :_  this
       [%pass /del %agent [our.bowl %portal-store] %poke %portal-update !>(upd)]~
     ::
+    ::
+        %add-to-default-list
+      =/  upd  (add-to-default-list:make-update:portal-manager our.bowl now.bowl act)
+      :_  this
+      [%pass /add-to-def-list %agent [our.bowl %portal-store] %poke %portal-update !>(upd)]~
+    ::
     ::  TODO test local and foreign commenting (and all else)
     ::  how does scries work when you comment on a foreign item (do you need scries for that)
 :: ovisi o: src, our, jel pointer na our ili na src

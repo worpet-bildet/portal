@@ -52,7 +52,7 @@
   $:  =data
       =meta
       =social
-      =item-sig
+      =sig
   ==
 ::
 ::
@@ -138,7 +138,7 @@
 ::  Item Metadata
 ::
 ::  made with jamming the whole item, so that nobody can fake an item
-+$  item-sig  signature
++$  sig  signature
 ::
 ::
 ::

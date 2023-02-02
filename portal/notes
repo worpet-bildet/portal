@@ -12,18 +12,11 @@ image='https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og_smaller.png
 color='#e8e8e8'
 ==
 
-ADD OTHER
+ADD OTHER AND APP (spam to get lot of items)
 :portal-manager|add [our [%enditem %other ~] general [%enditem-other ~]]
-ADD APPS
 :portal-manager|add [our [%enditem %app ~] general [%enditem-app '~nec/portal']]
-ADD APPS LIST FROM APPS IN ALL ITEMS
-:portal-manager|make-app-list
-ADD OTHER LIST FROM OTHER ITEMS IN ALL ITEMS
-:portal-manager|make-other-list
-EDIT CUR-PAGE
-:portal-manager|seed-cur-page
 
-SCRIES
+SCRIES (needs to be updated)
 .^(item:data %gx /=portal-store=/0/~zod/curator-page/~2000.1.1/item)
 .^(pointer-set:data %gx /=portal-store=/all/pointers/pointer-set)
 .^(nested-all-items:conv:lib %gx /=portal-store=/all/nested/nested-all-items)

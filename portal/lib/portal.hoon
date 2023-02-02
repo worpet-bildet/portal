@@ -28,21 +28,15 @@
     ::=/  all-items  (get-all-items:scry our now) (ovo crasha? mozda kad je pije inita?)
     =/  key-set  (get-all-keys:scry our now)
     =/  list-key-list  (skim-types:keys ~(tap in key-set) ~[[%list %list ~]])
-    ~&  >  "list-key-list"
-    ~&  list-key-list
+    ::
     ::  (map cur-pointer cur-item)
     =/  cur-map  (malt (turn list-key-list |=(=key [key (get-item:scry our now key)])))
-    ~&  >  "cur-map"
-    ~&  cur-map
+    ::
     ::  (map cur-pointer [cur-item (map liss-pointer lis-item)])
     =/  cur-lis-map  (~(run by cur-map) |=(=item (list-item-to-map our now item)))
-    ~&  >  "cur-lis-map"
-    ~&  cur-lis-map
     ::
     ::  (map cur-pointer [cur-item (map liss-pointer [lis-item (map end-pointer end-item)])])
     =/  cur-lis-end-map  (~(run by cur-lis-map) |=(val=[=item (map key item)] (inner-maps-transform our now val)))
-    ~&  >  "cur-lis-end-map"
-    ~&  cur-lis-end-map
     cur-lis-end-map
   ::
   ::  TODO
@@ -259,6 +253,10 @@
     ^-  card
     [%pass /sub %agent [our %portal-manager] %poke %portal-action !>([%sub key])]
   ::
+  ++  act-to-act-card
+    |=  [our=ship =action]
+    ^-  card
+    [%pass /act %agent [our %portal-manager] %poke %portal-action !>(action)]
   ::
   --
 ::
@@ -294,9 +292,12 @@
       ^-  (list card)
       ?:  &(=(-.type.key.upd %validity-store) =(our ship.key.upd))
         ~
-      :: %+  weld
-      ::   ?.  =(our p.id.meta.item.upd)  ~
-      ::   edit:portal-manager
+      %+  weld
+        ?.  =(our ship.key.upd)  ~
+        ?+    type.key.upd    ~
+            [%enditem *]
+          ~[(act-to-act-card:cards our [%add-to-default-list key.upd])]
+        ==
       %+  weld
         ?+    -.type.key.upd    ~
             %list
@@ -306,7 +307,7 @@
       ?~  val  ~
       val
   ::
-    ++  del
+    ++  del  ::  TODO remove from lists in which the item is?
       |=  [upd=[%del =key]]
       ^-  (list card)
       ~
@@ -434,6 +435,33 @@
       ?<  =(-.type.key.act %nonitem)
       act
 ::
+    ++  add-to-default-list
+      |=  [our=ship now=time act=[%add-to-default-list key=[=ship type=$%([%enditem type] [%nonitem type]) =cord]]]
+      ^-  update
+      =/  list-key  [our [%list type.key.act] '~2000.1.1']
+      =/  list  (get-item:scry our now list-key)
+      ?+    -.bespoke.data.list    !!
+          %list-enditem-app
+        =/  bespoke-input  [%list-enditem-app (snoc app-key-list.bespoke.data.list [ship.key.act [%enditem %app ~] cord.key.act])]
+        =/  act  [%edit list-key general.data.list bespoke-input]
+        (edit our our now act)
+      ::
+          %list-enditem-other
+        =/  bespoke-input  [%list-enditem-other (snoc other-key-list.bespoke.data.list [ship.key.act [%enditem %other ~] cord.key.act])]
+        =/  act  [%edit list-key general.data.list bespoke-input]
+        (edit our our now act)
+      ::
+          %list-nonitem-group
+        =/  bespoke-input  [%list-nonitem-group (snoc group-key-list.bespoke.data.list [ship.key.act [%nonitem %group ~] cord.key.act])]
+        =/  act  [%edit list-key general.data.list bespoke-input]
+        (edit our our now act)
+      ::
+          %list-nonitem-ship
+        =/  bespoke-input  [%list-nonitem-ship (snoc ship-key-list.bespoke.data.list [ship.key.act [%nonitem %ship ~] cord.key.act])]
+        =/  act  [%edit list-key general.data.list bespoke-input]
+        (edit our our now act)
+      ==
+    ::
     ++  comment
       |=  [our=ship src=ship now=time act=[%comment =key text=@t]]
       ^-  update

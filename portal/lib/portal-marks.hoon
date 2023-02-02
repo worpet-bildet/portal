@@ -11,10 +11,11 @@
     |=  =front-end-update
     ^-  json
     %-  pairs
-    :~  ['action' s+`@t`update.front-end-update]
+    :~  ['src' s+`@t`(scot %p src.front-end-update)]
+        ['action' s+`@t`update.front-end-update]
         ['keyObj' (enjs-key key.front-end-update)]
         ['keyStr' (enjs-jam-key key.front-end-update)]
-        ['face' s+(@t (weld (trip update.front-end-update) (spud type.key.front-end-update)))]
+        ['face' s+(crip (weld (trip update.front-end-update) (spud type.key.front-end-update)))]
     ==
   ++  enjs-nested-all-items
     |=  =nested-all-items
@@ -63,7 +64,7 @@
         ['data' (enjs-data data.item)]
         ['meta' (enjs-meta meta.item)]
         ['social' (enjs-social social.item)]
-        ['sig' (enjs-sig item-sig.item)]
+        ['sig' (enjs-sig sig.item)]
     ==
   :: ++  enjs-all-items
   ::   |=  =all-items

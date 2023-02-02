@@ -9,6 +9,8 @@
       [%sub =key]
       [%del =key]
       ::
+      [%add-to-default-list key=[=ship type=$%([%enditem type] [%nonitem type]) =cord]]
+      ::
       [%comment =key text=@t]
       [%edit-comment =key =created-at text=@t]
       [%del-comment =key =created-at]

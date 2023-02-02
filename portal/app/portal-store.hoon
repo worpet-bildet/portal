@@ -42,7 +42,7 @@
       :~
         [%pass /put %agent [our.bowl %portal-manager] %poke %portal-update !>(upd)]
         [(fact [%portal-update !>(upd)] [(key-to-sub-path:conv key.upd)]~)]
-        [%give %fact [/front-end-update]~ %portal-front-end-update !>([%put key.upd])]
+        [%give %fact [/front-end-update]~ %portal-front-end-update !>([%our %put key.upd])]
       ==
     ::
         %del
@@ -53,7 +53,7 @@
         [%pass /del %agent [our.bowl %portal-manager] %poke %portal-update !>(upd)]
         [(fact [%portal-update !>(upd)] [(key-to-sub-path:conv key.upd)]~)]
         [%pass (key-to-sub-path:conv key.upd) %agent [ship.key.upd %portal-store] %leave ~]
-        [%give %fact [/front-end-update]~ %portal-front-end-update !>([%put key.upd])]
+        [%give %fact [/front-end-update]~ %portal-front-end-update !>([%our %del key.upd])]
       ==
     ::
     ::  you can only sub to /0/ pointers
@@ -119,7 +119,7 @@
       :_  this(all-items new)
       :~
       [%pass /put %agent [our.bowl %portal-manager] %poke %portal-update !>(upd)]
-      [%give %fact [/front-end-update]~ %portal-front-end-update !>([%put key.upd])]
+      [%give %fact [/front-end-update]~ %portal-front-end-update !>([%their %put key.upd])]
       ==
     ::
     ::  receiving a delete (distinct from unsubbing)
@@ -128,7 +128,7 @@
       :_  this
       :~
       [%pass /del %agent [our.bowl %portal-manager] %poke %portal-update !>(upd)]
-      [%give %fact [/front-end-update]~ %portal-front-end-update !>([%del key.upd])]
+      [%give %fact [/front-end-update]~ %portal-front-end-update !>([%their %del key.upd])]
       ==
     ==
   ==
