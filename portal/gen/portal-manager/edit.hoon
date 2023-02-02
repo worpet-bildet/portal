@@ -1,5 +1,5 @@
 /-  *portal-action
 :-  %say
-|=  [[now=@da eny=@uvJ bek=beak] [[=id =general =bespoke-input] ~] ~]
+|=  [[now=@da eny=@uvJ bek=beak] [[=key =general =bespoke-input] ~] ~]
 :-  %portal-action
-[%edit id general bespoke-input]
+[%edit key general bespoke-input]

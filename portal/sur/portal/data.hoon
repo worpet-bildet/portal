@@ -50,7 +50,7 @@
 ::
 +$  item
   $:  =data
-      =meta-data
+      =meta
       =social
       =item-sig
   ==
@@ -61,7 +61,7 @@
       =general
   ==
 ::
-+$  meta-data
++$  meta
   $:  =updated-at                      ::  when '~2000.1.1' means it has not been updated
       permissions=(list @p)            ::  not used yet. auto- ~[our.bowl].
       =reach                           ::  not used yet
@@ -121,7 +121,7 @@
       [%validity-store =validity-records]
   ==
 ::
-+$  list-key-list       (list key=[=ship type=[%list ~] =cord])
++$  list-key-list       (list key=[=ship type=[%list type] =cord])
 +$  app-key-list        (list key=[=ship type=[%enditem %app ~] =cord])
 +$  other-key-list      (list key=[=ship type=[%enditem %other ~] =cord])
 +$  group-key-list      (list key=[=ship type=[%nonitem %group ~] =cord])
@@ -194,7 +194,7 @@
 +$  signature   [hex=@ux =ship =life]
 ::
 +$  sig-input
-  $%  [%item =data =meta-data =social]     ::  for signing the item each time it is edited
+  $%  [%item =data =meta =social]     ::  for signing the item each time it is edited
       [%key =key]                            ::  for signing item by somebody from the outside (not in use yet)
       [%app =key desk-name=@tas]            ::  for signing apps by the distributor ship
   ==

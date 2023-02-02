@@ -1,7 +1,8 @@
 /-  *portal-data
 |%
 +$  front-end-update
-  $:  update=?(%put %del)
+  $:  src=?(%our %their)
+      update=?(%put %del)
       =key
   ==
 --

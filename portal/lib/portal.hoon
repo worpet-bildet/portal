@@ -28,16 +28,21 @@
     ::=/  all-items  (get-all-items:scry our now) (ovo crasha? mozda kad je pije inita?)
     =/  key-set  (get-all-keys:scry our now)
     =/  list-key-list  (skim-types:keys ~(tap in key-set) ~[[%list %list ~]])
-
+    ~&  >  "list-key-list"
+    ~&  list-key-list
     ::  (map cur-pointer cur-item)
     =/  cur-map  (malt (turn list-key-list |=(=key [key (get-item:scry our now key)])))
-
+    ~&  >  "cur-map"
+    ~&  cur-map
     ::  (map cur-pointer [cur-item (map liss-pointer lis-item)])
     =/  cur-lis-map  (~(run by cur-map) |=(=item (list-item-to-map our now item)))
+    ~&  >  "cur-lis-map"
+    ~&  cur-lis-map
     ::
     ::  (map cur-pointer [cur-item (map liss-pointer [lis-item (map end-pointer end-item)])])
     =/  cur-lis-end-map  (~(run by cur-lis-map) |=(val=[=item (map key item)] (inner-maps-transform our now val)))
-
+    ~&  >  "cur-lis-end-map"
+    ~&  cur-lis-end-map
     cur-lis-end-map
   ::
   ::  TODO
@@ -265,6 +270,21 @@
   ::  TODO
   ++  respond-to-update
     |%
+
+:: MAKE APP LIST
+::     /-  *portal-action, *portal-data
+::     /+  *portal
+::     !:
+::     :-  %say
+::     |=   [[now=@da eny=@uvJ bek=beak] ~ ~]
+::     :-  %portal-action
+::     =/  pointer-set  (get-all-pointers:scry p.bek now)
+::     =/  pointer-list  ~(tap in pointer-set)
+::     =/  end-item-pointer-list  (end-item-pointer-list (skim-types:pointers pointer-list ~[%app]))
+::     [%add p.bek %list *general:data [%list [type=%app end-item-pointer-list]]]
+
+
+
     ::  does this has to respond to foreign
     ::  or it can also respond to us?
     ::  how do we as a user/curator go around discovering/addign items
@@ -275,7 +295,7 @@
       ?:  &(=(-.type.key.upd %validity-store) =(our ship.key.upd))
         ~
       :: %+  weld
-      ::   ?.  =(our p.id.meta-data.item.upd)  ~
+      ::   ?.  =(our p.id.meta.item.upd)  ~
       ::   edit:portal-manager
       %+  weld
         ?+    -.type.key.upd    ~
@@ -332,7 +352,7 @@
       |=  [our=ship now=time]
       ^-  update
       =/  general  ['Main Curator Page' '' 'Your first curator page.' *tags *properties *pictures '' '#e8e8e8']
-      =/  act  [%add our [%list %list ~] general [%list-list ~]]
+      =/  act  [%add our [%list %list ~] general [%list-list `list-key-list`~[[our [%list %enditem %app ~] '~2000.1.1'] [our [%list %enditem %other ~] '~2000.1.1'] [our [%list %nonitem %group ~] '~2000.1.1'] [our [%list %nonitem %ship ~] '~2000.1.1']]]]
       (add:make-update [our our now %.y act])
   ::
     ++  default-validity-store
@@ -376,14 +396,14 @@
       ?>  =(ship.act our)
       =/  key  [ship.act type.act cord=?:(=(default %.y) '~2000.1.1' `@t`(scot %da now))]
       =/  data  [(bespoke-write key bespoke-input.act [%add ~]) general.act]
-      =/  meta-data
+      =/  meta
         :*  updated-at='~2000.1.1'
             permissions=~[our]
             reach=[%public blacklist=~]
             outside-sigs=~
         ==
-      =/  item-sig  (sign:sig our now `sig-input`[%item data meta-data *social])
-      [%put key [data meta-data *social item-sig]]
+      =/  item-sig  (sign:sig our now `sig-input`[%item data meta *social])
+      [%put key [data meta *social item-sig]]
   ::
   ::  we can make edits more granular if necessary, e.g. edit only some part of bespoke data
     ++  edit
@@ -395,11 +415,11 @@
       =/  data  [(bespoke-write key.act bespoke-input.act [%edit bespoke.data.item]) general.act]
       =/  item
         %=  item
-          updated-at.meta-data  `@t`(scot %da now)
+          updated-at.meta  `@t`(scot %da now)
           data                  data
         ==
-      =/  item-sig  (sign:sig our now [%item data meta-data.item social.item])
-      [%put key.act [data meta-data.item social.item item-sig]]
+      =/  item-sig  (sign:sig our now [%item data meta.item social.item])
+      [%put key.act [data meta.item social.item item-sig]]
   ::
     ++  sub
       |=  [our=ship act=[%sub =key]]

@@ -42,6 +42,7 @@
       :~
         [%pass /put %agent [our.bowl %portal-manager] %poke %portal-update !>(upd)]
         [(fact [%portal-update !>(upd)] [(key-to-sub-path:conv key.upd)]~)]
+        [%give %fact [/front-end-update]~ %portal-front-end-update !>([%put key.upd])]
       ==
     ::
         %del
@@ -52,6 +53,7 @@
         [%pass /del %agent [our.bowl %portal-manager] %poke %portal-update !>(upd)]
         [(fact [%portal-update !>(upd)] [(key-to-sub-path:conv key.upd)]~)]
         [%pass (key-to-sub-path:conv key.upd) %agent [ship.key.upd %portal-store] %leave ~]
+        [%give %fact [/front-end-update]~ %portal-front-end-update !>([%put key.upd])]
       ==
     ::
     ::  you can only sub to /0/ pointers
@@ -72,8 +74,8 @@
   ?:  =(path /all-items)
     :_  this
     [%give %fact ~ %portal-all-items !>(`^all-items`all-items)]~
-  ~&  "1"
   ?:  =(path /front-end-update)
+    ::~&  (all-items-to-nested:conv our.bowl now.bowl)
     :_  this
     [%give %fact ~ %portal-nested-all-items !>(`^nested-all-items`(all-items-to-nested:conv our.bowl now.bowl))]~
   =/  item  (~(gut by all-items) (sub-path-to-key:conv path) ~)
