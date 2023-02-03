@@ -2,8 +2,8 @@
 [
   {
     "add": {
-      "p": "~zod",
-      "q": "other",
+      "ship": "~zod",
+      "type": "/enditem/other",
       "general": {
         "title": "Some Title",
         "link": "https://website-thing.com",
@@ -15,16 +15,16 @@
         "color": "#e8e8e8"
       },
       "bespoke-input": {
-        "other": "null"
+        "enditem-other": ""
       }
     }
   },
   {
     "edit": {
-      "id": {
-        "p": "~zod",
-        "q": "other",
-        "r": "~2000.1.1"
+      "key": {
+        "ship": "~zod",
+        "type": "/enditem/other",
+        "cord": "~2000.1.1"
       },
       "general": {
         "title": "Some Title",
@@ -37,56 +37,44 @@
         "color": "#e8e8e8"
       },
       "bespoke-input": {
-        "other": "null"
+        "enditem-other": ""
       }
     }
   },
   {
     "sub": {
-      "pointer": {
-        "points-to-item": true,
-        "id": {
-          "p": "~zod",
-          "q": "other",
-          "r": "~2000.1.1"
-        }
+      "key": {
+        "ship": "~zod",
+        "type": "/enditem/other",
+        "cord": "~2000.1.1"
       }
     }
   },
   {
     "del": {
-      "pointer": {
-        "points-to-item": true,
-        "id": {
-          "p": "~zod",
-          "q": "other",
-          "r": "~2000.1.1"
-        }
+      "key": {
+        "ship": "~zod",
+        "type": "/enditem/other",
+        "cord": "~2000.1.1"
       }
     }
   },
   {
     "comment": {
-      "pointer": {
-        "points-to-item": true,
-        "id": {
-          "p": "~zod",
-          "q": "other",
-          "r": "~2000.1.1"
-        }
+      "key": {
+        "ship": "~zod",
+        "type": "/enditem/other",
+        "cord": "~2000.1.1"
       },
       "text": "This is a comment."
     }
   },
   {
     "edit-comment": {
-      "pointer": {
-        "points-to-item": true,
-        "id": {
-          "p": "~zod",
-          "q": "other",
-          "r": "~2000.1.1"
-        }
+      "key": {
+        "ship": "~zod",
+        "type": "/enditem/other",
+        "cord": "~2000.1.1"
       },
       "created-at": "~2000.1.1",
       "text": "This is a comment."
@@ -94,80 +82,91 @@
   },
   {
     "del-comment": {
-      "pointer": {
-        "points-to-item": true,
-        "id": {
-          "p": "~zod",
-          "q": "other",
-          "r": "~2000.1.1"
-        }
+      "key": {
+        "ship": "~zod",
+        "type": "/enditem/other",
+        "cord": "~2000.1.1"
       },
       "created-at": "~2000.1.1"
     }
   },
   {
     "rate": {
-      "pointer": {
-        "points-to-item": true,
-        "id": {
-          "p": "~zod",
-          "q": "other",
-          "r": "~2000.1.1"
-        }
+      "key": {
+        "ship": "~zod",
+        "type": "/enditem/other",
+        "cord": "~2000.1.1"
       },
       "rating-num": 5
     }
   },
   {
     "unrate": {
-      "pointer": {
-        "points-to-item": true,
-        "id": {
-          "p": "~zod",
-          "q": "other",
-          "r": "~2000.1.1"
-        }
+      "key": {
+        "ship": "~zod",
+        "type": "/enditem/other",
+        "cord": "~2000.1.1"
       }
     }
   },
   {
     "review": {
-      "pointer": {
-        "points-to-item": true,
-        "id": {
-          "p": "~zod",
-          "q": "other",
-          "r": "~2000.1.1"
-        }
+      "key": {
+        "ship": "~zod",
+        "type": "/enditem/other",
+        "cord": "~2000.1.1"
       },
       "text": "This is a review.",
-      "hash": "0x1234",
+      "hash": "0v1234",
       "is-safe": false
     }
   },
   {
-    "review": {
-      "pointer": {
-        "points-to-item": true,
-        "id": {
-          "p": "~zod",
-          "q": "other",
-          "r": "~2000.1.1"
-        }
+    "del-review": {
+      "key": {
+        "ship": "~zod",
+        "type": "/enditem/other",
+        "cord": "~2000.1.1"
       }
     }
   },
   {
     "join-group": {
-      "pointer": {
-        "points-to-item": false,
-        "id": {
-          "p": "~rondev",
-          "q": "group",
-          "r": "group-discovery"
-        }
+      "key": {
+        "ship": "~rondev",
+        "type": "/nonitem/group",
+        "cord": "group-discovery"
       }
+    }
+  },
+  {
+    "overwrite-list": {
+      "key": {
+        "ship": "~zod",
+        "type": "/list/nonitem/group",
+        "cord": "~2000.1.1"
+      },
+      "key-list": [
+        {
+          "ship": "~rondev",
+          "type": "/nonitem/group",
+          "cord": "group-discovery"
+        },
+        {
+          "ship": "~bitbet-bolbel",
+          "type": "/nonitem/group",
+          "cord": "urbit-community"
+        }
+      ]
     }
   }
 ]
+```
+```json
+app bespoke-input
+{
+  "enditem-app": {
+    "dist-desk": "~zod/app"
+  }
+}
 ```
