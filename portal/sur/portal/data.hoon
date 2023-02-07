@@ -40,14 +40,14 @@
 +$  cur-obj  [=item =lis-map]
 +$  lis-map  (map key lis-obj)
 +$  lis-obj  [=item =end-map]
-+$  end-map  (map key item)
++$  end-map  (map key ?(~ item))
 ::
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
 ::  Item Parts
 ::
-+$  item
++$  item  ::TODO how to handle nonitems in general?
   $:  =data
       =meta
       =social

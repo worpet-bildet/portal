@@ -1,5 +1,5 @@
 /-  *portal-data, *portal-action, *portal-front-end-update
-/+  *portal, docket, mip
+/+  *portal, docket
 |%
 ++  enjs
   =,  enjs:format
@@ -48,8 +48,8 @@
     |=  =end-map
     ^-  json
     =/  transform
-      |=  [=key =item]
-      [(@t p.+:(enjs-jam-key key)) (enjs-item item)]
+      |=  [=key item=?(~ item)]
+      [(@t p.+:(enjs-jam-key key)) ?~(item ~ (enjs-item item))]
     =/  l  (turn ~(tap by end-map) transform)
     [%o `(map @t json)`(malt l)]
   ++  enjs-item

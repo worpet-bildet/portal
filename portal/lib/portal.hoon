@@ -32,23 +32,29 @@
     =/  list-list-map  (malt (turn list-key-list |=(=key [key (get-item:scry our now key)])))
     ::
     ::  (map list-list-key [list-list-item (map list-pointer list-item)])
-    =/  list-list-list-map  (~(run by list-list-map) |=(=item (list-item-to-map our now item)))
+    =/  list-list-list-map  (~(run by list-list-map) |=(=item (list-list-item-to-map our now item)))
     ::
     ::  (map list-list-key [list-list-item (map list-pointer [lis-item (map end-key end-item)])])
     (~(run by list-list-list-map) |=(val=[=item (map key item)] (inner-maps-transform our now val)))
   ::
   ++  inner-maps-transform
     |=  [our=ship now=time val=[=item mapp=(map key item)]]
-    ^-  [^item (map key [^item (map key item)])]
+    ^-  [^item (map key [^item (map key ?(~ ^item))])]
     [item.val (~(run by mapp.val) |=(=item (list-item-to-map our now item)))]
   ::
-  ++  list-item-to-map
+  ++  list-list-item-to-map
     |=  [our=ship now=time =item]
     ^-  [^item (map key ^item)]
     ?+    -.bespoke.data.item    [item ~]
         %list-list
       =/  lists-map  (malt (turn list-key-list.bespoke.data.item |=(=key [key (get-item:scry our now key)])))
       [item lists-map]
+    ==
+  ::
+  ++  list-item-to-map
+    |=  [our=ship now=time =item]
+    ^-  [^item (map key ?(~ ^item))]
+    ?+    -.bespoke.data.item    [item ~]
         %list-enditem-other
       =/  items-map  (malt (turn other-key-list.bespoke.data.item |=(=key [key (get-item:scry our now key)])))
       [item items-map]
@@ -56,10 +62,10 @@
       =/  items-map  (malt (turn app-key-list.bespoke.data.item |=(=key [key (get-item:scry our now key)])))
       [item items-map]
         %list-nonitem-group
-      =/  items-map  (malt (turn group-key-list.bespoke.data.item |=(=key [key (get-item:scry our now key)])))
+      =/  items-map  (malt (turn group-key-list.bespoke.data.item |=(=key [key ~])))
       [item items-map]
         %list-nonitem-ship
-      =/  items-map  (malt (turn ship-key-list.bespoke.data.item |=(=key [key (get-item:scry our now key)])))
+      =/  items-map  (malt (turn ship-key-list.bespoke.data.item |=(=key [key ~])))
       [item items-map]
     ==
   --
