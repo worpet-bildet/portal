@@ -1,12 +1,9 @@
 /-  *portal-data, *portal-action, *portal-front-end-update
 /+  *portal, docket, mip
 |%
-::  TODO  fix key fix, p q r, type on q
-::  do fixes for seth
 ++  enjs
   =,  enjs:format
   |%
-  ::  TODO camelCase instead of hyphen
   ++  enjs-front-end-update
     |=  =front-end-update
     ^-  json
@@ -66,11 +63,15 @@
         ['social' (enjs-social social.item)]
         ['sig' (enjs-sig sig.item)]
     ==
-  :: ++  enjs-all-items
-  ::   |=  =all-items
-  ::   ^-  json
-  ::   =/  lis  ~(tap by all-items)
-  ::   [%a (turn lis enjs-key-and-item)]
+  ++  enjs-key-and-item
+    |=  [=key =item]
+    ^-  json
+    (enjs-item item)
+  ++  enjs-all-items
+    |=  =all-items
+    ^-  json
+    =/  lis  ~(tap by all-items)
+    [%a (turn lis enjs-key-and-item)]
   ++  enjs-meta
     |=  [=meta]
     ^-  json
@@ -263,7 +264,7 @@
   ++  enjs-jam-key
     |=  =key
     ^-  json
-    s+(spat (key-to-sub-path:conv key))
+    s+(spat (key-to-path:conv key))
   ++  enjs-key
     |=  =key
     ^-  json
@@ -273,25 +274,11 @@
         ['cord' s+cord.key]
     ==
     ::
-
-  :: ++  enjs-app-set
-  ::   |=  =app-set
-  ::   ^-  json
-  ::   =/  app-list  ~(tap in app-set)
-  ::   [%a (turn app-list |=(app=@tas s+`@t`app))]
-  :: ++  enjs-aux-map
-  ::   |=  =aux-map
-  ::   ^-  json
-  ::   =/  lis  ~(tap by aux-map)
-  ::   =/  modify
-  ::     |=  [=dev-name =app-set]
-  ::     [`@t`(scot %p dev-name) (enjs-app-set app-set)]
-  ::   (pairs (turn lis modify))
-  :: ++  enjs-cat-set
-  ::   |=  =cat-set
-  ::   ^-  json
-  ::   =/  cat-list  ~(tap in cat-set)
-  ::   [%a (turn cat-list |=(=category s+`@t`category))]
+  ++  enjs-key-set
+    |=  =key-set
+    ^-  json
+    =/  key-list  ~(tap in key-set)
+    [%a (turn key-list |=(=key (enjs-key)))]
   --
 ::
 ::
@@ -369,26 +356,11 @@
     |=  jon=json
     ^-  @uv
     `@uv`(slav %uv (so jon))
-  :: ++  dejs-cat-map
-  ::   |=  jon=json
-  ::   ^-  cat-map
-  ::   |^
-  ::   (malt ((ar dejs-key-cat) jon))
-  ::   ++  dejs-key-cat
-  ::     |=  jon=json
-  ::     ^-  [=key =category]
-  ::     %.  jon
-  ::     %-  ot
-  ::     :~  key+dejs-key
-  ::         category+so
-  ::     ==
-  ::   --
-  :: ++  dejs-cat-set
-  ::   |=  jon=json
-  ::   ^-  cat-set
-  ::   %-  silt
-  ::   %.  jon
-  ::   (ar so)
-  ::
+  ++  dejs-key-set
+    |=  jon=json
+    ^-  key-set
+    %-  silt
+    %.  jon
+    (ar dejs-key)
   --
 --

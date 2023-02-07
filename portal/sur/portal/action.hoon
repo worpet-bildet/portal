@@ -10,6 +10,7 @@
       [%del =key]
       ::
       [%add-to-default-list key=[=ship type=$%([%enditem type] [%nonitem type]) =cord]]
+      [%overwrite-list key=[=ship type=[%list type] =cord] =key-list]
       ::
       [%comment =key text=@t]
       [%edit-comment =key =created-at text=@t]

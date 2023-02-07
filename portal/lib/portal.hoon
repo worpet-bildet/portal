@@ -1,45 +1,42 @@
 /-  *portal-data, *portal-update, *portal-action
-/+  sig, mip
+/+  sig
 |%
 +$  card  card:agent:gall
 ::
 ++  conv
   |%
-  ++  key-to-sub-path
+  ++  key-to-path
     |=  [=key]
     ^-  path
     %+  weld  ~[(scot %p ship.key)]
     %+  weld  type.key
               ~[cord.key]
   ::
-  ++  sub-path-to-key
+  ++  path-to-key
     |=  [=path]
     ^-  key
     :+  (slav %p -:path)
         (flop (snip (flop (snip path))))
         (rear path)
   ::
-  ::  find all cur pages
-  ::  for each,create a map with lists
-  ::  for each list, create a map with list of end items
+  ::  find all lists of lists
+  ::  for each, create a map with lists
+  ::  for each list, create a map with end items
   ++  all-items-to-nested
     |=  [our=ship now=time]
     ^-  nested-all-items
-    ::=/  all-items  (get-all-items:scry our now) (ovo crasha? mozda kad je pije inita?)
     =/  key-set  (get-all-keys:scry our now)
     =/  list-key-list  (skim-types:keys ~(tap in key-set) ~[[%list %list ~]])
     ::
-    ::  (map cur-pointer cur-item)
-    =/  cur-map  (malt (turn list-key-list |=(=key [key (get-item:scry our now key)])))
+    ::  (map list-list-key list-list-item)
+    =/  list-list-map  (malt (turn list-key-list |=(=key [key (get-item:scry our now key)])))
     ::
-    ::  (map cur-pointer [cur-item (map liss-pointer lis-item)])
-    =/  cur-lis-map  (~(run by cur-map) |=(=item (list-item-to-map our now item)))
+    ::  (map list-list-key [list-list-item (map list-pointer list-item)])
+    =/  list-list-list-map  (~(run by list-list-map) |=(=item (list-item-to-map our now item)))
     ::
-    ::  (map cur-pointer [cur-item (map liss-pointer [lis-item (map end-pointer end-item)])])
-    =/  cur-lis-end-map  (~(run by cur-lis-map) |=(val=[=item (map key item)] (inner-maps-transform our now val)))
-    cur-lis-end-map
+    ::  (map list-list-key [list-list-item (map list-pointer [lis-item (map end-key end-item)])])
+    (~(run by list-list-list-map) |=(val=[=item (map key item)] (inner-maps-transform our now val)))
   ::
-  ::  TODO
   ++  inner-maps-transform
     |=  [our=ship now=time val=[=item mapp=(map key item)]]
     ^-  [^item (map key [^item (map key item)])]
@@ -48,7 +45,7 @@
   ++  list-item-to-map
     |=  [our=ship now=time =item]
     ^-  [^item (map key ^item)]
-    ?+    -.bespoke.data.item    !!
+    ?+    -.bespoke.data.item    [item ~]
         %list-list
       =/  lists-map  (malt (turn list-key-list.bespoke.data.item |=(=key [key (get-item:scry our now key)])))
       [item lists-map]
@@ -73,7 +70,7 @@
   ++  get-item
     |=  [our=ship now=time =key]
     ^-  item
-    =/  path  (weld (weld /(scot %p our)/portal-store/(scot %da now)/item (key-to-sub-path:conv key)) /item)
+    =/  path  (weld (weld /(scot %p our)/portal-store/(scot %da now)/item (key-to-path:conv key)) /item)
     .^(item %gx path)
   ::
   ::  gets all-items
@@ -90,9 +87,19 @@
     =/  path  /(scot %p our)/portal-store/(scot %da now)/all/keys/key-set
     .^(key-set %gx path)
   ::
-  ::  TODO  get-verified-items scry
+  ::  gets all-items in nested form
+  ++  get-nested-all-items
+    |=  [our=ship now=time]
+    ^-  nested-all-items
+    =/  path  /(scot %p our)/portal-store/(scot %da now)/all/nested/nested-all-items
+    .^(nested-all-items %gx path)
 
-  ::  TODO scry all-items (as map, as list?)
+  ++  get-item-latest-validity
+    |=  [our=ship now=time =key]
+    ^-  ?
+    =/  path  (weld (weld /(scot %p our)/portal-store/(scot %da now)/valid/latest (key-to-path:conv key)) /noun)
+    .^(? %gx path)
+
   --
 ::
 ++  keys
@@ -118,7 +125,6 @@
     (skim key-list |=([=key] ?~((find [type.key]~ types) %.n %.y)))
   ::
   --
-
 ::
 ++  loob
   |%
@@ -192,26 +198,22 @@
   ++  del-item
     |=  [src=ship our=ship =all-items upd=[%del =key]]
     ^-  [?(%changed %unchanged) ^all-items]
-    ~&  "%portal: deleting item"
+    ~&  "%portal: deleting {(spud (key-to-path:conv key.upd))}"
     ?.  (~(has by all-items) key.upd)
-      ~&  "%portal: item does not exist"
+      ~&  "%portal: {(spud (key-to-path:conv key.upd))} does not exist"
       [%unchanged all-items]
     [%changed (~(del by all-items) key.upd)]
   ::
   ::  for receiving items, from local %portal-manager or foreign %portal-store
   ++  put-item
     |=  [our=ship =all-items upd=[%put =key =item]]
-    ~&  "%portal: putting item"
+    ~&  "%portal: putting {(spud (key-to-path:conv key.upd))}"
     (~(put by all-items) key.upd item.upd)
   --
 ::
 ++  cards
   |%
   ::
-  ::  current criterion: fetch all from this list which are not list
-  ::  another possible criterion: fetch all only if this list is in one of curator pages
-  ::  make recommendations assert type of each items somehow in the right place
-  ::  TODO
   ++  sub-to-list-keys
     |=  [our=ship now=time =item]
     ^-  (list card)
@@ -246,8 +248,6 @@
     ^-  (list card)
     (turn key-list (cury key-to-sub-card our))
   ::
-  ::  TODO figure out where to assert %.y on pointer
-  ::  doing like pointer=[%.y =id] complicates things elsewhere
   ++  key-to-sub-card
     |=  [our=ship =key]
     ^-  card
@@ -263,26 +263,9 @@
 ::  TODO think about all the assertions which need to happen in each of these arms
 ++  portal-manager
   |%
-
   ::
-  ::  TODO
   ++  respond-to-update
     |%
-
-:: MAKE APP LIST
-::     /-  *portal-action, *portal-data
-::     /+  *portal
-::     !:
-::     :-  %say
-::     |=   [[now=@da eny=@uvJ bek=beak] ~ ~]
-::     :-  %portal-action
-::     =/  pointer-set  (get-all-pointers:scry p.bek now)
-::     =/  pointer-list  ~(tap in pointer-set)
-::     =/  end-item-pointer-list  (end-item-pointer-list (skim-types:pointers pointer-list ~[%app]))
-::     [%add p.bek %list *general:data [%list [type=%app end-item-pointer-list]]]
-
-
-
     ::  does this has to respond to foreign
     ::  or it can also respond to us?
     ::  how do we as a user/curator go around discovering/addign items
@@ -312,13 +295,12 @@
       ^-  (list card)
       ~
   ::
-    ++  empty-init
-      |=  [upd=[%empty-init ~]]
+    ++  empty
+      |=  [upd=[%empty ~]]
       ^-  (list card)
       ~
     --
   ::
-  :: TODO
   ++  make-update
     |%
     ++  default-groups-list
@@ -374,8 +356,8 @@
           [%enditem-app key(type [%enditem %app ~]) dist-desk.bespoke-input *signature 0v0 *docket]
         ::
             %edit
-          ?+    -.bespoke.act    !!  ::  this really needs to be done smarter (the whole type system)
-              %enditem-app                              ::  I shouldn't need to confirm things twice. (maybe better sur?)
+          ?+    -.bespoke.act    !!                     ::  this really needs to be done smarter (the whole type system)
+              %enditem-app                              ::  I shouldn't need to confirm things twice. (maybe better sur? lib arms?)
             bespoke.act(dist-desk dist-desk.bespoke-input)
           ==
         ==
@@ -434,13 +416,13 @@
       ^-  update
       ?<  =(-.type.key.act %nonitem)
       act
-::
+  ::
     ++  add-to-default-list
       |=  [our=ship now=time act=[%add-to-default-list key=[=ship type=$%([%enditem type] [%nonitem type]) =cord]]]
       ^-  update
       =/  list-key  [our [%list type.key.act] '~2000.1.1']
       =/  list  (get-item:scry our now list-key)
-      ?+    -.bespoke.data.list    !!
+      ?+    -.bespoke.data.list    [%empty ~]
           %list-enditem-app
         =/  bespoke-input  [%list-enditem-app (snoc app-key-list.bespoke.data.list [ship.key.act [%enditem %app ~] cord.key.act])]
         =/  act  [%edit list-key general.data.list bespoke-input]
@@ -462,6 +444,32 @@
         (edit our our now act)
       ==
     ::
+      ++  overwrite-list
+        |=  [our=ship now=time act=[%overwrite-list list-key=[=ship type=[%list type] =cord] =key-list]]
+        ^-  update
+        =/  list  (get-item:scry our now list-key.act)
+        ?+    -.bespoke.data.list    [%empty ~]
+            %list-enditem-app
+          =/  bespoke-input  [%list-enditem-app (app-key-list key-list.act)]
+          =/  act  [%edit list-key.act general.data.list bespoke-input]
+          (edit our our now act)
+        ::
+            %list-enditem-other
+          =/  bespoke-input  [%list-enditem-other (other-key-list key-list.act)]
+          =/  act  [%edit list-key.act general.data.list bespoke-input]
+          (edit our our now act)
+        ::
+            %list-nonitem-group
+          =/  bespoke-input  [%list-nonitem-group (group-key-list key-list.act)]
+          =/  act  [%edit list-key.act general.data.list bespoke-input]
+          (edit our our now act)
+        ::
+            %list-nonitem-ship
+          =/  bespoke-input  [%list-nonitem-ship (ship-key-list key-list.act)]
+          =/  act  [%edit list-key.act general.data.list bespoke-input]
+          (edit our our now act)
+        ==
+    ::
     ++  comment
       |=  [our=ship src=ship now=time act=[%comment =key text=@t]]
       ^-  update
@@ -474,7 +482,7 @@
       |=  [our=ship src=ship now=time act=[%edit-comment =key =created-at text=@t]]
       ^-  update
       =/  item  `item`(get-item:scry our now key.act)
-      ?.  (~(has by comments.social.item) [src created-at.act])  !!
+      ?.  (~(has by comments.social.item) [src created-at.act])  [%empty ~]
       =/  new-comments  (~(put by comments.social.item) [src created-at.act] [text.act `@t`(scot %da now)])
       [%put key.act item(comments.social new-comments)]
   ::
@@ -482,7 +490,7 @@
       |=  [our=ship src=ship now=time act=[%del-comment =key =created-at]]
       ^-  update
       =/  item  `item`(get-item:scry our now key.act)
-      ?.  (~(has by comments.social.item) [src created-at.act])  !!
+      ?.  (~(has by comments.social.item) [src created-at.act])  [%empty ~]
       =/  new-comments  (~(del by comments.social.item) [src created-at.act])
       [%put key.act item(comments.social new-comments)]
   ::
@@ -502,7 +510,7 @@
       |=  [our=ship src=ship now=time act=[%unrate =key]]
       ^-  update
       =/  item  `item`(get-item:scry our now key.act)
-      ?.  (~(has by ratings.social.item) src)  !!
+      ?.  (~(has by ratings.social.item) src)  [%empty ~]
       =/  new-ratings  (~(del by ratings.social.item) src)
       [%put key.act item(ratings.social new-ratings)]
   ::
@@ -525,7 +533,7 @@
       |=  [our=ship src=ship now=time act=[%del-review =key]]
       ^-  update
       =/  item  `item`(get-item:scry our now key.act)
-      ?.  (~(has by reviews.social.item) src)  !!
+      ?.  (~(has by reviews.social.item) src)  [%empty ~]
       =/  new-reviews  (~(del by reviews.social.item) src)
       [%put key.act item(reviews.social new-reviews)]
 
@@ -537,7 +545,7 @@
       ::  what if item doesnt exist?
       =/  item  `item`(get-item:scry our now key.msg)
       ?>  ?=(signature sig.msg)
-      ?+    -.bespoke.data.item    !!
+      ?+    -.bespoke.data.item    [%empty ~]
           %enditem-app
         ?>  =(src -:(need (parse-dist-desk:misc dist-desk.bespoke.data.item)))
         [%put key.msg item(sig.bespoke.data sig.msg)]
@@ -552,7 +560,7 @@
       =/  item  `item`(get-item:scry our now key.msg)
       ::?<  ?=(@tas data.act)
       ::  ?=([@uv docket] data.act)
-      ?+    -.bespoke.data.item   !!
+      ?+    -.bespoke.data.item   [%empty ~]
           %enditem-app
         ?>  =(src -:(need (parse-dist-desk:misc dist-desk.bespoke.data.item)))
         =/  bespoke  bespoke.data.item(desk-hash desk-hash.data.msg, docket docket.data.msg)
@@ -560,26 +568,6 @@
       ==
     --
   --
-
-::  TODO IN REGARDS TO VALIDATION
-::  build send and receive for
-::  1. app signature (see how it generalizes to outside signature), and where is it specified from whom the signature needs to come
-::  2. app data, where is it specced from whom it needs to  come? (when generalized)
-
-::  sign item ima krivu logiku. treba bit action koji salje message koji se prima i stvara update
-::  (dvije razlicite funkcije?)
-::  send-app-data isto vjv ima krivu logiku?
-::
-::  app signature (sign-app) when receiving:
-::  link/dst-desk has to be written correctly (maybe have that as a criterion when inputting rather then reading)
-::  put it in bespoke data (better that than having to build custom readers for link for each type)
-
-::  src has to correspond to dst-desk
-::  dst-name == ship.signature
-::  dst-name == src
-
-::  then edit existing app page, add signature
-
 ::
 ::  when receiving app-data (docket + desk-hash)
 ::  check the right app exists
@@ -594,25 +582,8 @@
 ::     desk-hash.dst-input  hash.act
 ::     reviews.usr-input  new-reviews
 ::   ==
-
-::  when/where update the is-current from review?
-::  at each %put update? after receiving, or before making?
-::  before making %put update of app, update reviews. (should there be a general checker for stuff (based on type) after doing an input?)
-
 ::
-::
-::  reject invalid apps
-::
-
-
-
-::  here should also be stuff like validating that pointerlist [%other (list pointer)]
-::  actually has only pointer which point to %other items
-::  what to do with it from there?
-::  probably put it in the validity store, and then use that information in many possible ways
-
 ::  includes arms which are used to validate data
-::  TODO
 ++  validator
   |%
   ++  default-v1
@@ -684,28 +655,6 @@
 ::   ::
 ::   ::  app store legacy
 ::   ::
-::   ::  dev-data validators
-::   ::
-::   ::  takes dev-data and outputs the subset of dev-data with valid signatures
-::   ++  dev-data-all
-::     |=  [=dev-name =dev-data our=@p now=@da]
-::     ^-  ^dev-data
-::     =/  keys  ~(tap in ~(key by dev-map.dev-data))
-::     =/  signed-app-set  *app-set
-::     =/  signed-dev-map  *dev-map
-::     =/  n  0
-::     =/  len  ~(wyt in app-set.dev-data)
-::     |-  ?:  =(n len)  [signed-dev-map signed-app-set]
-::       =/  key  (snag n keys)
-::       =/  app-page  (~(get by dev-map.dev-data) key)
-::       ?~  app-page  !!
-::       ?.  (new-app-page [our now dev-name key u.app-page])  $(n +(n))
-::       %=  $
-::         n  +(n)
-::         signed-app-set  (~(put in signed-app-set) app-name.key)
-::         signed-dev-map  (~(put by signed-dev-map) key u.app-page)
-::       ==
-::   ::
 ::   ::
 ::   ::  takes cur-data and outputs the subset of cur-data with valid signatures
 ::   ++  cur-data-all
@@ -729,19 +678,5 @@
 ::         key-list.cur-choice.cur-data  (skip key-list.cur-choice.cur-data |=(k=^key =(k key)))
 ::         cat-map.cur-choice.cur-data  (~(del by cat-map.cur-choice.cur-data) key)
 ::       ==
-::
-::
-:: ::  verify whether keys of cur-map correspond to aux-map
-:: ::  relevant if we create aux-maps by type or ship
-:: ++  cur-map-aux-map
-::   |=  [=cur-map =aux-map]
-::   =/  cur-map-keys  ~(key by cur-map)
-::   =/  dev-name-add  |=  [=dev-name =app-set]
-::   ^-  (set [^dev-name app-name])
-::   (~(run in app-set) |=(=app-name [dev-name app-name]))
-::   =/  aux-map-1  (~(rut by aux-map) dev-name-add)
-::   =/  aux-map-2  (~(run by aux-map-1) |=(set=(set key) ~(tap in set)))
-::   =/  vals  (silt `(list key)`(zing ~(val by aux-map-2)))
-::   =(cur-map-keys vals)
   --
 --
