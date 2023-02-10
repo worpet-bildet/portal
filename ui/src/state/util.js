@@ -99,3 +99,7 @@ export const indexPages = (_pages, types = {}) => {
   });
   return [index, types];
 };
+
+export const updateIndex = (_pages, types = {}) => {
+  debugger;
+};

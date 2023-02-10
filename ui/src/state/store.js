@@ -2,11 +2,13 @@ import shallow from "zustand/shallow";
 import produce from "immer";
 // import sortedUniqBy from "lodash/sortedUniqBy";
 import { createStore } from "./middleware";
-import { indexPages } from "./util";
+import { indexPages, updateIndex } from "./util";
+import { scries } from "../urbit/scries";
 
 export const getCurators = state => state.curators;
 export const setCurators = state => state.setCurators;
 export const onInitialLoad = state => state.onInitialLoad;
+export const onUpdate = state => state.onUpdate;
 export const getApps = state => state.types.app;
 export const getGroups = state => state.types.group;
 export const getLists = state => state.types.list;
@@ -26,6 +28,10 @@ export const useStore = createStore((set, get) => ({
     get().setInitialState(initialState);
     get().indexAll(initialState);
   },
+  onUpdate: update => {
+    get().indexOnUpdate(update);
+  },
+  // onValidityChange: () => {},
   setInitialState: state =>
     set(
       produce(draft => {
@@ -48,6 +54,15 @@ export const useStore = createStore((set, get) => ({
         const [index, types] = indexPages(defaultCuratorPages);
         draft.defaultCurators[ship] = index;
         draft.types = types;
+      })
+    ),
+  indexOnUpdate: async update =>
+    set(
+      produce(async draft => {
+        console.log("indexOnUpdate", update);
+        debugger;
+        const res = await scries.item(update.urbit, update.evt);
+        console.log("res", res);
       })
     ),
   setSelectedItem: item =>

@@ -2,18 +2,27 @@ import { useEffect, useState } from "react";
 import Urbit from "@urbit/http-api";
 import { urbitConfig as config } from "../config";
 import { handleEvent } from "./events";
-import { onInitialLoad as _onInitialLoad, useStore } from "./store";
+import {
+  onInitialLoad as _onInitialLoad,
+  onUpdate as _onUpdate,
+  useStore,
+} from "./store";
 import { generateActions } from "../urbit/pokes";
 import { types } from "./faces";
+import { scries } from "../urbit/scries";
 
 export const usePortalSubscription = () => {
   const [ship, urbit] = useUrbit();
   const [portalSub, setPortalSub] = useState(null);
   const onInitialLoad = useStore(_onInitialLoad);
+  const onUpdate = useStore(_onUpdate);
 
   useEffect(() => {
     if (urbit && ship && !portalSub) {
-      const portalSub = getSubscription(urbit, handleEvent(urbit, { onInitialLoad }));
+      const portalSub = getSubscription(
+        urbit,
+        handleEvent(urbit, { onInitialLoad, onUpdate })
+      );
       setPortalSub(portalSub);
     }
     return () => {
@@ -25,7 +34,7 @@ export const usePortalSubscription = () => {
 export const usePortal = () => {
   const [ship, urbit] = useUrbit();
   const actions = generateActions(urbit);
-  return { urbit, ship, actions, types };
+  return { urbit, ship, actions, scries, types };
 };
 
 export const useUrbit = () => {
