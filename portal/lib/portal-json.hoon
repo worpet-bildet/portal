@@ -106,6 +106,18 @@
       |=  [=bespoke]
       ^-  json
       ?-    -.bespoke
+          %nonitem-ship
+        %-  pairs
+        :~  ['keyStr' (enjs-jam-key key.bespoke)]
+            ['keyObj' (enjs-key key.bespoke)]
+            ['payload' s+'']
+        ==
+          %nonitem-group
+        %-  pairs
+        :~  ['keyStr' (enjs-jam-key key.bespoke)]
+            ['keyObj' (enjs-key key.bespoke)]
+            ['payload' s+'']
+        ==
           %enditem-app
         %-  pairs
         :~  ['keyStr' (enjs-jam-key key.bespoke)]
@@ -128,31 +140,31 @@
         %-  pairs
         :~  ['keyStr' (enjs-jam-key key.bespoke)]
             ['keyObj' (enjs-key key.bespoke)]
-            ['payload' (enjs-key-list other-key-list.bespoke)]
+            ['payload' (enjs-key-text-list other-key-list.bespoke)]
         ==
           %list-enditem-app
         %-  pairs
         :~  ['keyStr' (enjs-jam-key key.bespoke)]
             ['keyObj' (enjs-key key.bespoke)]
-            ['payload' (enjs-key-list app-key-list.bespoke)]
+            ['payload' (enjs-key-text-list app-key-list.bespoke)]
         ==
           %list-nonitem-group
         %-  pairs
         :~  ['keyStr' (enjs-jam-key key.bespoke)]
             ['keyObj' (enjs-key key.bespoke)]
-            ['payload' (enjs-key-list group-key-list.bespoke)]
+            ['payload' (enjs-key-text-list group-key-list.bespoke)]
         ==
           %list-nonitem-ship
         %-  pairs
         :~  ['keyStr' (enjs-jam-key key.bespoke)]
             ['keyObj' (enjs-key key.bespoke)]
-            ['payload' (enjs-key-list ship-key-list.bespoke)]
+            ['payload' (enjs-key-text-list ship-key-list.bespoke)]
         ==
           %list-list
         %-  pairs
         :~  ['keyStr' (enjs-jam-key key.bespoke)]
             ['keyObj' (enjs-key key.bespoke)]
-            ['payload' (enjs-key-list list-key-list.bespoke)]
+            ['payload' (enjs-key-text-list list-key-list.bespoke)]
         ==
           %validity-store
         %-  pairs
@@ -241,6 +253,19 @@
     :-  %a
     %+  turn  key-list
     |=(=key (enjs-jam-key key))
+  ++  enjs-key-text-list
+    |=  =key-text-list
+    ^-  json
+    :-  %a
+    %+  turn  key-text-list
+    |=([=key text=cord] (enjs-key-text key text))
+  ++  enjs-key-text
+    |=  [=key text=cord]
+    ^-  json
+    %-  pairs
+    :~  ['key' (enjs-key key)]
+        ['text' s+text]
+    ==
   ++  enjs-key-list
     |=  =key-list
     ^-  json

@@ -1,10 +1,10 @@
 /-  *portal-front-end-update
-/+  portal-marks
+/+  portal-json
 |_  feu=front-end-update
 ++  grow
   |%
   ++  noun  feu
-  ++  json  (enjs-front-end-update:enjs:portal-marks feu)
+  ++  json  (enjs-front-end-update:enjs:portal-json feu)
   --
 ++  grab
   |%

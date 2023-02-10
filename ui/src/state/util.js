@@ -77,7 +77,7 @@ export const indexPages = (_pages, types = {}) => {
       const entries = Object.entries(map);
       const mapped = entries.map(entry => entry.filter(ent => ent));
 
-      return mapped[0].length > 1
+      return mapped && mapped[0]?.length > 1
         ? indexPages(mapped, _types)
         : mapped.map(ent => [
             ent[0],

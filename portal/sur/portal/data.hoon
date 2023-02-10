@@ -98,7 +98,9 @@
 ::  data specific to the item type
 ::  TODO how to branch on path instead of just tag?
 +$  bespoke
-  $%  [%enditem-other key=[=ship type=[%enditem %other ~] =cord] ~]
+  $%  [%nonitem-ship key=[=ship type=[%nonitem %ship ~] =cord] ~]
+      [%nonitem-group key=[=ship type=[%nonitem %group ~] =cord] ~]
+      [%enditem-other key=[=ship type=[%enditem %other ~] =cord] ~]
       [%enditem-app key=[=ship type=[%enditem %app ~] =cord] dist-desk=@t sig=signature desk-hash=@uv =docket]
       [%list-enditem-other key=[=ship type=[%list %enditem %other ~] =cord] =other-key-list]
       [%list-enditem-app key=[=ship type=[%list %enditem %app ~] =cord] =app-key-list]
@@ -110,7 +112,9 @@
 ::
 ::  when inputting bespoke data, you sometimes don't need to input all of it
 +$  bespoke-input
-  $%  [%enditem-other ~]
+  $%  [%nonitem-ship ~]
+      [%nonitem-group ~]
+      [%enditem-other ~]
       [%enditem-app dist-desk=@t]
       [%list-enditem-other =other-key-list]
       [%list-enditem-app =app-key-list]
@@ -120,11 +124,13 @@
       [%validity-store =validity-records]
   ==
 ::
-+$  list-key-list       (list key=[=ship type=[%list type] =cord])
-+$  app-key-list        (list key=[=ship type=[%enditem %app ~] =cord])
-+$  other-key-list      (list key=[=ship type=[%enditem %other ~] =cord])
-+$  group-key-list      (list key=[=ship type=[%nonitem %group ~] =cord])
-+$  ship-key-list       (list key=[=ship type=[%nonitem %ship ~] =cord])
++$  key-text-list       (list [=key text=cord])
+::
++$  list-key-list       (list [key=[=ship type=[%list type] =cord] text=cord])
++$  app-key-list        (list [key=[=ship type=[%enditem %app ~] =cord] text=cord])
++$  other-key-list      (list [key=[=ship type=[%enditem %other ~] =cord] text=cord])
++$  group-key-list      (list [key=[=ship type=[%nonitem %group ~] =cord] text=cord])
++$  ship-key-list       (list [key=[=ship type=[%nonitem %ship ~] =cord] text=cord])
 ::
 ::
 +$  key-list  (list key)

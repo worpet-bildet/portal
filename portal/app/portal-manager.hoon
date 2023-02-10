@@ -1,4 +1,4 @@
-/-  *portal-data, *portal-action, *portal-message
+/-  *portal-data, *portal-action, *portal-message, groups
 /+  default-agent, dbug, *portal, *agentio, sig
 |%
 +$  versioned-state
@@ -127,6 +127,10 @@
       ?.  ?=([%nonitem %group *] type.key.act)  `this
       :_  this
       [%pass /group-join %agent [our.bowl %groups] %poke %group-join !>([flag=[ship.key.act `@tas`cord.key.act] join-all=&])]~
+    ::
+        %get-group-preview
+      :_  this
+      [%pass /get-group-preview %agent [ship.flag.act %groups] %watch /groups/(scot %p ship.flag.act)/[term.flag.act]/preview]~
     ==
   ::
   ::  eventually should also be able to receive a message which can add/edit an item. with the right perms obviously
@@ -213,6 +217,23 @@
 ++  on-watch  on-watch:default
 ++  on-leave  on-leave:default
 ++  on-peek   on-peek:default
-++  on-agent  on-agent:default
+++  on-agent
+  |=  [=wire =sign:agent:gall]
+  ^-  (quip card _this)
+  ?+    wire    (on-agent:default wire sign)
+      [%get-group-preview ~]
+    ?+    -.sign    (on-agent:default wire sign)
+        %watch-ack  `this
+        %kick       `this
+    ::
+        %fact
+      =/  preview  !<(preview:groups q.cage.sign)
+      =/  act  [%put-nonitem-group [p.flag.preview [%nonitem %group ~] q.flag.preview] title.meta.preview description.meta.preview image.meta.preview]
+      =/  upd  (put-nonitem-group:make-update:portal-manager [our.bowl src.bowl now.bowl %.n act])
+      :_  this
+      [%pass /put-nonitem-group %agent [our.bowl %portal-store] %poke %portal-update !>(upd)]~
+    ==
+  ==
+::
 ++  on-fail   on-fail:default
 --
