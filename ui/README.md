@@ -36,5 +36,5 @@ Inside **/ui** start the react application.
 npm run dev
 ```
 
-The application will be accessible on `localhost:3000/apps/portal`.
+The application will be accessible on `localhost:5173/apps/portal`.
     "@urbit/vite-plugin-urbit": "git+https://git@github.com/sethfork/vite-plugin-urbit.git#02bcdf7",

@@ -20,7 +20,7 @@ description='This is a description.'
 tags=~['tag1' 'tag2' 'tag3']
 properties=*(map @t @t)
 pictures=~['https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og_smaller.png' 'https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og.png']
-image='https://bulbapedia.bulbagarden.net/wiki/File:0024Arbok.png'
+image='https://archives.bulbagarden.net/media/upload/5/51/0024Arbok.png'
 color='#e8e8e8'
 ==
 
@@ -31,7 +31,7 @@ description='This is a description.'
 tags=~['tag1' 'tag2' 'tag3']
 properties=*(map @t @t)
 pictures=~['https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og_smaller.png' 'https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og.png']
-image='https://bulbapedia.bulbagarden.net/wiki/File:0160Feraligatr.png'
+image='https://archives.bulbagarden.net/media/upload/2/29/0160Feraligatr.png'
 color='#e8e8e8'
 ==
 

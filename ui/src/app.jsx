@@ -1,4 +1,5 @@
 import Urbit from "@urbit/http-api";
+import { ThemeProvider } from "@mui/material/styles";
 import "font-awesome/css/font-awesome.min.css";
 import React from "react";
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
@@ -16,6 +17,8 @@ import { ApplicationPage } from "./pages/user/ApplicationPage";
 import { CuratorPage } from "./pages/user/CuratorPage";
 import { User } from "./pages/user/User";
 import { UserCurators } from "./pages/user/UserCurators";
+
+import theme from "./theme/theme";
 
 const api = new Urbit("", "", window.desk);
 api.ship = window.ship;
@@ -79,17 +82,20 @@ export function App() {
   usePortalSubscription();
   return (
     <React.Fragment>
-      <RouterProvider router={router} />
-      <ToastContainer
-        position="bottom-right"
-        autoClose={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        theme="colored"
-      />
+      <ThemeProvider theme={theme}>
+        <RouterProvider router={router} />
+        {/* <GlobalStyle blur={true} realmTheme={defaultTheme.themes.default} /> */}
+        {/* <ToastContainer
+          position="bottom-right"
+          autoClose={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          theme="colored"
+        /> */}
+      </ThemeProvider>
     </React.Fragment>
   );
 }

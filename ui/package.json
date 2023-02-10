@@ -7,14 +7,20 @@
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
-    "copy-desk": "rsync -a --delete ../portal/ ../../ships/zod/portal/",
+    "copy-desk-zod": "rsync -a --delete ../portal/ ../../ships/zod/portal/",
+    "copy-desk-nec": "rsync -a --delete ../portal/ ../../ships/nec/portal/",
     "copy-dist": "cp -r ../portal/* ../../ships/zod/portal"
   },
   "dependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "@fontsource/roboto": "^4.5.8",
+    "@mui/base": "^5.0.0-alpha.110",
     "@mui/icons-material": "^5.11.0",
-    "@mui/material": "^5.11.6",
+    "@mui/lab": "^5.0.0-alpha.112",
+    "@mui/material": "^5.11.0",
+    "@mui/styled-engine-sc": "^5.11.0",
+    "@mui/system": "^5.11.0",
     "@urbit/api": "^2.2.0",
     "@urbit/http-api": "^2.3.0",
     "copy-to-clipboard": "^3.3.3",
@@ -29,6 +35,7 @@
     "react-hook-form": "^7.40.0",
     "react-router-dom": "^6.4.3",
     "react-toastify": "^9.1.1",
+    "styled-components": "^5.3.6",
     "zustand": "^4.3.2"
   },
   "devDependencies": {
