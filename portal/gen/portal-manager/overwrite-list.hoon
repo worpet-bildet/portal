@@ -1,8 +1,8 @@
 /-  *portal-action
 :-  %say
-|=  [[now=@da eny=@uvJ bek=beak] [[key=[=ship type=[%list type] =cord] =key-list] ~] ~]
+|=  [[now=@da eny=@uvJ bek=beak] [[key=[=ship type=[%list type] =cord] =key-text-list] ~] ~]
 :-  %portal-action
-[%overwrite-list key key-list]
+[%overwrite-list key key-text-list]
 ::
 :: [ %overwrite-list
 ::      key

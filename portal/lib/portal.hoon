@@ -67,10 +67,10 @@
       =/  items-map  (malt (turn app-key-list.bespoke.data.item |=([=key =cord] [key (get-item:scry our now key)])))
       [item items-map]
         %list-nonitem-group
-      =/  items-map  (malt (turn group-key-list.bespoke.data.item |=([=key =cord] [key ~])))
+      =/  items-map  (malt (turn group-key-list.bespoke.data.item |=([=key =cord] [key (get-item:scry our now key)])))
       [item items-map]
         %list-nonitem-ship
-      =/  items-map  (malt (turn ship-key-list.bespoke.data.item |=([=key =cord] [key ~])))
+      =/  items-map  (malt (turn ship-key-list.bespoke.data.item |=([=key =cord] [key (get-item:scry our now key)])))
       [item items-map]
     ==
   --
@@ -224,7 +224,6 @@
 ::
 ++  cards
   |%
-  ::  TODO
   ++  get-list-nonitems
     |=  [our=ship now=time =item]
     ^-  (list card)
@@ -234,12 +233,19 @@
       ::  if you do set-difference you keep old data, if you don't do set difference you constantly overwrite fine data
       ::  =/  filtered-set  (set-difference:keys (silt key-list) (get-all-keys:scry our now))
       ::  =/  filtered-list  ~(tap in filtered-set)
-      =/  act-list  (turn key-list |=(=key [%get-group-preview ship.key cord.key]))
-      (turn act-list (cury act-to-act-card:cards our))
+      ::  TODO
+      =/  make-group-item-upd-list  (turn key-list put-empty-nonitem:make-update:portal-manager)
+      =/  get-group-preview-act-list  (turn key-list |=(=key [%get-group-preview ship.key cord.key]))
+      %+  weld
+      ::put ->
+      (turn make-group-item-upd-list (cury upd-to-upd-card:cards our))
+      ::edit(as group preview)
+      (turn get-group-preview-act-list (cury act-to-act-card:cards our))
+    ::
         %list-nonitem-ship
       =/  key-list  (key-text-list-to-key-list:conv ship-key-list.bespoke.data.item)
-      =/  act-list  (turn key-list |=(=key [%get-group-preview ship.key cord.key]))
-      (turn act-list (cury act-to-act-card:cards our))
+      =/  act-list  (turn key-list |=(=key (put-nonitem-ship:make-update:portal-manager our %.n [%put-nonitem-ship key])))
+      (turn act-list (cury upd-to-upd-card:cards our))
     ==
     ::
   ++  sub-to-list-keys
@@ -298,6 +304,10 @@
     ^-  card
     [%pass /act %agent [our %portal-manager] %poke %portal-action !>(action)]
   ::
+  ++  upd-to-upd-card
+    |=  [our=ship =update]
+    ^-  card
+    [%pass /upd %agent [our %portal-store] %poke %portal-update !>(update)]
   --
 ::
 ::  TODO think about all the assertions which need to happen in each of these arms
@@ -428,7 +438,6 @@
       |=  [our=ship src=ship now=time default=?(%.y %.n) act=[%add =ship =type =general =bespoke-input]]
       ^-  update
       ?>  =(our src)
-      ?>  =(ship.act our)
       =/  key  [ship.act type.act cord=?:(=(default %.y) '~2000.1.1' `@t`(scot %da now))]
       =/  data  [(bespoke-write key bespoke-input.act [%add ~]) general.act]
       =/  meta
@@ -619,8 +628,33 @@
         [%put key.msg item(bespoke.data bespoke)]
       ==
   ::
+    ++  put-empty-nonitem
+      |=  [=key]
+      ^-  update
+      ?+    type.key    !!
+          [%nonitem %group ~]
+        =/  data  [[%nonitem-group key(type [%nonitem %group ~]) ~] *general]
+        [%put key [data *meta *social *signature]]
+          [%nonitem %ship ~]
+        =/  data  [[%nonitem-ship key(type [%nonitem %ship ~]) ~] *general]
+        [%put key [data *meta *social *signature]]
+      ==
+  ::
+    ++  put-nonitem-ship
+      |=  [our=ship default=?(%.y %.n) act=[%put-nonitem-ship =key]]
+      ^-  update
+      =/  general  *general
+      =/  data  [[%nonitem-ship key.act(type [%nonitem %ship ~]) ~] general]
+      =/  meta
+        :*  updated-at='~2000.1.1'
+            permissions=~[our]
+            reach=[%public blacklist=~]
+            outside-sigs=~
+        ==
+      [%put key.act [data meta *social *signature]]
+    ::
     ++  put-nonitem-group
-      |=  [our=ship src=ship now=time default=?(%.y %.n) act=[%put-nonitem-group =key title=@t description=@t image=@t]]
+      |=  [our=ship default=?(%.y %.n) act=[%put-nonitem-group =key title=@t description=@t image=@t]]
       ^-  update
       =/  general  *general
       =/  data  [[%nonitem-group key.act(type [%nonitem %group ~]) ~] general(title title.act, description description.act, image image.act)]

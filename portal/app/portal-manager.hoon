@@ -229,9 +229,9 @@
         %fact
       =/  preview  !<(preview:groups q.cage.sign)
       =/  act  [%put-nonitem-group [p.flag.preview [%nonitem %group ~] q.flag.preview] title.meta.preview description.meta.preview image.meta.preview]
-      =/  upd  (put-nonitem-group:make-update:portal-manager [our.bowl src.bowl now.bowl %.n act])
+      =/  upd  (put-nonitem-group:make-update:portal-manager [our.bowl %.n act])
       :_  this
-      [%pass /put-nonitem-group %agent [our.bowl %portal-store] %poke %portal-update !>(upd)]~
+      [%pass /edit-nonitem-group %agent [our.bowl %portal-store] %poke %portal-update !>(upd)]~
     ==
   ==
 ::

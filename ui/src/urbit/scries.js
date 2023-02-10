@@ -22,7 +22,7 @@ export const formScryWithArgsInPath = (path, args) => {
   if (keyStr) {
     return {
       app: "portal-store",
-      path: `${path}${keyStr}/item`,
+      path: `${path}${keyStr}`,
       ship,
     };
   }
