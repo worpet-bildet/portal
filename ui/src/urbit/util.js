@@ -4,78 +4,49 @@ export const shouldTransform = subject =>
   subject.length && subject !== "SUBJECTS" && subject !== "FIELDS";
 // subject !== "INPUTS" &&
 
-export const mapInputField = input => {
+export const formField = (label, name, type = "text", parent = null) => ({
+  label,
+  name,
+  type,
+  parent,
+});
+export const mapInputField = (input, _parent = null) => {
+  const parent = !(typeof _parent === "number") ? _parent : null;
   if (input === "key") {
+    // debugger;
     return !appConfig.EXPAND_ALL_POKE_FIELDS &&
       !appConfig.EXPAND_POKE_FIELD_ITEM_KEY_OBJECT
-      ? {
-          label: "key",
-          name: "key",
-          type: "text",
-          // placeholder: "ship/type",
-        }
-      : ["ship", "type", "cord"].map(mapInputField);
+      ? formField("key", "key", "text", parent)
+      : ["ship", "type", "cord"].map(el => mapInputField(el, "key"));
   }
   if (input === "text") {
-    return {
-      label: "text",
-      name: "text",
-      type: "text",
-    };
+    return formField("text", "text", "text", parent);
   }
   if (input === "comment") {
     debugger;
     return !appConfig.EXPAND_ALL_POKE_FIELDS
-      ? {
-          label: "comment",
-          name: "comment",
-          type: "object",
-        }
-      : ["key", "text"].map(mapInputField);
+      ? formField("comment", "comment", "object", parent)
+      : ["key", "text"].map(el => mapInputField(el, "comment"));
   }
   if (input === "tags") {
-    return {
-      label: "tags",
-      name: "tags",
-    };
+    return formField("tags", "tags", "array", parent);
   }
   if (input === "properties") {
-    return {
-      label: "properties",
-      name: "properties",
-    };
+    return formField("properties", "properties", "object", parent);
   }
   if (input === "pictures") {
-    return {
-      label: "pictures",
-      name: "pictures",
-      type: "array",
-    };
+    return formField("pictures", "pictures", "array", parent);
   }
   if (input === "key-list") {
     // debugger;
-    return {
-      label: "key-list",
-      name: "key-list",
-      type: "array",
-      // disabled: true,
-    };
+    return formField("key-list", "key-list", "array", parent);
+    // disabled: true,
     // return !appConfig.EXPAND_ALL_POKE_FIELDS
-    //   ? {
-    //       label: "key-list",
-    //       name: "key-list",
-    //       type: "array",
-    //       // disabled: true,
-    //     }
     //   : ["key", "key-list"].map(mapInputField);
   }
   if (input === "general") {
     return !appConfig.EXPAND_ALL_POKE_FIELDS
-      ? {
-          label: "general",
-          name: "general",
-          type: "object",
-        }
+      ? formField("general", "general", "object", parent)
       : [
           "title",
           "link",
@@ -85,18 +56,10 @@ export const mapInputField = input => {
           "pictures",
           "image",
           "color",
-        ].map(mapInputField);
+        ].map(el => mapInputField(el, "general"));
   }
   if (input === "ship") {
-    return {
-      label: "ship",
-      name: "ship",
-      type: "text",
-    };
+    return formField("ship", "ship", "text", parent);
   }
-  return {
-    label: input,
-    name: input,
-    type: "text",
-  };
+  return formField(input, input, "text", parent);
 };

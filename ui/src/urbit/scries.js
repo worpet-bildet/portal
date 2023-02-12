@@ -18,12 +18,14 @@ export const formScry = (path, args) => {
   };
 };
 export const formScryWithArgsInPath = (path, args) => {
-  const { ship, type, cord, keyStr } = args;
+  const { keyStr, keyObj, action, face, src } = args;
   if (keyStr) {
     return {
       app: "portal-store",
       path: `${path}${keyStr}`,
-      ship,
+      // path: `${keyStr}`,
+      // .replaceAll("~", ""),
+      ship: args.ship || keyObj.ship,
     };
   }
   const pathWithArgs = path
@@ -37,11 +39,14 @@ export const formScryWithArgsInPath = (path, args) => {
 };
 export const getUpdatedItemList = async (urbit, options = {}) => {
   // const { src = "NO_SRC", action, face, keyObj, keyStr } = options;
+  const formedScry = formScryWithArgsInPath(PATHS.ITEM, options);
   console.log("getUpdatedItemList", options);
+  console.log("formedScry", formedScry);
   // debugger;
   try {
-    const data = await urbit.scry(formScryWithArgsInPath(PATHS.ITEM, options));
+    const data = await urbit.scry(formedScry);
     // const data = await urbit.scry(formScry(PATHS.ITEM, options));
+    debugger;
     return data;
   } catch (err) {
     console.error(err);

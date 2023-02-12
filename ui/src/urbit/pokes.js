@@ -62,7 +62,7 @@ export const createPoke = (urbit, type) => async data => {
   try {
     const res = await urbit.poke(poke);
     console.log("Poke Response: ", res);
-    debugger;
+    // debugger;
     return res;
   } catch (err) {
     console.error(err);
@@ -75,18 +75,23 @@ export const buildPoke = (type, data) => ({
   mark: "portal-action",
   json: {
     // poke: {
-    [type.POKE_KEY]: structurePokeData(type.INPUTS, data),
+    [type.POKE_KEY]: structurePokeData(type.FIELDS, data),
     // },
   },
   onSucccess: console.log,
   onError: console.error,
 });
 
-export const structurePokeData = (inputs, data) => {
+export const structurePokeData = (fields, data) => {
+  // debugger;
   return reduce(
-    inputs,
-    (acc, value) => {
-      acc[value] = data[value];
+    fields,
+    (acc, val) => {
+      if (val.parent) {
+        acc[val.parent] = { ...acc[val.parent], [val.name]: data[val.name] };
+      } else {
+        acc[val.name] = data[val.name];
+      }
       return acc;
     },
     {}

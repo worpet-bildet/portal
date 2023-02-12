@@ -60,7 +60,7 @@ export const useStore = createStore((set, get) => ({
     set(
       produce(async draft => {
         console.log("indexOnUpdate", update);
-        debugger;
+        // debugger;
         const res = await scries.item(update.urbit, update.evt);
         console.log("res", res);
       })
