@@ -1,8 +1,15 @@
 import shallow from "zustand/shallow";
 import produce from "immer";
+import unionBy from "lodash/unionBy";
 // import sortedUniqBy from "lodash/sortedUniqBy";
 import { createStore } from "./middleware";
-import { indexPages, updateIndex } from "./util";
+import {
+  indexPages,
+  getBP,
+  getListFromDCMap,
+  getListAtDCType,
+  getListAtType,
+} from "./util";
 import { scries } from "../urbit/scries";
 
 export const getCurators = state => state.curators;
@@ -21,6 +28,7 @@ export const useStore = createStore((set, get) => ({
   // apps: [],
   // groups: [],
   selectedItem: { name: "", type: "", key: "" },
+  selectedSection: "all",
   curators: {},
   defaultCurators: {},
   types: { app: [], group: [], list: [], other: [], ship: [] },
@@ -53,22 +61,59 @@ export const useStore = createStore((set, get) => ({
 
         const [index, types] = indexPages(defaultCuratorPages);
         draft.defaultCurators[ship] = index;
-        draft.types = types;
+        draft.types = Array.isArray(types) ? types[0] : types;
       })
     ),
   indexOnUpdate: async update =>
     set(
       produce(async draft => {
-        console.log("indexOnUpdate", update);
-        // debugger;
         const res = await scries.item(update.urbit, update.evt);
-        console.log("res", res);
+        const ship = res.keyObj.ship;
+        const type = res.keyObj.type.slice().split("/");
+
+        if (type[1] === "list") {
+          get().reduceListInIndex(res, ship, type);
+        } else {
+          get().addItemToIndex(res, ship, type);
+        }
+      })
+    ),
+  // On update of list, reduce bespoke 'payload'
+  reduceListInIndex: (item, ship, type) =>
+    set(
+      produce(draft => {
+        const listFromDCMap = getListFromDCMap(draft, ship, item);
+        const listAtType = getListAtType(draft, type);
+
+        const prevList = getBP(listAtType[0].item);
+        const nextList = getBP(item);
+        const prevListAtDC = getBP(listFromDCMap.item);
+
+        listAtType[0].item.data.bespoke.payload = unionBy(prevList, nextList, "key");
+        listFromDCMap.item.data.bespoke.payload = unionBy(prevListAtDC, nextList, "key");
+      })
+    ),
+  // On update with new item, add item to defaultCuratorMap and type map
+  addItemToIndex: (item, ship, type) =>
+    set(
+      produce(draft => {
+        const listAtDCType = getListAtDCType(draft, ship, type);
+        const listAtTypes = getListAtType(draft, type);
+
+        listAtDCType.map[0] = unionBy(listAtDCType.map[0], [item], "keyStr");
+        listAtTypes[0].map[item.keyStr] = item;
       })
     ),
   setSelectedItem: item =>
     set(
       produce(draft => {
         draft.selectedItem = item;
+      })
+    ),
+  setSelectedSection: section =>
+    set(
+      produce(draft => {
+        draft.selectedSection = section;
       })
     ),
 }));

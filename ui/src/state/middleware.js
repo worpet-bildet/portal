@@ -25,4 +25,9 @@ export const createStore = pipe(
   create
 );
 
-export const createFormStore = pipe(logger, devtools, immer, create);
+export const createFormStore = pipe(
+  // logger
+  devtools,
+  immer,
+  create
+);

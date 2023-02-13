@@ -103,3 +103,17 @@ export const indexPages = (_pages, types = {}) => {
 export const updateIndex = (_pages, types = {}) => {
   debugger;
 };
+
+export const getBP = _item => _item.data.bespoke.payload;
+export const getListFromDCMap = (_draft, _ship, _res) =>
+  _draft.defaultCurators[_ship][0].map[0].find(
+    el => el.general.title === _res.data.general.title
+  );
+export const getListAtDCType = (_draft, _ship, _type) =>
+  _draft.defaultCurators[_ship][0].map[0].find(
+    el => el.keys.keyTypes[el.keys.keyTypes.length - 1] === _type[_type.length - 1]
+  );
+export const getListAtType = (_draft, _type) => _draft.types[_type[_type.length - 1]];
+
+// |nuke %portal, =desk &
+// |rein %portal [& %portal-manager]

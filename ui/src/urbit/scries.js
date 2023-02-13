@@ -10,7 +10,6 @@ export const scries = {
   item: async (urbit, options) => getUpdatedItemList(urbit, options),
 };
 export const formScry = (path, args) => {
-  debugger;
   return {
     app: "portal-store",
     path,
@@ -23,8 +22,6 @@ export const formScryWithArgsInPath = (path, args) => {
     return {
       app: "portal-store",
       path: `${path}${keyStr}`,
-      // path: `${keyStr}`,
-      // .replaceAll("~", ""),
       ship: args.ship || keyObj.ship,
     };
   }
@@ -40,13 +37,10 @@ export const formScryWithArgsInPath = (path, args) => {
 export const getUpdatedItemList = async (urbit, options = {}) => {
   // const { src = "NO_SRC", action, face, keyObj, keyStr } = options;
   const formedScry = formScryWithArgsInPath(PATHS.ITEM, options);
-  console.log("getUpdatedItemList", options);
-  console.log("formedScry", formedScry);
-  // debugger;
+  console.log({ options, formedScry });
   try {
     const data = await urbit.scry(formedScry);
-    // const data = await urbit.scry(formScry(PATHS.ITEM, options));
-    debugger;
+    console.log("scry getUpdatedItemList", data);
     return data;
   } catch (err) {
     console.error(err);

@@ -4,7 +4,7 @@ import { Tag } from "./Tag";
 
 export function AppTile(props) {
   const { keyStr, keyObj, keywords, docket, data, singleVal } = props;
-  const title = data?.general?.title;
+  const title = data?.general?.title || props?.__title || props?.appName;
   const [imageError, setImageError] = useState(false);
   const [isUser, setIsUser] = useState(false);
   const location = useLocation();

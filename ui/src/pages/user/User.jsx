@@ -62,7 +62,7 @@ export function User(props) {
     <Fragment>
       <ResponsiveAppBar />
       <div className="flex flex-row">
-        <Sidebar />
+        {/* <Sidebar /> */}
         <div className="flex flex-col w-full min-h-screen">
           <main className="ml-32 basis-3/4 h-full">
             <div className="w-4/5 space-y-6 py-14">
@@ -102,6 +102,10 @@ export function User(props) {
                                           ...val?.data?.bespoke?.payload?.docket,
                                           ...val?.data?.general,
                                         }}
+                                        __type={type}
+                                        __key={key}
+                                        __title={getTitle(key, val, type)}
+                                        __val={val}
                                         {...val}
                                       />
                                     );
@@ -123,3 +127,15 @@ export function User(props) {
     </Fragment>
   );
 }
+
+export const getTitle = (key, val, type) => {
+  if (val?.data?.bespoke?.keyObj.type.includes("ship")) {
+    return val?.data?.bespoke?.keyObj.ship;
+  }
+  if (val?.data?.bespoke?.keyObj.type.includes("group")) {
+    return `${val?.data?.bespoke?.keyObj.ship}/${val?.data?.bespoke?.keyObj.cord}`;
+  }
+  if (type === "list") {
+    return val?.item?.data?.general?.title;
+  }
+};
