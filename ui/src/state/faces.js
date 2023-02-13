@@ -35,15 +35,10 @@ export const INPUT_FIELDS = {
   [t.RATING_DEL]: { inputs: ["key"], heading: "Delete Rating" },
   [t.REVIEW_ADD]: { inputs: ["key", "text", "hash", "is-safe"], heading: "Add Review" },
   [t.REVIEW_DEL]: { inputs: ["key"], heading: "Delete Review" },
-  [t.LIST_OVERWRITE]: { inputs: ["key", "key-list"], heading: "Overwrite List" },
+  [t.LIST_OVERWRITE]: { inputs: ["key", "key-text-list"], heading: "Overwrite List" },
   [t.GROUP_JOIN]: { inputs: ["key"], heading: "Join Group" },
 };
 
-// export const FIELDS = Object.keys(INPUTS).map(key => ({
-//   key,
-//   fields: INPUTS[key].map(mapInputField),
-//   heading:
-// }));
 export const FIELDS = transform(
   INPUT_FIELDS,
   (acc, { inputs, heading }, key) => {
@@ -59,111 +54,42 @@ export const FIELDS = transform(
 );
 
 export const types = { SUBJECTS, FIELDS, ACTIONS: ACTION_TYPES };
+
+export const getType = (FACE, POKE_KEY, SUCCESS_MSG) => ({
+  FACE,
+  INPUTS: INPUT_FIELDS[FACE].inputs,
+  HEADING: INPUT_FIELDS[FACE].heading,
+  POKE_KEY,
+  SUCCESS_MSG,
+});
+
 export const portalEvents = {
   SUBJECTS,
   FIELDS,
   ITEM: {
-    ADD: {
-      FACE: t.ITEM_ADD,
-      INPUTS: INPUT_FIELDS[t.ITEM_ADD].inputs,
-      HEADING: "Add Item",
-      POKE_KEY: "add",
-      SUCCESS_MSG: "Item added",
-    },
-    EDIT: {
-      FACE: t.ITEM_EDIT,
-      INPUTS: ["key", "general", "bespoke-input"],
-      HEADING: "Edit Item",
-      POKE_KEY: "edit",
-      SUCCESS_MSG: "Item edited",
-    },
-    SUB: {
-      FACE: t.ITEM_SUB,
-      INPUTS: ["key"],
-      HEADING: "Subscribe to Item",
-      POKE_KEY: "sub",
-      SUCCESS_MSG: "Item subscribed",
-    },
-    DEL: {
-      FACE: t.ITEM_DEL,
-      INPUTS: ["key"],
-      HEADING: "Delete Item",
-      POKE_KEY: "del",
-      SUCCESS_MSG: "Item deleted",
-    },
+    ADD: getType(t.ITEM_ADD, "add", "Item added"),
+    EDIT: getType(t.ITEM_EDIT, "edit", "Item edited"),
+    SUB: getType(t.ITEM_SUB, "sub", "Item subscribed"),
+    DEL: getType(t.ITEM_DEL, "del", "Item deleted"),
   },
   COMMENT: {
-    ADD: {
-      FACE: t.COMMENT_ADD,
-      INPUTS: ["key", "text"],
-      HEADING: "Add Comment",
-      POKE_KEY: "comment",
-      SUCCESS_MSG: "Comment added",
-    },
-    EDIT: {
-      FACE: t.COMMENT_EDIT,
-      INPUTS: ["key", "created-at", "text"],
-      HEADING: "Edit Comment",
-      POKE_KEY: "edit-comment",
-      SUCCESS_MSG: "Comment edited",
-    },
-    DEL: {
-      FACE: t.COMMENT_DEL,
-      INPUTS: ["key", "created-at"],
-      HEADING: "Delete Comment",
-      POKE_KEY: "del-comment",
-      SUCCESS_MSG: "Comment deleted",
-    },
+    ADD: getType(t.COMMENT_ADD, "comment", "Comment added"),
+    EDIT: getType(t.COMMENT_EDIT, "edit-comment", "Comment edited"),
+    DEL: getType(t.COMMENT_DEL, "del-comment", "Comment deleted"),
   },
   RATING: {
-    ADD: {
-      FACE: t.RATING_ADD,
-      INPUTS: ["key", "ratingNum"],
-      HEADING: "Add Rating",
-      POKE_KEY: "rate",
-      SUCCESS_MSG: "Rating added",
-    },
-    DEL: {
-      FACE: t.RATING_DEL,
-      INPUTS: ["key"],
-      HEADING: "Delete Rating",
-      POKE_KEY: "unrate",
-      SUCCESS_MSG: "Rating deleted",
-    },
+    ADD: getType(t.RATING_ADD, "rate", "Rating added"),
+    DEL: getType(t.RATING_DEL, "unrate", "Rating deleted"),
   },
   REVIEW: {
-    ADD: {
-      FACE: t.REVIEW_ADD,
-      INPUTS: ["key", "text", "hash", "is-safe"],
-      HEADING: "Add Review",
-      POKE_KEY: "review",
-      SUCCESS_MSG: "Review added",
-    },
-    DEL: {
-      FACE: t.REVIEW_DEL,
-      INPUTS: ["key"],
-      HEADING: "Delete Review",
-      POKE_KEY: "del-review",
-      SUCCESS_MSG: "Review deleted",
-    },
+    ADD: getType(t.REVIEW_ADD, "review", "Review added"),
+    DEL: getType(t.REVIEW_DEL, "del-review", "Review deleted"),
   },
   LIST: {
-    OVERWRITE: {
-      FACE: t.LIST_OVERWRITE,
-      INPUTS: ["key", "key-list"],
-      HEADING: "Overwrite List",
-      POKE_KEY: "overwrite-list",
-      SUCCESS_MSG: "List overwritten",
-    },
+    OVERWRITE: getType(t.LIST_OVERWRITE, "overwrite-list", "List overwritten"),
   },
   GROUP: {
-    JOIN: {
-      FACE: t.GROUP_JOIN,
-      INPUTS: ["key"],
-      HEADING: "Join Group",
-      POKE_KEY: "join-group",
-      SUCCESS_MSG: "Group joined",
-    },
+    JOIN: getType(t.GROUP_JOIN, "join-group", "Group joined"),
   },
 };
 

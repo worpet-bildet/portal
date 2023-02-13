@@ -8,7 +8,10 @@ export const handleEventActions = (
 export const handleEvent =
   (urbit, factActions = {}) =>
   (evt, action) => {
+    console.log("====================================");
     console.log("urbit event from sub: ", evt);
+    debugger;
+    console.log("====================================");
     console.log("evt.face: ", evt.face);
     if (evt.face === "put/validity-store") {
       return;

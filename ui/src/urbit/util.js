@@ -37,9 +37,9 @@ export const mapInputField = (input, _parent = null) => {
   if (input === "pictures") {
     return formField("pictures", "pictures", "array", parent);
   }
-  if (input === "key-list") {
+  if (input === "key-text-list") {
     // debugger;
-    return formField("key-list", "key-list", "array", parent);
+    return formField("key-text-list", "key-text-list", "array", parent);
     // disabled: true,
     // return !appConfig.EXPAND_ALL_POKE_FIELDS
     //   : ["key", "key-list"].map(mapInputField);

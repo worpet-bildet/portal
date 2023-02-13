@@ -8,8 +8,9 @@ const logger = config => (set, get, api) =>
     args => {
       console.log("====================================");
       set(args);
-      // const { apps, groups, curators, defaultCurator, types } = get();
-      console.log("state", get());
+      const { defaultCurators, types } = get();
+      console.log("defaultCurators", defaultCurators);
+      console.log("types", types);
       console.log("====================================");
     },
     get,

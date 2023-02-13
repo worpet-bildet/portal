@@ -1,30 +1,26 @@
 export const initialFormData = {
-  // fromPath: "",
-  // toPath: "",
-  // name: "",
-  // description: "",
-  // permissions: "",
-  // url: "",
-  // extension: "",
-  // from: "",
-  // by: "",
-  // id: "",
   actionType: "",
   key: {
     ship: "~zod",
     type: "/enditem/other",
     cord: "~2000.1.1",
   },
-  "key-list": [
+  "key-text-list": [
     {
-      ship: "~rondev",
-      type: "/nonitem/group",
-      cord: "group-discovery",
+      key: {
+        cord: "~2023.2.13..20.20.54..8a84",
+        ship: "~zod",
+        type: "/enditem/other",
+      },
+      text: "Chicken nuggets",
     },
     {
-      ship: "~bitbet-bolbel",
-      type: "/nonitem/group",
-      cord: "urbit-community",
+      key: {
+        ship: "~zod",
+        cord: "~2023.2.13..20.20.54..98dd",
+        type: "/enditem/other",
+      },
+      text: "Bloop",
     },
   ],
   general: {
@@ -56,13 +52,6 @@ export const initialFormData = {
     "enditem-other": "",
     // "enditem-app": {
     //   "dist-desk": "~zod/app"
-    // },
-    // type: "/enditem/other",
-    // payload: {},
-
-    // type: "enditem-app",
-    // payload: {
-    //   "dist-desk": "~zod/app",
     // },
   },
   ship: "~zod",
@@ -96,3 +85,32 @@ export const initialFormData = {
     "is-safe": false,
   },
 };
+
+// TODO: ["~zod"][0].map[0][2].map
+
+// "key-text-list": [
+//   {
+//     key: {
+//       cord: "~2023.2.13..20.20.54..8a84",
+//       ship: "~zod",
+//       type: "/enditem/other",
+//     },
+//     text: "Chiken nuggets",
+//   },
+//   {
+//     key: {
+//       ship: "~zod",
+//       cord: "~2023.2.13..20.20.54..98dd",
+//       type: "/enditem/other",
+//     },
+//     text: "Bloop",
+//   },
+//   {
+//     key: {
+//       ship: "~zod",
+//       cord: "~2023.2.13..20.20.54..a8d1",
+//       type: "/enditem/other",
+//     },
+//     text: "Auto-recommended",
+//   },
+// ],

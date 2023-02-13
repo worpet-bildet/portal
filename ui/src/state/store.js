@@ -71,6 +71,7 @@ export const useStore = createStore((set, get) => ({
         const ship = res.keyObj.ship;
         const type = res.keyObj.type.slice().split("/");
 
+        // TODO: Update all the things for list overwrite
         if (type[1] === "list") {
           get().reduceListInIndex(res, ship, type);
         } else {
@@ -99,8 +100,13 @@ export const useStore = createStore((set, get) => ({
       produce(draft => {
         const listAtDCType = getListAtDCType(draft, ship, type);
         const listAtTypes = getListAtType(draft, type);
+        const itemIndex = listAtDCType.map[0].findIndex(el => el.keyStr === item.keyStr);
 
-        listAtDCType.map[0] = unionBy(listAtDCType.map[0], [item], "keyStr");
+        if (itemIndex === -1) {
+          listAtDCType.map[0].push(item);
+        } else {
+          listAtDCType.map[0][itemIndex] = item;
+        }
         listAtTypes[0].map[item.keyStr] = item;
       })
     ),
