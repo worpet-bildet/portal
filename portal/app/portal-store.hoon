@@ -75,7 +75,6 @@
     :_  this
     [%give %fact ~ %portal-all-items !>(`^all-items`all-items)]~
   ?:  =(path /front-end-update)
-    ::~&  (all-items-to-nested:conv our.bowl now.bowl)
     :_  this
     [%give %fact ~ %portal-nested-all-items !>(`^nested-all-items`(all-items-to-nested:conv our.bowl now.bowl))]~
   =/  item  (~(gut by all-items) (path-to-key:conv path) ~)

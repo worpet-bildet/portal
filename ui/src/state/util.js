@@ -1,3 +1,5 @@
+import { appConfig } from "../config";
+
 export const getBespokeType = bespoke => {
   if (bespoke["curator-page"]) {
     return [
@@ -21,33 +23,97 @@ export const getBespokeType = bespoke => {
   }
   return ["otherBespoke", bespoke];
 };
-
 export const getMetadataIdType = item => {
   return item["meta-data"].id.type;
 };
+export const getDebug = (general, bespoke, keys) => {
+  return appConfig.AUDIT_TYPES
+    ? {
+        debug: {
+          general,
+          bespoke,
+          keys,
+          order: bespoke.payload,
+        },
+      }
+    : {};
+};
+export const getTypesByKey = _key => _key.slice().split("/").slice(2, -1);
+export const getBespokeKeys = bespoke => {
+  const { keyObj, keyStr } = bespoke;
+  return { keyObj, keyStr, keyTypes: getTypesByKey(keyStr) };
+};
+export const getEndTyoe = keyTypes => keyTypes[keyTypes.length - 1];
 
-export const indexPages = _pages => {
-  return _pages.slice().map(([key, page]) => {
+export const indexPages = (_pages, types = {}) => {
+  const index = _pages.slice().map(([key, page]) => {
+    if (!page) return key;
     const { item, map } = page;
     if (!item) return page;
-    const keyFragments = key.slice().split("/");
-    const [type, subtype, pointerList] = getBespokeType(item.data.bespoke);
+
+    const { data, meta, keyObj, keyStr, sig, social } = item;
+    const { general, bespoke } = data;
+    const keyTypes = getTypesByKey(key);
+    const bespokeKeys = getBespokeKeys(bespoke);
+    const keys = { key, keyObj, keyStr, keyTypes, bespoke: bespokeKeys };
+    const endType = getEndTyoe(keyTypes);
+
+    // if (endType === "group")
+    const _types = { ...types };
+    types[endType] = types[endType] || [];
+    // types[endType] = types[endType] || [];
+
+    const _item = {
+      data,
+      keys,
+      social,
+      title: general.title,
+      meta: { ...meta, sig, keys, order: bespoke.payload },
+    };
+
+    const getMap = (_types, __item) => {
+      if (!map) return {};
+
+      const entries = Object.entries(map);
+      const mapped = entries.map(entry => entry.filter(ent => ent));
+
+      return mapped && mapped[0]?.length > 1
+        ? indexPages(mapped, _types)
+        : mapped.map(ent => [
+            ent[0],
+            ent[1] || { nonItem: true, nonItemKey: ent[0], ...__item },
+          ]);
+    };
+
+    const _map = getMap(types, _item);
+    types[endType].push({ keys, title: general.title, item: _item, map });
+
     const pageData = {
-      key,
-      name: item.data.general.title,
-      general: item.data.general,
-      meta: item["meta-data"],
-      social: item.social,
-      order: pointerList,
-      bespoke: item.data.bespoke,
-      B_TYPE: `${type}/${subtype}`,
-      types: {
-        bespoke: [type, subtype, pointerList],
-        metadataId: getMetadataIdType(item),
-        keyType: keyFragments[3],
-      },
-      map: indexPages(Object.entries(map)),
+      keys,
+      title: general.title,
+      general,
+      item: _item,
+      map: _map,
     };
     return pageData;
   });
+  return [index, types];
 };
+
+export const updateIndex = (_pages, types = {}) => {
+  debugger;
+};
+
+export const getBP = _item => _item.data.bespoke.payload;
+export const getListFromDCMap = (_draft, _ship, _res) =>
+  _draft.defaultCurators[_ship][0].map[0].find(
+    el => el.general.title === _res.data.general.title
+  );
+export const getListAtDCType = (_draft, _ship, _type) =>
+  _draft.defaultCurators[_ship][0].map[0].find(
+    el => el.keys.keyTypes[el.keys.keyTypes.length - 1] === _type[_type.length - 1]
+  );
+export const getListAtType = (_draft, _type) => _draft.types[_type[_type.length - 1]];
+
+// |nuke %portal, =desk &
+// |rein %portal [& %portal-manager]

@@ -57,24 +57,26 @@ function AppBar() {
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href="/apps/portal/usr"
-            // className="w-full ml-3 font-basis text-lg"
-            sx={{
-              mr: 2,
-              display: { xs: "none", md: "flex" },
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            Portal L
-          </Typography>
+          <Link to="/apps/portal/usr">
+            <Typography
+              variant="h6"
+              noWrap
+              // component="a"
+              // href="/apps/portal/usr"
+              // className="w-full ml-3 font-basis text-lg"
+              sx={{
+                mr: 2,
+                display: { xs: "none", md: "flex" },
+                fontFamily: "monospace",
+                fontWeight: 700,
+                letterSpacing: ".3rem",
+                color: "inherit",
+                textDecoration: "none",
+              }}
+            >
+              Portal L
+            </Typography>
+          </Link>
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
@@ -127,24 +129,26 @@ function AppBar() {
             </Menu>
           </Box>
           <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            href="/apps/portal/usr"
-            sx={{
-              mr: 2,
-              display: { xs: "flex", md: "none" },
-              flexGrow: 1,
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            Portal M
-          </Typography>
+          <Link to="/apps/portal/usr">
+            <Typography
+              variant="h5"
+              noWrap
+              // component="a"
+              // href="/apps/portal/usr"
+              sx={{
+                mr: 2,
+                display: { xs: "flex", md: "none" },
+                flexGrow: 1,
+                fontFamily: "monospace",
+                fontWeight: 700,
+                letterSpacing: ".3rem",
+                color: "inherit",
+                textDecoration: "none",
+              }}
+            >
+              Portal M
+            </Typography>
+          </Link>
           <Box
             sx={{
               flexGrow: 1,
@@ -157,7 +161,7 @@ function AppBar() {
             }}
           >
             {pages.map(page => (
-              <Link to={page.link}>
+              <Link to={page.link} key={page.button}>
                 <Button
                   // this is the large view
                   key={page.button}

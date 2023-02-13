@@ -20,7 +20,7 @@ description='This is a description.'
 tags=~['tag1' 'tag2' 'tag3']
 properties=*(map @t @t)
 pictures=~['https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og_smaller.png' 'https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og.png']
-image='https://bulbapedia.bulbagarden.net/wiki/File:0024Arbok.png'
+image='https://archives.bulbagarden.net/media/upload/5/51/0024Arbok.png'
 color='#e8e8e8'
 ==
 
@@ -31,7 +31,7 @@ description='This is a description.'
 tags=~['tag1' 'tag2' 'tag3']
 properties=*(map @t @t)
 pictures=~['https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og_smaller.png' 'https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og.png']
-image='https://bulbapedia.bulbagarden.net/wiki/File:0160Feraligatr.png'
+image='https://archives.bulbagarden.net/media/upload/2/29/0160Feraligatr.png'
 color='#e8e8e8'
 ==
 
@@ -43,13 +43,13 @@ color='#e8e8e8'
 :portal-manager|add [our [%enditem %app ~] arbok [%enditem-app '~nec/portal']]
 :portal-manager|add [our [%enditem %app ~] feraligatr [%enditem-app '~nec/portal']]
 
-:portal-manager|overwrite-list [[our [%list %nonitem %group ~] '~2000.1.1'] ~[[~dalten [%nonitem %group ~] 'aera'] [~hocwyn-tipwex [%nonitem %group ~] 'uqbar-event-horizon'] [~dilryd-mopreg [%nonitem %group ~] 'app-store']]]
-:portal-manager|overwrite-list [[our [%list %nonitem %ship ~] '~2000.1.1'] ~[[~toptyr-bilder [%nonitem %ship ~] ''] [~doplyr-harbur [%nonitem %ship ~] ''] [~dilryd-mopreg [%nonitem %ship ~] '']]]
+:portal-manager|overwrite-list [[our [%list %nonitem %group ~] '~2000.1.1'] ~[[[~dalten [%nonitem %group ~] 'aera'] 'Love aera!'] [[~hocwyn-tipwex [%nonitem %group ~] 'uqbar-event-horizon'] 'Uqbar FTW!'] [[~dilryd-mopreg [%nonitem %group ~] 'app-store'] 'app-store coming soon TM']]]
+:portal-manager|overwrite-list [[our [%list %nonitem %ship ~] '~2000.1.1'] ~[[[~toptyr-bilder [%nonitem %ship ~] ''] 'top tier builder!'] [[~doplyr-harbur [%nonitem %ship ~] ''] 'top tier autist!'] [[~dilryd-mopreg [%nonitem %ship ~] ''] 'top tier weirdo!']]]
 
 
 
 SCRIES from dojo
-.^(item:data %gx /=portal-store=/item/~zod/list/list/~2000.1.1/item)
+.^(item:data %gx /=portal-store=/item/~zod/list/list/~2000.1.1/portal-item)
 .^(key-set:data %gx /=portal-store=/all/keys/key-set)
 .^(nested-all-items:conv:lib %gx /=portal-store=/all/nested/nested-all-items)
 .^(all-items:conv:lib %gx /=portal-store=/all/items/all-items)
@@ -57,7 +57,7 @@ SCRIES from dojo
 
 TODO
 - add groups to groups list, ships to ship list, better other item data, better app item data (e.g. a few commands for few different apps/other)
--general code cleanup
+- general code cleanup
 - different seed data?
 
 ASSERTIONS/SPECIFIC TYPES

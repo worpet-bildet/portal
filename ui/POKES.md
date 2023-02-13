@@ -146,17 +146,21 @@
         "type": "/list/nonitem/group",
         "cord": "~2000.1.1"
       },
-      "key-list": [
-        {
+      "key-text-list": [
+      { "key": {
           "ship": "~rondev",
           "type": "/nonitem/group",
           "cord": "group-discovery"
         },
-        {
+        "text": "group-discovery is great!"
+        },
+      { "key":  {
           "ship": "~bitbet-bolbel",
           "type": "/nonitem/group",
           "cord": "urbit-community"
-        }
+        },
+        "text": "urbit-community is lit!"
+      }
       ]
     }
   }
