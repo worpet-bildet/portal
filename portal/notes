@@ -45,11 +45,15 @@ color='#e8e8e8'
 
 :portal-manager|overwrite-list [[our [%list %nonitem %group ~] '~2000.1.1'] ~[[[~dalten [%nonitem %group ~] 'aera'] 'Love aera!'] [[~hocwyn-tipwex [%nonitem %group ~] 'uqbar-event-horizon'] 'Uqbar FTW!'] [[~dilryd-mopreg [%nonitem %group ~] 'app-store'] 'app-store coming soon TM']]]
 :portal-manager|overwrite-list [[our [%list %nonitem %ship ~] '~2000.1.1'] ~[[[~toptyr-bilder [%nonitem %ship ~] ''] 'top tier builder!'] [[~doplyr-harbur [%nonitem %ship ~] ''] 'top tier autist!'] [[~dilryd-mopreg [%nonitem %ship ~] ''] 'top tier weirdo!']]]
+:portal-manager|overwrite-list [[our [%list %enditem %app ~] '~2000.1.1'] ~[[[~nec [%enditem %app ~] '~2000.1.1'] '']]]
 
+ERROR TESTING COMMANDS
+:portal-manager|overwrite-list [[our [%list %enditem %app ~] '~2000.1.1'] ~[[[~nec [%enditem %app ~] '~2000.1.1'] '']]]
+:portal-manager|edit [[our [%enditem %other ~] '~2023.2.14..01.00.02..682e'] feraligatr [%enditem-other ~]]
 
 
 SCRIES from dojo
-.^(item:data %gx /=portal-store=/item/~zod/list/list/~2000.1.1/portal-item)
+.^(item:data %gx /=portal-store=/item/~zod/list/enditem/other/~2000.1.1/portal-item)
 .^(key-set:data %gx /=portal-store=/all/keys/key-set)
 .^(nested-all-items:conv:lib %gx /=portal-store=/all/nested/nested-all-items)
 .^(all-items:conv:lib %gx /=portal-store=/all/items/all-items)

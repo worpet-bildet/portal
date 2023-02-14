@@ -8,10 +8,12 @@
     |=  =front-end-update
     ^-  json
     %-  pairs
-    :~  ['src' s+`@t`(scot %p src.front-end-update)]
+    :~  ['srcIsOur' b+src-is-our.front-end-update]
         ['action' s+`@t`update.front-end-update]
         ['keyObj' (enjs-key key.front-end-update)]
         ['keyStr' (enjs-jam-key key.front-end-update)]
+        ['item' ?~(item.front-end-update ~ (enjs-item item.front-end-update))]
+        ['map' (enjs-end-map end-map.front-end-update)]
         ['face' s+(crip (weld (trip update.front-end-update) (spud type.key.front-end-update)))]
     ==
   ++  enjs-nested-all-items
@@ -140,31 +142,31 @@
         %-  pairs
         :~  ['keyStr' (enjs-jam-key key.bespoke)]
             ['keyObj' (enjs-key key.bespoke)]
-            ['payload' (enjs-jammed-key-text-list other-key-list.bespoke)]
+            ['payload' (enjs-key-text-list other-key-list.bespoke)]
         ==
           %list-enditem-app
         %-  pairs
         :~  ['keyStr' (enjs-jam-key key.bespoke)]
             ['keyObj' (enjs-key key.bespoke)]
-            ['payload' (enjs-jammed-key-text-list app-key-list.bespoke)]
+            ['payload' (enjs-key-text-list app-key-list.bespoke)]
         ==
           %list-nonitem-group
         %-  pairs
         :~  ['keyStr' (enjs-jam-key key.bespoke)]
             ['keyObj' (enjs-key key.bespoke)]
-            ['payload' (enjs-jammed-key-text-list group-key-list.bespoke)]
+            ['payload' (enjs-key-text-list group-key-list.bespoke)]
         ==
           %list-nonitem-ship
         %-  pairs
         :~  ['keyStr' (enjs-jam-key key.bespoke)]
             ['keyObj' (enjs-key key.bespoke)]
-            ['payload' (enjs-jammed-key-text-list ship-key-list.bespoke)]
+            ['payload' (enjs-key-text-list ship-key-list.bespoke)]
         ==
           %list-list
         %-  pairs
         :~  ['keyStr' (enjs-jam-key key.bespoke)]
             ['keyObj' (enjs-key key.bespoke)]
-            ['payload' (enjs-jammed-key-text-list list-key-list.bespoke)]
+            ['payload' (enjs-key-text-list list-key-list.bespoke)]
         ==
           %validity-store
         %-  pairs
@@ -211,16 +213,23 @@
         ^-  json
         %-  pairs
         :~  ['key' (enjs-jam-com-key com-key)]
+            ['keyObj' (enjs-com-key com-key)]
             ['ship' s+`@t`(scot %p ship.com-key)]
             ['text' s+text.comment]
             ['updatedAt' s+updated-at.comment]
             ['createdAt' s+created-at.com-key]
         ==
+      ++  enjs-com-key
+        |=  =com-key
+        ^-  json
+        %-  pairs
+        :~  ['ship' s+`@t`(scot %p ship.com-key)]
+            ['createdAt' s+created-at.com-key]
+        ==
       ++  enjs-jam-com-key
         |=  =com-key
         ^-  json
-        %-  wall
-        ~[(scow %p ship.com-key) (trip created-at.com-key)]
+        s+(crip (weld (scow %p ship.com-key) (trip created-at.com-key)))
       --
     ++  enjs-revs
       |=  =reviews
@@ -249,16 +258,6 @@
     :-  %a
     %+  turn  key-list
     |=(=key (enjs-jam-key key))
-  ++  enjs-jammed-key-text-list
-    |=  =key-text-list
-    ^-  json
-    :-  %a
-    %+  turn  key-text-list
-    |=  [=key text=cord]
-    %-  pairs
-    :~  ['key' (enjs-jam-key key)]
-        ['text' s+text]
-    ==
   ++  enjs-key-text-list
     |=  =key-text-list
     ^-  json
@@ -269,7 +268,8 @@
     |=  [=key text=cord]
     ^-  json
     %-  pairs
-    :~  ['key' (enjs-key key)]
+    :~  ['keyStr' (enjs-jam-key key)]
+        ['keyObj' (enjs-key key)]
         ['text' s+text]
     ==
   ++  enjs-key-list

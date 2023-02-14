@@ -1,8 +1,10 @@
 /-  *portal-data
 |%
 +$  front-end-update
-  $:  src=?(%our %their)
+  $:  src-is-our=?
       update=?(%put %del)
       =key
+      item=?(~ item)
+      =end-map
   ==
 --

@@ -1,4 +1,4 @@
-/-  *portal-data, *portal-update, *portal-action
+/-  *portal-data, *portal-update, *portal-action, *portal-front-end-update
 /+  sig
 |%
 +$  card  card:agent:gall
@@ -61,16 +61,16 @@
     ^-  [^item (map key ?(~ ^item))]
     ?+    -.bespoke.data.item    [item ~]
         %list-enditem-other
-      =/  items-map  (malt (turn other-key-list.bespoke.data.item |=([=key =cord] [key (get-item:scry our now key)])))
+      =/  items-map  (malt (turn other-key-list.bespoke.data.item |=([=key =cord] [key (get-item-or-null:scry our now key)])))
       [item items-map]
         %list-enditem-app
-      =/  items-map  (malt (turn app-key-list.bespoke.data.item |=([=key =cord] [key (get-item:scry our now key)])))
+      =/  items-map  (malt (turn app-key-list.bespoke.data.item |=([=key =cord] [key (get-item-or-null:scry our now key)])))
       [item items-map]
         %list-nonitem-group
-      =/  items-map  (malt (turn group-key-list.bespoke.data.item |=([=key =cord] [key (get-item:scry our now key)])))
+      =/  items-map  (malt (turn group-key-list.bespoke.data.item |=([=key =cord] [key (get-item-or-null:scry our now key)])))
       [item items-map]
         %list-nonitem-ship
-      =/  items-map  (malt (turn ship-key-list.bespoke.data.item |=([=key =cord] [key (get-item:scry our now key)])))
+      =/  items-map  (malt (turn ship-key-list.bespoke.data.item |=([=key =cord] [key (get-item-or-null:scry our now key)])))
       [item items-map]
     ==
   --
@@ -83,6 +83,21 @@
     ^-  item
     =/  path  (weld (weld /(scot %p our)/portal-store/(scot %da now)/item (key-to-path:conv key)) /item)
     .^(item %gx path)
+  ::
+  ::  gets item, and if doesn't exist returns ~
+  ++  get-item-or-null
+    |=  [our=ship now=time =key]
+    ^-  ?(~ item)
+    =/  path  (weld (weld /(scot %p our)/portal-store/(scot %da now)/item (key-to-path:conv key)) /noun)
+    .^(?(~ item) %gx path)
+  ::
+  ++  get-items
+    |=  [our=ship now=time =key-set]
+    ^-  (map key ?(~ item))
+    %-  malt
+    %+  turn  ~(tap in key-set)
+    |=  =key
+    [key (get-item-or-null our now key)]
   ::
   ::  gets all-items
   ++  get-all-items
@@ -104,13 +119,18 @@
     ^-  nested-all-items
     =/  path  /(scot %p our)/portal-store/(scot %da now)/all/nested/nested-all-items
     .^(nested-all-items %gx path)
-
+  ::
   ++  get-item-latest-validity
     |=  [our=ship now=time =key]
     ^-  ?
     =/  path  (weld (weld /(scot %p our)/portal-store/(scot %da now)/valid/latest (key-to-path:conv key)) /noun)
     .^(? %gx path)
-
+  ::
+  ++  in-default-list
+    |=  [our=ship now=time =key]
+    ^-  ?
+    =/  path  (weld (weld /(scot %p our)/portal-store/(scot %da now)/in-default-list (key-to-path:conv key)) /noun)
+    .^(? %gx path)
   --
 ::
 ++  keys
@@ -120,6 +140,8 @@
     ^-  key-set
     (~(dif in set-1) set-2)
   ::
+  ::  do this stuff (and other) with wet gates
+  ::  so that I can input key-list or key-text-list and it doesnt matter
   ++  skip-nonitem
     |=  [=key-list]
     ^-  ^key-list
@@ -135,6 +157,15 @@
     ^-  ^key-list
     (skim key-list |=([=key] ?~((find [type.key]~ types) %.n %.y)))
   ::
+  ++  skip-ships
+    |=  [=key-list ships=(list ship)]
+    ^-  ^key-list
+    (skip key-list |=([=key] ?~((find [ship.key]~ ships) %.n %.y)))
+  ::
+  ++  skim-ships
+    |=  [=key-list ships=(list ship)]
+    ^-  ^key-list
+    (skim key-list |=([=key] ?~((find [ship.key]~ ships) %.n %.y)))
   --
 ::
 ++  loob
@@ -210,6 +241,9 @@
     |=  [src=ship our=ship =all-items upd=[%del =key]]
     ^-  [?(%changed %unchanged) ^all-items]
     ~&  "%portal: deleting {(spud (key-to-path:conv key.upd))}"
+    ?:  =(cord.key.upd '~2000.1.1')
+      ~&  "%portal: item is default, not deleting"
+      [%unchanged all-items]
     ?.  (~(has by all-items) key.upd)
       ~&  "%portal: {(spud (key-to-path:conv key.upd))} does not exist"
       [%unchanged all-items]
@@ -220,6 +254,40 @@
     |=  [our=ship =all-items upd=[%put =key =item]]
     ~&  "%portal: putting {(spud (key-to-path:conv key.upd))}"
     (~(put by all-items) key.upd item.upd)
+  ::
+  ++  make-front-end-update
+    |=  [src=ship our=ship now=time upd=update]
+    ^-  front-end-update
+    :*  ?:(=(src our) %.y %.n)
+        ?+    -.upd    !!
+            %put
+          :^  -.upd  key.upd  item.upd
+          ?+    -.bespoke.data.item.upd    ~
+              %list-enditem-other
+            =/  key-list
+              %-  key-text-list-to-key-list:conv
+              other-key-list.bespoke.data.item.upd
+            (get-items:scry our now (silt key-list))
+              %list-enditem-app
+            =/  key-list
+              %-  key-text-list-to-key-list:conv
+              app-key-list.bespoke.data.item.upd
+            (get-items:scry our now (silt key-list))
+              %list-nonitem-group
+            =/  key-list
+              %-  key-text-list-to-key-list:conv
+              group-key-list.bespoke.data.item.upd
+            (get-items:scry our now (silt key-list))
+              %list-nonitem-ship
+            =/  key-list
+              %-  key-text-list-to-key-list:conv
+              ship-key-list.bespoke.data.item.upd
+            (get-items:scry our now (silt key-list))
+          ==
+          ::
+            %del  [-.upd key.upd ~ ~]
+        ==
+    ==
   --
 ::
 ++  cards
@@ -254,19 +322,21 @@
     ?+    -.bespoke.data.item    ~
         %list-list
       =/  key-list  (key-text-list-to-key-list:conv list-key-list.bespoke.data.item)
+      =/  key-list  (skip-ships:keys key-list ~[our])
       =/  filtered-set  (set-difference:keys (silt key-list) (get-all-keys:scry our now))
       =/  filtered-list  ~(tap in filtered-set)
       (turn filtered-list (cury key-to-sub-card:cards our))
     ::
         %list-enditem-other
       =/  key-list  (key-text-list-to-key-list:conv other-key-list.bespoke.data.item)
+      =/  key-list  (skip-ships:keys key-list ~[our])
       =/  filtered-set  (set-difference:keys (silt key-list) (get-all-keys:scry our now))
       =/  filtered-list  ~(tap in filtered-set)
       (turn filtered-list (cury key-to-sub-card:cards our))
     ::
         %list-enditem-app
       =/  key-list  (key-text-list-to-key-list:conv app-key-list.bespoke.data.item)
-
+      =/  key-list  (skip-ships:keys key-list ~[our])
       ::  filter out %.n pointers
       ::=/  filtered-list  (skip-cen-no:pointers end-item-pointer-list.recommendations.bespoke.data.item)
       ::
@@ -329,8 +399,10 @@
         ?.  =(our ship.key.upd)  ~
         ?+    type.key.upd    ~
             [%enditem %other ~]
+          ?:  (in-default-list:scry our now key.upd)  ~
           ~[(act-to-act-card:cards our [%add-to-default-list key.upd])]
             [%enditem %app ~]
+          ?:  (in-default-list:scry our now key.upd)  ~
           ~[(act-to-act-card:cards our [%add-to-default-list key.upd])]
         ==
       %+  weld
