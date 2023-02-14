@@ -2,6 +2,8 @@
 
 ## Development
 
+> See README.md at repo root for updated UI setup instructions
+
 ### Fake ship
 
 If you want to contribute on the development, you will need to have installed portal in your urbit development ship. If you don't have it, please go to **README.md from the app-store** folder.
@@ -37,4 +39,3 @@ npm run dev
 ```
 
 The application will be accessible on `localhost:5173/apps/portal`.
-    "@urbit/vite-plugin-urbit": "git+https://git@github.com/sethfork/vite-plugin-urbit.git#02bcdf7",
