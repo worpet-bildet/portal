@@ -1,4 +1,4 @@
-# App Store
+# Portal
 
 ### A tool for decentralized curation and discovery of Urbit applications
 
@@ -8,7 +8,49 @@ https://github.com/urbit/urbit.org/blob/master/content/grants/app-store.md
 For discussion, visit on Urbit:
 ~dilryd-mopreg/app-store
 
-### How to install
+## Setup
+
+## UI Prereqs
+
+- Node JS- [https://nodejs.org/en/download/](https://nodejs.org/en/download/)
+
+- A node version manager, such as [n](https://github.com/tj/n), [nvm](https://github.com/nvm-sh/nvm), or [pnpm](https://github.com/pnpm/pnpm). This project uses pnpm for package management, but any of these will work for node version management.
+
+  To install n with npm:
+
+  ```
+  npm install -g n
+  ```
+
+- Using your node version manager, select node version `16.14.0`. You can check which version you're on with `node -v`
+
+- This project uses [pnpm](https://pnpm.io/) for package management. See install options here - [https://pnpm.io/installation](https://pnpm.io/installation)
+
+## UI Usage
+
+```
+cd ui
+```
+
+Install deps:
+
+```
+pnpm install
+```
+
+Build app:
+
+```
+pnpm build
+```
+
+Run local app dev server:
+
+```
+pnpm dev
+```
+
+## Desk Setup
 
 App Store is not yet published on Urbit, but it is easy to boot a fake ship and play with it.
 
@@ -26,6 +68,17 @@ Download the zip file from github, and extract it to your fake ship. Delete the 
 |commit %portal
 |install our %portal
 ```
+
+on nuke
+
+```
+|nuke %portal, =desk &
+|rein %portal [& %portal-manager]
+```
+
+> To seed %portal data, see commands in /portal/notes
+
+## Instructions below are OOD
 
 Now %app-store has been installed on one fake ship. To see more clearly how it works, you can install it on multiple ships and assume different roles (Distributor, Developer, Curator, User) for each ship.
 

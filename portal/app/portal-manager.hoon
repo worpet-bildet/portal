@@ -1,4 +1,4 @@
-/-  *portal-data, *portal-action, *portal-message
+/-  *portal-data, *portal-action, *portal-message, groups
 /+  default-agent, dbug, *portal, *agentio, sig
 |%
 +$  versioned-state
@@ -46,7 +46,7 @@
   ^-  (quip card _this)
   ?+    mark    (on-poke:default mark vase)
       %portal-action
-    ?>  =(our.bowl src.bowl)
+    ?.  =(our.bowl src.bowl)  `this
     =/  act  !<(action vase)
     ?-    -.act
         %add
@@ -68,6 +68,17 @@
       =/  upd  (del:make-update:portal-manager [our.bowl act])
       :_  this
       [%pass /del %agent [our.bowl %portal-store] %poke %portal-update !>(upd)]~
+    ::
+    ::
+        %add-to-default-list
+      =/  upd  (add-to-default-list:make-update:portal-manager our.bowl now.bowl act)
+      :_  this
+      [%pass /add-to-def-list %agent [our.bowl %portal-store] %poke %portal-update !>(upd)]~
+    ::
+        %overwrite-list
+      =/  upd  (overwrite-list:make-update:portal-manager our.bowl now.bowl act)
+      :_  this
+      [%pass /overwrite-list %agent [our.bowl %portal-store] %poke %portal-update !>(upd)]~
     ::
     ::  TODO test local and foreign commenting (and all else)
     ::  how does scries work when you comment on a foreign item (do you need scries for that)
@@ -113,9 +124,13 @@
       [%pass /send-send-app-data %agent [ship.key.act %portal-manager] %poke %portal-message !>([%send-app-data key.act hash docket])]~
     ::
         %join-group
-      ?>  ?=([%nonitem %group *] type.key.act)
+      ?.  ?=([%nonitem %group *] type.key.act)  `this
       :_  this
       [%pass /group-join %agent [our.bowl %groups] %poke %group-join !>([flag=[ship.key.act `@tas`cord.key.act] join-all=&])]~
+    ::
+        %get-group-preview
+      :_  this
+      [%pass /get-group-preview %agent [ship.flag.act %groups] %watch /groups/(scot %p ship.flag.act)/[term.flag.act]/preview]~
     ==
   ::
   ::  eventually should also be able to receive a message which can add/edit an item. with the right perms obviously
@@ -181,7 +196,7 @@
     ::  then %portal-manager decides if it needs to do anything with it
     ::  maybe there should be more metadata except just the item itself?
       %portal-update
-    ?>  =(our.bowl src.bowl)
+    ?.  =(our.bowl src.bowl)  `this
     =/  upd  !<(update vase)
     ?+    -.upd    (on-poke:default mark vase)
         %put
@@ -192,9 +207,9 @@
       :_  this
       (del:respond-to-update:portal-manager upd)
     ::
-        %empty-init
+        %empty
       :_  this
-      (empty-init:respond-to-update:portal-manager upd)
+      (empty:respond-to-update:portal-manager upd)
     ==
   ==
 ::
@@ -202,6 +217,23 @@
 ++  on-watch  on-watch:default
 ++  on-leave  on-leave:default
 ++  on-peek   on-peek:default
-++  on-agent  on-agent:default
+++  on-agent
+  |=  [=wire =sign:agent:gall]
+  ^-  (quip card _this)
+  ?+    wire    (on-agent:default wire sign)
+      [%get-group-preview ~]
+    ?+    -.sign    (on-agent:default wire sign)
+        %watch-ack  `this
+        %kick       `this
+    ::
+        %fact
+      =/  preview  !<(preview:groups q.cage.sign)
+      =/  act  [%put-nonitem-group [p.flag.preview [%nonitem %group ~] q.flag.preview] title.meta.preview description.meta.preview image.meta.preview]
+      =/  upd  (put-nonitem-group:make-update:portal-manager [our.bowl %.n act])
+      :_  this
+      [%pass /edit-nonitem-group %agent [our.bowl %portal-store] %poke %portal-update !>(upd)]~
+    ==
+  ==
+::
 ++  on-fail   on-fail:default
 --

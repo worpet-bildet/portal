@@ -1,5 +1,5 @@
 /-  *portal-action
 :-  %say
-|=  [[now=@da eny=@uvJ bek=beak] [[=pointer rating-num=@ud] ~] ~]
+|=  [[now=@da eny=@uvJ bek=beak] [[=key rating-num=@ud] ~] ~]
 :-  %portal-action
-[%rate pointer rating-num]
+[%rate key rating-num]

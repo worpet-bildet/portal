@@ -1,5 +1,4 @@
 /-   *docket
-/+  mip
 |%
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
@@ -41,18 +40,18 @@
 +$  cur-obj  [=item =lis-map]
 +$  lis-map  (map key lis-obj)
 +$  lis-obj  [=item =end-map]
-+$  end-map  (map key item)
++$  end-map  (map key ?(~ item))
 ::
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
 ::  Item Parts
 ::
-+$  item
++$  item  ::TODO how to handle nonitems in general?
   $:  =data
-      =meta-data
+      =meta
       =social
-      =item-sig
+      =sig
   ==
 ::
 ::
@@ -61,7 +60,7 @@
       =general
   ==
 ::
-+$  meta-data
++$  meta
   $:  =updated-at                      ::  when '~2000.1.1' means it has not been updated
       permissions=(list @p)            ::  not used yet. auto- ~[our.bowl].
       =reach                           ::  not used yet
@@ -99,7 +98,9 @@
 ::  data specific to the item type
 ::  TODO how to branch on path instead of just tag?
 +$  bespoke
-  $%  [%enditem-other key=[=ship type=[%enditem %other ~] =cord] ~]
+  $%  [%nonitem-ship key=[=ship type=[%nonitem %ship ~] =cord] ~]
+      [%nonitem-group key=[=ship type=[%nonitem %group ~] =cord] ~]
+      [%enditem-other key=[=ship type=[%enditem %other ~] =cord] ~]
       [%enditem-app key=[=ship type=[%enditem %app ~] =cord] dist-desk=@t sig=signature desk-hash=@uv =docket]
       [%list-enditem-other key=[=ship type=[%list %enditem %other ~] =cord] =other-key-list]
       [%list-enditem-app key=[=ship type=[%list %enditem %app ~] =cord] =app-key-list]
@@ -111,7 +112,9 @@
 ::
 ::  when inputting bespoke data, you sometimes don't need to input all of it
 +$  bespoke-input
-  $%  [%enditem-other ~]
+  $%  [%nonitem-ship ~]
+      [%nonitem-group ~]
+      [%enditem-other ~]
       [%enditem-app dist-desk=@t]
       [%list-enditem-other =other-key-list]
       [%list-enditem-app =app-key-list]
@@ -121,11 +124,13 @@
       [%validity-store =validity-records]
   ==
 ::
-+$  list-key-list       (list key=[=ship type=[%list ~] =cord])
-+$  app-key-list        (list key=[=ship type=[%enditem %app ~] =cord])
-+$  other-key-list      (list key=[=ship type=[%enditem %other ~] =cord])
-+$  group-key-list      (list key=[=ship type=[%nonitem %group ~] =cord])
-+$  ship-key-list       (list key=[=ship type=[%nonitem %ship ~] =cord])
++$  key-text-list       (list [=key text=cord])
+::
++$  list-key-list       (list [key=[=ship type=[%list type] =cord] text=cord])
++$  app-key-list        (list [key=[=ship type=[%enditem %app ~] =cord] text=cord])
++$  other-key-list      (list [key=[=ship type=[%enditem %other ~] =cord] text=cord])
++$  group-key-list      (list [key=[=ship type=[%nonitem %group ~] =cord] text=cord])
++$  ship-key-list       (list [key=[=ship type=[%nonitem %ship ~] =cord] text=cord])
 ::
 ::
 +$  key-list  (list key)
@@ -138,7 +143,7 @@
 ::  Item Metadata
 ::
 ::  made with jamming the whole item, so that nobody can fake an item
-+$  item-sig  signature
++$  sig  signature
 ::
 ::
 ::
@@ -194,7 +199,7 @@
 +$  signature   [hex=@ux =ship =life]
 ::
 +$  sig-input
-  $%  [%item =data =meta-data =social]     ::  for signing the item each time it is edited
+  $%  [%item =data =meta =social]     ::  for signing the item each time it is edited
       [%key =key]                            ::  for signing item by somebody from the outside (not in use yet)
       [%app =key desk-name=@tas]            ::  for signing apps by the distributor ship
   ==

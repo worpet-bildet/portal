@@ -9,6 +9,9 @@
       [%sub =key]
       [%del =key]
       ::
+      [%add-to-default-list key=[=ship type=$%([%enditem %other ~] [%enditem %app ~] [%nonitem %group ~] [%nonitem %ship ~]) =cord]]
+      [%overwrite-list key=[=ship type=[%list type] =cord] =key-text-list]
+      ::
       [%comment =key text=@t]
       [%edit-comment =key =created-at text=@t]
       [%del-comment =key =created-at]
@@ -21,6 +24,7 @@
       [%send-app-data =key desk-name=@tas]
       ::
       [%join-group =key]  :: pointer would be: [%.n ~rondev %group 'group-discovery']
+      [%get-group-preview flag=[=ship =term]]
   ==
 ::
 ::  %add and %edit contain @p so that in the future they can be generalized
