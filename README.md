@@ -12,19 +12,18 @@ For discussion, visit on Urbit:
 
 ## UI Prereqs
 
-- Node JS- [https://nodejs.org/en/download/](https://nodejs.org/en/download/)
+- Node JS- [https://nodejs.org/en/download/](https://nodejs.org/en/download/). install with `sudo apt install nodejs`
 
-- A node version manager, such as [n](https://github.com/tj/n), [nvm](https://github.com/nvm-sh/nvm), or [pnpm](https://github.com/pnpm/pnpm). This project uses pnpm for package management, but any of these will work for node version management.
+- This project uses [pnpm](https://github.com/pnpm/pnpm) for package management, but any of these will work for node version management. install it with `wget -qO- https://get.pnpm.io/install.sh | ENV="~/.bashrc" SHELL="$(which bash)" bash -`
 
-  To install n with npm:
+To install n with npm:
 
   ```
+  sudo apt install npm
   npm install -g n
   ```
 
-- Using your node version manager, select node version `16.14.0`. You can check which version you're on with `node -v`
-
-- This project uses [pnpm](https://pnpm.io/) for package management. See install options here - [https://pnpm.io/installation](https://pnpm.io/installation)
+- Select node version `16.14.0` with `pnpm env use --global 16.14.0`. You can check which version you're on with `node -v`
 
 ## UI Usage
 
@@ -44,6 +43,8 @@ Build app:
 pnpm build
 ```
 
+if you run into heap limit errors you may have to configure node to work with less RAM: `NODE_OPTIONS=--max_old_space_size=1536` 
+
 Run local app dev server:
 
 ```
@@ -54,6 +55,10 @@ pnpm dev
 
 App Store is not yet published on Urbit, but it is easy to boot a fake ship and play with it.
 
+`curl -L https://urbit.org/install/linux-x86_64/latest | tar xzk --transform='s/.*/urbit/g' && ./urbit`
+
+`./urbit -c mycomet`
+
 Boot a fake ship. Run:
 
 ```
@@ -61,6 +66,8 @@ Boot a fake ship. Run:
 |merge %portal our %base
 |mount %portal
 ```
+
+use pnpm copy-desk-brady scripts in app-store/ui/package.json by updating the script with the relative path of your ship from app-store/ui
 
 Download the zip file from github, and extract it to your fake ship. Delete the app-store desk, and rename the downloaded folder into "app-store". Then:
 
