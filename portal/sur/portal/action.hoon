@@ -2,8 +2,7 @@
 |%
 ::
 +$  action
-  $%
-      [%add =ship =type =general =bespoke-input]
+  $%  [%add =ship =type =general =bespoke-input]
       [%edit =key =general =bespoke-input]
       ::
       [%sub =key]
@@ -11,6 +10,8 @@
       ::
       [%add-to-default-list key=[=ship type=$%([%enditem %other ~] [%enditem %app ~] [%nonitem %group ~] [%nonitem %ship ~]) =cord]]
       [%overwrite-list key=[=ship type=[%list type] =cord] =key-text-list]
+      ::
+      [%put-nonitem =key =item]
       ::
       [%comment =key text=@t]
       [%edit-comment =key =created-at text=@t]

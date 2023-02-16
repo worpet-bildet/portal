@@ -4,6 +4,18 @@
 ++  enjs
   =,  enjs:format
   |%
+  ++  enjs-result
+    |=  =result
+    ^-  json
+    ?~  result
+      %-  pairs
+      :~  ['valid' ~]
+          ['noResult' b+%.y]
+      ==
+    %-  pairs
+    :~  ['valid' b++.result]
+        ['noResult' b+%.n]
+    ==
   ++  enjs-front-end-update
     |=  =front-end-update
     ^-  json

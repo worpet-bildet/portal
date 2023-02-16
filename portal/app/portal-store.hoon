@@ -1,4 +1,4 @@
-/-  *portal-data, *portal-update, *portal-front-end-update
+/-  *portal-data, *portal-update, *portal-front-end-update, *portal-message
 /+  default-agent, dbug, *portal, *agentio
 |%
 +$  versioned-state
@@ -20,7 +20,20 @@
 ++  on-init
   ^-  (quip card _this)
   =.  state  *state-0
-  `this
+  =^  cards-1  all-items
+    (validity-store:default:make-update:portal-store all-items our.bowl now.bowl)
+  =^  cards-2  all-items
+    (groups-list:default:make-update:portal-store all-items our.bowl now.bowl)
+  =^  cards-3  all-items
+    (apps-list:default:make-update:portal-store all-items our.bowl now.bowl)
+  =^  cards-4  all-items
+    (ships-list:default:make-update:portal-store all-items our.bowl now.bowl)
+  =^  cards-5  all-items
+    (other-list:default:make-update:portal-store all-items our.bowl now.bowl)
+  =^  cards-6  all-items
+    (list-list:default:make-update:portal-store all-items our.bowl now.bowl)
+  :_  this
+  (zing ~[cards-1 cards-2 cards-3 cards-4 cards-5 cards-6])
 ::
 ++  on-save  !>(state)
 ++  on-load
@@ -28,43 +41,96 @@
   ^-  (quip card _this)
   `this(state !<(state-0 old))
 ::
+::  all portal-action and portal-message go into portal-update
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
   ?+    mark    (on-poke:default mark vase)
-      %portal-update
+      %portal-action
     ?.  =(our.bowl src.bowl)  `this
-    =/  upd  `update`!<(update vase)
-    ?+    -.upd    `this
-        %put
-      =/  new  (put-item:portal-store our.bowl all-items upd)
-      ?:  =(type.key.upd /validity-store)  `this(all-items new)
-      :_  this(all-items new)
-      :~
-        [%pass /put %agent [our.bowl %portal-manager] %poke %portal-update !>(upd)]
-        [(fact [%portal-update !>(upd)] [(key-to-path:conv key.upd)]~)]
-        [%give %fact [/front-end-update]~ %portal-front-end-update !>((make-front-end-update:portal-store src.bowl our.bowl now.bowl upd))]
-      ==
+    =/  act  `action`!<(action vase)
+    ?+    -.act    (on-poke:default mark vase)
+        %add
+      =^  cards  all-items
+        (add:on-action:portal-store [all-items our.bowl src.bowl now.bowl %.n act])
+      [cards this]
+    ::
+        %edit
+      =^  cards  all-items
+        (edit:on-action:portal-store [all-items our.bowl src.bowl now.bowl act])
+      [cards this]
+    ::
+        %sub
+      :_  this
+      (sub:on-action:portal-store [our.bowl src.bowl now.bowl wex.bowl act])
     ::
         %del
-      =^  changed  all-items  (del-item:portal-store src.bowl our.bowl all-items upd)
-      ~&  "%portal-store: unsubscribing from {(key-to-path:conv key.upd)}"
-      :_  this
-      :~
-        [%pass /del %agent [our.bowl %portal-manager] %poke %portal-update !>(upd)]
-        [(fact [%portal-update !>(upd)] [(key-to-path:conv key.upd)]~)]
-        [%pass (key-to-path:conv key.upd) %agent [ship.key.upd %portal-store] %leave ~]
-        [%give %fact [/front-end-update]~ %portal-front-end-update !>((make-front-end-update:portal-store src.bowl our.bowl now.bowl upd))]
-      ==
+      =^  cards  all-items
+        (del:on-action:portal-store [all-items our.bowl src.bowl now.bowl act])
+      [cards this]
     ::
-    ::  you can only sub to /0/ pointers
-        %sub
-      =/  wire  (key-to-path:conv key.upd)
-      ~&  "%portal-store: subscribing to {wire}"
-      :_  this
-      [%pass wire %agent [ship.key.upd %portal-store] %watch wire]~
+        %add-to-default-list
+      =^  cards  all-items
+        (add-to-default-list:on-action:portal-store all-items our.bowl now.bowl act)
+      [cards this]
+    ::
+        %overwrite-list
+      =^  cards  all-items
+        (overwrite-list:on-action:portal-store all-items our.bowl now.bowl act)
+      [cards this]
+    ==
+  ::
+      %portal-message
+    ?.  =(our.bowl src.bowl)  `this
+    =/  msg  `message`!<(message vase)
+    ?-    -.msg
+        %comment
+      =^  cards  all-items
+        (comment:on-message:portal-store [all-items our.bowl src.bowl now.bowl msg])
+      [cards this]
+    ::
+        %edit-comment
+      =^  cards  all-items
+        (edit-comment:on-message:portal-store [all-items our.bowl src.bowl now.bowl msg])
+      [cards this]
+    ::
+        %del-comment
+      =^  cards  all-items
+        (del-comment:on-message:portal-store [all-items our.bowl src.bowl now.bowl msg])
+      [cards this]
+    ::
+        %rate
+      =^  cards  all-items
+        (rate:on-message:portal-store [all-items our.bowl src.bowl now.bowl msg])
+      [cards this]
+    ::
+        %unrate
+      =^  cards  all-items
+        (unrate:on-message:portal-store [all-items our.bowl src.bowl now.bowl msg])
+      [cards this]
+    ::
+        %review
+      =^  cards  all-items
+        (review:on-message:portal-store [all-items our.bowl src.bowl now.bowl msg])
+      [cards this]
+    ::
+        %del-review
+      =^  cards  all-items
+        (del-review:on-message:portal-store [all-items our.bowl src.bowl now.bowl msg])
+      [cards this]
+    ::
+        %sign-app
+      =^  cards  all-items
+        (sign-app:on-message:portal-store [all-items our.bowl src.bowl now.bowl msg])
+      [cards this]
+    ::
+        %send-app-data
+      =^  cards  all-items
+        (send-app-data:on-message:portal-store [all-items our.bowl src.bowl now.bowl msg])
+      [cards this]
     ::
     ==
+  ::
   ==
 ::
 ++  on-arvo   on-arvo:default
@@ -77,11 +143,10 @@
     [%give %fact ~ %portal-all-items !>(`^all-items`all-items)]~
   ?:  =(path /front-end-update)
     :_  this
-    [%give %fact ~ %portal-nested-all-items !>(`^nested-all-items`(all-items-to-nested:conv our.bowl now.bowl))]~
+    [%give %fact ~ %portal-nested-all-items !>(`^nested-all-items`(all-items-to-nested:conv all-items our.bowl now.bowl))]~
   =/  item  (~(gut by all-items) (path-to-key:conv path) ~)
   :_  this
-  ?~  item
-    [%give %fact ~ %portal-update !>(`update`[%empty ~])]~
+  ?~  item  ~
   [%give %fact ~ %portal-update !>(`update`[%put key.bespoke.data.item item])]~
 ::
 ++  on-leave  on-leave:default
@@ -92,26 +157,22 @@
   ?+    -.sign  (on-agent:default wire sign)
       %watch-ack
     ?~  p.sign
-      ~&  "%portal-store: subscribe to {wire} succeeded"
+      ~&  "%portal-store: subscribe to {(spud wire)} succeeded"
       `this
-    ~&  "%portal-store: subscribe to {wire} failed"
+    ~&  "%portal-store: subscribe to {(spud wire)} failed"
     `this
   ::
       %kick
     =/  key  (path-to-key:conv wire)
-    ~&  "%portal-store: got kick from {wire}, resubscribing..."
+    ~&  "%portal-store: got kick from {(spud wire)}, resubscribing..."
     :_  this
     [%pass wire %agent [ship.key %portal-store] %watch wire]~
   ::
       %fact
     =/  key  (path-to-key:conv wire)
     =/  upd  !<(update q.cage.sign)
-    ~&  "%portal-store: received update from {wire}"
+    ~&  "%portal-store: received update from {(spud wire)}"
     ?+    -.upd    `this
-        %empty
-      ~&  "%portal-store: item doesn't exist"
-      :_  this
-      [%pass /empty %agent [our.bowl %portal-manager] %poke %portal-update !>(upd)]~
       ::
       ::  basically %init/%add/%edit
         %put
@@ -119,16 +180,16 @@
       :_  this(all-items new)
       :~
       [%pass /put %agent [our.bowl %portal-manager] %poke %portal-update !>(upd)]
-      [%give %fact [/front-end-update]~ %portal-front-end-update !>((make-front-end-update:portal-store src.bowl our.bowl now.bowl upd))]
+      [%give %fact [/front-end-update]~ %portal-front-end-update !>((make-front-end-update:portal-store all-items our.bowl src.bowl now.bowl upd))]
       ==
     ::
     ::  receiving a delete (distinct from unsubbing)
         %del
-      =^  changed  all-items  (del-item:portal-store src.bowl our.bowl all-items upd)
+      =^  changed  all-items  (del-item:portal-store our.bowl src.bowl all-items upd)
       :_  this
       :~
       [%pass /del %agent [our.bowl %portal-manager] %poke %portal-update !>(upd)]
-      [%give %fact [/front-end-update]~ %portal-front-end-update !>((make-front-end-update:portal-store src.bowl our.bowl now.bowl upd))]
+      [%give %fact [/front-end-update]~ %portal-front-end-update !>((make-front-end-update:portal-store all-items our.bowl src.bowl now.bowl upd))]
       ==
     ==
   ==
@@ -139,23 +200,25 @@
   ?+    path    ``noun+!>(~)
   ::
       [%x %all %items ~]
-    ``all-items+!>(all-items)
+    ``portal-all-items+!>(all-items)
   ::
       [%x %all %keys ~]
-    ``key-set+!>(~(key by all-items))
+    ``portal-key-set+!>(~(key by all-items))
   ::
       [%x %all %nested ~]
-    ``nested-all-items+!>((all-items-to-nested:conv our.bowl now.bowl))
+    ``portal-nested-all-items+!>((all-items-to-nested:conv all-items our.bowl now.bowl))
   ::
-      [%x %valid %latest @ @ @ @ ~]
+      [%x %valid %latest *]
     =/  key  (path-to-key:conv t.t.t.path)
-    ``noun+!>((get-latest:validator our.bowl now.bowl key))
+    ``portal-result+!>((get-latest:validator our.bowl now.bowl key))
+  ::
+      ::  TODO  check if exists
   ::
       [%x %item *]
     =/  key  (path-to-key:conv t.t.path)
     =/  maybe-item  (~(gut by all-items) key ~)
     ?~  maybe-item  ``noun+!>(~)
-    ``item+!>(maybe-item)
+    ``portal-item+!>(maybe-item)
   ::
       [%x %in-default-list *]
     =/  key  (path-to-key:conv t.t.path)

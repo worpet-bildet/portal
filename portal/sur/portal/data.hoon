@@ -183,7 +183,8 @@
 ::  Validity Store Structures
 ::
 +$  check-date  @da
-+$  validation-result  [validity-checker=@t result=?(%.y %.n) reason=@t]
++$  result  (unit ?)
++$  validation-result  [validity-checker=@t =result reason=@t]
 ::
 +$  validation-time-map  ((mop check-date validation-result) gth)
 ++  valid-mop  ((on check-date validation-result) gth)

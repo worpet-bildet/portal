@@ -19,21 +19,7 @@
 ++  on-init
   ^-  (quip card _this)
   =.  state  *state-0
-  =/  groups-list-upd  (default-groups-list:make-update:portal-manager our.bowl now.bowl)
-  =/  apps-list-upd  (default-apps-list:make-update:portal-manager our.bowl now.bowl)
-  =/  ships-list-upd  (default-ships-list:make-update:portal-manager our.bowl now.bowl)
-  =/  other-list-upd  (default-other-list:make-update:portal-manager our.bowl now.bowl)
-  =/  list-list-upd  (default-list-list:make-update:portal-manager our.bowl now.bowl)
-  =/  validity-store-upd  (default-validity-store:make-update:portal-manager our.bowl now.bowl)
-  :_  this
-  :~
-    [%pass /add-valid %agent [our.bowl %portal-store] %poke %portal-update !>(validity-store-upd)]
-    [%pass /add-groups %agent [our.bowl %portal-store] %poke %portal-update !>(groups-list-upd)]
-    [%pass /add-apps %agent [our.bowl %portal-store] %poke %portal-update !>(apps-list-upd)]
-    [%pass /add-ships %agent [our.bowl %portal-store] %poke %portal-update !>(ships-list-upd)]
-    [%pass /add-others %agent [our.bowl %portal-store] %poke %portal-update !>(other-list-upd)]
-    [%pass /add-cur %agent [our.bowl %portal-store] %poke %portal-update !>(list-list-upd)]
-  ==
+  `this
 ::
 ++  on-save  !>(state)
 ++  on-load
@@ -45,40 +31,40 @@
   |=  [=mark =vase]
   ^-  (quip card _this)
   ?+    mark    (on-poke:default mark vase)
+  ::  TODO  for now just forward the actions/messages (and updates?)
+  ::  after I manage to compile add validations/assertions
       %portal-action
     ?.  =(our.bowl src.bowl)  `this
     =/  act  !<(action vase)
     ?-    -.act
         %add
-      =/  upd  (add:make-update:portal-manager [our.bowl src.bowl now.bowl %.n act])
       :_  this
-      [%pass /add %agent [our.bowl %portal-store] %poke %portal-update !>(upd)]~
+      [%pass /add %agent [our.bowl %portal-store] %poke %portal-action vase]~
     ::
         %edit
-      =/  upd  (edit:make-update:portal-manager [our.bowl src.bowl now.bowl act])
       :_  this
-      [%pass /edit %agent [our.bowl %portal-store] %poke %portal-update !>(upd)]~
+      [%pass /edit %agent [our.bowl %portal-store] %poke %portal-action vase]~
     ::
         %sub
-      =/  upd  (sub:make-update:portal-manager [our.bowl act])
       :_  this
-      [%pass /sub %agent [our.bowl %portal-store] %poke %portal-update !>(upd)]~
+      [%pass /sub %agent [our.bowl %portal-store] %poke %portal-action vase]~
     ::
         %del
-      =/  upd  (del:make-update:portal-manager [our.bowl act])
       :_  this
-      [%pass /del %agent [our.bowl %portal-store] %poke %portal-update !>(upd)]~
+      [%pass /del %agent [our.bowl %portal-store] %poke %portal-action vase]~
     ::
     ::
         %add-to-default-list
-      =/  upd  (add-to-default-list:make-update:portal-manager our.bowl now.bowl act)
       :_  this
-      [%pass /add-to-def-list %agent [our.bowl %portal-store] %poke %portal-update !>(upd)]~
+      [%pass /del %agent [our.bowl %portal-store] %poke %portal-action vase]~
     ::
         %overwrite-list
-      =/  upd  (overwrite-list:make-update:portal-manager our.bowl now.bowl act)
       :_  this
-      [%pass /overwrite-list %agent [our.bowl %portal-store] %poke %portal-update !>(upd)]~
+      [%pass /del %agent [our.bowl %portal-store] %poke %portal-action vase]~
+    ::
+        %put-nonitem
+      :_  this
+      [%pass /del %agent [our.bowl %portal-store] %poke %portal-action vase]~
     ::
     ::  TODO test local and foreign commenting (and all else)
     ::  how does scries work when you comment on a foreign item (do you need scries for that)
@@ -141,54 +127,45 @@
     ::  ?>  =(our.bowl p:id:pointer:msg)  do I need to do this on every branch of switch statement?
     ?-    -.msg
         %comment
-      =/  upd  (comment:make-update:portal-manager [our.bowl src.bowl now.bowl msg])
       :_  this
-      [%pass /comment %agent [our.bowl %portal-store] %poke %portal-update !>(upd)]~
+      [%pass /comment %agent [ship.key.msg %portal-store] %poke %portal-message !>(msg)]~
     ::
         %edit-comment
-      =/  upd  (edit-comment:make-update:portal-manager [our.bowl src.bowl now.bowl msg])
       :_  this
-      [%pass /edit-comment %agent [our.bowl %portal-store] %poke %portal-update !>(upd)]~
+      [%pass /edit-comment %agent [ship.key.msg %portal-store] %poke %portal-message !>(msg)]~
     ::
         %del-comment
-      =/  upd  (del-comment:make-update:portal-manager [our.bowl src.bowl now.bowl msg])
       :_  this
-      [%pass /del-comment %agent [our.bowl %portal-store] %poke %portal-update !>(upd)]~
+      [%pass /del-comment %agent [ship.key.msg %portal-store] %poke %portal-message !>(msg)]~
     ::
         %rate
-      =/  upd  (rate:make-update:portal-manager [our.bowl src.bowl now.bowl msg])
       :_  this
-      [%pass /rate %agent [our.bowl %portal-store] %poke %portal-update !>(upd)]~
+      [%pass /rate %agent [ship.key.msg %portal-store] %poke %portal-message !>(msg)]~
     ::
         %unrate
-      =/  upd  (unrate:make-update:portal-manager [our.bowl src.bowl now.bowl msg])
       :_  this
-      [%pass /unrate %agent [our.bowl %portal-store] %poke %portal-update !>(upd)]~
+      [%pass /unrate %agent [ship.key.msg %portal-store] %poke %portal-message !>(msg)]~
     ::
         %review
-      =/  upd  (review:make-update:portal-manager [our.bowl src.bowl now.bowl msg])
       :_  this
-      [%pass /review %agent [our.bowl %portal-store] %poke %portal-update !>(upd)]~
+      [%pass /review %agent [ship.key.msg %portal-store] %poke %portal-message !>(msg)]~
     ::
         %del-review
-      =/  upd  (del-review:make-update:portal-manager [our.bowl src.bowl now.bowl msg])
       :_  this
-      [%pass /del-review %agent [our.bowl %portal-store] %poke %portal-update !>(upd)]~
+      [%pass /del-review %agent [ship.key.msg %portal-store] %poke %portal-message !>(msg)]~
     ::
     ::  should assert/specify that can only receive signature from specific ship, as defined in link for %app items
     ::  for other types a different definition which ship can send an outside-sig
     ::  TODO look thru ++sig from app-store.hoon
         %sign-app
-      =/  upd  (sign-app:make-update:portal-manager our.bowl src.bowl now.bowl msg)
       :_  this
-      [%pass /sign-app %agent [ship.key.msg %portal-store] %poke %portal-update !>(upd)]~
+      [%pass /sign-app %agent [ship.key.msg %portal-store] %poke %portal-message !>(msg)]~
     ::
     :: look thru ++data in app-store.hoon
     ::  needs a bunch of assertions etc. probably try to systematically figure out what needs to go where
         %send-app-data
-      =/  upd  (send-app-data:make-update:portal-manager our.bowl src.bowl now.bowl msg)
       :_  this
-      [%pass /send-app-data %agent [ship.key.msg %portal-store] %poke %portal-update !>(upd)]~
+      [%pass /send-app-data %agent [ship.key.msg %portal-store] %poke %portal-message !>(msg)]~
     ==
   ::
     ::  when %portal-store receives an update, sometimes it is necessary to notify portal manager
@@ -196,20 +173,17 @@
     ::  then %portal-manager decides if it needs to do anything with it
     ::  maybe there should be more metadata except just the item itself?
       %portal-update
+    ::  TODO assert that it comes from our %portal-store
     ?.  =(our.bowl src.bowl)  `this
     =/  upd  !<(update vase)
     ?+    -.upd    (on-poke:default mark vase)
         %put
       :_  this
-      (put:respond-to-update:portal-manager our.bowl now.bowl upd)
+      (put:on-update:portal-manager our.bowl now.bowl upd)
     ::
         %del
       :_  this
-      (del:respond-to-update:portal-manager upd)
-    ::
-        %empty
-      :_  this
-      (empty:respond-to-update:portal-manager upd)
+      (del:on-update:portal-manager upd)
     ==
   ==
 ::
@@ -229,9 +203,8 @@
         %fact
       =/  preview  !<(preview:groups q.cage.sign)
       =/  act  [%put-nonitem-group [p.flag.preview [%nonitem %group ~] q.flag.preview] title.meta.preview description.meta.preview image.meta.preview]
-      =/  upd  (put-nonitem-group:make-update:portal-manager [our.bowl %.n act])
       :_  this
-      [%pass /edit-nonitem-group %agent [our.bowl %portal-store] %poke %portal-update !>(upd)]~
+      ~[(put-nonitem-group:make-update:portal-store [our.bowl %.n act])]
     ==
   ==
 ::

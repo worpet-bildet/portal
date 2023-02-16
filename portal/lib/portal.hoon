@@ -1,5 +1,5 @@
 /-  *portal-data, *portal-update, *portal-action, *portal-front-end-update
-/+  sig
+/+  sig, agentio
 |%
 +$  card  card:agent:gall
 ::
@@ -27,51 +27,79 @@
   ::  find all lists of lists
   ::  for each, create a map with lists
   ::  for each list, create a map with end items
+  ::  TODO  remove unnecessary our src now everywhere which used to be for scries
   ++  all-items-to-nested
-    |=  [our=ship now=time]
+    |=  [=all-items our=ship now=time]
     ^-  nested-all-items
-    =/  key-set  (get-all-keys:scry our now)
+    =/  key-set  ~(key by all-items)
     =/  list-key-list  (skim-types:keys ~(tap in key-set) ~[[%list %list ~]])
     ::
     ::  (map list-list-key list-list-item)
-    =/  list-list-map  (malt (turn list-key-list |=(=key [key (get-item:scry our now key)])))
+    =/  list-list-map  (malt (turn list-key-list |=(=key [key (~(got by all-items) key)])))
     ::
     ::  (map list-list-key [list-list-item (map list-pointer list-item)])
-    =/  list-list-list-map  (~(run by list-list-map) |=(=item (list-list-item-to-map our now item)))
+    =/  list-list-list-map  (~(run by list-list-map) |=(=item (list-list-item-to-map all-items our now item)))
     ::
     ::  (map list-list-key [list-list-item (map list-pointer [lis-item (map end-key end-item)])])
-    (~(run by list-list-list-map) |=(val=[=item (map key item)] (inner-maps-transform our now val)))
+    (~(run by list-list-list-map) |=(val=[=item (map key item)] (inner-maps-transform all-items our now val)))
   ::
   ++  inner-maps-transform
-    |=  [our=ship now=time val=[=item mapp=(map key item)]]
+    |=  [=all-items our=ship now=time val=[=item mapp=(map key item)]]
     ^-  [^item (map key [^item (map key ?(~ ^item))])]
-    [item.val (~(run by mapp.val) |=(=item (list-item-to-map our now item)))]
+    [item.val (~(run by mapp.val) |=(=item (list-item-to-map all-items our now item)))]
   ::
   ++  list-list-item-to-map
-    |=  [our=ship now=time =item]
+    |=  [=all-items our=ship now=time =item]
     ^-  [^item (map key ^item)]
     ?+    -.bespoke.data.item    [item ~]
         %list-list
-      =/  lists-map  (malt (turn list-key-list.bespoke.data.item |=([=key =cord] [key (get-item:scry our now key)])))
+      =/  lists-map  (malt (turn list-key-list.bespoke.data.item |=([=key =cord] [key (~(got by all-items) key)])))
       [item lists-map]
     ==
   ::
   ++  list-item-to-map
-    |=  [our=ship now=time =item]
+    |=  [=all-items our=ship now=time =item]
     ^-  [^item (map key ?(~ ^item))]
     ?+    -.bespoke.data.item    [item ~]
         %list-enditem-other
-      =/  items-map  (malt (turn other-key-list.bespoke.data.item |=([=key =cord] [key (get-item-or-null:scry our now key)])))
+      =/  items-map  (malt (turn other-key-list.bespoke.data.item |=([=key =cord] [key (~(gut by all-items) key ~)])))
       [item items-map]
         %list-enditem-app
-      =/  items-map  (malt (turn app-key-list.bespoke.data.item |=([=key =cord] [key (get-item-or-null:scry our now key)])))
+      =/  items-map  (malt (turn app-key-list.bespoke.data.item |=([=key =cord] [key (~(gut by all-items) key ~)])))
       [item items-map]
         %list-nonitem-group
-      =/  items-map  (malt (turn group-key-list.bespoke.data.item |=([=key =cord] [key (get-item-or-null:scry our now key)])))
+      =/  items-map  (malt (turn group-key-list.bespoke.data.item |=([=key =cord] [key (~(gut by all-items) key ~)])))
       [item items-map]
         %list-nonitem-ship
-      =/  items-map  (malt (turn ship-key-list.bespoke.data.item |=([=key =cord] [key (get-item-or-null:scry our now key)])))
+      =/  items-map  (malt (turn ship-key-list.bespoke.data.item |=([=key =cord] [key (~(gut by all-items) key ~)])))
       [item items-map]
+    ==
+  ::
+  ++  bespoke-write
+    |=  [=key =bespoke-input act=$%([%add ~] [%edit =bespoke])]
+    ^-  bespoke
+    ?-    -.bespoke-input
+        %nonitem-ship        [%nonitem-ship key(type [%nonitem %ship ~]) ~]
+        %nonitem-group       [%nonitem-group key(type [%nonitem %group ~]) ~]
+        %enditem-other       [%enditem-other key(type [%enditem %other ~]) ~]
+        %enditem-app
+      ?-    -.act
+          %add
+        [%enditem-app key(type [%enditem %app ~]) dist-desk.bespoke-input *signature 0v0 *docket]
+      ::
+          %edit
+        ?+    -.bespoke.act    !!                     ::  this really needs to be done smarter (the whole type system)
+            %enditem-app                              ::  I shouldn't need to confirm things twice. (maybe better sur? lib arms?)
+          bespoke.act(dist-desk dist-desk.bespoke-input)
+        ==
+      ==
+      ::
+        %list-enditem-other  [%list-enditem-other key(type [%list %enditem %other ~]) other-key-list.bespoke-input]
+        %list-enditem-app    [%list-enditem-app key(type [%list %enditem %app ~]) app-key-list.bespoke-input]
+        %list-nonitem-group  [%list-nonitem-group key(type [%list %nonitem %group ~]) group-key-list.bespoke-input]
+        %list-nonitem-ship   [%list-nonitem-ship key(type [%list %nonitem %ship ~]) ship-key-list.bespoke-input]
+        %list-list           [%list-list key(type [%list %list ~]) list-key-list.bespoke-input]
+        %validity-store      [%validity-store key(type [%validity-store ~]) validity-records.bespoke-input]
     ==
   --
 ::
@@ -81,7 +109,7 @@
   ++  get-item
     |=  [our=ship now=time =key]
     ^-  item
-    =/  path  (weld (weld /(scot %p our)/portal-store/(scot %da now)/item (key-to-path:conv key)) /item)
+    =/  path  (weld (weld /(scot %p our)/portal-store/(scot %da now)/item (key-to-path:conv key)) /portal-item)
     .^(item %gx path)
   ::
   ::  gets item, and if doesn't exist returns ~
@@ -94,37 +122,35 @@
   ++  get-items
     |=  [our=ship now=time =key-set]
     ^-  (map key ?(~ item))
-    %-  malt
-    %+  turn  ~(tap in key-set)
-    |=  =key
-    [key (get-item-or-null our now key)]
+    =/  all-items  (get-all-items our now)
+    (get-items:misc all-items key-set)
   ::
   ::  gets all-items
   ++  get-all-items
     |=  [our=ship now=time]
     ^-  all-items
-    =/  path  /(scot %p our)/portal-store/(scot %da now)/all/items/all-items
+    =/  path  /(scot %p our)/portal-store/(scot %da now)/all/items/portal-all-items
     .^(all-items %gx path)
   ::
   ::  gets all keys in local all-items
   ++  get-all-keys
     |=  [our=ship now=time]
     ^-  key-set
-    =/  path  /(scot %p our)/portal-store/(scot %da now)/all/keys/key-set
+    =/  path  /(scot %p our)/portal-store/(scot %da now)/all/keys/portal-key-set
     .^(key-set %gx path)
   ::
   ::  gets all-items in nested form
   ++  get-nested-all-items
     |=  [our=ship now=time]
     ^-  nested-all-items
-    =/  path  /(scot %p our)/portal-store/(scot %da now)/all/nested/nested-all-items
+    =/  path  /(scot %p our)/portal-store/(scot %da now)/all/nested/portal-nested-all-items
     .^(nested-all-items %gx path)
   ::
   ++  get-item-latest-validity
     |=  [our=ship now=time =key]
-    ^-  ?
-    =/  path  (weld (weld /(scot %p our)/portal-store/(scot %da now)/valid/latest (key-to-path:conv key)) /noun)
-    .^(? %gx path)
+    ^-  result
+    =/  path  (weld (weld /(scot %p our)/portal-store/(scot %da now)/valid/latest (key-to-path:conv key)) /portal-result)
+    .^(result %gx path)
   ::
   ++  in-default-list
     |=  [our=ship now=time =key]
@@ -197,99 +223,6 @@
   ::
   --
 ::
-++  misc
-  |%
-  ::  input @p, output ship-type:portal-data
-  ++  get-ship-type
-    |=  [=ship]
-    ^-  ship-type
-    =/  hex  `@ux`ship
-    ?:  &((gte hex 0x0) (lte hex 0xff))  %galaxy
-    ?:  &((gte hex 0x100) (lte hex 0xffff))  %star
-    ?:  &((gte hex 0x1.0000) (lte hex 0xffff.ffff))  %planet
-    ?:  &((gte hex 0x1.0000.0000) (lte hex 0xffff.ffff.ffff.ffff))  %moon
-    %comet
-  ::
-  ::  %.y if one ship is moon of another
-  ++  ships-related
-    |=  [ship1=ship ship2=ship]
-    ^-  ?
-    ?:  (gte ship1 ship2)
-      ?:  =(0 (mod (sub ship1 ship2) 4.294.967.296))
-        %.y
-      %.n
-    ?:  =(0 (mod (sub ship2 ship1) 4.294.967.296))
-      %.y
-    %.n
-  ::
-  ::  takes dst-desk, outputs unit of dst-name and app-name
-  ++  parse-dist-desk
-    |=  [dist-desk=@t]
-    ^-  (unit [dist-name=ship desk-name=@tas])
-    =/  dist-desk  (trip dist-desk)
-    =/  loc  (find ['/']~ dist-desk)
-    ?~  loc  ~
-    %-  some  :-
-    (slav %p (crip (scag u.loc dist-desk)))
-    `@tas`(crip (slag +(u.loc) dist-desk))
-  --
-::
-++  portal-store
-  |%
-  ::  deletes an item (yours or foreign)
-  ++  del-item
-    |=  [src=ship our=ship =all-items upd=[%del =key]]
-    ^-  [?(%changed %unchanged) ^all-items]
-    ~&  "%portal: deleting {(spud (key-to-path:conv key.upd))}"
-    ?:  =(cord.key.upd '~2000.1.1')
-      ~&  "%portal: item is default, not deleting"
-      [%unchanged all-items]
-    ?.  (~(has by all-items) key.upd)
-      ~&  "%portal: {(spud (key-to-path:conv key.upd))} does not exist"
-      [%unchanged all-items]
-    [%changed (~(del by all-items) key.upd)]
-  ::
-  ::  for receiving items, from local %portal-manager or foreign %portal-store
-  ++  put-item
-    |=  [our=ship =all-items upd=[%put =key =item]]
-    ~&  "%portal: putting {(spud (key-to-path:conv key.upd))}"
-    (~(put by all-items) key.upd item.upd)
-  ::
-  ++  make-front-end-update
-    |=  [src=ship our=ship now=time upd=update]
-    ^-  front-end-update
-    :*  ?:(=(src our) %.y %.n)
-        ?+    -.upd    !!
-            %put
-          :^  -.upd  key.upd  item.upd
-          ?+    -.bespoke.data.item.upd    ~
-              %list-enditem-other
-            =/  key-list
-              %-  key-text-list-to-key-list:conv
-              other-key-list.bespoke.data.item.upd
-            (get-items:scry our now (silt key-list))
-              %list-enditem-app
-            =/  key-list
-              %-  key-text-list-to-key-list:conv
-              app-key-list.bespoke.data.item.upd
-            (get-items:scry our now (silt key-list))
-              %list-nonitem-group
-            =/  key-list
-              %-  key-text-list-to-key-list:conv
-              group-key-list.bespoke.data.item.upd
-            (get-items:scry our now (silt key-list))
-              %list-nonitem-ship
-            =/  key-list
-              %-  key-text-list-to-key-list:conv
-              ship-key-list.bespoke.data.item.upd
-            (get-items:scry our now (silt key-list))
-          ==
-          ::
-            %del  [-.upd key.upd ~ ~]
-        ==
-    ==
-  --
-::
 ++  cards
   |%
   ++  get-list-nonitems
@@ -301,21 +234,19 @@
       ::  if you do set-difference you keep old data, if you don't do set difference you constantly overwrite fine data
       ::  =/  filtered-set  (set-difference:keys (silt key-list) (get-all-keys:scry our now))
       ::  =/  filtered-list  ~(tap in filtered-set)
-      ::  TODO
-      =/  make-group-item-upd-list  (turn key-list put-empty-nonitem:make-update:portal-manager)
       =/  get-group-preview-act-list  (turn key-list |=(=key [%get-group-preview ship.key cord.key]))
       %+  weld
       ::put ->
-      (turn make-group-item-upd-list (cury upd-to-upd-card:cards our))
+      (turn key-list |=(=key (put-empty-nonitem:on-action:portal-store our key)))
       ::edit(as group preview)
       (turn get-group-preview-act-list (cury act-to-act-card:cards our))
     ::
         %list-nonitem-ship
       =/  key-list  (key-text-list-to-key-list:conv ship-key-list.bespoke.data.item)
-      =/  act-list  (turn key-list |=(=key (put-nonitem-ship:make-update:portal-manager our %.n [%put-nonitem-ship key])))
-      (turn act-list (cury upd-to-upd-card:cards our))
+      (turn key-list |=(=key (put-nonitem-ship:on-action:portal-store our %.n [%put-nonitem-ship key])))
     ==
     ::
+  ::
   ++  sub-to-list-keys
     |=  [our=ship now=time =item]
     ^-  (list card)
@@ -367,12 +298,12 @@
   ++  key-to-sub-card
     |=  [our=ship =key]
     ^-  card
-    [%pass /sub %agent [our %portal-manager] %poke %portal-action !>([%sub key])]
+    [%pass /sub %agent [our %portal-store] %poke %portal-action !>([%sub key])]
   ::
   ++  act-to-act-card
     |=  [our=ship =action]
     ^-  card
-    [%pass /act %agent [our %portal-manager] %poke %portal-action !>(action)]
+    [%pass /act %agent [our %portal-store] %poke %portal-action !>(action)]
   ::
   ++  upd-to-upd-card
     |=  [our=ship =update]
@@ -380,11 +311,480 @@
     [%pass /upd %agent [our %portal-store] %poke %portal-update !>(update)]
   --
 ::
+::
+++  misc
+  |%
+  ::  input @p, output ship-type:portal-data
+  ++  get-ship-type
+    |=  [=ship]
+    ^-  ship-type
+    =/  hex  `@ux`ship
+    ?:  &((gte hex 0x0) (lte hex 0xff))  %galaxy
+    ?:  &((gte hex 0x100) (lte hex 0xffff))  %star
+    ?:  &((gte hex 0x1.0000) (lte hex 0xffff.ffff))  %planet
+    ?:  &((gte hex 0x1.0000.0000) (lte hex 0xffff.ffff.ffff.ffff))  %moon
+    %comet
+  ::
+  ::  %.y if one ship is moon of another
+  ++  ships-related
+    |=  [ship1=ship ship2=ship]
+    ^-  ?
+    ?:  (gte ship1 ship2)
+      ?:  =(0 (mod (sub ship1 ship2) 4.294.967.296))
+        %.y
+      %.n
+    ?:  =(0 (mod (sub ship2 ship1) 4.294.967.296))
+      %.y
+    %.n
+  ::
+  ::  takes dst-desk, outputs unit of dst-name and app-name
+  ++  parse-dist-desk
+    |=  [dist-desk=@t]
+    ^-  (unit [dist-name=ship desk-name=@tas])
+    =/  dist-desk  (trip dist-desk)
+    =/  loc  (find ['/']~ dist-desk)
+    ?~  loc  ~
+    %-  some  :-
+    (slav %p (crip (scag u.loc dist-desk)))
+    `@tas`(crip (slag +(u.loc) dist-desk))
+  ::
+  ::  takes all-items and key-set and retrieves the desired items
+  ++  get-items
+    |=  [=all-items =key-set]
+    ^-  (map key ?(~ item))
+    %-  malt
+    %+  turn  ~(tap in key-set)
+    |=  =key
+    [key (~(gut by all-items) key ~)]
+  --
+::
+++  portal-store
+  |%
+  ++  make-update
+    |%
+    ++  default
+      |%
+      ++  groups-list
+        |=  [=all-items our=ship now=time]
+        ^-  [(list card) ^all-items]
+        =/  general  `general`['Main Groups List' '' 'Your first groups list.' *tags *properties *pictures '' '#e8e8e8']
+        =/  act  [%add our [%list %nonitem %group ~] general [%list-nonitem-group ~]]
+        (add:on-action:portal-store all-items our our now %.y act)
+      ::
+      ++  apps-list
+        |=  [=all-items our=ship now=time]
+        ^-  [(list card) ^all-items]
+        =/  general  ['Main Apps List' '' 'Your first apps list.' *tags *properties *pictures '' '#e8e8e8']
+        =/  act  [%add our [%list %enditem %app ~] general [%list-enditem-app ~]]
+        (add:on-action:portal-store all-items our our now %.y act)
+      ::
+      ++  ships-list
+        |=  [=all-items our=ship now=time]
+        ^-  [(list card) ^all-items]
+        =/  general  ['Main Ships List' '' 'Your first ships list.' *tags *properties *pictures '' '#e8e8e8']
+        =/  act  [%add our [%list %nonitem %ship ~] general [%list-nonitem-ship ~]]
+        (add:on-action:portal-store all-items our our now %.y act)
+      ::
+      ++  other-list
+        |=  [=all-items our=ship now=time]
+        ^-  [(list card) ^all-items]
+        =/  general  ['Main Other List' '' 'Your first other items list.' *tags *properties *pictures '' '#e8e8e8']
+        =/  act  [%add our [%list %enditem %other ~] general [%list-enditem-other ~]]
+        (add:on-action:portal-store all-items our our now %.y act)
+      ::
+      ++  list-list
+        |=  [=all-items our=ship now=time]
+        ^-  [(list card) ^all-items]
+        =/  general  ['Main Curator Page' '' 'Your first curator page.' *tags *properties *pictures '' '#e8e8e8']
+        =/  =list-key-list
+          :~  [[our [%list %enditem %app ~] '~2000.1.1'] 'These are the apps I recommend']
+              [[our [%list %enditem %other ~] '~2000.1.1'] 'These are miscellaneous items I recommend']
+              [[our [%list %nonitem %group ~] '~2000.1.1'] 'These are groups I recommend']
+              [[our [%list %nonitem %ship ~] '~2000.1.1'] 'These are ships I recommend']
+          ==
+        =/  act  [%add our [%list %list ~] general [%list-list list-key-list]]
+        (add:on-action:portal-store all-items our our now %.y act)
+      ::
+      ++  validity-store
+        |=  [=all-items our=ship now=time]
+        ^-  [(list card) ^all-items]
+        =/  general  ['Main Validity Store' '' 'Storage of validity of your items.' *tags *properties *pictures '' '#e8e8e8']
+        =/  act  [%add our [%validity-store ~] general [%validity-store *validity-records]]
+        (add:on-action:portal-store all-items our our now %.y act)
+      --
+    --
+    ::
+  ::
+  ++  on-action
+    |%
+    ++  add
+      |=  [=all-items our=ship src=ship now=time default=?(%.y %.n) act=[%add =ship =type =general =bespoke-input]]
+      ::  these are not the right places to assert -.bespoke correspond to type.id
+      ::  if =(%.y default), created-at becomes '~2000.1.1'
+      ^-  [(list card) ^all-items]
+      ?.  =(our src)  [~ all-items]
+      =/  key  [ship.act type.act cord=?:(=(default %.y) '~2000.1.1' `@t`(scot %da now))]
+      =/  data  [(bespoke-write:conv key bespoke-input.act [%add ~]) general.act]
+      =/  meta
+        :*  updated-at='~2000.1.1'
+            permissions=~[our]
+            reach=[%public blacklist=~]
+            outside-sigs=~
+        ==
+      =/  item-sig  (sign:sig our now `sig-input`[%item data meta *social])
+      =/  upd  [%put key [data meta *social item-sig]]
+      :-  (make-on-poke-put-cards all-items our src now upd)
+      (put-item our all-items upd)
+    ::
+    ++  edit
+      |=  [=all-items our=ship src=ship now=time act=[%edit =key =general =bespoke-input]]
+      ^-  [(list card) ^all-items]
+      ::  TODO  can-edit function to abstract permissions
+      ?.  =(our src)  [~ all-items]
+      ?.  =(ship.key.act our)  [~ all-items]
+      =/  item  (~(gut by all-items) key.act ~)
+      ::  TODO %portal-manager print messages to ->  %portal-store
+      ?~  item  ~&  "%portal-manager: item doesn't exist"  [~ all-items]
+      =/  data  [(bespoke-write:conv key.act bespoke-input.act [%edit bespoke.data.item]) general.act]
+      =/  item
+        %=  item
+          updated-at.meta  `@t`(scot %da now)
+          data                  data
+        ==
+      =/  item-sig  (sign:sig our now [%item data meta.item social.item])
+      =/  upd  [%put key.act [data meta.item social.item item-sig]]
+      :-  (make-on-poke-put-cards all-items our src now upd)
+      (put-item our all-items upd)
+    ::
+    ++  sub
+      |=  [our=ship src=ship now=time wex=boat:gall act=[%sub =key]]
+      ^-  (list card)
+      ?:  =(-.type.key.act %nonitem)  ~
+      ?:  =(ship.key.act our)  ~
+      (make-on-poke-sub-cards our src now wex act)
+    ::
+    ++  del
+      |=  [=all-items our=ship src=ship now=time act=[%del =key]]
+      ^-  [(list card) ^all-items]
+      ?:  =(-.type.key.act %nonitem)  [~ all-items]
+      =^  changed  all-items  (del-item our src all-items act)
+      :-  (make-on-poke-del-cards all-items our src now changed act)
+      all-items
+    ::
+    ::  TODO remove all scries (get-item) (get-) (:scry)
+    ++  add-to-default-list
+      |=  [=all-items our=ship now=time act=[%add-to-default-list key=[=ship type=$%([%enditem type] [%nonitem type]) =cord]]]
+      ^-  [(list card) ^all-items]
+      =/  list-key  [our [%list type.key.act] '~2000.1.1']
+      =/  list  (~(got by all-items) list-key)
+      ?+    -.bespoke.data.list    [~ all-items]
+          %list-enditem-app
+        =/  bespoke-input  [%list-enditem-app (snoc app-key-list.bespoke.data.list [[ship.key.act [%enditem %app ~] cord.key.act] 'Auto-recommended'])]
+        =/  act  [%edit list-key general.data.list bespoke-input]
+        (edit all-items our our now act)
+      ::
+          %list-enditem-other
+        =/  bespoke-input  [%list-enditem-other (snoc other-key-list.bespoke.data.list [[ship.key.act [%enditem %other ~] cord.key.act] 'Auto-recommended'])]
+        =/  act  [%edit list-key general.data.list bespoke-input]
+        (edit all-items our our now act)
+      ::
+          %list-nonitem-group
+        =/  bespoke-input  [%list-nonitem-group (snoc group-key-list.bespoke.data.list [[ship.key.act [%nonitem %group ~] cord.key.act] 'Auto-recommended'])]
+        =/  act  [%edit list-key general.data.list bespoke-input]
+        (edit all-items our our now act)
+      ::
+          %list-nonitem-ship
+        =/  bespoke-input  [%list-nonitem-ship (snoc ship-key-list.bespoke.data.list [[ship.key.act [%nonitem %ship ~] cord.key.act] 'Auto-recommended'])]
+        =/  act  [%edit list-key general.data.list bespoke-input]
+        (edit all-items our our now act)
+      ==
+    ::
+    ++  overwrite-list
+      |=  [=all-items our=ship now=time act=[%overwrite-list list-key=[=ship type=[%list type] =cord] =key-text-list]]
+      ^-  [(list card) ^all-items]
+      =/  list  (~(gut by all-items) list-key.act ~)
+      ?~  list  ~&  "%portal-manager: list doesn't exist"  [~ all-items]
+      ?+    -.bespoke.data.list    [~ all-items]
+          %list-enditem-app
+        =/  bespoke-input  [%list-enditem-app (app-key-list key-text-list.act)]
+        =/  act  [%edit list-key.act general.data.list bespoke-input]
+        (edit all-items our our now act)
+      ::
+          %list-enditem-other
+        =/  bespoke-input  [%list-enditem-other (other-key-list key-text-list.act)]
+        =/  act  [%edit list-key.act general.data.list bespoke-input]
+        (edit all-items our our now act)
+      ::
+          %list-nonitem-group
+        =/  bespoke-input  [%list-nonitem-group (group-key-list key-text-list.act)]
+        =/  act  [%edit list-key.act general.data.list bespoke-input]
+        (edit all-items our our now act)
+      ::
+          %list-nonitem-ship
+        =/  bespoke-input  [%list-nonitem-ship (ship-key-list key-text-list.act)]
+        =/  act  [%edit list-key.act general.data.list bespoke-input]
+        (edit all-items our our now act)
+      ==
+    --
+  ::
+  ++  on-message
+    |%
+    ++  comment
+      |=  [=all-items our=ship src=ship now=time act=[%comment =key text=@t]]
+      ^-  [(list card) ^all-items]
+      =/  item  (~(gut by all-items) key.act ~)
+      ?~  item  ~&  "%portal-manager: item doesn't exist"  [~ all-items]
+      =/  new-comments  (~(put by comments.social.item) [src `@t`(scot %da now)] [text.act '~2000.1.1'])
+      =/  upd  [%put key.act item(comments.social new-comments)]
+      :-  (make-on-poke-put-cards all-items our src now upd)
+      (put-item our all-items upd)
+    ::
+    ++  edit-comment
+      |=  [=all-items our=ship src=ship now=time act=[%edit-comment =key =created-at text=@t]]
+      ::  TODO test wrong pointer, on every action, local and foreign
+      ^-  [(list card) ^all-items]
+      =/  item  (~(gut by all-items) key.act ~)
+      ?~  item  ~&  "%portal-manager: item doesn't exist"  [~ all-items]
+      ?.  (~(has by comments.social.item) [src created-at.act])  [~ all-items]
+      =/  new-comments  (~(put by comments.social.item) [src created-at.act] [text.act `@t`(scot %da now)])
+      =/  upd  [%put key.act item(comments.social new-comments)]
+      :-  (make-on-poke-put-cards all-items our src now upd)
+      (put-item our all-items upd)
+    ::
+    ++  del-comment
+      |=  [=all-items our=ship src=ship now=time act=[%del-comment =key =created-at]]
+      ^-  [(list card) ^all-items]
+      =/  item  (~(gut by all-items) key.act ~)
+      ?~  item  ~&  "%portal-manager: item doesn't exist"  [~ all-items]
+      ?.  (~(has by comments.social.item) [src created-at.act])  [~ all-items]
+      =/  new-comments  (~(del by comments.social.item) [src created-at.act])
+      =/  upd  [%put key.act item(comments.social new-comments)]
+      :-  (make-on-poke-put-cards all-items our src now upd)
+      (put-item our all-items upd)
+    ::
+    ++  rate
+      |=  [=all-items our=ship src=ship now=time act=[%rate =key rating-num=@ud]]
+      ^-  [(list card) ^all-items]
+      ?.  &((gte rating-num.act 1) (lte rating-num.act 5))  [~ all-items]
+      =/  item  (~(gut by all-items) key.act ~)
+      ?~  item  ~&  "%portal-manager: item doesn't exist"  [~ all-items]
+      =/  rating  (~(get by ratings.social.item) src)
+      =/  new-rating
+        ?~  rating  [rating-num.act '~2000.1.1' `@t`(scot %da now)]
+        [rating-num.act `@t`(scot %da now) created-at.u.rating]
+      =/  new-ratings  (~(put by ratings.social.item) src new-rating)
+      =/  upd  [%put key.act item(ratings.social new-ratings)]
+      :-  (make-on-poke-put-cards all-items our src now upd)
+      (put-item our all-items upd)
+    ::
+    ++  unrate
+      |=  [=all-items our=ship src=ship now=time act=[%unrate =key]]
+      ^-  [(list card) ^all-items]
+      =/  item  (~(gut by all-items) key.act ~)
+      ?~  item  ~&  "%portal-manager: item doesn't exist"  [~ all-items]
+      ?.  (~(has by ratings.social.item) src)  [~ all-items]
+      =/  new-ratings  (~(del by ratings.social.item) src)
+      =/  upd  [%put key.act item(ratings.social new-ratings)]
+      :-  (make-on-poke-put-cards all-items our src now upd)
+      (put-item our all-items upd)
+    ::
+    ++  review
+      |=  [=all-items our=ship src=ship now=time act=[%review =key text=@t hash=@uv is-safe=?]]
+      ::  no review signatures for now
+      ^-  [(list card) ^all-items]
+      =/  item  (~(gut by all-items) key.act ~)
+      ?~  item  ~&  "%portal-manager: item doesn't exist"  [~ all-items]
+      :: TODO is-current for apps
+      ::=/  is-current  =(hash desk-hash.dst-input.app-page)
+      =/  is-current  %.n
+      =/  rev  (~(get by reviews.social.item) src)
+      =/  new-review
+        ?~  rev  [text.act hash.act is-current is-safe.act '~2000.1.1' `@t`(scot %da now) *signature]
+        [text.act hash.act is-current is-safe.act `@t`(scot %da now) created-at.u.rev *signature]
+      =/  new-reviews  (~(put by reviews.social.item) src new-review)
+      =/  upd  [%put key.act item(reviews.social new-reviews)]
+      :-  (make-on-poke-put-cards all-items our src now upd)
+      (put-item our all-items upd)
+    ::
+    ++  del-review
+      |=  [=all-items our=ship src=ship now=time act=[%del-review =key]]
+      ^-  [(list card) ^all-items]
+      =/  item  (~(gut by all-items) key.act ~)
+      ?~  item  ~&  "%portal-manager: item doesn't exist"  [~ all-items]
+      ?.  (~(has by reviews.social.item) src)  [~ all-items]
+      =/  new-reviews  (~(del by reviews.social.item) src)
+      =/  upd  [%put key.act item(reviews.social new-reviews)]
+      :-  (make-on-poke-put-cards all-items our src now upd)
+      (put-item our all-items upd)
+    ::
+    ++  sign-app
+      |=  [=all-items our=ship src=ship now=time msg=[%sign-app =key sig=signature]]
+      ::  TODO  should I put the whole logic in here? (including making cards etc)
+      ^-  [(list card) ^all-items]
+      ?.  =(our ship.key.msg)  [~ all-items]
+      =/  item  (~(gut by all-items) key.msg ~)
+      ?~  item  ~&  "%portal-manager: item doesn't exist"  [~ all-items]
+      ?+    -.bespoke.data.item    [~ all-items]
+          %enditem-app
+        ?.  =(src -:(need (parse-dist-desk:misc dist-desk.bespoke.data.item)))  [~ all-items]
+        =/  upd  [%put key.msg item(sig.bespoke.data sig.msg)]
+        :-  (make-on-poke-put-cards all-items our src now upd)
+        (put-item our all-items upd)
+      ==
+    ::
+    ++  send-app-data
+      |=  [=all-items our=ship src=ship now=time msg=[%send-app-data =key data=[desk-hash=@uv =docket]]]   :: use app-name=@tas when inputting
+      ::  how to do correct item type assertions etc?
+      ^-  [(list card) ^all-items]
+      ?.  =(our ship.key.msg)  [~ all-items]
+      =/  item  (~(gut by all-items) key.msg ~)
+      ?~  item  ~&  "%portal-manager: item doesn't exist"  [~ all-items]
+      ::?<  ?=(@tas data.act)
+      ::  ?=([@uv docket] data.act)
+      ?+    -.bespoke.data.item   [~ all-items]
+          %enditem-app
+        ?.  =(src -:(need (parse-dist-desk:misc dist-desk.bespoke.data.item)))  [~ all-items]
+        =/  bespoke  bespoke.data.item(desk-hash desk-hash.data.msg, docket docket.data.msg)
+        =/  upd  [%put key.msg item(bespoke.data bespoke)]
+        :-  (make-on-poke-put-cards all-items our src now upd)
+        (put-item our all-items upd)
+      ==
+    --
+    ::
+  ::
+  ::  deletes an item (yours or foreign)
+  ++  del-item
+    |=  [our=ship src=ship =all-items upd=[%del =key]]
+    ^-  [?(%changed %unchanged) ^all-items]
+    ~&  "%portal: deleting {(spud (key-to-path:conv key.upd))}"
+    ?:  =(cord.key.upd '~2000.1.1')
+      ~&  "%portal: item is default, not allowed to delete"
+      [%unchanged all-items]
+    ?.  (~(has by all-items) key.upd)
+      ~&  "%portal: {(spud (key-to-path:conv key.upd))} does not exist"
+      [%unchanged all-items]
+    [%changed (~(del by all-items) key.upd)]
+  ::
+  ::  for receiving items, from local %portal-manager or foreign %portal-store
+  ++  put-item
+    |=  [our=ship =all-items upd=[%put =key =item]]
+    ~&  "%portal: putting {(spud (key-to-path:conv key.upd))}"
+    (~(put by all-items) key.upd item.upd)
+  ::
+  ++  put-empty-nonitem
+    |=  [our=ship =key]
+    ^-  card
+    ?+    type.key    !!
+        [%nonitem %group ~]
+      =/  data  [[%nonitem-group key(type [%nonitem %group ~]) ~] *general]
+      (act-to-act-card:cards our [%put-nonitem key [data *meta *social *signature]])
+        [%nonitem %ship ~]
+      =/  data  [[%nonitem-ship key(type [%nonitem %ship ~]) ~] *general]
+      (act-to-act-card:cards our [%put-nonitem key [data *meta *social *signature]])
+    ==
+  ::
+  ++  put-nonitem-ship
+    |=  [our=ship default=?(%.y %.n) act=[%put-nonitem-ship =key]]
+    ^-  card
+    =/  general  *general
+    =/  data  [[%nonitem-ship key.act(type [%nonitem %ship ~]) ~] general]
+    =/  meta
+      :*  updated-at='~2000.1.1'
+          permissions=~[our]
+          reach=[%public blacklist=~]
+          outside-sigs=~
+      ==
+    (act-to-act-card:cards our [%put-nonitem key.act [data meta *social *signature]])
+  ::
+  ++  put-nonitem-group
+      |=  [our=ship default=?(%.y %.n) act=[%put-nonitem-group =key title=@t description=@t image=@t]]
+      ^-  card
+      =/  general  *general
+      =/  data  [[%nonitem-group key.act(type [%nonitem %group ~]) ~] general(title title.act, description description.act, image image.act)]
+      =/  meta
+        :*  updated-at='~2000.1.1'
+            permissions=~[our]
+            reach=[%public blacklist=~]
+            outside-sigs=~
+        ==
+      (act-to-act-card:cards our [%put-nonitem key.act [data meta *social *signature]])
+  ::
+  ::
+  ++  make-front-end-update
+    |=  [=all-items our=ship src=ship now=time upd=update]
+    ^-  front-end-update
+    :*  ?:(=(src our) %.y %.n)
+        ?+    -.upd    !!
+            %put
+          :^  -.upd  key.upd  item.upd
+          ?+    -.bespoke.data.item.upd    ~
+              %list-enditem-other
+            =/  key-list
+              %-  key-text-list-to-key-list:conv
+              other-key-list.bespoke.data.item.upd
+            (get-items:misc all-items (silt key-list))
+              %list-enditem-app
+            =/  key-list
+              %-  key-text-list-to-key-list:conv
+              app-key-list.bespoke.data.item.upd
+            (get-items:misc all-items (silt key-list))
+              %list-nonitem-group
+            =/  key-list
+              %-  key-text-list-to-key-list:conv
+              group-key-list.bespoke.data.item.upd
+            (get-items:misc all-items (silt key-list))
+              %list-nonitem-ship
+            =/  key-list
+              %-  key-text-list-to-key-list:conv
+              ship-key-list.bespoke.data.item.upd
+            (get-items:misc all-items (silt key-list))
+          ==
+          ::
+            %del  [-.upd key.upd ~ ~]
+        ==
+    ==
+  ::
+  ++  make-on-poke-put-cards
+    |=  [=all-items our=ship src=ship now=time upd=[%put =key =item]]
+    ^-  (list card)
+    ?:  =(type.key.upd /validity-store)  ~
+    %+  welp
+    :~  [%pass /put %agent [our %portal-manager] %poke %portal-update !>(upd)]
+        [%give %fact [/front-end-update]~ %portal-front-end-update !>((make-front-end-update all-items our src now upd))]
+    ==
+    ?.  =(our ship.key.upd)  ~
+    [%give %fact [(key-to-path:conv key.upd)]~ [%portal-update !>(upd)]]~
+  ::
+  ++  make-on-poke-del-cards
+    |=  [=all-items our=ship src=ship now=time changed=?(%changed %unchanged) upd=[%del =key]]
+    ^-  (list card)
+    ?:  =(changed %unchanged)  ~
+    ~&  "%portal-store: unsubscribing from {(spud (key-to-path:conv key.upd))}"
+    %+  welp
+      :~  [%pass /del %agent [our %portal-manager] %poke %portal-update !>(upd)]
+          [%give %fact [/front-end-update]~ %portal-front-end-update !>((make-front-end-update all-items our src now upd))]
+      ==
+    ?:  =(our ship.key.upd)
+      [%give %fact [(key-to-path:conv key.upd)]~ [%portal-update !>(upd)]]~
+    [%pass (key-to-path:conv key.upd) %agent [ship.key.upd %portal-store] %leave ~]~
+  ::
+  ++  make-on-poke-sub-cards
+    |=  [our=ship src=ship now=time wex=boat:gall upd=[%sub =key]]
+    ^-  (list card)
+    =/  wire  (key-to-path:conv key.upd)
+    ?:  (~(has by wex) [wire ship.key.upd %portal-store])
+      ~&  "%portal-store: already subscribed to {(spud wire)}"
+      ~
+    ~&  "%portal-store: subscribing to {(spud wire)}"
+    [%pass wire %agent [ship.key.upd %portal-store] %watch wire]~
+  --
+::
+
 ::  TODO think about all the assertions which need to happen in each of these arms
 ++  portal-manager
   |%
   ::
-  ++  respond-to-update
+  ++  on-update
     |%
     ::  does this has to respond to foreign
     ::  or it can also respond to us?
@@ -416,328 +816,10 @@
       ?~  val  ~
       val
   ::
-    ++  del  ::  TODO remove from lists in which the item is?
+    ++  del
       |=  [upd=[%del =key]]
       ^-  (list card)
       ~
-  ::
-    ++  empty
-      |=  [upd=[%empty ~]]
-      ^-  (list card)
-      ~
-    --
-  ::
-  ++  make-update
-    |%
-    ++  default-groups-list
-      |=  [our=ship now=time]
-      ^-  update
-      =/  general  `general`['Main Groups List' '' 'Your first groups list.' *tags *properties *pictures '' '#e8e8e8']
-      =/  act  [%add our [%list %nonitem %group ~] general [%list-nonitem-group ~]]
-      (add:make-update our our now %.y act)
-  ::
-    ++  default-apps-list
-      |=  [our=ship now=time]
-      ^-  update
-      =/  general  ['Main Apps List' '' 'Your first apps list.' *tags *properties *pictures '' '#e8e8e8']
-      =/  act  [%add our [%list %enditem %app ~] general [%list-enditem-app ~]]
-      (add:make-update [our our now %.y act])
-  ::
-    ++  default-ships-list
-      |=  [our=ship now=time]
-      ^-  update
-      =/  general  ['Main Ships List' '' 'Your first ships list.' *tags *properties *pictures '' '#e8e8e8']
-      =/  act  [%add our [%list %nonitem %ship ~] general [%list-nonitem-ship ~]]
-      (add:make-update [our our now %.y act])
-  ::
-    ++  default-other-list
-      |=  [our=ship now=time]
-      ^-  update
-      =/  general  ['Main Other List' '' 'Your first other items list.' *tags *properties *pictures '' '#e8e8e8']
-      =/  act  [%add our [%list %enditem %other ~] general [%list-enditem-other ~]]
-      (add:make-update [our our now %.y act])
-  ::
-    ++  default-list-list
-      |=  [our=ship now=time]
-      ^-  update
-      =/  general  ['Main Curator Page' '' 'Your first curator page.' *tags *properties *pictures '' '#e8e8e8']
-      =/  =list-key-list
-        :~  [[our [%list %enditem %app ~] '~2000.1.1'] 'These are the apps I recommend']
-            [[our [%list %enditem %other ~] '~2000.1.1'] 'These are miscellaneous items I recommend']
-            [[our [%list %nonitem %group ~] '~2000.1.1'] 'These are groups I recommend']
-            [[our [%list %nonitem %ship ~] '~2000.1.1'] 'These are ships I recommend']
-        ==
-      =/  act  [%add our [%list %list ~] general [%list-list list-key-list]]
-      (add:make-update [our our now %.y act])
-  ::
-    ++  default-validity-store
-      |=  [our=ship now=time]
-      ^-  update
-      =/  general  ['Main Validity Store' '' 'Storage of validity of your items.' *tags *properties *pictures '' '#e8e8e8']
-      =/  act  [%add our [%validity-store ~] general [%validity-store *validity-records]]
-      (add:make-update [our our now %.y act])
-  ::
-    ++  bespoke-write
-      |=  [=key =bespoke-input act=$%([%add ~] [%edit =bespoke])]
-      ^-  bespoke
-      ?-    -.bespoke-input
-          %nonitem-ship        [%nonitem-ship key(type [%nonitem %ship ~]) ~]
-          %nonitem-group       [%nonitem-group key(type [%nonitem %group ~]) ~]
-          %enditem-other       [%enditem-other key(type [%enditem %other ~]) ~]
-          %enditem-app
-        ?-    -.act
-            %add
-          [%enditem-app key(type [%enditem %app ~]) dist-desk.bespoke-input *signature 0v0 *docket]
-        ::
-            %edit
-          ?+    -.bespoke.act    !!                     ::  this really needs to be done smarter (the whole type system)
-              %enditem-app                              ::  I shouldn't need to confirm things twice. (maybe better sur? lib arms?)
-            bespoke.act(dist-desk dist-desk.bespoke-input)
-          ==
-        ==
-        ::
-          %list-enditem-other  [%list-enditem-other key(type [%list %enditem %other ~]) other-key-list.bespoke-input]
-          %list-enditem-app    [%list-enditem-app key(type [%list %enditem %app ~]) app-key-list.bespoke-input]
-          %list-nonitem-group  [%list-nonitem-group key(type [%list %nonitem %group ~]) group-key-list.bespoke-input]
-          %list-nonitem-ship   [%list-nonitem-ship key(type [%list %nonitem %ship ~]) ship-key-list.bespoke-input]
-          %list-list           [%list-list key(type [%list %list ~]) list-key-list.bespoke-input]
-          %validity-store      [%validity-store key(type [%validity-store ~]) validity-records.bespoke-input]
-      ==
-  ::
-    ::  these are not the right places to assert -.bespoke correspond to type.id
-    ::  if =(%.y default), created-at becomes '~2000.1.1'
-    ++  add
-      |=  [our=ship src=ship now=time default=?(%.y %.n) act=[%add =ship =type =general =bespoke-input]]
-      ^-  update
-      ?>  =(our src)
-      =/  key  [ship.act type.act cord=?:(=(default %.y) '~2000.1.1' `@t`(scot %da now))]
-      =/  data  [(bespoke-write key bespoke-input.act [%add ~]) general.act]
-      =/  meta
-        :*  updated-at='~2000.1.1'
-            permissions=~[our]
-            reach=[%public blacklist=~]
-            outside-sigs=~
-        ==
-      =/  item-sig  (sign:sig our now `sig-input`[%item data meta *social])
-      [%put key [data meta *social item-sig]]
-  ::
-  ::  we can make edits more granular if necessary, e.g. edit only some part of bespoke data
-    ++  edit
-      |=  [our=ship src=ship now=time act=[%edit =key =general =bespoke-input]]
-      ^-  update
-      ?>  =(our src)
-      ?>  =(ship.key.act our)
-      =/  item  `item`(get-item:scry our now key.act)
-      =/  data  [(bespoke-write key.act bespoke-input.act [%edit bespoke.data.item]) general.act]
-      =/  item
-        %=  item
-          updated-at.meta  `@t`(scot %da now)
-          data                  data
-        ==
-      =/  item-sig  (sign:sig our now [%item data meta.item social.item])
-      [%put key.act [data meta.item social.item item-sig]]
-  ::
-    ++  sub
-      |=  [our=ship act=[%sub =key]]
-      ^-  update
-      ?<  =(-.type.key.act %nonitem)
-      ?<  =(ship.key.act our)
-      act
-  ::
-    ++  del
-      |=  [our=ship act=[%del =key]]
-      ^-  update
-      ?<  =(-.type.key.act %nonitem)
-      act
-  ::
-    ++  add-to-default-list
-      |=  [our=ship now=time act=[%add-to-default-list key=[=ship type=$%([%enditem type] [%nonitem type]) =cord]]]
-      ^-  update
-      =/  list-key  [our [%list type.key.act] '~2000.1.1']
-      =/  list  (get-item:scry our now list-key)
-      ?+    -.bespoke.data.list    [%empty ~]
-          %list-enditem-app
-        =/  bespoke-input  [%list-enditem-app (snoc app-key-list.bespoke.data.list [[ship.key.act [%enditem %app ~] cord.key.act] 'Auto-recommended'])]
-        =/  act  [%edit list-key general.data.list bespoke-input]
-        (edit our our now act)
-      ::
-          %list-enditem-other
-        =/  bespoke-input  [%list-enditem-other (snoc other-key-list.bespoke.data.list [[ship.key.act [%enditem %other ~] cord.key.act] 'Auto-recommended'])]
-        =/  act  [%edit list-key general.data.list bespoke-input]
-        (edit our our now act)
-      ::
-          %list-nonitem-group
-        =/  bespoke-input  [%list-nonitem-group (snoc group-key-list.bespoke.data.list [[ship.key.act [%nonitem %group ~] cord.key.act] 'Auto-recommended'])]
-        =/  act  [%edit list-key general.data.list bespoke-input]
-        (edit our our now act)
-      ::
-          %list-nonitem-ship
-        =/  bespoke-input  [%list-nonitem-ship (snoc ship-key-list.bespoke.data.list [[ship.key.act [%nonitem %ship ~] cord.key.act] 'Auto-recommended'])]
-        =/  act  [%edit list-key general.data.list bespoke-input]
-        (edit our our now act)
-      ==
-    ::
-      ++  overwrite-list
-        |=  [our=ship now=time act=[%overwrite-list list-key=[=ship type=[%list type] =cord] =key-text-list]]
-        ^-  update
-        =/  list  (get-item:scry our now list-key.act)
-        ?+    -.bespoke.data.list    [%empty ~]
-            %list-enditem-app
-          =/  bespoke-input  [%list-enditem-app (app-key-list key-text-list.act)]
-          =/  act  [%edit list-key.act general.data.list bespoke-input]
-          (edit our our now act)
-        ::
-            %list-enditem-other
-          =/  bespoke-input  [%list-enditem-other (other-key-list key-text-list.act)]
-          =/  act  [%edit list-key.act general.data.list bespoke-input]
-          (edit our our now act)
-        ::
-            %list-nonitem-group
-          =/  bespoke-input  [%list-nonitem-group (group-key-list key-text-list.act)]
-          =/  act  [%edit list-key.act general.data.list bespoke-input]
-          (edit our our now act)
-        ::
-            %list-nonitem-ship
-          =/  bespoke-input  [%list-nonitem-ship (ship-key-list key-text-list.act)]
-          =/  act  [%edit list-key.act general.data.list bespoke-input]
-          (edit our our now act)
-        ==
-    ::
-    ++  comment
-      |=  [our=ship src=ship now=time act=[%comment =key text=@t]]
-      ^-  update
-      =/  item  `item`(get-item:scry our now key.act)
-      =/  new-comments  (~(put by comments.social.item) [src `@t`(scot %da now)] [text.act '~2000.1.1'])
-      [%put key.act item(comments.social new-comments)]
-  ::
-  ::  TODO test wrong pointer, on every action, local and foreign
-    ++  edit-comment
-      |=  [our=ship src=ship now=time act=[%edit-comment =key =created-at text=@t]]
-      ^-  update
-      =/  item  `item`(get-item:scry our now key.act)
-      ?.  (~(has by comments.social.item) [src created-at.act])  [%empty ~]
-      =/  new-comments  (~(put by comments.social.item) [src created-at.act] [text.act `@t`(scot %da now)])
-      [%put key.act item(comments.social new-comments)]
-  ::
-    ++  del-comment
-      |=  [our=ship src=ship now=time act=[%del-comment =key =created-at]]
-      ^-  update
-      =/  item  `item`(get-item:scry our now key.act)
-      ?.  (~(has by comments.social.item) [src created-at.act])  [%empty ~]
-      =/  new-comments  (~(del by comments.social.item) [src created-at.act])
-      [%put key.act item(comments.social new-comments)]
-  ::
-    ++  rate
-      |=  [our=ship src=ship now=time act=[%rate =key rating-num=@ud]]
-      ^-  update
-      ?>  &((gte rating-num.act 1) (lte rating-num.act 5))
-      =/  item  `item`(get-item:scry our now key.act)
-      =/  rating  (~(get by ratings.social.item) src)
-      =/  new-rating
-        ?~  rating  [rating-num.act '~2000.1.1' `@t`(scot %da now)]
-        [rating-num.act `@t`(scot %da now) created-at.u.rating]
-      =/  new-ratings  (~(put by ratings.social.item) src new-rating)
-      [%put key.act item(ratings.social new-ratings)]
-  ::
-    ++  unrate
-      |=  [our=ship src=ship now=time act=[%unrate =key]]
-      ^-  update
-      =/  item  `item`(get-item:scry our now key.act)
-      ?.  (~(has by ratings.social.item) src)  [%empty ~]
-      =/  new-ratings  (~(del by ratings.social.item) src)
-      [%put key.act item(ratings.social new-ratings)]
-  ::
-  ::  no review signatures for now
-    ++  review
-      |=  [our=ship src=ship now=time act=[%review =key text=@t hash=@uv is-safe=?]]
-      ^-  update
-      =/  item  `item`(get-item:scry our now key.act)
-      :: TODO is-current for apps
-      ::=/  is-current  =(hash desk-hash.dst-input.app-page)
-      =/  is-current  %.n
-      =/  rev  (~(get by reviews.social.item) src)
-      =/  new-review
-        ?~  rev  [text.act hash.act is-current is-safe.act '~2000.1.1' `@t`(scot %da now) *signature]
-        [text.act hash.act is-current is-safe.act `@t`(scot %da now) created-at.u.rev *signature]
-      =/  new-reviews  (~(put by reviews.social.item) src new-review)
-      [%put key.act item(reviews.social new-reviews)]
-  ::
-    ++  del-review
-      |=  [our=ship src=ship now=time act=[%del-review =key]]
-      ^-  update
-      =/  item  `item`(get-item:scry our now key.act)
-      ?.  (~(has by reviews.social.item) src)  [%empty ~]
-      =/  new-reviews  (~(del by reviews.social.item) src)
-      [%put key.act item(reviews.social new-reviews)]
-
-    ::  TODO  should I put the whole logic in here? (including making cards etc)
-    ++  sign-app
-      |=  [our=ship src=ship now=time msg=[%sign-app =key sig=signature]]
-      ^-  update
-      ?>  =(our ship.key.msg)
-      ::  what if item doesnt exist?
-      =/  item  `item`(get-item:scry our now key.msg)
-      ?>  ?=(signature sig.msg)
-      ?+    -.bespoke.data.item    [%empty ~]
-          %enditem-app
-        ?>  =(src -:(need (parse-dist-desk:misc dist-desk.bespoke.data.item)))
-        [%put key.msg item(sig.bespoke.data sig.msg)]
-      ==
-  ::
-  ::  how to do correct item type assertions etc?
-    ++  send-app-data
-      |=  [our=ship src=ship now=time msg=[%send-app-data =key data=[desk-hash=@uv =docket]]]   :: use app-name=@tas when inputting
-      ^-  update
-      ?>  =(our ship.key.msg)
-      ::  what if item doesnt exist?
-      =/  item  `item`(get-item:scry our now key.msg)
-      ::?<  ?=(@tas data.act)
-      ::  ?=([@uv docket] data.act)
-      ?+    -.bespoke.data.item   [%empty ~]
-          %enditem-app
-        ?>  =(src -:(need (parse-dist-desk:misc dist-desk.bespoke.data.item)))
-        =/  bespoke  bespoke.data.item(desk-hash desk-hash.data.msg, docket docket.data.msg)
-        [%put key.msg item(bespoke.data bespoke)]
-      ==
-  ::
-    ++  put-empty-nonitem
-      |=  [=key]
-      ^-  update
-      ?+    type.key    !!
-          [%nonitem %group ~]
-        =/  data  [[%nonitem-group key(type [%nonitem %group ~]) ~] *general]
-        [%put key [data *meta *social *signature]]
-          [%nonitem %ship ~]
-        =/  data  [[%nonitem-ship key(type [%nonitem %ship ~]) ~] *general]
-        [%put key [data *meta *social *signature]]
-      ==
-  ::
-    ++  put-nonitem-ship
-      |=  [our=ship default=?(%.y %.n) act=[%put-nonitem-ship =key]]
-      ^-  update
-      =/  general  *general
-      =/  data  [[%nonitem-ship key.act(type [%nonitem %ship ~]) ~] general]
-      =/  meta
-        :*  updated-at='~2000.1.1'
-            permissions=~[our]
-            reach=[%public blacklist=~]
-            outside-sigs=~
-        ==
-      [%put key.act [data meta *social *signature]]
-    ::
-    ++  put-nonitem-group
-      |=  [our=ship default=?(%.y %.n) act=[%put-nonitem-group =key title=@t description=@t image=@t]]
-      ^-  update
-      =/  general  *general
-      =/  data  [[%nonitem-group key.act(type [%nonitem %group ~]) ~] general(title title.act, description description.act, image image.act)]
-      =/  meta
-        :*  updated-at='~2000.1.1'
-            permissions=~[our]
-            reach=[%public blacklist=~]
-            outside-sigs=~
-        ==
-      [%put key.act [data meta *social *signature]]
-    ::
     --
   --
 ::
@@ -761,6 +843,8 @@
   ++  default-v1
     |=  [our=ship now=time item-key=key =item]
     ^-  (list card)
+    ::  slight amount of time after this
+    ?.  =(type.item-key [%enditem %app ~])  ~
     =/  v-store-key  `key`[our [%validity-store ~] '~2000.1.1']
     =/  validity-store  `^item`(get-item:scry our now v-store-key)
     ?+    -.bespoke.data.validity-store    ~
@@ -770,25 +854,21 @@
       =/  validation-time-map  (~(gut by validity-records) item-key *validation-time-map)
       =/  validation-time-map  (put:valid-mop validation-time-map now validation-result)
       =/  validity-records  (~(put by validity-records) item-key validation-time-map)
-      :: TODO bolji nacin za handleat typeove da nemoram svugdje ?+
-      ::  mozda izvuc sve ?+  na jedno mjesto, i za svaki type definirat sve funkcije koje se onda nestaju okolo
       =/  edit-action  `action`[%edit v-store-key general.data.validity-store [%validity-store validity-records]]
       [%pass /edit %agent [our %portal-manager] %poke %portal-action !>(edit-action)]~
     ==
 
   ++  get-latest
     |=  [our=ship now=time =key]
-    ^-  ?
-    =/  all-items  (get-all-items:scry our now)
-    =/  validity-store  (~(gut by all-items) [our [%validity-store ~] '~2000.1.1'] ~)
-    ?~  validity-store  !!
-    ?+    -.bespoke.data.validity-store    !!
+    ^-  result
+    =/  validity-store  (get-item:scry our now [our [%validity-store ~] '~2000.1.1'])
+    ?+    -.bespoke.data.validity-store    ~
         %validity-store
       =/  validity-records  validity-records.bespoke.data.validity-store
-      =/  validation-time-map  (~(gut by validity-records) key *validation-time-map ~)
-      ?~  validation-time-map  !!
+      =/  validation-time-map  (~(gut by validity-records) key *validation-time-map)
+      ?~  validation-time-map  ~
       =/  maybe-valid  (pry:valid-mop (^validation-time-map validation-time-map))
-      ?~  maybe-valid  !!
+      ?~  maybe-valid  ~
       =/  maybe-valid  `validation-result`val.u.maybe-valid
       result.maybe-valid
     ==
@@ -798,11 +878,11 @@
   ::  if app- dist-desk, signature, id
   ++  new-item
     |=  [our=@p now=@da =key =item]
-    ^-  ?
-    ?+    -.bespoke.data.item    %.y
+    ^-  result
+    ?+    -.bespoke.data.item    ~
         %enditem-app
       =/  dist-desk  (parse-dist-desk:misc dist-desk.bespoke.data.item)
-      ?~  dist-desk  %.n
+      ?~  dist-desk  [~ %.n]
       (sig key dist-name.u.dist-desk desk-name.u.dist-desk sig.bespoke.data.item our now)
     ==
 
@@ -810,19 +890,20 @@
   ::  validates signature
   ++  sig
     |=  [=key dist-ship=@p desk-name=@tas =signature our=@p now=@da]
+    ^-  result
     ?:  (ships-related:misc ship.key dist-ship)
-      %.y
+      [~ %.y]
     ?.  =(ship.signature dist-ship)
       ~&  "signature fail: ship in sig ({(scow %p ship.signature)}) and distributor ship ({(scow %p dist-ship)}) are not the same"
-      %.n
+      [~ %.n]
     ?:  =((get-ship-type:misc our) %comet)
       ~&  "our ship is a comet - skipping signature validation of {(trip desk-name)} by {(scow %p dist-ship)}. beware, apps may be unsafe and/or pirated"
-      %.y
+      ~
     ?.  (validate:^sig [our signature [%app key desk-name] now])
       ~&  "signature fail: distributor signature validation failed, not adding new app {(trip desk-name)} by {(scow %p dist-ship)}"
       ~&  >>>  signature
-      %.n
-    %.y
+      [~ %.n]
+    [~ %.y]
 ::
 ::   ::
 ::   ::  app store legacy
