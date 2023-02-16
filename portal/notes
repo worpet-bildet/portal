@@ -43,10 +43,9 @@ color='#e8e8e8'
 :portal-manager|add [our [%enditem %app ~] arbok [%enditem-app '~nec/portal']]
 :portal-manager|add [our [%enditem %app ~] feraligatr [%enditem-app '~zod/portal']]
 
-TODO - fix these seed commands (apps overwrite list)
 :portal-manager|overwrite-list [[our [%list %nonitem %group ~] '~2000.1.1'] ~[[[~dalten [%nonitem %group ~] 'aera'] 'Love aera!'] [[~hocwyn-tipwex [%nonitem %group ~] 'uqbar-event-horizon'] 'Uqbar FTW!'] [[~dilryd-mopreg [%nonitem %group ~] 'app-store'] 'app-store coming soon TM']]]
 :portal-manager|overwrite-list [[our [%list %nonitem %ship ~] '~2000.1.1'] ~[[[~toptyr-bilder [%nonitem %ship ~] ''] 'top tier builder!'] [[~doplyr-harbur [%nonitem %ship ~] ''] 'top tier autist!'] [[~dilryd-mopreg [%nonitem %ship ~] ''] 'top tier weirdo!']]]
-:portal-manager|overwrite-list [[our [%list %enditem %app ~] '~2000.1.1'] ~[[[~nec [%enditem %app ~] '~2000.1.1'] '']]]
+:portal-manager|overwrite-list [[our [%list %enditem %app ~] '~2000.1.1'] ~[[[~nec [%enditem %app ~] '~2000.1.1'] ''] [~zod [%enditem %app ~] '~2000.1.1']]]
 
 ERROR TESTING COMMANDS
 :portal-manager|overwrite-list [[our [%list %enditem %app ~] '~2000.1.1'] ~[[[~nec [%enditem %app ~] '~2000.1.1'] '']]]
@@ -60,13 +59,18 @@ SCRIES from dojo
 .^(result:data %gx /=portal-store=/valid/latest/~zod/list/list/~2000.1.1/portal-result)
 
 TODO
+- think about all the assertions which need to happen in all of portal lib
+- %portal-manager DONE %portal-store DONE portal-lib portal-sur portal-json-lib
+- check if marks work
 - vertical redesign (errors better earlier on %portal-manager). (make it redundant)
 - default title: 'Untitled' (maybe type specific? 'Untitled Group'?)
 - horizontal redesign?
 - what happens with delete and validity store??? no worries?
-- putting item (e.g. app) is slow  -> FIX
 - general code cleanup
 - different seed data?
+- update from store to manager
+  ->  maybe there should be more metadata except just the item itself?
+
 
 ASSERTIONS/SPECIFIC TYPES
 - how to add a default/bunt value in the data type? (we should add it for color, see where else. where for bespoke?)

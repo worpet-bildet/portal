@@ -4,7 +4,7 @@
 ++  grow
   |%
   ++  noun  res
-  ::++  json  (enjs-result:enjs:portal-json res)  ::TODO
+  ++  json  (enjs-result:enjs:portal-json res)
   --
 ++  grab
   |%
