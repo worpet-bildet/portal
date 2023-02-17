@@ -207,15 +207,15 @@
     =/  key  (path-to-key:conv t.t.t.path)
     ``portal-result+!>((get-latest:validator our.bowl now.bowl key))
     ::
+      [%x %item %exists *]
+    =/  key  (path-to-key:conv t.t.t.path)
+    ``noun+!>((~(has by all-items) key))
+    ::
       [%x %item *]
     =/  key  (path-to-key:conv t.t.path)
     =/  maybe-item  (~(gut by all-items) key ~)
     ?~  maybe-item  ``noun+!>(~)
     ``portal-item+!>(maybe-item)
-    ::
-      [%x %item %exists *]
-    =/  key  (path-to-key:conv t.t.t.path)
-    ``noun+!>((~(has by all-items) key))
     ::
       [%x %in-default-list *]
     =/  key  (path-to-key:conv t.t.path)

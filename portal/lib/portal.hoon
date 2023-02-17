@@ -284,6 +284,10 @@
   ++  ships-related
     |=  [ship1=ship ship2=ship]
     ^-  ?
+    ?:  ?|  =((get-ship-type ship1) %comet)
+            =((get-ship-type ship2) %comet)
+        ==
+      %.n
     ?:  (gte ship1 ship2)
       ?:  =(0 (mod (sub ship1 ship2) 4.294.967.296))
         %.y
@@ -299,8 +303,9 @@
     =/  dist-desk  (trip dist-desk)
     =/  loc  (find ['/']~ dist-desk)
     ?~  loc  ~
-    %-  some  :-
-    (slav %p (crip (scag u.loc dist-desk)))
+    =/  ship-unit  (slaw %p (crip (scag u.loc dist-desk)))
+    ?~  ship-unit  ~
+    %-  some  :-  (need ship-unit)
     `@tas`(crip (slag +(u.loc) dist-desk))
   ::
   ::  takes all-items and key-set and retrieves the desired items
@@ -320,7 +325,7 @@
     |=  [our=ship src=ship =all-items upd=[%del =key]]
     ^-  [?(%changed %unchanged) ^all-items]
     ~&  "%portal: deleting {(spud (key-to-path:conv key.upd))}"
-    ?:  =(cord.key.upd '~2000.1.1')
+    ?:  &(=(cord.key.upd '~2000.1.1') =(ship.key.upd our))
       ~&  "%portal: item is default, not allowed to delete"
       [%unchanged all-items]
     ?.  (~(has by all-items) key.upd)
@@ -331,6 +336,7 @@
   ::  for receiving items, from local %portal-manager or foreign %portal-store
   ++  put-item
     |=  [our=ship =all-items upd=[%put =key =item]]
+    ^-  ^all-items
     ~&  "%portal: putting {(spud (key-to-path:conv key.upd))}"
     (~(put by all-items) key.upd item.upd)
   ::
@@ -393,6 +399,9 @@
       ::  if =(%.y default), created-at becomes '~2000.1.1'
       ^-  [(list card) ^all-items]
       ?.  =(our src)  [~ all-items]
+      ?.  =(ship.act our)
+        ~&  "%portal: not adding item, ship in key must be our"
+        [~ all-items]
       =/  key  [ship.act type.act cord=?:(=(default %.y) '~2000.1.1' `@t`(scot %da now))]
       =/  data  [(bespoke-write:conv key bespoke-input.act [%add ~]) general.act]
       =/  meta
@@ -471,6 +480,7 @@
     ++  overwrite-list
       |=  [=all-items our=ship now=time act=[%overwrite-list list-key=[=ship type=[%list type] =cord] =key-text-list]]
       ^-  [(list card) ^all-items]
+      ?.  =(ship.list-key.act our)  [~ all-items]
       =/  list  (~(gut by all-items) list-key.act ~)
       ?~  list  ~&  "%portal-manager: list doesn't exist"  [~ all-items]
       ?+    -.bespoke.data.list    [~ all-items]
@@ -512,6 +522,7 @@
     ++  edit-comment
       |=  [=all-items our=ship src=ship now=time act=[%edit-comment =key =created-at text=@t]]
       ::  TODO test wrong pointer, on every action, local and foreign
+      ::  TODO check is-current on revs for apps
       ^-  [(list card) ^all-items]
       ?.  =(our ship.key.act)  [~ all-items]
       =/  item  (~(gut by all-items) key.act ~)
@@ -746,6 +757,7 @@
   ::
   ++  on-update
     |%
+    ::  TODO clean up and write clear comments here and everywhere
     ::  does this has to respond to foreign
     ::  or it can also respond to us?
     ::  how do we as a user/curator go around discovering/addign items
@@ -962,8 +974,8 @@
       ~&  "our ship is a comet - skipping signature validation of {(trip desk-name)} by {(scow %p dist-ship)}. beware, apps may be unsafe and/or pirated"
       ~
     ?.  (validate:^sig [our signature [%app key desk-name] now])
-      ~&  "signature fail: distributor signature validation failed, not adding new app {(trip desk-name)} by {(scow %p dist-ship)}"
-      ~&  >>>  signature
+      ~&  "signature fail: distributor signature validation failed"
+      ~&  >>  signature
       [~ %.n]
     [~ %.y]
 ::
