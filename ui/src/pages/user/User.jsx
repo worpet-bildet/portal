@@ -1,5 +1,10 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { AppTile } from "../../components/AppTile";
+import Box from "@mui/material/Box";
+import Fab from "@mui/material/Fab";
+import AddIcon from "@mui/icons-material/Add";
+import { Description } from "@mui/icons-material";
+import { isEmpty } from "lodash";
+import { ItemTile } from "../../components/Item/ItemTile";
 import { Footer } from "../../components/Footer";
 import DialogSelect from "../../components/Dialog";
 import { Sidebar } from "../../components/Sidebar";
@@ -15,49 +20,66 @@ import {
   useStore,
   getTypes,
 } from "../../state/store";
-import { Description } from "@mui/icons-material";
-import { isEmpty } from "lodash";
 // import { getGraph } from "@urbit/api";
 
+export const AddItemButton = () => {
+  return (
+    <Box sx={{ "& > :not(style)": { m: 1 } }}>
+      <Fab size="small" color="primary" aria-label="add">
+        <AddIcon />
+      </Fab>
+      <Fab size="medium" color="primary" aria-label="add">
+        <AddIcon />
+      </Fab>
+      <Fab color="primary" aria-label="add">
+        <AddIcon />
+      </Fab>
+    </Box>
+  );
+};
 const api = getUrbitApi();
 
 // TODO(adrian): Add api call from ship to get applications
 export function User(props) {
-  // const [applications, setApplications] = useState([]);
   const appLists = useStore(getApps);
   const types = useStore(getTypes);
-  const [open, setOpen] = useState(false);
-  // const groupLists = useStore(getGroups);
+  // const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    // subscribe();
     if (appLists?.length) {
-      // setApplications(appLists);
-      setOpen(true);
+      // setOpen(true);
     }
   }, [appLists]);
 
-  // const subscribe = async () => {
-  //   try {
-  //     api.subscribe({
-  //       app: "usr-server",
-  //       path: "/render",
-  //       event: handleUpdate,
-  //       err: () => setErrorMsg("Subscription rejected"),
-  //       quit: () => setErrorMsg("Kicked from subscription"),
-  //       cancel: () => setErrorMsg("Subscription cancelled"),
-  //     });
-  //   } catch {
-  //     setErrorMsg("Subscription failed");
-  //   }
-  // };
-  const handleUpdate = curators => {
-    // setApplications(getApplications(curators));
-  };
-  const setErrorMsg = msg => {
-    throw new Error(msg);
-  };
-  const getApplications = curators => {};
+  const renderListsByType = _types =>
+    Object.entries(_types)
+      .filter(([type]) => type !== "list")
+      .map(
+        ([type, lists]) =>
+          lists?.length &&
+          lists.map(({ item, map }, _idx) => (
+            <List key={_idx} item={item} map={map} type={type} />
+          ))
+      );
+
+  const List = ({ item, map, type }) => (
+    <div>
+      <h3 className="text-2xl font-bold">{item?.data?.general?.title}</h3>
+      <ul className="space-y-4">
+        {!isEmpty(map)
+          ? Object.entries(map).map(([key, val]) => (
+              <ItemTile
+                key={key}
+                itemType={type}
+                __title={getTitle(key, val, type)}
+                __val={val}
+                {...val}
+              />
+            ))
+          : null}
+      </ul>
+    </div>
+  );
   return (
     <Fragment>
       <ResponsiveAppBar />
@@ -67,8 +89,7 @@ export function User(props) {
           <main className="ml-32 basis-3/4 h-full">
             <div className="w-4/5 space-y-6 py-14">
               <h1 className="text-3xl font-bold">Discover Apps</h1>
-              <DialogSelect open={open} setOpen={setOpen} />
-
+              {/* <DialogSelect open={open} setOpen={setOpen} /> */}
               <Disclaimer
                 color="blue"
                 message={
@@ -78,45 +99,8 @@ export function User(props) {
               {appLists ? (
                 <div>
                   <h3 className="text-2xl font-bold">{}</h3>
-                  {Object.entries(types).map(([type, lists]) => {
-                    if (lists.length) {
-                      return lists.map((list, _idx) => {
-                        const { item, map } = list;
-                        const general = item?.data?.general;
-                        const { color, Description, image, link, pictures, tags, title } =
-                          general;
-                        return (
-                          <div key={_idx}>
-                            <h3 className="text-2xl font-bold">{title}</h3>
-                            <ul className="space-y-4">
-                              {/* <AppTile key={app.id} appName={app.key["app-name"]} {...app} /> */}
-                              {!isEmpty(map)
-                                ? Object.entries(map).map(([key, val]) => {
-                                    return (
-                                      <AppTile
-                                        key={key}
-                                        singleVal={val ? null : key}
-                                        appName={val?.data?.general?.title}
-                                        {...val?.data?.bespoke?.payload}
-                                        docket={{
-                                          ...val?.data?.bespoke?.payload?.docket,
-                                          ...val?.data?.general,
-                                        }}
-                                        __type={type}
-                                        __key={key}
-                                        __title={getTitle(key, val, type)}
-                                        __val={val}
-                                        {...val}
-                                      />
-                                    );
-                                  })
-                                : null}
-                            </ul>
-                          </div>
-                        );
-                      });
-                    }
-                  })}
+                  {renderListsByType(types)}
+                  <AddIcon />
                 </div>
               ) : null}
             </div>

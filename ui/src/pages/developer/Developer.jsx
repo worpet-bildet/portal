@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AddButtonTile } from '../../components/AddButtonTile';
-import { AppTile } from '../../components/AppTile';
+import { ItemTile } from '../../components/Item/ItemTile';
 import { Footer } from '../../components/Footer';
 import { Sidebar } from '../../components/Sidebar';
 import { getUrbitApi } from '../../utils/urbitApi';
@@ -53,7 +53,7 @@ export function Developer(props) {
                   <ul className="space-y-4">
                     <AddButtonTile buttonName="Add App page"/>
                     { applicationNames.map((appName) =>
-                        <AppTile key={getAppId(appName)} appName={appName} {...findApplication(appName)}/>
+                        <ItemTile key={getAppId(appName)} appName={appName} {...findApplication(appName)}/>
                       )
                     }
                   </ul>

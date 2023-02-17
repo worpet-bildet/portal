@@ -18,6 +18,7 @@ import {
   DeveloperPageButtons,
   UserPageButtons,
 } from "../constants/sidebarButtons";
+import DialogSelect from "./Dialog";
 
 const pages = [
   {
@@ -32,12 +33,15 @@ const pages = [
     button: "Groups",
     link: "/apps/portal/usr/groups",
   },
+  {
+    button: "Add",
+  },
 ];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function AppBar() {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const [open, setOpen] = useState(false);
 
   const handleOpenNavMenu = event => {
     setAnchorElNav(event.currentTarget);
@@ -52,6 +56,15 @@ function AppBar() {
     setAnchorElUser(null);
   };
 
+  const getNavProps = page =>
+    page.link
+      ? { to: page.link }
+      : {
+          onClick: evt => {
+            evt.preventDefault();
+            setOpen(true);
+          },
+        };
   return (
     <_AppBar position="static">
       <Container maxWidth="xl">
@@ -74,9 +87,11 @@ function AppBar() {
                 textDecoration: "none",
               }}
             >
-              Portal L
+              Portal
+              {/* L */}
             </Typography>
           </Link>
+          <DialogSelect open={open} setOpen={setOpen} />
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
@@ -114,7 +129,7 @@ function AppBar() {
                   // className="w-56 p-1 border border-black text-gray-900 bg-white dark:text-white hover:border-2 hover:font-semibold dark:hover:bg-gray-700"
                   // className="w-full ml-3 font-basis text-lg"
                 >
-                  <Link to={page.link}>
+                  <Link {...getNavProps(page)}>
                     <Typography
                       textAlign="center"
                       fontFamily={"monospace"}
@@ -146,7 +161,8 @@ function AppBar() {
                 textDecoration: "none",
               }}
             >
-              Portal M
+              Portal
+              {/* M */}
             </Typography>
           </Link>
           <Box
@@ -162,6 +178,7 @@ function AppBar() {
           >
             {pages.map(page => (
               <Link to={page.link} key={page.button}>
+                {/* <Link {...getNavProps(page)} key={page.button}> */}
                 <Button
                   // this is the large view
                   key={page.button}
@@ -190,7 +207,17 @@ function AppBar() {
                 <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
               </IconButton>
             </Tooltip>
-            <Menu
+          </Box>
+        </Toolbar>
+      </Container>
+    </_AppBar>
+  );
+}
+export default AppBar;
+
+// const settings = ["Profile", "Account", "Dashboard", "Logout"];
+{
+  /* <Menu
               sx={{ mt: "45px" }}
               id="menu-appbar"
               anchorEl={anchorElUser}
@@ -211,11 +238,5 @@ function AppBar() {
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}
-            </Menu>
-          </Box>
-        </Toolbar>
-      </Container>
-    </_AppBar>
-  );
+            </Menu> */
 }
-export default AppBar;
