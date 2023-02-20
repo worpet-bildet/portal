@@ -24,7 +24,7 @@ export function User(props) {
   const List = ({ item, map, type }) => (
     <div>
       <h3 className="text-2xl font-bold">{item?.data?.general?.title}</h3>
-      <ul className="space-y-4">
+      <ul className="flex flex-row my-4">
         {!isEmpty(map)
           ? Object.entries(map).map(([key, val]) => (
               <ItemTile
@@ -44,9 +44,9 @@ export function User(props) {
       <ResponsiveAppBar />
       <div className="flex flex-row">
         <div className="flex flex-col w-full min-h-screen">
-          <main className="ml-32 basis-3/4 h-full">
-            <div className="w-4/5 space-y-6 py-14">
-              <h1 className="text-3xl font-bold">Discover Apps</h1>
+          <main className="mx-8 basis-3/4 h-full">
+            <div className="space-y-6 py-14">
+              {/* <DialogSelect open={open} setOpen={setOpen} /> */}
               <Disclaimer
                 color="blue"
                 message={

@@ -37,12 +37,12 @@ export function ItemTile(props) {
     <li className="flex items-center space-x-3 text-sm leading-tight">
       <Link
         to={`/apps/portal/${!isUser ? `dev` : `usr`}/apps/${getAppUriKey(keys)}`}
-        className="w-full p-4 rounded border border-black hover:bg-gray-200"
+        className="w-full mr-4 rounded"
       >
-        <div className="flex flex-row flex-auto justify-between">
-          <div className="flex flex-row">
+        <div className="flex flex-col flex-auto justify-between">
+          <div className="flex flex-col">
             <div
-              className="flex-none relative w-20 h-20 mr-10 rounded-lg bg-gray-200 overflow-hidden"
+              className="flex-none relative w-40 h-40 rounded-lg bg-gray-200 overflow-hidden"
               style={{ backgroundColor: "aliceblue" }}
             >
               {!imageError ? (
@@ -54,14 +54,14 @@ export function ItemTile(props) {
               ) : null}
             </div>
             <div className="flex flex-col space-y-3">
-              <p className="text-2xl font-bold">{title}</p>
-              {data?.general?.tags?.length ? (
+              <p className="text-base mt-2">{title}</p>
+              {/* {data?.general?.tags?.length ? (
                 <ul className="flex flex-wrap gap-2">
                   {data.general.tags.map((tag, i) => (
                     <Tag key={`${title}_${tag}_${i}`} name={tag} />
                   ))}
                 </ul>
-              ) : null}
+              ) : null} */}
             </div>
           </div>
         </div>

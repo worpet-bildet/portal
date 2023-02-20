@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useTheme } from '@mui/material/styles';
 import _AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -10,6 +11,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
+
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
@@ -34,6 +36,8 @@ const pages = [
 ];
 
 function AppBar() {
+  const theme = useTheme()
+  const location = useLocation()
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [open, setOpen] = useState(false);
@@ -72,7 +76,6 @@ function AppBar() {
               sx={{
                 mr: 2,
                 display: { xs: "none", md: "flex" },
-                fontFamily: "monospace",
                 fontWeight: 700,
                 letterSpacing: ".3rem",
                 color: "inherit",
@@ -116,7 +119,11 @@ function AppBar() {
               {pages.map(page => (
                 <MenuItem key={page.button} onClick={handleCloseNavMenu}>
                   <Link {...getNavProps(page)}>
-                    <Typography textAlign="center" fontFamily={"monospace"}>
+                    <Typography
+                      textAlign="center"
+                      // fontSize={"1.1rem"}
+                      // className="w-full ml-3 font-basis text-lg"
+                    >
                       {page.button}
                     </Typography>
                   </Link>
@@ -133,7 +140,6 @@ function AppBar() {
                 mr: 2,
                 display: { xs: "flex", md: "none" },
                 flexGrow: 1,
-                fontFamily: "monospace",
                 fontWeight: 700,
                 letterSpacing: ".3rem",
                 color: "inherit",
@@ -152,16 +158,19 @@ function AppBar() {
             }}
           >
             {pages.map(page => (
-              <Link {...getNavProps(page)} key={page.button}>
+              <Link to={page.link} key={page.button} style={{
+                // This is a bit of a hack because we're not using the tabs component from material UI
+                borderBottom: page.link === location.pathname ? `2px solid ${theme.palette.secondary.main}` : 'none'
+              }}>
+                {/* <Link {...getNavProps(page)} key={page.button}> */}
                 <Button
                   key={page.button}
                   onClick={handleCloseNavMenu}
                   sx={{
                     my: 2,
                     mx: 2,
-                    color: "white",
+                    color: theme.palette.secondary.main,
                     display: "block",
-                    fontFamily: "monospace",
                     fontSize: "1.1rem",
                     textTransform: "none",
                   }}

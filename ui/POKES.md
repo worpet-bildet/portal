@@ -2,7 +2,7 @@
 [
   {
     "add": {
-      "ship": "~zod",
+      "ship": "~nus",
       "type": "/enditem/other",
       "general": {
         "title": "Some Title",
@@ -22,7 +22,7 @@
   {
     "edit": {
       "key": {
-        "ship": "~zod",
+        "ship": "~nus",
         "type": "/enditem/other",
         "cord": "~2000.1.1"
       },
@@ -44,7 +44,7 @@
   {
     "sub": {
       "key": {
-        "ship": "~zod",
+        "ship": "~nus",
         "type": "/enditem/other",
         "cord": "~2000.1.1"
       }
@@ -53,7 +53,7 @@
   {
     "del": {
       "key": {
-        "ship": "~zod",
+        "ship": "~nus",
         "type": "/enditem/other",
         "cord": "~2000.1.1"
       }
@@ -62,7 +62,7 @@
   {
     "comment": {
       "key": {
-        "ship": "~zod",
+        "ship": "~nus",
         "type": "/enditem/other",
         "cord": "~2000.1.1"
       },
@@ -72,7 +72,7 @@
   {
     "edit-comment": {
       "key": {
-        "ship": "~zod",
+        "ship": "~nus",
         "type": "/enditem/other",
         "cord": "~2000.1.1"
       },
@@ -83,7 +83,7 @@
   {
     "del-comment": {
       "key": {
-        "ship": "~zod",
+        "ship": "~nus",
         "type": "/enditem/other",
         "cord": "~2000.1.1"
       },
@@ -93,7 +93,7 @@
   {
     "rate": {
       "key": {
-        "ship": "~zod",
+        "ship": "~nus",
         "type": "/enditem/other",
         "cord": "~2000.1.1"
       },
@@ -103,7 +103,7 @@
   {
     "unrate": {
       "key": {
-        "ship": "~zod",
+        "ship": "~nus",
         "type": "/enditem/other",
         "cord": "~2000.1.1"
       }
@@ -112,7 +112,7 @@
   {
     "review": {
       "key": {
-        "ship": "~zod",
+        "ship": "~nus",
         "type": "/enditem/other",
         "cord": "~2000.1.1"
       },
@@ -124,7 +124,7 @@
   {
     "del-review": {
       "key": {
-        "ship": "~zod",
+        "ship": "~nus",
         "type": "/enditem/other",
         "cord": "~2000.1.1"
       }
@@ -142,7 +142,7 @@
   {
     "overwrite-list": {
       "key": {
-        "ship": "~zod",
+        "ship": "~nus",
         "type": "/list/nonitem/group",
         "cord": "~2000.1.1"
       },
@@ -170,7 +170,7 @@
 app bespoke-input
 {
   "enditem-app": {
-    "dist-desk": "~zod/app"
+    "dist-desk": "~nus/app"
   }
 }
 ```
