@@ -132,6 +132,12 @@
             ['keyObj' (enjs-key key.bespoke)]
             ['payload' s+'']
         ==
+          %nonitem-app
+        %-  pairs
+        :~  ['keyStr' (enjs-jam-key key.bespoke)]
+            ['keyObj' (enjs-key key.bespoke)]
+            ['payload' s+'']
+        ==
           %enditem-app
         %-  pairs
         :~  ['keyStr' (enjs-jam-key key.bespoke)]
@@ -157,6 +163,18 @@
             ['payload' (enjs-key-text-list other-key-list.bespoke)]
         ==
           %list-enditem-app
+        %-  pairs
+        :~  ['keyStr' (enjs-jam-key key.bespoke)]
+            ['keyObj' (enjs-key key.bespoke)]
+            ['payload' (enjs-key-text-list enditem-app-key-list.bespoke)]
+        ==
+          %list-nonitem-app
+        %-  pairs
+        :~  ['keyStr' (enjs-jam-key key.bespoke)]
+            ['keyObj' (enjs-key key.bespoke)]
+            ['payload' (enjs-key-text-list nonitem-app-key-list.bespoke)]
+        ==
+          %list-app
         %-  pairs
         :~  ['keyStr' (enjs-jam-key key.bespoke)]
             ['keyObj' (enjs-key key.bespoke)]
@@ -367,7 +385,9 @@
     %.  jon
     %-  of
     :~  [%list-enditem-other (ot ~[other-key-list+dejs-key-text-list])]
-        [%list-enditem-app (ot ~[app-key-list+dejs-key-text-list])]
+        [%list-enditem-app (ot ~[enditem-app-key-list+dejs-key-text-list])]
+        [%list-nonitem-app (ot ~[nonitem-app-key-list+dejs-key-text-list])]
+        [%list-app (ot ~[app-key-list+dejs-key-text-list])]
         [%list-nonitem-ship (ot ~[ship-key-list+dejs-key-text-list])]
         [%list-nonitem-group (ot ~[group-key-list+dejs-key-text-list])]
         [%enditem-app (ot ~[dist-desk+so])]

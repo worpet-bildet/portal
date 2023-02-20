@@ -78,6 +78,11 @@
       =^  cards  all-items
         (overwrite-list:on-action:portal-store all-items our.bowl now.bowl act)
       [cards this]
+      ::
+        %put-nonitem
+      =^  cards  all-items
+        (put-nonitem:on-action:portal-store all-items our.bowl src.bowl act)
+      [cards this]
     ==
     ::
       %portal-message

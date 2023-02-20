@@ -9,7 +9,7 @@ description='This is a cool interesting description.'
 tags=~['tag1' 'tag2' 'tag3']
 properties=*(map @t @t)
 pictures=~['https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og_smaller.png' 'https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og.png']
-image='https://archives.bulbagarden.net/media/upload/4/4a/0025Pikachu.png'
+image='https://dhs3.nyc3.cdn.digitaloceanspaces.com/1/20130810072317!0025Pikachu.png'
 color='#e8e8e8'
 ==
 
@@ -20,7 +20,7 @@ description='This is a description.'
 tags=~['tag1' 'tag2' 'tag3']
 properties=*(map @t @t)
 pictures=~['https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og_smaller.png' 'https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og.png']
-image='https://archives.bulbagarden.net/media/upload/5/51/0024Arbok.png'
+image='https://dhs3.nyc3.cdn.digitaloceanspaces.com/1/20110813031333!0024Arbok.png'
 color='#e8e8e8'
 ==
 
@@ -31,7 +31,7 @@ description='This is a description.'
 tags=~['tag1' 'tag2' 'tag3']
 properties=*(map @t @t)
 pictures=~['https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og_smaller.png' 'https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og.png']
-image='https://archives.bulbagarden.net/media/upload/2/29/0160Feraligatr.png'
+image='https://dhs3.nyc3.cdn.digitaloceanspaces.com/1/20100403124424!0160Feraligatr.png'
 color='#e8e8e8'
 ==
 
@@ -54,12 +54,17 @@ SCRY examples from dojo
 =data -build-file /=portal=/sur/portal/data/hoon
 =lib -build-file /=portal=/lib/portal/hoon
 
-.^(item:data %gx /=portal-store=/item/~master-dilryd-mopreg/list/enditem/other/~2000.1.1/portal-item)
+.^(?(~ item:data) %gx /=portal-store=/item/~zod/list/enditem/other/~2000.1.1/noun)
 .^(key-set:data %gx /=portal-store=/all/keys/portal-key-set)
 .^(nested-all-items:conv:lib %gx /=portal-store=/all/nested/portal-nested-all-items)
 .^(all-items:conv:lib %gx /=portal-store=/all/items/portal-all-items)
 .^(result:data %gx /=portal-store=/valid/latest/~zod/list/list/~2000.1.1/portal-result)
-.^(? %gx /=portal-store=/item/exists/~master-dilryd-mopreg/list/enditem/other/~2000.1.1/noun)
+.^(? %gx /=portal-store=/item/exists/~zod/list/enditem/other/~2000.1.1/noun)
+
+______
+:portal-manager|overwrite-list [[our [%list %enditem %other ~] '~2000.1.1'] ~[[[~master-dilryd-mopreg [%enditem %other ~] '~2023.2.17..15.08.26..d1dd'] 'I RECOMMEND THIS THING'] [[~dister-dozzod-dilryd-mopreg [%enditem %other ~] '~2023.2.17..15.13.08..f4e3'] 'I RECOMMEND THIS THING TOO']]]
+:portal-manager|overwrite-list [[our [%list %nonitem %group ~] '~2000.1.1'] ~[[[~dilryd-mopreg /nonitem/group 'europa'] 'I RECOMMEND THIS THING'] [[~bitbet-bolbel /nonitem/group 'urbit-community'] 'I RECOMMEND THIS THING TOO']]]
+.^(item:data %gx /=portal-store=/item/~master-dilryd-mopreg/enditem/app/~2023.2.17..14.13.32..f64a/portal-item)
 
 TODO
 - %portal-manager DONE %portal-store DONE portal-lib portal-sur portal-json-lib

@@ -23,6 +23,7 @@
       ::
       [%sign-app =key desk-name=@tas]
       [%send-app-data =key desk-name=@tas]
+      [%get-docket =ship =desk]
       ::
       [%join-group =key]  :: pointer would be: [%.n ~rondev %group 'group-discovery']
       [%get-group-preview flag=[=ship =term]]

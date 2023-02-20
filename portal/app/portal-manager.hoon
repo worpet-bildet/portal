@@ -1,4 +1,4 @@
-/-  *portal-data, *portal-action, *portal-message, groups
+/-  *portal-data, *portal-action, *portal-message, groups, treaty
 /+  default-agent, dbug, *portal, io=agentio, sig
 |%
 +$  versioned-state
@@ -91,9 +91,18 @@
       [%pass /group-join %agent [our.bowl %groups] %poke cage]~
       ::
         %get-group-preview
-      =/  wire  /groups/(scot %p ship.flag.act)/[term.flag.act]/preview
+      ::  not sub -> not perfectly updated, either too much or too little
+      =/  path  /groups/(scot %p ship.flag.act)/[term.flag.act]/preview
       :_  this
-      [%pass /get-group-preview %agent [ship.flag.act %groups] %watch wire]~
+      [%pass /get-group-preview %agent [ship.flag.act %groups] %watch path]~
+      ::
+        %get-docket
+      ::  TODO sub wire not unique
+      ::  napravit da se item automatski updatea (jer je sub)
+      ::  a onda kad pozovem get-docket drugi put nadalje uzimam vrijednost iz itema?
+      =/  path  /treaty/(scot %p ship.act)/[desk.act]
+      :_  this
+      [%pass /get-docket %agent [ship.act %treaty] %watch path]~
     ==
     ::
       %portal-message
@@ -126,6 +135,15 @@
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
   ?+    wire    (on-agent:default wire sign)
+      [%get-docket ~]
+    ?+    -.sign    (on-agent:default wire sign)
+        %watch-ack  `this
+        %kick       `this
+      ::
+        %fact
+      ~&  !<(treaty:treaty q.cage.sign)
+      `this
+    ==
       [%get-group-preview ~]
     ?+    -.sign    (on-agent:default wire sign)
         %watch-ack  `this

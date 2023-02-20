@@ -19,9 +19,11 @@
         [%list %nonitem ~]
           [%list %nonitem %group ~]
           [%list %nonitem %ship ~]
+          [%list %nonitem %app ~]
         [%list %enditem ~]
           [%list %enditem %other ~]
           [%list %enditem %app ~]
+        [%list %app ~]
         [%list %list ~]
     ::
       [%validity-store ~]
@@ -100,12 +102,15 @@
 +$  bespoke
   $%  [%nonitem-ship key=[=ship type=[%nonitem %ship ~] =cord] ~]
       [%nonitem-group key=[=ship type=[%nonitem %group ~] =cord] ~]
+      [%nonitem-app key=[=ship type=[%nonitem %app ~] =cord] ~]
       [%enditem-other key=[=ship type=[%enditem %other ~] =cord] ~]
       [%enditem-app key=[=ship type=[%enditem %app ~] =cord] dist-desk=@t sig=signature desk-hash=@uv =docket]
       [%list-enditem-other key=[=ship type=[%list %enditem %other ~] =cord] =other-key-list]
-      [%list-enditem-app key=[=ship type=[%list %enditem %app ~] =cord] =app-key-list]
+      [%list-enditem-app key=[=ship type=[%list %enditem %app ~] =cord] =enditem-app-key-list]
+      [%list-nonitem-app key=[=ship type=[%list %nonitem %app ~] =cord] =nonitem-app-key-list]
       [%list-nonitem-group key=[=ship type=[%list %nonitem %group ~] =cord] =group-key-list]
       [%list-nonitem-ship key=[=ship type=[%list %nonitem %ship ~] =cord] =ship-key-list]
+      [%list-app key=[=ship type=[%list %app ~] =cord] =app-key-list]
       [%list-list key=[=ship type=[%list %list ~] =cord] =list-key-list]
       [%validity-store key=[=ship type=[%validity-store ~] =cord] =validity-records]
   ==
@@ -114,23 +119,28 @@
 +$  bespoke-input
   $%  [%nonitem-ship ~]
       [%nonitem-group ~]
+      [%nonitem-app ~]
       [%enditem-other ~]
       [%enditem-app dist-desk=@t]
       [%list-enditem-other =other-key-list]
-      [%list-enditem-app =app-key-list]
+      [%list-enditem-app =enditem-app-key-list]
+      [%list-nonitem-app =nonitem-app-key-list]
       [%list-nonitem-group =group-key-list]
       [%list-nonitem-ship =ship-key-list]
+      [%list-app =app-key-list]
       [%list-list =list-key-list]
       [%validity-store =validity-records]
   ==
 ::
 +$  key-text-list       (list [=key text=cord])
 ::
-+$  list-key-list       (list [key=[=ship type=[%list type] =cord] text=cord])
-+$  app-key-list        (list [key=[=ship type=[%enditem %app ~] =cord] text=cord])
-+$  other-key-list      (list [key=[=ship type=[%enditem %other ~] =cord] text=cord])
-+$  group-key-list      (list [key=[=ship type=[%nonitem %group ~] =cord] text=cord])
-+$  ship-key-list       (list [key=[=ship type=[%nonitem %ship ~] =cord] text=cord])
++$  list-key-list         (list [key=[=ship type=[%list type] =cord] text=cord])
++$  other-key-list        (list [key=[=ship type=[%enditem %other ~] =cord] text=cord])
++$  enditem-app-key-list  (list [key=[=ship type=[%enditem %app ~] =cord] text=cord])
++$  nonitem-app-key-list  (list [key=[=ship type=[%nonitem %app ~] =cord] text=cord])
++$  app-key-list          (list [key=[=ship type=$%([%enditem %app ~] [%nonitem %app ~]) =cord] text=cord])
++$  group-key-list        (list [key=[=ship type=[%nonitem %group ~] =cord] text=cord])
++$  ship-key-list         (list [key=[=ship type=[%nonitem %ship ~] =cord] text=cord])
 ::
 ::
 +$  key-list  (list key)

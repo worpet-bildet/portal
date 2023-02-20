@@ -11,6 +11,7 @@
     ?-    -.bespoke-input
         %nonitem-ship        [%nonitem-ship key(type [%nonitem %ship ~]) ~]
         %nonitem-group       [%nonitem-group key(type [%nonitem %group ~]) ~]
+        %nonitem-app         [%nonitem-app key(type [%nonitem %app ~]) ~]
         %enditem-other       [%enditem-other key(type [%enditem %other ~]) ~]
         %enditem-app
       ?-    -.act
@@ -25,7 +26,9 @@
       ==
       ::
         %list-enditem-other  [%list-enditem-other key(type [%list %enditem %other ~]) other-key-list.bespoke-input]
-        %list-enditem-app    [%list-enditem-app key(type [%list %enditem %app ~]) app-key-list.bespoke-input]
+        %list-enditem-app    [%list-enditem-app key(type [%list %enditem %app ~]) enditem-app-key-list.bespoke-input]
+        %list-nonitem-app    [%list-nonitem-app key(type [%list %nonitem %app ~]) nonitem-app-key-list.bespoke-input]
+        %list-app            [%list-app key(type [%list %app ~]) app-key-list.bespoke-input]
         %list-nonitem-group  [%list-nonitem-group key(type [%list %nonitem %group ~]) group-key-list.bespoke-input]
         %list-nonitem-ship   [%list-nonitem-ship key(type [%list %nonitem %ship ~]) ship-key-list.bespoke-input]
         %list-list           [%list-list key(type [%list %list ~]) list-key-list.bespoke-input]
@@ -91,7 +94,13 @@
       =/  items-map  (malt (turn other-key-list.bespoke.data.item |=([=key =cord] [key (~(gut by all-items) key ~)])))
       [item items-map]
         %list-enditem-app
+      =/  items-map  (malt (turn enditem-app-key-list.bespoke.data.item |=([=key =cord] [key (~(gut by all-items) key ~)])))
+      [item items-map]
+        %list-app
       =/  items-map  (malt (turn app-key-list.bespoke.data.item |=([=key =cord] [key (~(gut by all-items) key ~)])))
+      [item items-map]
+        %list-nonitem-app
+      =/  items-map  (malt (turn nonitem-app-key-list.bespoke.data.item |=([=key =cord] [key (~(gut by all-items) key ~)])))
       [item items-map]
         %list-nonitem-group
       =/  items-map  (malt (turn group-key-list.bespoke.data.item |=([=key =cord] [key (~(gut by all-items) key ~)])))
@@ -173,6 +182,11 @@
     ^-  ^key-list
     (skip key-list |=([=key] ?:(=(-.type.key %nonitem) %.y %.n)))
   ::
+  ++  skim-nonitem
+    |=  [=key-list]
+    ^-  ^key-list
+    (skim key-list |=([=key] ?:(=(-.type.key %nonitem) %.y %.n)))
+  ::
   ++  skip-types
     |=  [=key-list types=(list type)]
     ^-  ^key-list
@@ -229,6 +243,12 @@
       =/  key-list  (key-text-list-to-key-list:conv other-key-list.bespoke.data.list-item)
       (key-in-key-list:loob key key-list)
         %list-enditem-app
+      =/  key-list  (key-text-list-to-key-list:conv enditem-app-key-list.bespoke.data.list-item)
+      (key-in-key-list:loob key key-list)
+        %list-nonitem-app
+      =/  key-list  (key-text-list-to-key-list:conv nonitem-app-key-list.bespoke.data.list-item)
+      (key-in-key-list:loob key key-list)
+        %list-app
       =/  key-list  (key-text-list-to-key-list:conv app-key-list.bespoke.data.list-item)
       (key-in-key-list:loob key key-list)
         %list-nonitem-group
@@ -256,9 +276,9 @@
     [%pass /sub %agent [our %portal-store] %poke %portal-action !>([%sub key])]
   ::
   ++  act-to-act-card
-    |=  [our=ship =action]
+    |=  [=action our=ship app=term]
     ^-  card
-    [%pass /act %agent [our %portal-store] %poke %portal-action !>(action)]
+    [%pass /act %agent [our app] %poke %portal-action !>(action)]
   ::
   ++  upd-to-upd-card
     |=  [our=ship =update]
@@ -349,11 +369,25 @@
       =/  act  [%add our [%list %nonitem %group ~] general [%list-nonitem-group ~]]
       (add:on-action:portal-store all-items our our now %.y act)
     ::
+    ++  enditem-apps-list
+      |=  [=all-items our=ship now=time]
+      ^-  [(list card) ^all-items]
+      =/  general  ['Main Enditem Apps List' '' 'Your first apps list.' *tags *properties *pictures '' '#e8e8e8']
+      =/  act  [%add our [%list %enditem %app ~] general [%list-enditem-app ~]]
+      (add:on-action:portal-store all-items our our now %.y act)
+    ::
+    ++  nonitem-apps-list
+      |=  [=all-items our=ship now=time]
+      ^-  [(list card) ^all-items]
+      =/  general  ['Main Nonitem Apps List' '' 'Your first apps list.' *tags *properties *pictures '' '#e8e8e8']
+      =/  act  [%add our [%list %nonitem %app ~] general [%list-nonitem-app ~]]
+      (add:on-action:portal-store all-items our our now %.y act)
+    ::
     ++  apps-list
       |=  [=all-items our=ship now=time]
       ^-  [(list card) ^all-items]
       =/  general  ['Main Apps List' '' 'Your first apps list.' *tags *properties *pictures '' '#e8e8e8']
-      =/  act  [%add our [%list %enditem %app ~] general [%list-enditem-app ~]]
+      =/  act  [%add our [%list %app ~] general [%list-app ~]]
       (add:on-action:portal-store all-items our our now %.y act)
     ::
     ++  ships-list
@@ -375,7 +409,7 @@
       ^-  [(list card) ^all-items]
       =/  general  ['Main Curator Page' '' 'Your first curator page.' *tags *properties *pictures '' '#e8e8e8']
       =/  =list-key-list
-        :~  [[our [%list %enditem %app ~] '~2000.1.1'] 'These are the apps I recommend']
+        :~  [[our [%list %app ~] '~2000.1.1'] 'These are the apps I recommend']
             [[our [%list %enditem %other ~] '~2000.1.1'] 'These are miscellaneous items I recommend']
             [[our [%list %nonitem %group ~] '~2000.1.1'] 'These are groups I recommend']
             [[our [%list %nonitem %ship ~] '~2000.1.1'] 'These are ships I recommend']
@@ -453,24 +487,46 @@
     ++  add-to-default-list
       |=  [=all-items our=ship now=time act=[%add-to-default-list key=[=ship type=$%([%enditem type] [%nonitem type]) =cord]]]
       ^-  [(list card) ^all-items]
-      =/  list-key  [our [%list type.key.act] '~2000.1.1']
+      =/  list-key
+        ?:  |(=(type.key.act [%enditem %app ~]) =(type.key.act [%nonitem %app ~]))
+          [our [%list %app ~] '~2000.1.1']
+        [our [%list type.key.act] '~2000.1.1']
       =/  list  (~(got by all-items) list-key)
       ?+    -.bespoke.data.list    [~ all-items]
-          %list-enditem-app
-        =/  bespoke-input  [%list-enditem-app (snoc app-key-list.bespoke.data.list [[ship.key.act [%enditem %app ~] cord.key.act] 'Auto-recommended'])]
-        =/  act  [%edit list-key general.data.list bespoke-input]
-        (edit all-items our our now act)
-      ::
           %list-enditem-other
         =/  bespoke-input  [%list-enditem-other (snoc other-key-list.bespoke.data.list [[ship.key.act [%enditem %other ~] cord.key.act] 'Auto-recommended'])]
         =/  act  [%edit list-key general.data.list bespoke-input]
         (edit all-items our our now act)
-      ::
+        ::
+          %list-enditem-app
+        =/  bespoke-input  [%list-enditem-app (snoc enditem-app-key-list.bespoke.data.list [[ship.key.act [%enditem %app ~] cord.key.act] 'Auto-recommended'])]
+        =/  act  [%edit list-key general.data.list bespoke-input]
+        (edit all-items our our now act)
+        ::
+          %list-nonitem-app
+        =/  bespoke-input  [%list-nonitem-app (snoc nonitem-app-key-list.bespoke.data.list [[ship.key.act [%nonitem %app ~] cord.key.act] 'Auto-recommended'])]
+        =/  act  [%edit list-key general.data.list bespoke-input]
+        (edit all-items our our now act)
+        ::
+          %list-app
+        =/  bespoke-input
+          :-  %list-app
+          %+   snoc  app-key-list.bespoke.data.list
+          :_  'Auto-recommended'
+          ?+    type.key.act    !!
+              [%enditem %app ~]
+            key.act
+              [%nonitem %app ~]
+            key.act
+          ==
+        =/  act  [%edit list-key general.data.list bespoke-input]
+        (edit all-items our our now act)
+        ::
           %list-nonitem-group
         =/  bespoke-input  [%list-nonitem-group (snoc group-key-list.bespoke.data.list [[ship.key.act [%nonitem %group ~] cord.key.act] 'Auto-recommended'])]
         =/  act  [%edit list-key general.data.list bespoke-input]
         (edit all-items our our now act)
-      ::
+       ::
           %list-nonitem-ship
         =/  bespoke-input  [%list-nonitem-ship (snoc ship-key-list.bespoke.data.list [[ship.key.act [%nonitem %ship ~] cord.key.act] 'Auto-recommended'])]
         =/  act  [%edit list-key general.data.list bespoke-input]
@@ -484,16 +540,26 @@
       =/  list  (~(gut by all-items) list-key.act ~)
       ?~  list  ~&  "%portal-manager: list doesn't exist"  [~ all-items]
       ?+    -.bespoke.data.list    [~ all-items]
-          %list-enditem-app
-        =/  bespoke-input  [%list-enditem-app (app-key-list key-text-list.act)]
-        =/  act  [%edit list-key.act general.data.list bespoke-input]
-        (edit all-items our our now act)
-      ::
           %list-enditem-other
         =/  bespoke-input  [%list-enditem-other (other-key-list key-text-list.act)]
         =/  act  [%edit list-key.act general.data.list bespoke-input]
         (edit all-items our our now act)
-      ::
+        ::
+          %list-enditem-app
+        =/  bespoke-input  [%list-enditem-app (enditem-app-key-list key-text-list.act)]
+        =/  act  [%edit list-key.act general.data.list bespoke-input]
+        (edit all-items our our now act)
+        ::
+          %list-nonitem-app
+        =/  bespoke-input  [%list-nonitem-app (nonitem-app-key-list key-text-list.act)]
+        =/  act  [%edit list-key.act general.data.list bespoke-input]
+        (edit all-items our our now act)
+        ::
+          %list-app
+        =/  bespoke-input  [%list-app (app-key-list key-text-list.act)]
+        =/  act  [%edit list-key.act general.data.list bespoke-input]
+        (edit all-items our our now act)
+        ::
           %list-nonitem-group
         =/  bespoke-input  [%list-nonitem-group (group-key-list key-text-list.act)]
         =/  act  [%edit list-key.act general.data.list bespoke-input]
@@ -504,6 +570,15 @@
         =/  act  [%edit list-key.act general.data.list bespoke-input]
         (edit all-items our our now act)
       ==
+    ::
+    ::  for now just overwrites
+    ::  long term nonitems should be able to sync with their source
+    ::  and not be overwritten every time
+    ++  put-nonitem
+      |=  [=all-items our=ship src=ship act=[%put-nonitem =key =item]]
+      ^-  [(list card) ^all-items]
+      :-  (put:on-poke:make-cards all-items our src [%put key.act item.act])
+      (put-item our all-items [%put key.act item.act])
     --
   ::
   ++  on-message
@@ -670,7 +745,7 @@
         :~  [%pass /put %agent [our %portal-manager] %poke %portal-update !>(upd)]
             [%give %fact [/front-end-update]~ %portal-front-end-update !>((make-front-end-update all-items our src upd))]
         ==
-        ?.  =(our ship.key.upd)  ~
+        ?.  &(=(our ship.key.upd) ?!(=(-.type.key.upd %nonitem)))  ~
         [%give %fact [(key-to-path:conv key.upd)]~ [%portal-update !>(upd)]]~
       ::
       ++  del
@@ -695,6 +770,7 @@
           ~
         ~&  "%portal-store: subscribing to {(spud wire)}"
         [%pass wire %agent [ship.key.upd %portal-store] %watch wire]~
+      ::
       --
     ++  on-agent
       |%
@@ -732,6 +808,16 @@
               %list-enditem-app
             =/  key-list
               %-  key-text-list-to-key-list:conv
+              enditem-app-key-list.bespoke.data.item.upd
+            (get-items:misc all-items (silt key-list))
+              %list-nonitem-app
+            =/  key-list
+              %-  key-text-list-to-key-list:conv
+              nonitem-app-key-list.bespoke.data.item.upd
+            (get-items:misc all-items (silt key-list))
+              %list-app
+            =/  key-list
+              %-  key-text-list-to-key-list:conv
               app-key-list.bespoke.data.item.upd
             (get-items:misc all-items (silt key-list))
               %list-nonitem-group
@@ -767,15 +853,17 @@
       ^-  (list card)
       ?:  &(=(-.type.key.upd %validity-store) =(our ship.key.upd))
         ~
+      ?:  =(-.type.key.upd %nonitem)
+        ~
       %+  weld
         ?.  =(our ship.key.upd)  ~
         ?+    type.key.upd    ~
             [%enditem %other ~]
           ?:  (in-default-list:scry our now key.upd)  ~
-          ~[(act-to-act-card:cards our [%add-to-default-list key.upd])]
+          ~[(act-to-act-card:cards [%add-to-default-list key.upd] our %portal-store)]
             [%enditem %app ~]
           ?:  (in-default-list:scry our now key.upd)  ~
-          ~[(act-to-act-card:cards our [%add-to-default-list key.upd])]
+          ~[(act-to-act-card:cards [%add-to-default-list key.upd] our %portal-store)]
         ==
       %+  weld
         ?+    -.type.key.upd    ~
@@ -808,7 +896,22 @@
       ::put ->
       (turn key-list |=(=key (put-empty-nonitem:portal-manager our key)))
       ::edit(as group preview)
-      (turn get-group-preview-act-list (cury act-to-act-card:cards our))
+      (turn get-group-preview-act-list (curr act-to-act-card:cards our %portal-manager))
+    ::
+        %list-app
+      =/  key-list  (key-text-list-to-key-list:conv app-key-list.bespoke.data.item)
+      =/  nonitem-app-key-list  (skim-nonitem:keys key-list)
+      ::  TODO
+      ::  weld
+      (turn nonitem-app-key-list |=(=key (put-empty-nonitem:portal-manager our key)))
+      ::
+        %list-nonitem-app
+      =/  key-list  (key-text-list-to-key-list:conv nonitem-app-key-list.bespoke.data.item)
+      ::=/  get-app-data-act-list   (turn key-list |=(=key [%get-app-data ship.key cord.key))
+      ::%+  weld
+      (turn key-list |=(=key (put-empty-nonitem:portal-manager our key)))
+      ::TODO
+      ::(turn get-group-preview-act-list (curr act-to-act-card:cards our %portal-manager)
     ::
         %list-nonitem-ship
       =/  key-list  (key-text-list-to-key-list:conv ship-key-list.bespoke.data.item)
@@ -833,8 +936,16 @@
       =/  filtered-list  ~(tap in filtered-set)
       (turn filtered-list (cury key-to-sub-card:cards our))
     ::
-        %list-enditem-app
+        %list-app
       =/  key-list  (key-text-list-to-key-list:conv app-key-list.bespoke.data.item)
+      =/  key-list  (skip-nonitem:keys key-list)
+      =/  key-list  (skip-ships:keys key-list ~[our])
+      =/  filtered-set  (set-difference:keys (silt key-list) (get-all-keys:scry our now))
+      =/  filtered-list  ~(tap in filtered-set)
+      (turn filtered-list (cury key-to-sub-card:cards our))
+    ::
+        %list-enditem-app
+      =/  key-list  (key-text-list-to-key-list:conv enditem-app-key-list.bespoke.data.item)
       =/  key-list  (skip-ships:keys key-list ~[our])
       ::  filter out %.n pointers
       ::=/  filtered-list  (skip-cen-no:pointers end-item-pointer-list.recommendations.bespoke.data.item)
@@ -864,10 +975,13 @@
     ?+    type.key    !!
         [%nonitem %group ~]
       =/  data  [[%nonitem-group key(type [%nonitem %group ~]) ~] *general]
-      (act-to-act-card:cards our [%put-nonitem key [data *meta *social *signature]])
+      (act-to-act-card:cards [%put-nonitem key [data *meta *social *signature]] our %portal-store)
         [%nonitem %ship ~]
       =/  data  [[%nonitem-ship key(type [%nonitem %ship ~]) ~] *general]
-      (act-to-act-card:cards our [%put-nonitem key [data *meta *social *signature]])
+      (act-to-act-card:cards [%put-nonitem key [data *meta *social *signature]] our %portal-store)
+        [%nonitem %app ~]
+      =/  data  [[%nonitem-app key(type [%nonitem %app ~]) ~] *general]
+      (act-to-act-card:cards [%put-nonitem key [data *meta *social *signature]] our %portal-store)
     ==
   ::
   ++  put-nonitem-ship
@@ -881,7 +995,7 @@
           reach=[%public blacklist=~]
           outside-sigs=~
       ==
-    (act-to-act-card:cards our [%put-nonitem key.act [data meta *social *signature]])
+    (act-to-act-card:cards [%put-nonitem key.act [data meta *social *signature]] our %portal-store)
   ::
   ++  put-nonitem-group
       |=  [our=ship default=?(%.y %.n) act=[%put-nonitem-group =key title=@t description=@t image=@t]]
@@ -894,7 +1008,7 @@
             reach=[%public blacklist=~]
             outside-sigs=~
         ==
-      (act-to-act-card:cards our [%put-nonitem key.act [data meta *social *signature]])
+      (act-to-act-card:cards [%put-nonitem key.act [data meta *social *signature]] our %portal-store)
     ::
   --
 ::
