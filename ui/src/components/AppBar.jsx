@@ -13,11 +13,6 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
-import {
-  CuratorPageButtons,
-  DeveloperPageButtons,
-  UserPageButtons,
-} from "../constants/sidebarButtons";
 import DialogSelect from "./Dialog";
 
 const pages = [
@@ -74,9 +69,6 @@ function AppBar() {
             <Typography
               variant="h6"
               noWrap
-              // component="a"
-              // href="/apps/portal/usr"
-              // className="w-full ml-3 font-basis text-lg"
               sx={{
                 mr: 2,
                 display: { xs: "none", md: "flex" },
@@ -88,7 +80,6 @@ function AppBar() {
               }}
             >
               Portal
-              {/* L */}
             </Typography>
           </Link>
           <DialogSelect open={open} setOpen={setOpen} />
@@ -123,19 +114,9 @@ function AppBar() {
               }}
             >
               {pages.map(page => (
-                <MenuItem
-                  key={page.button}
-                  onClick={handleCloseNavMenu}
-                  // className="w-56 p-1 border border-black text-gray-900 bg-white dark:text-white hover:border-2 hover:font-semibold dark:hover:bg-gray-700"
-                  // className="w-full ml-3 font-basis text-lg"
-                >
+                <MenuItem key={page.button} onClick={handleCloseNavMenu}>
                   <Link {...getNavProps(page)}>
-                    <Typography
-                      textAlign="center"
-                      fontFamily={"monospace"}
-                      // fontSize={"1.1rem"}
-                      // className="w-full ml-3 font-basis text-lg"
-                    >
+                    <Typography textAlign="center" fontFamily={"monospace"}>
                       {page.button}
                     </Typography>
                   </Link>
@@ -148,8 +129,6 @@ function AppBar() {
             <Typography
               variant="h5"
               noWrap
-              // component="a"
-              // href="/apps/portal/usr"
               sx={{
                 mr: 2,
                 display: { xs: "flex", md: "none" },
@@ -162,7 +141,6 @@ function AppBar() {
               }}
             >
               Portal
-              {/* M */}
             </Typography>
           </Link>
           <Box
@@ -171,16 +149,11 @@ function AppBar() {
               display: { xs: "none", md: "flex" },
               marginX: "5rem",
               justifyContent: "flex-start",
-              // justifyContent: "normal",
-              // justifyContent: "space-evenly",
-              // justifyContent: "center",
             }}
           >
             {pages.map(page => (
-              <Link to={page.link} key={page.button}>
-                {/* <Link {...getNavProps(page)} key={page.button}> */}
+              <Link {...getNavProps(page)} key={page.button}>
                 <Button
-                  // this is the large view
                   key={page.button}
                   onClick={handleCloseNavMenu}
                   sx={{
@@ -192,8 +165,6 @@ function AppBar() {
                     fontSize: "1.1rem",
                     textTransform: "none",
                   }}
-                  // className="w-56 p-1 border border-black text-gray-900 bg-white dark:text-white hover:border-2 hover:font-semibold dark:hover:bg-gray-700"
-                  // className="w-full ml-3 font-basis text-lg"
                 >
                   {page.button}
                 </Button>
@@ -214,29 +185,3 @@ function AppBar() {
   );
 }
 export default AppBar;
-
-// const settings = ["Profile", "Account", "Dashboard", "Logout"];
-{
-  /* <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map(setting => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
-            </Menu> */
-}
