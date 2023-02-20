@@ -14,16 +14,12 @@
   "dependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
-    "@fontsource/roboto": "^4.5.8",
     "@mui/base": "^5.0.0-alpha.110",
     "@mui/icons-material": "^5.11.0",
-    "@mui/lab": "^5.0.0-alpha.112",
     "@mui/material": "^5.11.0",
-    "@mui/styled-engine-sc": "^5.11.0",
     "@mui/system": "^5.11.0",
     "@urbit/api": "^2.2.0",
     "@urbit/http-api": "^2.3.0",
-    "copy-to-clipboard": "^3.3.3",
     "flowbite": "^1.5.3",
     "flowbite-react": "^0.3.3",
     "font-awesome": "^4.7.0",
@@ -32,10 +28,8 @@
     "ramda": "^0.28.0",
     "react": "^18.0.0",
     "react-dom": "^18.2.0",
-    "react-hook-form": "^7.40.0",
     "react-router-dom": "^6.4.3",
     "react-toastify": "^9.1.1",
-    "styled-components": "^5.3.6",
     "zustand": "^4.3.2"
   },
   "devDependencies": {
