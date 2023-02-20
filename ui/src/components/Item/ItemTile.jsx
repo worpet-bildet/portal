@@ -1,13 +1,25 @@
 import React, { useEffect, useState } from "react";
+// TODO: do we need this?
 import { Link, useLocation } from "react-router-dom";
+
+import Modal from 'react-modal'
+
+// TODO: do we need this?
 import { Tag } from "../Tag";
+
+import { ItemModal } from './ItemModal';
 import { ItemImage } from "./ItemImage";
 
 export function ItemTile(props) {
   const { keys, data, __title, item } = props;
+  console.log({data})
   const title = data?.general?.title || __title;
+  const description = data?.general?.description || ""
+  const pictures = data?.general?.pictures || []
+  const tags = data?.general?.tags || []
   const [imageError, setImageError] = useState(false);
   const [isUser, setIsUser] = useState(false);
+  const [modalIsOpen, setModalIsOpen] = useState(false)
   const location = useLocation();
 
   useEffect(() => {
@@ -35,14 +47,43 @@ export function ItemTile(props) {
     data?.general?.image || data?.icon?.src || data?.bespoke?.payload?.docket?.image;
   return data ? (
     <li className="flex items-center space-x-3 text-sm leading-tight">
-      <Link
-        to={`/apps/portal/${!isUser ? `dev` : `usr`}/apps/${getAppUriKey(keys)}`}
-        className="w-full p-4 rounded border border-black hover:bg-gray-200"
+    { /* TODO: Think about wrapping this modal so there is no need for inline style here */ }
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={() => setModalIsOpen(false)}
+        ariaHideApp={false}
+        contentLabel="Item Modal"
+        style={{
+          content: {
+            position: 'relative',
+            margin: '20px',
+            inset: 0
+          }
+        }}
+        // className="relative bg-white"
       >
-        <div className="flex flex-row flex-auto justify-between">
-          <div className="flex flex-row">
+        <ItemModal
+          title={title}
+          description={description}
+          pictures={pictures}
+          tags={tags}
+          image={getImage()}
+          type={getItemType()}
+          onRequestClose={() => setModalIsOpen(false)}
+        ></ItemModal>
+      </Modal>
+      {/* <Link
+        to={`/apps/portal/${!isUser ? `dev` : `usr`}/apps/${getAppUriKey(keys)}`}
+        className="w-full mr-4 rounded"
+      > */}
+      <div
+        onClick={() => setModalIsOpen(true)}
+        className="w-full mr-4 rounded cursor-pointer"
+      >
+        <div className="flex flex-col flex-auto justify-between">
+          <div className="flex flex-col">
             <div
-              className="flex-none relative w-20 h-20 mr-10 rounded-lg bg-gray-200 overflow-hidden"
+              className="flex-none relative w-40 h-40 rounded-lg bg-gray-200 overflow-hidden"
               style={{ backgroundColor: "aliceblue" }}
             >
               {!imageError ? (
@@ -54,18 +95,21 @@ export function ItemTile(props) {
               ) : null}
             </div>
             <div className="flex flex-col space-y-3">
-              <p className="text-2xl font-bold">{title}</p>
-              {data?.general?.tags?.length ? (
+              <p className="text-base mt-2">{title}</p>
+              {/* {data?.general?.tags?.length ? (
                 <ul className="flex flex-wrap gap-2">
                   {data.general.tags.map((tag, i) => (
                     <Tag key={`${title}_${tag}_${i}`} name={tag} />
                   ))}
                 </ul>
-              ) : null}
+              ) : null} */}
             </div>
           </div>
         </div>
-      </Link>
+      </div>
+      {
+        // TODO: do we need this?
+      }
       {!isUser ? (
         <div className="flex">
           <div className="relative">

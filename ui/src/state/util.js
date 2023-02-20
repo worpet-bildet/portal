@@ -37,6 +37,7 @@ export const indexPages = (pages, types = {}) => {
   const _pages = !Array.isArray(pages) ? Object.entries(pages) : pages;
 
   const index = _pages.slice().map(([key, page], _idx, _arr) => {
+    if (!page) return
     if (!page?.item) return page.data ? formatItem(page, key) : page;
 
     const _item = formatItem(page.item, key);

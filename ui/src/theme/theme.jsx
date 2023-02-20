@@ -2,12 +2,15 @@ import { createTheme } from "@mui/material/styles";
 import { red } from "@mui/material/colors";
 
 const theme = createTheme({
+  typography: {
+    fontFamily: "Inter"
+  },
   palette: {
     primary: {
-      main: "#556cd6",
+      main: "#ffffff",
     },
     secondary: {
-      main: "#19857b",
+      main: "#289539",
     },
     error: {
       main: red.A400,
