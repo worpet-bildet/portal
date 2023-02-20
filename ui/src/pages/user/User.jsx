@@ -46,13 +46,6 @@ export function User(props) {
         <div className="flex flex-col w-full min-h-screen">
           <main className="mx-8 basis-3/4 h-full">
             <div className="space-y-6 py-14">
-              {/* <DialogSelect open={open} setOpen={setOpen} /> */}
-              <Disclaimer
-                color="blue"
-                message={
-                  "Below are apps in your curator's collection. By default, you are subscribed to the Portal Curator. You can subscribe to other curators at /usr/curs"
-                }
-              />
               {appLists ? (
                 <div>
                   <h3 className="text-2xl font-bold">{}</h3>

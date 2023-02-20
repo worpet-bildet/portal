@@ -2,7 +2,6 @@ import { ThemeProvider } from "@mui/material/styles";
 import "font-awesome/css/font-awesome.min.css";
 import React from "react";
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { usePortalSubscription } from "./state/usePortal";
 import "./index.css";
