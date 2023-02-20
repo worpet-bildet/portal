@@ -1,50 +1,48 @@
-TO SEED DATA USE FOLLOWING COMMANDS
+TO SETUP PORTAL
+|merge %portal our %base
+|mount %portal
+- erase the portal folder and replace it with the one from github
+|commit %portal
+|install our %portal
+
+TO NUKE
+|nuke %portal, =desk &
+|rein %portal [& %portal-manager]
+
+TO SEED DATA ON THE LIVE NETWORK USE THE FOLLOWING COMMANDS
 =data -build-file /=portal=/sur/portal/data/hoon
 =lib -build-file /=portal=/lib/portal/hoon
 
-=pikachu :*
-title='Pikachu'
-link='https://bulbapedia.bulbagarden.net/wiki/Pikachu_(Pok%C3%A9mon)'
-description='This is a cool interesting description.'
-tags=~['tag1' 'tag2' 'tag3']
-properties=*(map @t @t)
-pictures=~['https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og_smaller.png' 'https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og.png']
-image='https://dhs3.nyc3.cdn.digitaloceanspaces.com/1/20130810072317!0025Pikachu.png'
-color='#e8e8e8'
+:portal-manager|overwrite-list :-
+[our [%list %nonitem %group ~] '~2000.1.1']
+  :~  [[~dalten [%nonitem %group ~] 'aera'] 'Love aera!']
+      [[~hocwyn-tipwex [%nonitem %group ~] 'uqbar-event-horizon'] 'Uqbar FTW!']
+      [[~dilryd-mopreg [%nonitem %group ~] 'app-store'] 'app-store coming soon TM']
+      [[~rondev [%nonitem %group ~] 'group-discovery'] 'Discover groups ayaya']
+      [[~poldec-tonteg [%nonitem %group ~] 'the-phantom-tollbooth'] 'esotericism whooooooooa']
+      [[~bollug-worlus [%nonitem %group ~] 'urbit-index'] 'indexxxxing urbit']
+  ==
+
+:portal-manager|overwrite-list :-
+[our [%list %app ~] '~2000.1.1']
+:~  [[~nodmyn-dosrux [%nonitem %app ~] 'radio'] 'dope app']
+    [[~bacrys [%nonitem %app ~] 'pokur'] 'another dope app']
+    [[~nodmyn-dosrux [%nonitem %app ~] 'houston'] 'manage your moons']
+    [[~paldev [%nonitem %app ~] 'pals'] 'add friends on urbit']
+    [[~paldev [%nonitem %app ~] 'cliff'] 'your urbit file manager']
+    [[~dachus-tiprel [%nonitem %app ~] 'blog'] 'publish to the boomerweb']
 ==
 
-=arbok :*
-title='Arbok'
-link='https://bulbapedia.bulbagarden.net/wiki/Arbok_(Pok%C3%A9mon)'
-description='This is a description.'
-tags=~['tag1' 'tag2' 'tag3']
-properties=*(map @t @t)
-pictures=~['https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og_smaller.png' 'https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og.png']
-image='https://dhs3.nyc3.cdn.digitaloceanspaces.com/1/20110813031333!0024Arbok.png'
-color='#e8e8e8'
+:portal-manager|overwrite-list :-
+[our [%list %nonitem %ship ~] '~2000.1.1']
+:~  [[~toptyr-bilder [%nonitem %ship ~] ''] 'portal dude']
+    [[~doplyr-harbur [%nonitem %ship ~] ''] 'another portal dude']
+    [[~dilryd-mopreg [%nonitem %ship ~] ''] '3rd portal dude']
+    [[~foddur-hodler [%nonitem %ship ~] ''] 'portal dudes never stop']
 ==
 
-=feraligatr :*
-title='Feraligatr'
-link='https://bulbapedia.bulbagarden.net/wiki/Feraligatr_(Pok%C3%A9mon)'
-description='This is a description.'
-tags=~['tag1' 'tag2' 'tag3']
-properties=*(map @t @t)
-pictures=~['https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og_smaller.png' 'https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og.png']
-image='https://dhs3.nyc3.cdn.digitaloceanspaces.com/1/20100403124424!0160Feraligatr.png'
-color='#e8e8e8'
-==
-
-:portal-manager|add [our [%enditem %other ~] pikachu [%enditem-other ~]]
-:portal-manager|add [our [%enditem %other ~] arbok [%enditem-other ~]]
-:portal-manager|add [our [%enditem %other ~] feraligatr [%enditem-other ~]]
-:portal-manager|add [our [%enditem %app ~] pikachu [%enditem-app '~dister-doznec-dilryd-mopreg/portalll']]
-:portal-manager|add [our [%enditem %app ~] arbok [%enditem-app '~nec/portal']]
-:portal-manager|add [our [%enditem %app ~] feraligatr [%enditem-app '~zod/portal']]
-
-:portal-manager|overwrite-list [[our [%list %nonitem %group ~] '~2000.1.1'] ~[[[~dalten [%nonitem %group ~] 'aera'] 'Love aera!'] [[~hocwyn-tipwex [%nonitem %group ~] 'uqbar-event-horizon'] 'Uqbar FTW!'] [[~dilryd-mopreg [%nonitem %group ~] 'app-store'] 'app-store coming soon TM']]]
-:portal-manager|overwrite-list [[our [%list %nonitem %ship ~] '~2000.1.1'] ~[[[~toptyr-bilder [%nonitem %ship ~] ''] 'top tier builder!'] [[~doplyr-harbur [%nonitem %ship ~] ''] 'top tier autist!'] [[~dilryd-mopreg [%nonitem %ship ~] ''] 'top tier weirdo!']]]
-:portal-manager|overwrite-list [[our [%list %enditem %app ~] '~2000.1.1'] ~[[[~nec [%enditem %app ~] '~2000.1.1'] ''] [~zod [%enditem %app ~] '~2000.1.1']]]
+JURIJ'S STUFF
+DONT TOUCH OR YOU WILL GET SMESHED
 
 ERROR TESTING COMMANDS
 :portal-manager|overwrite-list [[our [%list %enditem %app ~] '~2000.1.1'] ~[[[~nec [%enditem %app ~] '~2000.1.1'] '']]]

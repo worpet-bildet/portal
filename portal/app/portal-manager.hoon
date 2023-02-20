@@ -35,8 +35,9 @@
     ?.  =(our.bowl src.bowl)  `this
     =/  act  !<(action vase)
     ::
+    ::  TODO abstract a portal-manager add/edit/etc function which does stuff based on action and type
     =/  act-set  %-  silt   ^-  (list term)
-      ~[%add %edit %sub %del %add-to-default-list %overwrite-list %put-nonitem]
+      ~[%add %edit %sub %del %add-to-default-list %overwrite-list %put-nonitem %edit-docket]
     ?:  (~(has in act-set) -.act)
       :_  this
       ~[(~(poke pass:io /act) [our.bowl %portal-store] portal-action+vase)]
@@ -77,13 +78,6 @@
       :_  this
       ~[(poke-msg [ship.key.act %portal-manager] cage)]
       ::
-        %send-app-data
-      =/  hash  .^(@uvI %cz /(scot %p our.bowl)/(scot %tas desk-name.act)/(scot %da now.bowl))
-      =/  docket  .^(docket %cx /(scot %p our.bowl)/(scot %tas desk-name.act)/(scot %da now.bowl)/desk/docket-0)
-      =/  cage  portal-message+!>([%send-app-data key.act hash docket])
-      :_  this
-      ~[(poke-msg [ship.key.act %portal-manager] cage)]
-      ::
         %join-group
       ?.  ?=([%nonitem %group *] type.key.act)  `this
       =/  cage  group-join+!>([flag=[ship.key.act `@tas`cord.key.act] join-all=&])
@@ -97,12 +91,13 @@
       [%pass /get-group-preview %agent [ship.flag.act %groups] %watch path]~
       ::
         %get-docket
-      ::  TODO sub wire not unique
-      ::  napravit da se item automatski updatea (jer je sub)
-      ::  a onda kad pozovem get-docket drugi put nadalje uzimam vrijednost iz itema?
       =/  path  /treaty/(scot %p ship.act)/[desk.act]
+      =/  wire  [%treaty (key-to-path:conv key.act)]
+      ?:  (~(has by wex.bowl) [wire ship.act %portal-manager])
+        ~&  "%portal-store: already subscribed to {(spud wire)}"
+        [~ this]
       :_  this
-      [%pass /get-docket %agent [ship.act %treaty] %watch path]~
+      [%pass wire %agent [ship.act %treaty] %watch path]~
     ==
     ::
       %portal-message
@@ -135,14 +130,22 @@
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
   ?+    wire    (on-agent:default wire sign)
-      [%get-docket ~]
+      [%treaty *]
     ?+    -.sign    (on-agent:default wire sign)
         %watch-ack  `this
         %kick       `this
       ::
         %fact
-      ~&  !<(treaty:treaty q.cage.sign)
-      `this
+      =/  treaty  !<(treaty:treaty q.cage.sign)
+      =/  key  (path-to-key:conv +.wire)
+      ?+    type.key    !!
+          [%enditem %app ~]
+        :_  this
+        ~[(act-to-act-card:cards [%edit-docket key treaty] our.bowl %portal-store)]
+          [%nonitem %app ~]
+        :_  this
+        ~[(fill-nonitem-app-data:portal-manager [our.bowl [%fill-nonitem-app key treaty]])]
+      ==
     ==
       [%get-group-preview ~]
     ?+    -.sign    (on-agent:default wire sign)
@@ -152,14 +155,14 @@
         %fact
       =/  preview  !<(preview:groups q.cage.sign)
       =/  act
-        :*  %put-nonitem-group
+        :*  %fill-nonitem-group
           [p.flag.preview [%nonitem %group ~] q.flag.preview]
           title.meta.preview
           description.meta.preview
           image.meta.preview
         ==
       :_  this
-      ~[(put-nonitem-group:portal-manager [our.bowl %.n act])]
+      ~[(fill-group-data:portal-manager [our.bowl act])]
     ==
   ==
 ::

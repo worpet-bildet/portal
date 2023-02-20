@@ -11,6 +11,5 @@
       [%del-review =key]
       ::
       [%sign-app =key =signature]
-      [%send-app-data =key data=[desk-hash=@uv =docket]]
   ==
 --

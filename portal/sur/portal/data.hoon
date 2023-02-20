@@ -1,4 +1,4 @@
-/-   *docket
+/-   *treaty
 |%
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
@@ -102,9 +102,9 @@
 +$  bespoke
   $%  [%nonitem-ship key=[=ship type=[%nonitem %ship ~] =cord] ~]
       [%nonitem-group key=[=ship type=[%nonitem %group ~] =cord] ~]
-      [%nonitem-app key=[=ship type=[%nonitem %app ~] =cord] ~]
+      [%nonitem-app key=[=ship type=[%nonitem %app ~] =cord] =treaty]
       [%enditem-other key=[=ship type=[%enditem %other ~] =cord] ~]
-      [%enditem-app key=[=ship type=[%enditem %app ~] =cord] dist-desk=@t sig=signature desk-hash=@uv =docket]
+      [%enditem-app key=[=ship type=[%enditem %app ~] =cord] dist-desk=@t sig=signature =treaty]
       [%list-enditem-other key=[=ship type=[%list %enditem %other ~] =cord] =other-key-list]
       [%list-enditem-app key=[=ship type=[%list %enditem %app ~] =cord] =enditem-app-key-list]
       [%list-nonitem-app key=[=ship type=[%list %nonitem %app ~] =cord] =nonitem-app-key-list]

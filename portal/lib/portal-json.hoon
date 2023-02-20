@@ -1,5 +1,5 @@
 /-  *portal-data, *portal-action, *portal-front-end-update
-/+  *portal, docket
+/+  *portal, docket, treaty
 |%
 ++  enjs
   =,  enjs:format
@@ -136,7 +136,7 @@
         %-  pairs
         :~  ['keyStr' (enjs-jam-key key.bespoke)]
             ['keyObj' (enjs-key key.bespoke)]
-            ['payload' s+'']
+            ['payload' (treaty:enjs:treaty treaty.bespoke)]
         ==
           %enditem-app
         %-  pairs
@@ -146,8 +146,7 @@
             %-  pairs
             :~  ['distDesk' s+dist-desk.bespoke]
                 ['signature' (enjs-sig sig.bespoke)]
-                ['deskHash' s+`@t`(scot %uv desk-hash.bespoke)]
-                ['docket' (docket:enjs:docket docket.bespoke)]
+                ['treaty' (treaty:enjs:treaty treaty.bespoke)]
             ==
         ==
           %enditem-other

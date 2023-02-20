@@ -83,6 +83,11 @@
       =^  cards  all-items
         (put-nonitem:on-action:portal-store all-items our.bowl src.bowl act)
       [cards this]
+      ::
+        %edit-docket
+      =^  cards  all-items
+        (edit-docket:on-action:portal-store all-items our.bowl src.bowl now.bowl act)
+      [cards this]
     ==
     ::
       %portal-message
@@ -127,11 +132,6 @@
         %sign-app
       =^  cards  all-items
         (sign-app:on-message:portal-store [all-items our.bowl src.bowl now.bowl msg])
-      [cards this]
-      ::
-        %send-app-data
-      =^  cards  all-items
-        (send-app-data:on-message:portal-store [all-items our.bowl src.bowl now.bowl msg])
       [cards this]
     ==
   ==

@@ -8,7 +8,7 @@
       [%sub =key]
       [%del =key]
       ::
-      [%add-to-default-list key=[=ship type=$%([%enditem %other ~] [%enditem %app ~] [%nonitem %group ~] [%nonitem %ship ~]) =cord]]
+      [%add-to-default-list key=[=ship type=$%([%enditem %other ~] [%enditem %app ~]) =cord]]
       [%overwrite-list key=[=ship type=[%list type] =cord] =key-text-list]
       ::
       [%put-nonitem =key =item]
@@ -23,7 +23,8 @@
       ::
       [%sign-app =key desk-name=@tas]
       [%send-app-data =key desk-name=@tas]
-      [%get-docket =ship =desk]
+      [%get-docket =key =ship =desk]  ::  key which defines which item will be filled with treaty data
+      [%edit-docket =key =treaty]
       ::
       [%join-group =key]  :: pointer would be: [%.n ~rondev %group 'group-discovery']
       [%get-group-preview flag=[=ship =term]]
