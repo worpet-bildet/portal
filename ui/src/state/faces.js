@@ -25,17 +25,29 @@ export const INPUT_FIELDS = {
     inputs: ["ship", "type", "general", "bespoke-input"],
     heading: "Add Item",
   },
-  [t.ITEM_EDIT]: { inputs: ["key", "general", "bespoke-input"], heading: "Edit Item" },
+  [t.ITEM_EDIT]: {
+    inputs: ["key", "general", "bespoke-input"],
+    heading: "Edit Item",
+  },
   [t.ITEM_SUB]: { inputs: ["key"], heading: "Subscribe to Item" },
   [t.ITEM_DEL]: { inputs: ["key"], heading: "Delete Item" },
   [t.COMMENT_ADD]: { inputs: ["key", "text"], heading: "Add Comment" },
-  [t.COMMENT_EDIT]: { inputs: ["key", "created-at", "text"], heading: "Edit Comment" },
+  [t.COMMENT_EDIT]: {
+    inputs: ["key", "created-at", "text"],
+    heading: "Edit Comment",
+  },
   [t.COMMENT_DEL]: { inputs: ["key", "created-at"], heading: "Delete Comment" },
   [t.RATING_ADD]: { inputs: ["key", "ratingNum"], heading: "Add Rating" },
   [t.RATING_DEL]: { inputs: ["key"], heading: "Delete Rating" },
-  [t.REVIEW_ADD]: { inputs: ["key", "text", "hash", "is-safe"], heading: "Add Review" },
+  [t.REVIEW_ADD]: {
+    inputs: ["key", "text", "hash", "is-safe"],
+    heading: "Add Review",
+  },
   [t.REVIEW_DEL]: { inputs: ["key"], heading: "Delete Review" },
-  [t.LIST_OVERWRITE]: { inputs: ["key", "key-text-list"], heading: "Overwrite List" },
+  [t.LIST_OVERWRITE]: {
+    inputs: ["key", "key-text-list"],
+    heading: "Overwrite List",
+  },
   [t.GROUP_JOIN]: { inputs: ["key"], heading: "Join Group" },
 };
 

@@ -3,7 +3,7 @@ import { red } from "@mui/material/colors";
 
 const theme = createTheme({
   typography: {
-    fontFamily: "Inter"
+    fontFamily: "Inter",
   },
   palette: {
     primary: {
