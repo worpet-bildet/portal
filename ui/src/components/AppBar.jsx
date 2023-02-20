@@ -1,13 +1,13 @@
 import React, { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useStore } from "../state/store";
+import { getSelectedSection, useStore } from "../state/store";
 
 const navigation = [
-  { name: "Home", href: "#", current: true, section: "all" },
-  { name: "Apps", href: "#", current: false, section: "app" },
-  { name: "Groups", href: "#", current: false, section: "group" },
-  { name: "Galleria Chat", href: "#", current: false, section: "all" },
+  { name: "Home", href: "#", highlightOnSelect: true, section: "all" },
+  { name: "Apps", href: "#", highlightOnSelect: true, section: "app" },
+  { name: "Groups", href: "#", highlightOnSelect: true, section: "group" },
+  { name: "Galleria Chat", href: "#", highlightOnSelect: false, section: "all" },
 ];
 
 function classNames(...classes) {
@@ -16,10 +16,14 @@ function classNames(...classes) {
 
 export default function Example() {
   const setSelectedSection = useStore(state => state.setSelectedSection);
+  const selectedSection = useStore(getSelectedSection);
+  const sectionToggled = ({ section, highlightOnSelect }) => {
+    return selectedSection === section && highlightOnSelect;
+  };
 
-  const handleSectionChange = (evt, section) => {
+  const handleSectionChange = (evt, item) => {
     evt.preventDefault();
-    setSelectedSection(section?.toLowerCase());
+    item.highlightOnSelect && setSelectedSection(item.section.toLowerCase());
   };
   return (
     <Disclosure as="nav" className="bg-gray-800">
@@ -55,16 +59,16 @@ export default function Example() {
                   <div className="flex space-x-4">
                     {navigation.map(item => (
                       <a
-                        onClick={evt => handleSectionChange(evt, item.section)}
+                        onClick={evt => handleSectionChange(evt, item)}
                         key={item.name}
                         href={item.href}
                         className={classNames(
-                          item.current
+                          sectionToggled(item)
                             ? "bg-gray-900 text-white"
                             : "text-gray-300 hover:bg-gray-700 hover:text-white",
                           "px-3 py-2 rounded-md text-sm font-medium"
                         )}
-                        aria-current={item.current ? "page" : undefined}
+                        aria-current={sectionToggled(item) ? "page" : undefined}
                       >
                         {item.name}
                       </a>
@@ -83,12 +87,12 @@ export default function Example() {
                   as="a"
                   href={item.href}
                   className={classNames(
-                    item.current
+                    sectionToggled(item)
                       ? "bg-gray-900 text-white"
                       : "text-gray-300 hover:bg-gray-700 hover:text-white",
                     "block px-3 py-2 rounded-md text-base font-medium"
                   )}
-                  aria-current={item.current ? "page" : undefined}
+                  aria-current={sectionToggled(item) ? "page" : undefined}
                 >
                   {item.name}
                 </Disclosure.Button>
