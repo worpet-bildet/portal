@@ -1,5 +1,5 @@
 /-  *portal-action
 :-  %say
-|=  [[now=@da eny=@uvJ bek=beak] [[=pointer =created-at text=@t] ~] ~]
+|=  [[now=@da eny=@uvJ bek=beak] [[=key =created-at text=@t] ~] ~]
 :-  %portal-action
-[%edit-comment pointer created-at text]
+[%edit-comment key created-at text]

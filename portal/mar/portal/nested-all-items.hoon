@@ -1,10 +1,10 @@
 /-  *portal-data
-/+  portal-marks
+/+  portal-json
 |_  all=nested-all-items
 ++  grow
   |%
   ++  noun  all
-  ++  json  (enjs-nested-all-items:enjs:portal-marks all)
+  ++  json  (enjs-nested-all-items:enjs:portal-json all)
   --
 ++  grab
   |%

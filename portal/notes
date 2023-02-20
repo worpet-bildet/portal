@@ -1,60 +1,86 @@
 TO SEED DATA USE FOLLOWING COMMANDS
 =data -build-file /=portal=/sur/portal/data/hoon
 =lib -build-file /=portal=/lib/portal/hoon
-=general :*
-title='Title'
-link='https://www.google.com/maps'
-description='This is a desctription.'
+
+=pikachu :*
+title='Pikachu'
+link='https://bulbapedia.bulbagarden.net/wiki/Pikachu_(Pok%C3%A9mon)'
+description='This is a cool interesting description.'
 tags=~['tag1' 'tag2' 'tag3']
 properties=*(map @t @t)
 pictures=~['https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og_smaller.png' 'https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og.png']
-image='https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og_smaller.png'
+image='https://dhs3.nyc3.cdn.digitaloceanspaces.com/1/20130810072317!0025Pikachu.png'
 color='#e8e8e8'
 ==
 
-ADD OTHER
-:portal-manager|add [our [%enditem %other ~] general [%enditem-other ~]]
-ADD APPS
-:portal-manager|add [our [%enditem %app ~] general [%enditem-app '~nec/portal']]
-ADD APPS LIST FROM APPS IN ALL ITEMS
-:portal-manager|make-app-list
-ADD OTHER LIST FROM OTHER ITEMS IN ALL ITEMS
-:portal-manager|make-other-list
-EDIT CUR-PAGE
-:portal-manager|seed-cur-page
+=arbok :*
+title='Arbok'
+link='https://bulbapedia.bulbagarden.net/wiki/Arbok_(Pok%C3%A9mon)'
+description='This is a description.'
+tags=~['tag1' 'tag2' 'tag3']
+properties=*(map @t @t)
+pictures=~['https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og_smaller.png' 'https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og.png']
+image='https://dhs3.nyc3.cdn.digitaloceanspaces.com/1/20110813031333!0024Arbok.png'
+color='#e8e8e8'
+==
 
-SCRIES
-.^(item:data %gx /=portal-store=/0/~zod/curator-page/~2000.1.1/item)
-.^(pointer-set:data %gx /=portal-store=/all/pointers/pointer-set)
-.^(nested-all-items:conv:lib %gx /=portal-store=/all/nested/nested-all-items)
-.^(all-items:conv:lib %gx /=portal-store=/all/items/all-items)
-.^(? %gx /=portal-store=/valid/latest/0/~zod/curator-page/~2000.1.1/noun)
+=feraligatr :*
+title='Feraligatr'
+link='https://bulbapedia.bulbagarden.net/wiki/Feraligatr_(Pok%C3%A9mon)'
+description='This is a description.'
+tags=~['tag1' 'tag2' 'tag3']
+properties=*(map @t @t)
+pictures=~['https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og_smaller.png' 'https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/mona_og.png']
+image='https://dhs3.nyc3.cdn.digitaloceanspaces.com/1/20100403124424!0160Feraligatr.png'
+color='#e8e8e8'
+==
 
-TESTING
-- BOOTAT NEKOLIKO MJESECA ASAP, I TESTIRAT NA LIVE NETWORKU
+:portal-manager|add [our [%enditem %other ~] pikachu [%enditem-other ~]]
+:portal-manager|add [our [%enditem %other ~] arbok [%enditem-other ~]]
+:portal-manager|add [our [%enditem %other ~] feraligatr [%enditem-other ~]]
+:portal-manager|add [our [%enditem %app ~] pikachu [%enditem-app '~dister-doznec-dilryd-mopreg/portalll']]
+:portal-manager|add [our [%enditem %app ~] arbok [%enditem-app '~nec/portal']]
+:portal-manager|add [our [%enditem %app ~] feraligatr [%enditem-app '~zod/portal']]
 
-SCRYS/SUBS
-- vidjet dii ih sve zovem i vidjet kad crashaju. handleat crashove bolje? jel se mogu handleat?
-( to ukljucuje sve !! i sve ?> i ?<)
+:portal-manager|overwrite-list [[our [%list %nonitem %group ~] '~2000.1.1'] ~[[[~dalten [%nonitem %group ~] 'aera'] 'Love aera!'] [[~hocwyn-tipwex [%nonitem %group ~] 'uqbar-event-horizon'] 'Uqbar FTW!'] [[~dilryd-mopreg [%nonitem %group ~] 'app-store'] 'app-store coming soon TM']]]
+:portal-manager|overwrite-list [[our [%list %nonitem %ship ~] '~2000.1.1'] ~[[[~toptyr-bilder [%nonitem %ship ~] ''] 'top tier builder!'] [[~doplyr-harbur [%nonitem %ship ~] ''] 'top tier autist!'] [[~dilryd-mopreg [%nonitem %ship ~] ''] 'top tier weirdo!']]]
+:portal-manager|overwrite-list [[our [%list %enditem %app ~] '~2000.1.1'] ~[[[~nec [%enditem %app ~] '~2000.1.1'] ''] [~zod [%enditem %app ~] '~2000.1.1']]]
 
-GROUPS
-autojoin groups, uqbar code
+ERROR TESTING COMMANDS
+:portal-manager|overwrite-list [[our [%list %enditem %app ~] '~2000.1.1'] ~[[[~nec [%enditem %app ~] '~2000.1.1'] '']]]
+:portal-manager|edit [[our [%enditem %other ~] '~2023.2.14..01.00.02..682e'] feraligatr [%enditem-other ~]]
+
+SCRY examples from dojo
+=data -build-file /=portal=/sur/portal/data/hoon
+=lib -build-file /=portal=/lib/portal/hoon
+
+.^(?(~ item:data) %gx /=portal-store=/item/~zod/list/enditem/other/~2000.1.1/noun)
+.^(key-set:data %gx /=portal-store=/all/keys/portal-key-set)
+.^(nested-all-items:conv:lib %gx /=portal-store=/all/nested/portal-nested-all-items)
+.^(all-items:conv:lib %gx /=portal-store=/all/items/portal-all-items)
+.^(result:data %gx /=portal-store=/valid/latest/~zod/list/list/~2000.1.1/portal-result)
+.^(? %gx /=portal-store=/item/exists/~zod/list/enditem/other/~2000.1.1/noun)
+
+______
+:portal-manager|overwrite-list [[our [%list %enditem %other ~] '~2000.1.1'] ~[[[~master-dilryd-mopreg [%enditem %other ~] '~2023.2.17..15.08.26..d1dd'] 'I RECOMMEND THIS THING'] [[~dister-dozzod-dilryd-mopreg [%enditem %other ~] '~2023.2.17..15.13.08..f4e3'] 'I RECOMMEND THIS THING TOO']]]
+:portal-manager|overwrite-list [[our [%list %nonitem %group ~] '~2000.1.1'] ~[[[~dilryd-mopreg /nonitem/group 'europa'] 'I RECOMMEND THIS THING'] [[~bitbet-bolbel /nonitem/group 'urbit-community'] 'I RECOMMEND THIS THING TOO']]]
+.^(item:data %gx /=portal-store=/item/~master-dilryd-mopreg/enditem/app/~2023.2.17..14.13.32..f64a/portal-item)
+
+TODO
+- %portal-manager DONE %portal-store DONE portal-lib portal-sur portal-json-lib
+- vertical redesign (errors better earlier on %portal-manager). (make it redundant)
+- default title: 'Untitled' (maybe type specific? 'Untitled Group'?)
+- horizontal redesign?
+- what happens with delete and validity store??? no worries?
+- general code cleanup
+- different seed data?
+- update from store to manager
+  ->  maybe there should be more metadata except just the item itself?
+
 
 ASSERTIONS/SPECIFIC TYPES
 - how to add a default/bunt value in the data type? (we should add it for color, see where else. where for bespoke?)
-- how to look for e.g. ships(for curators and other things)/groups canonical pointer or canonical title?
--
-%curator type za subscribing, so other curs can be recommended
-how to recommend other curator pages in lists? will it mess things up with subs?
-->  better to recommend just curator ship, so that you dont automatically fetch the curator page and everything? (for now)
 
-ARCH
-- remove extra files which come from base
-
-ERROR HANDLING?
- - what happens if scries fail? (look where they are all used)
- - make sre you dont !!, but return sth like ~
- - find all !!, and make it not crash but handle it
 
 
 
@@ -66,36 +92,14 @@ TODO LATER
    or is that less clear? or more clear?
 - validation is only for apps
 
-=groups-list [%group ~[[%.n ~dilryd-mopreg 'app-store' %group] [%.n ~toptyr-bilder 'random-group' %group] [%.n ~doplyr-harbur 'hacker-house']]]
+SCRYS/SUBS
+- vidjet dii ih sve zovem i vidjet kad crashaju. handleat crashove bolje? jel se mogu handleat?
+( to ukljucuje sve !! i sve ?> i ?<)
 
-
-::  doesnt work
-ADD MIXED LIST FROM ALL ITEMS (except curator page and validity store)
-:portal-manager|make-all-list
-
-
-
-mock item:
-[ ~zod
-  'item'
-  %other
-  [%other ~]
-  'item.link'
-  'some description'
-  ~['tag1' 'tag2' 'tag3']
-  (malt (limo ~[['hoon' 'awesome'] ['wut' 'zap']]))
-  *comments:sur
-  *ratings:sur
-  *reviews:sur
-  ~['pic-link1' 'pic-link2']
-  'image-link'
-  '#e4eaef'
-  *created-at:sur
-  *updated-at:sur
-  *signature:sur
-  [%public ~]
-  =price
-]
+ERROR HANDLING?
+ - what happens if scries fail? (look where they are all used)
+ - make sre you dont !!, but return sth like ~
+ - find all !!, and make it not crash but handle it
 
 _____
 

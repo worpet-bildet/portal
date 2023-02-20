@@ -6,4 +6,7 @@
 /ui/stats.html
 /ui/.eslintcache
 /ui/.vercel
+
 .DS_Store
+*.code-workspace
+/archive

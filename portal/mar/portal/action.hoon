@@ -1,4 +1,5 @@
 /-  *portal-action
+/+  portal-json
 |_  act=action
 ++  grow
   |%
@@ -7,7 +8,7 @@
 ++  grab
   |%
   ++  noun  action
-  ++  json  (dejs-action:dejs:portal-marks act)
+  ++  json  dejs-action:dejs:portal-json
   --
 ++  grad  %noun
 --

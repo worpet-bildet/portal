@@ -1,9 +1,10 @@
 /-  *portal-data
-/+  portal-marks
+/+  portal-json
 |_  itm=item
 ++  grow
   |%
   ++  noun  itm
+  ++  json  (enjs-item:enjs:portal-json itm)
   --
 ++  grab
   |%

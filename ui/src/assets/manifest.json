@@ -1,6 +1,6 @@
 {
-  "name": "galleria",
-  "short_name": "galleria",
+  "name": "portal",
+  "short_name": "portal",
   "icons": [
     {
       "src": "/apps/grid/android-chrome-512x512.png",

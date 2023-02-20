@@ -1,5 +1,5 @@
 /-  *portal-action
 :-  %say
-|=  [[now=@da eny=@uvJ bek=beak] [[=pointer desk-name=@tas] ~] ~]
+|=  [[now=@da eny=@uvJ bek=beak] [[=key desk-name=@tas] ~] ~]
 :-  %portal-action
-[%send-app-data pointer desk-name]
+[%send-app-data key desk-name]
