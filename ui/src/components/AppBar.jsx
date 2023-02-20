@@ -1,19 +1,26 @@
 import React, { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { useStore } from '../state/store';
 
 const navigation = [
-  { name: 'Home', href: '#', current: true },
-  { name: 'Apps', href: '#', current: false },
-  { name: 'Groups', href: '#', current: false },
-  { name: 'Galleria Chat', href: '#', current: false },
-]
+  { name: 'Home', href: '#', current: true, section: 'all' },
+  { name: 'Apps', href: '#', current: false, section: 'app' },
+  { name: 'Groups', href: '#', current: false, section: 'group' },
+  { name: 'Galleria Chat', href: '#', current: false, section: 'all' },
+];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
 export default function Example() {
+  const setSelectedSection = useStore((state) => state.setSelectedSection);
+
+  const handleSectionChange = (evt, section) => {
+    evt.preventDefault();
+    setSelectedSection(section?.toLowerCase());
+  };
   return (
     <Disclosure as="nav" className="bg-gray-800">
       {({ open }) => (
@@ -48,6 +55,7 @@ export default function Example() {
                   <div className="flex space-x-4">
                     {navigation.map((item) => (
                       <a
+                        onClick={(evt) => handleSectionChange(evt, item.section)}
                         key={item.name}
                         href={item.href}
                         className={classNames(

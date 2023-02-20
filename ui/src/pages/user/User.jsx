@@ -4,15 +4,20 @@ import { ItemTile } from "../../components/Item/ItemTile";
 import { Footer } from "../../components/Footer";
 import { Disclaimer } from "../../components/Disclaimer";
 import ResponsiveAppBar from "../../components/AppBar";
-import { getApps, useStore, getTypes } from "../../state/store";
+import { getApps, useStore, getTypes, getSelectedSection } from "../../state/store";
 
 export function User(props) {
   const appLists = useStore(getApps);
   const types = useStore(getTypes);
+  const selectedSection = useStore(getSelectedSection);
+  const filterBySection = ([type]) => {
+    return selectedSection === "all" ? true : type === selectedSection;
+  };
 
   const renderListsByType = _types =>
     Object.entries(_types)
       .filter(([type]) => type !== "list")
+      .filter(filterBySection)
       .map(
         ([type, lists]) =>
           lists?.length &&

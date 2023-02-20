@@ -23,6 +23,7 @@ export const getOthers = state => state.types.other;
 export const getShips = state => state.types.ship;
 export const getCurator = state => state.curators;
 export const getTypes = state => state.types;
+export const getSelectedSection = state => state.selectedSection;
 export const useStore = createStore((set, get) => ({
   // ...initialState,
   // apps: [],
