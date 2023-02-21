@@ -33,7 +33,6 @@ export function User(props) {
               <ItemTile
                 key={key}
                 itemType={type}
-                __title={getTitle(key, val, type)}
                 __val={val}
                 {...val}
               />
@@ -62,15 +61,3 @@ export function User(props) {
     </Fragment>
   );
 }
-
-export const getTitle = (key, val, type) => {
-  if (val?.data?.bespoke?.keyObj.type.includes("ship")) {
-    return val?.data?.bespoke?.keyObj.ship;
-  }
-  if (val?.data?.bespoke?.keyObj.type.includes("group")) {
-    return `${val?.data?.bespoke?.keyObj.ship}/${val?.data?.bespoke?.keyObj.cord}`;
-  }
-  if (type === "list") {
-    return val?.item?.data?.general?.title;
-  }
-};

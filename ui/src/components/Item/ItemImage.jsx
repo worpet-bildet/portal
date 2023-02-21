@@ -1,22 +1,25 @@
-import React from "react";
-import { sigil, reactRenderer } from '@tlon/sigil-js'
+import React, { useState, useEffect } from "react";
+import { sigil, reactRenderer } from "@tlon/sigil-js";
 import groupsIcon from "../../assets/icon-groups.svg";
 import tildeIcon from "../../assets/tilde.svg";
 
-export const ItemImage = ({ src, type, onError }) => {
-  if (type === 'ship') {
+export const ItemImage = ({ src, type, container, onError }) => {
+  const [imageSize, setImageSize] = useState(0);
+  useEffect(() => {
+    setImageSize(container?.current?.clientWidth);
+  }, [container]);
+
+  if (type === "ship") {
     return (
       <>
-      {
-        sigil({
+        {sigil({
           patp: src,
           renderer: reactRenderer,
-          size: '160', // TODO: figure out how to make this dynamic
-          colors: ['black', 'white'],
-        })
-      }
+          size: imageSize,
+          colors: ["black", "white"],
+        })}
       </>
-    )
+    );
   }
   return (
     <img
@@ -26,7 +29,7 @@ export const ItemImage = ({ src, type, onError }) => {
       onError={() => onError(true)}
     />
   );
-}
+};
 
 export const defaultImg = {
   group: groupsIcon,
