@@ -94,7 +94,7 @@ export function ItemTile(props) {
                 />
               ) : null}
             </div>
-            <div className="flex flex-col space-y-3">
+            <div className="flex flex-col w-40 space-y-3">
               <p className="text-base mt-2">{title}</p>
               {/* {data?.general?.tags?.length ? (
                 <ul className="flex flex-wrap gap-2">

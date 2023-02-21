@@ -1,11 +1,6 @@
 import React from "react";
-//         className="flex flex-row justify-end w-full cursor-pointer"
-//         onClick={onRequestClose}
-
-
 import { Fragment, useRef, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 
 export function ItemModal({
   title,

@@ -1,7 +1,6 @@
 import React, { Fragment } from "react";
 import { isEmpty } from "lodash";
 import { ItemTile } from "../../components/Item/ItemTile";
-import { Disclaimer } from "../../components/Disclaimer";
 import ResponsiveAppBar from "../../components/AppBar";
 import { getApps, useStore, getTypes, getSelectedSection } from "../../state/store";
 

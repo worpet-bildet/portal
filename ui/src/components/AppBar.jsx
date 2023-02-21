@@ -8,7 +8,7 @@ const navigation = [
   { name: "Groups", href: "#", highlightOnSelect: true, section: "group" },
   { name: "Apps", href: "#", highlightOnSelect: true, section: "app" },
   { name: "Feedback", href: "web+urbitgraph://group/~toptyr-bilder/portal", highlightOnSelect: false, section: "all" },
-  { name: "New Post", href: "#", highlightOnSelect: true, section: "app" },
+  { name: "New Post", href: "#", highlightOnSelect: true, section: "post" },
 ];
 
 function classNames(...classes) {
@@ -85,6 +85,7 @@ export default function Example() {
             <div className="space-y-1 px-2 pt-2 pb-3">
               {navigation.map(item => (
                 <Disclosure.Button
+                  onClick={evt => handleSectionChange(evt, item)}
                   key={item.name}
                   as="a"
                   href={item.href}
