@@ -45,6 +45,7 @@
     "autoprefixer": "^10.4.12",
     "postcss": "^8.4.18",
     "prettier": "^2.8.4",
+    "react-horizontal-scrolling-menu": "^3.2.5",
     "react-modal": "^3.16.1",
     "tailwindcss": "^3.2.1",
     "vite": "=3.1.0"

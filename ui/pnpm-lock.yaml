@@ -25,6 +25,7 @@ specifiers:
   ramda: ^0.28.0
   react: ^18.0.0
   react-dom: ^18.2.0
+  react-horizontal-scrolling-menu: ^3.2.5
   react-modal: ^3.16.1
   react-router-dom: ^6.4.3
   react-toastify: ^9.1.1
@@ -63,6 +64,7 @@ devDependencies:
   autoprefixer: 10.4.13_postcss@8.4.21
   postcss: 8.4.21
   prettier: 2.8.4
+  react-horizontal-scrolling-menu: 3.2.5_react@18.2.0
   tailwindcss: 3.2.4_postcss@8.4.21
   vite: 3.1.0
 
@@ -1225,6 +1227,10 @@ packages:
       - '@swc/core'
       - '@swc/wasm'
     dev: false
+
+  /compute-scroll-into-view/1.0.20:
+    resolution: {integrity: sha512-UCB0ioiyj8CRjtrvaceBLqqhZCVP+1B8+NWQhmdsm0VXOJtobBCf1dBQmebCCo34qZmUwZfIH2MZLqNHazrfjg==}
+    dev: true
 
   /concat-map/0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
@@ -2425,6 +2431,15 @@ packages:
       scheduler: 0.23.0
     dev: false
 
+  /react-horizontal-scrolling-menu/3.2.5_react@18.2.0:
+    resolution: {integrity: sha512-KsYMcB3H++VBm2H+CuHbvO9GDtZualKYthRIume136i2GQfH5kn4FUgnGJUjwwlwqhg6zHVlJNsHYv3Bs1r6tw==}
+    peerDependencies:
+      react: '>=16.8'
+    dependencies:
+      react: 18.2.0
+      smooth-scroll-into-view-if-needed: 1.1.33
+    dev: true
+
   /react-icons/4.7.1_react@18.2.0:
     resolution: {integrity: sha512-yHd3oKGMgm7zxo3EA7H2n7vxSoiGmHk5t6Ou4bXsfcgWyhfDKMpyKfhHR6Bjnn63c+YXBLBPUql9H4wPJM6sXw==}
     peerDependencies:
@@ -2653,6 +2668,12 @@ packages:
       loose-envify: 1.4.0
     dev: false
 
+  /scroll-into-view-if-needed/2.2.31:
+    resolution: {integrity: sha512-dGCXy99wZQivjmjIqihaBQNjryrz5rueJY7eHfTdyWEiR4ttYpsajb14rn9s5d4DY4EcY6+4+U/maARBXJedkA==}
+    dependencies:
+      compute-scroll-into-view: 1.0.20
+    dev: true
+
   /semver/6.3.0:
     resolution: {integrity: sha512-b39TBaTSfV6yBrapU89p5fKekE2m/NwnDocOVruQFS1/veMgdzuPcnOM34M6CwxW8jH/lxEa5rBoDeUwu5HHTw==}
     hasBin: true
@@ -2661,6 +2682,12 @@ packages:
   /signal-exit/3.0.7:
     resolution: {integrity: sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==}
     dev: false
+
+  /smooth-scroll-into-view-if-needed/1.1.33:
+    resolution: {integrity: sha512-crS8NfAaoPrtVYOCMSAnO2vHRgUp22NiiDgEQ7YiaAy5xe2jmR19Jm+QdL8+97gO8ENd7PUyQIAQojJyIiyRHw==}
+    dependencies:
+      scroll-into-view-if-needed: 2.2.31
+    dev: true
 
   /source-map-js/1.0.2:
     resolution: {integrity: sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==}
