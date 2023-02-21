@@ -39,6 +39,7 @@
   "devDependencies": {
     "@headlessui/react": "^1.7.11",
     "@heroicons/react": "^2.0.16",
+    "@tlon/sigil-js": "^1.4.5",
     "@urbit/vite-plugin-urbit": "github:sethfork/vite-plugin-urbit#feat/vite3",
     "@vitejs/plugin-react-refresh": "^1.3.1",
     "autoprefixer": "^10.4.12",

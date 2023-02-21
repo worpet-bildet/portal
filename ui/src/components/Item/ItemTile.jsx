@@ -88,7 +88,7 @@ export function ItemTile(props) {
             >
               {!imageError ? (
                 <ItemImage
-                  src={getImage()}
+                  src={getImage() || title}
                   type={getItemType()}
                   onError={setImageError}
                 />
