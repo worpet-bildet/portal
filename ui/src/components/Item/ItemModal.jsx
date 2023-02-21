@@ -53,32 +53,34 @@ export function ItemModal({
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
                 <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start">
-                    <div
-                      className="w-1/3 rounded-lg overflow-hidden"
-                      ref={imageContainerRef}
-                    >
-                      <ItemImage
-                        src={image || title}
-                        type={type}
-                        container={imageContainerRef}
-                      ></ItemImage>
-                    </div>
-                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                      <Dialog.Title
-                        as="h3"
-                        className="text-lg font-medium leading-6 text-gray-900"
+                    <div className="w-full flex flex-row justify-start pt-2">
+                      <div
+                        className="w-1/3 rounded-lg overflow-hidden"
+                        ref={imageContainerRef}
                       >
-                        {title}
-                      </Dialog.Title>
-                      <div className="text-xs pt-3 font-bold">1,384 downloads</div>
-                      <div className="mt-2">
-                        <p className="text-sm text-gray-500">{description}</p>
+                        <ItemImage
+                          src={image || title}
+                          type={type}
+                          container={imageContainerRef}
+                        ></ItemImage>
                       </div>
-                      <div className="pt-3">
-                        <span>Tags: </span>
-                        {tags.map((t, i) => (
-                          <span>&nbsp;</span>
-                        ))}
+                      <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                        <Dialog.Title
+                          as="h3"
+                          className="text-lg font-medium leading-6 text-gray-900"
+                        >
+                          {title}
+                        </Dialog.Title>
+                        <div className="text-xs pt-3 font-bold">1,384 downloads</div>
+                        <div className="mt-2">
+                          <p className="text-sm text-gray-500">{description}</p>
+                        </div>
+                        <div className="pt-3">
+                          <span>Tags: </span>
+                          {tags.map((t, i) => (
+                            <span>&nbsp;</span>
+                          ))}
+                        </div>
                       </div>
                     </div>
                     <button
