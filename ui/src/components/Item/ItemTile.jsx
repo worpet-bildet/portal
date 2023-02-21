@@ -46,7 +46,7 @@ export function ItemTile(props) {
   const getImage = () =>
     data?.general?.image || data?.icon?.src || data?.bespoke?.payload?.docket?.image;
   return data ? (
-    <li className="flex items-center space-x-3 text-sm leading-tight">
+    <li className="flex space-x-3 text-sm leading-tight">
       {/* TODO: Think about wrapping this modal so there is no need for inline style here */}
       <Modal
         isOpen={modalIsOpen}
@@ -80,7 +80,7 @@ export function ItemTile(props) {
         onClick={() => setModalIsOpen(true)}
         className="w-full mr-4 rounded cursor-pointer"
       >
-        <div className="flex flex-col flex-auto justify-between">
+        <div className="flex flex-col flex-auto">
           <div className="flex flex-col">
             <div
               className="flex-none relative w-40 h-40 rounded-lg bg-gray-200 overflow-hidden"
@@ -94,7 +94,7 @@ export function ItemTile(props) {
                 />
               ) : null}
             </div>
-            <div className="flex flex-col space-y-3">
+            <div className="flex flex-col w-40 space-y-3">
               <p className="text-base mt-2">{title}</p>
               {/* {data?.general?.tags?.length ? (
                 <ul className="flex flex-wrap gap-2">

@@ -1,7 +1,6 @@
 import React, { Fragment } from "react";
 import { isEmpty } from "lodash";
 import { ItemTile } from "../../components/Item/ItemTile";
-import { Footer } from "../../components/Footer";
 import { Disclaimer } from "../../components/Disclaimer";
 import ResponsiveAppBar from "../../components/AppBar";
 import { getApps, useStore, getTypes, getSelectedSection } from "../../state/store";
@@ -59,7 +58,6 @@ export function User(props) {
               ) : null}
             </div>
           </main>
-          <Footer />
         </div>
       </div>
     </Fragment>

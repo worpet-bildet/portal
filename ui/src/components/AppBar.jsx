@@ -5,9 +5,10 @@ import { getSelectedSection, useStore } from "../state/store";
 
 const navigation = [
   { name: "Home", href: "#", highlightOnSelect: true, section: "all" },
-  { name: "Apps", href: "#", highlightOnSelect: true, section: "app" },
   { name: "Groups", href: "#", highlightOnSelect: true, section: "group" },
-  { name: "Galleria Chat", href: "#", highlightOnSelect: false, section: "all" },
+  { name: "Apps", href: "#", highlightOnSelect: true, section: "app" },
+  { name: "Feedback", href: "web+urbitgraph://group/~toptyr-bilder/portal", highlightOnSelect: false, section: "all" },
+  { name: "New Post", href: "#", highlightOnSelect: true, section: "app" },
 ];
 
 function classNames(...classes) {
@@ -26,7 +27,7 @@ export default function Example() {
     item.highlightOnSelect && setSelectedSection(item.section.toLowerCase());
   };
   return (
-    <Disclosure as="nav" className="bg-gray-800">
+    <Disclosure as="nav" className="bg-black">
       {({ open }) => (
         <>
           <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -46,14 +47,15 @@ export default function Example() {
                 <div className="flex flex-shrink-0 items-center">
                   <img
                     className="block h-8 w-auto lg:hidden"
-                    src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+                    src="https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/3d.svg"
                     alt="Your Company"
                   />
                   <img
                     className="hidden h-8 w-auto lg:block"
-                    src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+                    src="https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/3d.svg"
                     alt="Your Company"
                   />
+                <h2 className="flex flex-1 text-lg font-michroma leading-8 px-4 tracking-tight text-white">PORTAL</h2>
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4">
