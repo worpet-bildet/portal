@@ -49,7 +49,10 @@ export function ItemTile(props) {
   const getAppUriKey = _keys => _getAppUriKey(getKeys(_keys));
   const getItemType = () => props.itemType || data?.general?.type || "other";
   const getImage = () =>
-    data?.general?.image || data?.icon?.src || data?.bespoke?.payload?.docket?.image;
+    data?.general?.image ||
+    data?.icon?.src ||
+    data?.bespoke?.payload?.docket?.image ||
+    data?.bespoke?.payload?.image;
   return data ? (
     <li className="flex space-x-3 text-sm leading-tight">
       {/* TODO: Think about wrapping this modal so there is no need for inline style here */}
