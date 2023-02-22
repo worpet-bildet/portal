@@ -21,6 +21,7 @@
     "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.0",
     "@mui/system": "^5.11.0",
+    "@tailwindcss/line-clamp": "^0.4.2",
     "@tlon/sigil-js": "^1.4.5",
     "@urbit/api": "^2.2.0",
     "@urbit/http-api": "^2.3.0",
