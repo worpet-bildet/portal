@@ -33,9 +33,9 @@ export function User(props) {
   return (
     <Fragment>
       <ResponsiveAppBar />
-      <div className="flex flex-row">
+      <div className="flex flex-row px-2 sm:px-5 lg:px-44">
         <div className="flex flex-col max-w-full min-h-screen">
-          <main className="mx-8 basis-3/4 h-full">
+          <main className="basis-3/4 h-full">
             <div className="space-y-6 py-14">
               {appLists ? (
                 <div>
