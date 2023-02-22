@@ -106,14 +106,8 @@ export function ItemTile(props) {
               ) : null}
             </div>
             <div className="flex flex-col w-40 space-y-3">
-              <p className="text-base mt-2">{shortTitle}</p>
-              {/* {data?.general?.tags?.length ? (
-                <ul className="flex flex-wrap gap-2">
-                  {data.general.tags.map((tag, i) => (
-                    <Tag key={`${title}_${tag}_${i}`} name={tag} />
-                  ))}
-                </ul>
-              ) : null} */}
+              <div className="text-base mt-2">{shortTitle}</div>
+              <div className="text-sm">{description}</div>
             </div>
           </div>
         </div>
