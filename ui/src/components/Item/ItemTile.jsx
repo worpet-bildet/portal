@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 // TODO: do we need this?
 import { Link, useLocation } from "react-router-dom";
 
 import Modal from "react-modal";
+
+import { getTitles } from "../../utils/format";
 
 // TODO: do we need this?
 import { Tag } from "../Tag";
@@ -11,9 +13,8 @@ import { ItemModal } from "./ItemModal";
 import { ItemImage } from "./ItemImage";
 
 export function ItemTile(props) {
-  const { keys, data, __title, item } = props;
-  console.log({ data });
-  const title = data?.general?.title || __title;
+  const { keys, data, item, __val, itemType } = props;
+  const [shortTitle, longTitle] = getTitles(__val, itemType);
   const description = data?.general?.description || "";
   const pictures = data?.general?.pictures || [];
   const tags = data?.general?.tags || [];
@@ -26,6 +27,10 @@ export function ItemTile(props) {
     const isShipUser = location.pathname.split("/")[3] === "usr";
     setIsUser(isShipUser);
   }, [location.pathname]);
+
+  // We use this to ensure the sigil is the correct size, since we need to
+  // specify it in pixels
+  const imageContainerRef = useRef();
 
   const formatAppUriKey = ({ keyStr, ship, type, cord }) => {
     const appUriKey = (
@@ -44,7 +49,10 @@ export function ItemTile(props) {
   const getAppUriKey = _keys => _getAppUriKey(getKeys(_keys));
   const getItemType = () => props.itemType || data?.general?.type || "other";
   const getImage = () =>
-    data?.general?.image || data?.icon?.src || data?.bespoke?.payload?.docket?.image;
+    data?.general?.image ||
+    data?.icon?.src ||
+    data?.bespoke?.payload?.docket?.image ||
+    data?.bespoke?.payload?.image;
   return data ? (
     <li className="flex space-x-3 text-sm leading-tight">
       {/* TODO: Think about wrapping this modal so there is no need for inline style here */}
@@ -63,7 +71,8 @@ export function ItemTile(props) {
         // className="relative bg-white"
       >
         <ItemModal
-          title={title}
+          title={shortTitle}
+          path={longTitle}
           description={description}
           pictures={pictures}
           tags={tags}
@@ -85,17 +94,19 @@ export function ItemTile(props) {
             <div
               className="flex-none relative w-40 h-40 rounded-lg bg-gray-200 overflow-hidden"
               style={{ backgroundColor: "aliceblue" }}
+              ref={imageContainerRef}
             >
               {!imageError ? (
                 <ItemImage
-                  src={getImage()}
+                  src={getImage() || shortTitle}
+                  container={imageContainerRef}
                   type={getItemType()}
                   onError={setImageError}
                 />
               ) : null}
             </div>
             <div className="flex flex-col w-40 space-y-3">
-              <p className="text-base mt-2">{title}</p>
+              <p className="text-base mt-2">{shortTitle}</p>
               {/* {data?.general?.tags?.length ? (
                 <ul className="flex flex-wrap gap-2">
                   {data.general.tags.map((tag, i) => (

@@ -1,9 +1,11 @@
 import React from "react";
-import { Fragment, useRef, useState } from 'react'
-import { Dialog, Transition } from '@headlessui/react'
+import { Fragment, useRef, useState, useEffect } from "react";
+import { Dialog, Transition } from "@headlessui/react";
+import { ItemImage } from "./ItemImage";
 
 export function ItemModal({
   title,
+  path,
   image,
   description,
   pictures,
@@ -11,14 +13,20 @@ export function ItemModal({
   type,
   onRequestClose,
 }) {
-  const [open, setOpen] = useState(true) 
+  const [open, setOpen] = useState(true);
   // TODO: remove the unsightly panel displayed over the navbar while the modal is open
 
-  const cancelButtonRef = useRef(null)
+  const cancelButtonRef = useRef();
+  const imageContainerRef = useRef();
 
   return (
     <Transition.Root show={open} as={Fragment}>
-      <Dialog as="div" className="relative z-10" initialFocus={cancelButtonRef} onClose={onRequestClose}>
+      <Dialog
+        as="div"
+        className="relative z-10"
+        initialFocus={cancelButtonRef}
+        onClose={onRequestClose}
+      >
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -45,34 +53,56 @@ export function ItemModal({
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
                 <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start">
-                    <img className="w-1/3 rounded-lg" src={image}></img>
-                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
-                        {title}
-                      </Dialog.Title>
-                      <div className="text-xs pt-3 font-bold">1,384 downloads</div>
-                      <div className="mt-2">
-                        <p className="text-sm text-gray-500">
-                          {description}
-                        </p>
+                    <div className="w-full flex flex-row justify-start pt-2">
+                      <div
+                        className="w-1/3 rounded-lg overflow-hidden"
+                        ref={imageContainerRef}
+                      >
+                        <ItemImage
+                          src={image || title}
+                          type={type}
+                          container={imageContainerRef}
+                        ></ItemImage>
                       </div>
-                      <div className="pt-3">
-                        <span>Tags: </span>
-                        {tags.map((t, i) => (
-                          <span>
-                            &nbsp;
-                          </span>
-                        ))}
+                      <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                        <Dialog.Title
+                          as="h3"
+                          className="text-lg font-medium leading-6 text-gray-900"
+                        >
+                          {title}
+                        </Dialog.Title>
+                        <div className="text-xs pt-3 font-bold">1,384 downloads</div>
+                        <div className="mt-2">
+                          <p className="text-sm text-gray-500">{description}</p>
+                        </div>
+                        <div className="pt-3">
+                          <span>Tags: </span>
+                          {tags.map((t, i) => (
+                            <span>&nbsp;</span>
+                          ))}
+                        </div>
                       </div>
                     </div>
-                    <button 
-                      type="button" 
-                      class="bg-white rounded-md p-2 inline-flex items-center justify-end text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500" 
+                    <button
+                      type="button"
+                      className="bg-white rounded-md p-2 inline-flex items-center justify-end text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
                       onClick={onRequestClose}
                     >
-                      <span class="sr-only">Close menu</span>
-                      <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      <span className="sr-only">Close menu</span>
+                      <svg
+                        className="h-6 w-6"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        aria-hidden="true"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M6 18L18 6M6 6l12 12"
+                        />
                       </svg>
                     </button>
                   </div>
@@ -101,5 +131,5 @@ export function ItemModal({
         </div>
       </Dialog>
     </Transition.Root>
-  )
+  );
 }
