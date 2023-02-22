@@ -7,7 +7,12 @@ const navigation = [
   { name: "Home", href: "#", highlightOnSelect: true, section: "all" },
   { name: "Groups", href: "#", highlightOnSelect: true, section: "group" },
   { name: "Apps", href: "#", highlightOnSelect: true, section: "app" },
-  { name: "Feedback", href: "web+urbitgraph://group/~toptyr-bilder/portal", highlightOnSelect: false, section: "all" },
+  {
+    name: "Feedback",
+    href: "web+urbitgraph://group/~toptyr-bilder/portal",
+    highlightOnSelect: false,
+    section: "all",
+  },
   { name: "New Post", href: "#", highlightOnSelect: true, section: "post" },
 ];
 
@@ -44,7 +49,10 @@ export default function Example() {
                 </Disclosure.Button>
               </div>
               <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-                <div className="flex flex-shrink-0 items-center cursor-pointer">
+                <div
+                  className="flex flex-shrink-0 items-center cursor-pointer"
+                  onClick={() => setSelectedSection("all")}
+                >
                   <img
                     className="block h-8 w-auto lg:hidden"
                     src="https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/3d.svg"
@@ -55,7 +63,9 @@ export default function Example() {
                     src="https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/3d.svg"
                     alt="Portal Logo"
                   />
-                <h2 className="flex flex-1 text-lg font-michroma leading-8 px-4 tracking-tight text-white cursor-pointer">PORTAL</h2>
+                  <h2 className="flex flex-1 text-lg font-michroma leading-8 px-4 tracking-tight text-white cursor-pointer">
+                    PORTAL
+                  </h2>
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4">
