@@ -66,6 +66,7 @@ export function ItemTile(props) {
             position: "relative",
             margin: "20px",
             inset: 0,
+            display: "none", // wtf
           },
         }}
         // className="relative bg-white"
