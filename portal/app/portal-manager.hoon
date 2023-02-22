@@ -1,4 +1,5 @@
-/-  *portal-data, *portal-action, *portal-message, groups, treaty
+/-  *portal-data, *portal-action, *portal-message, *portal-logs, *portal-config,
+    groups, treaty
 /+  default-agent, dbug, *portal, io=agentio, sig
 |%
 +$  versioned-state
@@ -6,6 +7,8 @@
   ==
 +$  state-0
   $:  %0
+      =default-curators
+      =portal-curator
   ==
 +$  card  card:agent:gall
 --
@@ -19,12 +22,25 @@
 ++  on-init
   ^-  (quip card _this)
   =.  state  *state-0
-  `this
+  =/  default-curators  (silt (limo ~[[~dister-doznec-dilryd-mopreg /list/list '~2000.1.1']]))
+  =/  portal-curator    [~dister-doznec-dilryd-mopreg /list/list '~2000.1.1']
+  =/  new-user-event    [%join now.bowl (get-ship-type:misc our.bowl) `@ux`(shax our.bowl)]
+  :_  %=  this
+        default-curators  default-curators
+        portal-curator    portal-curator
+      ==
+  :~  (~(poke pass:io /act) [our.bowl %portal-store] %portal-action !>([%sub portal-curator]))
+      (~(poke pass:io /new-user) [-.portal-curator %portal-logs] %portal-new-user-event !>(new-user-event))
+  ==
 ::
 ++  on-save  !>(state)
 ++  on-load
   |=  old=vase
   ^-  (quip card _this)
+  ::  later:
+  ::  upon update, new default curators can be added by us
+  ::  and added to portal-curators
+  ::  if user unsubs from a curator, then they are not added
   `this(state !<(state-0 old))
 ::
 ++  on-poke
