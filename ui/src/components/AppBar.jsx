@@ -34,9 +34,9 @@ export default function Example() {
     <Disclosure as="nav" className="bg-black">
       {({ open }) => (
         <>
-          <div className="max-w-7xl px-2 sm:px-5 lg:px-44">
+          <div className="px-2 sm:px-5 lg:px-44">
             <div className="relative flex h-16 items-center justify-between">
-              <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+              <div className="absolute inset-y-0 right-0 flex items-center sm:hidden">
                 {/* Mobile menu button*/}
                 <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                   <span className="sr-only">Open main menu</span>
@@ -47,24 +47,26 @@ export default function Example() {
                   )}
                 </Disclosure.Button>
               </div>
-              <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-                <div
-                  className="flex flex-shrink-0 items-center cursor-pointer"
-                  onClick={() => setSelectedSection("all")}
-                >
-                  <img
-                    className="block h-8 w-auto lg:hidden"
-                    src="https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/3d.svg"
-                    alt="Portal Logo"
-                  />
-                  <img
-                    className="hidden h-8 w-auto lg:block"
-                    src="https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/3d.svg"
-                    alt="Portal Logo"
-                  />
-                  <h2 className="flex flex-1 text-lg font-michroma leading-8 px-4 tracking-tight text-white cursor-pointer">
-                    PORTAL
-                  </h2>
+              <div className="flex flex-row w-full items-center justify-between">
+                <div className="flex flex-row justify-between">
+                  <div
+                    className="flex flex-shrink-0 items-center cursor-pointer"
+                    onClick={() => setSelectedSection("all")}
+                  >
+                    <img
+                      className="block h-8 w-auto lg:hidden"
+                      src="https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/3d.svg"
+                      alt="Portal Logo"
+                    />
+                    <img
+                      className="hidden h-8 w-auto lg:block"
+                      src="https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/3d.svg"
+                      alt="Portal Logo"
+                    />
+                    <h2 className="flex flex-1 text-lg font-michroma leading-8 px-4 tracking-tight text-white cursor-pointer">
+                      PORTAL
+                    </h2>
+                  </div>
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4">
@@ -90,7 +92,7 @@ export default function Example() {
             </div>
           </div>
 
-          <Disclosure.Panel className="sm:hidden">
+          <Disclosure.Panel className="sm:hidden text-right">
             <div className="space-y-1 px-2 pt-2 pb-3">
               {navigation.map(item => (
                 <Disclosure.Button
