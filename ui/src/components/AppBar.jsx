@@ -13,7 +13,6 @@ const navigation = [
     highlightOnSelect: false,
     section: "all",
   },
-  { name: "New Post", href: "#", highlightOnSelect: true, section: "post" },
 ];
 
 function classNames(...classes) {
