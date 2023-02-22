@@ -26,6 +26,13 @@ export function User(props) {
     () =>
       Object.entries(types)
         .filter(([type]) => type !== "list")
+        .sort(([type1], [type2]) => {
+          // There's probably a better way to do this
+          if (type1 === "group") return -1;
+          if (type2 === "group") return 1;
+          if (type1 === "app") return -1;
+          if (type2 === "app") return 1;
+        })
         .map(renderListsByType),
     [types]
   );
