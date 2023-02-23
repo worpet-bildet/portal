@@ -27,3 +27,13 @@ export const getTitles = (val, type) => [
   getShortTitle(val, type),
   getLongTitle(val, type),
 ];
+
+export const checkUrl = string => {
+  let url;
+  try {
+    url = new URL(string);
+  } catch (error) {
+    return false;
+  }
+  return true;
+};
