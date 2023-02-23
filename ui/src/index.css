@@ -19,7 +19,7 @@
 }
 
 .text-offwhite {
-  color: #EBFFFD;
+  color: #ebfffd;
 }
 
 .react-horizontal-scrolling-menu--scroll-container::-webkit-scrollbar {
@@ -27,14 +27,14 @@
 }
 
 .react-horizontal-scrolling-menu--scroll-container {
--ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 .react-horizontal-scrolling-menu--inner-wrapper::-webkit-scrollbar {
   display: none;
 }
 .react-horizontal-scrolling-menu--inner-wrapper {
-  -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-  }
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}

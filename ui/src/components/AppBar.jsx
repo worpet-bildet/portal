@@ -74,7 +74,7 @@ export default function Example() {
               <div className="flex flex-row w-full items-center justify-between">
                 <div className="flex flex-row justify-between">
                   <div
-                    className="flex flex-shrink-0 items-center cursor-pointer"
+                    className="flex flex-shrink-0 items-center cursor-pointer pl-2"
                     onClick={() => setSelectedSection("all")}
                   >
                     <img
@@ -87,8 +87,8 @@ export default function Example() {
                       src="https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/3d.svg"
                       alt="Portal Logo"
                     />
-                    <h2 className="flex flex-1 text-lg font-michroma leading-8 px-4 tracking-tight text-white cursor-pointer">
-                      PORTAL
+                    <h2 className="flex flex-1 text-lg font-michroma leading-8 pl-2 pb-1 tracking-tight text-white cursor-pointer">
+                      Portal
                     </h2>
                   </div>
                 </div>

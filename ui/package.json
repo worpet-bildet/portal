@@ -9,6 +9,7 @@
     "serve": "vite preview",
     "copy-desk-zod": "rsync -a --delete ../portal/ ../../ships/zod/portal/",
     "copy-desk-nec": "rsync -a --delete ../portal/ ../../ships/nec/portal/",
+    "copy-desk-brady": "rsync -a --delete ../portal/ ../../../mycomet/portal/",
     "copy-dist": "cp -r ../portal/* ../../ships/zod/portal",
     "prettier": "prettier --write src/**/*.{js,jsx,css}"
   },
