@@ -1,4 +1,4 @@
-import React, { Fragment, useMemo, useState, useEffect } from "react";
+import React, { Fragment, useMemo, useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import ResponsiveAppBar from "../../components/AppBar";
 import { getApps, useStore, getTypes, getLists } from "../../state/store";
@@ -59,6 +59,8 @@ export function User(props) {
     [types, patp]
   );
 
+  const imageContainerRef = useRef();
+
   return (
     <Fragment>
       <ResponsiveAppBar />
@@ -66,10 +68,14 @@ export function User(props) {
         <div className="flex flex-col max-w-full min-h-screen">
           {lists?.length > 0 && (
             <main className="basis-3/4 h-full">
-              <div className="pt-4 sm:px-5 sm:pt-10">
+              <div className="pt-4 sm:pt-10 h-56">
                 <div className="flex flex-row items-center">
-                  <div className="hidden sm:flex w-1/6">
-                    <ItemImage src={listImageSrc} patp={patp}></ItemImage>
+                  <div className="hidden sm:flex w-44 h-44" ref={imageContainerRef}>
+                    <ItemImage
+                      src={listImageSrc}
+                      patp={patp}
+                      container={imageContainerRef}
+                    ></ItemImage>
                   </div>
                   <div className="px-2 sm:w-3/4 sm:px-10">
                     <div className="font-bold text-2xl">{listTitle}</div>
@@ -77,7 +83,7 @@ export function User(props) {
                   </div>
                 </div>
               </div>
-              <div className="space-y-4 px-2 py-8 sm:space-y-6 sm:py-14">
+              <div className="space-y-4 py-8 sm:space-y-6 sm:py-14">
                 {appLists ? <div>{listsByType}</div> : null}
               </div>
             </main>
