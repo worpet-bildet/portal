@@ -66,7 +66,6 @@ export function ItemTile(props) {
               display: "none", // wtf
             },
           }}
-          // className="relative bg-white"
         >
           <ItemModal
             title={shortTitle}

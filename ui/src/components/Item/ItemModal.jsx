@@ -77,7 +77,7 @@ export function ItemModal({
                   <div className="sm:flex sm:items-start">
                     <div className="w-full flex flex-row justify-start pt-4">
                       <div
-                        className="w-1/3 h-1/3 rounded-lg overflow-hidden bg-gray-200"
+                        className="w-44 h-44 rounded-lg overflow-hidden bg-gray-200"
                         ref={imageContainerRef}
                       >
                         <ItemImage
@@ -87,7 +87,10 @@ export function ItemModal({
                         ></ItemImage>
                       </div>
                       <div className="w-2/3 sm:mt-0 sm:ml-4 text-left px-2">
-                        <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-left">
+                        <Dialog.Title
+                          as="h3"
+                          className="text-lg font-medium leading-6 text-left"
+                        >
                           {title}
                         </Dialog.Title>
                         <div className="mt-2">
