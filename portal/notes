@@ -13,6 +13,93 @@ TO SEED DATA ON THE LIVE NETWORK USE THE FOLLOWING COMMANDS
 =data -build-file /=portal=/sur/portal/data/hoon
 =lib -build-file /=portal=/lib/portal/hoon
 
+:portal-manager  &portal-action  :-  %edit
+:portal-manager &portal-action :-  %edit  :+  [our [%list %list ~] '~2000.1.1']
+:*
+'I cannot believe this worked'
+''
+''
+*tags:data
+*properties:data
+*pictures:data
+''
+''
+==
+:-  %list-list
+:~  [[our [%list %app ~] '~2000.1.1'] 'These are the apps I recommend']
+    [[our [%list %enditem %other ~] '~2000.1.1'] 'These are miscellaneous items I recommend']
+    [[our [%list %nonitem %group ~] '~2000.1.1'] 'These are groups I recommend']
+    [[our [%list %nonitem %ship ~] '~2000.1.1'] 'These are ships I recommend']  ==
+
+
+:portal-manager &portal-action :-  %edit  :+  [our [%list %app ~] '~2000.1.1']
+:*
+'the best apps on urbit. guaranteed.'
+''
+''
+*tags:data
+*properties:data
+*pictures:data
+''
+''
+==
+:-  %list-app
+:~  [[~nodmyn-dosrux [%nonitem %app ~] 'radio'] 'dope app']
+    [[~nodmyn-dosrux [%nonitem %app ~] 'houston'] 'manage your moons']
+    [[~paldev [%nonitem %app ~] 'cliff'] 'your urbit file manager']
+    [[~dachus-tiprel [%nonitem %app ~] 'blog'] 'publish to the boomerweb']
+==
+
+:portal-manager &portal-action :-  %edit  :+  [our [%list %nonitem %ship ~] '~2000.1.1']
+:*
+'my favourite frens.'
+''
+''
+*tags:data
+*properties:data
+*pictures:data
+''
+''
+==
+:-  %list-nonitem-ship
+:~  [[~toptyr-bilder [%nonitem %ship ~] ''] 'portal dude']
+    [[~winpex-widtev-foddur-hodler [%nonitem %ship ~] ''] 'spaceman']
+    [[~doplyr-harbur [%nonitem %ship ~] ''] 'another portal dude']
+    [[~dilryd-mopreg [%nonitem %ship ~] ''] '3rd portal dude']
+    [[~foddur-hodler [%nonitem %ship ~] ''] 'portal dudes never stop']
+==
+
+:portal-manager &portal-action :-  %edit  :+  [our [%list %nonitem %group ~] '~2000.1.1']
+:*
+'good places to hang out.'
+''
+''
+*tags:data
+*properties:data
+*pictures:data
+''
+''
+==
+:-  %list-nonitem-group
+:~  [[~dalten [%nonitem %group ~] 'aera'] 'Love aera!']
+    [[~hocwyn-tipwex [%nonitem %group ~] 'uqbar-event-horizon'] 'Uqbar FTW!']
+    [[~dilryd-mopreg [%nonitem %group ~] 'app-store'] 'app-store coming soon TM']
+    [[~rondev [%nonitem %group ~] 'group-discovery'] 'Discover groups ayaya']
+    [[~poldec-tonteg [%nonitem %group ~] 'the-phantom-tollbooth'] 'esotericism whooooooooa']
+    [[~bollug-worlus [%nonitem %group ~] 'urbit-index'] 'indexxxxing urbit']
+==
+
+;; title=@t
+;; link=@t
+;; description=@t
+;; =tags
+;; =properties
+;; =pictures
+;; image=@t
+;; color=@t
+
+:portal-manager|sub [~winpex-widtev-foddur-hodler [%list %list ~] '~2000.1.1']
+
 :portal-manager|overwrite-list :-
 [our [%list %nonitem %group ~] '~2000.1.1']
   :~  [[~dalten [%nonitem %group ~] 'aera'] 'Love aera!']

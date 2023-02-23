@@ -10,6 +10,7 @@ export const ItemImage = ({ src, type, container, onError }) => {
   }, [container]);
 
   if (type === "ship") {
+    if (src.length > "13") return <></>
     return (
       <>
         {sigil({
