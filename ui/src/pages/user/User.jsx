@@ -1,18 +1,23 @@
 import React, { Fragment, useMemo, useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import ResponsiveAppBar from "../../components/AppBar";
-import { getApps, useStore, getTypes, getLists } from "../../state/store";
+import { getApps, useStore, getTypes, getLists, getShips } from "../../state/store";
 import { SliderList } from "../../components/List/SliderList";
 import { ItemImage } from "../../components/Item/ItemImage";
+import { usePortal } from "../../state/usePortal";
+import { createPoke } from "../../urbit/pokes";
+import { portalEvents } from "../../state/faces";
 
 export function User(props) {
   const appLists = useStore(getApps);
   const types = useStore(getTypes);
   const lists = useStore(getLists);
+  const shipList = useStore(getShips);
   const { patp } = useParams();
   const [listTitle, setListTitle] = useState(null);
   const [listDescription, setListDescription] = useState(null);
   const [listImageSrc, setListImageSrc] = useState(null);
+  const { urbit, actions } = usePortal();
   useEffect(() => {
     let l = lists.find(l => l?.keys?.keyObj?.ship === patp);
     setListTitle(l?.general?.title || patp);
@@ -20,7 +25,23 @@ export function User(props) {
       l?.general?.description || `${patp} hasn't recommended anything yet`
     );
     setListImageSrc(l?.general?.image);
-  }, [lists, patp]);
+    // subscribe to all the planets in the list of ships
+    types.ship
+      .filter(s => lists.find(l => l.item.keys.keyObj.ship !== s.item.keys.keyObj.ship))
+      .forEach(s => {
+        // subscribe only to the ships that we have not yet subscribed to
+        Object.values(s.map).forEach(sub => {
+          actions.ITEM.pokes.sub(
+            urbit,
+            actions.ITEM.SUB
+          )({
+            ship: sub.keyObj.ship,
+            type: "/list/list",
+            cord: "~2000.1.1",
+          });
+        });
+      });
+  }, [lists, patp, urbit]);
   const filterBySection = ({ type, selectedSection }) => {
     return selectedSection === "all" ? true : type === selectedSection;
   };

@@ -18,7 +18,7 @@ const logger = config => (set, get, api) =>
   );
 
 export const createStore = pipe(
-  // logger,
+  logger,
   devtools,
   subscribeWithSelector,
   // persist,
