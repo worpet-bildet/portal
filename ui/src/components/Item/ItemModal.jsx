@@ -51,11 +51,33 @@ export function ItemModal({
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-black text-offwhite text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                <button
+                  type="button"
+                  className="absolute top-0 right-0 p-2"
+                  onClick={onRequestClose}
+                >
+                  <span className="sr-only">Close menu</span>
+                  <svg
+                    className="h-6 w-6"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
                 <div className="bg-black text-offwhite px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start">
-                    <div className="w-full flex flex-row justify-start pt-2">
+                    <div className="w-full flex flex-row justify-start pt-4">
                       <div
-                        className="w-1/3 rounded-lg overflow-hidden"
+                        className="w-1/3 h-1/3 rounded-lg overflow-hidden bg-gray-200"
                         ref={imageContainerRef}
                       >
                         <ItemImage
@@ -64,8 +86,8 @@ export function ItemModal({
                           container={imageContainerRef}
                         ></ItemImage>
                       </div>
-                      <div className="w-2/3 mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                        <Dialog.Title as="h3" className="text-lg font-medium leading-6 ">
+                      <div className="w-2/3 sm:mt-0 sm:ml-4 text-left px-2">
+                        <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-left">
                           {title}
                         </Dialog.Title>
                         <div className="mt-2">
@@ -73,34 +95,12 @@ export function ItemModal({
                         </div>
                       </div>
                     </div>
-                    <button
-                      type="button"
-                      className="rounded-md p-2 inline-flex items-center justify-end focus:outline-none"
-                      onClick={onRequestClose}
-                    >
-                      <span className="sr-only">Close menu</span>
-                      <svg
-                        className="h-6 w-6"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        aria-hidden="true"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
-                    </button>
                   </div>
                 </div>
                 <div className="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                   <button
                     type="button"
-                    className="inline-flex w-full justify-center rounded-md border border-transparent px-4 py-2 text-base font-medium text-white shadow-sm hover:border-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
+                    className="inline-flex w-full justify-center rounded-md border border-transparent px-4 py-2 text-base font-medium text-white shadow-sm border-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
                     onClick={onRequestClose}
                   >
                     {type === "app" ? "Install" : "Join"}

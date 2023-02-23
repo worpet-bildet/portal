@@ -93,8 +93,7 @@ export function ItemTile(props) {
         <div className="flex flex-col flex-auto justify-between">
           <div className="flex flex-col">
             <div
-              className="flex-none relative w-40 h-40 rounded-lg bg-gray-200 overflow-hidden"
-              style={{ backgroundColor: "aliceblue" }}
+              className="flex-none relative w-55 h-55 rounded-lg bg-gray-200 overflow-hidden"
               ref={imageContainerRef}
             >
               {!imageError ? (
@@ -106,9 +105,9 @@ export function ItemTile(props) {
                 />
               ) : null}
             </div>
-            <div className="flex flex-col w-40 space-y-3">
-              <div className="text-base mt-2">{shortTitle}</div>
-              <div className="text-sm line-clamp-3 text-ellipsis">{description}</div>
+            <div className="flex flex-col w-40">
+              <div className="text-base mt-2 font-bold">{shortTitle}</div>
+              <div className="text-xs line-clamp-3 text-ellipsis">{description}</div>
             </div>
           </div>
         </div>
