@@ -14,7 +14,7 @@ export function User(props) {
   const listTitle = thisList?.general?.title || patp;
   const listDescription =
     thisList?.general?.description || `${patp} hasn't recommended anything yet`;
-  const listImageSrc = thisList?.general?.image || patp;
+  const listImageSrc = thisList?.general?.image;
   const filterBySection = ({ type, selectedSection }) => {
     return selectedSection === "all" ? true : type === selectedSection;
   };
@@ -63,7 +63,7 @@ export function User(props) {
                 <div className="hidden sm:flex w-1/6">
                   {/* Forgive my sins please */}
                   {/* <img className="h-40" src={listImageSrc}></img> */}
-                  <ItemImage src={listImageSrc}></ItemImage>
+                  <ItemImage src={listImageSrc} patp={patp}></ItemImage>
                 </div>
                 <div className="px-2 sm:w-3/4 sm:px-10">
                   <div className="font-bold text-2xl">{listTitle}</div>

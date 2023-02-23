@@ -102,7 +102,8 @@ export function ItemTile(props) {
             >
               {!imageError ? (
                 <ItemImage
-                  src={getImage() || shortTitle}
+                  src={getImage() || null}
+                  patp={getItemType() === "ship" ? shortTitle : null}
                   container={imageContainerRef}
                   type={getItemType()}
                   onError={setImageError}

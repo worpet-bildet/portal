@@ -4,17 +4,17 @@ import groupsIcon from "../../assets/icon-groups.svg";
 import tildeIcon from "../../assets/tilde.svg";
 import { checkUrl } from "../../utils/format";
 
-export const ItemImage = ({ src, type, container, onError }) => {
+export const ItemImage = ({ src, patp, type, container, onError }) => {
   const [imageSize, setImageSize] = useState(0);
   useEffect(() => {
     setImageSize(container?.current?.clientWidth);
   }, [container]);
 
-  if (type === "ship" && src?.length <= "14") {
+  if (!src && patp && patp.length <= "14") {
     return (
       <>
         {sigil({
-          patp: src,
+          patp,
           renderer: reactRenderer,
           size: imageSize,
           colors: ["black", "white"],
@@ -22,10 +22,10 @@ export const ItemImage = ({ src, type, container, onError }) => {
       </>
     );
   }
-  if (type === "ship" && src?.length > "14") {
+  if (!src && patp && patp?.length > "14") {
     src = defaultImg.ship;
   }
-  if (type !== "ship" && !checkUrl(src)) {
+  if (!checkUrl(src)) {
     src = defaultImg[type];
   }
   return (
