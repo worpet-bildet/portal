@@ -34,7 +34,7 @@ export const ItemImage = ({ src, patp, type, container, onError }) => {
   if (!type) type = "other";
   return (
     <img
-      className="w-full pt-100 object-cover"
+      className="w-full pt-100 object-cover rounded-lg bg-gray-200"
       src={getImageSrc(src, type)}
       alt={`${type}-image`}
       onError={() => onError(true)}
