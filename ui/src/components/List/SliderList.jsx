@@ -7,6 +7,7 @@ import { LeftArrow, RightArrow } from "./SliderArrows";
 import { useStore } from "../../state/store";
 
 export const SliderList = ({ item, map, type, filters, filterProps }) => {
+  if (isEmpty(map)) return <></>
   const [hover, setHover] = useState(false);
   const selectedSection = useStore(state => state.selectedSection);
   const defaultFiltersProps = { selectedSection, type };
@@ -30,7 +31,6 @@ export const SliderList = ({ item, map, type, filters, filterProps }) => {
     () =>
       !isEmpty(map)
         ? Object.entries(map).map(([key, val]) => {
-            console.log({ key });
             return (
               <Card
                 itemId={key} // NOTE: itemId is required for track items
@@ -54,7 +54,8 @@ export const SliderList = ({ item, map, type, filters, filterProps }) => {
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
-      <h3 className="text-2xl font-bold">{item?.data?.general?.title}</h3>
+      <div className="text-2xl font-bold">{item?.data?.general?.title}</div>
+      <div className="text-base pb-2">{item?.data?.general?.description}</div>
       <ScrollMenu
         LeftArrow={hover ? LeftArrow : <></>}
         RightArrow={hover ? RightArrow : <></>}

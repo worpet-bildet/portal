@@ -9,6 +9,7 @@
     "serve": "vite preview",
     "copy-desk-zod": "rsync -a --delete ../portal/ ../../ships/zod/portal/",
     "copy-desk-nec": "rsync -a --delete ../portal/ ../../ships/nec/portal/",
+    "copy-desk-brady": "rsync -a --delete ../portal/ ../../../mycomet/portal/",
     "copy-dist": "cp -r ../portal/* ../../ships/zod/portal",
     "prettier": "prettier --write src/**/*.{js,jsx,css}"
   },
@@ -21,6 +22,7 @@
     "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.0",
     "@mui/system": "^5.11.0",
+    "@tailwindcss/line-clamp": "^0.4.2",
     "@tlon/sigil-js": "^1.4.5",
     "@urbit/api": "^2.2.0",
     "@urbit/http-api": "^2.3.0",

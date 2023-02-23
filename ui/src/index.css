@@ -14,19 +14,27 @@
   }
 }
 
+.page-container {
+  background-color: #151515;
+}
+
+.text-offwhite {
+  color: #ebfffd;
+}
+
 .react-horizontal-scrolling-menu--scroll-container::-webkit-scrollbar {
   display: none;
 }
 
 .react-horizontal-scrolling-menu--scroll-container {
--ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 .react-horizontal-scrolling-menu--inner-wrapper::-webkit-scrollbar {
   display: none;
 }
 .react-horizontal-scrolling-menu--inner-wrapper {
-  -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-  }
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}

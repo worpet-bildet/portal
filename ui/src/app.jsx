@@ -15,7 +15,7 @@ const router = createBrowserRouter([
     element: <Navigate replace to="/apps/portal/usr" />,
   },
   {
-    path: "/apps/portal/usr",
+    path: "/apps/portal/:patp",
     element: <User />,
   },
 ]);
@@ -25,8 +25,9 @@ export function App() {
   return (
     <React.Fragment>
       <ThemeProvider theme={theme}>
-        <RouterProvider router={router} />
-        {/* <ToastContainer
+        <div className="page-container text-offwhite">
+          <RouterProvider router={router} />
+          {/* <ToastContainer
           position="bottom-right"
           autoClose={false}
           newestOnTop={false}
@@ -36,6 +37,7 @@ export function App() {
           draggable
           theme="colored"
         /> */}
+        </div>
       </ThemeProvider>
     </React.Fragment>
   );

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 // TODO: do we need this?
-import { Link, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import Modal from "react-modal";
 
@@ -21,12 +21,8 @@ export function ItemTile(props) {
   const [imageError, setImageError] = useState(false);
   const [isUser, setIsUser] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const location = useLocation();
 
-  useEffect(() => {
-    const isShipUser = location.pathname.split("/")[3] === "usr";
-    setIsUser(isShipUser);
-  }, [location.pathname]);
+  const navigate = useNavigate();
 
   // We use this to ensure the sigil is the correct size, since we need to
   // specify it in pixels
@@ -56,83 +52,72 @@ export function ItemTile(props) {
   return data ? (
     <li className="flex space-x-3 text-sm leading-tight">
       {/* TODO: Think about wrapping this modal so there is no need for inline style here */}
-      <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={() => setModalIsOpen(false)}
-        ariaHideApp={false}
-        contentLabel="Item Modal"
-        style={{
-          content: {
-            position: "relative",
-            margin: "20px",
-            inset: 0,
-          },
-        }}
-        // className="relative bg-white"
-      >
-        <ItemModal
-          title={shortTitle}
-          path={longTitle}
-          description={description}
-          pictures={pictures}
-          tags={tags}
-          image={getImage()}
-          type={getItemType()}
+      {getItemType() !== "ship" && (
+        <Modal
+          isOpen={modalIsOpen}
           onRequestClose={() => setModalIsOpen(false)}
-        ></ItemModal>
-      </Modal>
+          ariaHideApp={false}
+          contentLabel="Item Modal"
+          style={{
+            content: {
+              position: "relative",
+              margin: "20px",
+              inset: 0,
+              display: "none", // wtf
+            },
+          }}
+        >
+          <ItemModal
+            title={shortTitle}
+            path={longTitle}
+            description={description}
+            pictures={pictures}
+            tags={tags}
+            image={getImage()}
+            type={getItemType()}
+            onRequestClose={() => setModalIsOpen(false)}
+          ></ItemModal>
+        </Modal>
+      )}
       {/* <Link
         to={`/apps/portal/${!isUser ? `dev` : `usr`}/apps/${getAppUriKey(keys)}`}
         className="w-full mr-4 rounded"
       > */}
       <div
-        onClick={() => setModalIsOpen(true)}
+        onClick={() => {
+          if (getItemType() === "ship") {
+            window.scrollTo(0, 0);
+            return navigate(`/apps/portal/${shortTitle}`);
+          }
+          setModalIsOpen(true);
+        }}
         className="w-full mr-4 rounded cursor-pointer"
       >
         <div className="flex flex-col flex-auto justify-between">
           <div className="flex flex-col">
             <div
-              className="flex-none relative w-40 h-40 rounded-lg bg-gray-200 overflow-hidden"
-              style={{ backgroundColor: "aliceblue" }}
+              className={`flex-none relative overflow-hidden rounded-lg ${
+                getItemType() === "ship" ? "w-56 h-56" : "w-44 h-44"
+              }`}
               ref={imageContainerRef}
             >
               {!imageError ? (
                 <ItemImage
-                  src={getImage() || shortTitle}
+                  src={getImage() || null}
+                  patp={getItemType() === "ship" ? shortTitle : null}
                   container={imageContainerRef}
                   type={getItemType()}
                   onError={setImageError}
                 />
               ) : null}
             </div>
-            <div className="flex flex-col w-40 space-y-3">
-              <p className="text-base mt-2">{shortTitle}</p>
-              {/* {data?.general?.tags?.length ? (
-                <ul className="flex flex-wrap gap-2">
-                  {data.general.tags.map((tag, i) => (
-                    <Tag key={`${title}_${tag}_${i}`} name={tag} />
-                  ))}
-                </ul>
-              ) : null} */}
+            <div className="flex flex-col w-40">
+              <div className="text-base mt-2 font-bold">{shortTitle}</div>
+              <div className="text-xs line-clamp-3 text-ellipsis">{description}</div>
             </div>
           </div>
         </div>
       </div>
-      {
-        // TODO: do we need this?
-      }
-      {!isUser ? (
-        <div className="flex">
-          <div className="relative">
-            <Link
-              to={`/apps/portal/dev/edit-app/${getAppUriKey(keys)}`}
-              className="absolute right-32 top-0 mt-auto mb-auto ml-auto font-bold border-2 border-black hover:bg-gray-800 hover:text-white py-2 px-5"
-            >
-              edit
-            </Link>
-          </div>
-        </div>
-      ) : null}
     </li>
   ) : null;
 }

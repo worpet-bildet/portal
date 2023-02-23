@@ -3,12 +3,12 @@ export const getShortTitle = (val, type) => {
     return val?.data?.bespoke?.keyObj.ship;
   }
   if (val?.data?.bespoke?.keyObj.type.includes("group")) {
-    return `${val?.data?.bespoke?.keyObj.cord}`;
+    return `${val?.data?.general?.title}`;
   }
   if (type === "list") {
     return val?.item?.data?.general?.title;
   }
-}
+};
 
 export const getLongTitle = (val, type) => {
   if (val?.data?.bespoke?.keyObj.type.includes("ship")) {
@@ -21,6 +21,19 @@ export const getLongTitle = (val, type) => {
   if (type === "list") {
     return val?.item?.data?.general?.title;
   }
-}
+};
 
-export const getTitles = (val, type) => [getShortTitle(val, type), getLongTitle(val, type)]
+export const getTitles = (val, type) => [
+  getShortTitle(val, type),
+  getLongTitle(val, type),
+];
+
+export const checkUrl = string => {
+  let url;
+  try {
+    url = new URL(string);
+  } catch (error) {
+    return false;
+  }
+  return true;
+};

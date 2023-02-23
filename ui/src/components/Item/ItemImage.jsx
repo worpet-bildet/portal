@@ -2,18 +2,19 @@ import React, { useState, useEffect } from "react";
 import { sigil, reactRenderer } from "@tlon/sigil-js";
 import groupsIcon from "../../assets/icon-groups.svg";
 import tildeIcon from "../../assets/tilde.svg";
+import { checkUrl } from "../../utils/format";
 
-export const ItemImage = ({ src, type, container, onError }) => {
+export const ItemImage = ({ src, patp, type, container, onError }) => {
   const [imageSize, setImageSize] = useState(0);
   useEffect(() => {
     setImageSize(container?.current?.clientWidth);
   }, [container]);
 
-  if (type === "ship") {
+  if (!src && patp && patp.length <= "14") {
     return (
       <>
         {sigil({
-          patp: src,
+          patp,
           renderer: reactRenderer,
           size: imageSize,
           colors: ["black", "white"],
@@ -21,9 +22,19 @@ export const ItemImage = ({ src, type, container, onError }) => {
       </>
     );
   }
+  if (!src && patp && patp?.length > "14") {
+    src = defaultImg.ship;
+  }
+  if (!checkUrl(src)) {
+    src = defaultImg[type];
+  }
+  if (!checkUrl(getImageSrc(src, type))) {
+    src = defaultImg[type];
+  }
+  if (!type) type = "other";
   return (
     <img
-      className="h-full w-full object-cover"
+      className="w-full h-full pt-100 object-cover rounded-lg bg-gray-200"
       src={getImageSrc(src, type)}
       alt={`${type}-image`}
       onError={() => onError(true)}

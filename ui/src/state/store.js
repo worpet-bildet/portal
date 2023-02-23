@@ -13,6 +13,7 @@ import {
 import { scries } from "../urbit/scries";
 
 export const getCurators = state => state.curators;
+export const getDefaultCurators = state => state.defaultCurators;
 export const setCurators = state => state.setCurators;
 export const onInitialLoad = state => state.onInitialLoad;
 export const onUpdate = state => state.onUpdate;
@@ -57,11 +58,9 @@ export const useStore = createStore((set, get) => ({
     set(
       produce(draft => {
         const defaultCuratorPages = Object.entries(pages);
-        const key = defaultCuratorPages[0][0];
-        const ship = key.slice().split("/")[1];
 
         const [index, types] = indexPages(defaultCuratorPages);
-        draft.defaultCurators[ship] = index;
+        draft.defaultCurators = defaultCuratorPages;
         draft.types = Array.isArray(types) ? types[0] : types;
       })
     ),

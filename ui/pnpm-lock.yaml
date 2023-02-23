@@ -9,6 +9,7 @@ specifiers:
   '@mui/icons-material': ^5.11.0
   '@mui/material': ^5.11.0
   '@mui/system': ^5.11.0
+  '@tailwindcss/line-clamp': ^0.4.2
   '@tlon/sigil-js': ^1.4.5
   '@urbit/api': ^2.2.0
   '@urbit/http-api': ^2.3.0
@@ -42,6 +43,7 @@ dependencies:
   '@mui/icons-material': 5.11.0_zsyq3rhvvm2x5cshkyxexlmlkm
   '@mui/material': 5.11.8_fbxtuirhogpez7m7qjkm3itwca
   '@mui/system': 5.11.8_xqp3pgpqjlfxxa3zxu4zoc4fba
+  '@tailwindcss/line-clamp': 0.4.2_tailwindcss@3.2.4
   '@tlon/sigil-js': 1.4.5_react@18.2.0
   '@urbit/api': 2.2.0
   '@urbit/http-api': 2.3.0
@@ -805,6 +807,14 @@ packages:
       estree-walker: 2.0.2
       picomatch: 2.3.1
     dev: true
+
+  /@tailwindcss/line-clamp/0.4.2_tailwindcss@3.2.4:
+    resolution: {integrity: sha512-HFzAQuqYCjyy/SX9sLGB1lroPzmcnWv1FHkIpmypte10hptf4oPUfucryMKovZh2u0uiS9U5Ty3GghWfEJGwVw==}
+    peerDependencies:
+      tailwindcss: '>=2.0.0 || >=3.0.0 || >=3.0.0-alpha.1'
+    dependencies:
+      tailwindcss: 3.2.4_postcss@8.4.21
+    dev: false
 
   /@tlon/sigil-js/1.4.5_react@18.2.0:
     resolution: {integrity: sha512-+Fn0EizPetjePaK+z8njjzE74wxzqIRLVM8W53Dlri6XU87wJ4vk82baVGgZQFAQs96rYM/f4WV7kCzuSxSMAw==}
