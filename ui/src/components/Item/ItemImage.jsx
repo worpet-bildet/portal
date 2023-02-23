@@ -9,8 +9,7 @@ export const ItemImage = ({ src, type, container, onError }) => {
     setImageSize(container?.current?.clientWidth);
   }, [container]);
 
-  if (type === "ship") {
-    if (src.length > "13") return <></>;
+  if (type === "ship" && src?.length <= "14") {
     return (
       <>
         {sigil({
@@ -22,9 +21,12 @@ export const ItemImage = ({ src, type, container, onError }) => {
       </>
     );
   }
+  if (type === "ship" && src?.length > "14") {
+    src = defaultImg.ship;
+  }
   return (
     <img
-      className="h-full w-full object-cover"
+      className="w-full pt-100 object-cover"
       src={getImageSrc(src, type)}
       alt={`${type}-image`}
       onError={() => onError(true)}

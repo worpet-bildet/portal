@@ -9,7 +9,7 @@ export const handleEvent =
   (urbit, factActions = {}) =>
   (evt, action) => {
     console.log("====================================");
-    console.log("urbit event from sub: ", evt);
+    console.log("urbit event from sub: ", evt, action);
     // debugger;
     console.log("====================================");
     console.log("evt.face: ", evt.face);

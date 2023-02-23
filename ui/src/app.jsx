@@ -15,7 +15,7 @@ const router = createBrowserRouter([
     element: <Navigate replace to="/apps/portal/usr" />,
   },
   {
-    path: "/apps/portal/usr",
+    path: "/apps/portal/:patp",
     element: <User />,
   },
 ]);

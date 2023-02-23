@@ -7,6 +7,7 @@ import { LeftArrow, RightArrow } from "./SliderArrows";
 import { useStore } from "../../state/store";
 
 export const SliderList = ({ item, map, type, filters, filterProps }) => {
+  if (isEmpty(map)) return <></>
   const [hover, setHover] = useState(false);
   const selectedSection = useStore(state => state.selectedSection);
   const defaultFiltersProps = { selectedSection, type };
