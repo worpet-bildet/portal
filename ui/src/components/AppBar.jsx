@@ -2,35 +2,48 @@ import React, { Fragment, useEffect, useState } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { sigil, reactRenderer } from "@tlon/sigil-js";
-import { getSelectedSection, useStore } from "../state/store";
+import { getSelectedSection, useStore, getDefaultCurators } from "../state/store";
 import { useUrbit, usePortal } from "../state/usePortal";
 
-const navigation = [
-  { name: "Home", href: "#", highlightOnSelect: true, section: "all" },
-  { name: "Groups", href: "#", highlightOnSelect: true, section: "group" },
-  { name: "Apps", href: "#", highlightOnSelect: true, section: "app" },
-  {
-    name: "Feedback",
-    href: "web+urbitgraph://group/~toptyr-bilder/portal",
-    highlightOnSelect: false,
-    section: "all",
-  },
-];
+// this is not very nice, it just picks the first item in the default curators
+// map to navigate you to. this map is not ordered though, so it might not be
+// the same page that you actually landed on.. how to solve.. hmm
+function buildNav(curators) {
+  return [
+    {
+      name: "Home",
+      href: `/apps/portal/${curators[0] ? curators[0][1].item.keyObj.ship : ""}`,
+      highlightOnSelect: true,
+      section: "all",
+    },
+    { name: "Groups", href: "#", highlightOnSelect: true, section: "group" },
+    { name: "Apps", href: "#", highlightOnSelect: true, section: "app" },
+    {
+      name: "Feedback",
+      href: "web+urbitgraph://group/~toptyr-bilder/portal",
+      highlightOnSelect: false,
+      section: "all",
+    },
+  ];
+}
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Example() {
+export default function AppBar() {
+  const curators = useStore(getDefaultCurators);
+  const navigation = buildNav(curators);
   const setSelectedSection = useStore(state => state.setSelectedSection);
   const selectedSection = useStore(getSelectedSection);
   const sectionToggled = ({ section, highlightOnSelect }) => {
     return selectedSection === section && highlightOnSelect;
   };
 
+  // TODO: maybe rethink this
   const handleSectionChange = (evt, item) => {
-    evt.preventDefault();
-    item.highlightOnSelect && setSelectedSection(item.section.toLowerCase());
+    // evt.preventDefault();
+    // item.highlightOnSelect && setSelectedSection(item.section.toLowerCase());
   };
 
   const mySigil = () => {
