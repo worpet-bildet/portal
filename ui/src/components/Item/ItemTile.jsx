@@ -97,7 +97,7 @@ export function ItemTile(props) {
         <div className="flex flex-col flex-auto justify-between">
           <div className="flex flex-col">
             <div
-              className={`flex-none relative overflow-hidden ${
+              className={`flex-none relative overflow-hidden rounded-lg ${
                 getItemType() === "ship" ? "w-56 h-56" : "w-44 h-44"
               }`}
               ref={imageContainerRef}
