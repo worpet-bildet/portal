@@ -7,7 +7,7 @@ export const Arrow = ({ children, disabled, onClick, direction }) => {
     <button
       disabled={disabled}
       onClick={onClick}
-      className="flex flex-col justify-center items-center w-0 h-40 z-10"
+      className="flex flex-col justify-center items-center w-0 h-4/5 z-10"
       style={{
         opacity: disabled ? "0" : "1",
       }}
