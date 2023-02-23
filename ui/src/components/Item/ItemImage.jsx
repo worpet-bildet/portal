@@ -28,6 +28,10 @@ export const ItemImage = ({ src, patp, type, container, onError }) => {
   if (!checkUrl(src)) {
     src = defaultImg[type];
   }
+  if (!checkUrl(getImageSrc(src, type))) {
+    src = defaultImg[type];
+  }
+  if (!type) type = "other";
   return (
     <img
       className="w-full pt-100 object-cover"

@@ -86,9 +86,9 @@ export default function AppBar() {
               </div>
               <div className="flex flex-row w-full items-center justify-between">
                 <div className="flex flex-row justify-between">
-                  <div
+                  <a
                     className="flex flex-shrink-0 items-center cursor-pointer pl-2"
-                    onClick={() => setSelectedSection("all")}
+                    href={navigation[0].href}
                   >
                     <img
                       className="block h-8 w-auto lg:hidden"
@@ -103,7 +103,7 @@ export default function AppBar() {
                     <h2 className="flex flex-1 text-lg font-michroma leading-8 pl-2 pb-1 tracking-tight text-white cursor-pointer">
                       Portal
                     </h2>
-                  </div>
+                  </a>
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4">
