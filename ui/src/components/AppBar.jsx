@@ -16,8 +16,8 @@ function buildNav(curators) {
       highlightOnSelect: true,
       section: "all",
     },
-    { name: "Groups", href: "#", highlightOnSelect: true, section: "group" },
-    { name: "Apps", href: "#", highlightOnSelect: true, section: "app" },
+    // { name: "Groups", href: "#", highlightOnSelect: true, section: "group" },
+    // { name: "Apps", href: "#", highlightOnSelect: true, section: "app" },
     {
       name: "Feedback",
       href: "web+urbitgraph://group/~toptyr-bilder/portal",
