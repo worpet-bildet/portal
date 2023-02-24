@@ -1,7 +1,7 @@
 import shallow from "zustand/shallow";
 import produce from "immer";
 import unionBy from "lodash/unionBy";
-// import sortedUniqBy from "lodash/sortedUniqBy";
+import keyBy from "lodash/keyBy";
 import { createStore } from "./middleware";
 import {
   indexPages,
@@ -58,9 +58,8 @@ export const useStore = createStore((set, get) => ({
     set(
       produce(draft => {
         const defaultCuratorPages = Object.entries(pages);
-
         const [index, types] = indexPages(defaultCuratorPages);
-        draft.defaultCurators = defaultCuratorPages;
+        draft.defaultCurators = keyBy(index, "keys.keyObj.ship");
         draft.types = Array.isArray(types) ? types[0] : types;
       })
     ),
@@ -70,7 +69,7 @@ export const useStore = createStore((set, get) => ({
         const res = await scries.item(update.urbit, update.evt);
         const ship = res.keyObj.ship;
         const type = res.keyObj.type.slice().split("/");
-
+        debugger;
         // TODO: Update all the things for list overwrite
         if (type[1] === "list") {
           get().reduceListInIndex(res, ship, type);

@@ -58,7 +58,6 @@ export const generatePokes = actions => {
 
 export const createPoke = (urbit, type) => async data => {
   const poke = buildPoke(type, data);
-  console.log({ poke });
   try {
     const res = await urbit.poke(poke);
     console.log("Poke Response: ", res);
@@ -66,7 +65,7 @@ export const createPoke = (urbit, type) => async data => {
     return res;
   } catch (err) {
     console.error(err);
-    debugger;
+    // debugger;
   }
 };
 
@@ -83,6 +82,7 @@ export const buildPoke = (type, data) => ({
 });
 
 export const structurePokeData = (fields, data) => {
+  console.log({ fields, data });
   // debugger;
   return reduce(
     fields,

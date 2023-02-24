@@ -70,6 +70,7 @@ export const types = { SUBJECTS, FIELDS, ACTIONS: ACTION_TYPES };
 export const getType = (FACE, POKE_KEY, SUCCESS_MSG) => ({
   FACE,
   INPUTS: INPUT_FIELDS[FACE].inputs,
+  FIELDS: INPUT_FIELDS[FACE].inputs,
   HEADING: INPUT_FIELDS[FACE].heading,
   POKE_KEY,
   SUCCESS_MSG,

@@ -7,7 +7,7 @@ import { LeftArrow, RightArrow } from "./SliderArrows";
 import { useStore } from "../../state/store";
 
 export const SliderList = ({ item, map, type, filters, filterProps }) => {
-  if (isEmpty(map)) return <></>
+  if (isEmpty(map)) return <></>;
   const [hover, setHover] = useState(false);
   const selectedSection = useStore(state => state.selectedSection);
   const defaultFiltersProps = { selectedSection, type };
@@ -55,7 +55,9 @@ export const SliderList = ({ item, map, type, filters, filterProps }) => {
       onMouseLeave={() => setHover(false)}
     >
       <div className="text-2xl font-bold">{item?.data?.general?.title}</div>
-      <div className="text-base pb-2">{item?.data?.general?.description}</div>
+      <div className="text-base pb-2 text-gray-400">
+        {item?.data?.general?.description}
+      </div>
       <ScrollMenu
         LeftArrow={hover ? LeftArrow : <></>}
         RightArrow={hover ? RightArrow : <></>}

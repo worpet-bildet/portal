@@ -68,14 +68,14 @@ export default function AppBar() {
   };
 
   return (
-    <Disclosure as="nav" className="bg-black">
+    <Disclosure as="nav" className="bg-black sticky top-0 z-[100]">
       {({ open }) => (
         <>
-          <div className="px-2 sm:px-5 lg:px-44">
+          <div className="px-2 sm:px-5 lg:px-24">
             <div className="relative flex h-16 items-center justify-between">
               <div className="absolute inset-y-0 right-0 flex items-center sm:hidden">
                 {/* Mobile menu button*/}
-                <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white">
                   <span className="sr-only">Open main menu</span>
                   {open ? (
                     <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
@@ -87,7 +87,7 @@ export default function AppBar() {
               <div className="flex flex-row w-full items-center justify-between">
                 <div className="flex flex-row justify-between">
                   <a
-                    className="flex flex-shrink-0 items-center cursor-pointer pl-2"
+                    className="flex items-center cursor-pointer pl-2"
                     href={navigation[0].href}
                   >
                     <img
@@ -100,7 +100,7 @@ export default function AppBar() {
                       src="https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/3d.svg"
                       alt="Portal Logo"
                     />
-                    <h2 className="flex flex-1 text-lg font-michroma leading-8 pl-2 pb-1 tracking-tight text-white cursor-pointer">
+                    <h2 className="flex flex-1 text-lg font-michroma leading-8 pb-1 pl-2 tracking-tight text-white cursor-pointer">
                       Portal
                     </h2>
                   </a>
@@ -114,7 +114,7 @@ export default function AppBar() {
                         href={item.href}
                         className={classNames(
                           sectionToggled(item)
-                            ? "bg-gray-900 text-white"
+                            ? "bg-blue-600 text-white"
                             : "text-gray-300 hover:bg-gray-700 hover:text-white",
                           "px-3 py-2 rounded-md text-sm font-medium"
                         )}
@@ -131,6 +131,7 @@ export default function AppBar() {
           </div>
 
           <Disclosure.Panel className="sm:hidden text-right">
+            {/* TODO: make this 1/3 width of screen */}
             <div className="space-y-1 px-2 pt-2 pb-3">
               {navigation.map(item => (
                 <Disclosure.Button

@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import Modal from "react-modal";
 
 import { getTitles } from "../../utils/format";
+import { getWebsite } from "../../utils/format";
+import { getDescription } from "../../utils/format";
 
 // TODO: do we need this?
 import { Tag } from "../Tag";
@@ -15,7 +17,8 @@ import { ItemImage } from "./ItemImage";
 export function ItemTile(props) {
   const { keys, data, item, __val, itemType } = props;
   const [shortTitle, longTitle] = getTitles(__val, itemType);
-  const description = data?.general?.description || "";
+  const description = getDescription(__val, itemType);
+  const website = getWebsite(__val, itemType);
   const pictures = data?.general?.pictures || [];
   const tags = data?.general?.tags || [];
   const [imageError, setImageError] = useState(false);
@@ -71,6 +74,7 @@ export function ItemTile(props) {
             title={shortTitle}
             path={longTitle}
             description={description}
+            website={website}
             pictures={pictures}
             tags={tags}
             image={getImage()}
@@ -111,9 +115,11 @@ export function ItemTile(props) {
                 />
               ) : null}
             </div>
-            <div className="flex flex-col w-40">
+            <div className="flex flex-col w-40 space-y-3">
               <div className="text-base mt-2 font-bold">{shortTitle}</div>
-              <div className="text-xs line-clamp-3 text-ellipsis">{description}</div>
+              <div className="text-xs line-clamp-3 text-gray-400 text-ellipsis">
+                {description}
+              </div>
             </div>
           </div>
         </div>
