@@ -15,7 +15,7 @@ TO SEED DATA ON THE LIVE NETWORK USE THE FOLLOWING COMMANDS
 
 :portal-manager &portal-action :-  %edit  :+  [our [%list %list ~] '~2000.1.1']
 :*
-'I cannot believe this worked'
+'My curator page'
 ''
 ''
 *tags:data
@@ -31,22 +31,39 @@ TO SEED DATA ON THE LIVE NETWORK USE THE FOLLOWING COMMANDS
     [[our [%list %nonitem %ship ~] '~2000.1.1'] 'These are ships I recommend']  ==
 
 
-:portal-manager &portal-action :-  %edit  :+  [our [%list %app ~] '~2000.1.1']
+:portal-manager &portal-action :-  %add  :^  our  [%list %nonitem %group ~]
 :*
-'the best apps on urbit. guaranteed.'
+'urbit groups for hackers.'
 ''
-''
+'Best urbit groups made for real autists'
 *tags:data
 *properties:data
 *pictures:data
 ''
 ''
 ==
-:-  %list-app
-:~  [[~nodmyn-dosrux [%nonitem %app ~] 'radio'] 'dope app']
-    [[~nodmyn-dosrux [%nonitem %app ~] 'houston'] 'manage your moons']
-    [[~paldev [%nonitem %app ~] 'cliff'] 'your urbit file manager']
-    [[~dachus-tiprel [%nonitem %app ~] 'blog'] 'publish to the boomerweb']
+:-  %list-nonitem-group
+:~  [[~litmus-ritten [%nonitem %group ~] 'iwtf'] 'internet weirdenss task force']
+    [[~litmus-ritten [%nonitem %group ~] 'sis'] 'software intelligence service']
+    [[~middev [%nonitem %group ~] 'the-forge'] 'forge the new urbit']
+    [[~doplyr-harbur [%nonitem %group ~] 'hacker-house'] 'seth the o.g.']
+==
+
+:portal-manager &portal-action :-  %add  :^  our  [%list %nonitem %group ~]
+:*
+'urbit groups for newbs.'
+''
+'new to urbit- look no further than this list'
+*tags:data
+*properties:data
+*pictures:data
+''
+''
+==
+:-  %list-nonitem-group
+:~  [[~bitbet-bolbel [%nonitem %group ~] 'urbit-community'] 'welcome wanderer']
+    [[~halbex-palheb [%nonitem %group ~] 'uf-public'] 'the urbit foundation']
+    [[~nibset-napwyn [%nonitem %group ~] 'tlon'] 'tlon public']
 ==
 
 :portal-manager &portal-action :-  %edit  :+  [our [%list %nonitem %ship ~] '~2000.1.1']
