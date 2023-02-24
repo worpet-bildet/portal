@@ -75,10 +75,10 @@ export function ItemModal({
                 </button>
                 <div className="bg-black text-offwhite px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start sm:pb-5">
-                    <div className="w-full flex flex-row justify-start pt-4 align-middle"> 
-                    {/* TODO: make align-middle actually put image vertically centered between title + path  */}
+                    <div className="w-full flex flex-row justify-start pt-4 align-middle">
+                      {/* TODO: make align-middle actually put image vertically centered between title + path  */}
                       <div
-                        className="w-1/4 h-1/4 rounded-lg overflow-hidden" 
+                        className="w-1/4 h-1/4 rounded-lg overflow-hidden"
                         ref={imageContainerRef}
                       >
                         <ItemImage
@@ -103,15 +103,18 @@ export function ItemModal({
                     </div>
                   </div>
                   <div className="mt-2 sm:mt-0 pb-5">
-                      <p className="text-sm text-gray-400">{description}</p>
-                    </div>
+                    <p className="text-sm text-gray-400">{description}</p>
+                  </div>
                 </div>
                 <div className="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                   {/* <p className="w-2/3 text-xs text-blue-600 pr-4 absolute sm:bottom-4 sm:left-4 bottom-2 left-2">We sent a request for you to join. Open the Groups app to get started. </p> */}
                   <button
                     type="button"
                     className="inline-flex w-1/3 justify-center rounded-md bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-800 sm:ml-3 sm:w-auto sm:text-sm absolute sm:bottom-4 sm:right-4 bottom-2 right-2"
-                    onClick={() => {onRequestClose(); setAlertIsOpen(true);}}
+                    onClick={() => {
+                      onRequestClose();
+                      setAlertIsOpen(true);
+                    }}
                   >
                     {type === "app" ? "Install" : "Join"}
                   </button>

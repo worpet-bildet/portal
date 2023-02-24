@@ -130,8 +130,8 @@ export default function AppBar() {
             </div>
           </div>
 
-          <Disclosure.Panel className="sm:hidden text-right"> 
-          {/* TODO: make this 1/3 width of screen */}
+          <Disclosure.Panel className="sm:hidden text-right">
+            {/* TODO: make this 1/3 width of screen */}
             <div className="space-y-1 px-2 pt-2 pb-3">
               {navigation.map(item => (
                 <Disclosure.Button

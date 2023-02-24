@@ -1,10 +1,8 @@
 import React from "react";
 import { Fragment, useRef, useState, useEffect } from "react";
-import { XMarkIcon } from '@heroicons/react/20/solid'
+import { XMarkIcon } from "@heroicons/react/20/solid";
 
-export function AlertModal({
-  onRequestClose, 
-}) {
+export function AlertModal({ onRequestClose }) {
   const [alertIsOpen, setAlertIsOpen] = useState(false);
   const cancelButtonRef = useRef();
   const imageContainerRef = useRef();
@@ -45,7 +43,8 @@ export function AlertModal({
       </svg>
       <div className="flex flex-wrap items-center gap-y-2 gap-x-4">
         <p className="text-xs sm:text-sm leading-6 text-gray-900">
-          We sent a join request to this group. <br class="sm:hidden"></br> Open the Groups app to dive in.
+          We sent a join request to this group. <br class="sm:hidden"></br> Open the
+          Groups app to dive in.
         </p>
       </div>
       <div className="flex flex-1 justify-end">
@@ -55,5 +54,5 @@ export function AlertModal({
         </button>
       </div>
     </div>
-  )
+  );
 }

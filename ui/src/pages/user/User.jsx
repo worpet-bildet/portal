@@ -86,9 +86,7 @@ export function User(props) {
   return (
     <Fragment>
       <ResponsiveAppBar />
-      <AlertModal 
-        onRequestClose={() => setAlertIsOpen(false)}
-      />
+      <AlertModal onRequestClose={() => setAlertIsOpen(false)} />
       <div className="flex flex-row px-2 sm:px-5 lg:px-24">
         <div className="flex flex-col max-w-full min-h-screen">
           {lists?.length > 0 && (
