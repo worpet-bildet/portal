@@ -27,6 +27,7 @@ export function ItemModal({
 
   const groupInviteObject = useGang(path);
   const { join } = useGroupJoin(path, groupInviteObject, true);
+  const getColor = () => data?.bespoke?.payload?.color?.split(".").join("").substring(2);
 
   const handleAction = evt => {
     if (type === "group" && path?.length) {
@@ -109,6 +110,8 @@ export function ItemModal({
                           src={image || title}
                           type={type}
                           container={imageContainerRef}
+                          name={title}
+                          color={getColor()}
                         ></ItemImage>
                       </div>
                       <div className="w-2/3 sm:mt-0 sm:ml-4 text-left px-2">

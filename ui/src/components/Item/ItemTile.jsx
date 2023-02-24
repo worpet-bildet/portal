@@ -52,6 +52,7 @@ export function ItemTile(props) {
     data?.icon?.src ||
     data?.bespoke?.payload?.docket?.image ||
     data?.bespoke?.payload?.image;
+  const getColor = () => data?.bespoke?.payload?.color?.split(".").join("").substring(2);
   return data ? (
     <li className="flex space-x-3 text-sm leading-tight">
       {/* TODO: Think about wrapping this modal so there is no need for inline style here */}
@@ -112,6 +113,8 @@ export function ItemTile(props) {
                   patp={getItemType() === "ship" ? shortTitle : null}
                   container={imageContainerRef}
                   type={getItemType()}
+                  name={shortTitle}
+                  color={getColor()}
                   onError={setImageError}
                 />
               ) : null}
