@@ -1,3 +1,5 @@
+import { portalEvents } from "./faces";
+
 export const getTypesByKey = _key => _key.slice().split("/").slice(2, -1);
 export const getBespokeKeys = bespoke => {
   const { keyObj, keyStr } = bespoke;
@@ -72,3 +74,10 @@ export const getListAtType = (_draft, _type) => _draft.types[_type[_type.length 
 
 // |nuke %portal, =desk &
 // |rein %portal [& %portal-manager]
+
+export const getFactSuccessMsg = factFace => {
+  const [subject, action] = factFace?.slice().split("_") || ["", ""];
+  // debugger;
+  // TODO: fix conditional
+  return factFace === factFace ? "" : portalEvents[subject][action].SUCCESS_MSG;
+};

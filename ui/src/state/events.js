@@ -1,3 +1,6 @@
+import { toast } from "react-toastify";
+import { getFactSuccessMsg } from "./util";
+
 export const handleEventActions = (
   evt,
   factActions = {},
@@ -13,6 +16,13 @@ export const handleEvent =
     // debugger;
     console.log("====================================");
     console.log("evt.face: ", evt.face);
+
+    // TODO: Handle errors, success, other events, etc. properly with toasts
+    const successMessage = getFactSuccessMsg(evt?.face);
+    const _toast = successMessage?.length ? successMessage : action;
+
+    toast.success(_toast);
+
     if (evt.face === "put/validity-store") {
       return;
     }
