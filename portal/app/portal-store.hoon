@@ -230,7 +230,7 @@
       [%x %in-default-list *]
     =/  key  (path-to-key:conv t.t.path)
     =/  list
-      ?:  =(-.type.key list)
+      ?:  =(-.type.key %list)
         (~(got by all-items) [our.bowl /list/list '~2000.1.1'])
       (~(got by all-items) [our.bowl [%list type.key] '~2000.1.1'])
     ``noun+!>((key-in-list-item:loob key list))

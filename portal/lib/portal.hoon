@@ -508,11 +508,13 @@
       all-items
     ::
     ++  add-to-default-list
-      |=  [=all-items our=ship now=time act=[%add-to-default-list key=[=ship type=$%([%enditem type] [%nonitem type]) =cord]]]
+      |=  [=all-items our=ship now=time act=[%add-to-default-list key=[=ship type=?([%list %app ~] [%list %enditem %other ~] [%list %nonitem %group ~] [%list %nonitem %ship ~] [%enditem %other ~] [%enditem %app ~]) =cord]]]
       ^-  [(list card) ^all-items]
       =/  list-key
         ?:  |(=(type.key.act [%enditem %app ~]) =(type.key.act [%nonitem %app ~]))
           [our [%list %app ~] '~2000.1.1']
+        ?:  =(-.type.key.act %list)
+          [our [%list %list ~] '~2000.1.1']
         [our [%list type.key.act] '~2000.1.1']
       =/  list  (~(got by all-items) list-key)
       ?+    -.bespoke.data.list    [~ all-items]
@@ -538,9 +540,11 @@
           :_  'Auto-recommended'
           ?+    type.key.act    !!
               [%enditem %app ~]
-            key.act
-              [%nonitem %app ~]
-            key.act
+            ::key.act(type [%enditem %app ~])
+            [ship.key.act [%enditem %app ~] cord.key.act]
+            ::   [%nonitem %app ~]
+            :: ::key.act(type [%nonitem %app ~])
+            :: [ship.key.act [%nonitem %app ~] cord.key.act]
           ==
         =/  act  [%edit list-key general.data.list bespoke-input]
         (edit all-items our our now act)
@@ -554,6 +558,14 @@
         =/  bespoke-input  [%list-nonitem-ship (snoc ship-key-list.bespoke.data.list [[ship.key.act [%nonitem %ship ~] cord.key.act] 'Auto-recommended'])]
         =/  act  [%edit list-key general.data.list bespoke-input]
         (edit all-items our our now act)
+        ::
+          %list-list
+        ?+    -.type.key.act    !!
+            %list
+          =/  bespoke-input  [%list-list (snoc list-key-list.bespoke.data.list [key.act 'Auto-recommended'])]
+          =/  act  [%edit list-key general.data.list bespoke-input]
+          (edit all-items our our now act)
+        ==
       ==
     ::
     ++  overwrite-list
@@ -919,9 +931,24 @@
       %+  weld
         ?+    -.type.key.upd    ~
             %list
-          %+  weld
-          (sub-to-list-keys our now item.upd)
-          (get-list-nonitems our now item.upd)
+          %-  zing
+          :~  (sub-to-list-keys our now item.upd)
+              (get-list-nonitems our now item.upd)
+              ?+    type.key.upd    ~
+                  [%list %app ~]
+                ?:  (in-default-list:scry our now key.upd)  ~
+                ~[(act-to-act-card:cards [%add-to-default-list key.upd] our %portal-store)]
+                  [%list %nonitem %group ~]
+                ?:  (in-default-list:scry our now key.upd)  ~
+                ~[(act-to-act-card:cards [%add-to-default-list key.upd] our %portal-store)]
+                  [%list %enditem %other ~]
+                ?:  (in-default-list:scry our now key.upd)  ~
+                ~[(act-to-act-card:cards [%add-to-default-list key.upd] our %portal-store)]
+                  [%list %nonitem %ship ~]
+                ?:  (in-default-list:scry our now key.upd)  ~
+                ~[(act-to-act-card:cards [%add-to-default-list key.upd] our %portal-store)]
+              ==
+          ==
         ==
       =/  val  (default-v1:validator our now key.upd item.upd)
       ?~  val  ~
