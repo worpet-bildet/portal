@@ -2,6 +2,7 @@ import React from "react";
 import { Fragment, useRef, useState, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ItemImage } from "./ItemImage";
+import { useStore, setAlertIsOpen } from "../../state/store";
 
 export function ItemModal({
   title,
@@ -15,7 +16,7 @@ export function ItemModal({
   onRequestClose,
 }) {
   const [open, setOpen] = useState(true);
-  const [alertIsOpen, setAlertIsOpen] = useState(false);
+  const _setAlertIsOpen = useStore(setAlertIsOpen);
   const cancelButtonRef = useRef();
   const imageContainerRef = useRef();
 
@@ -112,7 +113,7 @@ export function ItemModal({
                     className="inline-flex w-1/3 justify-center rounded-md bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-800 sm:ml-3 sm:w-auto sm:text-sm absolute sm:bottom-4 sm:right-4 bottom-2 right-2"
                     onClick={() => {
                       onRequestClose();
-                      setAlertIsOpen(true);
+                      _setAlertIsOpen(true);
                     }}
                   >
                     {type === "app" ? "Install" : "Join"}

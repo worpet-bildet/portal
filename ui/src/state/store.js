@@ -25,6 +25,8 @@ export const getShips = state => state.types.ship;
 export const getCurator = state => state.curators;
 export const getTypes = state => state.types;
 export const getSelectedSection = state => state.selectedSection;
+export const getAlertIsOpen = state => state.alertIsOpen;
+export const setAlertIsOpen = state => state.setAlertIsOpen;
 export const useStore = createStore((set, get) => ({
   // ...initialState,
   // apps: [],
@@ -34,6 +36,7 @@ export const useStore = createStore((set, get) => ({
   curators: {},
   defaultCurators: {},
   types: { app: [], group: [], list: [], other: [], ship: [] },
+  alertIsOpen: false,
   onInitialLoad: initialState => {
     get().setInitialState(initialState);
     get().indexAll(initialState);
@@ -119,6 +122,12 @@ export const useStore = createStore((set, get) => ({
     set(
       produce(draft => {
         draft.selectedSection = section;
+      })
+    ),
+  setAlertIsOpen: isOpen =>
+    set(
+      produce(draft => {
+        draft.alertIsOpen = isOpen;
       })
     ),
 }));

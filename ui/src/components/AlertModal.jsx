@@ -1,11 +1,15 @@
 import React from "react";
 import { Fragment, useRef, useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/20/solid";
+import { useStore, getAlertIsOpen } from "../state/store";
 
 export function AlertModal({ onRequestClose }) {
-  const [alertIsOpen, setAlertIsOpen] = useState(false);
   const cancelButtonRef = useRef();
   const imageContainerRef = useRef();
+
+  const alertIsOpen = useStore(getAlertIsOpen);
+
+  if (!alertIsOpen) return <></>;
 
   return (
     <div className="relative sticky top-100 isolate flex items-center gap-x-6 overflow-hidden bg-gray-50 py-2.5 px-5 sm:px-3.5 sm:before:flex-1">
@@ -48,7 +52,11 @@ export function AlertModal({ onRequestClose }) {
         </p>
       </div>
       <div className="flex flex-1 justify-end">
-        <button type="button" className="-m-3 p-3 focus-visible:outline-offset-[-4px]">
+        <button
+          type="button"
+          className="-m-3 p-3 focus-visible:outline-offset-[-4px]"
+          onClick={onRequestClose}
+        >
           <span className="sr-only">Dismiss</span>
           <XMarkIcon className="h-5 w-5 text-gray-900" aria-hidden="true" />
         </button>

@@ -1,7 +1,14 @@
 import React, { Fragment, useMemo, useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import ResponsiveAppBar from "../../components/AppBar";
-import { getApps, useStore, getTypes, getLists, getShips } from "../../state/store";
+import {
+  getApps,
+  useStore,
+  getTypes,
+  getLists,
+  getShips,
+  setAlertIsOpen,
+} from "../../state/store";
 import { SliderList } from "../../components/List/SliderList";
 import { ItemImage } from "../../components/Item/ItemImage";
 import { usePortal } from "../../state/usePortal";
@@ -14,6 +21,7 @@ export function User(props) {
   const types = useStore(getTypes);
   const lists = useStore(getLists);
   const shipList = useStore(getShips);
+  const _setAlertIsOpen = useStore(setAlertIsOpen);
   const { patp } = useParams();
   const [listTitle, setListTitle] = useState(null);
   const [listDescription, setListDescription] = useState(null);
@@ -86,7 +94,7 @@ export function User(props) {
   return (
     <Fragment>
       <ResponsiveAppBar />
-      <AlertModal onRequestClose={() => setAlertIsOpen(false)} />
+      <AlertModal onRequestClose={() => _setAlertIsOpen(false)} />
       <div className="flex flex-row px-2 sm:px-5 lg:px-24">
         <div className="flex flex-col max-w-full min-h-screen">
           {lists?.length > 0 && (
