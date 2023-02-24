@@ -934,6 +934,7 @@
           %-  zing
           :~  (sub-to-list-keys our now item.upd)
               (get-list-nonitems our now item.upd)
+              ?.  =(our ship.key.upd)  ~
               ?+    type.key.upd    ~
                   [%list %app ~]
                 ?:  (in-default-list:scry our now key.upd)  ~

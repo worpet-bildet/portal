@@ -104,7 +104,7 @@
       ::  not sub -> not perfectly updated, either too much or too little
       =/  path  /groups/(scot %p ship.flag.act)/[term.flag.act]/preview
       :_  this
-      [%pass /get-group-preview %agent [ship.flag.act %groups] %watch path]~
+      [%pass [%get-group-preview /(scot %p ship.flag.act)/[term.flag.act]] %agent [ship.flag.act %groups] %watch path]~
       ::
         %get-docket
       =/  path  /treaty/(scot %p ship.act)/[desk.act]
@@ -163,7 +163,7 @@
         ~[(fill-nonitem-app-data:portal-manager [our.bowl [%fill-nonitem-app key treaty]])]
       ==
     ==
-      [%get-group-preview ~]
+      [%get-group-preview *]
     ?+    -.sign    (on-agent:default wire sign)
         %watch-ack  `this
         %kick       `this
@@ -178,7 +178,9 @@
           image.meta.preview
         ==
       :_  this
-      ~[(fill-group-data:portal-manager [our.bowl act])]
+      :~  (fill-group-data:portal-manager [our.bowl act])
+          [%pass wire %agent [p.flag.preview %groups] %leave ~]
+      ==
     ==
   ==
 ::
