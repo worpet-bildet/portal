@@ -1,6 +1,8 @@
 import React from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import "font-awesome/css/font-awesome.min.css";
+import { MotionConfig } from "framer-motion";
+import { ToastContainer } from "react-toastify";
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import { usePortalSubscription } from "./state/usePortal";
@@ -30,8 +32,10 @@ export function App() {
     <React.Fragment>
       <ThemeProvider theme={theme}>
         <div className="page-container text-offwhite">
-          <RouterProvider router={router} />
-          {/* <ToastContainer
+          <MotionConfig transition={{ duration: 1, reducedMotion: "user" }}>
+            <ToastContainer />
+            <RouterProvider router={router} />
+            {/* <ToastContainer
           position="bottom-right"
           autoClose={false}
           newestOnTop={false}
@@ -41,6 +45,7 @@ export function App() {
           draggable
           theme="colored"
         /> */}
+          </MotionConfig>
         </div>
       </ThemeProvider>
     </React.Fragment>
