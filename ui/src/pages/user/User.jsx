@@ -91,16 +91,16 @@ export function User(props) {
         <div className="flex flex-col max-w-full min-h-screen">
           {lists?.length > 0 && (
             <main className="basis-3/4 h-full px-2">
-              <div className="pt-4 sm:pt-10 h-56">
-                <div className="flex flex-row items-center">
-                  <div className="hidden sm:flex w-44 h-44" ref={imageContainerRef}>
+              <div className="pt-4 sm:pt-10 h-auto md:h-56">
+                <div className="flex flex-col md:flex-row items-center">
+                  <div className="w-44 h-44" ref={imageContainerRef}>
                     <ItemImage
                       src={listImageSrc}
                       patp={patp}
                       container={imageContainerRef}
                     ></ItemImage>
                   </div>
-                  <div className="sm:w-3/4 sm:px-10">
+                  <div className="sm:w-3/4 sm:px-10 py-5 md:py-0">
                     <div className="font-bold text-2xl">{listTitle}</div>
                     <div className="pt-2 text-sm sm:text-lg text-gray-400">
                       {listDescription}
@@ -108,7 +108,7 @@ export function User(props) {
                   </div>
                 </div>
               </div>
-              <div className="space-y-4 py-8 sm:space-y-10 sm:py-14">
+              <div className="space-y-4 sm:space-y-10 sm:py-14 pt-5">
                 {appLists ? <div>{listsByType}</div> : null}
               </div>
             </main>

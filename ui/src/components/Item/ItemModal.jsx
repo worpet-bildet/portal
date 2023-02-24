@@ -75,8 +75,7 @@ export function ItemModal({
                 </button>
                 <div className="bg-black text-offwhite px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start sm:pb-5">
-                    <div className="w-full flex flex-row justify-start pt-4 align-middle">
-                      {/* TODO: make align-middle actually put image vertically centered between title + path  */}
+                    <div className="w-full flex flex-row justify-start pt-4 items-center">
                       <div
                         className="w-1/4 h-1/4 rounded-lg overflow-hidden"
                         ref={imageContainerRef}
