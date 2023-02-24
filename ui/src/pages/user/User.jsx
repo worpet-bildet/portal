@@ -12,32 +12,24 @@ import {
 import { SliderList } from "../../components/List/SliderList";
 import { ItemImage } from "../../components/Item/ItemImage";
 import { usePortal } from "../../state/usePortal";
-import { createPoke } from "../../urbit/pokes";
-import { portalEvents } from "../../state/faces";
 import { AlertModal } from "../../components/AlertModal";
-import { useGroupList } from "../../lib/state/groups/groups";
 
 export function User(props) {
   const { urbit, actions } = usePortal();
-  const groupList = useGroupList();
   const appLists = useStore(getApps);
   const types = useStore(getTypes);
   const lists = useStore(getLists);
-  const shipList = useStore(getShips);
   const _setAlertIsOpen = useStore(setAlertIsOpen);
   const { patp } = useParams();
   const [listTitle, setListTitle] = useState(null);
   const [listDescription, setListDescription] = useState(null);
   const [listImageSrc, setListImageSrc] = useState(null);
 
-  console.log({ groupList });
-
   useEffect(() => {
     let l = lists.find(l => l?.keys?.keyObj?.ship === patp);
     setListTitle(l?.general?.title || patp);
-    setListDescription(
-      l?.general?.description || `${patp} hasn't recommended anything yet`
-    );
+    setListDescription(l?.general?.description);
+    if (!l) setListDescription(`${patp} hasn't recommended anything yet`);
     setListImageSrc(l?.general?.image);
     // subscribe to all the planets in the list of ships
     types.ship

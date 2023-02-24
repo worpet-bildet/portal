@@ -82,7 +82,6 @@ export const buildPoke = (type, data) => ({
 });
 
 export const structurePokeData = (fields, data) => {
-  console.log({ fields, data });
   // debugger;
   return reduce(
     fields,
