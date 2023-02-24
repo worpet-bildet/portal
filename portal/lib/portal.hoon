@@ -61,6 +61,22 @@
     ^-  key-list
     (turn key-text-list |=([cel=[=key text=cord]] (head cel)))
   ::
+  ++  all-items-to-nested-one-cur
+    |=  [cur-key=key =all-items]
+    ^-  nested-all-items
+    =/  key-set  ~(key by all-items)
+    =/  list-key-list  ~[cur-key]
+    ::
+    ::  (map list-list-key list-list-item)
+    =/  list-list-map  (malt (turn list-key-list |=(=key [key (~(got by all-items) key)])))
+    ::
+    ::  (map list-list-key [list-list-item (map list-pointer list-item)])
+    =/  list-list-list-map  (~(run by list-list-map) |=(=item (list-list-item-to-map all-items item)))
+    ::
+    ::  (map list-list-key [list-list-item (map list-pointer [lis-item (map end-key end-item)])])
+    (~(run by list-list-list-map) |=(val=[=item (map key item)] (inner-maps-transform all-items val)))
+
+  ::
   ::  find all lists of lists
   ::  for each, create a map with lists
   ::  for each list, create a map with end items

@@ -216,6 +216,11 @@
     =/  key  (path-to-key:conv t.t.t.path)
     ``noun+!>((~(has by all-items) key))
     ::
+      [%x %item %nested *]
+    =/  key  (path-to-key:conv t.t.t.path)
+    ?.  =([%list %list ~] type.key)  ``noun+!>(~)
+    ``portal-nested-all-items+!>((all-items-to-nested-one-cur:conv key all-items))
+    ::
       [%x %item *]
     =/  key  (path-to-key:conv t.t.path)
     =/  maybe-item  (~(gut by all-items) key ~)
