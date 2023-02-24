@@ -1,18 +1,19 @@
 import React from "react";
 import { Fragment, useRef, useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/20/solid";
-import { useStore, getAlertIsOpen } from "../state/store";
+import { useStore, getAlertIsOpen, getAlertText } from "../state/store";
 
 export function AlertModal({ onRequestClose }) {
   const cancelButtonRef = useRef();
   const imageContainerRef = useRef();
 
   const alertIsOpen = useStore(getAlertIsOpen);
+  const alertText = useStore(getAlertText);
 
   if (!alertIsOpen) return <></>;
 
   return (
-    <div className="relative sticky top-100 isolate flex items-center gap-x-6 overflow-hidden bg-gray-50 py-2.5 px-5 sm:px-3.5 sm:before:flex-1">
+    <div className="fixed w-full z-20 top-100 isolate flex items-center gap-x-6 overflow-hidden bg-gray-50 py-2.5 px-5 sm:px-3.5 sm:before:flex-1">
       <svg
         viewBox="0 0 577 310"
         aria-hidden="true"
@@ -47,7 +48,8 @@ export function AlertModal({ onRequestClose }) {
       </svg>
       <div className="flex flex-wrap items-center gap-y-2 gap-x-4">
         <p className="text-xs sm:text-sm leading-6 text-gray-900">
-          We sent a join request to this group. <br class="sm:hidden"></br> Open the
+          {/* TODO: Make this dynamic for a little more feebdack */}
+          We sent a join request to this group. <br className="sm:hidden"></br> Open the
           Groups app to dive in.
         </p>
       </div>

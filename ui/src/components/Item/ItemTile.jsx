@@ -80,6 +80,7 @@ export function ItemTile(props) {
             image={getImage()}
             type={getItemType()}
             onRequestClose={() => setModalIsOpen(false)}
+            data={data}
           ></ItemModal>
         </Modal>
       )}

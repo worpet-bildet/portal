@@ -46,6 +46,9 @@ export const useUrbit = () => {
       const urbit = getUrbitApi(config.desk);
       setUrbit(urbit);
       setShip(urbit.ship);
+      window.ship = urbit.ship;
+      window.our = urbit.ship;
+      window.desk = config.desk;
     }
   }, [ship]);
   return [ship, urbit];

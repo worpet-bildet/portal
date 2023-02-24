@@ -2,7 +2,9 @@ import React from "react";
 import { Fragment, useRef, useState, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ItemImage } from "./ItemImage";
-import { useStore, setAlertIsOpen } from "../../state/store";
+import { useStore, setAlertIsOpen, setAlertText } from "../../state/store";
+import { useGang } from "../../lib/state/groups/groups";
+import useGroupJoin from "../../lib/useGroupJoin";
 
 export function ItemModal({
   title,
@@ -13,18 +15,40 @@ export function ItemModal({
   pictures,
   tags,
   type,
+  data,
   onRequestClose,
 }) {
+  // console.log("ItemModal", { title, path, image, description, pictures, tags, type });
   const [open, setOpen] = useState(true);
   const _setAlertIsOpen = useStore(setAlertIsOpen);
+  const _setAlertText = useStore(setAlertText);
   const cancelButtonRef = useRef();
   const imageContainerRef = useRef();
+
+  const groupInviteObject = useGang(path);
+  const { join } = useGroupJoin(path, groupInviteObject, true);
+
+  const handleAction = evt => {
+    if (type === "group" && path?.length) {
+      join();
+    }
+    // open a new tab in grid with the install page
+    if (type === "app") {
+      const {
+        bespoke: {
+          keyObj: { ship, cord },
+        },
+      } = data;
+      const uri = `/apps/grid/leap/search/${ship}/apps/${ship}/${cord}`;
+      window.open(uri);
+    }
+  };
 
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog
         as="div"
-        className="relative z-10"
+        className="relative z-30"
         initialFocus={cancelButtonRef}
         onClose={onRequestClose}
       >
@@ -40,7 +64,7 @@ export function ItemModal({
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
         </Transition.Child>
 
-        <div className="fixed inset-0 z-10 overflow-y-auto">
+        <div className="fixed inset-0 z-30 overflow-y-auto">
           <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <Transition.Child
               as={Fragment}
@@ -112,8 +136,9 @@ export function ItemModal({
                     type="button"
                     className="inline-flex w-1/3 justify-center rounded-md bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-800 sm:ml-3 sm:w-auto sm:text-sm absolute sm:bottom-4 sm:right-4 bottom-2 right-2"
                     onClick={() => {
-                      onRequestClose();
                       _setAlertIsOpen(true);
+                      handleAction();
+                      onRequestClose();
                     }}
                   >
                     {type === "app" ? "Install" : "Join"}

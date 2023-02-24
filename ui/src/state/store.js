@@ -27,6 +27,8 @@ export const getTypes = state => state.types;
 export const getSelectedSection = state => state.selectedSection;
 export const getAlertIsOpen = state => state.alertIsOpen;
 export const setAlertIsOpen = state => state.setAlertIsOpen;
+export const getAlertText = state => state.alertText;
+export const setAlertText = state => state.setAlertText;
 export const useStore = createStore((set, get) => ({
   // ...initialState,
   // apps: [],
@@ -37,6 +39,7 @@ export const useStore = createStore((set, get) => ({
   defaultCurators: {},
   types: { app: [], group: [], list: [], other: [], ship: [] },
   alertIsOpen: false,
+  alertText: "",
   onInitialLoad: initialState => {
     get().setInitialState(initialState);
     get().indexAll(initialState);
@@ -128,6 +131,12 @@ export const useStore = createStore((set, get) => ({
     set(
       produce(draft => {
         draft.alertIsOpen = isOpen;
+      })
+    ),
+  setAlertText: text =>
+    set(
+      produce(draft => {
+        draft.alertText = text;
       })
     ),
 }));

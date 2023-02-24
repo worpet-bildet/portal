@@ -12,7 +12,7 @@ function buildNav(curators) {
   return [
     {
       name: "Home",
-      href: `/apps/portal/${curators[0] ? curators[0][1].item.keyObj.ship : ""}`,
+      href: `/apps/portal/${curators[0] ? curators[0][1].item.keys.keyObj.ship : ""}`,
       highlightOnSelect: true,
       section: "all",
     },
@@ -33,7 +33,7 @@ function classNames(...classes) {
 
 export default function AppBar() {
   const curators = useStore(getDefaultCurators);
-  const navigation = buildNav(curators);
+  const navigation = buildNav(Object.entries(curators));
   const setSelectedSection = useStore(state => state.setSelectedSection);
   const selectedSection = useStore(getSelectedSection);
   const sectionToggled = ({ section, highlightOnSelect }) => {
