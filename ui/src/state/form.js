@@ -2,6 +2,11 @@ import produce from "immer";
 import { initialFormData } from "./state";
 import { createFormStore } from "./middleware";
 
+export const getToastActions = state => ({
+  add: state.addToast,
+});
+// const toastActions = useForm(getToastActions);
+
 export const useForm = createFormStore((set, get) => ({
   formAction: "ITEM_ADD",
   formData: initialFormData,
@@ -71,3 +76,16 @@ export const toastTypes = {
   WARNING: "WARNING",
   INFO: "INFO",
 };
+
+export function useToastControls() {
+  const controls = useForm(
+    state => ({
+      add: state.addToast,
+      remove: state.removeToast,
+      reset: state.resetToasts,
+    }),
+    shallow
+  );
+
+  return controls;
+}
