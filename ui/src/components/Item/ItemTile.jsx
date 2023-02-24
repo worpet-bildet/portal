@@ -116,7 +116,7 @@ export function ItemTile(props) {
                 />
               ) : null}
             </div>
-            <div className="flex flex-col w-40 space-y-3">
+            <div className="flex flex-col w-40 space-y-2">
               <div className="text-base mt-2 font-bold">{shortTitle}</div>
               <div className="text-xs line-clamp-3 text-gray-400 text-ellipsis">
                 {description}

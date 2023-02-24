@@ -115,6 +115,9 @@ export function User(props) {
                   </div>
                   <div className="sm:w-3/4 sm:px-10 py-5 md:py-0">
                     <div className="font-bold text-2xl">{listTitle}</div>
+                    <div className="text-sm">
+                      list by <span className="font-bold text-blue-600">{patp}</span>
+                    </div>
                     <div className="pt-2 text-sm sm:text-lg text-gray-400">
                       {listDescription}
                     </div>

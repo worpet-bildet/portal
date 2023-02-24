@@ -62,10 +62,11 @@ export const indexPages = (pages, types = {}) => {
 };
 
 export const getBP = _item => _item.data.bespoke.payload;
-export const getListFromDCMap = (_draft, _ship, _res) =>
-  _draft.defaultCurators[_ship][0].map[0].find(
+export const getListFromDCMap = (_draft, _ship, _res) => {
+  return _draft.defaultCurators[_ship][0].map[0].find(
     el => el.general.title === _res.data.general.title
   );
+};
 export const getListAtDCType = (_draft, _ship, _type) =>
   _draft.defaultCurators[_ship][0].map[0].find(
     el => el.keys.keyTypes[el.keys.keyTypes.length - 1] === _type[_type.length - 1]

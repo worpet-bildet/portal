@@ -118,7 +118,7 @@ export function ItemModal({
                         <div>
                           <a
                             href={website}
-                            className="text-xs text-blue-600 hover:text-blue-800"
+                            className="text-xs font-bold text-blue-600 hover:text-blue-800"
                           >
                             {path}
                           </a>
@@ -136,7 +136,9 @@ export function ItemModal({
                     type="button"
                     className="inline-flex w-1/3 justify-center rounded-md bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-800 sm:ml-3 sm:w-auto sm:text-sm absolute sm:bottom-4 sm:right-4 bottom-2 right-2"
                     onClick={() => {
-                      _setAlertIsOpen(true);
+                      if (type === "group") {
+                        _setAlertIsOpen(true);
+                      }
                       handleAction();
                       onRequestClose();
                     }}

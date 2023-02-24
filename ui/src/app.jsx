@@ -33,7 +33,7 @@ export function App() {
       <ThemeProvider theme={theme}>
         <div className="page-container text-offwhite">
           <MotionConfig transition={{ duration: 1, reducedMotion: "user" }}>
-            <ToastContainer />
+            {/* <ToastContainer /> */}
             <RouterProvider router={router} />
             {/* <ToastContainer
           position="bottom-right"
