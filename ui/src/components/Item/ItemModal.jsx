@@ -2,6 +2,8 @@ import React from "react";
 import { Fragment, useRef, useState, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ItemImage } from "./ItemImage";
+import { useGang } from "../../lib/state/groups/groups";
+import useGroupJoin from "../../lib/useGroupJoin";
 
 export function ItemModal({
   title,
@@ -14,10 +16,23 @@ export function ItemModal({
   type,
   onRequestClose,
 }) {
+  // console.log("ItemModal", { title, path, image, description, pictures, tags, type });
   const [open, setOpen] = useState(true);
   const [alertIsOpen, setAlertIsOpen] = useState(false);
   const cancelButtonRef = useRef();
   const imageContainerRef = useRef();
+
+  const groupInviteObject = useGang(path);
+  const { join } = useGroupJoin(path, groupInviteObject, true);
+
+  const handleAction = evt => {
+    evt.preventDefault();
+    if (type === "group" && path?.length) {
+      join();
+    } else {
+      onRequestClose(evt);
+    }
+  };
 
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -110,10 +125,7 @@ export function ItemModal({
                   <button
                     type="button"
                     className="inline-flex w-1/3 justify-center rounded-md bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-800 sm:ml-3 sm:w-auto sm:text-sm absolute sm:bottom-4 sm:right-4 bottom-2 right-2"
-                    onClick={() => {
-                      onRequestClose();
-                      setAlertIsOpen(true);
-                    }}
+                    onClick={handleAction}
                   >
                     {type === "app" ? "Install" : "Join"}
                   </button>

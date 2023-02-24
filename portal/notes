@@ -13,7 +13,6 @@ TO SEED DATA ON THE LIVE NETWORK USE THE FOLLOWING COMMANDS
 =data -build-file /=portal=/sur/portal/data/hoon
 =lib -build-file /=portal=/lib/portal/hoon
 
-:portal-manager  &portal-action  :-  %edit
 :portal-manager &portal-action :-  %edit  :+  [our [%list %list ~] '~2000.1.1']
 :*
 'I cannot believe this worked'

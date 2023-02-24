@@ -1,9 +1,10 @@
+import React from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import "font-awesome/css/font-awesome.min.css";
-import React from "react";
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import { usePortalSubscription } from "./state/usePortal";
+import { useLandscapeSubscription } from "./state/useLandscape";
 import "./index.css";
 import { User } from "./pages/user/User";
 
@@ -22,6 +23,8 @@ const router = createBrowserRouter([
 
 export function App() {
   usePortalSubscription();
+  useLandscapeSubscription();
+
   return (
     <React.Fragment>
       <ThemeProvider theme={theme}>
