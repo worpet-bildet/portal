@@ -10,6 +10,7 @@
     "copy-desk-zod": "rsync -a --delete ../portal/ ../../ships/zod/portal/",
     "copy-desk-nec": "rsync -a --delete ../portal/ ../../ships/nec/portal/",
     "copy-desk-brady": "rsync -a --delete ../portal/ ../../../mycomet/portal/",
+    "copy-desk-pw": "rsync -a --delete ../portal/ ../../ships/portal-wolred/portal/",
     "copy-dist": "cp -r ../portal/* ../../ships/zod/portal",
     "prettier": "prettier --write src/**/*.{js,jsx,css}"
   },
@@ -25,7 +26,11 @@
     "@tailwindcss/line-clamp": "^0.4.2",
     "@tlon/sigil-js": "^1.4.5",
     "@urbit/api": "^2.2.0",
+    "@urbit/aura": "^0.6.0",
     "@urbit/http-api": "^2.3.0",
+    "any-ascii": "^0.3.1",
+    "color2k": "^2.0.2",
+    "date-fns": "^2.29.3",
     "flowbite": "^1.5.3",
     "flowbite-react": "^0.3.3",
     "font-awesome": "^4.7.0",
@@ -34,10 +39,12 @@
     "ramda": "^0.28.0",
     "react": "^18.0.0",
     "react-dom": "^18.2.0",
+    "react-error-boundary": "^3.1.4",
     "react-horizontal-scrolling-menu": "^3.2.5",
     "react-modal": "^3.16.1",
     "react-router-dom": "^6.4.3",
     "react-toastify": "^9.1.1",
+    "urbit-ob": "^5.0.1",
     "zustand": "^4.3.2"
   },
   "devDependencies": {

@@ -8,8 +8,11 @@ import { usePortal } from "../../state/usePortal";
 import { createPoke } from "../../urbit/pokes";
 import { portalEvents } from "../../state/faces";
 import { AlertModal } from "../../components/AlertModal";
+import { useGroupList } from "../../lib/state/groups/groups";
 
 export function User(props) {
+  const { urbit, actions } = usePortal();
+  const groupList = useGroupList();
   const appLists = useStore(getApps);
   const types = useStore(getTypes);
   const lists = useStore(getLists);
@@ -18,7 +21,8 @@ export function User(props) {
   const [listTitle, setListTitle] = useState(null);
   const [listDescription, setListDescription] = useState(null);
   const [listImageSrc, setListImageSrc] = useState(null);
-  const { urbit, actions } = usePortal();
+
+  console.log({ groupList });
   useEffect(() => {
     let l = lists.find(l => l?.keys?.keyObj?.ship === patp);
     setListTitle(l?.general?.title || patp);
