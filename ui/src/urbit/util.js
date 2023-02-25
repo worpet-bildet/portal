@@ -23,7 +23,7 @@ export const mapInputField = (input, _parent = null) => {
     return formField("text", "text", "text", parent);
   }
   if (input === "comment") {
-    debugger;
+    // debugger;
     return !appConfig.EXPAND_ALL_POKE_FIELDS
       ? formField("comment", "comment", "object", parent)
       : ["key", "text"].map(el => mapInputField(el, "comment"));

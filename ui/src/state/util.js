@@ -1,3 +1,4 @@
+import unionBy from "lodash/unionBy";
 import { portalEvents } from "./faces";
 
 export const getTypesByKey = _key => _key.slice().split("/").slice(2, -1);
@@ -63,14 +64,19 @@ export const indexPages = (pages, types = {}) => {
 
 export const getBP = _item => _item.data.bespoke.payload;
 export const getListFromDCMap = (_draft, _ship, _res) => {
+  _draft.defaultCurators[_ship] = _draft.defaultCurators[_ship] || [{ map: [] }];
   return _draft.defaultCurators[_ship][0].map[0].find(
     el => el.general.title === _res.data.general.title
   );
 };
-export const getListAtDCType = (_draft, _ship, _type) =>
-  _draft.defaultCurators[_ship][0].map[0].find(
-    el => el.keys.keyTypes[el.keys.keyTypes.length - 1] === _type[_type.length - 1]
-  );
+export const getListAtDCType = (_draft, _ship, _type, item = {}) => {
+  _draft.defaultCurators[_ship] = _draft.defaultCurators[_ship] || [{ map: [] }];
+  return _draft.defaultCurators[_ship][0].map?.length
+    ? _draft.defaultCurators[_ship][0].map[0].find(
+        el => el.keys.keyTypes[el.keys.keyTypes.length - 1] === _type[_type.length - 1]
+      )
+    : "";
+};
 export const getListAtType = (_draft, _type) => _draft.types[_type[_type.length - 1]];
 
 // |nuke %portal, =desk &
@@ -81,4 +87,11 @@ export const getFactSuccessMsg = factFace => {
   // debugger;
   // TODO: fix conditional
   return factFace === factFace ? "" : portalEvents[subject][action].SUCCESS_MSG;
+};
+
+export const isNewSub = _update =>
+  _update.evt.keyObj.type === "/list/list" && _update.evt.keyObj.cord === "~2000.1.1";
+
+export const mergeTypesTransform = _get => (result, value, key) => {
+  result[key] = unionBy(_get().types[key], value, "keys.keyStr");
 };

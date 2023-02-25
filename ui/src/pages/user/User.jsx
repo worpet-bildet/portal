@@ -1,29 +1,71 @@
 import React, { Fragment, useMemo, useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
+import uniqBy from "lodash/uniqBy";
 import ResponsiveAppBar from "../../components/AppBar";
 import {
   getApps,
   useStore,
   getTypes,
   getLists,
-  getShips,
+  // getShips,
   setAlertIsOpen,
+  getDefaultCurators,
 } from "../../state/store";
 import { SliderList } from "../../components/List/SliderList";
 import { ItemImage } from "../../components/Item/ItemImage";
 import { usePortal } from "../../state/usePortal";
 import { AlertModal } from "../../components/AlertModal";
+import unionBy from "lodash/unionBy";
 
 export function User(props) {
   const { urbit, actions } = usePortal();
   const appLists = useStore(getApps);
   const types = useStore(getTypes);
   const lists = useStore(getLists);
+  const defaultCurators = useStore(getDefaultCurators);
   const _setAlertIsOpen = useStore(setAlertIsOpen);
   const { patp } = useParams();
   const [listTitle, setListTitle] = useState(null);
   const [listDescription, setListDescription] = useState(null);
   const [listImageSrc, setListImageSrc] = useState(null);
+
+  const allRecommendedShips = useMemo(
+    () =>
+      types?.ship?.length
+        ? types.ship.reduce((prev, curr, _idx) => {
+            const _ships = Object.values(curr.map).map(s => s.keyObj.ship);
+            return _ships?.length ? unionBy(prev, _ships, s => s) : prev;
+          }, [])
+        : [],
+    [types.ship]
+  );
+
+  const defaultCuratorShips = useMemo(
+    () => (defaultCurators ? Object.keys(defaultCurators) : []),
+    [defaultCurators]
+  );
+  const outstandingShipsToSubscribeTo = useMemo(
+    () =>
+      allRecommendedShips?.length
+        ? allRecommendedShips.filter(ship => !defaultCurators[ship] && ship !== patp)
+        : [],
+    [allRecommendedShips, defaultCuratorShips, patp]
+  );
+
+  useEffect(() => {
+    if (outstandingShipsToSubscribeTo.length) {
+      outstandingShipsToSubscribeTo.forEach(ship => {
+        actions.ITEM.pokes.sub(
+          urbit,
+          actions.ITEM.SUB
+        )({
+          ship,
+          type: "/list/list",
+          cord: "~2000.1.1",
+        });
+      });
+    }
+  }, [outstandingShipsToSubscribeTo]);
 
   useEffect(() => {
     let l = lists.find(l => l?.keys?.keyObj?.ship === patp);
@@ -31,23 +73,8 @@ export function User(props) {
     setListDescription(l?.general?.description);
     if (!l) setListDescription(`${patp} hasn't recommended anything yet`);
     setListImageSrc(l?.general?.image);
-    // subscribe to all the planets in the list of ships
-    types.ship
-      .filter(s => lists.find(l => l.item.keys.keyObj.ship !== s.item.keys.keyObj.ship))
-      .forEach(s => {
-        // subscribe only to the ships that we have not yet subscribed to
-        Object.values(s.map).forEach(sub => {
-          actions.ITEM.pokes.sub(
-            urbit,
-            actions.ITEM.SUB
-          )({
-            ship: sub.keyObj.ship,
-            type: "/list/list",
-            cord: "~2000.1.1",
-          });
-        });
-      });
-  }, [lists, patp, urbit]);
+  }, [lists, patp]);
+
   const filterBySection = ({ type, selectedSection }) => {
     return selectedSection === "all" ? true : type === selectedSection;
   };

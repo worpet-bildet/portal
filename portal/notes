@@ -105,15 +105,6 @@ TO SEED DATA ON THE LIVE NETWORK USE THE FOLLOWING COMMANDS
     [[~bollug-worlus [%nonitem %group ~] 'urbit-index'] 'indexxxxing urbit']
 ==
 
-;; title=@t
-;; link=@t
-;; description=@t
-;; =tags
-;; =properties
-;; =pictures
-;; image=@t
-;; color=@t
-
 :portal-manager|sub [~winpex-widtev-foddur-hodler [%list %list ~] '~2000.1.1']
 
 :portal-manager|overwrite-list :-
@@ -143,6 +134,25 @@ TO SEED DATA ON THE LIVE NETWORK USE THE FOLLOWING COMMANDS
     [[~dilryd-mopreg [%nonitem %ship ~] ''] '3rd portal dude']
     [[~foddur-hodler [%nonitem %ship ~] ''] 'portal dudes never stop']
 ==
+
+;; title=@t
+;; link=@t
+;; description=@t
+;; =tags
+;; =properties
+;; =pictures
+;; image=@t
+;; color=@t
+
+
+// const { ship, type } = ({ keyObj }) => ({
+//   ship: keyObj.ship,
+//   type: keyObj.type.slice().split("/")
+// })(res);
+
+// :portal-manager|del [~winpex-widtev-foddur-hodler [%list %list ~] '~2000.1.1']
+
+// hey dude quick q on pongo - whats the base route for the app /webview? If I I open another tab to grid using the usual URL scheme would that work? or if new tab wouldnt work can I overwrite the location?
 
 NOTE:  you get the format, please add groups/ships/apps into these commands as you please
 

@@ -21,8 +21,6 @@ export const handleEvent =
     const successMessage = getFactSuccessMsg(evt?.face);
     const _toast = successMessage?.length ? successMessage : action;
 
-    toast.success(_toast);
-
     if (evt.face === "put/validity-store") {
       return;
     }
@@ -30,10 +28,11 @@ export const handleEvent =
       return factActions.onInitialLoad(evt);
     }
     if (action === "portal-front-end-update") {
+      toast.success(_toast);
       return factActions.onUpdate({ evt, action, urbit });
     }
     console.log({ factActions, action, evt });
-    debugger;
+    // debugger;
   };
 
 // TODO: async middleware

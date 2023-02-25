@@ -3,7 +3,14 @@ export const getShortTitle = (val, type) => {
     return val?.data?.bespoke?.keyObj.ship;
   }
   if (val?.data?.bespoke?.keyObj.type.includes("group")) {
-    return `${val?.data?.general?.title}`;
+    const generalTitle = val?.data?.general?.title;
+    const groupTitle = val?.keys?.keyObj?.cord || val?.keyObj?.cord;
+    const host = val?.keys?.keyObj?.ship || val?.keyObj?.ship;
+    return generalTitle?.length
+      ? generalTitle
+      : host?.length && groupTitle?.length
+      ? `${host}/${groupTitle}`
+      : "no title found";
   }
   if (val?.data?.bespoke?.keyObj.type.includes("app")) {
     return `${val?.data?.bespoke?.keyObj.cord}`;
