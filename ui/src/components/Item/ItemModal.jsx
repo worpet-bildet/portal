@@ -45,6 +45,12 @@ export function ItemModal({
     }
   };
 
+  function getActionText(type) {
+    if (type === "group") return "Join";
+    if (type === "app") return "Install";
+    if (type === "other") return "Go";
+  }
+
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog
@@ -123,7 +129,7 @@ export function ItemModal({
                             href={website}
                             className="text-xs font-bold text-blue-600 hover:text-blue-800"
                           >
-                            {path}
+                            {type !== "other" ? path : ""}
                           </a>
                         </div>
                       </div>
@@ -142,11 +148,14 @@ export function ItemModal({
                       if (type === "group") {
                         _setAlertIsOpen(true);
                       }
+                      if (type === "other") {
+                        window.open(website);
+                      }
                       handleAction();
                       onRequestClose();
                     }}
                   >
-                    {type === "app" ? "Install" : "Join"}
+                    {getActionText(type)}
                   </button>
                 </div>
               </Dialog.Panel>

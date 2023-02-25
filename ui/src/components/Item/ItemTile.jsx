@@ -25,6 +25,8 @@ export function ItemTile(props) {
   const [isUser, setIsUser] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
+  console.log({ data });
+
   const navigate = useNavigate();
 
   // We use this to ensure the sigil is the correct size, since we need to
@@ -120,7 +122,9 @@ export function ItemTile(props) {
               ) : null}
             </div>
             <div className="flex flex-col w-40 space-y-2">
-              <div className="text-base mt-2 font-bold">{shortTitle}</div>
+              <div className="text-base mt-2 font-bold line-clamp-3 text-ellipsis">
+                {shortTitle}
+              </div>
               <div className="text-xs line-clamp-3 text-gray-400 text-ellipsis">
                 {description}
               </div>

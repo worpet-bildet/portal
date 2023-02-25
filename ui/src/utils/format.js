@@ -15,6 +15,9 @@ export const getShortTitle = (val, type) => {
   if (val?.data?.bespoke?.keyObj.type.includes("app")) {
     return `${val?.data?.bespoke?.keyObj.cord}`;
   }
+  if (type === "other") {
+    return val?.data?.general?.title;
+  }
   if (type === "list") {
     return val?.item?.data?.general?.title;
   }
@@ -29,6 +32,9 @@ export const getLongTitle = (val, type) => {
   }
   if (val?.data?.bespoke?.keyObj.type.includes("app")) {
     return `${val?.data?.bespoke?.keyObj.ship}/${val?.data?.bespoke?.keyObj.cord}`;
+  }
+  if (type === "other") {
+    return val?.data?.general?.title;
   }
   if (type === "list") {
     return val?.item?.data?.general?.title;
@@ -50,6 +56,9 @@ export const getDescription = (val, type) => {
   if (val?.data?.bespoke?.keyObj.type.includes("app")) {
     return val?.data?.bespoke?.payload?.info;
   }
+  if (type === "other") {
+    return val?.data?.general?.description;
+  }
   if (type === "list") {
     return "";
   }
@@ -64,6 +73,9 @@ export const getWebsite = (val, type) => {
   }
   if (val?.data?.bespoke?.keyObj.type.includes("app")) {
     return val?.data?.bespoke?.payload?.website;
+  }
+  if (type === "other") {
+    return val?.data?.general?.link;
   }
   if (type === "list") {
     return "";
