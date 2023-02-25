@@ -6,7 +6,7 @@ import { Card } from "./Card";
 import { LeftArrow, RightArrow } from "./SliderArrows";
 import { useStore } from "../../state/store";
 
-export const SliderList = ({ item, map, type, filters, filterProps }) => {
+export const SliderList = ({ item, map, type, filters, filterProps, groups }) => {
   if (isEmpty(map)) return <></>;
   const [hover, setHover] = useState(false);
   const selectedSection = useStore(state => state.selectedSection);
@@ -39,7 +39,13 @@ export const SliderList = ({ item, map, type, filters, filterProps }) => {
                 onClick={handleClick}
               >
                 <div tabIndex={key}>
-                  <ItemTile key={key} itemType={type} __val={val} {...val} />
+                  <ItemTile
+                    key={key}
+                    itemType={type}
+                    __val={val}
+                    userGroupData={groups}
+                    {...val}
+                  />
                 </div>
               </Card>
             );

@@ -15,7 +15,7 @@ import { ItemModal } from "./ItemModal";
 import { ItemImage } from "./ItemImage";
 
 export function ItemTile(props) {
-  const { keys, data, item, __val, itemType } = props;
+  const { keys, data, item, __val, itemType, userGroupData } = props;
   const [shortTitle, longTitle] = getTitles(__val, itemType);
   const description = getDescription(__val, itemType);
   const website = getWebsite(__val, itemType);
@@ -49,11 +49,19 @@ export function ItemTile(props) {
   });
   const getAppUriKey = _keys => _getAppUriKey(getKeys(_keys));
   const getItemType = () => props.itemType || data?.general?.type || "other";
-  const getImage = () =>
-    data?.general?.image ||
-    data?.icon?.src ||
-    data?.bespoke?.payload?.docket?.image ||
-    data?.bespoke?.payload?.image;
+  // TODO: hacky, should do this in a better way
+  const getImage = () => {
+    const { ship, cord } = data?.bespoke?.keyObj;
+    const nameKey = `${ship}/${cord}`;
+    return (
+      data?.general?.image ||
+      data?.icon?.src ||
+      data?.bespoke?.payload?.docket?.image ||
+      data?.bespoke?.payload?.image ||
+      userGroupData[nameKey]?.meta?.image
+    );
+  };
+
   const getColor = () => data?.bespoke?.payload?.color?.split(".").join("").substring(2);
   return data ? (
     <li className="flex space-x-3 text-sm leading-tight">

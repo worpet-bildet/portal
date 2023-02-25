@@ -16,6 +16,7 @@ import { ItemImage } from "../../components/Item/ItemImage";
 import { usePortal } from "../../state/usePortal";
 import { AlertModal } from "../../components/AlertModal";
 import unionBy from "lodash/unionBy";
+import { useGroupState } from "../../lib/state/groups/groups";
 
 export function User(props) {
   const { urbit, actions } = usePortal();
@@ -23,6 +24,7 @@ export function User(props) {
   const types = useStore(getTypes);
   const lists = useStore(getLists);
   const defaultCurators = useStore(getDefaultCurators);
+  const { groups } = useGroupState();
   const _setAlertIsOpen = useStore(setAlertIsOpen);
   const { patp } = useParams();
   const [listTitle, setListTitle] = useState(null);
@@ -94,6 +96,7 @@ export function User(props) {
             type={type}
             filters={[{ fn: filterBySection, args: ["selectedSection", "type"] }]}
             filterProps={["selectedSection", "type"]}
+            groups={groups}
           />
         ))
     );
