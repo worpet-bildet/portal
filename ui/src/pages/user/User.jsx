@@ -104,9 +104,22 @@ export function User(props) {
   const listsByType = useMemo(
     () =>
       Object.entries(types)
+        // Only show lists of not-lists
         .filter(([type]) => type !== "list")
+        // Order the lists by date
+        .map(([type, list]) => {
+          let listSortedByDate = list
+            .map(x => x) // have to clone the array
+            .sort((a, b) => {
+              if (a?.item?.keys.keyObj?.cord < b?.item?.keys.keyObj?.cord) return -1;
+              return 1;
+            });
+          return [type, listSortedByDate];
+        })
+        // Then secondarily order by type (overwriting date order where necessary)
         .sort(([type1], [type2]) => {
           // There's probably a better way to do this
+          if (type1 === type2) return 0;
           if (type1 === "group") return -1;
           if (type2 === "group") return 1;
           if (type1 === "app") return -1;
