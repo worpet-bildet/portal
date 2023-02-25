@@ -9,7 +9,7 @@ export const getShortTitle = (val, type) => {
     return generalTitle?.length
       ? generalTitle
       : host?.length && groupTitle?.length
-      ? `${host}/${groupTitle}`
+      ? `${groupTitle.replace(/-/g, " ")}`
       : "no title found";
   }
   if (val?.data?.bespoke?.keyObj.type.includes("app")) {
