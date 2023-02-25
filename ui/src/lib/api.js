@@ -67,7 +67,7 @@ const api = {
       console.log("eventListener", { params, event, mark });
       const path = params?.app + params?.path;
       const relevantWatchers = watchers && watchers[path];
-      debugger;
+      // debugger;
       if (relevantWatchers) {
         relevantWatchers.forEach(w => {
           if (w.hook(event, mark)) {
