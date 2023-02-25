@@ -83,11 +83,10 @@ export const getWebsite = (val, type) => {
 };
 
 export const checkUrl = string => {
-  let url;
-  try {
-    url = new URL(string);
-  } catch (error) {
-    return false;
-  }
-  return true;
+  if (!string) return false;
+  return (
+    string.indexOf("http://") === 0 ||
+    string.indexOf("https://") === 0 ||
+    string.indexOf("/apps/portal/src/assets") === 0
+  );
 };

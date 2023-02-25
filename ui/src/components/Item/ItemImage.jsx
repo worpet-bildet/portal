@@ -10,6 +10,7 @@ export const ItemImage = ({ src, patp, type, container, name, color, onError }) 
     setImageSize(container?.current?.clientWidth);
   }, [container]);
 
+  console.log({ src, patp, len: patp?.length });
   if (!src && patp && patp.length <= "14") {
     return (
       <>
@@ -31,7 +32,6 @@ export const ItemImage = ({ src, patp, type, container, name, color, onError }) 
   if (!checkUrl(getImageSrc(src, type))) {
     src = defaultImg[type];
   }
-  if (!type) type = "other";
   if (type && type !== "ship" && src === defaultImg[type]) {
     return (
       <div
