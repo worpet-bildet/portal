@@ -147,6 +147,7 @@ export function ItemModal({
                     onClick={() => {
                       if (type === "group") {
                         _setAlertIsOpen(true);
+                        setTimeout(() => _setAlertIsOpen(false), 5000);
                       }
                       if (type === "other") {
                         window.open(website);
