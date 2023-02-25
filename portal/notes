@@ -13,9 +13,48 @@ TO SEED DATA ON THE LIVE NETWORK USE THE FOLLOWING COMMANDS
 =data -build-file /=portal=/sur/portal/data/hoon
 =lib -build-file /=portal=/lib/portal/hoon
 
-:portal-manager &portal-action :-  %edit  :+  [our [%list %list ~] '~2000.1.1']
+:portal-manager &portal-action :-  %add  :^  our  [%enditem %other ~]
 :*
-'My curator page'
+'Software as Soulcraft and the Metaphysics of Engineering with Neal Davis'
+'https://www.youtube.com/watch?v=8f8vk1BhlDo'
+'Neal Davis is a professor of computer science and the director of Urbit\'s Hoon School. We discuss why solving nuclear fusion might be a disaster, why Urbit computers have souls, Shinto philosophy, why you should read old books, how to select books, and much more. This was really good!'
+*tags:data
+*properties:data
+*pictures:data
+'http://i3.ytimg.com/vi/8f8vk1BhlDo/hqdefault.jpg'
+''
+==
+[%enditem-other ~]
+
+:portal-manager &portal-action :-  %add  :^  our  [%enditem %other ~]
+:*
+'Urbit, Blockchains, & the Next Billion Users with Ted Blackman, Engineer at Tlon | The Urbit Series'
+'https://www.youtube.com/watch?v=JiNe8XWa7wY'
+'Ted Blackman is a senior engineer at Tlon and one of the most advanced Urbit engineers in the world. We discuss how Urbit will get faster, how it will scale to billions of users, and how Urbit fits into the blockchain ecosystem. In some ways Urbit is like a blockchain, in other ways Urbit is the categorical dual of the blockchain, soon there will be a blockchain built on top of Urbit, and more.'
+*tags:data
+*properties:data
+*pictures:data
+'http://i3.ytimg.com/vi/JiNe8XWa7wY/hqdefault.jpg'
+''
+==
+[%enditem-other ~]
+
+:portal-manager &portal-action :-  %add  :^  our  [%enditem %other ~]
+:*
+'The Most Correct Computer (How Urbit Wins) with Philip Monk, CTO of Tlon | The #Urbit Series'
+'https://www.youtube.com/watch?v=iFdsQStj4PM'
+'Philip Monk co-authored the Urbit whitepaper with Curtis Yarvin back in 2016. He is now the lead engineer working on Urbit, and a thoughtful writer as well. We discuss how to find frontiers, the philosophy of "correctness at all costs," how the current internet is captured by gradient descent, and how Urbit will achieve mass adoption.'
+*tags:data
+*properties:data
+*pictures:data
+'http://i3.ytimg.com/vi/iFdsQStj4PM/hqdefault.jpg'
+''
+==
+[%enditem-other ~]
+
+:portal-manager &portal-action :-  %add  :^  our  [%list %enditem %other ~]
+:*
+'Youtube videos introducing Urbit'
 ''
 ''
 *tags:data
@@ -24,11 +63,67 @@ TO SEED DATA ON THE LIVE NETWORK USE THE FOLLOWING COMMANDS
 ''
 ''
 ==
-:-  %list-list
-:~  [[our [%list %app ~] '~2000.1.1'] 'These are the apps I recommend']
-    [[our [%list %enditem %other ~] '~2000.1.1'] 'These are miscellaneous items I recommend']
-    [[our [%list %nonitem %group ~] '~2000.1.1'] 'These are groups I recommend']
-    [[our [%list %nonitem %ship ~] '~2000.1.1'] 'These are ships I recommend']  ==
+:-  %list-enditem-other
+:~  [[our [%enditem %other ~] 'insert date when item was created ~2023.2...'] 'yt vid']
+    [[our [%enditem %other ~] 'insert date ~2023.2...'] 'yt vid']
+    [[our [%enditem %other ~] 'insert date ~2023.2...'] 'yt vid']
+==
+
+:portal-manager &portal-action :-  %add  :^  our  [%enditem %other ~]
+:*
+'The BlockDollar'
+'https://mirror.xyz/0x08477a125e282201BacCF4AE2e6136d1F0cEEE36/fNd7kLNFYkq-VMjeRFJ5MjmyzDgNwqmWacYYxXiK27A'
+'The BlockDollar, or “What Will Blockchains Actually Be Good For?”'
+*tags:data
+*properties:data
+*pictures:data
+'https://mirror-media.imgix.net/publication-images/moUqrDE7XmeVzIcw6LSS_.jpeg?height=243&width=486&h=243&w=486&auto=compress'
+''
+==
+[%enditem-other ~]
+
+:portal-manager &portal-action :-  %add  :^  our  [%enditem %other ~]
+:*
+'Urbit: functional programming from scratch'
+'https://moronlab.blogspot.com/2010/01/urbit-functional-programming-from.html'
+'Urbit is a static functional namespace: a programming environment specified as a single stateless, frozen function. The Urbit function is Maxwellian: formally defined by a small system of axioms. Urbit, while a cool toy, is designed for practical computing.'
+*tags:data
+*properties:data
+*pictures:data
+''
+''
+==
+[%enditem-other ~]
+
+:portal-manager &portal-action :-  %add  :^  our  [%enditem %other ~]
+:*
+'Rovnys tweetstorm'
+'https://twitter.com/rovnys/status/1371972157971050499?s=20'
+'I\'ve begun a series of audio recordings about the design and rationale of Urbit, called Urbit from the Outside In.'
+*tags:data
+*properties:data
+*pictures:data
+'https://twitter.com/rovnys/photo'
+''
+==
+[%enditem-other ~]
+
+:portal-manager &portal-action :-  %add  :^  our  [%list %enditem %other ~]
+:*
+'Articles introducing Urbit'
+''
+''
+*tags:data
+*properties:data
+*pictures:data
+''
+''
+==
+:-  %list-enditem-other
+:~  [[our [%enditem %other ~] 'insert date when item was created ~2023.2...'] 'article']
+    [[our [%enditem %other ~] 'insert date ~2023.2...'] 'article']
+    [[our [%enditem %other ~] 'insert date ~2023.2...'] 'article']
+==
 
 
 :portal-manager &portal-action :-  %add  :^  our  [%list %nonitem %group ~]
