@@ -127,6 +127,8 @@ export function ItemModal({
                         <div>
                           <a
                             href={website}
+                            target="_blank" 
+                            rel="noopener noreferrer"
                             className="text-xs font-bold text-blue-600 hover:text-blue-800"
                           >
                             {type !== "other" ? path : ""}
