@@ -4,6 +4,7 @@
 +$  action
   $%  [%add =ship =type =general =bespoke-input]
       [%edit =key =general =bespoke-input]
+      [%edit-general =key =general]
       ::
       [%sub =key]
       [%del =key]

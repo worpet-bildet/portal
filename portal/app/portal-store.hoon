@@ -60,6 +60,11 @@
         (edit:on-action:portal-store [all-items our.bowl src.bowl now.bowl act])
       [cards this]
       ::
+        %edit-general
+      =^  cards  all-items
+        (edit-general:on-action:portal-store [all-items our.bowl src.bowl now.bowl act])
+      [cards this]
+      ::
         %sub
       :_  this
         (sub:on-action:portal-store [our.bowl src.bowl now.bowl wex.bowl act])

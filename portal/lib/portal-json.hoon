@@ -24,7 +24,7 @@
         ['action' s+`@t`update.front-end-update]
         ['keyObj' (enjs-key key.front-end-update)]
         ['keyStr' (enjs-jam-key key.front-end-update)]
-        ['item' ?~(item.front-end-update ~ (enjs-item item.front-end-update))]
+        ['item' ?~(item.front-end-update ~ (enjs-item-or-null item.front-end-update))]
         ['map' (enjs-end-map end-map.front-end-update)]
         ['face' s+(crip (weld (trip update.front-end-update) (spud type.key.front-end-update)))]
     ==
@@ -40,7 +40,7 @@
     |=  =cur-obj
     ^-  json
     %-  pairs
-    :~  ['item' (enjs-item item.cur-obj)]
+    :~  ['item' (enjs-item-or-null item.cur-obj)]
         ['map' (enjs-list-map lis-map.cur-obj)]
     ==
   ++  enjs-list-map
@@ -55,7 +55,7 @@
     |=  =lis-obj
     ^-  json
     %-  pairs
-    :~  ['item' (enjs-item item.lis-obj)]
+    :~  ['item' (enjs-item-or-null item.lis-obj)]
         ['map' (enjs-end-map end-map.lis-obj)]
     ==
   ++  enjs-end-map
@@ -63,12 +63,13 @@
     ^-  json
     =/  transform
       |=  [=key item=?(~ item)]
-      [(@t p.+:(enjs-jam-key key)) ?~(item ~ (enjs-item item))]
+      [(@t p.+:(enjs-jam-key key)) ?~(item ~ (enjs-item-or-null item))]
     =/  l  (turn ~(tap by end-map) transform)
     [%o `(map @t json)`(malt l)]
-  ++  enjs-item
-    |=  [=item]
+  ++  enjs-item-or-null
+    |=  [item=?(~ item)]
     ^-  json
+    ?~  item  ~
     %-  pairs
     :~  ['keyStr' (enjs-jam-key key.bespoke.data.item)]
         ['keyObj' (enjs-key key.bespoke.data.item)]
@@ -80,7 +81,7 @@
   ++  enjs-key-and-item
     |=  [=key =item]
     ^-  json
-    (enjs-item item)
+    (enjs-item-or-null item)
   ++  enjs-all-items
     |=  =all-items
     ^-  json
@@ -352,6 +353,7 @@
     %-  of
     :~  [%add (ot ~[ship+dejs-ship type+dejs-type general+dejs-general bespoke-input+dejs-bespoke-input])]
         [%edit (ot ~[key+dejs-key general+dejs-general bespoke-input+dejs-bespoke-input])]
+        [%edit-general (ot ~[key+dejs-key general+dejs-general])]
         [%sub (ot ~[key+dejs-key])]
         [%del (ot ~[key+dejs-key])]
         [%overwrite-list (ot ~[key+dejs-key key-text-list+dejs-key-text-list])]
