@@ -50,10 +50,8 @@ export function ItemTile(props) {
   });
   const getAppUriKey = _keys => _getAppUriKey(getKeys(_keys));
   const getItemType = () => props.itemType || data?.general?.type || "other";
-  console.log({ userGroupData });
   useEffect(() => {
     if (userGroupData[nameKey]) {
-      console.log("have already joined", nameKey);
       setIsJoined(true);
     }
   }, [userGroupData, nameKey]);

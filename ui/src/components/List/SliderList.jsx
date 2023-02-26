@@ -33,7 +33,6 @@ export const SliderList = ({ item, map, type, filters, filterProps, groups }) =>
       !isEmpty(map)
         ? Object.entries(map).map(([key, val]) => {
             if (hideJoinedGroups) {
-              console.log({ key, val, groups });
               const { ship, cord } = val?.data?.bespoke?.keyObj;
               const nameKey = `${ship}/${cord}`;
               if (groups[nameKey]) return <></>;
