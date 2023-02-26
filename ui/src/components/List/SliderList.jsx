@@ -11,6 +11,7 @@ export const SliderList = ({ item, map, type, filters, filterProps, groups }) =>
   const [hover, setHover] = useState(false);
   const selectedSection = useStore(state => state.selectedSection);
   const defaultFiltersProps = { selectedSection, type };
+  const [hideJoinedGroups, setHideJoinedGroups] = useState(false);
 
   // TODO: Replace with desired click handler
   const handleClick = visibility => {
@@ -31,6 +32,12 @@ export const SliderList = ({ item, map, type, filters, filterProps, groups }) =>
     () =>
       !isEmpty(map)
         ? Object.entries(map).map(([key, val]) => {
+            if (hideJoinedGroups) {
+              console.log({ key, val, groups });
+              const { ship, cord } = val?.data?.bespoke?.keyObj;
+              const nameKey = `${ship}/${cord}`;
+              if (groups[nameKey]) return <></>;
+            }
             return (
               <Card
                 itemId={key} // NOTE: itemId is required for track items
@@ -51,8 +58,25 @@ export const SliderList = ({ item, map, type, filters, filterProps, groups }) =>
             );
           })
         : null,
-    [map]
+    [map, hideJoinedGroups]
   );
+
+  const FilterJoinedButton = props => {
+    let numberOfJoinedGroups = Object.keys(groups).length;
+    if (numberOfJoinedGroups === 0) return;
+    return (
+      <div
+        className="text-base text-gray-400 underline w-1/3 text-right cursor-pointer"
+        onClick={() => setHideJoinedGroups(!hideJoinedGroups)}
+      >
+        {hideJoinedGroups
+          ? `show joined groups`
+          : `hide ${numberOfJoinedGroups} group ${
+              numberOfJoinedGroups > 1 ? "s" : ""
+            } i've joined`}
+      </div>
+    );
+  };
 
   const _List = (
     <div
@@ -61,8 +85,11 @@ export const SliderList = ({ item, map, type, filters, filterProps, groups }) =>
       onMouseLeave={() => setHover(false)}
     >
       <div className="text-2xl font-bold">{item?.data?.general?.title}</div>
-      <div className="text-base pb-2 text-gray-400">
-        {item?.data?.general?.description}
+      <div className="flex flex-row justify-between pb-2 w-full">
+        <div className="text-base text-gray-400 w-2/3">
+          {item?.data?.general?.description}
+        </div>
+        {type === "group" && <FilterJoinedButton></FilterJoinedButton>}
       </div>
       <ScrollMenu
         LeftArrow={hover ? LeftArrow : <></>}

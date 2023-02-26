@@ -21,9 +21,12 @@ export function ItemTile(props) {
   const website = getWebsite(__val, itemType);
   const pictures = data?.general?.pictures || [];
   const tags = data?.general?.tags || [];
+  const { ship, cord } = data?.bespoke?.keyObj;
+  const nameKey = `${ship}/${cord}`;
   const [imageError, setImageError] = useState(false);
   const [isUser, setIsUser] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [isJoined, setIsJoined] = useState(false);
 
   const navigate = useNavigate();
 
@@ -47,10 +50,15 @@ export function ItemTile(props) {
   });
   const getAppUriKey = _keys => _getAppUriKey(getKeys(_keys));
   const getItemType = () => props.itemType || data?.general?.type || "other";
+  console.log({ userGroupData });
+  useEffect(() => {
+    if (userGroupData[nameKey]) {
+      console.log("have already joined", nameKey);
+      setIsJoined(true);
+    }
+  }, [userGroupData, nameKey]);
   // TODO: hacky, should do this in a better way
   const getImage = () => {
-    const { ship, cord } = data?.bespoke?.keyObj;
-    const nameKey = `${ship}/${cord}`;
     return (
       data?.general?.image ||
       data?.icon?.src ||
@@ -62,7 +70,7 @@ export function ItemTile(props) {
 
   const getColor = () => data?.bespoke?.payload?.color?.split(".").join("").substring(2);
   return data ? (
-    <li className="flex space-x-3 text-sm leading-tight">
+    <li className={`flex mr-3 text-sm leading-tight ${isJoined ? `opacity-50` : ""}`}>
       {/* TODO: Think about wrapping this modal so there is no need for inline style here */}
       {getItemType() !== "ship" && (
         <Modal
@@ -90,13 +98,10 @@ export function ItemTile(props) {
             type={getItemType()}
             onRequestClose={() => setModalIsOpen(false)}
             data={data}
+            buttonDisabled={isJoined}
           ></ItemModal>
         </Modal>
       )}
-      {/* <Link
-        to={`/apps/portal/${!isUser ? `dev` : `usr`}/apps/${getAppUriKey(keys)}`}
-        className="w-full mr-4 rounded"
-      > */}
       <div
         onClick={() => {
           if (getItemType() === "ship") {
@@ -105,7 +110,7 @@ export function ItemTile(props) {
           }
           setModalIsOpen(true);
         }}
-        className="w-full mr-4 rounded cursor-pointer"
+        className="w-full rounded cursor-pointer"
       >
         <div className="flex flex-col flex-auto justify-between">
           <div className="flex flex-col">
