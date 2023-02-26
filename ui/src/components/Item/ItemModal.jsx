@@ -16,6 +16,7 @@ export function ItemModal({
   tags,
   type,
   data,
+  buttonDisabled,
   onRequestClose,
 }) {
   // console.log("ItemModal", { title, path, image, description, pictures, tags, type });
@@ -46,7 +47,7 @@ export function ItemModal({
   };
 
   function getActionText(type) {
-    if (type === "group") return "Join";
+    if (type === "group") return buttonDisabled ? "Joined" : "Join";
     if (type === "app") return "Install";
     if (type === "other") return "Go";
   }
@@ -127,7 +128,7 @@ export function ItemModal({
                         <div>
                           <a
                             href={website}
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                             className="text-xs font-bold text-blue-600 hover:text-blue-800"
                           >
@@ -145,7 +146,10 @@ export function ItemModal({
                   {/* <p className="w-2/3 text-xs text-blue-600 pr-4 absolute sm:bottom-4 sm:left-4 bottom-2 left-2">We sent a request for you to join. Open the Groups app to get started. </p> */}
                   <button
                     type="button"
-                    className="inline-flex w-1/3 justify-center rounded-md bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-800 sm:ml-3 sm:w-auto sm:text-sm absolute sm:bottom-4 sm:right-4 bottom-2 right-2"
+                    className={`inline-flex w-1/3 justify-center rounded-md px-4 py-2 text-base font-medium text-white shadow-sm  sm:ml-3 sm:w-auto sm:text-sm absolute sm:bottom-4 sm:right-4 bottom-2 right-2 ${
+                      buttonDisabled ? "bg-none" : "bg-blue-600 hover:bg-blue-800"
+                    }`}
+                    disabled={buttonDisabled}
                     onClick={() => {
                       if (type === "group") {
                         _setAlertIsOpen(true);
