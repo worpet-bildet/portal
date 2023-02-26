@@ -4,6 +4,26 @@
 ++  enjs
   =,  enjs:format
   |%
+  ++  enjs-outgoing-subs
+    |=  =outgoing-subs
+    ^-  json
+    |^
+    =/  transform
+      |=  [ship=@p map=(map key acked=?)]
+      ^-  [@t json]
+      [(scot %p ship) (enjs-key-acked-map map)]
+    =/  l  (turn ~(tap by outgoing-subs) transform)
+    [%o `(map @t json)`(malt l)]
+    ++  enjs-key-acked-map
+      |=  mapp=(map key acked=?)
+      ^-  json
+      =/  transform
+        |=  [=key acked=?]
+        ^-  [@t json]
+        [(spat (key-to-path:conv key)) b+acked]
+      =/  l  (turn ~(tap by mapp) transform)
+      [%o `(map @t json)`(malt l)]
+    --
   ++  enjs-result
     |=  =result
     ^-  json
@@ -330,7 +350,7 @@
     |=  =key
     ^-  json
     %-  pairs
-    :~  ['ship' s+`@t`(scot %p ship.key)]
+    :~  ['ship' (enjs-ship ship.key)]
         ['type' s+(spat type.key)]
         ['cord' s+cord.key]
     ==
@@ -340,6 +360,11 @@
     ^-  json
     =/  key-list  ~(tap in key-set)
     [%a (turn key-list |=(=key (enjs-key)))]
+  ::
+  ++  enjs-ship
+    |=  ship=@p
+    ^-  json
+    s+`@t`(scot %p ship)
   --
 ::
 ::

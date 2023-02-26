@@ -5,12 +5,12 @@
   $%  [%add =ship =type =general =bespoke-input]
       [%edit =key =general =bespoke-input]
       [%edit-general =key =general]
+      [%overwrite-list key=[=ship type=[%list type] =cord] =key-text-list]
       ::
       [%sub =key]
       [%del =key]
       ::
       [%add-to-default-list key=[=ship type=$%([%list %app ~] [%list %enditem %other ~] [%list %nonitem %group ~] [%list %nonitem %ship ~] [%enditem %other ~] [%enditem %app ~]) =cord]]
-      [%overwrite-list key=[=ship type=[%list type] =cord] =key-text-list]
       ::
       [%put-nonitem =key =item]
       ::

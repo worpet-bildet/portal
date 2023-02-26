@@ -239,6 +239,12 @@
         (~(got by all-items) [our.bowl /list/list '~2000.1.1'])
       (~(got by all-items) [our.bowl [%list type.key] '~2000.1.1'])
     ``noun+!>((key-in-list-item:loob key list))
+    ::
+      [%x %subs %outgoing ~]
+    ``portal-outgoing-subs+!>((boat-to-outgoing-subs:conv wex.bowl))
+    ::
+      [%x %subs %incoming ~]
+    ``noun+!>(~)
   ==
   ::
 ++  on-fail   on-fail:default
