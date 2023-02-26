@@ -70,7 +70,7 @@ export const SliderList = ({ item, map, type, filters, filterProps, groups }) =>
       >
         {hideJoinedGroups
           ? `show joined groups`
-          : `hide ${numberOfJoinedGroups} group ${
+          : `hide ${numberOfJoinedGroups} group${
               numberOfJoinedGroups > 1 ? "s" : ""
             } i've joined`}
       </div>
