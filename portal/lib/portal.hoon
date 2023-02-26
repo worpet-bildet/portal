@@ -480,8 +480,7 @@
       ?.  =(our src)  [~ all-items]
       ?.  =(ship.key.act our)  [~ all-items]
       =/  item  (~(gut by all-items) key.act ~)
-      ::  TODO %portal-manager print messages to ->  %portal-store
-      ?~  item  ~&  "%portal-manager: item doesn't exist"  [~ all-items]
+      ?~  item  ~&  "%portal-store: item doesn't exist"  [~ all-items]
       =/  data  [(bespoke-write:conv key.act bespoke-input.act [%edit bespoke.data.item]) general.act]
       =/  item
         %=  item
@@ -490,6 +489,23 @@
         ==
       =/  item-sig  (sign:sig our now [%item data meta.item social.item])
       =/  upd  [%put key.act [data meta.item social.item item-sig]]
+      :-  (put:on-poke:make-cards all-items our src upd)
+      (put-item our all-items upd)
+    ::
+    ++  edit-general
+      |=  [=all-items our=ship src=ship now=time act=[%edit-general =key =general]]
+      ^-  [(list card) ^all-items]
+      ?.  =(our src)  [~ all-items]
+      ?.  =(ship.key.act our)  [~ all-items]
+      =/  item  (~(gut by all-items) key.act ~)
+      ?~  item  ~&  "%portal-store: item doesn't exist"  [~ all-items]
+      =/  item
+        %=  item
+          updated-at.meta  `@t`(scot %da now)
+          general.data      general.act
+        ==
+      =/  item-sig  (sign:sig our now [%item data.item meta.item social.item])
+      =/  upd  [%put key.act [data.item meta.item social.item item-sig]]
       :-  (put:on-poke:make-cards all-items our src upd)
       (put-item our all-items upd)
     ::
@@ -574,7 +590,7 @@
       ^-  [(list card) ^all-items]
       ?.  =(ship.list-key.act our)  [~ all-items]
       =/  list  (~(gut by all-items) list-key.act ~)
-      ?~  list  ~&  "%portal-manager: list doesn't exist"  [~ all-items]
+      ?~  list  ~&  "%portal-store: list doesn't exist"  [~ all-items]
       ?+    -.bespoke.data.list    [~ all-items]
           %list-enditem-other
         =/  bespoke-input  [%list-enditem-other (other-key-list key-text-list.act)]
@@ -623,7 +639,7 @@
       ::  how to make it so that =(our src) makes sense as a validation in general
       ?.  =(ship.key.act our)  [~ all-items]
       =/  item  (~(gut by all-items) key.act ~)
-      ?~  item  ~&  "%portal-manager: item doesn't exist"  [~ all-items]
+      ?~  item  ~&  "%portal-store: item doesn't exist"  [~ all-items]
       ?+    -.bespoke.data.item    !!
           %enditem-app
         =/  item
@@ -645,7 +661,7 @@
       ^-  [(list card) ^all-items]
       ?.  =(our ship.key.act)  [~ all-items]
       =/  item  (~(gut by all-items) key.act ~)
-      ?~  item  ~&  "%portal-manager: item doesn't exist"  [~ all-items]
+      ?~  item  ~&  "%portal-store: item doesn't exist"  [~ all-items]
       =/  new-comments  (~(put by comments.social.item) [src `@t`(scot %da now)] [text.act '~2000.1.1'])
       =/  upd  [%put key.act item(comments.social new-comments)]
       :-  (put:on-poke:make-cards all-items our src upd)
@@ -658,7 +674,7 @@
       ^-  [(list card) ^all-items]
       ?.  =(our ship.key.act)  [~ all-items]
       =/  item  (~(gut by all-items) key.act ~)
-      ?~  item  ~&  "%portal-manager: item doesn't exist"  [~ all-items]
+      ?~  item  ~&  "%portal-store: item doesn't exist"  [~ all-items]
       ?.  (~(has by comments.social.item) [src created-at.act])  [~ all-items]
       =/  new-comments  (~(put by comments.social.item) [src created-at.act] [text.act `@t`(scot %da now)])
       =/  upd  [%put key.act item(comments.social new-comments)]
@@ -670,7 +686,7 @@
       ^-  [(list card) ^all-items]
       ?.  =(our ship.key.act)  [~ all-items]
       =/  item  (~(gut by all-items) key.act ~)
-      ?~  item  ~&  "%portal-manager: item doesn't exist"  [~ all-items]
+      ?~  item  ~&  "%portal-store: item doesn't exist"  [~ all-items]
       ?.  (~(has by comments.social.item) [src created-at.act])  [~ all-items]
       =/  new-comments  (~(del by comments.social.item) [src created-at.act])
       =/  upd  [%put key.act item(comments.social new-comments)]
@@ -683,7 +699,7 @@
       ?.  =(our ship.key.act)  [~ all-items]
       ?.  &((gte rating-num.act 1) (lte rating-num.act 5))  [~ all-items]
       =/  item  (~(gut by all-items) key.act ~)
-      ?~  item  ~&  "%portal-manager: item doesn't exist"  [~ all-items]
+      ?~  item  ~&  "%portal-store: item doesn't exist"  [~ all-items]
       =/  rating  (~(get by ratings.social.item) src)
       =/  new-rating
         ?~  rating  [rating-num.act '~2000.1.1' `@t`(scot %da now)]
@@ -698,7 +714,7 @@
       ^-  [(list card) ^all-items]
       ?.  =(our ship.key.act)  [~ all-items]
       =/  item  (~(gut by all-items) key.act ~)
-      ?~  item  ~&  "%portal-manager: item doesn't exist"  [~ all-items]
+      ?~  item  ~&  "%portal-store: item doesn't exist"  [~ all-items]
       ?.  (~(has by ratings.social.item) src)  [~ all-items]
       =/  new-ratings  (~(del by ratings.social.item) src)
       =/  upd  [%put key.act item(ratings.social new-ratings)]
@@ -711,7 +727,7 @@
       ^-  [(list card) ^all-items]
       ?.  =(our ship.key.act)  [~ all-items]
       =/  item  (~(gut by all-items) key.act ~)
-      ?~  item  ~&  "%portal-manager: item doesn't exist"  [~ all-items]
+      ?~  item  ~&  "%portal-store: item doesn't exist"  [~ all-items]
       :: TODO is-current for apps
       ::=/  is-current  =(hash desk-hash.dst-input.app-page)
       =/  is-current  %.n
@@ -729,7 +745,7 @@
       ^-  [(list card) ^all-items]
       ?.  =(our ship.key.act)  [~ all-items]
       =/  item  (~(gut by all-items) key.act ~)
-      ?~  item  ~&  "%portal-manager: item doesn't exist"  [~ all-items]
+      ?~  item  ~&  "%portal-store: item doesn't exist"  [~ all-items]
       ?.  (~(has by reviews.social.item) src)  [~ all-items]
       =/  new-reviews  (~(del by reviews.social.item) src)
       =/  upd  [%put key.act item(reviews.social new-reviews)]
@@ -745,7 +761,7 @@
       ^-  [(list card) ^all-items]
       ?.  =(our ship.key.msg)  [~ all-items]
       =/  item  (~(gut by all-items) key.msg ~)
-      ?~  item  ~&  "%portal-manager: item doesn't exist"  [~ all-items]
+      ?~  item  ~&  "%portal-store: item doesn't exist"  [~ all-items]
       ?+    -.bespoke.data.item    [~ all-items]
           %enditem-app
         ?.  =(src -:(need (parse-dist-desk:misc dist-desk.bespoke.data.item)))  [~ all-items]
@@ -760,7 +776,7 @@
     ::   ^-  [(list card) ^all-items]
     ::   ?.  =(our ship.key.msg)  [~ all-items]
     ::   =/  item  (~(gut by all-items) key.msg ~)
-    ::   ?~  item  ~&  "%portal-manager: item doesn't exist"  [~ all-items]
+    ::   ?~  item  ~&  "%portal-store: item doesn't exist"  [~ all-items]
     ::   ::?<  ?=(@tas data.act)
     ::   ::  ?=([@uv docket] data.act)
     ::   ?+    -.bespoke.data.item   [~ all-items]

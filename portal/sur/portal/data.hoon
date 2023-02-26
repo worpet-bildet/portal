@@ -41,7 +41,7 @@
 ::
 +$  cur-obj  [=item =lis-map]
 +$  lis-map  (map key lis-obj)
-+$  lis-obj  [?(~ item) =end-map]
++$  lis-obj  [item=?(~ item) =end-map]
 +$  end-map  (map key ?(~ item))
 ::
 ::
