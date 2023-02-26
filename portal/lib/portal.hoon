@@ -74,7 +74,7 @@
     =/  list-list-list-map  (~(run by list-list-map) |=(=item (list-list-item-to-map all-items item)))
     ::
     ::  (map list-list-key [list-list-item (map list-pointer [lis-item (map end-key end-item)])])
-    (~(run by list-list-list-map) |=(val=[=item (map key item)] (inner-maps-transform all-items val)))
+    (~(run by list-list-list-map) |=(val=[=item (map key ?(~ item))] (inner-maps-transform all-items val)))
 
   ::
   ::  find all lists of lists
@@ -93,25 +93,26 @@
     =/  list-list-list-map  (~(run by list-list-map) |=(=item (list-list-item-to-map all-items item)))
     ::
     ::  (map list-list-key [list-list-item (map list-pointer [lis-item (map end-key end-item)])])
-    (~(run by list-list-list-map) |=(val=[=item (map key item)] (inner-maps-transform all-items val)))
+    (~(run by list-list-list-map) |=(val=[=item (map key ?(~ item))] (inner-maps-transform all-items val)))
   ::
   ++  inner-maps-transform
-    |=  [=all-items val=[=item mapp=(map key item)]]
-    ^-  [^item (map key [^item (map key ?(~ ^item))])]
-    [item.val (~(run by mapp.val) |=(=item (list-item-to-map all-items item)))]
+    |=  [=all-items val=[=item mapp=(map key ?(~ item))]]
+    ^-  [item (map key [?(~ item) (map key ?(~ item))])]
+    [item.val (~(run by mapp.val) |=(item=?(~ item) (list-item-to-map all-items item)))]
   ::
   ++  list-list-item-to-map
     |=  [=all-items =item]
-    ^-  [^item (map key ^item)]
+    ^-  [^item (map key ?(~ ^item))]
     ?+    -.bespoke.data.item    [item ~]
         %list-list
-      =/  lists-map  (malt (turn list-key-list.bespoke.data.item |=([=key =cord] [key (~(got by all-items) key)])))
+      =/  lists-map  (malt (turn list-key-list.bespoke.data.item |=([=key =cord] [key (~(gut by all-items) key ~)])))
       [item lists-map]
     ==
   ::
   ++  list-item-to-map
-    |=  [=all-items =item]
-    ^-  [^item (map key ?(~ ^item))]
+    |=  [=all-items item=?(~ item)]
+    ^-  [?(~ ^item) (map key ?(~ ^item))]
+    ?~  item  [~ ~]
     ?+    -.bespoke.data.item    [item ~]
         %list-enditem-other
       =/  items-map  (malt (turn other-key-list.bespoke.data.item |=([=key =cord] [key (~(gut by all-items) key ~)])))
