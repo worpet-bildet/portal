@@ -4,7 +4,7 @@
 ++  grow
   |%
   ++  noun  itm
-  ++  json  (enjs-item:enjs:portal-json itm)
+  ++  json  (enjs-item-or-null:enjs:portal-json itm)
   --
 ++  grab
   |%
