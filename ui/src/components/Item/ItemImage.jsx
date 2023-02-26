@@ -10,7 +10,6 @@ export const ItemImage = ({ src, patp, type, container, name, color, onError }) 
     setImageSize(container?.current?.clientWidth);
   }, [container]);
 
-  console.log({ src, patp, len: patp?.length });
   if (!src && patp && patp.length <= "14") {
     return (
       <>

@@ -25,8 +25,6 @@ export function ItemTile(props) {
   const [isUser, setIsUser] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
-  console.log({ data });
-
   const navigate = useNavigate();
 
   // We use this to ensure the sigil is the correct size, since we need to
