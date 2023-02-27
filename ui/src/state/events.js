@@ -11,11 +11,11 @@ export const handleEventActions = (
 export const handleEvent =
   (urbit, factActions = {}) =>
   (evt, action) => {
-    console.log("====================================");
+    // console.log("====================================");
     console.log("urbit event from sub: ", evt, action);
     // debugger;
-    console.log("====================================");
-    console.log("evt.face: ", evt.face);
+    // console.log("====================================");
+    // console.log("evt.face: ", evt.face);
 
     // TODO: Handle errors, success, other events, etc. properly with toasts
     const successMessage = getFactSuccessMsg(evt?.face);
@@ -31,7 +31,7 @@ export const handleEvent =
       toast.success(_toast);
       return factActions.onUpdate({ evt, action, urbit });
     }
-    console.log({ factActions, action, evt });
+    // console.log({ factActions, action, evt });
     // debugger;
   };
 

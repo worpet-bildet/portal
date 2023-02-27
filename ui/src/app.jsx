@@ -9,6 +9,7 @@ import { usePortalSubscription } from "./state/usePortal";
 import { useLandscapeSubscription } from "./state/useLandscape";
 import "./index.css";
 import { User } from "./pages/user/User";
+// import { GenericForm as Me } from "./pages/form/GenericForm";
 
 import theme from "./theme/theme";
 
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
     path: "/apps/portal/:patp",
     element: <User />,
   },
+  // {
+  //   path: "/apps/portal/me",
+  //   element: <Me />,
+  // },
 ]);
 
 export function App() {

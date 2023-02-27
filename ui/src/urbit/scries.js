@@ -41,7 +41,7 @@ export const getCuratorDefaultLists = async (urbit, options = {}) => {
   const formedScry = formScryWithArgsInPath(PATHS.CURATOR_DEFAULTS, options);
   try {
     const data = await urbit.scry(formedScry);
-    console.log("scry getCuratorDefaultLists", data);
+    // console.log("scry getCuratorDefaultLists", data);
     return data;
   } catch (err) {
     console.error(err);
@@ -51,10 +51,10 @@ export const getCuratorDefaultLists = async (urbit, options = {}) => {
 export const getUpdatedItemList = async (urbit, options = {}) => {
   // const { src = "NO_SRC", action, face, keyObj, keyStr } = options;
   const formedScry = formScryWithArgsInPath(PATHS.ITEM, options);
-  console.log({ options, formedScry });
+  // console.log({ options, formedScry });
   try {
     const data = await urbit.scry(formedScry);
-    console.log("scry getUpdatedItemList", data);
+    // console.log("scry getUpdatedItemList", data);
     return data;
   } catch (err) {
     console.error(err);

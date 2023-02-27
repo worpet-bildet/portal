@@ -2,7 +2,8 @@ import React from "react";
 import { Fragment, useRef, useState, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ItemImage } from "./ItemImage";
-import { useStore, setAlertIsOpen, setAlertText } from "../../state/store";
+import { useStore } from "../../state/store";
+import { setAlertIsOpen, setAlertText } from "../../state/selectors";
 import { useGang } from "../../lib/state/groups/groups";
 import useGroupJoin from "../../lib/useGroupJoin";
 

@@ -1,4 +1,4 @@
-import shallow from "zustand/shallow";
+import { shallow } from "zustand/shallow";
 import produce from "immer";
 import unionBy from "lodash/unionBy";
 import keyBy from "lodash/keyBy";
@@ -18,23 +18,6 @@ import transform from "lodash/transform";
 
 export const initalTypeState = { app: [], group: [], list: [], other: [], ship: [] };
 
-export const getCurators = state => state.curators;
-export const getDefaultCurators = state => state.defaultCurators;
-export const setCurators = state => state.setCurators;
-export const onInitialLoad = state => state.onInitialLoad;
-export const onUpdate = state => state.onUpdate;
-export const getApps = state => state.types.app;
-export const getGroups = state => state.types.group;
-export const getLists = state => state.types.list;
-export const getOthers = state => state.types.other;
-export const getShips = state => state.types.ship;
-export const getCurator = state => state.curators;
-export const getTypes = state => state.types;
-export const getSelectedSection = state => state.selectedSection;
-export const getAlertIsOpen = state => state.alertIsOpen;
-export const setAlertIsOpen = state => state.setAlertIsOpen;
-export const getAlertText = state => state.alertText;
-export const setAlertText = state => state.setAlertText;
 export const useStore = createStore((set, get) => ({
   // ...initialState,
   // apps: [],
@@ -99,7 +82,7 @@ export const useStore = createStore((set, get) => ({
             get().addItemToIndex(res, ship, type);
           }
         } catch (e) {
-          console.log("error in indexOnUpdate");
+          // console.log("error in indexOnUpdate");
           console.log(e);
         }
       })

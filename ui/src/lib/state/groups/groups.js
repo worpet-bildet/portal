@@ -211,7 +211,7 @@ export const useGroupState = createStoreWithPersist(
     join: async (flag, joinAll) => {
       get().batchSet(draft => {
         // debugger;
-        console.log("join", { flag, joinAll });
+        // console.log("join", { flag, joinAll });
         draft.gangs[flag] = draft.gangs[flag] || {};
         draft.gangs[flag].invite = null;
         draft.gangs[flag].claim = {
@@ -220,15 +220,15 @@ export const useGroupState = createStoreWithPersist(
         };
       });
       await new Promise((resolve, reject) => {
-        const formedPoke = {
-          app: "groups",
-          mark: "group-join",
-          json: {
-            flag,
-            "join-all": joinAll,
-          },
-        };
-        console.log("formedPoke", formedPoke);
+        // const formedPoke = {
+        //   app: "groups",
+        //   mark: "group-join",
+        //   json: {
+        //     flag,
+        //     "join-all": joinAll,
+        //   },
+        // };
+        // console.log("formedPoke", formedPoke);
         api.poke({
           app: "groups",
           mark: "group-join",

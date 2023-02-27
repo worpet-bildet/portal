@@ -64,7 +64,7 @@ const api = {
       if (!watchers && !remove) {
         console.error("No watchers or remove function found");
       }
-      console.log("eventListener", { params, event, mark });
+      // console.log("eventListener", { params, event, mark });
       const path = params?.app + params?.path;
       const relevantWatchers = watchers && watchers[path];
       // debugger;

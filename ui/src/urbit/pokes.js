@@ -58,6 +58,7 @@ export const generatePokes = actions => {
 
 export const createPoke = (urbit, type) => async data => {
   const poke = buildPoke(type, data);
+  console.log("built poke: ", poke);
   try {
     const res = await urbit.poke(poke);
     console.log("Poke Response: ", res);
@@ -86,8 +87,8 @@ export const structurePokeData = (fields, data) => {
   return reduce(
     fields,
     (acc, val) => {
-      if (val.parent) {
-        acc[val.parent] = { ...acc[val.parent], [val.name]: data[val.name] };
+      if (val.children) {
+        acc[val.name] = structurePokeData(val.children, data[val.name]);
       } else {
         acc[val.name] = data[val.name];
       }

@@ -15,9 +15,8 @@ export const SliderList = ({ item, map, type, filters, filterProps, groups }) =>
 
   // TODO: Replace with desired click handler
   const handleClick = visibility => {
-    console.log("====================================");
-    console.log("Card.onClick", { visibility });
-    console.log("====================================");
+    // console.log("Card.onClick", { visibility });
+    return;
   };
   const _filterProps = filterProps?.length
     ? filterProps.reduce((acc, cur) => ({ ...acc, [cur]: defaultFiltersProps[cur] }), {})

@@ -1,7 +1,8 @@
 import React from "react";
 import { Fragment, useRef, useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/20/solid";
-import { useStore, getAlertIsOpen, getAlertText } from "../state/store";
+import { useStore } from "../state/store";
+import { getAlertIsOpen, getAlertText } from "../state/selectors";
 
 export function AlertModal({ onRequestClose }) {
   const cancelButtonRef = useRef();

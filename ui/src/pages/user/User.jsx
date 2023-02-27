@@ -2,15 +2,15 @@ import React, { Fragment, useMemo, useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import uniqBy from "lodash/uniqBy";
 import ResponsiveAppBar from "../../components/AppBar";
+import { useStore } from "../../state/store";
 import {
   getApps,
-  useStore,
   getTypes,
   getLists,
   // getShips,
   setAlertIsOpen,
   getDefaultCurators,
-} from "../../state/store";
+} from "../../state/selectors";
 import { SliderList } from "../../components/List/SliderList";
 import { ItemImage } from "../../components/Item/ItemImage";
 import { usePortal } from "../../state/usePortal";
@@ -61,9 +61,11 @@ export function User(props) {
           urbit,
           actions.ITEM.SUB
         )({
-          ship,
-          type: "/list/list",
-          cord: "~2000.1.1",
+          key: {
+            ship,
+            type: "/list/list",
+            cord: "~2000.1.1",
+          },
         });
       });
     }

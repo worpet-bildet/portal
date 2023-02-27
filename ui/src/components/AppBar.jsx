@@ -2,8 +2,10 @@ import React, { Fragment, useEffect, useState } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { sigil, reactRenderer } from "@tlon/sigil-js";
-import { getSelectedSection, useStore, getDefaultCurators } from "../state/store";
+import { useStore } from "../state/store";
+import { getSelectedSection, getDefaultCurators } from "../state/selectors";
 import { useUrbit, usePortal } from "../state/usePortal";
+// import DialogSelect from "./Dialog";
 
 // this is not very nice, it just picks the first item in the default curators
 // map to navigate you to. this map is not ordered though, so it might not be
@@ -13,11 +15,13 @@ function buildNav(curators) {
     {
       name: "Home",
       href: `/apps/portal/${curators[0] ? curators[0][1].item.keys.keyObj.ship : ""}`,
+      // href: `/apps/portal/${curators[0] ? curators[0][1].item.keyObj.ship : ""}`,
       highlightOnSelect: true,
       section: "all",
     },
     // { name: "Groups", href: "#", highlightOnSelect: true, section: "group" },
     // { name: "Apps", href: "#", highlightOnSelect: true, section: "app" },
+    // { name: "Add", href: "#", highlightOnSelect: true, section: "all" },
     {
       name: "Feedback",
       href: "web+urbitgraph://group/~toptyr-bilder/portal",
@@ -33,6 +37,7 @@ function classNames(...classes) {
 
 export default function AppBar() {
   const curators = useStore(getDefaultCurators);
+  const [formOpen, setFormOpen] = useState(false);
   const navigation = buildNav(Object.entries(curators));
   const setSelectedSection = useStore(state => state.setSelectedSection);
   const selectedSection = useStore(getSelectedSection);
@@ -44,18 +49,18 @@ export default function AppBar() {
   const handleSectionChange = (evt, item) => {
     // evt.preventDefault();
     // item.highlightOnSelect && setSelectedSection(item.section.toLowerCase());
+    // if (item.name === "Add") {
+    //   setFormOpen(true);
+    // }
   };
 
-  const mySigil = () => {
+  const MySigil = () => {
     // TODO: check this works when signed in on a ship
-    const [myShip, setMyShip] = useState();
-    const { ship } = usePortal();
-    useEffect(() => {
-      if (ship) setMyShip(ship);
-    }, [ship]);
+    const { ship: myShip } = usePortal();
     // sigil-js can't render moons
-    if (myShip && myShip.length > "13") return <></>;
-    return (
+    return myShip?.length > "13" ? (
+      <></>
+    ) : (
       <>
         {sigil({
           patp: myShip || "zod",
@@ -123,7 +128,10 @@ export default function AppBar() {
                         {item.name}
                       </a>
                     ))}
-                    <div>{mySigil()}</div>
+                    <div>
+                      <MySigil />
+                    </div>
+                    {/* <DialogSelect open={formOpen} setOpen={setFormOpen} /> */}
                   </div>
                 </div>
               </div>
