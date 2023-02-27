@@ -2,6 +2,8 @@ import React from "react";
 import { Fragment, useRef, useState, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ItemImage } from "./ItemImage";
+import { useStore } from "../../state/store";
+import { setAlertIsOpen, setAlertText } from "../../state/selectors";
 import { useGang } from "../../lib/state/groups/groups";
 import useGroupJoin from "../../lib/useGroupJoin";
 
@@ -14,31 +16,48 @@ export function ItemModal({
   pictures,
   tags,
   type,
+  data,
+  buttonDisabled,
   onRequestClose,
 }) {
   // console.log("ItemModal", { title, path, image, description, pictures, tags, type });
   const [open, setOpen] = useState(true);
-  const [alertIsOpen, setAlertIsOpen] = useState(false);
+  const _setAlertIsOpen = useStore(setAlertIsOpen);
+  const _setAlertText = useStore(setAlertText);
   const cancelButtonRef = useRef();
   const imageContainerRef = useRef();
 
   const groupInviteObject = useGang(path);
   const { join } = useGroupJoin(path, groupInviteObject, true);
+  const getColor = () => data?.bespoke?.payload?.color?.split(".").join("").substring(2);
 
   const handleAction = evt => {
-    evt.preventDefault();
     if (type === "group" && path?.length) {
       join();
-    } else {
-      onRequestClose(evt);
+    }
+    // open a new tab in grid with the install page
+    if (type === "app") {
+      const {
+        bespoke: {
+          keyObj: { ship, cord },
+        },
+      } = data;
+      const uri = `/apps/grid/leap/search/${ship}/apps/${ship}/${cord}`;
+      window.open(uri);
     }
   };
+
+  function getActionText(type) {
+    if (type === "group") return buttonDisabled ? "Joined" : "Join";
+    if (type === "app") return "Install";
+    if (type === "other") return "Go";
+  }
 
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog
         as="div"
-        className="relative z-10"
+        className="relative z-30"
         initialFocus={cancelButtonRef}
         onClose={onRequestClose}
       >
@@ -54,7 +73,7 @@ export function ItemModal({
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
         </Transition.Child>
 
-        <div className="fixed inset-0 z-10 overflow-y-auto">
+        <div className="fixed inset-0 z-30 overflow-y-auto">
           <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <Transition.Child
               as={Fragment}
@@ -99,6 +118,8 @@ export function ItemModal({
                           src={image || title}
                           type={type}
                           container={imageContainerRef}
+                          name={title}
+                          color={getColor()}
                         ></ItemImage>
                       </div>
                       <div className="w-2/3 sm:mt-0 sm:ml-4 text-left px-2">
@@ -108,9 +129,11 @@ export function ItemModal({
                         <div>
                           <a
                             href={website}
-                            className="text-xs text-blue-600 hover:text-blue-800"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs font-bold text-blue-600 hover:text-blue-800"
                           >
-                            {path}
+                            {type !== "other" ? path : ""}
                           </a>
                         </div>
                       </div>
@@ -124,10 +147,23 @@ export function ItemModal({
                   {/* <p className="w-2/3 text-xs text-blue-600 pr-4 absolute sm:bottom-4 sm:left-4 bottom-2 left-2">We sent a request for you to join. Open the Groups app to get started. </p> */}
                   <button
                     type="button"
-                    className="inline-flex w-1/3 justify-center rounded-md bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-800 sm:ml-3 sm:w-auto sm:text-sm absolute sm:bottom-4 sm:right-4 bottom-2 right-2"
-                    onClick={handleAction}
+                    className={`inline-flex w-1/3 justify-center rounded-md px-4 py-2 text-base font-medium text-white shadow-sm  sm:ml-3 sm:w-auto sm:text-sm absolute sm:bottom-4 sm:right-4 bottom-2 right-2 ${
+                      buttonDisabled ? "bg-none" : "bg-blue-600 hover:bg-blue-800"
+                    }`}
+                    disabled={buttonDisabled}
+                    onClick={() => {
+                      if (type === "group") {
+                        _setAlertIsOpen(true);
+                        setTimeout(() => _setAlertIsOpen(false), 5000);
+                      }
+                      if (type === "other") {
+                        window.open(website);
+                      }
+                      handleAction();
+                      onRequestClose();
+                    }}
                   >
-                    {type === "app" ? "Install" : "Join"}
+                    {getActionText(type)}
                   </button>
                 </div>
               </Dialog.Panel>

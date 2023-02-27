@@ -3,12 +3,29 @@ import { appConfig } from "../config";
 export const shouldTransform = subject =>
   subject.length && subject !== "SUBJECTS" && subject !== "FIELDS";
 // subject !== "INPUTS" &&
+const disabledProps = new Map([
+  ["properties", true],
+  ["pictures", true],
+  // ["key-text-list", true],
+  ["key-comment-list", true],
+  ["key-comment", true],
+  ["key-text", true],
+  ["bespoke-input", true],
+]);
 
-export const formField = (label, name, type = "text", parent = null) => ({
+export const formField = (
+  label,
+  name,
+  type = "text",
+  parent = null,
+  children = null
+) => ({
   label,
   name,
   type,
   parent,
+  children,
+  disabled: disabledProps.has(name),
 });
 export const mapInputField = (input, _parent = null) => {
   const parent = !(typeof _parent === "number") ? _parent : null;
@@ -17,16 +34,28 @@ export const mapInputField = (input, _parent = null) => {
     return !appConfig.EXPAND_ALL_POKE_FIELDS &&
       !appConfig.EXPAND_POKE_FIELD_ITEM_KEY_OBJECT
       ? formField("key", "key", "text", parent)
-      : ["ship", "type", "cord"].map(el => mapInputField(el, "key"));
+      : formField(
+          "key",
+          "key",
+          "object",
+          parent,
+          ["ship", "type", "cord"].map(el => mapInputField(el, "key"))
+        );
   }
   if (input === "text") {
     return formField("text", "text", "text", parent);
   }
   if (input === "comment") {
-    debugger;
+    // debugger;
     return !appConfig.EXPAND_ALL_POKE_FIELDS
       ? formField("comment", "comment", "object", parent)
-      : ["key", "text"].map(el => mapInputField(el, "comment"));
+      : formField(
+          "comment",
+          "comment",
+          "object",
+          parent,
+          ["key", "text"].map(el => mapInputField(el, "comment"))
+        );
   }
   if (input === "tags") {
     return formField("tags", "tags", "array", parent);
@@ -40,6 +69,7 @@ export const mapInputField = (input, _parent = null) => {
   if (input === "key-text-list") {
     // debugger;
     return formField("key-text-list", "key-text-list", "array", parent);
+    // return formField("key-text-list", "key-text-list", "array", parent, []);
     // disabled: true,
     // return !appConfig.EXPAND_ALL_POKE_FIELDS
     //   : ["key", "key-list"].map(mapInputField);
@@ -47,16 +77,22 @@ export const mapInputField = (input, _parent = null) => {
   if (input === "general") {
     return !appConfig.EXPAND_ALL_POKE_FIELDS
       ? formField("general", "general", "object", parent)
-      : [
-          "title",
-          "link",
-          "description",
-          "tags",
-          "properties",
-          "pictures",
-          "image",
-          "color",
-        ].map(el => mapInputField(el, "general"));
+      : formField(
+          "general",
+          "general",
+          "object",
+          parent,
+          [
+            "title",
+            "link",
+            "description",
+            "tags",
+            "image",
+            "properties",
+            "pictures",
+            "color",
+          ].map(el => mapInputField(el, "general"))
+        );
   }
   if (input === "ship") {
     return formField("ship", "ship", "text", parent);

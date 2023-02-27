@@ -103,8 +103,14 @@
         %get-group-preview
       ::  not sub -> not perfectly updated, either too much or too little
       =/  path  /groups/(scot %p ship.flag.act)/[term.flag.act]/preview
+      =/  wire  [%get-group-preview /(scot %p ship.flag.act)/[term.flag.act]]
+      =/  sub-status  (~(gut by wex.bowl) [wire ship.flag.act %groups] ~)
       :_  this
-      [%pass [%get-group-preview /(scot %p ship.flag.act)/[term.flag.act]] %agent [ship.flag.act %groups] %watch path]~
+      ?~  sub-status
+        [%pass wire %agent [ship.flag.act %groups] %watch path]~
+      ?:  =(acked.sub-status %.n)
+        [%pass wire %agent [ship.flag.act %groups] %watch path]~
+      ~
       ::
         %get-docket
       =/  path  /treaty/(scot %p ship.act)/[desk.act]

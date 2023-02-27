@@ -9,18 +9,24 @@ import { usePortalSubscription } from "./state/usePortal";
 import { useLandscapeSubscription } from "./state/useLandscape";
 import "./index.css";
 import { User } from "./pages/user/User";
+// import { GenericForm as Me } from "./pages/form/GenericForm";
 
 import theme from "./theme/theme";
 
 const router = createBrowserRouter([
   {
     path: "/apps/portal/",
-    element: <Navigate replace to="/apps/portal/usr" />,
+    // TODO: Change this to the default Portal curator's ship
+    element: <Navigate replace to="/apps/portal/~winpex-widtev-foddur-hodler" />,
   },
   {
     path: "/apps/portal/:patp",
     element: <User />,
   },
+  // {
+  //   path: "/apps/portal/me",
+  //   element: <Me />,
+  // },
 ]);
 
 export function App() {
@@ -32,7 +38,7 @@ export function App() {
       <ThemeProvider theme={theme}>
         <div className="page-container text-offwhite">
           <MotionConfig transition={{ duration: 1, reducedMotion: "user" }}>
-            <ToastContainer />
+            {/* <ToastContainer /> */}
             <RouterProvider router={router} />
             {/* <ToastContainer
           position="bottom-right"

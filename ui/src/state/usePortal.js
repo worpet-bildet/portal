@@ -2,11 +2,8 @@ import { useEffect, useState } from "react";
 import Urbit from "@urbit/http-api";
 import { urbitConfig as config } from "../config";
 import { handleEvent } from "./events";
-import {
-  onInitialLoad as _onInitialLoad,
-  onUpdate as _onUpdate,
-  useStore,
-} from "./store";
+import { useStore } from "./store";
+import { onInitialLoad as _onInitialLoad, onUpdate as _onUpdate } from "./selectors";
 import { generateActions } from "../urbit/pokes";
 import { types } from "./faces";
 import { scries } from "../urbit/scries";

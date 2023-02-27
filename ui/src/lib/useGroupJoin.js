@@ -47,7 +47,7 @@ export default function useGroupJoin(
     setStatus("loading");
     if (privacy === "private" && !invited) {
       await useGroupState.getState().knock(flag);
-      debugger;
+      // debugger;
     } else {
       try {
         await useHarkState.getState().sawRope({
@@ -60,7 +60,7 @@ export default function useGroupJoin(
         // no notification
       }
       try {
-        debugger;
+        // debugger;
         await useGroupState.getState().join(flag, true);
         setStatus("success");
         if (redirectItem) {
@@ -76,7 +76,7 @@ export default function useGroupJoin(
         return navigateByApp(`/groups/${flag}`);
       } catch (e) {
         setStatus("error");
-        debugger;
+        // debugger;
         if (requested) {
           await useGroupState.getState().rescind(flag);
         } else {

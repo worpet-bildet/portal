@@ -15,15 +15,18 @@ import { ItemModal } from "./ItemModal";
 import { ItemImage } from "./ItemImage";
 
 export function ItemTile(props) {
-  const { keys, data, item, __val, itemType } = props;
+  const { keys, data, item, __val, itemType, userGroupData } = props;
   const [shortTitle, longTitle] = getTitles(__val, itemType);
   const description = getDescription(__val, itemType);
   const website = getWebsite(__val, itemType);
   const pictures = data?.general?.pictures || [];
   const tags = data?.general?.tags || [];
+  const { ship, cord } = data?.bespoke?.keyObj;
+  const nameKey = `${ship}/${cord}`;
   const [imageError, setImageError] = useState(false);
   const [isUser, setIsUser] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [isJoined, setIsJoined] = useState(false);
 
   const navigate = useNavigate();
 
@@ -47,13 +50,25 @@ export function ItemTile(props) {
   });
   const getAppUriKey = _keys => _getAppUriKey(getKeys(_keys));
   const getItemType = () => props.itemType || data?.general?.type || "other";
-  const getImage = () =>
-    data?.general?.image ||
-    data?.icon?.src ||
-    data?.bespoke?.payload?.docket?.image ||
-    data?.bespoke?.payload?.image;
+  useEffect(() => {
+    if (userGroupData[nameKey]) {
+      setIsJoined(true);
+    }
+  }, [userGroupData, nameKey]);
+  // TODO: hacky, should do this in a better way
+  const getImage = () => {
+    return (
+      data?.general?.image ||
+      data?.icon?.src ||
+      data?.bespoke?.payload?.docket?.image ||
+      data?.bespoke?.payload?.image ||
+      userGroupData[nameKey]?.meta?.image
+    );
+  };
+
+  const getColor = () => data?.bespoke?.payload?.color?.split(".").join("").substring(2);
   return data ? (
-    <li className="flex space-x-3 text-sm leading-tight">
+    <li className={`flex mr-3 text-sm leading-tight ${isJoined ? `"` : ""}`}>
       {/* TODO: Think about wrapping this modal so there is no need for inline style here */}
       {getItemType() !== "ship" && (
         <Modal
@@ -80,13 +95,11 @@ export function ItemTile(props) {
             image={getImage()}
             type={getItemType()}
             onRequestClose={() => setModalIsOpen(false)}
+            data={data}
+            buttonDisabled={isJoined}
           ></ItemModal>
         </Modal>
       )}
-      {/* <Link
-        to={`/apps/portal/${!isUser ? `dev` : `usr`}/apps/${getAppUriKey(keys)}`}
-        className="w-full mr-4 rounded"
-      > */}
       <div
         onClick={() => {
           if (getItemType() === "ship") {
@@ -95,7 +108,7 @@ export function ItemTile(props) {
           }
           setModalIsOpen(true);
         }}
-        className="w-full mr-4 rounded cursor-pointer"
+        className="w-full rounded cursor-pointer"
       >
         <div className="flex flex-col flex-auto justify-between">
           <div className="flex flex-col">
@@ -111,12 +124,16 @@ export function ItemTile(props) {
                   patp={getItemType() === "ship" ? shortTitle : null}
                   container={imageContainerRef}
                   type={getItemType()}
+                  name={shortTitle}
+                  color={getColor()}
                   onError={setImageError}
                 />
               ) : null}
             </div>
-            <div className="flex flex-col w-40 space-y-3">
-              <div className="text-base mt-2 font-bold">{shortTitle}</div>
+            <div className="flex flex-col w-40 space-y-2">
+              <div className="text-base mt-2 font-bold line-clamp-3 text-ellipsis">
+                {shortTitle}
+              </div>
               <div className="text-xs line-clamp-3 text-gray-400 text-ellipsis">
                 {description}
               </div>

@@ -1,5 +1,5 @@
 /-  *portal-data, *portal-update, *portal-action, *portal-front-end-update
-/+  sig, agentio
+/+  sig, agentio, mip
 |%
 +$  card  card:agent:gall
 ::
@@ -61,6 +61,22 @@
     ^-  key-list
     (turn key-text-list |=([cel=[=key text=cord]] (head cel)))
   ::
+  ++  boat-to-outgoing-subs
+    |=  wex=boat:gall
+    ^-  outgoing-subs
+    =/  new-mip  *(map ship (map key ?))
+    =/  l  ~(val by wex)
+    =/  n  0
+    |-
+    ?:  =(n (lent l))  new-mip
+    %=  $
+      n  +(n)
+      new-mip
+        =/  pair=[acked=? =path]  (snag n l)
+        =/  key  (path-to-key:conv path.pair)
+        (~(put bi:mip new-mip) ship.key key acked.pair)
+    ==
+  ::
   ++  all-items-to-nested-one-cur
     |=  [cur-key=key =all-items]
     ^-  nested-all-items
@@ -75,7 +91,6 @@
     ::
     ::  (map list-list-key [list-list-item (map list-pointer [lis-item (map end-key end-item)])])
     (~(run by list-list-list-map) |=(val=[=item (map key ?(~ item))] (inner-maps-transform all-items val)))
-
   ::
   ::  find all lists of lists
   ::  for each, create a map with lists

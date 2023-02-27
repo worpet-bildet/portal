@@ -1,52 +1,84 @@
 import React, { Fragment, useMemo, useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
+import uniqBy from "lodash/uniqBy";
 import ResponsiveAppBar from "../../components/AppBar";
-import { getApps, useStore, getTypes, getLists, getShips } from "../../state/store";
+import { useStore } from "../../state/store";
+import {
+  getApps,
+  getTypes,
+  getLists,
+  // getShips,
+  setAlertIsOpen,
+  getDefaultCurators,
+} from "../../state/selectors";
 import { SliderList } from "../../components/List/SliderList";
 import { ItemImage } from "../../components/Item/ItemImage";
 import { usePortal } from "../../state/usePortal";
-import { createPoke } from "../../urbit/pokes";
-import { portalEvents } from "../../state/faces";
 import { AlertModal } from "../../components/AlertModal";
-import { useGroupList } from "../../lib/state/groups/groups";
+import unionBy from "lodash/unionBy";
+import { useGroupState } from "../../lib/state/groups/groups";
 
 export function User(props) {
   const { urbit, actions } = usePortal();
-  const groupList = useGroupList();
   const appLists = useStore(getApps);
   const types = useStore(getTypes);
   const lists = useStore(getLists);
-  const shipList = useStore(getShips);
+  const defaultCurators = useStore(getDefaultCurators);
+  const { groups } = useGroupState();
+  const _setAlertIsOpen = useStore(setAlertIsOpen);
   const { patp } = useParams();
   const [listTitle, setListTitle] = useState(null);
   const [listDescription, setListDescription] = useState(null);
   const [listImageSrc, setListImageSrc] = useState(null);
 
-  console.log({ groupList });
+  const allRecommendedShips = useMemo(
+    () =>
+      types?.ship?.length
+        ? types.ship.reduce((prev, curr, _idx) => {
+            const _ships = Object.values(curr.map).map(s => s.keyObj.ship);
+            return _ships?.length ? unionBy(prev, _ships, s => s) : prev;
+          }, [])
+        : [],
+    [types.ship]
+  );
+
+  const defaultCuratorShips = useMemo(
+    () => (defaultCurators ? Object.keys(defaultCurators) : []),
+    [defaultCurators]
+  );
+  const outstandingShipsToSubscribeTo = useMemo(
+    () =>
+      allRecommendedShips?.length
+        ? allRecommendedShips.filter(ship => !defaultCurators[ship] && ship !== patp)
+        : [],
+    [allRecommendedShips, defaultCuratorShips, patp]
+  );
+
+  useEffect(() => {
+    if (outstandingShipsToSubscribeTo.length) {
+      outstandingShipsToSubscribeTo.forEach(ship => {
+        actions.ITEM.pokes.sub(
+          urbit,
+          actions.ITEM.SUB
+        )({
+          key: {
+            ship,
+            type: "/list/list",
+            cord: "~2000.1.1",
+          },
+        });
+      });
+    }
+  }, [outstandingShipsToSubscribeTo]);
+
   useEffect(() => {
     let l = lists.find(l => l?.keys?.keyObj?.ship === patp);
     setListTitle(l?.general?.title || patp);
-    setListDescription(
-      l?.general?.description || `${patp} hasn't recommended anything yet`
-    );
+    setListDescription(l?.general?.description);
+    if (!l) setListDescription(`${patp} hasn't recommended anything yet`);
     setListImageSrc(l?.general?.image);
-    // subscribe to all the planets in the list of ships
-    types.ship
-      .filter(s => lists.find(l => l.item.keys.keyObj.ship !== s.item.keys.keyObj.ship))
-      .forEach(s => {
-        // subscribe only to the ships that we have not yet subscribed to
-        Object.values(s.map).forEach(sub => {
-          actions.ITEM.pokes.sub(
-            urbit,
-            actions.ITEM.SUB
-          )({
-            ship: sub.keyObj.ship,
-            type: "/list/list",
-            cord: "~2000.1.1",
-          });
-        });
-      });
-  }, [lists, patp, urbit]);
+  }, [lists, patp]);
+
   const filterBySection = ({ type, selectedSection }) => {
     return selectedSection === "all" ? true : type === selectedSection;
   };
@@ -66,6 +98,7 @@ export function User(props) {
             type={type}
             filters={[{ fn: filterBySection, args: ["selectedSection", "type"] }]}
             filterProps={["selectedSection", "type"]}
+            groups={groups}
           />
         ))
     );
@@ -73,9 +106,22 @@ export function User(props) {
   const listsByType = useMemo(
     () =>
       Object.entries(types)
+        // Only show lists of not-lists
         .filter(([type]) => type !== "list")
+        // Order the lists by date
+        .map(([type, list]) => {
+          let listSortedByDate = list
+            .map(x => x) // have to clone the array
+            .sort((a, b) => {
+              if (a?.item?.keys.keyObj?.cord < b?.item?.keys.keyObj?.cord) return -1;
+              return 1;
+            });
+          return [type, listSortedByDate];
+        })
+        // Then secondarily order by type (overwriting date order where necessary)
         .sort(([type1], [type2]) => {
           // There's probably a better way to do this
+          if (type1 === type2) return 0;
           if (type1 === "group") return -1;
           if (type2 === "group") return 1;
           if (type1 === "app") return -1;
@@ -90,7 +136,7 @@ export function User(props) {
   return (
     <Fragment>
       <ResponsiveAppBar />
-      <AlertModal onRequestClose={() => setAlertIsOpen(false)} />
+      <AlertModal onRequestClose={() => _setAlertIsOpen(false)} />
       <div className="flex flex-row px-2 sm:px-5 lg:px-24">
         <div className="flex flex-col max-w-full min-h-screen">
           {lists?.length > 0 && (
@@ -106,6 +152,9 @@ export function User(props) {
                   </div>
                   <div className="sm:w-3/4 sm:px-10 py-5 md:py-0">
                     <div className="font-bold text-2xl">{listTitle}</div>
+                    <div className="text-sm">
+                      list by <span className="font-bold text-blue-600">{patp}</span>
+                    </div>
                     <div className="pt-2 text-sm sm:text-lg text-gray-400">
                       {listDescription}
                     </div>

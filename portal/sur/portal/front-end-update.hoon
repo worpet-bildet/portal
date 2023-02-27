@@ -1,4 +1,5 @@
 /-  *portal-data
+/+  mip
 |%
 +$  front-end-update
   $:  src-is-our=?
@@ -7,4 +8,9 @@
       item=?(~ item)
       =end-map
   ==
+::
++$  outgoing-subs  (mip:mip ship key acked=?)
+::
+::  TODO later
++$  incoming-subs  (map ship key)
 --

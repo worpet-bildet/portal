@@ -58,7 +58,8 @@ export const FIELDS = transform(
       key,
       inputs,
       heading,
-      fields: flatten(inputs.map(mapInputField)),
+      // fields: flatten(inputs.map(mapInputField)),
+      fields: inputs.map(mapInputField),
     };
     return acc;
   },

@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
+import { shallow } from "zustand/shallow";
 import { Box } from "@mui/system";
 import { Container, IconButton } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
@@ -11,7 +12,7 @@ import ClickAwayListener from "@mui/base/ClickAwayListener";
 import toPairs from "lodash/toPairs";
 
 import { useStore } from "../../state/store";
-import { useForm } from "../../state/form";
+import { getFormActions, getFormState, useForm } from "../../state/form";
 import { getActionStructure, withOverrides } from "./util";
 import { usePortal } from "../../state/usePortal";
 
@@ -21,25 +22,39 @@ export const PokeForm = ({ selectedPath, handleClose }) => {
   const {
     urbit,
     actions,
+    ship,
     types: { FIELDS },
   } = usePortal();
+  const { formAction, formData } = useForm(getFormState);
   const {
-    formAction,
-    formData,
     setFormAction,
-    setFormData,
-    initFormData,
-    skipInit,
+    setFormDataAtPath: setFormData,
+    getFormDataAtPath: getFormData,
     setSkipInit,
-  } = useForm();
-  // useEffect(() => {
-  //   initFormData(getInitialFormData());
-  //   return () => { setSkipInit(false) };
-  // }, [itemPreviewPath]);
+  } = useForm(getFormActions);
 
-  const getValue = (field, _formData) => _formData[field.name];
-  const handleChange = (name, value) => setFormData(name, value);
-  const handleSetAction = action => setFormAction(action);
+  useEffect(() => {
+    if (ship?.length) setFormData("ship", `~${ship}`);
+    if (formAction.length && !formData?.actionType?.length) {
+      setFormData("actionType", formAction);
+    }
+    return () => {
+      setSkipInit(false);
+    };
+  }, [ship]);
+
+  const fields = useMemo(
+    () => FIELDS[formAction]?.fields || [],
+    [FIELDS, formAction, ship]
+  );
+
+  const handleChange = (name, value, parent) =>
+    setFormData(formatPath(name, parent), value);
+
+  const handleSetAction = action => {
+    setFormAction(action);
+    setFormData("actionType", action);
+  };
 
   const handleSubmit = evt => {
     evt.preventDefault();
@@ -53,34 +68,24 @@ export const PokeForm = ({ selectedPath, handleClose }) => {
 
   // TODO: Align styling with other components
   const createInputComponents = (fieldsByAction, handleChange) => {
-    return action => {
-      const fields = fieldsByAction[action]?.fields || [];
-      return fields.length
-        ? fields.map(field => {
-            const addProps = field.disabled ? { disabled: true } : {};
-            return HIDE_DISABLED_FIELDS && field.disabled ? null : (
-              <TextField
-                key={field.name}
-                id={`gen-form-action-${action}`}
-                label={field.label}
-                // placeholder={getPathDefaults(field)}
-                value={getValue(field, formData)}
-                onKeyDown={evt => {
-                  if (evt.key === "Enter") {
-                    handleSubmit(evt);
-                    handleChange(field.name, "");
-                  }
-                }}
-                onChange={evt => handleChange(field.name, evt.target.value)}
-                {...addProps}
-                sx={{ m: 1, minWidth: 120, gap: "2px" }}
-              ></TextField>
-            );
-          })
-        : null;
-    };
+    return action =>
+      fieldsByAction.length ? (
+        <GenericFieldMapper
+          fields={fields}
+          formData={formData}
+          action={action}
+          handleChange={handleChange}
+          handleSubmit={handleSubmit}
+        />
+      ) : (
+        <Box>
+          <Typography variant="body1">No fields found for {action}</Typography>
+        </Box>
+      );
   };
-  const generateInputComponents = createInputComponents(FIELDS, handleChange);
+
+  const generateInputComponents = createInputComponents(fields, handleChange);
+
   const onClickAway = evt => {
     setSkipInit(false);
     handleClose(evt);
@@ -124,3 +129,69 @@ export const PokeForm = ({ selectedPath, handleClose }) => {
     </ClickAwayListener>
   );
 };
+
+// TODO: Move these components to their own file(s)
+export const GenericTextField = ({
+  field,
+  formData,
+  action,
+  addProps,
+  handleChange,
+  handleSubmit,
+}) => {
+  const getFieldShallow = useForm(state => state.getFormDataAtPath, shallow);
+  const setField = useForm(state => state.setFormDataAtPath);
+  return !field.disabled ? (
+    <TextField
+      id={`gen-form-action-${action}`}
+      label={field.label}
+      // placeholder={getPathDefaults(field)}
+      value={getFieldShallow(formatPath(field.name, field.parent))}
+      onKeyDown={evt => {
+        if (evt.key === "Enter") {
+          handleSubmit(evt);
+        }
+      }}
+      onChange={evt => setField(formatPath(field.name, field.parent), evt.target.value)}
+      {...addProps}
+      sx={{ m: 1, minWidth: 120, gap: "2px" }}
+    ></TextField>
+  ) : null;
+};
+
+export const GenericFieldMapper = ({
+  fields,
+  formData,
+  action,
+  handleChange,
+  handleSubmit,
+}) => {
+  return fields.map(field =>
+    field.children?.length ? (
+      <Box key={field.name}>
+        <InputLabel id={`gen-form-action-${action}-label`}>{field.name}</InputLabel>
+        {field.children.map(child => (
+          <GenericTextField
+            key={child.name}
+            field={child}
+            formData={formData}
+            action={action}
+            handleChange={handleChange}
+            handleSubmit={handleSubmit}
+          />
+        ))}
+      </Box>
+    ) : (
+      <GenericTextField
+        field={field}
+        formData={formData}
+        action={action}
+        handleChange={handleChange}
+        handleSubmit={handleSubmit}
+      />
+    )
+  );
+};
+
+// TODO: Move to util
+export const formatPath = (_name, _parent) => (_parent ? `${_parent}.${_name}` : _name);

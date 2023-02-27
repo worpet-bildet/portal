@@ -6,11 +6,13 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build-prod": "cross-env APP=portal vite build --mode production --base=/dist/",
     "serve": "vite preview",
     "copy-desk-zod": "rsync -a --delete ../portal/ ../../ships/zod/portal/",
     "copy-desk-nec": "rsync -a --delete ../portal/ ../../ships/nec/portal/",
     "copy-desk-brady": "rsync -a --delete ../portal/ ../../../mycomet/portal/",
     "copy-desk-pw": "rsync -a --delete ../portal/ ../../ships/portal-wolred/portal/",
+    "copy-desk-fm": "rsync -a --delete ../portal/ ../../ships/fopwyt-doplyr/portal/",
     "copy-dist": "cp -r ../portal/* ../../ships/zod/portal",
     "prettier": "prettier --write src/**/*.{js,jsx,css}"
   },
@@ -44,6 +46,7 @@
     "react-error-boundary": "^3.1.4",
     "react-horizontal-scrolling-menu": "^3.2.5",
     "react-modal": "^3.16.1",
+    "react-router": "^6.8.1",
     "react-router-dom": "^6.4.3",
     "react-toastify": "^9.1.1",
     "urbit-ob": "^5.0.1",

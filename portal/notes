@@ -200,15 +200,6 @@ TO SEED DATA ON THE LIVE NETWORK USE THE FOLLOWING COMMANDS
     [[~bollug-worlus [%nonitem %group ~] 'urbit-index'] 'indexxxxing urbit']
 ==
 
-;; title=@t
-;; link=@t
-;; description=@t
-;; =tags
-;; =properties
-;; =pictures
-;; image=@t
-;; color=@t
-
 :portal-manager|sub [~winpex-widtev-foddur-hodler [%list %list ~] '~2000.1.1']
 
 :portal-manager|overwrite-list :-
@@ -238,6 +229,197 @@ TO SEED DATA ON THE LIVE NETWORK USE THE FOLLOWING COMMANDS
     [[~dilryd-mopreg [%nonitem %ship ~] ''] '3rd portal dude']
     [[~foddur-hodler [%nonitem %ship ~] ''] 'portal dudes never stop']
 ==
+
+=data -build-file /=portal=/sur/portal/data/hoon
+=lib -build-file /=portal=/lib/portal/hoon
+
+:portal-manager  &portal-action  :-  %edit
+:portal-manager &portal-action :-  %edit  :+  [our [%list %list ~] '~2000.1.1']
+:*
+'Portal's Guide to Getting Started on Urbit'
+'testa'
+'testb'
+*tags:data
+*properties:data
+*pictures:data
+''
+''
+==
+:-  %list-list
+:~  [[our [%list %app ~] '~2000.1.1'] 'These are the apps I recommend']
+    [[our [%list %enditem %other ~] '~2000.1.1'] 'These are miscellaneous items I recommend']
+    [[our [%list %nonitem %group ~] '~2000.1.1'] 'These are groups I recommend']
+    [[our [%list %nonitem %ship ~] '~2000.1.1'] 'These are ships I recommend']  ==
+
+:portal-manager &portal-action :-  %edit  :+  [our [%list %app ~] '~2000.1.1']
+:*
+'Social Apps'
+''
+'Connect and chat with your friends in the Urbitverse'
+*tags:data
+*properties:data
+*pictures:data
+''
+''
+==
+:-  %list-app
+:~  [[~nodmyn-dosrux [%nonitem %app ~] 'radio'] 'dope app']
+    [[~paldev [%nonitem %app ~] 'pals'] 'add friends on urbit']
+    [[~paldev [%nonitem %app ~] 'pals'] 'dope app']
+    [[~paldev [%nonitem %app ~] 'rumors'] 'dope app']
+    [[~nodmyn-dosrux [%nonitem %app ~] 'radio'] 'dope app']
+    [[~dister-dister-datryn-ribdun [%nonitem %app ~] 'campfire'] 'dope app']
+    [[~dister-nocsyx-lassul [%nonitem %app ~] 'sphinx'] 'dope app']
+    [[~sitden-sonnet [%nonitem %app ~] 'channel'] 'dope app']
+    [[~dister-dister-sidnym-ladrut [%nonitem %app ~] 'quorum'] 'dope app']
+    [[~dister-dozzod-sortug [%nonitem %app ~] 'trill'] 'dope app']
+    [[~paldev [%nonitem %app ~] 'scooore'] 'dope app']
+==
+
+:portal-manager &portal-action :-  %edit  :+  [our [%list %nonitem %ship ~] '~2000.1.1']
+:*
+'Other Curators'
+''
+'Discover more collections like our own'
+*tags:data
+*properties:data
+*pictures:data
+''
+''
+==
+:-  %list-nonitem-ship
+:~  [[~toptyr-bilder [%nonitem %ship ~] ''] 'portal dude']
+    [[~winpex-widtev-foddur-hodler [%nonitem %ship ~] ''] 'spaceman']
+    [[~doplyr-harbur [%nonitem %ship ~] ''] 'another portal dude']
+    [[~dilryd-mopreg [%nonitem %ship ~] ''] '3rd portal dude']
+    [[~foddur-hodler [%nonitem %ship ~] ''] 'portal dudes never stop']
+==
+
+:portal-manager &portal-action :-  %edit  :+  [our [%list %nonitem %group ~] '~2000.1.1']
+:*
+'Technology Groups'
+''
+'Communities focused on tech, crypto and more'
+*tags:data
+*properties:data
+*pictures:data
+''
+''
+==
+:-  %list-nonitem-group
+:~  [[~matwet [%nonitem %group ~] 'networked-subject'] 'Love!']
+    [[~sonwet [%nonitem %group ~] 'the-cryptocurrency-forum'] 'Love!']
+    [[~litmus-ritten [%nonitem %group ~] 'iwtf'] 'Love!']
+    [[~tirrel [%nonitem %group ~] 'the-marketplace'] 'Love!']
+    [[~litmus-ritten [%nonitem %group ~] 'sis'] 'Love!']
+    [[~dalten [%nonitem %group ~] 'dalten-collective-public'] 'Love!']
+==
+
+:portal-manager|sub [~winpex-widtev-foddur-hodler [%list %list ~] '~2000.1.1']
+
+;; portal curator subtitle: There's a lot to discover on Urbit. Portal has assembled an array of communities, games, and content to jump start your Urbit experience.
+;;  need to create new list
+;; :portal-manager &portal-action :-  %edit  :+  [our [%list %app ~] '~2000.1.1']
+;; :*
+;; 'Tools'
+;; ''
+;; 'Build and work on the network'
+;; *tags:data
+;; *properties:data
+;; *pictures:data
+;; ''
+;; ''
+;; ==
+;; :-  %list-app
+;; :~  [[~maptyl-lapsyl [%nonitem %app ~] 'uniswap'] 'dope app']
+;;     [[~dister-dozzod-dalten [%nonitem %app ~] 'keep'] 'dope app']
+;;     [[~mister-master-tiller-tolbus [%nonitem %app ~] 'membrane'] 'dope app']
+;;     [[~hanrut-sillet-dachus-tiprel [%nonitem %app ~] 'blog'] 'dope app']
+;;     [[~tirrel [%nonitem %app ~] 'studio'] 'dope app']
+;;     [[~pocwet [%nonitem %app ~] 'docs'] 'dope app']
+;;     [[~dister-dozzod-bacdun [%nonitem %app ~] 'zig'] 'dope app']
+;;     [[~dister-norsyr-torryn [%nonitem %app ~] 'canvas'] 'dope app']
+;; ==
+
+;; need to create new list
+;; :portal-manager &portal-action :-  %edit  :+  [our [%list %nonitem %group ~] '~2000.1.1']
+;; :*
+;; 'Community / Support Groups'
+;; ''
+;; 'Communities for getting tech support and finding your way around Urbit'
+;; *tags:data
+;; *properties:data
+;; *pictures:data
+;; ''
+;; ''
+;; ==
+;; :-  %list-nonitem-group
+;; :~  [[~doplyr-harbur [%nonitem %group ~] 'hacker-house'] 'Love!']
+;;     [[~bitbet-bolbel [%nonitem %group ~] 'urbit-community'] 'Love!']
+;;     [[~halbex-palheb [%nonitem %group ~] 'uf-public'] 'Love!']
+;;     [[~nibset-napwyn [%nonitem %group ~] 'tlon'] 'Love!']
+;;     [[~rondev [%nonitem %group ~] 'group-discovery'] 'Love!']
+;;     [[~hocwyn-tipwex [%nonitem %group ~] 'uqbar-event-horizon'] 'Love!']
+;;     [[~middev [%nonitem %group ~] 'the-forge'] 'Love!']
+;;     [[~hiddev-dannut [%nonitem %group ~] 'new-hooniverse'] 'Love!']
+;;     [[~hocwyn-tipwex [%nonitem %group ~] 'uqbar-event-horizon'] 'Uqbar FTW!']
+;;     [[~rondev [%nonitem %group ~] 'group-discovery'] 'Discover groups ayaya']
+;;     [[~poldec-tonteg [%nonitem %group ~] 'the-phantom-tollbooth'] 'esotericism whooooooooa']
+;;     [[~bollug-worlus [%nonitem %group ~] 'urbit-index'] 'indexxxxing urbit']
+;; ==
+
+;; need to create new list
+;; :portal-manager &portal-action :-  %edit  :+  [our [%list %nonitem %group ~] '~2000.1.1']
+;; :*
+;; 'Lifestyle Groups'
+;; ''
+;; 'Communities for play'
+;; *tags:data
+;; *properties:data
+;; *pictures:data
+;; ''
+;; ''
+;; ==
+;; :-  %list-nonitem-group
+;; :~ [[~nibset-napwyn [%nonitem %group ~] 'remote-life'] 'Love!']
+;; [[~tichus-holnet [%nonitem %group ~] 'urblon'] 'Love!']
+;; [[~dister-dozzod-niblyx-malnus [%nonitem %group ~] 'towards-a-timeless-way-of-building'] 'Love!']
+;; [[~rabsef-bicrym [%nonitem %group ~] 'hollow-mars-theory'] 'Love!']
+;; [[~natnex-ronret [%nonitem %group ~] 'door-link'] 'Love!']
+;; [[~somlus-savlev [%nonitem %group ~] 'urbart'] 'Love!']
+;; [[~fabled-faster [%nonitem %group ~] 'new-york'] 'Love!']
+;; [[~rondev [%nonitem %group ~] 'minecraft'] 'Love!']
+;; ==
+
+;; need to add new list
+;; :portal-manager|overwrite-list :-
+;; [our [%list %app ~] '~2000.1.1']
+;; :~  [[~bacrys [%nonitem %app ~] 'pokur'] 'another dope app']
+;; [[~finmep-lanteb [%nonitem %app ~] 'chess'] 'another dope app']
+;; [[~dister-dozzod-dalten [%nonitem %app ~] 'wrdu'] 'another dope app']
+;; [[~disreb-winner-mittec [%nonitem %app ~] 'urbit-go'] 'another dope app']
+;; [[~dister-hanfel-dovned [%nonitem %app ~] 'slam'] 'another dope app']
+;; [[~bacwyl-samweg [%nonitem %app ~] 'templeochess'] 'another dope app']
+;; ==
+
+;; title=@t
+;; link=@t
+;; description=@t
+;; =tags
+;; =properties
+;; =pictures
+;; image=@t
+;; color=@t
+
+
+// const { ship, type } = ({ keyObj }) => ({
+//   ship: keyObj.ship,
+//   type: keyObj.type.slice().split("/")
+// })(res);
+
+// :portal-manager|del [~winpex-widtev-foddur-hodler [%list %list ~] '~2000.1.1']
+
+// hey dude quick q on pongo - whats the base route for the app /webview? If I I open another tab to grid using the usual URL scheme would that work? or if new tab wouldnt work can I overwrite the location?
 
 NOTE:  you get the format, please add groups/ships/apps into these commands as you please
 

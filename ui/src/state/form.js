@@ -1,13 +1,32 @@
 import produce from "immer";
+import _get from "lodash/get";
+import _set from "lodash/set";
 import { initialFormData } from "./state";
-import { createFormStore } from "./middleware";
+import { createStore } from "./middleware";
 
 export const getToastActions = state => ({
   add: state.addToast,
 });
+
+export const getFormActions = state => ({
+  setFormAction: state.setFormAction,
+  setSkipInit: state.setSkipInit,
+  setFormData: state.setFormData,
+  setFormDataAtPath: state.setFormDataAtPath,
+  hydrateFormData: state.hydrateFormData,
+  initFormData: state.initFormData,
+  resetFormData: state.resetFormData,
+});
+
+export const getFormState = state => ({
+  formAction: state.formAction,
+  formData: state.formData,
+  skipInit: state.skipInit,
+  getFormDataAtPath: state.getFormDataAtPath,
+});
 // const toastActions = useForm(getToastActions);
 
-export const useForm = createFormStore((set, get) => ({
+export const useForm = createStore((set, get) => ({
   formAction: "ITEM_ADD",
   formData: initialFormData,
   skipInit: false,
@@ -23,6 +42,13 @@ export const useForm = createFormStore((set, get) => ({
       produce(draft => {
         draft.formAction = action;
         draft.formData.actionType = action;
+      })
+    ),
+  getFormDataAtPath: path => _get(get().formData, path),
+  setFormDataAtPath: (path, value) =>
+    set(
+      produce(draft => {
+        _set(draft.formData, path, value.toLowerCase());
       })
     ),
   setFormData: (name, value) =>
