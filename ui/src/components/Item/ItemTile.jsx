@@ -21,7 +21,8 @@ export function ItemTile(props) {
   const website = getWebsite(__val, itemType);
   const pictures = data?.general?.pictures || [];
   const tags = data?.general?.tags || [];
-  const { ship, cord } = data?.bespoke?.keyObj;
+  const ship = data?.bespoke?.keyObj?.ship;
+  const cord = data?.bespoke?.keyObj?.cord;
   const nameKey = `${ship}/${cord}`;
   const [imageError, setImageError] = useState(false);
   const [isUser, setIsUser] = useState(false);
