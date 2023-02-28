@@ -60,7 +60,12 @@ export const SliderList = ({ item, map, type, filters, filterProps, groups }) =>
   );
 
   const FilterJoinedButton = props => {
-    let numberOfJoinedGroups = Object.keys(groups).length;
+    // let numberOfJoinedGroups = Object.keys(groups).length;
+    let numberOfJoinedGroups = 0;
+    Object.values(map).forEach(list => {
+      let keyStr = `${list?.data?.bespoke?.keyObj?.ship}/${list?.data?.bespoke?.keyObj?.cord}`;
+      if (groups[keyStr]) numberOfJoinedGroups++;
+    });
     if (numberOfJoinedGroups === 0) return;
     return (
       <div

@@ -14,7 +14,8 @@ function buildNav(curators) {
   return [
     {
       name: "Home",
-      href: `/apps/portal/${curators[0] ? curators[0][1].item.keys.keyObj.ship : ""}`,
+      href: `/apps/portal/~worpet-bildet`,
+      // href: `/apps/portal/${curators[0] ? curators[0][1].item.keys.keyObj.ship : ""}`,
       // href: `/apps/portal/${curators[0] ? curators[0][1].item.keyObj.ship : ""}`,
       highlightOnSelect: true,
       section: "all",
