@@ -23,7 +23,7 @@
   ^-  (quip card _this)
   =.  state  :+  %0
   *user-log:portal-logs
-  [~dister-doznec-dilryd-mopreg /list/list '~2000.1.1']
+  [~worpet-bildet /list/list '~2000.1.1']
   `this
 ::
 ++  on-save  !>(state)

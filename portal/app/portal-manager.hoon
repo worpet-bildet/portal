@@ -22,8 +22,8 @@
 ++  on-init
   ^-  (quip card _this)
   =.  state  *state-0
-  =/  default-curators  (silt (limo ~[[~dister-doznec-dilryd-mopreg /list/list '~2000.1.1']]))
-  =/  portal-curator    [~dister-doznec-dilryd-mopreg /list/list '~2000.1.1']
+  =/  default-curators  (silt (limo ~[[~worpet-bildet /list/list '~2000.1.1']]))
+  =/  portal-curator    [~worpet-bildet /list/list '~2000.1.1']
   =/  new-user-event    [%join now.bowl (get-ship-type:misc our.bowl) `@ux`(shax our.bowl)]
   :_  %=  this
         default-curators  default-curators

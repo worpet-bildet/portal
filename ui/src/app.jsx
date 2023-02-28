@@ -17,7 +17,7 @@ const router = createBrowserRouter([
   {
     path: "/apps/portal/",
     // TODO: Change this to the default Portal curator's ship
-    element: <Navigate replace to="/apps/portal/~winpex-widtev-foddur-hodler" />,
+    element: <Navigate replace to="/apps/portal/~worpet-bildet" />,
   },
   {
     path: "/apps/portal/:patp",
