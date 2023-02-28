@@ -56,7 +56,7 @@ export default function AppBar() {
 
   const MySigil = () => {
     // TODO: check this works when signed in on a ship
-    const { ship: myShip } = usePortal();
+    let { ship: myShip } = usePortal();
     // sigil-js can't render moons
     return myShip?.length > "13" ? (
       <></>
@@ -111,7 +111,7 @@ export default function AppBar() {
                   </a>
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
-                  <div className="flex space-x-4">
+                  <div className="flex space-x-4 items-center">
                     {navigation.map(item => (
                       <a
                         onClick={evt => handleSectionChange(evt, item)}
