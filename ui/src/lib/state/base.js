@@ -115,11 +115,13 @@ export async function doOptimistically(state, action, call, reduce) {
     }
   }
 }
-export async function pokeOptimisticallyN(state, poke, reduce, desk = "groups") {
+// export async function pokeOptimisticallyN(state, poke, reduce, desk = "groups") {
+export async function pokeOptimisticallyN(state, poke, reduce) {
   let num;
   try {
     num = optReduceState(state, poke.json, reduce);
-    await api.poke(poke, desk);
+    // await api.poke(poke, desk);
+    await api.poke(poke);
     state.getState().removePatch(num);
   } catch (e) {
     console.error(e);
