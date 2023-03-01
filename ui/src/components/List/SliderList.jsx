@@ -5,6 +5,7 @@ import { ItemTile } from "../Item/ItemTile";
 import { Card } from "./Card";
 import { LeftArrow, RightArrow } from "./SliderArrows";
 import { useStore } from "../../state/store";
+import { isMobile } from "../../utils/mobile";
 
 export const SliderList = ({ item, map, type, filters, filterProps, groups }) => {
   if (isEmpty(map)) return <></>;
@@ -95,8 +96,8 @@ export const SliderList = ({ item, map, type, filters, filterProps, groups }) =>
         {type === "group" && <FilterJoinedButton></FilterJoinedButton>}
       </div>
       <ScrollMenu
-        LeftArrow={hover ? LeftArrow : <></>}
-        RightArrow={hover ? RightArrow : <></>}
+        LeftArrow={hover || isMobile() ? LeftArrow : <></>}
+        RightArrow={hover || isMobile() ? RightArrow : <></>}
         className="overflow-hidden"
       >
         {mappedCards}
