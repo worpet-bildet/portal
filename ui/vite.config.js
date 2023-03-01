@@ -24,7 +24,7 @@ export default ({ mode }) => {
       },
     },
     build: {
-      sourcemap: true,
+      sourcemap: false,
       manifest: true,
     },
   });

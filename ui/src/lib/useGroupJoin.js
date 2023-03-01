@@ -4,7 +4,7 @@ import useGroupPrivacy from "./logic/useGroupPrivacy";
 import { useModalNavigate, useDismissNavigate } from "./logic/routing";
 import useNavigateByApp from "./logic/useNavigateByApp";
 import { useGroup, useGroupState } from "./state/groups/groups";
-import useHarkState from "./state/hark";
+// import useHarkState from "./state/hark";
 
 function getButtonText(privacy, requested, invited, group) {
   switch (true) {
@@ -49,16 +49,16 @@ export default function useGroupJoin(
       await useGroupState.getState().knock(flag);
       // debugger;
     } else {
-      try {
-        await useHarkState.getState().sawRope({
-          channel: null,
-          desk: "groups",
-          group: flag,
-          thread: `/${flag}/invite`,
-        });
-      } catch (error) {
-        // no notification
-      }
+      // try {
+      //   await useHarkState.getState().sawRope({
+      //     channel: null,
+      //     desk: "groups",
+      //     group: flag,
+      //     thread: `/${flag}/invite`,
+      //   });
+      // } catch (error) {
+      //   // no notification
+      // }
       try {
         // debugger;
         await useGroupState.getState().join(flag, true);

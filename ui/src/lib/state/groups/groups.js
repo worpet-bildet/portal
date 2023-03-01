@@ -277,34 +277,37 @@ export const useGroupState = createStoreWithPersist(
             },
           }),
           onError: () => reject(),
-          onSuccess: async () => {
-            await useSubscriptionState.getState().track("groups/groups/ui", event => {
-              const { update, diff } = event;
-              if (update && update.diff) {
-                if ("cordon" in update.diff) {
-                  const { shut } = update.diff.cordon;
-                  if ("add-ships" in shut) {
-                    const { kind, ships: addedShips } = shut["add-ships"];
-                    return (
-                      kind === "pending" && addedShips.every(ship => ships.includes(ship))
-                    );
-                  }
-                  return false;
-                }
-                return false;
-              }
-              if (diff && "cordon" in diff) {
-                const { shut } = diff.cordon;
-                if ("add-ships" in shut) {
-                  const { kind, ships: addedShips } = shut["add-ships"];
-                  return (
-                    kind === "pending" && addedShips.every(ship => ships.includes(ship))
-                  );
-                }
-                return false;
-              }
-              return false;
-            });
+          onSuccess: async _ => {
+            if (_) console.log(_);
+            // resolve();
+            // onSuccess: async () => {
+            // await useSubscriptionState.getState().track("groups/groups/ui", event => {
+            //   const { update, diff } = event;
+            //   if (update && update.diff) {
+            //     if ("cordon" in update.diff) {
+            //       const { shut } = update.diff.cordon;
+            //       if ("add-ships" in shut) {
+            //         const { kind, ships: addedShips } = shut["add-ships"];
+            //         return (
+            //           kind === "pending" && addedShips.every(ship => ships.includes(ship))
+            //         );
+            //       }
+            //       return false;
+            //     }
+            //     return false;
+            //   }
+            //   if (diff && "cordon" in diff) {
+            //     const { shut } = diff.cordon;
+            //     if ("add-ships" in shut) {
+            //       const { kind, ships: addedShips } = shut["add-ships"];
+            //       return (
+            //         kind === "pending" && addedShips.every(ship => ships.includes(ship))
+            //       );
+            //     }
+            //     return false;
+            //   }
+            //   return false;
+            // });
             resolve();
           },
         });
@@ -329,36 +332,37 @@ export const useGroupState = createStoreWithPersist(
             },
           }),
           onError: () => reject(),
-          onSuccess: async () => {
-            await useSubscriptionState.getState().track("groups/groups/ui", event => {
-              const { update, diff } = event;
-              if (update && update.diff) {
-                if ("cordon" in update.diff) {
-                  const { shut } = update.diff.cordon;
-                  if ("del-ships" in shut) {
-                    const { kind: returnedKind, ships: addedShips } = shut["del-ships"];
-                    return (
-                      returnedKind === "pending" &&
-                      addedShips.every(ship => ships.includes(ship))
-                    );
-                  }
-                  return false;
-                }
-                return false;
-              }
-              if (diff && "cordon" in diff) {
-                const { shut } = diff.cordon;
-                if ("del-ships" in shut) {
-                  const { kind: returnedKind, ships: addedShips } = shut["del-ships"];
-                  return (
-                    returnedKind === "pending" &&
-                    addedShips.every(ship => ships.includes(ship))
-                  );
-                }
-                return false;
-              }
-              return false;
-            });
+          onSuccess: async _ => {
+            if (_) console.log(_);
+            // await useSubscriptionState.getState().track("groups/groups/ui", event => {
+            //   const { update, diff } = event;
+            //   if (update && update.diff) {
+            //     if ("cordon" in update.diff) {
+            //       const { shut } = update.diff.cordon;
+            //       if ("del-ships" in shut) {
+            //         const { kind: returnedKind, ships: addedShips } = shut["del-ships"];
+            //         return (
+            //           returnedKind === "pending" &&
+            //           addedShips.every(ship => ships.includes(ship))
+            //         );
+            //       }
+            //       return false;
+            //     }
+            //     return false;
+            //   }
+            //   if (diff && "cordon" in diff) {
+            //     const { shut } = diff.cordon;
+            //     if ("del-ships" in shut) {
+            //       const { kind: returnedKind, ships: addedShips } = shut["del-ships"];
+            //       return (
+            //         returnedKind === "pending" &&
+            //         addedShips.every(ship => ships.includes(ship))
+            //       );
+            //     }
+            //     return false;
+            //   }
+            //   return false;
+            // });
             resolve();
           },
         });

@@ -13,7 +13,7 @@
     "copy-desk-brady": "rsync -a --delete ../portal/ ../../../mycomet/portal/",
     "copy-desk-pw": "rsync -a --delete ../portal/ ../../ships/portal-wolred/portal/",
     "copy-desk-fm": "rsync -a --delete ../portal/ ../../ships/fopwyt-doplyr/portal/",
-    "copy-dist": "cp -r ../portal/* ../../ships/zod/portal",
+    "copy-dist": "rsync -avL --delete ../portal/ ../../ships/portal-wolred/portal/",
     "prettier": "prettier --write src/**/*.{js,jsx,css}"
   },
   "dependencies": {
