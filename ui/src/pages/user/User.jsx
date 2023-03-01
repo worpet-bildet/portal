@@ -143,19 +143,22 @@ export function User(props) {
             <main className="basis-3/4 h-full px-2">
               <div className="pt-4 sm:pt-10 h-auto md:h-56">
                 <div className="flex flex-col md:flex-row items-center">
-                  <div className="w-44 h-44 rounded-lg overflow-hidden" ref={imageContainerRef}>
+                  <div
+                    className="w-44 h-44 rounded-lg overflow-hidden"
+                    ref={imageContainerRef}
+                  >
                     <ItemImage
                       src={listImageSrc}
                       patp={patp}
                       container={imageContainerRef}
                     ></ItemImage>
                   </div>
-                  <div className="sm:w-3/4 sm:px-10 py-5 md:py-0">
+                  <div className="w-full sm:w-3/4 sm:px-10 py-5 md:py-0">
                     <div className="font-bold text-2xl">{listTitle}</div>
                     <div className="text-sm">
                       list by <span className="font-bold text-[#0284c7]">{patp}</span>
                     </div>
-                    <div className="pt-2 text-sm sm:text-lg text-gray-400">
+                    <div className="pt-2 text-sm sm:text-lg text-gray-400 break-words">
                       {listDescription}
                     </div>
                   </div>
