@@ -39,7 +39,7 @@ export function App() {
         <div className="page-container text-offwhite">
           <MotionConfig transition={{ duration: 1, reducedMotion: "user" }}>
             <ToastContainer theme="dark" />
-            <RouterProvider router={router} />
+            <RouterProvider router={router} icon={false} />
             {/* <ToastContainer
           position="bottom-right"
           autoClose={false}
