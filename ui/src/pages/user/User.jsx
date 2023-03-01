@@ -144,7 +144,7 @@ export function User(props) {
               <div className="pt-4 sm:pt-10 h-auto md:h-56">
                 <div className="flex flex-col md:flex-row items-center">
                   <div
-                    className="w-44 h-44 rounded-lg overflow-hidden"
+                    className="w-44 h-44 rounded-xl overflow-hidden"
                     ref={imageContainerRef}
                   >
                     <ItemImage

@@ -86,7 +86,7 @@ export function ItemModal({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-black text-offwhite text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-xl bg-black text-offwhite text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
                 <button
                   type="button"
                   className="absolute top-0 right-0 pt-4 pr-4"
@@ -113,7 +113,7 @@ export function ItemModal({
                   <div className="sm:flex sm:items-start sm:pb-5">
                     <div className="w-full flex flex-row justify-start pt-4 items-center">
                       <div
-                        className="w-1/4 h-1/4 rounded-lg overflow-hidden"
+                        className="w-1/4 h-1/4 rounded-xl overflow-hidden"
                         ref={imageContainerRef}
                       >
                         <ItemImage

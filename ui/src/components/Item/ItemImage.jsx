@@ -34,7 +34,7 @@ export const ItemImage = ({ src, patp, type, container, name, color, onError }) 
   if (type && type !== "ship" && src === defaultImg[type]) {
     return (
       <div
-        className="flex flex-col justify-center items-center w-full h-full rounded-lg bg-black text-5xl"
+        className="flex flex-col justify-center items-center w-full h-full rounded-xl bg-black text-5xl"
         style={{
           height: `${imageSize}px` || `0px`,
           backgroundColor: `#${color}` || "#000000",
@@ -53,7 +53,7 @@ export const ItemImage = ({ src, patp, type, container, name, color, onError }) 
   }
   return (
     <img
-      className="w-full pt-100 object-cover rounded-lg bg-gray-200"
+      className="w-full pt-100 object-cover rounded-xl bg-gray-200"
       src={getImageSrc(src, type)}
       alt={`${type}-image`}
       onError={() => onError(true)}
