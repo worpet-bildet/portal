@@ -1,17 +1,35 @@
-TO SETUP PORTAL
+# TO SETUP PORTAL 1st time
 |merge %portal our %base
 |mount %portal
-- erase the portal folder and replace it with the one from github
-|commit %portal
 |install our %portal
 
-TO NUKE
+# setup continued. do these after pulling from remote or nuking
+- erase the portal folder and replace it with the one from github
+|commit %portal # move files from earth (unix) to mars (urbit filesystem)
+
+# TO NUKE
 |nuke %portal, =desk &
 |rein %portal [& %portal-manager]
 
-TO SEED DATA ON THE LIVE NETWORK USE THE FOLLOWING COMMANDS
+# TO SEED DATA ON THE LIVE NETWORK USE THE FOLLOWING COMMANDS
 =data -build-file /=portal=/sur/portal/data/hoon
 =lib -build-file /=portal=/lib/portal/hoon
+
+;; end item - item with data living on portal
+;; non item - item with data living elsewhere (some apps, groups). non-editable
+;; edit - can work on every end item or list 
+;; canonical list types (init in portal.hoon) - 
+;; %list %enditem %other
+;; %list %nonitem %group
+;; %list %nonitem %ship
+;; %list %app
+;; all items have general + bespoke data
+;; general - title, link, desc, tags, props, pics, image, color
+;; bespoke - depends on type - keys
+;; cord - name of an app/group, or a date
+;; path (uuid) - /zod/list/enditem/other/[date or cord]
+
+# add enditem to default list
 
 :portal-manager &portal-action :-  %add  :^  our  [%enditem %other ~]
 :*
@@ -26,31 +44,9 @@ TO SEED DATA ON THE LIVE NETWORK USE THE FOLLOWING COMMANDS
 ==
 [%enditem-other ~]
 
-:portal-manager &portal-action :-  %add  :^  our  [%enditem %other ~]
-:*
-'Urbit, Blockchains, & the Next Billion Users with Ted Blackman, Engineer at Tlon | The Urbit Series'
-'https://www.youtube.com/watch?v=JiNe8XWa7wY'
-'Ted Blackman is a senior engineer at Tlon and one of the most advanced Urbit engineers in the world. We discuss how Urbit will get faster, how it will scale to billions of users, and how Urbit fits into the blockchain ecosystem. In some ways Urbit is like a blockchain, in other ways Urbit is the categorical dual of the blockchain, soon there will be a blockchain built on top of Urbit, and more.'
-*tags:data
-*properties:data
-*pictures:data
-'http://i3.ytimg.com/vi/JiNe8XWa7wY/hqdefault.jpg'
-''
-==
-[%enditem-other ~]
+# add list with items
+are these items then removed from other lists?
 
-:portal-manager &portal-action :-  %add  :^  our  [%enditem %other ~]
-:*
-'The Most Correct Computer (How Urbit Wins) with Philip Monk, CTO of Tlon | The #Urbit Series'
-'https://www.youtube.com/watch?v=iFdsQStj4PM'
-'Philip Monk co-authored the Urbit whitepaper with Curtis Yarvin back in 2016. He is now the lead engineer working on Urbit, and a thoughtful writer as well. We discuss how to find frontiers, the philosophy of "correctness at all costs," how the current internet is captured by gradient descent, and how Urbit will achieve mass adoption.'
-*tags:data
-*properties:data
-*pictures:data
-'http://i3.ytimg.com/vi/iFdsQStj4PM/hqdefault.jpg'
-''
-==
-[%enditem-other ~]
 
 :portal-manager &portal-action :-  %add  :^  our  [%list %enditem %other ~]
 :*
@@ -65,65 +61,10 @@ TO SEED DATA ON THE LIVE NETWORK USE THE FOLLOWING COMMANDS
 ==
 :-  %list-enditem-other
 :~  [[our [%enditem %other ~] 'insert date when item was created ~2023.2...'] 'yt vid']
+    [[our [%enditem %other ~] 'cord'] 'yt vid']
     [[our [%enditem %other ~] 'insert date ~2023.2...'] 'yt vid']
-    [[our [%enditem %other ~] 'insert date ~2023.2...'] 'yt vid']
 ==
-
-:portal-manager &portal-action :-  %add  :^  our  [%enditem %other ~]
-:*
-'The BlockDollar'
-'https://mirror.xyz/0x08477a125e282201BacCF4AE2e6136d1F0cEEE36/fNd7kLNFYkq-VMjeRFJ5MjmyzDgNwqmWacYYxXiK27A'
-'The BlockDollar, or “What Will Blockchains Actually Be Good For?”'
-*tags:data
-*properties:data
-*pictures:data
-'https://mirror-media.imgix.net/publication-images/moUqrDE7XmeVzIcw6LSS_.jpeg?height=243&width=486&h=243&w=486&auto=compress'
-''
-==
-[%enditem-other ~]
-
-:portal-manager &portal-action :-  %add  :^  our  [%enditem %other ~]
-:*
-'Urbit: functional programming from scratch'
-'https://moronlab.blogspot.com/2010/01/urbit-functional-programming-from.html'
-'Urbit is a static functional namespace: a programming environment specified as a single stateless, frozen function. The Urbit function is Maxwellian: formally defined by a small system of axioms. Urbit, while a cool toy, is designed for practical computing.'
-*tags:data
-*properties:data
-*pictures:data
-''
-''
-==
-[%enditem-other ~]
-
-:portal-manager &portal-action :-  %add  :^  our  [%enditem %other ~]
-:*
-'Rovnys tweetstorm'
-'https://twitter.com/rovnys/status/1371972157971050499?s=20'
-'I\'ve begun a series of audio recordings about the design and rationale of Urbit, called Urbit from the Outside In.'
-*tags:data
-*properties:data
-*pictures:data
-'https://twitter.com/rovnys/photo'
-''
-==
-[%enditem-other ~]
-
-:portal-manager &portal-action :-  %add  :^  our  [%list %enditem %other ~]
-:*
-'Articles introducing Urbit'
-''
-''
-*tags:data
-*properties:data
-*pictures:data
-''
-''
-==
-:-  %list-enditem-other
-:~  [[our [%enditem %other ~] 'insert date when item was created ~2023.2...'] 'article']
-    [[our [%enditem %other ~] 'insert date ~2023.2...'] 'article']
-    [[our [%enditem %other ~] 'insert date ~2023.2...'] 'article']
-==
+these should be in the format [[~poldec-tonteg [%enditem %other ~] '~2023.2...'] 'yt vid']
 
 
 :portal-manager &portal-action :-  %add  :^  our  [%list %nonitem %group ~]
@@ -211,29 +152,6 @@ TO SEED DATA ON THE LIVE NETWORK USE THE FOLLOWING COMMANDS
       [[~poldec-tonteg [%nonitem %group ~] 'the-phantom-tollbooth'] 'esotericism whooooooooa']
       [[~bollug-worlus [%nonitem %group ~] 'urbit-index'] 'indexxxxing urbit']
   ==
-
-:portal-manager|overwrite-list :-
-[our [%list %app ~] '~2000.1.1']
-:~  [[~nodmyn-dosrux [%nonitem %app ~] 'radio'] 'dope app']
-    [[~bacrys [%nonitem %app ~] 'pokur'] 'another dope app']
-    [[~nodmyn-dosrux [%nonitem %app ~] 'houston'] 'manage your moons']
-    [[~paldev [%nonitem %app ~] 'pals'] 'add friends on urbit']
-    [[~paldev [%nonitem %app ~] 'cliff'] 'your urbit file manager']
-    [[~dachus-tiprel [%nonitem %app ~] 'blog'] 'publish to the boomerweb']
-==
-
-:portal-manager|overwrite-list :-
-[our [%list %nonitem %ship ~] '~2000.1.1']
-:~  [[~toptyr-bilder [%nonitem %ship ~] ''] 'portal dude']
-    [[~doplyr-harbur [%nonitem %ship ~] ''] 'another portal dude']
-    [[~dilryd-mopreg [%nonitem %ship ~] ''] '3rd portal dude']
-    [[~foddur-hodler [%nonitem %ship ~] ''] 'portal dudes never stop']
-==
-
-=data -build-file /=portal=/sur/portal/data/hoon
-=lib -build-file /=portal=/lib/portal/hoon
-
-:portal-manager  &portal-action  :-  %edit
 :portal-manager &portal-action :-  %edit  :+  [our [%list %list ~] '~2000.1.1']
 :*
 'Portal's Guide to Getting Started on Urbit'
@@ -314,6 +232,8 @@ TO SEED DATA ON THE LIVE NETWORK USE THE FOLLOWING COMMANDS
     [[~litmus-ritten [%nonitem %group ~] 'sis'] 'Love!']
     [[~dalten [%nonitem %group ~] 'dalten-collective-public'] 'Love!']
 ==
+
+# subscribe to a ship
 
 :portal-manager|sub [~winpex-widtev-foddur-hodler [%list %list ~] '~2000.1.1']
 
@@ -550,3 +470,13 @@ extra command for practicality: add pointer to list-of-pointers when you want (s
 specificna mapa/lista itema koji su prikazani? (ako zelis neki hopping algo u buducnosti mozemo)
 
 eventually we want to add "price" property to items.
+
+# Enforce capitalization for title on dev app creation
+
+# Provide clearer, persistent instruction for uploading icon from docket, other post-upload instructions
+
+# Fix isSafe icon on review page
+
+# Fix button overlap on curator add app page
+
+# Can make add app clearer for curator

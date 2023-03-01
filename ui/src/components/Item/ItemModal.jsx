@@ -42,7 +42,7 @@ export function ItemModal({
           keyObj: { ship, cord },
         },
       } = data;
-      const uri = `/apps/grid/leap/search/${ship}/apps/${ship}/${cord}`;
+      const uri = `/apps/grid/leap/search/${ship}/apps`;
       window.open(uri);
     }
   };
@@ -131,7 +131,7 @@ export function ItemModal({
                             href={website}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-xs font-bold text-blue-600 hover:text-blue-800"
+                            className="text-xs font-bold text-[#0284c7] hover:text-[#0284c7]"
                           >
                             {type !== "other" ? path : ""}
                           </a>
@@ -144,11 +144,11 @@ export function ItemModal({
                   </div>
                 </div>
                 <div className="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                  {/* <p className="w-2/3 text-xs text-blue-600 pr-4 absolute sm:bottom-4 sm:left-4 bottom-2 left-2">We sent a request for you to join. Open the Groups app to get started. </p> */}
+                  {/* <p className="w-2/3 text-xs text-[#0284c7] pr-4 absolute sm:bottom-4 sm:left-4 bottom-2 left-2">We sent a request for you to join. Open the Groups app to get started. </p> */}
                   <button
                     type="button"
                     className={`inline-flex w-1/3 justify-center rounded-md px-4 py-2 text-base font-medium text-white shadow-sm  sm:ml-3 sm:w-auto sm:text-sm absolute sm:bottom-4 sm:right-4 bottom-2 right-2 ${
-                      buttonDisabled ? "bg-none" : "bg-blue-600 hover:bg-blue-800"
+                      buttonDisabled ? "bg-none" : "bg-[#0284c7] hover:bg-[#0284c7]"
                     }`}
                     disabled={buttonDisabled}
                     onClick={() => {

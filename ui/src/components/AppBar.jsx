@@ -98,12 +98,12 @@ export default function AppBar() {
                   >
                     <img
                       className="block h-8 w-auto lg:hidden"
-                      src="https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/3d.svg"
+                      src="https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/logo2.svg"
                       alt="Portal Logo"
                     />
                     <img
-                      className="hidden h-8 w-auto lg:block"
-                      src="https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/3d.svg"
+                      className="hidden h-14 w-auto lg:block"
+                      src="https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/logo2.svg"
                       alt="Portal Logo"
                     />
                     <h2 className="flex flex-1 text-lg font-michroma leading-8 pb-1 pl-2 tracking-tight text-white cursor-pointer">
@@ -120,7 +120,7 @@ export default function AppBar() {
                         href={item.href}
                         className={classNames(
                           sectionToggled(item)
-                            ? "bg-blue-600 text-white"
+                            ? "bg-[#0284c7] text-white"
                             : "text-gray-300 hover:bg-gray-700 hover:text-white",
                           "px-3 py-2 rounded-md text-sm font-medium"
                         )}
