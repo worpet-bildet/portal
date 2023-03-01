@@ -97,7 +97,7 @@ export default function AppBar() {
                     href={navigation[0].href}
                   >
                     <img
-                      className="block h-8 w-auto lg:hidden"
+                      className="block h-12 w-auto lg:hidden"
                       src="https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/logo2.svg"
                       alt="Portal Logo"
                     />
