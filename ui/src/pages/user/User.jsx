@@ -30,6 +30,7 @@ export function User(props) {
   const [listTitle, setListTitle] = useState(null);
   const [listDescription, setListDescription] = useState(null);
   const [listImageSrc, setListImageSrc] = useState(null);
+  const [listOrder, setListOrder] = useState([]);
 
   const allRecommendedShips = useMemo(
     () =>
@@ -76,60 +77,40 @@ export function User(props) {
     setListTitle(l?.general?.title || patp);
     setListDescription(l?.general?.description);
     if (!l) setListDescription(`${patp} hasn't recommended anything yet`);
+    setListOrder(l?.item?.data?.bespoke?.payload || []);
     setListImageSrc(l?.general?.image);
   }, [lists, patp]);
 
+  const getTypeFromTypeKey = typeKey => {
+    return typeKey.slice(typeKey.lastIndexOf("/") + 1);
+  };
   const filterBySection = ({ type, selectedSection }) => {
     return selectedSection === "all" ? true : type === selectedSection;
   };
-  const renderListsByType = ([type, lists]) => {
-    if (!lists?.length) return <></>;
+  const renderList = ({ item, map }) => {
+    if (!item || !map) return <></>;
     return (
-      lists?.length &&
-      lists
-        .filter(l => {
-          return l?.keys?.keyObj?.ship === patp;
-        })
-        .map(({ item, map }, _idx) => (
-          <SliderList
-            key={_idx}
-            item={item}
-            map={map}
-            type={type}
-            filters={[{ fn: filterBySection, args: ["selectedSection", "type"] }]}
-            filterProps={["selectedSection", "type"]}
-            groups={groups}
-          />
-        ))
+      <SliderList
+        item={item}
+        map={map}
+        type={getTypeFromTypeKey(item?.data?.bespoke?.keyObj?.type)}
+        filters={[{ fn: filterBySection, args: ["selectedSection", "type"] }]}
+        filterProps={["selectedSection", "type"]}
+        groups={groups}
+      ></SliderList>
     );
   };
-  const listsByType = useMemo(
-    () =>
-      Object.entries(types)
-        // Only show lists of not-lists
-        .filter(([type]) => type !== "list")
-        // Order the lists by date
-        .map(([type, list]) => {
-          let listSortedByDate = list
-            .map(x => x) // have to clone the array
-            .sort((a, b) => {
-              if (a?.item?.keys.keyObj?.cord < b?.item?.keys.keyObj?.cord) return -1;
-              return 1;
-            });
-          return [type, listSortedByDate];
-        })
-        // Then secondarily order by type (overwriting date order where necessary)
-        .sort(([type1], [type2]) => {
-          // There's probably a better way to do this
-          if (type1 === type2) return 0;
-          if (type1 === "group") return -1;
-          if (type2 === "group") return 1;
-          if (type1 === "app") return -1;
-          if (type2 === "app") return 1;
-        })
-        .map(renderListsByType),
-    [types, patp]
-  );
+  const listsByType = useMemo(() => {
+    let nonListLists = Object.entries(types).filter(([type]) => type !== "list");
+    let orderedLists = [];
+    listOrder.forEach(l => {
+      nonListLists.forEach(([type, list]) => {
+        let myList = list.find(typeList => typeList.keys.key === l.keyStr);
+        if (myList) orderedLists.push(myList);
+      });
+    });
+    return orderedLists.map(renderList);
+  }, [types, patp, listOrder]);
 
   const imageContainerRef = useRef();
 
