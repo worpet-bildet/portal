@@ -5,7 +5,7 @@
   version+[0 0 1]
   website+''
   license+''
-  image+'https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/tile.svg'
+  image+'https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/tile2.svg'
   base+'portal'
   glob-ames+[~worpet-bildet 0v0]
 ==
