@@ -1,7 +1,7 @@
 :~
   title+'Portal'
   info+'A tool for decentralized curation and discovery of groups, apps and content on Urbit.'
-  color+0x0a.0a0a
+  color+0xa.0a0a
   version+[0 0 1]
   website+''
   license+''
