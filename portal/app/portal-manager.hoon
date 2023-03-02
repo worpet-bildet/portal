@@ -58,6 +58,10 @@
       :_  this
       ~[(~(poke pass:io /act) [our.bowl %portal-store] portal-action+vase)]
     ::
+    ?:  =(-.act %add-items-and-list)
+      :_  this
+      (add-items-and-list:on-action:portal-manager our.bowl src.bowl now.bowl act)
+    ::
     =/  poke-msg  ~(poke pass:io /msg)
     ?+    -.act    `this
         %comment

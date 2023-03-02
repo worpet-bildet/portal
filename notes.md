@@ -17,8 +17,8 @@
 
 ;; end item - item with data living on portal
 ;; non item - item with data living elsewhere (some apps, groups). non-editable
-;; edit - can work on every end item or list 
-;; canonical list types (init in portal.hoon) - 
+;; edit - can work on every end item or list
+;; canonical list types (init in portal.hoon) -
 ;; %list %enditem %other
 ;; %list %nonitem %group
 ;; %list %nonitem %ship
@@ -28,6 +28,57 @@
 ;; bespoke - depends on type - keys
 ;; cord - name of an app/group, or a date
 ;; path (uuid) - /zod/list/enditem/other/[date or cord]
+
+# make list with items in one command
+:portal-manager &portal-action :-  %add-items-and-list  :^  our  [%list %enditem %other ~]
+:*
+'List Title'
+'link'
+'List Description. List Description. List Description. List Description. List Description.'
+*tags:data
+*properties:data
+*pictures:data
+''
+''
+==
+:~  :-  %add  :^  our  [%enditem %other ~]
+    :*
+    'Software as Soulcraft and the Metaphysics of Engineering with Neal Davis'
+    'https://www.youtube.com/watch?v=8f8vk1BhlDo'
+    'Neal Davis is a professor of computer science and the director of Urbit\'s Hoon School. We discuss why solving nuclear fusion might be a disaster, why Urbit computers have souls, Shinto philosophy, why you should read old books, how to select books, and much more. This was really good!'
+    *tags:data
+    *properties:data
+    *pictures:data
+    'http://i3.ytimg.com/vi/8f8vk1BhlDo/hqdefault.jpg'
+    ''
+    ==
+    [%enditem-other ~]
+    :-  %add  :^  our  [%enditem %other ~]
+    :*
+    'Urbit, Blockchains, & the Next Billion Users with Ted Blackman, Engineer at Tlon | The Urbit Series'
+    'https://www.youtube.com/watch?v=JiNe8XWa7wY'
+    'Ted Blackman is a senior engineer at Tlon and one of the most advanced Urbit engineers in the world. We discuss how Urbit will get faster, how it will scale to billions of users, and how Urbit fits into the blockchain ecosystem. In some ways Urbit is like a blockchain, in other ways Urbit is the categorical dual of the blockchain, soon there will be a blockchain built on top of Urbit, and more.'
+    *tags:data
+    *properties:data
+    *pictures:data
+    'http://i3.ytimg.com/vi/JiNe8XWa7wY/hqdefault.jpg'
+    ''
+    ==
+    [%enditem-other ~]
+    :-  %add  :^  our  [%enditem %other ~]
+    :*
+    'The Most Correct Computer (How Urbit Wins) with Philip Monk, CTO of Tlon | The #Urbit Series'
+    'https://www.youtube.com/watch?v=iFdsQStj4PM'
+    'Philip Monk co-authored the Urbit whitepaper with Curtis Yarvin back in 2016. He is now the lead engineer working on Urbit, and a thoughtful writer as well. We discuss how to find frontiers, the philosophy of "correctness at all costs," how the current internet is captured by gradient descent, and how Urbit will achieve mass adoption.'
+    *tags:data
+    *properties:data
+    *pictures:data
+    'http://i3.ytimg.com/vi/iFdsQStj4PM/hqdefault.jpg'
+    ''
+    ==
+    [%enditem-other ~]
+==
+
 
 # add enditem to default list
 
@@ -45,8 +96,8 @@
 [%enditem-other ~]
 
 # add list with items
-are these items then removed from other lists?
-
+q: are these items then removed from other lists?
+a: no. (by Jurij)
 
 :portal-manager &portal-action :-  %add  :^  our  [%list %enditem %other ~]
 :*

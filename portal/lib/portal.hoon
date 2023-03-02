@@ -1,4 +1,5 @@
-/-  *portal-data, *portal-update, *portal-action, *portal-front-end-update
+/-  *portal-data, *portal-update, *portal-action, *portal-front-end-update,
+    *portal-config
 /+  sig, agentio, mip
 |%
 +$  card  card:agent:gall
@@ -55,6 +56,11 @@
     :+  (slav %p -:path)
         (flop (snip (flop (snip path))))
         (rear path)
+  ::
+  ++  key-list-to-key-text-list  :: make key-text-list with empty comments
+    |=  [=key-list]
+    ^-  key-text-list
+    (turn key-list |=(=key [key '']))
   ::
   ++  key-text-list-to-key-list
     |=  [=key-text-list]:: ?(app-key-list other-key-list group-key-list ship-key-list)
@@ -524,6 +530,27 @@
       :-  (put:on-poke:make-cards all-items our src upd)
       (put-item our all-items upd)
     ::
+    ::  TODO portal-store should be able to add a bunch of items in one arvo cycle (once card)
+    ::  used with +add-other-items-and-list from portal-manager, trying out new pattern
+    ++  add-with-time
+      |=  [=all-items our=ship src=ship now=time act=[%add-with-time =key =general =bespoke-input]]
+      ^-  [(list card) ^all-items]
+      ?.  =(our src)  [~ all-items]
+      ?.  =(ship.key.act our)
+        ~&  "%portal: not adding item, ship in key must be our"
+        [~ all-items]
+      =/  data  [(bespoke-write:conv key.act bespoke-input.act [%add ~]) general.act]
+      =/  meta
+        :*  updated-at='~2000.1.1'
+            permissions=~[our]
+            reach=[%public blacklist=~]
+            outside-sigs=~
+        ==
+      =/  item-sig  (sign:sig our now `sig-input`[%item data meta *social])
+      =/  upd  [%put key.act [data meta *social item-sig]]
+      :-  (put:on-poke:make-cards all-items our src upd)
+      (put-item our all-items upd)
+    ::
     ++  sub
       |=  [our=ship src=ship now=time wex=boat:gall act=[%sub =key]]
       ^-  (list card)
@@ -928,6 +955,54 @@
 ::
 ++  portal-manager
   |%
+  ++  on-action
+    |%
+    ::[%add-other-items-and-list list-ship=ship list-type=$%(/list/enditem/other /list/app) list-general=general add-items=(list [%add =ship =type =general =bespoke-input])]]
+    ::  note: makes key-text-list with empty texts
+    ::  action must be %add-items-and-list
+    ++  add-items-and-list
+      |=  [our=ship src=ship now=time act=action]
+      ^-  (list card)        ::  first item cards, then list card
+      ?+    -.act    !!
+          %add-items-and-list
+        ?.  =(our src)  ~
+        ?.  =(list-ship.act our)
+          ~&  "%portal: not adding item, ship in key must be our"
+          ~
+        ::  TODO validate ships in item keys (fine for now since its also done in portal store)
+        ::
+        =/  n  0
+        =/  len  (lent add-items.act)
+        =/  time-state  now
+        =/  item-keys   *(list key)
+        =/  item-cards  *(list card)
+        =/  keys-and-cards
+          |-  ?:  =(n len)  [item-keys item-cards]
+            =/  add-act  (snag n add-items.act)
+            =/  key  [ship.add-act type.add-act `@t`(scot %da time-state)]
+            =/  item-card  %^  act-to-act-card:cards
+              [%add-with-time key general.add-act bespoke-input.add-act]
+              our  %portal-store
+            %=  $
+              n  +(n)
+              time-state  `@da`(add time-state `@dr`~s0..0000.0001)
+              item-keys   (snoc item-keys key)
+              item-cards  (snoc item-cards item-card)
+            ==
+        =/  key-text-list  (key-list-to-key-text-list:conv -.keys-and-cards)
+        =/  bespoke-input
+          ?-    list-type.act
+              [%list %enditem %other ~]
+            [%list-enditem-other key-text-list]
+              [%list %app ~]
+            [%list-app key-text-list]
+          ==
+        %+  snoc  +.keys-and-cards
+        %^  act-to-act-card:cards
+        (action [%add list-ship.act list-type.act list-general.act bespoke-input])
+          our  %portal-store
+      ==
+    --
   ::
   ++  on-update
     |%

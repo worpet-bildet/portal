@@ -55,6 +55,11 @@
         (add:on-action:portal-store [all-items our.bowl src.bowl now.bowl %.n act])
       [cards this]
       ::
+        %add-with-time
+      =^  cards  all-items
+        (add-with-time:on-action:portal-store [all-items our.bowl src.bowl now.bowl act])
+      [cards this]
+      ::
         %edit
       =^  cards  all-items
         (edit:on-action:portal-store [all-items our.bowl src.bowl now.bowl act])
