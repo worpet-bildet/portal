@@ -62,6 +62,10 @@
       :_  this
       (add-items-and-list:on-action:portal-manager our.bowl src.bowl now.bowl act)
     ::
+    ?:  =(-.act %add-items-and-edit-list)
+      :_  this
+      (add-items-and-edit-list:on-action:portal-manager our.bowl src.bowl now.bowl act)
+    ::
     =/  poke-msg  ~(poke pass:io /msg)
     ?+    -.act    `this
         %comment

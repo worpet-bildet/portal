@@ -9,6 +9,7 @@
       ::
       :: note: makes key-text-list with empty texts
       [%add-items-and-list list-ship=ship list-type=$%([%list %enditem %other ~] [%list %app ~]) list-general=general add-items=(list [%add =ship =type =general =bespoke-input])]
+      [%add-items-and-edit-list list-key=[=ship type=$%([%list %enditem %other ~] [%list %app ~]) =cord] list-general=general add-items=(list [%add =ship =type =general =bespoke-input])]
       [%add-with-time =key =general =bespoke-input]
       ::
       [%sub =key]

@@ -953,6 +953,8 @@
   ::
   --
 ::
+::  'macros' of commands happen on portal-manager level
+::  TODO fundamental commands (actions) and composite commands
 ++  portal-manager
   |%
   ++  on-action
@@ -1000,6 +1002,49 @@
         %+  snoc  +.keys-and-cards
         %^  act-to-act-card:cards
         (action [%add list-ship.act list-type.act list-general.act bespoke-input])
+          our  %portal-store
+      ==
+    ::
+    ++  add-items-and-edit-list
+      |=  [our=ship src=ship now=time act=action]
+      ^-  (list card)        ::  first item cards, then list card
+      ?+    -.act    !!
+          %add-items-and-edit-list
+        ?.  =(our src)  ~
+        ?.  =(ship.list-key.act our)
+          ~&  "%portal: not adding item, ship in key must be our"
+          ~
+        ::  TODO validate ships in item keys (fine for now since its also done in portal store)
+        ::
+        =/  n  0
+        =/  len  (lent add-items.act)
+        =/  time-state  now
+        =/  item-keys   *(list key)
+        =/  item-cards  *(list card)
+        =/  keys-and-cards
+          |-  ?:  =(n len)  [item-keys item-cards]
+            =/  add-act  (snag n add-items.act)
+            =/  key  [ship.add-act type.add-act `@t`(scot %da time-state)]
+            =/  item-card  %^  act-to-act-card:cards
+              [%add-with-time key general.add-act bespoke-input.add-act]
+              our  %portal-store
+            %=  $
+              n  +(n)
+              time-state  `@da`(add time-state `@dr`~s0..0000.0001)
+              item-keys   (snoc item-keys key)
+              item-cards  (snoc item-cards item-card)
+            ==
+        =/  key-text-list  (key-list-to-key-text-list:conv -.keys-and-cards)
+        =/  bespoke-input
+          ?-    type.list-key.act
+              [%list %enditem %other ~]
+            [%list-enditem-other key-text-list]
+              [%list %app ~]
+            [%list-app key-text-list]
+          ==
+        %+  snoc  +.keys-and-cards
+        %^  act-to-act-card:cards
+        (action [%edit list-key.act list-general.act bespoke-input])
           our  %portal-store
       ==
     --
