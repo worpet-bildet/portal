@@ -28,7 +28,7 @@ export const handleEvent =
       return factActions.onInitialLoad(evt);
     }
     if (action === "portal-front-end-update") {
-      toast.success(_toast);
+      // toast.success(_toast);
       return factActions.onUpdate({ evt, action, urbit });
     }
     // console.log({ factActions, action, evt });
