@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { ScrollMenu } from "react-horizontal-scrolling-menu";
 import { isEmpty } from "lodash";
 import { ItemTile } from "../Item/ItemTile";
@@ -13,6 +13,11 @@ export const SliderList = ({ item, map, type, filters, filterProps, groups }) =>
   const selectedSection = useStore(state => state.selectedSection);
   const defaultFiltersProps = { selectedSection, type };
   const [hideJoinedGroups, setHideJoinedGroups] = useState(false);
+  const [listOrder, setListOrder] = useState([]);
+
+  useEffect(() => {
+    setListOrder(item?.data?.bespoke?.payload || []);
+  }, [item]);
 
   // TODO: Replace with desired click handler
   const handleClick = visibility => {
@@ -29,35 +34,44 @@ export const SliderList = ({ item, map, type, filters, filterProps, groups }) =>
   );
 
   const mappedCards = useMemo(
-    () =>
-      !isEmpty(map)
-        ? Object.entries(map).map(([key, val]) => {
-            if (hideJoinedGroups) {
-              const { ship, cord } = val?.data?.bespoke?.keyObj;
-              const nameKey = `${ship}/${cord}`;
-              if (groups[nameKey]) return <></>;
-            }
-            return (
-              <Card
-                itemId={key} // NOTE: itemId is required for track items
-                title={key}
+    () => {
+      if (isEmpty(map)) return null;
+      let orderedItems = [];
+      listOrder.forEach(l => {
+        const { ship, cord } = l.keyObj;
+        const nameKey = `${ship}/${cord}`;
+        if (groups[nameKey]) return;
+        if (map[l.keyStr]) orderedItems.push(map[l.keyStr]);
+      });
+      return orderedItems.map(val => {
+        if (hideJoinedGroups) {
+          const { ship, cord } = val?.data?.bespoke?.keyObj;
+          const nameKey = `${ship}/${cord}`;
+          if (groups[nameKey]) return <></>;
+        }
+        const key = val.keyStr;
+        return (
+          <Card
+            itemId={key} // NOTE: itemId is required for track items
+            title={key}
+            key={key}
+            onClick={handleClick}
+          >
+            <div tabIndex={key}>
+              <ItemTile
                 key={key}
-                onClick={handleClick}
-              >
-                <div tabIndex={key}>
-                  <ItemTile
-                    key={key}
-                    itemType={type}
-                    __val={val}
-                    userGroupData={groups}
-                    {...val}
-                  />
-                </div>
-              </Card>
-            );
-          })
-        : null,
-    [map, hideJoinedGroups]
+                itemType={type}
+                __val={val}
+                userGroupData={groups}
+                {...val}
+              />
+            </div>
+          </Card>
+        );
+      });
+    },
+    // : null,
+    [item, map, hideJoinedGroups, listOrder]
   );
 
   const FilterJoinedButton = props => {
