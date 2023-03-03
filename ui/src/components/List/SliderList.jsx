@@ -70,7 +70,7 @@ export const SliderList = ({ item, map, type, filters, filterProps, groups }) =>
     if (numberOfJoinedGroups === 0) return;
     return (
       <div
-        className="text-base text-gray-400 underline w-1/3 text-right cursor-pointer"
+        className="text-xs text-gray-400 underline w-1/3 text-right cursor-pointer"
         onClick={() => setHideJoinedGroups(!hideJoinedGroups)}
       >
         {hideJoinedGroups
@@ -90,7 +90,7 @@ export const SliderList = ({ item, map, type, filters, filterProps, groups }) =>
     >
       <div className="text-2xl font-bold">{item?.data?.general?.title}</div>
       <div className="flex flex-row justify-between pb-2 w-full">
-        <div className="text-base text-gray-400 w-2/3">
+        <div className="text-xs sm:text-base text-gray-400 w-2/3">
           {item?.data?.general?.description}
         </div>
         {type === "group" && <FilterJoinedButton></FilterJoinedButton>}

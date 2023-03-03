@@ -79,7 +79,7 @@
     [%enditem-other ~]
 ==
 
-#add items and edit a list to include only those items (it will remove other items previously in the list)
+# add items and edit a list to include only those items (it will remove other items previously in the list)
 :portal-manager &portal-action :-  %add-items-and-edit-list  :+  [our [%list %enditem %other ~] '~2000.1.1']
 :*
 'List Title'
