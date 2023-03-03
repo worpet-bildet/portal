@@ -84,13 +84,13 @@ export const SliderList = ({ item, map, type, filters, filterProps, groups }) =>
 
   const _List = (
     <div
-      className="pb-5"
+      className="pb-7"
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
       <div className="text-2xl font-bold">{item?.data?.general?.title}</div>
       <div className="flex flex-row justify-between pb-2 w-full">
-        <div className="text-xs sm:text-base text-gray-400 w-2/3">
+        <div className="text-xs sm:text-base pb-3 text-gray-400 w-2/3">
           {item?.data?.general?.description}
         </div>
         {type === "group" && <FilterJoinedButton></FilterJoinedButton>}

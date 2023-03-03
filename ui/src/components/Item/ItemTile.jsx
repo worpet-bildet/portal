@@ -69,7 +69,7 @@ export function ItemTile(props) {
 
   const getColor = () => data?.bespoke?.payload?.color?.split(".").join("").substring(2);
   return data ? (
-    <li className={`flex mr-3 text-sm leading-tight ${isJoined ? `"` : ""}`}>
+    <li className={`flex mr-5 text-sm leading-tight ${isJoined ? `"` : ""}`}>
       {/* TODO: Think about wrapping this modal so there is no need for inline style here */}
       {getItemType() !== "ship" && (
         <Modal
