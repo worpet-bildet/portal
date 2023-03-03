@@ -39,15 +39,15 @@ export const SliderList = ({ item, map, type, filters, filterProps, groups }) =>
       let orderedItems = [];
       listOrder.forEach(l => {
         const { ship, cord } = l.keyObj;
-        const nameKey = `${ship}/${cord}`;
-        if (groups[nameKey]) return;
         if (map[l.keyStr]) orderedItems.push(map[l.keyStr]);
       });
       return orderedItems.map(val => {
         if (hideJoinedGroups) {
           const { ship, cord } = val?.data?.bespoke?.keyObj;
           const nameKey = `${ship}/${cord}`;
-          if (groups[nameKey]) return <></>;
+          if (groups[nameKey]) {
+            return <></>;
+          }
         }
         const key = val.keyStr;
         return (
