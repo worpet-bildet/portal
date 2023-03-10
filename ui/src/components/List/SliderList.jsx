@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { ScrollMenu } from "react-horizontal-scrolling-menu";
 import { isEmpty } from "lodash";
 import { ItemTile } from "../Item/ItemTile";
@@ -7,7 +8,7 @@ import { LeftArrow, RightArrow } from "./SliderArrows";
 import { useStore } from "../../state/store";
 import { isMobile } from "../../utils/mobile";
 
-export const SliderList = ({ item, map, type, filters, filterProps, groups }) => {
+export const SliderList = ({ item, map, type, filters, filterProps, groups, isMine }) => {
   if (isEmpty(map)) return <></>;
   const [hover, setHover] = useState(false);
   const selectedSection = useStore(state => state.selectedSection);
@@ -23,6 +24,10 @@ export const SliderList = ({ item, map, type, filters, filterProps, groups }) =>
   const handleClick = visibility => {
     // console.log("Card.onClick", { visibility });
     return;
+  };
+  const editList = keyStr => {
+    console.log({ keyStr });
+    window.location = `/apps/portal/list/${encodeURIComponent(keyStr)}/edit`;
   };
   const _filterProps = filterProps?.length
     ? filterProps.reduce((acc, cur) => ({ ...acc, [cur]: defaultFiltersProps[cur] }), {})
@@ -102,7 +107,19 @@ export const SliderList = ({ item, map, type, filters, filterProps, groups }) =>
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
-      <div className="text-2xl font-bold">{item?.data?.general?.title}</div>
+      <div className="flex flex-row w-full justify-between items-center">
+        <div className="text-2xl font-bold">{item?.data?.general?.title}</div>
+        {isMine ? (
+          <span
+            className="text-xs pl-4 underline cursor-pointer"
+            onClick={() => editList(item?.data?.bespoke?.keyStr)}
+          >
+            Edit
+          </span>
+        ) : (
+          <></>
+        )}
+      </div>
       <div className="flex flex-row justify-between pb-2 w-full">
         <div className="text-xs sm:text-base pb-3 text-gray-400 w-2/3">
           {item?.data?.general?.description}

@@ -14,6 +14,10 @@
   }
 }
 
+input, textarea {
+  color: black;
+}
+
 .page-container {
   background-color: #151515;
 }

@@ -33,6 +33,7 @@ specifiers:
   ramda: ^0.28.0
   react: ^18.0.0
   react-dom: ^18.2.0
+  react-drag-reorder: ^1.2.0
   react-error-boundary: ^3.1.4
   react-horizontal-scrolling-menu: ^3.2.5
   react-modal: ^3.16.1
@@ -71,6 +72,7 @@ dependencies:
   ramda: 0.28.0
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
+  react-drag-reorder: 1.2.0
   react-error-boundary: 3.1.4_react@18.2.0
   react-horizontal-scrolling-menu: 3.2.5_react@18.2.0
   react-modal: 3.16.1_biqbaboplfbrettd7655fr4n2y
@@ -2663,6 +2665,10 @@ packages:
       loose-envify: 1.4.0
       react: 18.2.0
       scheduler: 0.23.0
+    dev: false
+
+  /react-drag-reorder/1.2.0:
+    resolution: {integrity: sha512-UXpXvRYorBoJOIaniqDXtU/eKWx1YNk6D2efUk+awXAd2xNJS6DSdwEOrwUZU44XsjKYO54/QC1RmiaL2OqiEg==}
     dev: false
 
   /react-error-boundary/3.1.4_react@18.2.0:

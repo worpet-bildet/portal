@@ -29,6 +29,12 @@ function buildNav(curators) {
       highlightOnSelect: false,
       section: "all",
     },
+    {
+      name: "Add Item",
+      href: "/apps/portal/add",
+      // highlightOnSelect: false,
+      section: "all",
+    },
   ];
 }
 
@@ -56,7 +62,6 @@ export default function AppBar() {
   };
 
   const MySigil = () => {
-    // TODO: check this works when signed in on a ship
     let { ship: myShip } = usePortal();
     // sigil-js can't render moons
     return myShip?.length > "13" ? (

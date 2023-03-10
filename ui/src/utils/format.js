@@ -1,3 +1,8 @@
+export const getType = item => {
+  let typeKey = item?.data?.bespoke?.keyObj?.type || "list";
+  return typeKey?.slice(typeKey.lastIndexOf("/") + 1);
+};
+
 export const getShortTitle = (val, type) => {
   if (val?.data?.bespoke?.keyObj.type.includes("ship")) {
     return val?.data?.bespoke?.keyObj.ship;
@@ -82,6 +87,17 @@ export const getWebsite = (val, type) => {
   }
 };
 
+export const getImage = (data, groups) => {
+  return (
+    data?.data?.general?.image ||
+    data?.general?.image ||
+    data?.icon?.src ||
+    data?.bespoke?.payload?.docket?.image ||
+    data?.bespoke?.payload?.image ||
+    (groups ? groups[`${data?.keyObj?.ship}/${data?.keyObj?.cord}`]?.meta?.image : false)
+  );
+};
+
 export const checkUrl = string => {
   if (!string) return false;
   return (
@@ -89,4 +105,11 @@ export const checkUrl = string => {
     string.indexOf("https://") === 0 ||
     string.indexOf("/apps/portal/src/assets") === 0
   );
+};
+
+export const validateItemPath = path => {
+  // let regex = /~[A-Za-z]+\/[A-Za-z]+/i;
+  // let regexPlanet = /~[A-Za-z]+-[A-Za-z]+\/[A-Za-z]+/i;
+  // return regex.test(path);
+  return true;
 };
