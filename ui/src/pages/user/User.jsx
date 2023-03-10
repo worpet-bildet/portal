@@ -76,7 +76,6 @@ export function User(props) {
 
   useEffect(() => {
     let l = lists.find(l => l?.keys?.keyObj?.ship === patp);
-    console.log({ l });
     setList(l);
     setListTitle(l?.general?.title || patp);
     setListDescription(l?.general?.description);
@@ -116,12 +115,9 @@ export function User(props) {
   }, [types, patp, listOrder]);
 
   const editList = keyStr => {
-    console.log({ keyStr });
     window.location = `/apps/portal/list/${encodeURIComponent(keyStr)}/edit`;
   };
   const imageContainerRef = useRef();
-
-  console.log({ list });
 
   return (
     lists?.length > 0 && (

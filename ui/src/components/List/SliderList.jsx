@@ -26,7 +26,6 @@ export const SliderList = ({ item, map, type, filters, filterProps, groups, isMi
     return;
   };
   const editList = keyStr => {
-    console.log({ keyStr });
     window.location = `/apps/portal/list/${encodeURIComponent(keyStr)}/edit`;
   };
   const _filterProps = filterProps?.length

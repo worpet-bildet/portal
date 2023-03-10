@@ -153,7 +153,6 @@ export function Edit() {
   // adding more items
   const renderListItems = () => {
     const getChangedPos = (currentPos, newPos) => {
-      console.log({ currentPos, newPos });
       const x = listItems.map(i => i);
       const _buf = x[newPos];
       x[newPos] = x[currentPos];
