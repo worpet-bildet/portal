@@ -29,12 +29,12 @@ function buildNav(curators) {
       highlightOnSelect: false,
       section: "all",
     },
-    {
-      name: "Add Item",
-      href: "/apps/portal/add",
-      // highlightOnSelect: false,
-      section: "all",
-    },
+    // {
+    //   name: "Add Item",
+    //   href: "/apps/portal/add",
+    //   // highlightOnSelect: false,
+    //   section: "all",
+    // },
   ];
 }
 
