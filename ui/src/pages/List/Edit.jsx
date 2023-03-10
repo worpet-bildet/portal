@@ -1,15 +1,8 @@
-import React, {
-  useState,
-  useEffect,
-  createRef,
-  useDeferredValue,
-  useCallback,
-} from "react";
+import React, { useState, useEffect, createRef } from "react";
 import { useParams } from "react-router-dom";
 import { Draggable } from "react-drag-reorder";
 import {
   CheckIcon,
-  XMarkIcon,
   TrashIcon,
   PlusIcon,
   MinusIcon,
@@ -25,14 +18,13 @@ import {
   validateItemPath,
   getDescription,
 } from "../../utils/format";
-import { edit } from "@urbit/api";
 import { usePortal } from "../../state/usePortal";
 import { ItemImage } from "../../components/Item/ItemImage";
 import { useGroupState } from "../../lib/state/groups/groups";
 import { EditGeneralForm } from "../../components/Form/EditGeneralForm";
 
 export function Edit() {
-  const { urbit, actions } = usePortal();
+  const { urbit } = usePortal();
   const { groups } = useGroupState();
   const { listkey } = useParams();
   const defaultCurators = useStore(getDefaultCurators);
@@ -89,10 +81,8 @@ export function Edit() {
         },
       },
     } = list;
-    let itemsObj = {};
     let _pokeListItems = listItems.map(i => {
       let keyObj = { key: i.keyObj || i.item?.keyObj, text: i.keyStr || i.item?.keyStr };
-      itemsObj[i?.keyStr || i?.item?.keyStr] = keyObj;
       return keyObj;
     });
     setPokeListItems(_pokeListItems);
@@ -113,103 +103,36 @@ export function Edit() {
     });
   }, [listItems]);
 
-  const imgContainer = createRef();
-
-  const removeItem = i => {
-    setListItems(listItems.filter(li => li.keyStr !== i.keyStr));
-  };
-
-  // also need to print each entry as a separate item, and allow deleting and
-  // adding more items
-  const renderListItems = () => {
-    // this is used for draggable stuff, but the component was being a little
-    // shit so that feature can wait
-    // const getChangedPos = (currentPos, newPos) => {
-    //   const x = listItems.map(i => i);
-    //   const _buf = x[newPos];
-    //   x[newPos] = x[currentPos];
-    //   x[currentPos] = _buf;
-    //   setListItems(x);
-    // };
-    console.log(listItems);
-    return listItems.map((i, k) => {
-      const canEdit = getType(i) === "other" || getType(i) === "list";
-      return (
-        <div
-          className="flex flex-row w-full justify-between items-center p-4 border border-slate-500"
-          key={k}
-        >
-          <div className="flex flex-row w-full items-center justify-start">
-            <div className="h-44 w-44 flex items-center" ref={imgContainer}>
-              <ItemImage
-                src={getImage(i, groups) || null}
-                patp={getType(i) === "ship" ? getShortTitle(i, getType(i)) : null}
-                type={getType(i)}
-                name={getShortTitle(i, getType(i))}
-                container={imgContainer}
-              />
-            </div>
-            <div className="pl-4 w-3/4">
-              <div className="text-xl">{getShortTitle(i, getType(i))}</div>
-              <div className="text-sm pt-2">{getDescription(i, getType(i))}</div>
-            </div>
-          </div>
-          <div>
-            {canEdit ? (
-              <button
-                className="p-2 hover:bg-blue-500 rounded-lg"
-                onClick={() => editItem(i)}
-              >
-                <div className="w-10">
-                  <PencilIcon />
-                </div>
-              </button>
-            ) : null}
-            <button
-              className="p-2 hover:bg-red-500 rounded-lg"
-              onClick={() => removeItem(i)}
-            >
-              <div className="w-10">
-                <TrashIcon />
-              </div>
-            </button>
-          </div>
-        </div>
-      );
-    });
-  };
-
   if (!list || !editListPoke) return <></>;
-  let {
-    edit: {
-      general: { title, description, image, link },
-      "bespoke-input": {
-        [pokeListType]: {},
+
+  // too much duplicated code here but i'm in a bit of a rush
+  const removeItem = i => {
+    const temp = listItems.filter(li => li.keyStr !== i.keyStr);
+    const {
+      item: {
+        data: {
+          bespoke: { keyObj },
+        },
       },
-    },
-  } = editListPoke;
-  // {
-  //   "edit": {
-  //     "key": {
-  //       "ship": "~zod",
-  //       "type": "/enditem/other",
-  //       "cord": "~2000.1.1"
-  //     },
-  //     "general": {
-  //       "title": "Some Title",
-  //       "link": "https://website-thing.com",
-  //       "description": "Some description.",
-  //       "tags": ["tag1", "tag2"],
-  //       "properties": {},
-  //       "pictures": ["https://pic1.com", "https://pic2.com"],
-  //       "image": "https://square-image.com",
-  //       "color": "#e8e8e8"
-  //     },
-  //     "bespoke-input": {
-  //       "enditem-other": ""
-  //     }
-  //   }
-  // },
+    } = list;
+    let _pokeListItems = temp.map(i => {
+      let keyObj = { key: i.keyObj || i.item?.keyObj, text: i.keyStr || i.item?.keyStr };
+      return keyObj;
+    });
+    let pokeBespokeKeyString = keyObj?.type?.slice(1).replace(/\//g, "-");
+    const poke = {
+      edit: {
+        key: { ...editListPoke.edit.key },
+        general: { ...editListPoke.edit.general },
+        "bespoke-input": {
+          [pokeBespokeKeyString]: {
+            [typesOfBespokeInput[pokeBespokeKeyString]]: _pokeListItems,
+          },
+        },
+      },
+    };
+    doPoke(poke);
+  };
 
   const editItem = i => {
     if (i?.item?.keyStr?.includes("list")) {
@@ -217,12 +140,75 @@ export function Edit() {
         i?.item?.keyStr
       )}/edit`);
     }
-    // return;
     // making an item edit page here is pretty annoying, because the data is
     // nested within our own list that we're editing
     window.location = `/apps/portal/item/${encodeURIComponent(
       list?.item?.keyStr
     )}/${encodeURIComponent(i.keyStr)}/edit`;
+  };
+
+  const imgContainer = createRef();
+
+  // also need to print each entry as a separate item, and allow deleting and
+  // adding more items
+  const renderListItems = () => {
+    const getChangedPos = (currentPos, newPos) => {
+      console.log({ currentPos, newPos });
+      const x = listItems.map(i => i);
+      const _buf = x[newPos];
+      x[newPos] = x[currentPos];
+      x[currentPos] = _buf;
+      setListItems(x);
+    };
+    return (
+      <Draggable onPosChange={getChangedPos}>
+        {listItems.map((i, k) => {
+          const canEdit = getType(i) === "other" || getType(i) === "list";
+          return (
+            <div
+              className="flex flex-row w-full justify-between items-center p-4 border border-slate-500"
+              key={k}
+            >
+              <div className="flex flex-row w-full items-center justify-start">
+                <div className="h-44 w-44 flex items-center" ref={imgContainer}>
+                  <ItemImage
+                    src={getImage(i, groups) || null}
+                    patp={getType(i) === "ship" ? getShortTitle(i, getType(i)) : null}
+                    type={getType(i)}
+                    name={getShortTitle(i, getType(i))}
+                    container={imgContainer}
+                  />
+                </div>
+                <div className="pl-4 w-3/4">
+                  <div className="text-xl">{getShortTitle(i, getType(i))}</div>
+                  <div className="text-sm pt-2">{getDescription(i, getType(i))}</div>
+                </div>
+              </div>
+              <div>
+                {canEdit ? (
+                  <button
+                    className="p-2 hover:bg-blue-500 rounded-lg"
+                    onClick={() => editItem(i)}
+                  >
+                    <div className="w-10">
+                      <PencilIcon />
+                    </div>
+                  </button>
+                ) : null}
+                <button
+                  className="p-2 hover:bg-red-500 rounded-lg"
+                  onClick={() => removeItem(i)}
+                >
+                  <div className="w-10">
+                    <TrashIcon />
+                  </div>
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </Draggable>
+    );
   };
 
   const validateItem = ({ target: { value } }) => {
@@ -265,13 +251,10 @@ export function Edit() {
       app: "portal-manager",
       mark: "portal-action",
       json: poke,
-      // json: poke,
       onSuccess: () => window.location.reload(),
       onError: () => window.location.reload(),
     });
   };
-
-  // const validateItem = ({ current: { value}})
 
   const renderAddItem = () => {
     let newItem = createRef();

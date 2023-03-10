@@ -21,10 +21,7 @@ export function Edit() {
   useEffect(() => {
     if (!item) return;
     const {
-      data: {
-        general,
-        bespoke: { payload },
-      },
+      data: { general },
       keyObj,
     } = item;
 
