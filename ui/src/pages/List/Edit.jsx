@@ -147,6 +147,10 @@ export function Edit() {
     )}/${encodeURIComponent(i.keyStr)}/edit`;
   };
 
+  const addList = () => {
+    return (window.location = `/apps/portal/list/add`);
+  };
+
   const imgContainer = createRef();
 
   // also need to print each entry as a separate item, and allow deleting and
@@ -284,6 +288,7 @@ export function Edit() {
   };
 
   const toggleAddItemForm = () => {
+    if (listType === "list") return;
     // if we are adding an /enditem/other we should be taken to the add item
     // page. otherwise we should just show the ~path/form.
     if (listType === "other") {
@@ -299,11 +304,7 @@ export function Edit() {
       <div className="pb-12">
         <div className="text-4xl">editing list: {getLongTitle(list, "list")}</div>
       </div>
-      <EditGeneralForm
-        editPoke={editListPoke}
-        setEditPoke={setEditListPoke}
-        action="edit"
-      />
+      <EditGeneralForm poke={editListPoke} setPoke={setEditListPoke} action="edit" />
       <div className="flex flex-row justify-between items-center pt-4">
         <div>items (drag to reorder)</div>
         <button className="p-2" onClick={toggleAddItemForm}>
@@ -323,6 +324,16 @@ export function Edit() {
                 </div>
               </div>
             )
+          ) : null}
+          {listType === "list" ? (
+            <button className="p2" onClick={addList}>
+              <div className="flex flex-row items-center">
+                add list
+                <div className="w-10">
+                  <PlusIcon />
+                </div>
+              </div>
+            </button>
           ) : null}
         </button>
       </div>

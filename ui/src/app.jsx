@@ -10,6 +10,7 @@ import { useLandscapeSubscription } from "./state/useLandscape";
 import "./index.css";
 import Layout from "./components/Layout";
 import { User } from "./pages/user/User";
+import { Add as AddList } from "./pages/List/Add";
 import { Edit as EditList } from "./pages/List/Edit";
 import { Add as AddItem } from "./pages/Item/Add";
 import { Edit as EditItem } from "./pages/Item/Edit";
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
     path: "/apps/portal/",
     // TODO: Change this to the default Portal curator's ship
     element: <Navigate replace to="/apps/portal/~worpet-bildet" />,
+  },
+  {
+    path: "/apps/portal/list/add",
+    element: <AddList />,
   },
   {
     path: "/apps/portal/list/:listkey/edit",

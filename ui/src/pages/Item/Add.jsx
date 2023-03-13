@@ -51,7 +51,7 @@ export function Add() {
       <div className="pb-12">
         <div className="text-4xl">adding new item</div>
       </div>
-      <EditGeneralForm editPoke={addItemPoke} setEditPoke={setAddItemPoke} action="add" />
+      <EditGeneralForm poke={addItemPoke} setPoke={setAddItemPoke} action="add" />
     </div>
   );
 }

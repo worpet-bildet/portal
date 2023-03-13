@@ -113,3 +113,7 @@ export const validateItemPath = path => {
   // return regex.test(path);
   return true;
 };
+
+export const defaultListUrl = myShip => {
+  return `/apps/portal/list/${encodeURIComponent(`/~${myShip}/list/list/2000.1.1`)}/edit`;
+};

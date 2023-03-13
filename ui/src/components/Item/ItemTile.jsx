@@ -8,14 +8,11 @@ import { getTitles } from "../../utils/format";
 import { getWebsite } from "../../utils/format";
 import { getDescription } from "../../utils/format";
 
-// TODO: do we need this?
-import { Tag } from "../Tag";
-
 import { ItemModal } from "./ItemModal";
 import { ItemImage } from "./ItemImage";
 
 export function ItemTile(props) {
-  const { keys, data, item, __val, itemType, userGroupData } = props;
+  const { data, __val, itemType, userGroupData } = props;
   const [shortTitle, longTitle] = getTitles(__val, itemType);
   const description = getDescription(__val, itemType);
   const website = getWebsite(__val, itemType);
@@ -25,7 +22,6 @@ export function ItemTile(props) {
   const cord = data?.bespoke?.keyObj?.cord;
   const nameKey = `${ship}/${cord}`;
   const [imageError, setImageError] = useState(false);
-  const [isUser, setIsUser] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [isJoined, setIsJoined] = useState(false);
 
@@ -49,7 +45,6 @@ export function ItemTile(props) {
     keyStr: _keys?.keyStr || props.keyStr || props.item.keyStr,
     keyObj: _keys?.keyObj || props.keyObj || props.item.keyObj,
   });
-  const getAppUriKey = _keys => _getAppUriKey(getKeys(_keys));
   const getItemType = () => props.itemType || data?.general?.type || "other";
   useEffect(() => {
     if (userGroupData[nameKey]) {

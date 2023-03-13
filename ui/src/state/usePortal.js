@@ -63,6 +63,7 @@ export const getSubscription = (urbit, eventHandler = console.log) =>
     ship: urbit.ship,
     event: eventHandler,
   });
+// export const getSubscription = (urbit, eventHandler = console.log) => null;
 
 export const subscription = {
   app: config.agent,

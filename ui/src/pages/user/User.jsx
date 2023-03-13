@@ -1,31 +1,21 @@
 import React, { Fragment, useMemo, useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
-import ResponsiveAppBar from "../../components/AppBar";
 import { useStore } from "../../state/store";
-import {
-  getApps,
-  getTypes,
-  getLists,
-  // getShips,
-  setAlertIsOpen,
-  getDefaultCurators,
-} from "../../state/selectors";
+import { getApps, getTypes, getLists, getDefaultCurators } from "../../state/selectors";
 import { SliderList } from "../../components/List/SliderList";
 import { ItemImage } from "../../components/Item/ItemImage";
 import { usePortal } from "../../state/usePortal";
-import { AlertModal } from "../../components/AlertModal";
 import unionBy from "lodash/unionBy";
 import { useGroupState } from "../../lib/state/groups/groups";
 import { getType } from "../../utils/format";
 
-export function User(props) {
+export function User() {
   const { urbit, actions, ship } = usePortal();
   const appLists = useStore(getApps);
   const types = useStore(getTypes);
   const lists = useStore(getLists);
   const defaultCurators = useStore(getDefaultCurators);
   const { groups } = useGroupState();
-  const _setAlertIsOpen = useStore(setAlertIsOpen);
   const { patp } = useParams();
   const [list, setList] = useState(null);
   const [listTitle, setListTitle] = useState(null);

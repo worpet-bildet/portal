@@ -1,18 +1,18 @@
 import React from "react";
 import { usePortal } from "../../state/usePortal";
 
-export function EditGeneralForm({ editPoke, setEditPoke, action }) {
+export function EditGeneralForm({ poke, setPoke, action, onSave }) {
   const { urbit } = usePortal();
   let {
     [action]: {
       general: { title, description, image, link },
     },
-  } = editPoke;
+  } = poke;
 
   const setGeneralProp = (prop, value) => {
-    let newPoke = { ...editPoke }; // clone so we can edit
+    let newPoke = { ...poke }; // clone so we can edit
     newPoke[action]["general"][prop] = value;
-    setEditPoke(newPoke);
+    setPoke(newPoke);
   };
 
   const doPoke = poke => {
@@ -21,8 +21,15 @@ export function EditGeneralForm({ editPoke, setEditPoke, action }) {
       app: "portal-manager",
       mark: "portal-action",
       json: poke,
-      onSuccess: () => window.location.reload(),
-      onError: () => window.location.reload(),
+      // onSuccess: () => window.location.reload(),
+      onSuccess: e => {
+        console.log(e);
+        if (onSave) onSave(e);
+      },
+      // onError: () => window.location.reload(),
+      onError: e => {
+        console.error(e);
+      },
     });
   };
 
@@ -30,10 +37,7 @@ export function EditGeneralForm({ editPoke, setEditPoke, action }) {
     <div className="grid gap-4">
       <div className="w-full">
         <div className="flex items-center justify-end w-full">
-          <button
-            className="p-4 bg-green-500 rounded-lg"
-            onClick={() => doPoke(editPoke)}
-          >
+          <button className="p-4 bg-green-500 rounded-lg" onClick={() => doPoke(poke)}>
             Save
           </button>
         </div>

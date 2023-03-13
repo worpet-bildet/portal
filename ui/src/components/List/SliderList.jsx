@@ -1,5 +1,4 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { ScrollMenu } from "react-horizontal-scrolling-menu";
 import { isEmpty } from "lodash";
 import { ItemTile } from "../Item/ItemTile";

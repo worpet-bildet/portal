@@ -10,7 +10,10 @@ import { useUrbit, usePortal } from "../state/usePortal";
 // this is not very nice, it just picks the first item in the default curators
 // map to navigate you to. this map is not ordered though, so it might not be
 // the same page that you actually landed on.. how to solve.. hmm
-function buildNav(curators) {
+function buildNav(myShip) {
+  const defaultListUrl = `/apps/portal/list/${encodeURIComponent(
+    `/~${myShip}/list/list/2000.1.1`
+  )}/edit`;
   return [
     {
       name: "Home",
@@ -29,12 +32,12 @@ function buildNav(curators) {
       highlightOnSelect: false,
       section: "all",
     },
-    // {
-    //   name: "Add Item",
-    //   href: "/apps/portal/add",
-    //   // highlightOnSelect: false,
-    //   section: "all",
-    // },
+    {
+      name: "Add Item",
+      href: defaultListUrl,
+      // highlightOnSelect: false,
+      section: "all",
+    },
   ];
 }
 
@@ -43,14 +46,24 @@ function classNames(...classes) {
 }
 
 export default function AppBar() {
-  const curators = useStore(getDefaultCurators);
-  const [formOpen, setFormOpen] = useState(false);
-  const navigation = buildNav(Object.entries(curators));
+  const [myShip, setMyShip] = useState(null);
+  let { ship } = usePortal();
+  const [navigation, setNavigation] = useState(buildNav());
   const setSelectedSection = useStore(state => state.setSelectedSection);
   const selectedSection = useStore(getSelectedSection);
   const sectionToggled = ({ section, highlightOnSelect }) => {
     return selectedSection === section && highlightOnSelect;
   };
+
+  useEffect(() => {
+    if (!ship) return;
+    setMyShip(ship);
+  }, [ship]);
+
+  useEffect(() => {
+    if (!myShip) return;
+    setNavigation(buildNav(myShip));
+  }, [myShip]);
 
   // TODO: maybe rethink this
   const handleSectionChange = (evt, item) => {
@@ -62,7 +75,6 @@ export default function AppBar() {
   };
 
   const MySigil = () => {
-    let { ship: myShip } = usePortal();
     // sigil-js can't render moons
     return myShip?.length > "13" ? (
       <></>

@@ -3,8 +3,6 @@ import { Fragment, useRef, useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { Dialog, Transition } from "@headlessui/react";
 import { ItemImage } from "./ItemImage";
-import { useStore } from "../../state/store";
-import { setAlertIsOpen, setAlertText } from "../../state/selectors";
 import { useGang } from "../../lib/state/groups/groups";
 import useGroupJoin from "../../lib/useGroupJoin";
 
@@ -14,17 +12,12 @@ export function ItemModal({
   image,
   description,
   website,
-  pictures,
-  tags,
   type,
   data,
   buttonDisabled,
   onRequestClose,
 }) {
-  // console.log("ItemModal", { title, path, image, description, pictures, tags, type });
   const [open, setOpen] = useState(true);
-  const _setAlertIsOpen = useStore(setAlertIsOpen);
-  const _setAlertText = useStore(setAlertText);
   const cancelButtonRef = useRef();
   const imageContainerRef = useRef();
 
