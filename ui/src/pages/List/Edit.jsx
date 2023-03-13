@@ -110,7 +110,7 @@ export function Edit() {
     const temp = listItems.filter(
       li =>
         (li.keyStr && li.keyStr !== i.keyStr) ||
-        (li.item.keyStr && li.item?.keyStr !== i.item?.keyStr)
+        (li.item?.keyStr && li.item?.keyStr !== i.item?.keyStr)
     );
     const {
       item: {
