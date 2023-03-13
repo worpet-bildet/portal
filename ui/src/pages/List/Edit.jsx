@@ -107,7 +107,11 @@ export function Edit() {
 
   // too much duplicated code here but i'm in a bit of a rush
   const removeItem = i => {
-    const temp = listItems.filter(li => li.keyStr !== i.keyStr);
+    const temp = listItems.filter(
+      li =>
+        (li.keyStr && li.keyStr !== i.keyStr) ||
+        (li.item.keyStr && li.item?.keyStr !== i.item?.keyStr)
+    );
     const {
       item: {
         data: {
