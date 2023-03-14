@@ -36,43 +36,48 @@ export function EditGeneralForm({ poke, setPoke, action, onSave }) {
   return (
     <div className="grid gap-4">
       <div className="w-full">
-        <div className="flex items-center justify-end w-full">
-          <button className="p-4 bg-green-500 rounded-lg" onClick={() => doPoke(poke)}>
+        <div className="flex items-center justify-end w-full pr-2">
+          <button className="bg-[#0284c7] rounded-lg px-3 py-2 text-sm font-medium"
+          onClick={() => {
+            doPoke(poke);
+            window.history.back(); // TODO: rethink this, probably better to navigate 1 level up this heirarchy: profile page <- profile page (edit mode) <- edit list <- edit item
+          }}>
             Save
           </button>
         </div>
-        <div>title</div>
+        <div>Title</div>
         <input
-          className="w-full bg-transparent text-white border-white text-2xl"
+          className="w-full bg-transparent text-white rounded-md"
           type="text"
           autoFocus={true}
-          placeholder="wow guys look at this"
+          placeholder="Portal"
           value={title}
           onChange={e => setGeneralProp("title", e.target.value)}
         ></input>
       </div>
       <div>
-        <div>description</div>
+        <div>Description</div>
         <textarea
-          className="w-full bg-transparent text-white border-white"
+          className="w-full bg-transparent text-white rounded-md"
           onChange={e => setGeneralProp("description", e.target.value)}
           value={description}
+          placeholder="A tool for decentralized curation and discovery on Urbit"
         ></textarea>
       </div>
       <div>
-        <div>image link</div>
+        <div>Image link</div>
         <input
-          className="w-full bg-transparent text-white border-white"
+          className="w-full bg-transparent text-white rounded-md"
           type="text"
-          placeholder="https://some.url/image.png"
+          placeholder="https://nyc3.digitaloceanspaces.com/image.svg"
           value={image}
           onChange={e => setGeneralProp("image", e.target.value)}
         ></input>
       </div>
       <div>
-        <div>web link</div>
+        <div>Web link</div>
         <input
-          className="w-full bg-transparent text-white border-white"
+          className="w-full bg-transparent text-white rounded-md"
           type="text"
           placeholder="https://some.url/"
           value={link}

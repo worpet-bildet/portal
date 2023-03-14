@@ -65,7 +65,7 @@ export const getDescription = (val, type) => {
     return val?.data?.general?.description;
   }
   if (type === "list") {
-    return "";
+    return val?.item?.data?.general?.description;
   }
 };
 

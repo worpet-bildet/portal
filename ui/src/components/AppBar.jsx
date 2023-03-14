@@ -16,11 +16,17 @@ function buildNav(myShip) {
   )}/edit`;
   return [
     {
+      name: "New Post",
+      href: defaultListUrl,
+      highlightOnSelect: true,
+      section: "all",
+    },
+    {
       name: "Home",
       href: `/apps/portal/~worpet-bildet`,
       // href: `/apps/portal/${curators[0] ? curators[0][1].item.keys.keyObj.ship : ""}`,
       // href: `/apps/portal/${curators[0] ? curators[0][1].item.keyObj.ship : ""}`,
-      highlightOnSelect: true,
+      highlightOnSelect: false,
       section: "all",
     },
     // { name: "Groups", href: "#", highlightOnSelect: true, section: "group" },
@@ -30,12 +36,6 @@ function buildNav(myShip) {
       name: "Feedback",
       href: "web+urbitgraph://group/~toptyr-bilder/portal",
       highlightOnSelect: false,
-      section: "all",
-    },
-    {
-      name: "Add Item",
-      href: defaultListUrl,
-      // highlightOnSelect: false,
       section: "all",
     },
   ];

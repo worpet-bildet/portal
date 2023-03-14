@@ -135,10 +135,10 @@ export function User() {
             {isMe ? (
               <div className="flex h-full items-start">
                 <span
-                  className="text-xs pl-4 pt-4 underline cursor-pointer"
+                  className="text-xs pl-4 pt-4 whitespace-nowrap underline cursor-pointer"
                   onClick={() => editList(list?.item?.data?.bespoke?.keyStr)}
                 >
-                  Edit
+                  Edit Profile
                 </span>
               </div>
             ) : (

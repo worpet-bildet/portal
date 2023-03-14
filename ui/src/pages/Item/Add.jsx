@@ -49,7 +49,7 @@ export function Add() {
   return (
     <div className="pt-12 w-full h-full">
       <div className="pb-12">
-        <div className="text-4xl">adding new item</div>
+        <div className="text-4xl">New post</div>
       </div>
       <EditGeneralForm poke={addItemPoke} setPoke={setAddItemPoke} action="add" />
     </div>

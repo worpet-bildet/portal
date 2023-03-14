@@ -64,7 +64,7 @@ export function Add() {
   return (
     <div className="pt-12 w-full h-full">
       <div className="pb-12">
-        <div className="text-4xl">adding new list</div>
+        <div className="text-4xl">New list</div>
       </div>
       <EditGeneralForm
         poke={addListPoke}
@@ -73,12 +73,12 @@ export function Add() {
         onSave={handleSave}
       />
       <div className="pt-4">
-        <div>list of:</div>
-        <select onChange={setType}>
-          <option value="/nonitem/group">groups</option>
-          <option value="/app">apps</option>
-          <option value="/nonitem/ship">ships (other curators)</option>
-          <option value="/enditem/other">other (web links etc.)</option>
+        <div>List type</div>
+        <select onChange={setType} className="bg-[#151515] text-white rounded-md">
+          <option value="/nonitem/group">Groups</option>
+          <option value="/app">Apps</option>
+          <option value="/nonitem/ship">Ships</option>
+          <option value="/enditem/other">Other (Web2 links, etc.)</option>
         </select>
       </div>
     </div>

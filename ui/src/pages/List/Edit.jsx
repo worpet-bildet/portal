@@ -7,6 +7,7 @@ import {
   PlusIcon,
   MinusIcon,
   PencilIcon,
+  Bars3Icon,
 } from "@heroicons/react/24/outline";
 import { useStore } from "../../state/store";
 import { getDefaultCurators } from "../../state/selectors";
@@ -140,9 +141,7 @@ export function Edit() {
 
   const editItem = i => {
     if (i?.item?.keyStr?.includes("list")) {
-      return (window.location = `/apps/portal/list/${encodeURIComponent(
-        i?.item?.keyStr
-      )}/edit`);
+      return (window.location = `/apps/portal/list/${encodeURIComponent(i?.item?.keyStr)}/edit`);
     }
     // making an item edit page here is pretty annoying, because the data is
     // nested within our own list that we're editing
@@ -173,10 +172,13 @@ export function Edit() {
           const canEdit = getType(i) === "other" || getType(i) === "list";
           return (
             <div
-              className="flex flex-row w-full justify-between items-center p-4 border border-slate-500"
+              className="flex flex-row w-full justify-between items-center sm:p-2"
               key={k}
             >
               <div className="flex flex-row w-full items-center justify-start">
+                  <div className="w-10 pr-2">
+                    <Bars3Icon/>
+                  </div>
                 <div className="h-44 w-44 flex items-center" ref={imgContainer}>
                   <ItemImage
                     src={getImage(i, groups) || null}
@@ -194,7 +196,7 @@ export function Edit() {
               <div>
                 {canEdit ? (
                   <button
-                    className="p-2 hover:bg-blue-500 rounded-lg"
+                    className="p-2 hover:bg-[#0284c7] rounded-lg right-0"
                     onClick={() => editItem(i)}
                   >
                     <div className="w-10">
@@ -279,7 +281,7 @@ export function Edit() {
             <p>{error}</p>
           </div>
           <button
-            className="p-2 hover:bg-green-500 rounded-lg"
+            className="p-2 hover:bg-[#0284c7] rounded-lg"
             onClick={() => addItem(newItem)}
           >
             <div className="w-10">
@@ -306,36 +308,36 @@ export function Edit() {
   return (
     <div className="pt-12 w-full h-full">
       <div className="pb-12">
-        <div className="text-4xl">editing list: {getLongTitle(list, "list")}</div>
+        <div className="text-2xl">Editing list: {getLongTitle(list, "list")}</div>
       </div>
       <EditGeneralForm poke={editListPoke} setPoke={setEditListPoke} action="edit" />
       <div className="flex flex-row justify-between items-center pt-4">
-        <div>items (drag to reorder)</div>
+        <div className="text-2xl">Items</div>
         <button className="p-2" onClick={toggleAddItemForm}>
           {listType !== "list" ? (
             showAddItemForm ? (
               <div className="flex flex-row items-center">
-                hide
+                Hide
                 <div className="w-10">
                   <MinusIcon />
                 </div>
               </div>
             ) : (
-              <div className="flex flex-row items-center">
-                add item
-                <div className="w-10">
+              <div className="flex flex-row items-center bg-[#0284c7] px-3 py-2 rounded-md text-sm font-medium">
+                <div className="w-5 pr-2">
                   <PlusIcon />
                 </div>
+                New Post
               </div>
             )
           ) : null}
           {listType === "list" ? (
             <button className="p2" onClick={addList}>
-              <div className="flex flex-row items-center">
-                add list
-                <div className="w-10">
+              <div className="flex flex-row items-center bg-[#0284c7] px-3 py-2 rounded-md text-sm font-medium">
+                <div className="w-5 pr-2">
                   <PlusIcon />
                 </div>
+                New List
               </div>
             </button>
           ) : null}
