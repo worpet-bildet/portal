@@ -182,7 +182,6 @@ export default function AppBar() {
                         </button>
                       ) : (
                         <NavLink
-                          onClick={evt => handleSectionChange(evt, item)}
                           to={item.href}
                           key={item.name}
                           className={classNames(

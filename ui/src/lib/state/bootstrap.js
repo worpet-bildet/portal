@@ -5,7 +5,7 @@ import { useGroupState } from "./groups/groups";
 
 export default async function bootstrap(reset = false) {
   if (reset) {
-    api.reset();
+    // api.reset();
   }
   useGroupState.getState().start();
   // usePalsState.getState().initializePals();
