@@ -7,7 +7,7 @@ import { ItemImage } from "../../components/Item/ItemImage";
 import { usePortal } from "../../state/usePortal";
 import unionBy from "lodash/unionBy";
 import { useGroupState } from "../../lib/state/groups/groups";
-import { getType } from "../../utils/format";
+import { getType, unsanitiseTextFieldsRecursive } from "../../utils/format";
 
 export function User() {
   const { urbit, actions, ship } = usePortal();
@@ -65,7 +65,9 @@ export function User() {
   }, [outstandingShipsToSubscribeTo]);
 
   useEffect(() => {
-    let l = lists.find(l => l?.keys?.keyObj?.ship === patp);
+    let l = unsanitiseTextFieldsRecursive(
+      lists.find(l => l?.keys?.keyObj?.ship === patp)
+    );
     setList(l);
     setListTitle(l?.general?.title || patp);
     setListDescription(l?.general?.description);
@@ -99,14 +101,14 @@ export function User() {
     listOrder.forEach(l => {
       nonListLists.forEach(([type, list]) => {
         let myList = list.find(typeList => typeList.keys.key === l.keyStr);
-        if (myList) orderedLists.push(myList);
+        if (myList) orderedLists.push(unsanitiseTextFieldsRecursive(myList));
       });
     });
     return orderedLists.map(renderList);
   }, [types, patp, listOrder]);
 
   const editList = keyStr => {
-    window.location = `/list/${encodeURIComponent(keyStr)}/edit`;
+    window.location = `/apps/portal/list/${encodeURIComponent(keyStr)}/edit`;
   };
   const imageContainerRef = useRef();
 

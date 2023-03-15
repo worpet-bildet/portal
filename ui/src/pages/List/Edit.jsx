@@ -18,6 +18,7 @@ import {
   getImage,
   validateItemPath,
   getDescription,
+  unsanitiseTextFieldsRecursive,
 } from "../../utils/format";
 import { usePortal } from "../../state/usePortal";
 import { ItemImage } from "../../components/Item/ItemImage";
@@ -42,7 +43,8 @@ export function Edit() {
   useEffect(() => {
     let mapkey = listkey.slice(1);
     mapkey = mapkey.slice(0, mapkey.indexOf("/"));
-    setList(defaultCurators[mapkey]?.map[listkey] || defaultCurators[mapkey]);
+    let _list = defaultCurators[mapkey]?.map[listkey] || defaultCurators[mapkey];
+    setList(unsanitiseTextFieldsRecursive(_list));
   }, [listkey, defaultCurators]);
 
   useEffect(() => {
@@ -54,7 +56,7 @@ export function Edit() {
         },
       },
       map,
-    } = list;
+    } = unsanitiseTextFieldsRecursive(list);
     setListType(getType(list.item));
     // create the list of items
     let items = [];
@@ -176,9 +178,9 @@ export function Edit() {
               key={k}
             >
               <div className="flex flex-row w-full items-center justify-start">
-                  <div className="w-10 pr-2">
-                    <Bars3Icon/>
-                  </div>
+                <div className="w-10 pr-2">
+                  <Bars3Icon />
+                </div>
                 <div className="h-44 w-44 flex items-center" ref={imgContainer}>
                   <ItemImage
                     src={getImage(i, groups) || null}
@@ -298,9 +300,7 @@ export function Edit() {
     // if we are adding an /enditem/other we should be taken to the add item
     // page. otherwise we should just show the ~path/form.
     if (listType === "other") {
-      return (window.location = `/item/${encodeURIComponent(
-        list?.item?.keyStr
-      )}/add`);
+      return (window.location = `/item/${encodeURIComponent(list?.item?.keyStr)}/add`);
     }
     setShowAddItemForm(!showAddItemForm);
   };

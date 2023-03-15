@@ -1,15 +1,17 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { usePortal } from "../../state/usePortal";
+import {
+  sanitiseTextFieldsRecursive,
+  unsanitiseTextFieldsRecursive,
+} from "../../utils/format";
 
 export function EditGeneralForm({ poke, setPoke, action, onSave }) {
-  const navigate = useNavigate();
   const { urbit } = usePortal();
   let {
     [action]: {
       general: { title, description, image, link },
     },
-  } = poke;
+  } = unsanitiseTextFieldsRecursive(poke);
 
   const setGeneralProp = (prop, value) => {
     let newPoke = { ...poke }; // clone so we can edit
@@ -18,16 +20,19 @@ export function EditGeneralForm({ poke, setPoke, action, onSave }) {
   };
 
   const doPoke = poke => {
-    // console.log(poke);
+    // sanitise all the fields recursively
+    let sanitisedPoke = { ...poke };
+    sanitisedPoke = sanitiseTextFieldsRecursive(sanitisedPoke);
+    console.log({ sanitisedPoke });
     urbit.poke({
       app: "portal-manager",
       mark: "portal-action",
-      json: poke,
+      json: sanitisedPoke,
       // onSuccess: () => window.location.reload(),
       onSuccess: e => {
         console.log(e);
-        if (onSave) return onSave(e);
-        window.location.reload();
+        // if (onSave) return onSave(e);
+        // window.location.reload();
       },
       // onError: () => window.location.reload(),
       onError: e => {
@@ -44,7 +49,7 @@ export function EditGeneralForm({ poke, setPoke, action, onSave }) {
             className="bg-[#0284c7] rounded-lg px-3 py-2 text-sm font-medium"
             onClick={() => {
               doPoke(poke);
-              navigate(-1); // TODO: rethink this, probably better to navigate 1 level up this heirarchy: profile page <- profile page (edit mode) <- edit list <- edit item
+              // navigate(-1); // TODO: rethink this, probably better to navigate 1 level up this heirarchy: profile page <- profile page (edit mode) <- edit list <- edit item
             }}
           >
             Save

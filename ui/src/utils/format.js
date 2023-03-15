@@ -99,7 +99,7 @@ export const getImage = (data, groups) => {
 };
 
 export const checkUrl = string => {
-  if (!string) return false;
+  if (!string || typeof string !== "string") return false;
   return (
     string.indexOf("http://") === 0 ||
     string.indexOf("https://") === 0 ||
@@ -116,4 +116,47 @@ export const validateItemPath = path => {
 
 export const defaultListUrl = myShip => {
   return `/apps/portal/list/${encodeURIComponent(`/~${myShip}/list/list/2000.1.1`)}/edit`;
+};
+
+export const sanitiseTextFieldsRecursive = objectOrText => {
+  // if object is an object, loop through the keys
+  let cloned;
+  if (typeof objectOrText === "object" && !Array.isArray(objectOrText)) {
+    cloned = { ...objectOrText };
+    for (let key in cloned) {
+      cloned[key] = sanitiseTextFieldsRecursive(cloned[key]);
+    }
+  }
+  if (Array.isArray(objectOrText)) {
+    cloned = objectOrText.map(el => el);
+    for (let [index] in cloned) {
+      cloned[index] = sanitiseTextFieldsRecursive(cloned[index]);
+    }
+  }
+  if (typeof objectOrText === "string") {
+    cloned = objectOrText.substring(0);
+    cloned = cloned.replace(/'/g, "\\'");
+  }
+  return cloned;
+};
+
+export const unsanitiseTextFieldsRecursive = objectOrText => {
+  let cloned;
+  if (typeof objectOrText === "object" && !Array.isArray(objectOrText)) {
+    cloned = { ...objectOrText };
+    for (let key in cloned) {
+      cloned[key] = unsanitiseTextFieldsRecursive(cloned[key]);
+    }
+  }
+  if (Array.isArray(objectOrText)) {
+    cloned = objectOrText.map(el => el);
+    for (let [index] in cloned) {
+      cloned[index] = unsanitiseTextFieldsRecursive(cloned[index]);
+    }
+  }
+  if (typeof objectOrText === "string") {
+    cloned = objectOrText.substring(0);
+    cloned = cloned.replace(/\\'/g, "'");
+  }
+  return cloned;
 };
