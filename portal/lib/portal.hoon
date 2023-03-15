@@ -1066,18 +1066,18 @@
       %+  weld
         ?.  =(our ship.key.upd)  ~
         ?+    type.key.upd    ~
-            [%enditem %other ~]
-          ?:  (in-default-list:scry our now key.upd)  ~
-          ~[(act-to-act-card:cards [%add-to-default-list key.upd] our %portal-store)]
+          ::   [%enditem %other ~]
+          :: ?:  (in-default-list:scry our now key.upd)  ~
+          :: ~[(act-to-act-card:cards [%add-to-default-list key.upd] our %portal-store)]
             [%enditem %app ~]
           ?+    -.bespoke.data.item.upd    !!
               %enditem-app
             =/  dist-desk  (parse-dist-desk:misc dist-desk.bespoke.data.item.upd)
-            %+  weld
-              ?~  dist-desk  ~
-              ~[(act-to-act-card:cards [%get-docket key.upd -.u.dist-desk +.u.dist-desk] our %portal-manager)]
-              ?:  (in-default-list:scry our now key.upd)  ~
-              ~[(act-to-act-card:cards [%add-to-default-list key.upd] our %portal-store)]
+            ::%+  weld
+            ?~  dist-desk  ~
+            ~[(act-to-act-card:cards [%get-docket key.upd -.u.dist-desk +.u.dist-desk] our %portal-manager)]
+            :: ?:  (in-default-list:scry our now key.upd)  ~
+            :: ~[(act-to-act-card:cards [%add-to-default-list key.upd] our %portal-store)]
           ==
         ==
       %+  weld
