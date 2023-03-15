@@ -18,7 +18,7 @@ function buildNav(myShip) {
   const defaultListUrl = `/list/${encodeURIComponent(
     `/~${myShip}/list/list/2000.1.1`
   )}/edit`;
-  console.log({ defaultListUrl });
+
   const nav = [
     {
       name: "Home",
