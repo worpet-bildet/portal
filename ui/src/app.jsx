@@ -18,37 +18,37 @@ import { Edit as EditItem } from "./pages/Item/Edit";
 
 import theme from "./theme/theme";
 
-const router = createBrowserRouter([
-  {
-    path: "/apps/portal/",
-    // TODO: Change this to the default Portal curator's ship
-    element: <Navigate replace to="/apps/portal/~worpet-bildet" />,
-  },
-  {
-    path: "/apps/portal/list/add",
-    element: <AddList />,
-  },
-  {
-    path: "/apps/portal/list/:listkey/edit",
-    element: <EditList />,
-  },
-  {
-    path: "/apps/portal/item/:listkey/add",
-    element: <AddItem />,
-  },
-  {
-    path: "/apps/portal/item/:listkey/:itemkey/edit",
-    element: <EditItem />,
-  },
-  {
-    path: "/apps/portal/:patp",
-    element: <User />,
-  },
-  // {
-  //   path: "/apps/portal/me",
-  //   element: <Me />,
-  // },
-]);
+const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      element: <Layout />,
+      children: [
+        {
+          path: ":patp",
+          element: <User />,
+        },
+        {
+          path: "list/add",
+          element: <AddList />,
+        },
+        {
+          path: "list/:listkey/edit",
+          element: <EditList />,
+        },
+        {
+          path: "item/:listkey/add",
+          element: <AddItem />,
+        },
+        {
+          path: "item/:listkey/:itemkey/edit",
+          element: <EditItem />,
+        },
+      ],
+    },
+  ],
+  { basename: "/apps/portal" }
+);
 
 export function App() {
   usePortalSubscription();
@@ -59,10 +59,8 @@ export function App() {
       <ThemeProvider theme={theme}>
         <div className="page-container text-offwhite">
           <MotionConfig transition={{ duration: 1, reducedMotion: "user" }}>
-            <Layout>
-              <ToastContainer theme="dark" />
-              <RouterProvider router={router} icon={false} />
-            </Layout>
+            <ToastContainer theme="dark" />
+            <RouterProvider router={router} icon={false} />
           </MotionConfig>
         </div>
       </ThemeProvider>

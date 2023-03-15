@@ -79,10 +79,11 @@ export function User() {
     return selectedSection === "all" ? true : type === selectedSection;
   };
   const renderList = ({ item, map }) => {
-    if (!item || !map) return <></>;
+    if (!isMe && (!item || !map)) return <></>;
     return (
       <SliderList
         item={item}
+        key={item.keys.keyStr}
         map={map}
         type={getType(item)}
         filters={[{ fn: filterBySection, args: ["selectedSection", "type"] }]}
@@ -105,7 +106,7 @@ export function User() {
   }, [types, patp, listOrder]);
 
   const editList = keyStr => {
-    window.location = `/apps/portal/list/${encodeURIComponent(keyStr)}/edit`;
+    window.location = `/list/${encodeURIComponent(keyStr)}/edit`;
   };
   const imageContainerRef = useRef();
 

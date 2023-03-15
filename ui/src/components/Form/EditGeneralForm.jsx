@@ -1,7 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { usePortal } from "../../state/usePortal";
 
 export function EditGeneralForm({ poke, setPoke, action, onSave }) {
+  const navigate = useNavigate();
   const { urbit } = usePortal();
   let {
     [action]: {
@@ -16,7 +18,7 @@ export function EditGeneralForm({ poke, setPoke, action, onSave }) {
   };
 
   const doPoke = poke => {
-    console.log(poke);
+    // console.log(poke);
     urbit.poke({
       app: "portal-manager",
       mark: "portal-action",
@@ -24,7 +26,8 @@ export function EditGeneralForm({ poke, setPoke, action, onSave }) {
       // onSuccess: () => window.location.reload(),
       onSuccess: e => {
         console.log(e);
-        if (onSave) onSave(e);
+        if (onSave) return onSave(e);
+        window.location.reload();
       },
       // onError: () => window.location.reload(),
       onError: e => {
@@ -37,11 +40,13 @@ export function EditGeneralForm({ poke, setPoke, action, onSave }) {
     <div className="grid gap-4">
       <div className="w-full">
         <div className="flex items-center justify-end w-full pr-2">
-          <button className="bg-[#0284c7] rounded-lg px-3 py-2 text-sm font-medium"
-          onClick={() => {
-            doPoke(poke);
-            window.history.back(); // TODO: rethink this, probably better to navigate 1 level up this heirarchy: profile page <- profile page (edit mode) <- edit list <- edit item
-          }}>
+          <button
+            className="bg-[#0284c7] rounded-lg px-3 py-2 text-sm font-medium"
+            onClick={() => {
+              doPoke(poke);
+              navigate(-1); // TODO: rethink this, probably better to navigate 1 level up this heirarchy: profile page <- profile page (edit mode) <- edit list <- edit item
+            }}
+          >
             Save
           </button>
         </div>

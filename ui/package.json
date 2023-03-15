@@ -47,8 +47,8 @@
     "react-error-boundary": "^3.1.4",
     "react-horizontal-scrolling-menu": "^3.2.5",
     "react-modal": "^3.16.1",
-    "react-router": "^6.8.1",
-    "react-router-dom": "^6.4.3",
+    "react-router": "^6.9.0",
+    "react-router-dom": "^6.9.0",
     "react-toastify": "^9.1.1",
     "urbit-ob": "^5.0.1",
     "zustand": "^4.3.2"

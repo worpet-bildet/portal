@@ -8,7 +8,7 @@ import { useStore } from "../../state/store";
 import { isMobile } from "../../utils/mobile";
 
 export const SliderList = ({ item, map, type, filters, filterProps, groups, isMine }) => {
-  if (isEmpty(map)) return <></>;
+  if (!isMine && isEmpty(map)) return <></>;
   const [hover, setHover] = useState(false);
   const selectedSection = useStore(state => state.selectedSection);
   const defaultFiltersProps = { selectedSection, type };
@@ -25,7 +25,7 @@ export const SliderList = ({ item, map, type, filters, filterProps, groups, isMi
     return;
   };
   const editList = keyStr => {
-    window.location = `/apps/portal/list/${encodeURIComponent(keyStr)}/edit`;
+    window.location = `/list/${encodeURIComponent(keyStr)}/edit`;
   };
   const _filterProps = filterProps?.length
     ? filterProps.reduce((acc, cur) => ({ ...acc, [cur]: defaultFiltersProps[cur] }), {})

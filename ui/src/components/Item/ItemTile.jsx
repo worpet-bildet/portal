@@ -100,7 +100,7 @@ export function ItemTile(props) {
         onClick={() => {
           if (getItemType() === "ship") {
             window.scrollTo(0, 0);
-            return navigate(`/apps/portal/${shortTitle}`);
+            return navigate(`/${shortTitle}`);
           }
           setModalIsOpen(true);
         }}
