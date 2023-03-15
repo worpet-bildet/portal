@@ -143,17 +143,19 @@ export function Edit() {
 
   const editItem = i => {
     if (i?.item?.keyStr?.includes("list")) {
-      return (window.location = `/list/${encodeURIComponent(i?.item?.keyStr)}/edit`);
+      return (window.location = `/apps/portal/list/${encodeURIComponent(
+        i?.item?.keyStr
+      )}/edit`);
     }
     // making an item edit page here is pretty annoying, because the data is
     // nested within our own list that we're editing
-    window.location = `/item/${encodeURIComponent(
+    window.location = `/apps/portal/item/${encodeURIComponent(
       list?.item?.keyStr
     )}/${encodeURIComponent(i.keyStr)}/edit`;
   };
 
   const addList = () => {
-    return (window.location = `/list/add`);
+    return (window.location = `/apps/portal/list/add`);
   };
 
   const imgContainer = createRef();
@@ -300,7 +302,9 @@ export function Edit() {
     // if we are adding an /enditem/other we should be taken to the add item
     // page. otherwise we should just show the ~path/form.
     if (listType === "other") {
-      return (window.location = `/item/${encodeURIComponent(list?.item?.keyStr)}/add`);
+      return (window.location = `/apps/portal/item/${encodeURIComponent(
+        list?.item?.keyStr
+      )}/add`);
     }
     setShowAddItemForm(!showAddItemForm);
   };

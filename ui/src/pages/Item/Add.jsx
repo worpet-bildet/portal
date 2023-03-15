@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { getDefaultCurators } from "../../state/selectors";
 import { useStore } from "../../state/store";
 import { usePortal } from "../../state/usePortal";
@@ -11,6 +11,7 @@ export function Add() {
   const defaultCurators = useStore(getDefaultCurators);
   const [list, setList] = useState(null);
   const [addItemPoke, setAddItemPoke] = useState(null);
+  const navigate = useNavigate();
 
   const defaultGeneral = {
     title: "",
@@ -51,7 +52,14 @@ export function Add() {
       <div className="pb-12">
         <div className="text-4xl">New post</div>
       </div>
-      <EditGeneralForm poke={addItemPoke} setPoke={setAddItemPoke} action="add" />
+      <EditGeneralForm
+        poke={addItemPoke}
+        setPoke={setAddItemPoke}
+        action="add"
+        onSave={() => {
+          navigate(-1); // TODO: rethink this, probably better to navigate 1 level up this heirarchy: profile page <- profile page (edit mode) <- edit list <- edit item
+        }}
+      />
     </div>
   );
 }
