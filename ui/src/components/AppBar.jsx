@@ -99,7 +99,7 @@ export default function AppBar() {
   const MySigil = () => {
     // sigil-js can't render moons
     return (
-      <a href={'/apps/portal/~' + myShip}>
+      <a href={"/apps/portal/~" + myShip}>
         {sigil({
           patp: myShip?.length < "14" ? myShip : "worpet-bildet",
           renderer: reactRenderer,
@@ -204,7 +204,7 @@ export default function AppBar() {
               {/* TODO: Extract feedback / group join component */}
               {navigation.map(item =>
                 item.name === "Feedback" ? (
-                  <div>
+                  <div className="w-full flex flex-row justify-end">
                     <>
                       <button
                         key={item.name}
