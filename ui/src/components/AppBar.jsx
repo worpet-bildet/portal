@@ -15,14 +15,14 @@ import { useGang, useGroupState } from "../lib/state/groups/groups";
 const GROUP_FLAG = "~worpet-bildet/portal";
 
 function buildNav(myShip) {
-  const defaultListUrl = `/apps/portal/list/${encodeURIComponent(
+  const defaultListUrl = `/list/${encodeURIComponent(
     `/~${myShip}/list/list/2000.1.1`
   )}/edit`;
 
   const nav = [
     {
       name: "Home",
-      href: `/apps/portal/~worpet-bildet`,
+      href: `/~worpet-bildet`,
       // href: `/${curators[0] ? curators[0][1].item.keys.keyObj.ship : ""}`,
       // href: `/${curators[0] ? curators[0][1].item.keyObj.ship : ""}`,
       highlightOnSelect: false,
@@ -43,6 +43,11 @@ function buildNav(myShip) {
       name: "New Post",
       href: defaultListUrl,
       highlightOnSelect: true,
+      section: "all",
+    });
+    nav.push({
+      name: "My Profile",
+      href: `/~${myShip}`,
       section: "all",
     });
   }
@@ -220,10 +225,10 @@ export default function AppBar() {
                     </button>
                   </div>
                 ) : (
-                  <a
+                  <NavLink
                     // onClick={evt => handleSectionChange(evt, item)}
                     key={item.name}
-                    href={item.href}
+                    to={item.href}
                     className={classNames(
                       sectionToggled(item)
                         ? "bg-gray-900 text-white"
@@ -233,7 +238,7 @@ export default function AppBar() {
                     aria-current={sectionToggled(item) ? "page" : undefined}
                   >
                     {item.name}
-                  </a>
+                  </NavLink>
                 )
               )}
             </div>
