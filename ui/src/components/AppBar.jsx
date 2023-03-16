@@ -39,16 +39,10 @@ function buildNav(myShip) {
     },
   ];
   if (myShip?.length && myShip !== "undefined") {
-    nav.push({
-      name: "Me",
-      href: `/~${myShip}`,
-      highlightOnSelect: false,
-      section: "all",
-    });
-    nav.push({
-      name: "Add Item",
+    nav.unshift({
+      name: "New Post",
       href: defaultListUrl,
-      // highlightOnSelect: false,
+      highlightOnSelect: true,
       section: "all",
     });
   }
@@ -104,17 +98,15 @@ export default function AppBar() {
 
   const MySigil = () => {
     // sigil-js can't render moons
-    return myShip?.length > "13" ? (
-      <></>
-    ) : (
-      <>
+    return (
+      <a href={'/apps/portal/~' + myShip}>
         {sigil({
-          patp: myShip || "zod",
+          patp: myShip?.length < "14" ? myShip : "worpet-bildet",
           renderer: reactRenderer,
           size: "50",
           colors: ["black", "white"],
         })}
-      </>
+      </a>
     );
   };
 
