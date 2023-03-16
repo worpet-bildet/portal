@@ -183,7 +183,10 @@ export function Edit() {
                 <div className="w-10 pr-2">
                   <Bars3Icon />
                 </div>
-                <div className="h-44 w-44 flex items-center" ref={imgContainer}>
+                <div
+                  className="w-24 h-24 md:h-44 md:w-44 flex items-center"
+                  ref={imgContainer}
+                >
                   <ItemImage
                     src={getImage(i, groups) || null}
                     patp={getType(i) === "ship" ? getShortTitle(i, getType(i)) : null}
@@ -197,13 +200,13 @@ export function Edit() {
                   <div className="text-sm pt-2">{getDescription(i, getType(i))}</div>
                 </div>
               </div>
-              <div>
+              <div className="flex flex-col items-center justify-center">
                 {canEdit ? (
                   <button
                     className="p-2 hover:bg-[#0284c7] rounded-lg right-0"
                     onClick={() => editItem(i)}
                   >
-                    <div className="w-10">
+                    <div className="w-5 md:w-10">
                       <PencilIcon />
                     </div>
                   </button>
@@ -212,7 +215,7 @@ export function Edit() {
                   className="p-2 hover:bg-red-500 rounded-lg"
                   onClick={() => removeItem(i)}
                 >
-                  <div className="w-10">
+                  <div className="w-5 md:w-10">
                     <TrashIcon />
                   </div>
                 </button>
