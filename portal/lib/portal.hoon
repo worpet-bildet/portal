@@ -627,6 +627,21 @@
         ==
       ==
     ::
+    ++  add-item-to-list  ::TODO /list/app
+      |=  [=all-items our=ship src=ship now=time act=[%add-item-to-list list-key=[=ship type=?([%list %app ~] [%list %enditem %other ~]) =cord] add=[%add =ship =type =general =bespoke-input]]]
+      ^-  [(list card) ^all-items]
+      =/  list  (~(got by all-items) list-key.act)
+      ?+    -.bespoke.data.list    [~ all-items]
+          %list-enditem-other
+        =/  bespoke-input  [%list-enditem-other (snoc other-key-list.bespoke.data.list [[ship.add.act [%enditem %other ~] `@t`(scot %da now)] 'Auto-recommended'])]
+        =/  list-act  [%edit list-key.act general.data.list bespoke-input]
+        =^  cards1  all-items
+          (add-with-time all-items our src now [%add-with-time [ship.add.act type.add.act `@t`(scot %da now)] general.add.act bespoke-input.add.act])
+        =^  cards2  all-items
+          (edit all-items our our now list-act)
+        [(weld cards1 cards2) all-items]
+      ==
+    ::
     ++  overwrite-list
       |=  [=all-items our=ship now=time act=[%overwrite-list list-key=[=ship type=[%list type] =cord] =key-text-list]]
       ^-  [(list card) ^all-items]

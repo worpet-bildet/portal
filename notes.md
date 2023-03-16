@@ -79,6 +79,21 @@
     [%enditem-other ~]
 ==
 
+# create an item and append it to a list
+:portal-manager &portal-action :-  %add-item-to-list  :-  [our [%list %enditem %other ~] '~2000.1.1']
+:-  %add  :^  our  [%enditem %other ~]
+:*
+'Software as Soulcraft and the Metaphysics of Engineering with Neal Davis'
+'https://www.youtube.com/watch?v=8f8vk1BhlDo'
+'Neal Davis is a professor of computer science and the director of Urbit\'s Hoon School. We discuss why solving nuclear fusion might be a disaster, why Urbit computers have souls, Shinto philosophy, why you should read old books, how to select books, and much more. This was really good!'
+*tags:data
+*properties:data
+*pictures:data
+'http://i3.ytimg.com/vi/8f8vk1BhlDo/hqdefault.jpg'
+''
+==
+[%enditem-other ~]
+
 # add items and edit a list to include only those items (it will remove other items previously in the list)
 :portal-manager &portal-action :-  %add-items-and-edit-list  :+  [our [%list %enditem %other ~] '~2000.1.1']
 :*
