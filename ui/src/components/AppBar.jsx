@@ -15,14 +15,14 @@ import { useGang, useGroupState } from "../lib/state/groups/groups";
 const GROUP_FLAG = "~worpet-bildet/portal";
 
 function buildNav(myShip) {
-  const defaultListUrl = `/list/${encodeURIComponent(
+  const defaultListUrl = `/apps/portal/list/${encodeURIComponent(
     `/~${myShip}/list/list/2000.1.1`
   )}/edit`;
 
   const nav = [
     {
       name: "Home",
-      href: `/~worpet-bildet`,
+      href: `/apps/portal/~worpet-bildet`,
       // href: `/${curators[0] ? curators[0][1].item.keys.keyObj.ship : ""}`,
       // href: `/${curators[0] ? curators[0][1].item.keyObj.ship : ""}`,
       highlightOnSelect: false,
@@ -205,27 +205,24 @@ export default function AppBar() {
               {navigation.map(item =>
                 item.name === "Feedback" ? (
                   <div className="w-full flex flex-row justify-end">
-                    <>
-                      <button
-                        key={item.name}
-                        className={classNames(
-                          sectionToggled(item)
-                            ? "bg-gray-900 text-white"
-                            : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                          "block px-3 py-2 rounded-md text-base font-medium"
-                        )}
-                        onClick={evt => handleSectionChange(evt, item, button)}
-                        disabled={button.disabled || status === "error"}
-                      >
-                        {status === "error" ? "Errored" : "Feedback"}
-                      </button>
-                    </>
+                    <button
+                      key={item.name}
+                      className={classNames(
+                        sectionToggled(item)
+                          ? "bg-gray-900 text-white"
+                          : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                        "block px-3 py-2 rounded-md text-base font-medium"
+                      )}
+                      onClick={evt => handleSectionChange(evt, item, button)}
+                      disabled={button.disabled || status === "error"}
+                    >
+                      {status === "error" ? "Errored" : "Feedback"}
+                    </button>
                   </div>
                 ) : (
-                  <Disclosure.Button
-                    onClick={evt => handleSectionChange(evt, item)}
+                  <a
+                    // onClick={evt => handleSectionChange(evt, item)}
                     key={item.name}
-                    as="a"
                     href={item.href}
                     className={classNames(
                       sectionToggled(item)
@@ -236,7 +233,7 @@ export default function AppBar() {
                     aria-current={sectionToggled(item) ? "page" : undefined}
                   >
                     {item.name}
-                  </Disclosure.Button>
+                  </a>
                 )
               )}
             </div>

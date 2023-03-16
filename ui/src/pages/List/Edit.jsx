@@ -320,35 +320,37 @@ export function Edit() {
       <EditGeneralForm poke={editListPoke} setPoke={setEditListPoke} action="edit" />
       <div className="flex flex-row justify-between items-center pt-4">
         <div className="text-2xl">Items</div>
-        <button className="p-2" onClick={toggleAddItemForm}>
-          {listType !== "list" ? (
-            showAddItemForm ? (
+        {listType !== "list" ? (
+          showAddItemForm ? (
+            <button className="p-2" onClick={toggleAddItemForm}>
               <div className="flex flex-row items-center">
                 Hide
                 <div className="w-10">
                   <MinusIcon />
                 </div>
               </div>
-            ) : (
+            </button>
+          ) : (
+            <button className="p-2" onClick={toggleAddItemForm}>
               <div className="flex flex-row items-center bg-[#0284c7] px-3 py-2 rounded-md text-sm font-medium">
                 <div className="w-5 pr-2">
                   <PlusIcon />
                 </div>
                 New Post
               </div>
-            )
-          ) : null}
-          {listType === "list" ? (
-            <button className="p2" onClick={addList}>
-              <div className="flex flex-row items-center bg-[#0284c7] px-3 py-2 rounded-md text-sm font-medium">
-                <div className="w-5 pr-2">
-                  <PlusIcon />
-                </div>
-                New List
-              </div>
             </button>
-          ) : null}
-        </button>
+          )
+        ) : null}
+        {listType === "list" ? (
+          <button className="p2" onClick={addList}>
+            <div className="flex flex-row items-center bg-[#0284c7] px-3 py-2 rounded-md text-sm font-medium">
+              <div className="w-5 pr-2">
+                <PlusIcon />
+              </div>
+              New List
+            </div>
+          </button>
+        ) : null}
       </div>
       {showAddItemForm && renderAddItem()}
       <div className="grid gap-4 pt-4">{renderListItems()}</div>
