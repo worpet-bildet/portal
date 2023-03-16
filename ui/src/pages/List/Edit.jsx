@@ -164,7 +164,7 @@ export function Edit() {
   // adding more items
   const renderListItems = () => {
     const getChangedPos = (currentPos, newPos) => {
-      const x = listItems.map(i => i);
+      const x = listItems?.map(i => i);
       const _buf = x[newPos];
       x[newPos] = x[currentPos];
       x[currentPos] = _buf;
@@ -203,7 +203,7 @@ export function Edit() {
               <div className="flex flex-col items-center justify-center">
                 {canEdit ? (
                   <button
-                    className="p-2 hover:bg-[#0284c7] rounded-lg right-0"
+                    className="p-2 hover:bg-blue-500 rounded-lg right-0"
                     onClick={() => editItem(i)}
                   >
                     <div className="w-5 md:w-10">
@@ -288,7 +288,7 @@ export function Edit() {
             <p>{error}</p>
           </div>
           <button
-            className="p-2 hover:bg-[#0284c7] rounded-lg"
+            className="p-2 hover:bg-blue-500 rounded-lg"
             onClick={() => addItem(newItem)}
           >
             <div className="w-10">
@@ -332,7 +332,7 @@ export function Edit() {
             </button>
           ) : (
             <button className="p-2" onClick={toggleAddItemForm}>
-              <div className="flex flex-row items-center bg-[#0284c7] px-3 py-2 rounded-md text-sm font-medium">
+              <div className="flex flex-row items-center bg-blue-500 px-3 py-2 rounded-md text-sm font-medium">
                 <div className="w-5 pr-2">
                   <PlusIcon />
                 </div>
@@ -343,7 +343,7 @@ export function Edit() {
         ) : null}
         {listType === "list" ? (
           <button className="p2" onClick={addList}>
-            <div className="flex flex-row items-center bg-[#0284c7] px-3 py-2 rounded-md text-sm font-medium">
+            <div className="flex flex-row items-center bg-blue-500 px-3 py-2 rounded-md text-sm font-medium">
               <div className="w-5 pr-2">
                 <PlusIcon />
               </div>
