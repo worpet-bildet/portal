@@ -377,6 +377,7 @@
     %.  jon
     %-  of
     :~  [%add (ot ~[ship+dejs-ship type+dejs-type general+dejs-general bespoke-input+dejs-bespoke-input])]
+        [%add-item-to-list (ot ~[list-key+dejs-key ship+dejs-ship type+dejs-type general+dejs-general bespoke-input+dejs-bespoke-input])]
         [%edit (ot ~[key+dejs-key general+dejs-general bespoke-input+dejs-bespoke-input])]
         [%edit-general (ot ~[key+dejs-key general+dejs-general])]
         [%sub (ot ~[key+dejs-key])]

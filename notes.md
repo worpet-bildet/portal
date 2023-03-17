@@ -81,7 +81,7 @@
 
 # create an item and append it to a list
 :portal-manager &portal-action :-  %add-item-to-list  :-  [our [%list %enditem %other ~] '~2000.1.1']
-:-  %add  :^  our  [%enditem %other ~]
+:^  our  [%enditem %other ~]
 :*
 'Software as Soulcraft and the Metaphysics of Engineering with Neal Davis'
 'https://www.youtube.com/watch?v=8f8vk1BhlDo'
