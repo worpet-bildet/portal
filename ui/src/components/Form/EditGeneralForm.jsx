@@ -1,5 +1,6 @@
 import React from "react";
 import { usePortal } from "../../state/usePortal";
+import { toast } from "react-toastify";
 import {
   sanitiseTextFieldsRecursive,
   unsanitiseTextFieldsRecursive,
@@ -27,14 +28,12 @@ export function EditGeneralForm({ poke, setPoke, action, onSave }) {
       app: "portal-manager",
       mark: "portal-action",
       json: sanitisedPoke,
-      // onSuccess: () => window.location.reload(),
       onSuccess: e => {
         if (onSave) return onSave(e);
         window.location.reload();
       },
-      // onError: () => window.location.reload(),
       onError: e => {
-        console.error(e);
+        toast.error(`Could not save ${title}`);
       },
     });
   };

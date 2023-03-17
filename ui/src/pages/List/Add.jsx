@@ -51,10 +51,6 @@ export function Add() {
     });
   };
 
-  useEffect(() => {
-    console.log({ addListPoke });
-  }, [addListPoke]);
-
   const handleSave = e => {
     window.location = defaultListUrl(ship);
   };

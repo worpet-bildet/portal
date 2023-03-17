@@ -36,7 +36,8 @@ export function Add() {
     let type = list?.item?.keyObj?.type?.slice(1);
     type = type?.slice(type.indexOf("/"));
     setAddItemPoke({
-      add: {
+      "add-item-to-list": {
+        "list-key": { ...list?.item?.keyObj },
         ship: `~${ship}`,
         type,
         general: { ...defaultGeneral },
@@ -55,7 +56,7 @@ export function Add() {
       <EditGeneralForm
         poke={addItemPoke}
         setPoke={setAddItemPoke}
-        action="add"
+        action="add-item-to-list"
         onSave={() => {
           navigate(-1); // TODO: rethink this, probably better to navigate 1 level up this heirarchy: profile page <- profile page (edit mode) <- edit list <- edit item
         }}

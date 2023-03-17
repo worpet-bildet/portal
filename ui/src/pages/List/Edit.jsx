@@ -9,6 +9,7 @@ import {
   PencilIcon,
   Bars3Icon,
 } from "@heroicons/react/24/outline";
+import { toast } from "react-toastify";
 import { useStore } from "../../state/store";
 import { getDefaultCurators } from "../../state/selectors";
 import {
@@ -267,8 +268,13 @@ export function Edit() {
       app: "portal-manager",
       mark: "portal-action",
       json: poke,
-      onSuccess: () => window.location.reload(),
-      onError: () => window.location.reload(),
+      onSuccess: () => {
+        window.location.reload();
+      },
+      onError: () => {
+        toast.error(`Couldn't add item, check it's ~path and try again`);
+        // window.location.reload()
+      },
     });
   };
 
