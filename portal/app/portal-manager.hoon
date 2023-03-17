@@ -150,11 +150,13 @@
       ::  not sub -> not perfectly updated, either too much or too little
       =/  path  /treaty/(scot %p ship.act)/[desk.act]
       =/  wire  [%treaty (key-to-path:conv key.act)]
-      ?:  (~(has by wex.bowl) [wire ship.act %portal-manager])
-        ~&  "%portal-store: already subscribed to {(spud wire)}"
-        [~ this]
+      =/  sub-status  (~(gut by wex.bowl) [wire ship.act %treaty] ~)
       :_  this
-      [%pass wire %agent [ship.act %treaty] %watch path]~
+      ?~  sub-status
+        [%pass wire %agent [ship.act %treaty] %watch path]~
+      ?:  =(acked.sub-status %.n)
+        [%pass wire %agent [ship.act %treaty] %watch path]~
+      ~
     ==
     ::
       %portal-message
