@@ -381,6 +381,55 @@
     %+  turn  ~(tap in key-set)
     |=  =key
     [key (~(gut by all-items) key ~)]
+  ::
+  ::  takes list item and outputs key-set
+  ++  list-item-to-key-set
+    |=  [=item]
+    ^-  key-set
+    ?+    -.bespoke.data.item    ~
+        %list-enditem-other
+      %-  silt
+      (key-text-list-to-key-list:conv other-key-list.bespoke.data.item)
+        %list-enditem-app
+      %-  silt
+      (key-text-list-to-key-list:conv enditem-app-key-list.bespoke.data.item)
+        %list-app
+      %-  silt
+      (key-text-list-to-key-list:conv app-key-list.bespoke.data.item)
+        %list-nonitem-app
+      %-  silt
+      (key-text-list-to-key-list:conv nonitem-app-key-list.bespoke.data.item)
+        %list-nonitem-group
+      %-  silt
+      (key-text-list-to-key-list:conv group-key-list.bespoke.data.item)
+        %list-nonitem-ship
+      %-  silt
+      (key-text-list-to-key-list:conv ship-key-list.bespoke.data.item)
+        %list-list
+      %-  silt
+      (key-text-list-to-key-list:conv list-key-list.bespoke.data.item)
+    ==
+  ::
+  ::  takes list item and outputs key-list
+  ++  list-item-to-key-list
+      |=  [=item]
+      ^-  key-list
+      ?+    -.bespoke.data.item    ~
+          %list-enditem-other
+        (key-text-list-to-key-list:conv other-key-list.bespoke.data.item)
+          %list-enditem-app
+        (key-text-list-to-key-list:conv enditem-app-key-list.bespoke.data.item)
+          %list-app
+        (key-text-list-to-key-list:conv app-key-list.bespoke.data.item)
+          %list-nonitem-app
+        (key-text-list-to-key-list:conv nonitem-app-key-list.bespoke.data.item)
+          %list-nonitem-group
+        (key-text-list-to-key-list:conv group-key-list.bespoke.data.item)
+          %list-nonitem-ship
+        (key-text-list-to-key-list:conv ship-key-list.bespoke.data.item)
+          %list-list
+        (key-text-list-to-key-list:conv list-key-list.bespoke.data.item)
+      ==
   --
 ::
 ++  portal-store
@@ -469,6 +518,45 @@
       =/  act  [%add our [%validity-store ~] general [%validity-store *validity-records]]
       (add:on-action:portal-store all-items our our now %.y act)
     --
+  ::
+  ::  purges all foreign items except those from default-curators and portal-curator
+  ++  purge
+    |=  [=all-items our=ship src=ship now=time act=[%purge =default-curators =portal-curator]]
+    ^-  [(list card) ^all-items]
+    =/  all-items-key-set  ~(key by all-items)
+    =/  key-list  ~(tap in all-items-key-set)
+    ::make list/set of items
+    ::diff from all-items
+    =/  ships  (silt (limo ~[our ship.portal-curator.act]))  ::TODO also default curators in here
+    =/  our-keys  (skim-ships:keys key-list ~(tap in ships))  ::  LISTLIST KEY LIST
+    =/  our-list-lists-keys  (silt (skim-types:keys our-keys ~[[%list %list ~]]))  :: LISTLIST KEYSET
+    =/  our-list-lists-items  ::list items
+      %-  (list item)  %+  skip
+        ~(val by (get-items:misc all-items our-list-lists-keys))
+        |=(item=?(~ item) ?~(item %.y %.n))
+    =/  our-lists-keys  `(list key)`(zing (turn our-list-lists-items |=(=item (list-item-to-key-list:misc item))))  :: LIST KEYLIST
+    =/  our-lists-items
+      %-  (list item)  %+  skip
+        (turn our-lists-keys |=(=key (~(gut by all-items) key ~)))  :: LIST ITEMLIST
+        |=(item=?(~ item) ?~(item %.y %.n))
+    =/  our-items-keys  `(list key)`(zing (turn our-lists-items |=(=item (list-item-to-key-list:misc item))))  :: ITEM KEYLIST
+    =/  keys-to-keep  (~(uni in (silt our-keys)) (silt our-lists-keys))
+    =.  keys-to-keep  (~(uni in keys-to-keep) (silt our-items-keys))
+    :: our-list-lists-keys is redundant
+    =/  keys-to-purge  (~(dif in all-items-key-set) keys-to-keep)
+    =/  keys  ~(tap in keys-to-purge)
+    =/  len  (lent keys)
+    =/  n  0
+    =/  return  [*(list card) items=all-items]
+    ~&  >  "%portal: items kept after purge"
+    ~&  >  ~(tap in keys-to-keep)
+    |-  ?:  =(n len)  return
+    =/  new  (del:on-action items.return our src now [%del (snag n keys)])
+    %=  $
+      -.return  (weld -.return -.new)
+      +.return  +.new
+      n  +(n)
+    ==
   ::
   ++  on-action
     |%
@@ -709,6 +797,8 @@
         :-  (put:on-poke:make-cards all-items our src upd)
         (put-item our all-items upd)
       ==
+    ::
+
     --
   ::
   ++  on-message

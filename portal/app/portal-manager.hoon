@@ -4,16 +4,24 @@
 |%
 +$  versioned-state
   $%  state-0
+      state-1
   ==
 +$  state-0
   $:  %0
       =default-curators
       =portal-curator
   ==
++$  state-1
+  $:  %1
+      =default-curators
+      =portal-curator
+      purge-timer=?
+      purge-time=@dr
+  ==
 +$  card  card:agent:gall
 --
 %-  agent:dbug
-=|  state-0
+=|  state-1
 =*  state  -
 ^-  agent:gall
 |_  =bowl:gall
@@ -21,16 +29,20 @@
     default   ~(. (default-agent this %|) bowl)
 ++  on-init
   ^-  (quip card _this)
-  =.  state  *state-0
   =/  default-curators  (silt (limo ~[[~worpet-bildet /list/list '~2000.1.1']]))
   =/  portal-curator    [~worpet-bildet /list/list '~2000.1.1']
   =/  new-user-event    [%join now.bowl (get-ship-type:misc our.bowl) `@ux`(shax our.bowl)]
+  =/  purge-timer       %.y
+  =/  purge-time        ~d1
   :_  %=  this
         default-curators  default-curators
         portal-curator    portal-curator
+        purge-timer       purge-timer
+        purge-time        purge-time
       ==
   :~  (~(poke pass:io /act) [our.bowl %portal-store] %portal-action !>([%sub portal-curator]))
       (~(poke pass:io /new-user) [-.portal-curator %portal-logs] %portal-new-user-event !>(new-user-event))
+      [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]
   ==
 ::
 ++  on-save  !>(state)
@@ -41,7 +53,20 @@
   ::  upon update, new default curators can be added by us
   ::  and added to portal-curators
   ::  if user unsubs from a curator, then they are not added
-  `this(state !<(state-0 old))
+  =/  old  !<(versioned-state old)
+  =/  purge-time  ~d1
+  ?-    -.old
+      %0
+    :_  this(state [%1 default-curators.old portal-curator.old %.y purge-time])
+    [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]~
+      %1
+    ?:  =(purge-timer %.y)  `this(state old)
+      ::  TODO
+      ::  cancel old timer
+      ::  add new one with new purge-time
+    :_  this(purge-timer %.y)
+    [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]~
+  ==
 ::
 ++  on-poke
   |=  [=mark =vase]
@@ -52,8 +77,9 @@
     =/  act  !<(action vase)
     ::
     ::  TODO abstract a portal-manager add/edit/etc function which does stuff based on action and type
+    ::  maybe not needed? aim for simplicity.
     =/  act-set  %-  silt   ^-  (list term)
-      ~[%add %edit %edit-general %sub %del %add-to-default-list %overwrite-list %put-nonitem %edit-docket %add-item-to-list]
+      ~[%add %edit %edit-general %sub %del %add-to-default-list %overwrite-list %put-nonitem %edit-docket %add-item-to-list %purge]
     ?:  (~(has in act-set) -.act)
       :_  this
       ~[(~(poke pass:io /act) [our.bowl %portal-store] portal-action+vase)]
@@ -121,6 +147,7 @@
       ~
       ::
         %get-docket
+      ::  not sub -> not perfectly updated, either too much or too little
       =/  path  /treaty/(scot %p ship.act)/[desk.act]
       =/  wire  [%treaty (key-to-path:conv key.act)]
       ?:  (~(has by wex.bowl) [wire ship.act %portal-manager])
@@ -152,7 +179,16 @@
     ==
   ==
 ::
-++  on-arvo   on-arvo:default
+++  on-arvo
+  |=  [=wire sign=sign-arvo]
+  ^-  (quip card:agent:gall _this)
+  ?>  ?=([%purge-timer ~] wire)
+  ?>  ?=([%khan %arow *] sign)
+  :_  this
+  :~  [(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>([%purge default-curators portal-curator]))]
+      [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]
+  ==
+::
 ++  on-watch  on-watch:default
 ++  on-leave  on-leave:default
 ++  on-peek   on-peek:default
@@ -174,7 +210,9 @@
         ~[(act-to-act-card:cards [%edit-docket key treaty] our.bowl %portal-store)]
           [%nonitem %app ~]
         :_  this
-        ~[(fill-nonitem-app-data:portal-manager [our.bowl [%fill-nonitem-app key treaty]])]
+        :~  [(fill-nonitem-app-data:portal-manager [our.bowl [%fill-nonitem-app key treaty]])]
+            [%pass wire %agent [ship.key %treaty] %leave ~]
+        ==
       ==
     ==
       [%get-group-preview *]

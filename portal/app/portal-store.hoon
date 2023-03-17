@@ -103,8 +103,13 @@
       =^  cards  all-items
         (add-item-to-list:on-action:portal-store all-items our.bowl src.bowl now.bowl act)
       [cards this]
+      ::
+      ::  TODO probably after purge send nested-all-items to frontend
+        %purge
+      =^  cards  all-items
+        (purge:portal-store [all-items our.bowl src.bowl now.bowl act])
+      [cards this]
     ==
-    ::
       %portal-message
     ?.  =(our.bowl src.bowl)  `this
     =/  msg  `message`!<(message vase)

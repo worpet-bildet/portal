@@ -1,4 +1,4 @@
-/-  *portal-data
+/-  *portal-data, *portal-config
 |%
 ::
 +$  action
@@ -36,6 +36,8 @@
       ::
       [%join-group =key]
       [%get-group-preview flag=[=ship =term]]
+      ::
+      [%purge =default-curators =portal-curator]
   ==
 ::
 ::  %add and %edit contain @p so that in the future they can be generalized
