@@ -627,6 +627,21 @@
         ==
       ==
     ::
+    ++  add-item-to-list  ::TODO /list/app
+      |=  [=all-items our=ship src=ship now=time act=[%add-item-to-list list-key=[=ship type=?([%list %app ~] [%list %enditem %other ~]) =cord] =ship =type =general =bespoke-input]]
+      ^-  [(list card) ^all-items]
+      =/  list  (~(got by all-items) list-key.act)
+      ?+    -.bespoke.data.list    [~ all-items]
+          %list-enditem-other
+        =/  bespoke-input  [%list-enditem-other (snoc other-key-list.bespoke.data.list [[ship.act [%enditem %other ~] `@t`(scot %da now)] 'Auto-recommended'])]
+        =/  list-act  [%edit list-key.act general.data.list bespoke-input]
+        =^  cards1  all-items
+          (add-with-time all-items our src now [%add-with-time [ship.act type.act `@t`(scot %da now)] general.act bespoke-input.act])
+        =^  cards2  all-items
+          (edit all-items our our now list-act)
+        [(weld cards1 cards2) all-items]
+      ==
+    ::
     ++  overwrite-list
       |=  [=all-items our=ship now=time act=[%overwrite-list list-key=[=ship type=[%list type] =cord] =key-text-list]]
       ^-  [(list card) ^all-items]
@@ -1066,18 +1081,18 @@
       %+  weld
         ?.  =(our ship.key.upd)  ~
         ?+    type.key.upd    ~
-            [%enditem %other ~]
-          ?:  (in-default-list:scry our now key.upd)  ~
-          ~[(act-to-act-card:cards [%add-to-default-list key.upd] our %portal-store)]
+          ::   [%enditem %other ~]
+          :: ?:  (in-default-list:scry our now key.upd)  ~
+          :: ~[(act-to-act-card:cards [%add-to-default-list key.upd] our %portal-store)]
             [%enditem %app ~]
           ?+    -.bespoke.data.item.upd    !!
               %enditem-app
             =/  dist-desk  (parse-dist-desk:misc dist-desk.bespoke.data.item.upd)
-            %+  weld
-              ?~  dist-desk  ~
-              ~[(act-to-act-card:cards [%get-docket key.upd -.u.dist-desk +.u.dist-desk] our %portal-manager)]
-              ?:  (in-default-list:scry our now key.upd)  ~
-              ~[(act-to-act-card:cards [%add-to-default-list key.upd] our %portal-store)]
+            ::%+  weld
+            ?~  dist-desk  ~
+            ~[(act-to-act-card:cards [%get-docket key.upd -.u.dist-desk +.u.dist-desk] our %portal-manager)]
+            :: ?:  (in-default-list:scry our now key.upd)  ~
+            :: ~[(act-to-act-card:cards [%add-to-default-list key.upd] our %portal-store)]
           ==
         ==
       %+  weld

@@ -57,7 +57,7 @@ export const indexPages = (pages, types = {}) => {
     types[endType] = types[endType] || [];
     types[endType].push(pageData);
 
-    return { ...pageData, map: getMapRecursive(page.map, types, _item) };
+    return { ...pageData, array: getMapRecursive(page.map, types, _item) };
   });
   return [index, types];
 };

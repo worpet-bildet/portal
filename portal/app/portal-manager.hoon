@@ -53,7 +53,7 @@
     ::
     ::  TODO abstract a portal-manager add/edit/etc function which does stuff based on action and type
     =/  act-set  %-  silt   ^-  (list term)
-      ~[%add %edit %edit-general %sub %del %add-to-default-list %overwrite-list %put-nonitem %edit-docket]
+      ~[%add %edit %edit-general %sub %del %add-to-default-list %overwrite-list %put-nonitem %edit-docket %add-item-to-list]
     ?:  (~(has in act-set) -.act)
       :_  this
       ~[(~(poke pass:io /act) [our.bowl %portal-store] portal-action+vase)]

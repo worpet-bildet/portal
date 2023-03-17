@@ -7,6 +7,8 @@
       [%edit-general =key =general]
       [%overwrite-list key=[=ship type=[%list type] =cord] =key-text-list]
       ::
+      ::  creates item and adds it to specified list
+      [%add-item-to-list list-key=[=ship type=[%list %enditem %other ~] =cord] =ship =type =general =bespoke-input]
       :: note: makes key-text-list with empty texts
       [%add-items-and-list list-ship=ship list-type=$%([%list %enditem %other ~] [%list %app ~]) list-general=general add-items=(list [%add =ship =type =general =bespoke-input])]
       [%add-items-and-edit-list list-key=[=ship type=$%([%list %enditem %other ~] [%list %app ~]) =cord] list-general=general add-items=(list [%add =ship =type =general =bespoke-input])]

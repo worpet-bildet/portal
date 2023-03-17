@@ -12,7 +12,15 @@
   html {
     font-family: "Inter", sans-serif;
   }
+  input, textarea, select {
+    color: black;
+  }
+  /* this feels dumb */
+  [type='text']:focus, [type='email']:focus, [type='url']:focus, [type='password']:focus, [type='number']:focus, [type='date']:focus, [type='datetime-local']:focus, [type='month']:focus, [type='search']:focus, [type='tel']:focus, [type='time']:focus, [type='week']:focus, [multiple]:focus, textarea:focus, select:focus {
+    @apply border-blue-500;
+  }
 }
+
 
 .page-container {
   background-color: #151515;

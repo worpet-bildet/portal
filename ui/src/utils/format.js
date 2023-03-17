@@ -1,3 +1,8 @@
+export const getType = item => {
+  let typeKey = item?.data?.bespoke?.keyObj?.type || "list";
+  return typeKey?.slice(typeKey.lastIndexOf("/") + 1);
+};
+
 export const getShortTitle = (val, type) => {
   if (val?.data?.bespoke?.keyObj.type.includes("ship")) {
     return val?.data?.bespoke?.keyObj.ship;
@@ -60,7 +65,7 @@ export const getDescription = (val, type) => {
     return val?.data?.general?.description;
   }
   if (type === "list") {
-    return "";
+    return val?.item?.data?.general?.description;
   }
 };
 
@@ -82,11 +87,76 @@ export const getWebsite = (val, type) => {
   }
 };
 
+export const getImage = (data, groups) => {
+  return (
+    data?.data?.general?.image ||
+    data?.general?.image ||
+    data?.icon?.src ||
+    data?.bespoke?.payload?.docket?.image ||
+    data?.bespoke?.payload?.image ||
+    (groups ? groups[`${data?.keyObj?.ship}/${data?.keyObj?.cord}`]?.meta?.image : false)
+  );
+};
+
 export const checkUrl = string => {
-  if (!string) return false;
+  if (!string || typeof string !== "string") return false;
   return (
     string.indexOf("http://") === 0 ||
     string.indexOf("https://") === 0 ||
     string.indexOf("/apps/portal/src/assets") === 0
   );
+};
+
+export const validateItemPath = path => {
+  // let regex = /~[A-Za-z]+\/[A-Za-z]+/i;
+  // let regexPlanet = /~[A-Za-z]+-[A-Za-z]+\/[A-Za-z]+/i;
+  // return regex.test(path);
+  return true;
+};
+
+export const defaultListUrl = myShip => {
+  return `/apps/portal/list/${encodeURIComponent(`/~${myShip}/list/list/2000.1.1`)}/edit`;
+};
+
+export const sanitiseTextFieldsRecursive = objectOrText => {
+  // if object is an object, loop through the keys
+  let cloned;
+  if (typeof objectOrText === "object" && !Array.isArray(objectOrText)) {
+    cloned = { ...objectOrText };
+    for (let key in cloned) {
+      cloned[key] = sanitiseTextFieldsRecursive(cloned[key]);
+    }
+  }
+  if (Array.isArray(objectOrText)) {
+    cloned = objectOrText.map(el => el);
+    for (let [index] in cloned) {
+      cloned[index] = sanitiseTextFieldsRecursive(cloned[index]);
+    }
+  }
+  if (typeof objectOrText === "string") {
+    cloned = objectOrText.substring(0);
+    cloned = cloned.replace(/'/g, "\\'");
+  }
+  return cloned;
+};
+
+export const unsanitiseTextFieldsRecursive = objectOrText => {
+  let cloned;
+  if (typeof objectOrText === "object" && !Array.isArray(objectOrText)) {
+    cloned = { ...objectOrText };
+    for (let key in cloned) {
+      cloned[key] = unsanitiseTextFieldsRecursive(cloned[key]);
+    }
+  }
+  if (Array.isArray(objectOrText)) {
+    cloned = objectOrText.map(el => el);
+    for (let [index] in cloned) {
+      cloned[index] = unsanitiseTextFieldsRecursive(cloned[index]);
+    }
+  }
+  if (typeof objectOrText === "string") {
+    cloned = objectOrText.substring(0);
+    cloned = cloned.replace(/\\'/g, "'");
+  }
+  return cloned;
 };

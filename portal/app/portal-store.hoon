@@ -98,6 +98,11 @@
       =^  cards  all-items
         (edit-docket:on-action:portal-store all-items our.bowl src.bowl now.bowl act)
       [cards this]
+      ::
+        %add-item-to-list
+      =^  cards  all-items
+        (add-item-to-list:on-action:portal-store all-items our.bowl src.bowl now.bowl act)
+      [cards this]
     ==
     ::
       %portal-message
