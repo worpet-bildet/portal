@@ -899,6 +899,27 @@
       :-  (put:on-poke:make-cards all-items our src upd)
       (put-item our all-items upd)
     ::
+    ++  index-as-curator  ::idempotent toggle
+      |=  [=all-items our=ship src=ship now=time act=[%index-as-curator toggle=?]]
+      ^-  [(list card) ^all-items]
+      ?>  =(our ~nec)  ::  TODO change to worpet-bildet
+      =/  index-key  [our [%list %nonitem %ship ~] 'index']
+      =/  index  (~(gut by all-items) index-key ~)
+      ?~  index  ~&  "%portal-store: index doesn't exist"  [~ all-items]
+      ?+    -.bespoke.data.index    [~ all-items]
+          %list-nonitem-ship
+        =/  loc  (find [[[src [%nonitem %ship ~] ''] 'Auto-recommended']]~ ship-key-list.bespoke.data.index)
+        ?~  loc
+          ?.  =(toggle.act %.y)  [~ all-items]
+          =/  bespoke-input  [%list-nonitem-ship (snoc ship-key-list.bespoke.data.index [[src [%nonitem %ship ~] ''] 'Auto-recommended'])]
+          =/  list-act  [%edit index-key general.data.index bespoke-input]
+          (edit:on-action all-items our our now list-act)
+        ?.  =(toggle.act %.n)  [~ all-items]
+        =/  bespoke-input  [%list-nonitem-ship (oust [u.loc 1] ship-key-list.bespoke.data.index)]
+        =/  list-act  [%edit index-key general.data.index bespoke-input]
+        (edit:on-action all-items our our now list-act)
+      ==
+    ::
     ::  should assert/specify that can only receive signature from specific ship, as defined in link for %app items
     ::  for other types a different definition which ship can send an outside-sig
     ::  TODO look thru ++sig from app-store.hoon

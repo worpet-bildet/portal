@@ -32,6 +32,13 @@
     (other-list:default:portal-store all-items our.bowl now.bowl)
   =^  cards-6  all-items
     (list-list:default:portal-store all-items our.bowl now.bowl)
+  =/  index-key  [our.bowl [%list %nonitem %ship ~] 'index']
+  ?:  &(=(our.bowl ~nec) !(~(has by all-items) index-key))  ::  TODO change to ~worpet-bildet
+    =/  act  [%add-with-time index-key *general [%list-nonitem-ship ~]]
+    =^  cards-7  all-items
+      (add-with-time:on-action:portal-store [all-items our.bowl src.bowl now.bowl act])
+    :_  this
+    (zing ~[cards-1 cards-2 cards-3 cards-4 cards-5 cards-6 cards-7])
   :_  this
   (zing ~[cards-1 cards-2 cards-3 cards-4 cards-5 cards-6])
 ::
@@ -39,7 +46,16 @@
 ++  on-load
   |=  old=vase
   ^-  (quip card _this)
-  `this(state !<(state-0 old))
+  =/  old  !<(state-0 old)
+  =/  all-items  all-items.old
+  =/  index-key  [our.bowl [%list %nonitem %ship ~] 'index']
+  ?:  &(=(our.bowl ~nec) !(~(has by all-items) index-key))  ::  TODO change to worpet-bildet
+    =/  act  [%add-with-time index-key *general [%list-nonitem-ship ~]]
+    ::  rename add-with-time to add-with-cord?
+    =^  cards  all-items
+      (add-with-time:on-action:portal-store [all-items our.bowl src.bowl now.bowl act])
+    [cards this(all-items all-items)]
+  `this(state old)
 ::
 ::  all portal-action and portal-message go into portal-update
 ++  on-poke
@@ -104,7 +120,6 @@
         (add-item-to-list:on-action:portal-store all-items our.bowl src.bowl now.bowl act)
       [cards this]
       ::
-      ::  TODO probably after purge send nested-all-items to frontend
         %purge
       =^  cards  all-items
         (purge:portal-store [all-items our.bowl src.bowl now.bowl act])
@@ -152,6 +167,11 @@
         %sign-app
       =^  cards  all-items
         (sign-app:on-message:portal-store [all-items our.bowl src.bowl now.bowl msg])
+      [cards this]
+      ::
+        %index-as-curator
+      =^  cards  all-items
+        (index-as-curator:on-message:portal-store [all-items our.bowl src.bowl now.bowl msg])
       [cards this]
     ==
   ==
@@ -251,7 +271,7 @@
     =/  key  (path-to-key:conv t.t.path)
     =/  list
       ?:  =(-.type.key %list)
-        (~(got by all-items) [our.bowl /list/list '~2000.1.1'])
+        (~(got by all-items) [our.bowl [%list %list ~] '~2000.1.1'])
       (~(got by all-items) [our.bowl [%list type.key] '~2000.1.1'])
     ``noun+!>((key-in-list-item:loob key list))
     ::

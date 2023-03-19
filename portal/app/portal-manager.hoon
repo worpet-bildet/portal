@@ -17,6 +17,8 @@
       =portal-curator
       purge-timer=?
       purge-time=@dr
+      portal-indexer=@p
+      indexed-as-curator=?
   ==
 +$  card  card:agent:gall
 --
@@ -29,16 +31,20 @@
     default   ~(. (default-agent this %|) bowl)
 ++  on-init
   ^-  (quip card _this)
-  =/  default-curators  (silt (limo ~[[~worpet-bildet /list/list '~2000.1.1']]))
-  =/  portal-curator    [~worpet-bildet /list/list '~2000.1.1']
-  =/  new-user-event    [%join now.bowl (get-ship-type:misc our.bowl) `@ux`(shax our.bowl)]
-  =/  purge-timer       %.y
-  =/  purge-time        ~d1
+  =/  new-user-event      [%join now.bowl (get-ship-type:misc our.bowl) `@ux`(shax our.bowl)]
+  =/  default-curators    (silt (limo ~[[~worpet-bildet /list/list '~2000.1.1']]))
+  =/  portal-curator      [~worpet-bildet /list/list '~2000.1.1']
+  =/  purge-timer         %.y
+  =/  purge-time          ~d1
+  =/  portal-indexer      ~nec   ::  TODO change to ~worpet-bildet
+  =/  indexed-as-curator  %.n
   :_  %=  this
-        default-curators  default-curators
-        portal-curator    portal-curator
-        purge-timer       purge-timer
-        purge-time        purge-time
+        default-curators    default-curators
+        portal-curator      portal-curator
+        purge-timer         purge-timer
+        purge-time          purge-time
+        portal-indexer      portal-indexer
+        indexed-as-curator  indexed-as-curator
       ==
   :~  (~(poke pass:io /act) [our.bowl %portal-store] %portal-action !>([%sub portal-curator]))
       (~(poke pass:io /new-user) [-.portal-curator %portal-logs] %portal-new-user-event !>(new-user-event))
@@ -57,7 +63,7 @@
   =/  purge-time  ~d1
   ?-    -.old
       %0
-    :_  this(state [%1 default-curators.old portal-curator.old %.y purge-time])
+    :_  this(state [%1 default-curators.old portal-curator.old %.y purge-time ~worpet-bildet %.n])
     [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]~
       %1
     ?:  =(purge-timer %.y)  `this(state old)
@@ -94,6 +100,10 @@
     ::
     =/  poke-msg  ~(poke pass:io /msg)
     ?+    -.act    `this
+        %index-as-curator
+      :_  this(indexed-as-curator toggle.act)
+      [(poke-msg [portal-indexer %portal-manager] portal-message+vase)]~
+      ::
         %comment
       :_  this
       [(poke-msg [ship.key.act %portal-manager] portal-message+vase)]~

@@ -38,6 +38,8 @@
       [%get-group-preview flag=[=ship =term]]
       ::
       [%purge =default-curators =portal-curator]
+      ::
+      [%index-as-curator toggle=?]
   ==
 ::
 ::  %add and %edit contain @p so that in the future they can be generalized

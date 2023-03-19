@@ -11,5 +11,7 @@
       [%del-review =key]
       ::
       [%sign-app =key =signature]
+      ::
+      [%index-as-curator toggle=?]
   ==
 --

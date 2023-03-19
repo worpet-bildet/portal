@@ -391,6 +391,7 @@
         [%review (ot ~[key+dejs-key text+so hash+dejs-hash is-safe+bo])]
         [%del-review (ot ~[key+dejs-key])]
         [%join-group (ot ~[key+dejs-key])]
+        [%index-as-curator (ot ~[toggle+bo])]
     ==
   ++  dejs-general
     |=  jon=json
