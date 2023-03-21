@@ -22,6 +22,8 @@ export function User() {
   const [listDescription, setListDescription] = useState(null);
   const [listImageSrc, setListImageSrc] = useState(null);
   const [listOrder, setListOrder] = useState([]);
+  const [userIndex, setUserIndex] = useState([]);
+  const [userIsIndexed, setUserIsIndexed] = useState(false);
   const [isMe, setIsMe] = useState(false);
 
   const allRecommendedShips = useMemo(
@@ -46,6 +48,27 @@ export function User() {
         : [],
     [allRecommendedShips, defaultCuratorShips, patp]
   );
+
+  useEffect(() => {
+    // this is really gross just to find if the user has been indexed before.
+    // sigh.
+    if (!patp || !types) return;
+    const { ship } = types;
+    const indexList = ship?.find(
+      ({
+        keys: {
+          keyObj: { cord },
+        },
+      }) => cord === "index"
+    );
+    setUserIsIndexed(
+      Object.keys(indexList?.map || {}).find(l => l.includes(patp)) ? true : false
+    );
+  }, [types, patp]);
+
+  useEffect(() => {
+    console.log({ userIsIndexed });
+  }, [userIsIndexed]);
 
   useEffect(() => {
     if (outstandingShipsToSubscribeTo.length) {
@@ -74,6 +97,7 @@ export function User() {
     if (!l) setListDescription(`${patp} hasn't recommended anything yet`);
     setListOrder(l?.item?.data?.bespoke?.payload || []);
     setListImageSrc(l?.general?.image);
+    setUserIndex(Object.values(l?.map[`/${patp}/list/nonitem/ship/index`]?.map || {}));
     setIsMe(patp.slice(1) === ship);
   }, [lists, patp]);
 
@@ -82,6 +106,7 @@ export function User() {
   };
   const renderList = ({ item, map }) => {
     if (!isMe && (!item || !map)) return <></>;
+    if (item?.keys?.keyStr.includes("index")) return;
     return (
       <SliderList
         item={item}
@@ -109,6 +134,18 @@ export function User() {
 
   const editList = keyStr => {
     window.location = `/apps/portal/list/${encodeURIComponent(keyStr)}/edit`;
+  };
+  const indexMe = b => {
+    urbit.poke({
+      app: "portal-manager",
+      mark: "portal-action",
+      json: {
+        "index-as-curator": {
+          toggle: b,
+        },
+      },
+    });
+    setUserIsIndexed(b);
   };
   const imageContainerRef = useRef();
 
@@ -143,6 +180,15 @@ export function User() {
                 >
                   Edit Profile
                 </span>
+                <span className="text-xs pl-4 pt-4 whitespace-nowrap underline cursor-pointer">
+                  Add me to the Index
+                  <input
+                    className="ml-2"
+                    type="checkbox"
+                    onChange={e => indexMe(e.target.checked)}
+                    checked={userIsIndexed}
+                  ></input>
+                </span>
               </div>
             ) : (
               <></>
@@ -152,6 +198,26 @@ export function User() {
         <div className="space-y-4 sm:space-y-10 sm:py-14 pt-5">
           {appLists ? <div>{listsByType}</div> : null}
         </div>
+        {userIndex?.length > 0 && (
+          <div>
+            <div className="text-xl font-bold">Portal User Index</div>
+            <div>
+              Add yourself here by visitng your{" "}
+              <a href={`~${ship}`} className="text-blue-500">
+                profile page.
+              </a>
+            </div>
+            {userIndex?.map(({ keyObj: { ship } }) => {
+              return (
+                <div>
+                  <a className="text-blue-500 py-1" href={`${ship}`}>
+                    {ship}
+                  </a>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </main>
     )
   );

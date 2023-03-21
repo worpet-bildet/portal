@@ -60,7 +60,7 @@ function classNames(...classes) {
 
 export default function AppBar() {
   const [myShip, setMyShip] = useState(null);
-  let { ship } = usePortal();
+  let { urbit, ship } = usePortal();
   const [navigation, setNavigation] = useState(buildNav());
   const gang = useGang(GROUP_FLAG);
   const { group, button, status } = useGroupJoin(GROUP_FLAG, gang);
