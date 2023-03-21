@@ -180,8 +180,19 @@
     ::
       %portal-message
     =/  msg  !<(message vase)
-    :_  this
-    ~[(~(poke pass:io /msg) [our.bowl %portal-store] portal-message+vase)]
+    ?+    -.msg
+      ::  All messages
+      :_  this
+      ~[(~(poke pass:io /msg) [our.bowl %portal-store] portal-message+vase)]
+      ::
+      ::  Index-as-Curator
+      ::  TODO implement for all
+        %index-as-curator
+      ?>  =(src.bowl src.msg)
+      :_  this
+      ~[(~(poke pass:io /msg) [our.bowl %portal-store] portal-message+vase)]
+    ==
+
     ::
     ::  when %portal-store makes/receives an update, it notifies %portal-manager
     ::  then %portal-manager decides what it needs to do with it
