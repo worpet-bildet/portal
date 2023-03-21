@@ -102,7 +102,7 @@
     ?+    -.act    `this
         %index-as-curator
       :_  this(indexed-as-curator toggle.act)
-      [(poke-msg [portal-indexer %portal-manager] portal-message+vase)]~
+      [(poke-msg [portal-indexer %portal-manager] portal-message+!>([%index-as-curator src.bowl toggle.act]))]~
       ::
         %comment
       :_  this

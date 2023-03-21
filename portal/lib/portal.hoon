@@ -900,7 +900,7 @@
       (put-item our all-items upd)
     ::
     ++  index-as-curator  ::idempotent toggle
-      |=  [=all-items our=ship src=ship now=time act=[%index-as-curator toggle=?]]
+      |=  [=all-items our=ship src=ship now=time act=[%index-as-curator src=ship toggle=?]]
       ^-  [(list card) ^all-items]
       ?>  =(our ~nec)  ::  TODO change to worpet-bildet
       =/  index-key  [our [%list %nonitem %ship ~] 'index']
@@ -908,10 +908,10 @@
       ?~  index  ~&  "%portal-store: index doesn't exist"  [~ all-items]
       ?+    -.bespoke.data.index    [~ all-items]
           %list-nonitem-ship
-        =/  loc  (find [[[src [%nonitem %ship ~] ''] 'Auto-recommended']]~ ship-key-list.bespoke.data.index)
+        =/  loc  (find [[[src.act [%nonitem %ship ~] ''] 'Auto-recommended']]~ ship-key-list.bespoke.data.index)
         ?~  loc
           ?.  =(toggle.act %.y)  [~ all-items]
-          =/  bespoke-input  [%list-nonitem-ship (snoc ship-key-list.bespoke.data.index [[src [%nonitem %ship ~] ''] 'Auto-recommended'])]
+          =/  bespoke-input  [%list-nonitem-ship (snoc ship-key-list.bespoke.data.index [[src.act [%nonitem %ship ~] ''] 'Auto-recommended'])]
           =/  list-act  [%edit index-key general.data.index bespoke-input]
           (edit:on-action all-items our our now list-act)
         ?.  =(toggle.act %.n)  [~ all-items]

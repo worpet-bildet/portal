@@ -12,6 +12,6 @@
       ::
       [%sign-app =key =signature]
       ::
-      [%index-as-curator toggle=?]
+      [%index-as-curator src=ship toggle=?]
   ==
 --
