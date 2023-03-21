@@ -19,6 +19,7 @@
       purge-time=@dr
       portal-indexer=@p
       indexed-as-curator=?
+      onboarded=?
   ==
 +$  card  card:agent:gall
 --
@@ -38,6 +39,7 @@
   =/  purge-time          ~d1
   =/  portal-indexer      ~nec   ::  TODO change to ~worpet-bildet
   =/  indexed-as-curator  %.n
+  =/  onboarded           %.n
   :_  %=  this
         default-curators    default-curators
         portal-curator      portal-curator
@@ -45,6 +47,7 @@
         purge-time          purge-time
         portal-indexer      portal-indexer
         indexed-as-curator  indexed-as-curator
+        onboarded           onboarded
       ==
   :~  (~(poke pass:io /act) [our.bowl %portal-store] %portal-action !>([%sub portal-curator]))
       (~(poke pass:io /new-user) [-.portal-curator %portal-logs] %portal-new-user-event !>(new-user-event))
@@ -63,7 +66,7 @@
   =/  purge-time  ~d1
   ?-    -.old
       %0
-    :_  this(state [%1 default-curators.old portal-curator.old %.y purge-time ~worpet-bildet %.n])
+    :_  this(state [%1 default-curators.old portal-curator.old %.y purge-time ~worpet-bildet %.n %.n])
     [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]~
       %1
     ?:  =(purge-timer %.y)  `this(state old)
@@ -97,6 +100,12 @@
     ?:  =(-.act %add-items-and-edit-list)
       :_  this
       (add-items-and-edit-list:on-action:portal-manager our.bowl src.bowl now.bowl act)
+    ::
+    ?:  =(-.act %onboarded)
+      ?+  -.act  !!
+        %onboarded  `this(onboarded toggle.act)
+      ==
+
     ::
     =/  poke-msg  ~(poke pass:io /msg)
     ?+    -.act    `this
@@ -203,7 +212,13 @@
 ::
 ++  on-watch  on-watch:default
 ++  on-leave  on-leave:default
-++  on-peek   on-peek:default
+++  on-peek
+  |=  =path
+  ^-  (unit (unit cage))
+  ?+    path    (on-peek:default path)
+      [%x %onboarded ~]
+    ``noun+!>(onboarded)
+  ==
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)

@@ -40,6 +40,8 @@
       [%purge =default-curators =portal-curator]
       ::
       [%index-as-curator toggle=?]
+      ::
+      [%onboarded toggle=?]
   ==
 ::
 ::  %add and %edit contain @p so that in the future they can be generalized

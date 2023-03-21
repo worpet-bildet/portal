@@ -475,6 +475,7 @@ SCRY examples from dojo
 .^(all-items:conv:lib %gx /=portal-store=/all/items/portal-all-items)
 .^(result:data %gx /=portal-store=/valid/latest/~zod/list/list/~2000.1.1/portal-result)
 .^(? %gx /=portal-store=/item/exists/~zod/list/enditem/other/~2000.1.1/noun)
+.^(? %gx /=portal-manager=/onboarded/noun)
 
 ______
 :portal-manager|overwrite-list [[our [%list %enditem %other ~] '~2000.1.1'] ~[[[~master-dilryd-mopreg [%enditem %other ~] '~2023.2.17..15.08.26..d1dd'] 'I RECOMMEND THIS THING'] [[~dister-dozzod-dilryd-mopreg [%enditem %other ~] '~2023.2.17..15.13.08..f4e3'] 'I RECOMMEND THIS THING TOO']]]
