@@ -203,7 +203,7 @@
   ?+    -.sign  (on-agent:default wire sign)
       %watch-ack
     ?~  p.sign
-      ~&  "%portal-store: subscribe to {(spud wire)} succeeded"
+      ::~&  "%portal-store: subscribe to {(spud wire)} succeeded"
       `this
     ~&  "%portal-store: subscribe to {(spud wire)} failed"
     `this
@@ -217,7 +217,7 @@
       %fact
     =/  key  (path-to-key:conv wire)
     =/  upd  !<(update q.cage.sign)
-    ~&  "%portal-store: received update from {(spud wire)}"
+    ::~&  "%portal-store: received update from {(spud wire)}"
     ?+    -.upd    `this
       ::
       ::  basically %init/%add/%edit

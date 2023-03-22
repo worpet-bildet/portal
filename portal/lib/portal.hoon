@@ -438,7 +438,7 @@
   ++  del-item
     |=  [our=ship src=ship =all-items upd=[%del =key]]
     ^-  [?(%changed %unchanged) ^all-items]
-    ~&  "%portal: deleting {(spud (key-to-path:conv key.upd))}"
+    ::~&  "%portal: deleting {(spud (key-to-path:conv key.upd))}"
     ?:  &(=(cord.key.upd '~2000.1.1') =(ship.key.upd our))
       ~&  "%portal: item is default, not allowed to delete"
       [%unchanged all-items]
@@ -548,9 +548,16 @@
     =/  len  (lent keys)
     =/  n  0
     =/  return  [*(list card) items=all-items]
-    ~&  >  "%portal: items kept after purge"
-    ~&  >  ~(tap in keys-to-keep)
-    |-  ?:  =(n len)  return
+    ~&  "all-items-key-set"
+    ~&  >  ~(wyt in all-items-key-set)
+    :: ~&  "item number to keep"
+    :: ~&  >  ~(wyt in keys-to-keep)
+    ~&  "item number to purge"
+    ~&  >  len
+    |-  ?:  =(n len)
+    ~&  "items kept"
+    ~&  >  ~(wyt by `^all-items`+.return)
+    return
     =/  new  (del:on-action items.return our src now [%del (snag n keys)])
     %=  $
       -.return  (weld -.return -.new)
@@ -649,7 +656,7 @@
     ++  del
       |=  [=all-items our=ship src=ship now=time act=[%del =key]]
       ^-  [(list card) ^all-items]
-      ?:  =(-.type.key.act %nonitem)  [~ all-items]
+      ::?:  =(-.type.key.act %nonitem)  [~ all-items]
       =^  changed  all-items  (del-item our src all-items act)
       :-  (del:on-poke:make-cards all-items our src changed act)
       all-items
@@ -993,13 +1000,20 @@
         |=  [=all-items our=ship src=ship changed=?(%changed %unchanged) upd=[%del =key]]
         ^-  (list card)
         ?:  =(changed %unchanged)  ~
-        ~&  "%portal-store: unsubscribing from {(spud (key-to-path:conv key.upd))}"
+        ::~&  "%portal-store: unsubscribing from {(spud (key-to-path:conv key.upd))}"
         %+  welp
           :~  [%pass /del %agent [our %portal-manager] %poke %portal-update !>(upd)]
               [%give %fact [/front-end-update]~ %portal-front-end-update !>((make-front-end-update all-items our src upd))]
           ==
         ?:  =(our ship.key.upd)
           [%give %fact [(key-to-path:conv key.upd)]~ [%portal-update !>(upd)]]~
+        ?:  =(-.type.key.upd %nonitem)  ~
+        ::   ?-    type.key.upd
+        ::       [%nonitem %group ~]
+        ::     [%pass (key-to-path:conv key.upd) %agent [ship.key.upd %portal-store] %leave ~]~
+        ::       [%nonitem %app ~]
+        ::     [%pass (key-to-path:conv key.upd) %agent [ship.key.upd %portal-store] %leave ~]~
+        ::   ==
         [%pass (key-to-path:conv key.upd) %agent [ship.key.upd %portal-store] %leave ~]~
       ::
       ++  sub
@@ -1009,7 +1023,7 @@
         ?:  (~(has by wex) [wire ship.key.upd %portal-store])
           ~&  "%portal-store: already subscribed to {(spud wire)}"
           ~
-        ~&  "%portal-store: subscribing to {(spud wire)}"
+        ::~&  "%portal-store: subscribing to {(spud wire)}"
         [%pass wire %agent [ship.key.upd %portal-store] %watch wire]~
       ::
       --
@@ -1026,7 +1040,7 @@
         |=  [=all-items our=ship src=ship changed=?(%changed %unchanged) upd=[%del =key]]
         ^-  (list card)
         ?:  =(changed %unchanged)  ~
-        ~&  "%portal-store: unsubscribing from {(spud (key-to-path:conv key.upd))}"
+        ::~&  "%portal-store: unsubscribing from {(spud (key-to-path:conv key.upd))}"
         :~  [%pass /del %agent [our %portal-manager] %poke %portal-update !>(upd)]
             [%give %fact [/front-end-update]~ %portal-front-end-update !>((make-front-end-update all-items our src upd))]
         ==
