@@ -39,7 +39,7 @@ function buildNav(myShip) {
     },
   ];
   if (myShip?.length && myShip !== "undefined") {
-    nav.unshift({
+    nav.push({
       name: "New Post",
       href: defaultListUrl,
       highlightOnSelect: true,

@@ -55,10 +55,6 @@ export const useStore = createStore((set, get) => ({
     setTimeout(doUpdate, 4000);
     setTimeout(doUpdate, 8000);
     setTimeout(doUpdate, 12000);
-    setTimeout(doUpdate, 20000);
-    setTimeout(doUpdate, 25000);
-    setTimeout(doUpdate, 30000);
-    setTimeout(doUpdate, 40000);
   },
   setInitialState: state =>
     set(
