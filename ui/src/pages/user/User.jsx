@@ -212,7 +212,7 @@ export function User() {
           {appLists ? <div>{listsByType()}</div> : null}
         </div>
         {userIndex?.length > 0 && (
-          <div>
+          <div className="pb-6">
             <div className="text-xl font-bold">Portal User Index</div>
             <div>
               Add yourself here by visitng your{" "}
