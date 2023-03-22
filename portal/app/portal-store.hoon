@@ -33,7 +33,7 @@
   =^  cards-6  all-items
     (list-list:default:portal-store all-items our.bowl now.bowl)
   =/  index-key  [our.bowl [%list %nonitem %ship ~] 'index']
-  ?:  &(=(our.bowl ~nec) !(~(has by all-items) index-key))  ::  TODO change to ~worpet-bildet
+  ?:  &(=(our.bowl ~worpet-bildet) !(~(has by all-items) index-key))
     =/  act  [%add-with-time index-key *general [%list-nonitem-ship ~]]
     =^  cards-7  all-items
       (add-with-time:on-action:portal-store [all-items our.bowl src.bowl now.bowl act])
@@ -49,7 +49,7 @@
   =/  old  !<(state-0 old)
   =/  all-items  all-items.old
   =/  index-key  [our.bowl [%list %nonitem %ship ~] 'index']
-  ?:  &(=(our.bowl ~nec) !(~(has by all-items) index-key))  ::  TODO change to worpet-bildet
+  ?:  &(=(our.bowl ~worpet-bildet) !(~(has by all-items) index-key))
     =/  act  [%add-with-time index-key *general [%list-nonitem-ship ~]]
     ::  rename add-with-time to add-with-cord?
     =^  cards  all-items

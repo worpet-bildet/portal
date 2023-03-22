@@ -909,7 +909,7 @@
     ++  index-as-curator  ::idempotent toggle
       |=  [=all-items our=ship src=ship now=time act=[%index-as-curator src=ship toggle=?]]
       ^-  [(list card) ^all-items]
-      ?>  =(our ~nec)  ::  TODO change to worpet-bildet
+      ?>  =(our ~worpet-bildet)
       =/  index-key  [our [%list %nonitem %ship ~] 'index']
       =/  index  (~(gut by all-items) index-key ~)
       ?~  index  ~&  "%portal-store: index doesn't exist"  [~ all-items]

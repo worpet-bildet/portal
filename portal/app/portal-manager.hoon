@@ -37,7 +37,7 @@
   =/  portal-curator      [~worpet-bildet /list/list '~2000.1.1']
   =/  purge-timer         %.y
   =/  purge-time          ~d1
-  =/  portal-indexer      ~nec   ::  TODO change to ~worpet-bildet
+  =/  portal-indexer      ~worpet-bildet
   =/  indexed-as-curator  %.n
   =/  onboarded           %.n
   :_  %=  this
@@ -227,8 +227,10 @@
   |=  =path
   ^-  (unit (unit cage))
   ?+    path    (on-peek:default path)
+      [%x %indexed-as-curator ~]
+    ``bool+!>(indexed-as-curator)
       [%x %onboarded ~]
-    ``noun+!>(onboarded)
+    ``bool+!>(onboarded)
   ==
 ++  on-agent
   |=  [=wire =sign:agent:gall]
