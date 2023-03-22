@@ -113,7 +113,7 @@ export function User() {
     setListImageSrc(l?.general?.image);
     setUserIndex(Object.values(l?.map[`/${patp}/list/nonitem/ship/index`]?.map || {}));
     setIsMe(patp.slice(1) === ship);
-  }, [lists, patp, defaultCurators, types]);
+  }, [lists, patp, defaultCurators, types, ship]);
 
   const filterBySection = ({ type, selectedSection }) => {
     return selectedSection === "all" ? true : type === selectedSection;

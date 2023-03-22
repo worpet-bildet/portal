@@ -41,7 +41,12 @@ export function Edit() {
       <div className="pb-12">
         <div className="text-4xl">editing item: {getShortTitle(item, getType(item))}</div>
       </div>
-      <EditGeneralForm poke={editItemPoke} setPoke={setEditItemPoke} action="edit" />
+      <EditGeneralForm
+        poke={editItemPoke}
+        setPoke={setEditItemPoke}
+        action="edit"
+        onSave={() => navigate(-1)}
+      />
     </div>
   );
 }
