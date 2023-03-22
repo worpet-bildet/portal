@@ -193,7 +193,7 @@ export function User() {
                 >
                   Edit Profile
                 </span>
-                <span className="text-xs pl-4 pt-4 whitespace-nowrap underline cursor-pointer">
+                <span className="text-xs pl-4 pt-4 whitespace-nowrap">
                   Add me to the Index
                   <input
                     className="ml-2"
