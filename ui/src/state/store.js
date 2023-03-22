@@ -38,12 +38,16 @@ export const useStore = createStore((set, get) => ({
     else get().indexOnUpdate(update);
   },
   scryBeforeIndex: async update => {
-    try {
-      const res = await scries.curatorDefaults(update.urbit, update.evt);
-      get().indexAll(res);
-    } catch (err) {
-      console.error(err);
-    }
+    // If we literally just subbed to this person, wait a couple seconds and
+    // then get everything again, this is gross but it works for now
+    setTimeout(async () => {
+      try {
+        const res = await scries.curatorDefaults(update.urbit, update.evt);
+        get().indexAll(res);
+      } catch (err) {
+        console.error(err);
+      }
+    }, 1000);
   },
   setInitialState: state =>
     set(
@@ -77,6 +81,7 @@ export const useStore = createStore((set, get) => ({
           const ship = res?.keyObj?.ship;
           const type = res?.keyObj?.type?.slice().split("/");
           if (type.length && type[1] === "list") {
+            console.log({ res, ship, type }, "thing");
             get().reduceListInIndex(res, ship, type);
           } else {
             get().addItemToIndex(res, ship, type);
@@ -122,6 +127,7 @@ export const useStore = createStore((set, get) => ({
           const itemIndex = listAtDCType.map[0].findIndex(
             el => el.keyStr === item.keyStr
           );
+          console.log({ item, ship, type, listAtDCType, listAtTypes, itemIndex });
 
           if (itemIndex === -1) {
             listAtDCType.map[0].push(item);

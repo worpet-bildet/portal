@@ -67,8 +67,22 @@ export function User() {
   }, [types, patp]);
 
   useEffect(() => {
-    console.log({ userIsIndexed });
-  }, [userIsIndexed]);
+    if (urbit && patp && !isMe) {
+      urbit.poke({
+        app: "portal-manager",
+        mark: "portal-action",
+        json: {
+          sub: {
+            key: {
+              ship: patp,
+              type: "/list/list",
+              cord: "~2000.1.1",
+            },
+          },
+        },
+      });
+    }
+  }, [patp, isMe, urbit]);
 
   useEffect(() => {
     if (outstandingShipsToSubscribeTo.length) {
