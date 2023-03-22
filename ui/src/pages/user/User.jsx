@@ -102,9 +102,9 @@ export function User() {
   }, [outstandingShipsToSubscribeTo]);
 
   useEffect(() => {
-    let l = unsanitiseTextFieldsRecursive(
-      lists.find(l => l?.keys?.keyObj?.ship === patp)
-    );
+    // We should search the default curators here
+    if (!defaultCurators || !patp) return;
+    let l = unsanitiseTextFieldsRecursive(defaultCurators[patp]);
     setList(l);
     setListTitle(l?.general?.title || patp);
     setListDescription(l?.general?.description);
@@ -113,18 +113,18 @@ export function User() {
     setListImageSrc(l?.general?.image);
     setUserIndex(Object.values(l?.map[`/${patp}/list/nonitem/ship/index`]?.map || {}));
     setIsMe(patp.slice(1) === ship);
-  }, [lists, patp]);
+  }, [lists, patp, defaultCurators, types]);
 
   const filterBySection = ({ type, selectedSection }) => {
     return selectedSection === "all" ? true : type === selectedSection;
   };
   const renderList = ({ item, map }) => {
     if (!isMe && (!item || !map)) return <></>;
-    if (item?.keys?.keyStr.includes("index")) return;
+    if (item?.keyStr?.includes("index")) return;
     return (
       <SliderList
         item={item}
-        key={item.keys.keyStr}
+        key={item.keyStr}
         map={map}
         type={getType(item)}
         filters={[{ fn: filterBySection, args: ["selectedSection", "type"] }]}
@@ -134,17 +134,16 @@ export function User() {
       ></SliderList>
     );
   };
-  const listsByType = useMemo(() => {
-    let nonListLists = Object.entries(types).filter(([type]) => type !== "list");
+  const listsByType = () => {
+    let nonListLists = list?.item?.data?.bespoke?.payload;
+    if (!nonListLists) return;
     let orderedLists = [];
     listOrder.forEach(l => {
-      nonListLists.forEach(([type, list]) => {
-        let myList = list.find(typeList => typeList.keys.key === l.keyStr);
-        if (myList) orderedLists.push(unsanitiseTextFieldsRecursive(myList));
-      });
+      let myList = list.map[l.keyStr];
+      if (myList) orderedLists.push(unsanitiseTextFieldsRecursive(myList));
     });
     return orderedLists.map(renderList);
-  }, [types, patp, listOrder]);
+  };
 
   const editList = keyStr => {
     window.location = `/apps/portal/list/${encodeURIComponent(keyStr)}/edit`;
@@ -210,7 +209,7 @@ export function User() {
           </div>
         </div>
         <div className="space-y-4 sm:space-y-10 sm:py-14 pt-5">
-          {appLists ? <div>{listsByType}</div> : null}
+          {appLists ? <div>{listsByType()}</div> : null}
         </div>
         {userIndex?.length > 0 && (
           <div>

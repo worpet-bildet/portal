@@ -45,6 +45,7 @@
     "react-dom": "^18.2.0",
     "react-drag-reorder": "^1.2.0",
     "react-error-boundary": "^3.1.4",
+    "react-ga": "^3.3.1",
     "react-horizontal-scrolling-menu": "^3.2.5",
     "react-modal": "^3.16.1",
     "react-router": "^6.9.0",

@@ -14,6 +14,7 @@ import { Add as AddList } from "./pages/List/Add";
 import { Edit as EditList } from "./pages/List/Edit";
 import { Add as AddItem } from "./pages/Item/Add";
 import { Edit as EditItem } from "./pages/Item/Edit";
+import ReactGA from "react-ga";
 // import { GenericForm as Me } from "./pages/form/GenericForm";
 
 import theme from "./theme/theme";
@@ -53,6 +54,7 @@ const router = createBrowserRouter(
 export function App() {
   usePortalSubscription();
   useLandscapeSubscription();
+  ReactGA.initialize("UA-359336070");
 
   return (
     <React.Fragment>

@@ -37,17 +37,28 @@ export const useStore = createStore((set, get) => ({
     if (isNewSub(update)) get().scryBeforeIndex(update);
     else get().indexOnUpdate(update);
   },
-  scryBeforeIndex: async update => {
+  scryBeforeIndex: update => {
     // If we literally just subbed to this person, wait a couple seconds and
     // then get everything again, this is gross but it works for now
-    setTimeout(async () => {
+    const doUpdate = async () => {
       try {
         const res = await scries.curatorDefaults(update.urbit, update.evt);
         get().indexAll(res);
       } catch (err) {
         console.error(err);
       }
-    }, 1000);
+    };
+    doUpdate();
+    setTimeout(doUpdate, 500);
+    setTimeout(doUpdate, 1000);
+    setTimeout(doUpdate, 2000);
+    setTimeout(doUpdate, 4000);
+    setTimeout(doUpdate, 8000);
+    setTimeout(doUpdate, 12000);
+    setTimeout(doUpdate, 20000);
+    setTimeout(doUpdate, 25000);
+    setTimeout(doUpdate, 30000);
+    setTimeout(doUpdate, 40000);
   },
   setInitialState: state =>
     set(
@@ -66,7 +77,6 @@ export const useStore = createStore((set, get) => ({
       produce(draft => {
         const [index, types] = indexPages(Object.entries(pages));
         const curators = keyBy(index, "keys.keyObj.ship");
-
         draft.defaultCurators = { ...draft.defaultCurators, ...curators };
         draft.types = isEqual(draft.types, initalTypeState)
           ? types
@@ -80,8 +90,7 @@ export const useStore = createStore((set, get) => ({
           const res = await scries.item(update.urbit, update.evt);
           const ship = res?.keyObj?.ship;
           const type = res?.keyObj?.type?.slice().split("/");
-          if (type.length && type[1] === "list") {
-            console.log({ res, ship, type }, "thing");
+          if (type && type.length && type[1] === "list") {
             get().reduceListInIndex(res, ship, type);
           } else {
             get().addItemToIndex(res, ship, type);
@@ -127,7 +136,6 @@ export const useStore = createStore((set, get) => ({
           const itemIndex = listAtDCType.map[0].findIndex(
             el => el.keyStr === item.keyStr
           );
-          console.log({ item, ship, type, listAtDCType, listAtTypes, itemIndex });
 
           if (itemIndex === -1) {
             listAtDCType.map[0].push(item);

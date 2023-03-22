@@ -35,6 +35,7 @@ specifiers:
   react-dom: ^18.2.0
   react-drag-reorder: ^1.2.0
   react-error-boundary: ^3.1.4
+  react-ga: ^3.3.1
   react-horizontal-scrolling-menu: ^3.2.5
   react-modal: ^3.16.1
   react-router: ^6.9.0
@@ -74,6 +75,7 @@ dependencies:
   react-dom: 18.2.0_react@18.2.0
   react-drag-reorder: 1.2.0
   react-error-boundary: 3.1.4_react@18.2.0
+  react-ga: 3.3.1_react@18.2.0
   react-horizontal-scrolling-menu: 3.2.5_react@18.2.0
   react-modal: 3.16.1_biqbaboplfbrettd7655fr4n2y
   react-router: 6.9.0_react@18.2.0
@@ -2673,6 +2675,15 @@ packages:
       react: '>=16.13.1'
     dependencies:
       '@babel/runtime': 7.20.7
+      react: 18.2.0
+    dev: false
+
+  /react-ga/3.3.1_react@18.2.0:
+    resolution: {integrity: sha512-4Vc0W5EvXAXUN/wWyxvsAKDLLgtJ3oLmhYYssx+YzphJpejtOst6cbIHCIyF50Fdxuf5DDKqRYny24yJ2y7GFQ==}
+    peerDependencies:
+      prop-types: ^15.6.0
+      react: ^15.6.2 || ^16.0 || ^17 || ^18
+    dependencies:
       react: 18.2.0
     dev: false
 
