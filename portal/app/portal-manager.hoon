@@ -227,8 +227,10 @@
   |=  =path
   ^-  (unit (unit cage))
   ?+    path    (on-peek:default path)
+      [%x %indexed-as-curator ~]
+    ``bool+!>(indexed-as-curator)
       [%x %onboarded ~]
-    ``noun+!>(onboarded)
+    ``bool+!>(onboarded)
   ==
 ++  on-agent
   |=  [=wire =sign:agent:gall]
