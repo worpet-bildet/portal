@@ -1,7 +1,7 @@
 import produce from "immer";
 import keyBy from "lodash/keyBy";
 import { createStore } from "./middleware";
-import { indexPages, getListAtDCType, getListAtType, isNewSub } from "./util";
+import { indexPages, isNewSub } from "./util";
 import { scries } from "../urbit/scries";
 
 export const initalTypeState = { app: [], group: [], list: [], other: [], ship: [] };
@@ -32,7 +32,6 @@ export const useStore = createStore((set, get) => ({
   alertIsOpen: false,
   alertText: "",
   onInitialLoad: initialState => {
-    console.log({ initialState });
     get().setInitialState(initialState);
     get().indexAll(initialState);
   },

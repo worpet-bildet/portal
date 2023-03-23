@@ -25,7 +25,6 @@ export function User() {
 
   useEffect(() => {
     if (!patp || !defaultCurators) return;
-    console.log({ defaultCurators });
     const INDEXER_SHIP = "~worpet-bildet";
     const INDEXER_LIST = `/${INDEXER_SHIP}/list/nonitem/ship/index`;
     let index = Object.values(
@@ -53,7 +52,6 @@ export function User() {
   };
 
   useEffect(() => {
-    console.log({ urbit, patp, isMe });
     if (urbit && patp && !isMe) {
       subscribeTo(patp);
     }

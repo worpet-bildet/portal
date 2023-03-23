@@ -263,7 +263,6 @@ export function Edit() {
   };
 
   const doPoke = poke => {
-    console.log(poke);
     urbit.poke({
       app: "portal-manager",
       mark: "portal-action",

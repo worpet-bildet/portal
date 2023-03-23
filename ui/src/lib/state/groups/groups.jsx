@@ -210,8 +210,6 @@ export const useGroupState = createStoreWithPersist(
       }),
     join: async (flag, joinAll) => {
       get().batchSet(draft => {
-        // debugger;
-        // console.log("join", { flag, joinAll });
         draft.gangs[flag] = draft.gangs[flag] || {};
         draft.gangs[flag].invite = null;
         draft.gangs[flag].claim = {

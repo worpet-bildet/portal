@@ -1,5 +1,5 @@
 import React from "react";
-import { Fragment, useRef, useState, useEffect } from "react";
+import { Fragment, useRef } from "react";
 import { toast } from "react-toastify";
 import { Dialog, Transition } from "@headlessui/react";
 import { ItemImage } from "./ItemImage";
