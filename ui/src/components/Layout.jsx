@@ -13,7 +13,7 @@ export default function Layout() {
     <Fragment>
       <ResponsiveAppBar />
       <div className="px-2 sm:px-5 lg:px-24">
-        <div className="flex flex-col max-w-full min-h-screen">
+        <div className="flex justify-center max-w-full min-h-screen">
           <Outlet />
         </div>
       </div>

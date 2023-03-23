@@ -4,6 +4,7 @@ import { useStore } from "../../state/store";
 import { getApps, getDefaultCurators } from "../../state/store";
 import { SliderList } from "../../components/List/SliderList";
 import { ItemImage } from "../../components/Item/ItemImage";
+import { LoadingSpinner } from "../../components/LoadingSpinner";
 import { usePortal } from "../../state/usePortal";
 import { useGroupState } from "../../lib/state/groups/groups";
 import { getType, unsanitiseTextFieldsRecursive } from "../../utils/format";
@@ -118,56 +119,56 @@ export function User() {
   };
   const imageContainerRef = useRef();
 
-  return (
-    curatorLists && (
-      <main className="basis-3/4 h-full px-2">
-        <div className="pt-4 sm:pt-10 h-auto md:h-56">
-          <div className="flex flex-col md:flex-row items-center h-full">
-            <div className="w-44 h-44 rounded-xl overflow-hidden" ref={imageContainerRef}>
-              <ItemImage
-                src={curatorListImageSrc}
-                patp={patp}
-                container={imageContainerRef}
-              ></ItemImage>
-            </div>
-            <div className="w-full sm:w-3/4 sm:px-10 py-5 md:py-0">
-              <div>
-                <div className="font-bold text-2xl">{curatorListTitle}</div>
-                <div className="text-sm">
-                  list by <span className="font-bold text-[#0284c7]">{patp}</span>
-                </div>
-                <div className="pt-2 text-sm sm:text-lg text-gray-400 break-words">
-                  {curatorListDescription}
-                </div>
-              </div>
-            </div>
-            {isMe ? (
-              <div className="flex h-full items-start">
-                <span
-                  className="text-xs pl-4 pt-4 whitespace-nowrap underline cursor-pointer"
-                  onClick={() => editList(list?.item?.data?.bespoke?.keyStr)}
-                >
-                  Edit Profile
-                </span>
-                <span className="text-xs pl-4 pt-4 whitespace-nowrap">
-                  Add me to the Index
-                  <input
-                    className="ml-2"
-                    type="checkbox"
-                    onChange={e => indexMe(e.target.checked)}
-                    checked={userIsIndexed}
-                  ></input>
-                </span>
-              </div>
-            ) : (
-              <></>
-            )}
+  return curatorLists ? (
+    <main className="w-full h-full px-2">
+      <div className="pt-4 sm:pt-10 h-auto md:h-56">
+        <div className="flex flex-col md:flex-row items-center h-full">
+          <div className="w-44 h-44 rounded-xl overflow-hidden" ref={imageContainerRef}>
+            <ItemImage
+              src={curatorListImageSrc}
+              patp={patp}
+              container={imageContainerRef}
+            ></ItemImage>
           </div>
+          <div className="w-full sm:w-3/4 sm:px-10 py-5 md:py-0">
+            <div>
+              <div className="font-bold text-2xl">{curatorListTitle}</div>
+              <div className="text-sm">
+                list by <span className="font-bold text-[#0284c7]">{patp}</span>
+              </div>
+              <div className="pt-2 text-sm sm:text-lg text-gray-400 break-words">
+                {curatorListDescription}
+              </div>
+            </div>
+          </div>
+          {isMe ? (
+            <div className="flex h-full items-start">
+              <span
+                className="text-xs pl-4 pt-4 whitespace-nowrap underline cursor-pointer"
+                onClick={() => editList(list?.item?.data?.bespoke?.keyStr)}
+              >
+                Edit Profile
+              </span>
+              <span className="text-xs pl-4 pt-4 whitespace-nowrap">
+                Add me to the Index
+                <input
+                  className="ml-2"
+                  type="checkbox"
+                  onChange={e => indexMe(e.target.checked)}
+                  checked={userIsIndexed}
+                ></input>
+              </span>
+            </div>
+          ) : (
+            <></>
+          )}
         </div>
-        <div className="space-y-4 sm:space-y-10 sm:py-14 pt-5">
-          {appLists ? <div>{listsByType()}</div> : null}
-        </div>
-      </main>
-    )
+      </div>
+      <div className="space-y-4 sm:space-y-10 sm:py-14 pt-5">
+        {appLists ? <div>{listsByType()}</div> : null}
+      </div>
+    </main>
+  ) : (
+    <LoadingSpinner />
   );
 }
