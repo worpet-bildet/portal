@@ -47,20 +47,8 @@ export default function useGroupJoin(
     setStatus("loading");
     if (privacy === "private" && !invited) {
       await useGroupState.getState().knock(flag);
-      // debugger;
     } else {
-      // try {
-      //   await useHarkState.getState().sawRope({
-      //     channel: null,
-      //     desk: "groups",
-      //     group: flag,
-      //     thread: `/${flag}/invite`,
-      //   });
-      // } catch (error) {
-      //   // no notification
-      // }
       try {
-        // debugger;
         await useGroupState.getState().join(flag, true);
         setStatus("success");
         if (redirectItem) {

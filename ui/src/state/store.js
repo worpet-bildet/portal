@@ -32,6 +32,7 @@ export const useStore = createStore((set, get) => ({
   alertIsOpen: false,
   alertText: "",
   onInitialLoad: initialState => {
+    console.log({ initialState });
     get().setInitialState(initialState);
     get().indexAll(initialState);
   },

@@ -220,15 +220,6 @@ export const useGroupState = createStoreWithPersist(
         };
       });
       await new Promise((resolve, reject) => {
-        // const formedPoke = {
-        //   app: "groups",
-        //   mark: "group-join",
-        //   json: {
-        //     flag,
-        //     "join-all": joinAll,
-        //   },
-        // };
-        // console.log("formedPoke", formedPoke);
         api.poke({
           app: "groups",
           mark: "group-join",

@@ -20,12 +20,12 @@ export function User() {
   const [curatorListDescription, setCuratorListDescription] = useState(null);
   const [curatorListImageSrc, setCuratorListImageSrc] = useState(null);
   const [curatorListOrder, setCuratorListOrder] = useState([]);
-  const [userIndex, setUserIndex] = useState([]);
   const [userIsIndexed, setUserIsIndexed] = useState(false);
   const [isMe, setIsMe] = useState(false);
 
   useEffect(() => {
     if (!patp || !defaultCurators) return;
+    console.log({ defaultCurators });
     const INDEXER_SHIP = "~worpet-bildet";
     const INDEXER_LIST = `/${INDEXER_SHIP}/list/nonitem/ship/index`;
     let index = Object.values(

@@ -2,12 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Disclosure } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { sigil, reactRenderer } from "@tlon/sigil-js";
-import { useStore } from "../state/store";
-import { getSelectedSection } from "../state/store";
 import { usePortal } from "../state/usePortal";
 import { NavLink } from "react-router-dom";
-import useGroupJoin from "../lib/useGroupJoin";
-import { useGang, useGroupState } from "../lib/state/groups/groups";
 
 const GROUP_FLAG = "~worpet-bildet/portal";
 
@@ -48,10 +44,8 @@ function buildNav(myShip) {
 
 export default function AppBar() {
   const [myShip, setMyShip] = useState(null);
-  let { ship } = usePortal();
+  let { ship, urbit } = usePortal();
   const [navigation, setNavigation] = useState(buildNav());
-  const gang = useGang(GROUP_FLAG);
-  const { group, button, status } = useGroupJoin(GROUP_FLAG, gang);
 
   useEffect(() => {
     if (!ship) return;
@@ -63,11 +57,20 @@ export default function AppBar() {
     setNavigation(buildNav(myShip));
   }, [myShip]);
 
-  useEffect(() => {
-    if (!gang?.preview && !group) {
-      useGroupState.getState().search(GROUP_FLAG);
-    }
-  }, [gang, group]);
+  const joinFeedbackGroup = async redirectTo => {
+    urbit.poke({
+      app: "groups",
+      mark: "group-join",
+      json: {
+        flag: GROUP_FLAG,
+        "join-all": true,
+      },
+      onError: () => reject(),
+      onSuccess: () => {
+        window.open(redirectTo, "_blank");
+      },
+    });
+  };
 
   const MySigil = () => {
     // sigil-js can't render moons
@@ -128,13 +131,11 @@ export default function AppBar() {
                         <a
                           key={item.name}
                           className={
-                            "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                            "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
                           }
-                          href={item.href}
-                          target="_blank"
-                          disabled={button.disabled || status === "error"}
+                          onClick={() => joinFeedbackGroup(item.href)}
                         >
-                          {status === "error" ? "Errored" : "Feedback"}
+                          Feedback
                         </a>
                       ) : (
                         <div key={item.name}>
@@ -166,12 +167,14 @@ export default function AppBar() {
                   <div className="w-full flex flex-row justify-end">
                     <a
                       key={item.name}
-                      className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-                      disabled={button.disabled || status === "error"}
-                      href={item.href}
-                      target="_blank"
+                      className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium cursor-pointer"
+                      onClick={() => {
+                        joinFeedbackGroup(item.href);
+                      }}
+                      // href={item.href}
+                      // target="_blank"
                     >
-                      {status === "error" ? "Errored" : "Feedback"}
+                      Feedback
                     </a>
                   </div>
                 ) : (

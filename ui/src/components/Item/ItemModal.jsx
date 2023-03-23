@@ -17,7 +17,6 @@ export function ItemModal({
   buttonDisabled,
   onRequestClose,
 }) {
-  const [open, setOpen] = useState(true);
   const cancelButtonRef = useRef();
   const imageContainerRef = useRef();
 
@@ -49,7 +48,7 @@ export function ItemModal({
   }
 
   return (
-    <Transition.Root show={open} as={Fragment}>
+    <Transition.Root show={true} as={Fragment}>
       <Dialog
         as="div"
         className="relative z-30"
@@ -139,7 +138,6 @@ export function ItemModal({
                   </div>
                 </div>
                 <div className="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                  {/* <p className="w-2/3 text-xs text-[#0284c7] pr-4 absolute sm:bottom-4 sm:left-4 bottom-2 left-2">We sent a request for you to join. Open the Groups app to get started. </p> */}
                   <button
                     type="button"
                     className={`inline-flex w-1/3 rounded-md px-4 py-2 text-base font-medium text-white shadow-sm  sm:ml-3 sm:w-auto sm:text-sm absolute sm:bottom-4 sm:right-4 bottom-2 right-2 ${
@@ -149,10 +147,6 @@ export function ItemModal({
                     }`}
                     disabled={buttonDisabled}
                     onClick={() => {
-                      if (type === "group") {
-                        // _setAlertIsOpen(true);
-                        // setTimeout(() => _setAlertIsOpen(false), 5000);
-                      }
                       if (type === "other") {
                         window.open(website);
                       }
