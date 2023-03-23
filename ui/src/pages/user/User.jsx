@@ -60,10 +60,10 @@ export function User() {
 
   useEffect(() => {
     // We should search the default curators here
-    if (!defaultCurators || !patp) return;
+    if (!defaultCurators || Object.values(defaultCurators).length < 1 || !patp) return;
     let l = unsanitiseTextFieldsRecursive(defaultCurators[patp]);
     setCuratorList(l);
-    setCuratorLists(l?.map);
+    setCuratorLists(l?.map || {});
     setCuratorListTitle(l?.general?.title || patp);
     setCuratorListDescription(l?.general?.description);
     if (!l) setCuratorListDescription(`${patp} hasn't recommended anything yet`);
