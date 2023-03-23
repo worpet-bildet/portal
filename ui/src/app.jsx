@@ -59,7 +59,7 @@ const router = createBrowserRouter(
 export function App() {
   usePortalSubscription();
   useLandscapeSubscription();
-  ReactGA.initialize("UA-359336070");
+  ReactGA.initialize("G-HC9S8FMZ6C");
 
   return (
     <React.Fragment>
