@@ -111,7 +111,6 @@ export function User() {
     if (!l) setListDescription(`${patp} hasn't recommended anything yet`);
     setListOrder(l?.item?.data?.bespoke?.payload || []);
     setListImageSrc(l?.general?.image);
-    setUserIndex(Object.values(l?.map[`/${patp}/list/nonitem/ship/index`]?.map || {}));
     setIsMe(patp.slice(1) === ship);
   }, [lists, patp, defaultCurators, types, ship]);
 
@@ -211,26 +210,6 @@ export function User() {
         <div className="space-y-4 sm:space-y-10 sm:py-14 pt-5">
           {appLists ? <div>{listsByType()}</div> : null}
         </div>
-        {userIndex?.length > 0 && (
-          <div className="pb-6">
-            <div className="text-xl font-bold">Portal User Index</div>
-            <div>
-              Add yourself here by visitng your{" "}
-              <a href={`~${ship}`} className="text-blue-500">
-                profile page.
-              </a>
-            </div>
-            {userIndex?.map(({ keyObj: { ship } }) => {
-              return (
-                <div>
-                  <a className="text-blue-500 py-1" href={`${ship}`}>
-                    {ship}
-                  </a>
-                </div>
-              );
-            })}
-          </div>
-        )}
       </main>
     )
   );

@@ -21,6 +21,12 @@ function buildNav(myShip) {
 
   const nav = [
     {
+      name: "New Post",
+      href: defaultListUrl,
+      highlightOnSelect: true,
+      section: "all",
+    },
+    {
       name: "Home",
       href: `/~worpet-bildet`,
       // href: `/${curators[0] ? curators[0][1].item.keys.keyObj.ship : ""}`,
@@ -32,25 +38,23 @@ function buildNav(myShip) {
     // { name: "Apps", href: "#", highlightOnSelect: true, section: "app" },
     // { name: "Add", href: "#", highlightOnSelect: true, section: "all" },
     {
+      name: "User Index",
+      href: `/index`,
+      highlightOnSelect: false,
+      section: "all",
+    },
+    {
       name: "Feedback",
       href: `${window.location.origin}/apps/groups/groups/~worpet-bildet/portal/channels/chat/~worpet-bildet/feedback---support`,
       highlightOnSelect: false,
       section: "all",
     },
-  ];
-  if (myShip?.length && myShip !== "undefined") {
-    nav.push({
-      name: "New Post",
-      href: defaultListUrl,
-      highlightOnSelect: true,
-      section: "all",
-    });
-    nav.push({
+    {
       name: "My Profile",
       href: `/~${myShip}`,
       section: "all",
-    });
-  }
+    },
+  ];
   return nav;
 }
 
@@ -141,7 +145,7 @@ export default function AppBar() {
                 <div className="flex flex-row justify-between">
                   <NavLink
                     className="flex items-center cursor-pointer pl-2"
-                    to={navigation[0]?.href}
+                    to={navigation[1]?.href}
                     // {...getNavigationProps(navigation[0])}
                   >
                     <img

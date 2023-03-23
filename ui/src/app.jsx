@@ -10,6 +10,7 @@ import { useLandscapeSubscription } from "./state/useLandscape";
 import "./index.css";
 import Layout from "./components/Layout";
 import { User } from "./pages/user/User";
+import { UserIndex } from "./pages/user/Index";
 import { Add as AddList } from "./pages/List/Add";
 import { Edit as EditList } from "./pages/List/Edit";
 import { Add as AddItem } from "./pages/Item/Add";
@@ -28,6 +29,10 @@ const router = createBrowserRouter(
         {
           path: ":patp",
           element: <User />,
+        },
+        {
+          path: "index",
+          element: <UserIndex />,
         },
         {
           path: "list/add",
