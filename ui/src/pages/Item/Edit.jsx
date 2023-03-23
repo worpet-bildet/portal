@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getDefaultCurators } from "../../state/selectors";
+import { getDefaultCurators } from "../../state/store";
 import { useStore } from "../../state/store";
 import { EditGeneralForm } from "../../components/Form/EditGeneralForm";
 import { getShortTitle, getType } from "../../utils/format";

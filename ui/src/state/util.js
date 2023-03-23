@@ -1,5 +1,4 @@
 import unionBy from "lodash/unionBy";
-import { portalEvents } from "./faces";
 
 export const getTypesByKey = _key => _key.slice().split("/").slice(2, -1);
 export const getBespokeKeys = bespoke => {
@@ -32,6 +31,7 @@ export const formatItem = (page, key) => {
     meta: { ...meta, sig, keys, order: data.bespoke.payload },
   };
 };
+
 export const formatPage = (item, map) => ({
   keys: item.keys,
   title: item.title,
@@ -40,35 +40,31 @@ export const formatPage = (item, map) => ({
   map,
 });
 
-export const getMapRecursive = (map, types, item) =>
-  !map || !types || !item ? {} : indexPages(map, types);
+export const getMapRecursive = (map, item) => (!map || !item ? {} : indexPages(map));
 
-export const indexPages = (pages, types = {}) => {
+export const indexPages = pages => {
   const _pages = !Array.isArray(pages) ? Object.entries(pages) : pages;
-
   const index = _pages.slice().map(([key, page], _idx, _arr) => {
     if (!page) return;
     if (!page?.item) return page.data ? formatItem(page, key) : page;
 
     const _item = formatItem(page.item, key);
     const pageData = formatPage(_item, page.map);
-    const endType = _item.meta.keys.endType;
 
-    types[endType] = types[endType] || [];
-    types[endType].push(pageData);
-
-    return { ...pageData, array: getMapRecursive(page.map, types, _item) };
+    return { ...pageData, array: getMapRecursive(page.map, _item) };
   });
-  return [index, types];
+  return index;
 };
 
 export const getBP = _item => _item.data.bespoke.payload;
+
 export const getListFromDCMap = (_draft, _ship, _res) => {
   _draft.defaultCurators[_ship] = _draft.defaultCurators[_ship] || [{ map: [] }];
   return _draft.defaultCurators[_ship][0].map[0].find(
     el => el.general.title === _res.data.general.title
   );
 };
+
 export const getListAtDCType = (_draft, _ship, _type, item = {}) => {
   _draft.defaultCurators[_ship] = _draft.defaultCurators[_ship] || [{ map: [] }];
   return _draft.defaultCurators[_ship][0].map?.length
@@ -77,17 +73,8 @@ export const getListAtDCType = (_draft, _ship, _type, item = {}) => {
       )
     : "";
 };
+
 export const getListAtType = (_draft, _type) => _draft.types[_type[_type.length - 1]];
-
-// |nuke %portal, =desk &
-// |rein %portal [& %portal-manager]
-
-export const getFactSuccessMsg = factFace => {
-  const [subject, action] = factFace?.slice().split("_") || ["", ""];
-  // debugger;
-  // TODO: fix conditional
-  return factFace === factFace ? "" : portalEvents[subject][action].SUCCESS_MSG;
-};
 
 export const isNewSub = _update =>
   _update.evt.keyObj.type === "/list/list" && _update.evt.keyObj.cord === "~2000.1.1";

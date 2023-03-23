@@ -11,7 +11,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { toast } from "react-toastify";
 import { useStore } from "../../state/store";
-import { getDefaultCurators } from "../../state/selectors";
+import { getDefaultCurators } from "../../state/store";
 import {
   getShortTitle,
   getLongTitle,

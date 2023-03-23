@@ -1,6 +1,6 @@
 import React, { createRef, useEffect, useState } from "react";
 import { ItemImage } from "../../components/Item/ItemImage";
-import { getDefaultCurators } from "../../state/selectors";
+import { getDefaultCurators } from "../../state/store";
 import { useStore } from "../../state/store";
 import { usePortal } from "../../state/usePortal";
 

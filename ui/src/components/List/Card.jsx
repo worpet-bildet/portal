@@ -5,7 +5,7 @@ export const Card = ({ onClick, selected, title, itemId, children }) => {
   const visibility = useContext(VisibilityContext);
 
   return (
-    <div onClick={() => onClick(visibility)} tabIndex={0}>
+    <div onClick={() => onClick(visibility)} tabIndex={0} key={itemId}>
       {children}
     </div>
   );

@@ -3,10 +3,18 @@ import Urbit from "@urbit/http-api";
 import { urbitConfig as config } from "../config";
 import { handleEvent } from "./events";
 import { useStore } from "./store";
-import { onInitialLoad as _onInitialLoad, onUpdate as _onUpdate } from "./selectors";
-import { generateActions } from "../urbit/pokes";
-import { types } from "./faces";
+import { onInitialLoad as _onInitialLoad, onUpdate as _onUpdate } from "./store";
 import { scries } from "../urbit/scries";
+
+const subscription = {
+  app: config.agent,
+  path: config.path,
+  ship: window?.ship || "",
+  verbose: true,
+  event: console.log,
+  err: console.error,
+  quit: console.error,
+};
 
 export const usePortalSubscription = () => {
   const [ship, urbit] = useUrbit();
@@ -30,8 +38,7 @@ export const usePortalSubscription = () => {
 
 export const usePortal = () => {
   const [ship, urbit] = useUrbit();
-  const actions = generateActions(urbit);
-  return { urbit, ship, actions, scries, types };
+  return { urbit, ship, scries };
 };
 
 export const useUrbit = () => {
@@ -63,14 +70,3 @@ export const getSubscription = (urbit, eventHandler = console.log) =>
     ship: urbit.ship,
     event: eventHandler,
   });
-// export const getSubscription = (urbit, eventHandler = console.log) => null;
-
-export const subscription = {
-  app: config.agent,
-  path: config.path,
-  ship: window?.ship || "",
-  verbose: true,
-  event: console.log,
-  err: console.error,
-  quit: console.error,
-};
