@@ -451,7 +451,7 @@
   ++  put-item
     |=  [our=ship =all-items upd=[%put =key =item]]
     ^-  ^all-items
-    ~&  "%portal: putting {(spud (key-to-path:conv key.upd))}"
+    ::~&  "%portal: putting {(spud (key-to-path:conv key.upd))}"
     (~(put by all-items) key.upd item.upd)
   ::
   ++  default
@@ -548,15 +548,15 @@
     =/  len  (lent keys)
     =/  n  0
     =/  return  [*(list card) items=all-items]
-    ~&  "all-items-key-set"
-    ~&  >  ~(wyt in all-items-key-set)
+    :: ~&  "all-items-key-set"
+    :: ~&  >  ~(wyt in all-items-key-set)
     :: ~&  "item number to keep"
     :: ~&  >  ~(wyt in keys-to-keep)
-    ~&  "item number to purge"
-    ~&  >  len
+    :: ~&  "item number to purge"
+    :: ~&  >  len
     |-  ?:  =(n len)
-    ~&  "items kept"
-    ~&  >  ~(wyt by `^all-items`+.return)
+    :: ~&  "items kept"
+    :: ~&  >  ~(wyt by `^all-items`+.return)
     return
     =/  new  (del:on-action items.return our src now [%del (snag n keys)])
     %=  $
