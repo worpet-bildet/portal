@@ -145,7 +145,7 @@ export function User() {
             <div className="flex h-full items-start">
               <span
                 className="text-xs pl-4 pt-4 whitespace-nowrap underline cursor-pointer"
-                onClick={() => editList(list?.item?.data?.bespoke?.keyStr)}
+                onClick={() => editList(curatorList?.item?.data?.bespoke?.keyStr)}
               >
                 Edit Profile
               </span>
