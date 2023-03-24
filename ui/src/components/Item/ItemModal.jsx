@@ -143,7 +143,7 @@ export function ItemModal({
                     className={`inline-flex w-1/3 rounded-md px-4 py-2 text-base font-medium text-white shadow-sm  sm:ml-3 sm:w-auto sm:text-sm absolute sm:bottom-4 sm:right-4 bottom-2 right-2 ${
                       buttonDisabled
                         ? "bg-none justify-end"
-                        : "bg-blue-500 hover:bg-blue-500 justify-center"
+                        : "bg-[#0284c7] hover:bg-[#0284c7] justify-center"
                     }`}
                     disabled={buttonDisabled}
                     onClick={() => {

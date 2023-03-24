@@ -43,7 +43,7 @@ export function EditGeneralForm({ poke, setPoke, action, onSave }) {
       <div className="w-full">
         <div className="flex items-center justify-end w-full pr-2">
           <button
-            className="bg-blue-500 rounded-lg px-3 py-2 text-sm font-medium"
+            className="bg-[#0284c7] rounded-lg px-3 py-2 text-sm font-medium"
             onClick={() => {
               doPoke(poke);
             }}
