@@ -23,24 +23,18 @@
   =^  cards-1  all-items
     (validity-store:default:portal-store all-items our.bowl now.bowl)
   =^  cards-2  all-items
-    (groups-list:default:portal-store all-items our.bowl now.bowl)
+    (simple-list:default:portal-store all-items our.bowl now.bowl)
   =^  cards-3  all-items
-    (apps-list:default:portal-store all-items our.bowl now.bowl)
-  =^  cards-4  all-items
-    (ships-list:default:portal-store all-items our.bowl now.bowl)
-  =^  cards-5  all-items
-    (other-list:default:portal-store all-items our.bowl now.bowl)
-  =^  cards-6  all-items
     (list-list:default:portal-store all-items our.bowl now.bowl)
-  =/  index-key  [our.bowl [%list %nonitem %ship ~] 'index']
+  =/  index-key  [our.bowl [%list ~] 'index']
   ?:  &(=(our.bowl ~worpet-bildet) !(~(has by all-items) index-key))
-    =/  act  [%add-with-time index-key *general [%list-nonitem-ship ~]]
-    =^  cards-7  all-items
+    =/  act  [%add-with-time index-key *general [%list ~]]
+    =^  cards-4  all-items
       (add-with-time:on-action:portal-store [all-items our.bowl src.bowl now.bowl act])
     :_  this
-    (zing ~[cards-1 cards-2 cards-3 cards-4 cards-5 cards-6 cards-7])
+    (zing ~[cards-1 cards-2 cards-3 cards-4])
   :_  this
-  (zing ~[cards-1 cards-2 cards-3 cards-4 cards-5 cards-6])
+  (zing ~[cards-1 cards-2 cards-3])
 ::
 ++  on-save  !>(state)
 ++  on-load
@@ -48,9 +42,9 @@
   ^-  (quip card _this)
   =/  old  !<(state-0 old)
   =/  all-items  all-items.old
-  =/  index-key  [our.bowl [%list %nonitem %ship ~] 'index']
+  =/  index-key  [our.bowl [%list ~] 'index']
   ?:  &(=(our.bowl ~worpet-bildet) !(~(has by all-items) index-key))
-    =/  act  [%add-with-time index-key *general [%list-nonitem-ship ~]]
+    =/  act  [%add-with-time index-key *general [%list ~]]
     ::  rename add-with-time to add-with-cord?
     =^  cards  all-items
       (add-with-time:on-action:portal-store [all-items our.bowl src.bowl now.bowl act])
@@ -81,11 +75,6 @@
         (edit:on-action:portal-store [all-items our.bowl src.bowl now.bowl act])
       [cards this]
       ::
-        %edit-general
-      =^  cards  all-items
-        (edit-general:on-action:portal-store [all-items our.bowl src.bowl now.bowl act])
-      [cards this]
-      ::
         %sub
       :_  this
         (sub:on-action:portal-store [our.bowl src.bowl now.bowl wex.bowl act])
@@ -98,11 +87,6 @@
         %add-to-default-list
       =^  cards  all-items
         (add-to-default-list:on-action:portal-store all-items our.bowl now.bowl act)
-      [cards this]
-      ::
-        %overwrite-list
-      =^  cards  all-items
-        (overwrite-list:on-action:portal-store all-items our.bowl now.bowl act)
       [cards this]
       ::
         %put-nonitem
@@ -128,47 +112,7 @@
       %portal-message
     ?.  =(our.bowl src.bowl)  `this
     =/  msg  `message`!<(message vase)
-    ?-    -.msg
-        %comment
-      =^  cards  all-items
-        (comment:on-message:portal-store [all-items our.bowl src.bowl now.bowl msg])
-      [cards this]
-      ::
-        %edit-comment
-      =^  cards  all-items
-        (edit-comment:on-message:portal-store [all-items our.bowl src.bowl now.bowl msg])
-      [cards this]
-      ::
-        %del-comment
-      =^  cards  all-items
-        (del-comment:on-message:portal-store [all-items our.bowl src.bowl now.bowl msg])
-      [cards this]
-      ::
-        %rate
-      =^  cards  all-items
-        (rate:on-message:portal-store [all-items our.bowl src.bowl now.bowl msg])
-      [cards this]
-      ::
-        %unrate
-      =^  cards  all-items
-        (unrate:on-message:portal-store [all-items our.bowl src.bowl now.bowl msg])
-      [cards this]
-      ::
-        %review
-      =^  cards  all-items
-        (review:on-message:portal-store [all-items our.bowl src.bowl now.bowl msg])
-      [cards this]
-      ::
-        %del-review
-      =^  cards  all-items
-        (del-review:on-message:portal-store [all-items our.bowl src.bowl now.bowl msg])
-      [cards this]
-      ::
-        %sign-app
-      =^  cards  all-items
-        (sign-app:on-message:portal-store [all-items our.bowl src.bowl now.bowl msg])
-      [cards this]
-      ::
+    ?+    -.msg    !!
         %index-as-curator
       =^  cards  all-items
         (index-as-curator:on-message:portal-store [all-items our.bowl src.bowl now.bowl msg])

@@ -5,32 +5,55 @@
 ::  Basic Outline
 ::
 ::  item types
-+$  type
-  $%  path
-      [%nonitem ~]
++$  type  :: this is fucked, needs work, change it to item-type, so its not confusing with type.key
+  $%
         [%nonitem %group ~]
         [%nonitem %ship ~]
+        [%nonitem %app ~]
+    ::
+
+        [%enditem %app ~]
+        [%enditem %other ~]
+    ::
+    ::  [%app ~]
+    ::
+            [%list ~]
+              ::[%list %nonitem ~]
+                :: [%list %nonitem %group ~]
+                :: [%list %nonitem %ship ~]
+                :: [%list %nonitem %app ~]
+              ::[%list %enditem ~]
+              ::   [%list %enditem %other ~]
+              ::   [%list %enditem %app ~]
+              :: [%list %app ~]
+              [%list %list ~]
+      [%validity-store ~]
+    ::
+
+  ==
+::
++$  item-type  :: this is fucked, needs work, change it to item-type, so its not confusing with type.key
+  $%  [%nonitem ~]
+        [%nonitem %group ~]
+        [%nonitem %ship ~]
+        [%nonitem %app ~]
     ::
       [%enditem ~]
         [%enditem %app ~]
         [%enditem %other ~]
     ::
-      [%list ~]
-        [%list %nonitem ~]
-          [%list %nonitem %group ~]
-          [%list %nonitem %ship ~]
-          [%list %nonitem %app ~]
-        [%list %enditem ~]
-          [%list %enditem %other ~]
-          [%list %enditem %app ~]
-        [%list %app ~]
-        [%list %list ~]
+      [%app ~]
     ::
       [%validity-store ~]
-  ==
+    ==
 ::
++$  list-type
+  $%  [%list ~]
+
+        [%list %list ~]
+  ==
 ::  key of an item
-+$  key  [=ship =type =cord]
++$  key  [=ship type=path =cord]
 ::
 ::  all-items is the state of %portal-store
 ::  only %.y pointers
@@ -105,12 +128,7 @@
       [%nonitem-app key=[=ship type=[%nonitem %app ~] =cord] =treaty]
       [%enditem-other key=[=ship type=[%enditem %other ~] =cord] ~]
       [%enditem-app key=[=ship type=[%enditem %app ~] =cord] dist-desk=@t sig=signature =treaty]
-      [%list-enditem-other key=[=ship type=[%list %enditem %other ~] =cord] =other-key-list]
-      [%list-enditem-app key=[=ship type=[%list %enditem %app ~] =cord] =enditem-app-key-list]
-      [%list-nonitem-app key=[=ship type=[%list %nonitem %app ~] =cord] =nonitem-app-key-list]
-      [%list-nonitem-group key=[=ship type=[%list %nonitem %group ~] =cord] =group-key-list]
-      [%list-nonitem-ship key=[=ship type=[%list %nonitem %ship ~] =cord] =ship-key-list]
-      [%list-app key=[=ship type=[%list %app ~] =cord] =app-key-list]
+      [%list key=[=ship type=list-type =cord] =key-text-list]
       [%list-list key=[=ship type=[%list %list ~] =cord] =list-key-list]
       [%validity-store key=[=ship type=[%validity-store ~] =cord] =validity-records]
   ==
@@ -122,25 +140,14 @@
       [%nonitem-app ~]
       [%enditem-other ~]
       [%enditem-app dist-desk=@t]
-      [%list-enditem-other =other-key-list]
-      [%list-enditem-app =enditem-app-key-list]
-      [%list-nonitem-app =nonitem-app-key-list]
-      [%list-nonitem-group =group-key-list]
-      [%list-nonitem-ship =ship-key-list]
-      [%list-app =app-key-list]
+      [%list =key-text-list]
       [%list-list =list-key-list]
       [%validity-store =validity-records]
   ==
 ::
 +$  key-text-list       (list [=key text=cord])
 ::
-+$  list-key-list         (list [key=[=ship type=[%list type] =cord] text=cord])
-+$  other-key-list        (list [key=[=ship type=[%enditem %other ~] =cord] text=cord])
-+$  enditem-app-key-list  (list [key=[=ship type=[%enditem %app ~] =cord] text=cord])
-+$  nonitem-app-key-list  (list [key=[=ship type=[%nonitem %app ~] =cord] text=cord])
-+$  app-key-list          (list [key=[=ship type=$%([%enditem %app ~] [%nonitem %app ~]) =cord] text=cord])
-+$  group-key-list        (list [key=[=ship type=[%nonitem %group ~] =cord] text=cord])
-+$  ship-key-list         (list [key=[=ship type=[%nonitem %ship ~] =cord] text=cord])
++$  list-key-list         (list [key=[=ship type=list-type =cord] text=cord])
 ::
 ::
 +$  key-list  (list key)

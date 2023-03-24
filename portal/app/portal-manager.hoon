@@ -34,7 +34,7 @@
   ^-  (quip card _this)
   =/  new-user-event      [%join now.bowl (get-ship-type:misc our.bowl) `@ux`(shax our.bowl)]
   =/  default-curators    (silt (limo ~[[~worpet-bildet /list/list '~2000.1.1']]))
-  =/  portal-curator      [~worpet-bildet /list/list '~2000.1.1']
+  =/  portal-curator      [~dister-doznec-dilryd-mopreg /list/list '~2000.1.1']  ::TODO change to worpet-bildet
   =/  purge-timer         %.y
   =/  purge-time          ~d1
   =/  portal-indexer      ~worpet-bildet
@@ -93,13 +93,13 @@
       :_  this
       ~[(~(poke pass:io /act) [our.bowl %portal-store] portal-action+vase)]
     ::
-    ?:  =(-.act %add-items-and-list)
-      :_  this
-      (add-items-and-list:on-action:portal-manager our.bowl src.bowl now.bowl act)
-    ::
-    ?:  =(-.act %add-items-and-edit-list)
-      :_  this
-      (add-items-and-edit-list:on-action:portal-manager our.bowl src.bowl now.bowl act)
+    :: ?:  =(-.act %add-items-and-list)
+    ::   :_  this
+    ::   (add-items-and-list:on-action:portal-manager our.bowl src.bowl now.bowl act)
+    :: ::
+    :: ?:  =(-.act %add-items-and-edit-list)
+    ::   :_  this
+    ::   (add-items-and-edit-list:on-action:portal-manager our.bowl src.bowl now.bowl act)
     ::
     ?:  =(-.act %onboarded)
       ?+  -.act  !!

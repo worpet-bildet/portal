@@ -176,41 +176,11 @@
             ['keyObj' (enjs-key key.bespoke)]
             ['payload' s+'']
         ==
-          %list-enditem-other
+          %list
         %-  pairs
         :~  ['keyStr' (enjs-jam-key key.bespoke)]
             ['keyObj' (enjs-key key.bespoke)]
-            ['payload' (enjs-key-text-list other-key-list.bespoke)]
-        ==
-          %list-enditem-app
-        %-  pairs
-        :~  ['keyStr' (enjs-jam-key key.bespoke)]
-            ['keyObj' (enjs-key key.bespoke)]
-            ['payload' (enjs-key-text-list enditem-app-key-list.bespoke)]
-        ==
-          %list-nonitem-app
-        %-  pairs
-        :~  ['keyStr' (enjs-jam-key key.bespoke)]
-            ['keyObj' (enjs-key key.bespoke)]
-            ['payload' (enjs-key-text-list nonitem-app-key-list.bespoke)]
-        ==
-          %list-app
-        %-  pairs
-        :~  ['keyStr' (enjs-jam-key key.bespoke)]
-            ['keyObj' (enjs-key key.bespoke)]
-            ['payload' (enjs-key-text-list app-key-list.bespoke)]
-        ==
-          %list-nonitem-group
-        %-  pairs
-        :~  ['keyStr' (enjs-jam-key key.bespoke)]
-            ['keyObj' (enjs-key key.bespoke)]
-            ['payload' (enjs-key-text-list group-key-list.bespoke)]
-        ==
-          %list-nonitem-ship
-        %-  pairs
-        :~  ['keyStr' (enjs-jam-key key.bespoke)]
-            ['keyObj' (enjs-key key.bespoke)]
-            ['payload' (enjs-key-text-list ship-key-list.bespoke)]
+            ['payload' (enjs-key-text-list key-text-list.bespoke)]
         ==
           %list-list
         %-  pairs
@@ -412,12 +382,7 @@
     %-  bespoke-input
     %.  jon
     %-  of
-    :~  [%list-enditem-other (ot ~[other-key-list+dejs-key-text-list])]
-        [%list-enditem-app (ot ~[enditem-app-key-list+dejs-key-text-list])]
-        [%list-nonitem-app (ot ~[nonitem-app-key-list+dejs-key-text-list])]
-        [%list-app (ot ~[app-key-list+dejs-key-text-list])]
-        [%list-nonitem-ship (ot ~[ship-key-list+dejs-key-text-list])]
-        [%list-nonitem-group (ot ~[group-key-list+dejs-key-text-list])]
+    :~  [%list (ot ~[key-text-list+dejs-key-text-list])]
         [%enditem-app (ot ~[dist-desk+so])]
         [%enditem-other so]
         [%list-list (ot ~[list-key-list+dejs-key-text-list])]
@@ -452,7 +417,7 @@
   ++  dejs-type
     |=  jon=json
     ^-  ^type
-    (stab (so jon))
+    (^type (stab (so jon)))
   ++  dejs-ship
     |=  jon=json
     ^-  @p
