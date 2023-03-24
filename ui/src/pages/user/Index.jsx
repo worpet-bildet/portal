@@ -26,8 +26,8 @@ export const UserIndex = () => {
     <div className="p-12">
       <div className="text-xl font-bold">Portal User Index</div>
       <div>
-        Add your ship here by visitng the{" "}
-        <a href={`~${ship}`} className="text-blue-500">
+        Add your ship here by visiting your{" "}
+        <a href={`~${ship}`} className="text-[#0284c7]">
           profile page.
         </a>
       </div>
@@ -39,10 +39,10 @@ export const UserIndex = () => {
         .map(({ keyObj: { ship } }) => {
           return (
             <div className="flex flex-row items-center">
-              <div className="w-10" ref={imageContainerRef}>
+              <div className="w-20" ref={imageContainerRef}>
                 <ItemImage patp={ship} type={"ship"} container={imageContainerRef} />
               </div>
-              <a className="pl-2 text-blue-500 py-1" href={`${ship}`}>
+              <a className="pl-2 text-[#0284c7] py-1" href={`${ship}`}>
                 {ship}
               </a>
             </div>

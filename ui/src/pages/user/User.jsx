@@ -149,7 +149,7 @@ export function User() {
               >
                 Edit Profile
               </span>
-              <span className="text-xs pl-4 pt-4 whitespace-nowrap">
+              <span className="text-[#0284c7] font-bold text-xs pl-4 pt-4 whitespace-nowrap">
                 Add me to the Index
                 <input
                   className="ml-2"
