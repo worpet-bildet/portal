@@ -39,7 +39,7 @@ export const LeftArrow = () => {
 
   return (
     <Arrow disabled={disabled} onClick={() => scrollPrev()} direction="left">
-      <ChevronLeftIcon className="h-5 w-5 bg-black"></ChevronLeftIcon>
+      <ChevronLeftIcon className="h-5 w-5 bg-black" />
     </Arrow>
   );
 };
@@ -59,7 +59,7 @@ export const RightArrow = () => {
 
   return (
     <Arrow disabled={disabled} onClick={() => scrollNext()} direction="right">
-      <ChevronRightIcon className="h-5 w-5 bg-black"></ChevronRightIcon>
+      <ChevronRightIcon className="h-5 w-5 bg-black" />
     </Arrow>
   );
 };

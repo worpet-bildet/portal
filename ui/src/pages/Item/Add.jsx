@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getDefaultCurators } from "../../state/store";
-import { useStore } from "../../state/store";
-import { usePortal } from "../../state/usePortal";
-import { EditGeneralForm } from "../../components/Form/EditGeneralForm";
+import { getDefaultCurators } from "@state/store";
+import { useStore } from "@state/store";
+import { usePortal } from "@state/usePortal";
+import { EditGeneralForm } from "@components/Form/EditGeneralForm";
 
 export function Add() {
   const { listkey } = useParams();

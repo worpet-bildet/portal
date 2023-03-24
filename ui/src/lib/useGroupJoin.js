@@ -4,7 +4,6 @@ import useGroupPrivacy from "./logic/useGroupPrivacy";
 import { useModalNavigate, useDismissNavigate } from "./logic/routing";
 import useNavigateByApp from "./logic/useNavigateByApp";
 import { useGroup, useGroupState } from "./state/groups/groups";
-// import useHarkState from "./state/hark";
 
 function getButtonText(privacy, requested, invited, group) {
   switch (true) {

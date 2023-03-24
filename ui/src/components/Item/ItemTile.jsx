@@ -4,9 +4,9 @@ import { useNavigate } from "react-router-dom";
 
 import Modal from "react-modal";
 
-import { getTitles } from "../../utils/format";
-import { getWebsite } from "../../utils/format";
-import { getDescription } from "../../utils/format";
+import { getTitles } from "@utils/format";
+import { getWebsite } from "@utils/format";
+import { getDescription } from "@utils/format";
 
 import { ItemModal } from "./ItemModal";
 import { ItemImage } from "./ItemImage";

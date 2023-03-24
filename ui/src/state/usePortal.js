@@ -4,7 +4,7 @@ import { urbitConfig as config } from "../config";
 import { handleEvent } from "./events";
 import { useStore } from "./store";
 import { onInitialLoad as _onInitialLoad, onUpdate as _onUpdate } from "./store";
-import { scries } from "../urbit/scries";
+import { scries } from "@utils/urbit/scries";
 
 const subscription = {
   app: config.agent,

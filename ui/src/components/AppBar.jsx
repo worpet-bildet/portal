@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Disclosure } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { sigil, reactRenderer } from "@tlon/sigil-js";
-import { usePortal } from "../state/usePortal";
+import { usePortal } from "@state/usePortal";
 import { NavLink } from "react-router-dom";
 
 const GROUP_FLAG = "~worpet-bildet/portal";

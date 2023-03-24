@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { usePortal } from "../../state/usePortal";
-import { EditGeneralForm } from "../../components/Form/EditGeneralForm";
-import { defaultListUrl } from "../../utils/format";
+import { usePortal } from "@state/usePortal";
+import { EditGeneralForm } from "@components/Form/EditGeneralForm";
+import { defaultListUrl } from "@utils/format";
 
 export function Add() {
   const { ship } = usePortal();

@@ -1,10 +1,10 @@
 import React from "react";
-import { usePortal } from "../../state/usePortal";
+import { usePortal } from "@state/usePortal";
 import { toast } from "react-toastify";
 import {
   sanitiseTextFieldsRecursive,
   unsanitiseTextFieldsRecursive,
-} from "../../utils/format";
+} from "@utils/format";
 
 export function EditGeneralForm({ poke, setPoke, action, onSave }) {
   const { urbit } = usePortal();

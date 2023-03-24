@@ -1,5 +1,4 @@
 import path from "path";
-import { fileURLToPath, URL } from "url";
 import { urbitPlugin } from "@urbit/vite-plugin-urbit";
 import reactRefresh from "@vitejs/plugin-react-refresh";
 import { defineConfig, loadEnv } from "vite";
@@ -18,9 +17,12 @@ export default ({ mode }) => {
     resolve: {
       alias: {
         "@mui/material": path.resolve("./node_modules/@mui/material"),
-        // "@mui/styled-engine": path.resolve("./node_modules/@mui/styled-engine"),
-        // "styled-components": path.resolve("./node_modules/styled-components"),
-        // "@/": fileURLToPath(new URL("./src", import.meta.url)),
+        "@assets": path.resolve("./src/assets"),
+        "@components": path.resolve("./src/components"),
+        "@lib": path.resolve("./src/lib"),
+        "@pages": path.resolve("./src/pages"),
+        "@state": path.resolve("./src/state"),
+        "@utils": path.resolve("./src/utils"),
       },
     },
     build: {

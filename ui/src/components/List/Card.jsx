@@ -1,11 +1,8 @@
-import React, { useContext } from "react";
-import { VisibilityContext } from "react-horizontal-scrolling-menu";
+import React from "react";
 
-export const Card = ({ onClick, selected, title, itemId, children }) => {
-  const visibility = useContext(VisibilityContext);
-
+export const Card = ({ itemId, children }) => {
   return (
-    <div onClick={() => onClick(visibility)} tabIndex={0} key={itemId}>
+    <div tabIndex={0} key={itemId}>
       {children}
     </div>
   );

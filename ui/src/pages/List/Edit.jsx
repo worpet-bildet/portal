@@ -10,8 +10,8 @@ import {
   Bars3Icon,
 } from "@heroicons/react/24/outline";
 import { toast } from "react-toastify";
-import { useStore } from "../../state/store";
-import { getDefaultCurators } from "../../state/store";
+import { useStore } from "@state/store";
+import { getDefaultCurators } from "@state/store";
 import {
   getShortTitle,
   getLongTitle,
@@ -20,11 +20,11 @@ import {
   validateItemPath,
   getDescription,
   unsanitiseTextFieldsRecursive,
-} from "../../utils/format";
-import { usePortal } from "../../state/usePortal";
-import { ItemImage } from "../../components/Item/ItemImage";
-import { useGroupState } from "../../lib/state/groups/groups";
-import { EditGeneralForm } from "../../components/Form/EditGeneralForm";
+} from "@utils/format";
+import { usePortal } from "@state/usePortal";
+import { ItemImage } from "@components/Item/ItemImage";
+import { useGroupState } from "@lib/state/groups/groups";
+import { EditGeneralForm } from "@components/Form/EditGeneralForm";
 
 export function Edit() {
   const { urbit } = usePortal();

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { sigil, reactRenderer } from "@tlon/sigil-js";
-import groupsIcon from "../../assets/icon-groups.svg";
-import tildeIcon from "../../assets/tilde.svg";
-import { checkUrl } from "../../utils/format";
+import groupsIcon from "@assets/icon-groups.svg";
+import tildeIcon from "@assets/tilde.svg";
+import { checkUrl } from "@utils/format";
 
 export const ItemImage = ({ src, patp, type, container, name, color, onError }) => {
   const [imageSize, setImageSize] = useState(0);

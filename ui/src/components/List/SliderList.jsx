@@ -4,14 +4,11 @@ import { isEmpty } from "lodash";
 import { ItemTile } from "../Item/ItemTile";
 import { Card } from "./Card";
 import { LeftArrow, RightArrow } from "./SliderArrows";
-import { useStore } from "../../state/store";
-import { isMobile } from "../../utils/mobile";
+import { isMobile } from "@utils/mobile";
 
-export const SliderList = ({ item, map, type, filters, filterProps, groups, isMine }) => {
+export const SliderList = ({ item, map, type, groups, isMine }) => {
   if (!isMine && isEmpty(map)) return <></>;
   const [hover, setHover] = useState(false);
-  const selectedSection = useStore(state => state.selectedSection);
-  const defaultFiltersProps = { selectedSection, type };
   const [hideJoinedGroups, setHideJoinedGroups] = useState(false);
   const [listOrder, setListOrder] = useState([]);
 
@@ -19,63 +16,44 @@ export const SliderList = ({ item, map, type, filters, filterProps, groups, isMi
     setListOrder(item?.data?.bespoke?.payload || []);
   }, [item]);
 
-  // TODO: Replace with desired click handler
-  const handleClick = visibility => {
-    // console.log("Card.onClick", { visibility });
-    return;
-  };
   const editList = keyStr => {
     window.location = `/apps/portal/list/${encodeURIComponent(keyStr)}/edit`;
   };
-  const _filterProps = filterProps?.length
-    ? filterProps.reduce((acc, cur) => ({ ...acc, [cur]: defaultFiltersProps[cur] }), {})
-    : defaultFiltersProps;
 
-  const shouldRenderList = useMemo(
-    () => filters.reduce((acc, cur) => acc && cur.fn(_filterProps), true),
-    [filterProps, selectedSection]
-  );
-
-  const mappedCards = useMemo(
-    () => {
-      if (isEmpty(map)) return null;
-      let orderedItems = [];
-      listOrder.forEach(l => {
-        const { ship, cord } = l.keyObj;
-        if (map[l.keyStr]) orderedItems.push(map[l.keyStr]);
-      });
-      return orderedItems.map(val => {
-        if (hideJoinedGroups) {
-          const { ship, cord } = val?.data?.bespoke?.keyObj;
-          const nameKey = `${ship}/${cord}`;
-          if (groups[nameKey]) {
-            return <></>;
-          }
+  const mappedCards = useMemo(() => {
+    if (isEmpty(map)) return null;
+    let orderedItems = [];
+    listOrder.forEach(l => {
+      if (map[l.keyStr]) orderedItems.push(map[l.keyStr]);
+    });
+    return orderedItems.map(val => {
+      if (hideJoinedGroups) {
+        const { ship, cord } = val?.data?.bespoke?.keyObj;
+        const nameKey = `${ship}/${cord}`;
+        if (groups[nameKey]) {
+          return <></>;
         }
-        const key = val.keyStr;
-        return (
-          <Card
-            itemId={key} // NOTE: itemId is required for track items
-            title={key}
-            key={key}
-            onClick={handleClick}
-          >
-            <div tabIndex={key}>
-              <ItemTile
-                key={key}
-                itemType={type}
-                __val={val}
-                userGroupData={groups}
-                {...val}
-              />
-            </div>
-          </Card>
-        );
-      });
-    },
-    // : null,
-    [item, map, hideJoinedGroups, listOrder]
-  );
+      }
+      const key = val.keyStr;
+      return (
+        <Card
+          itemId={key} // NOTE: itemId is required for track items
+          title={key}
+          key={key}
+        >
+          <div tabIndex={key}>
+            <ItemTile
+              key={key}
+              itemType={type}
+              __val={val}
+              userGroupData={groups}
+              {...val}
+            />
+          </div>
+        </Card>
+      );
+    });
+  }, [item, map, hideJoinedGroups, listOrder]);
 
   const FilterJoinedButton = props => {
     // let numberOfJoinedGroups = Object.keys(groups).length;
@@ -122,7 +100,7 @@ export const SliderList = ({ item, map, type, filters, filterProps, groups, isMi
         <div className="text-xs sm:text-base pb-3 text-gray-400 w-2/3">
           {item?.data?.general?.description}
         </div>
-        {type === "group" && <FilterJoinedButton></FilterJoinedButton>}
+        {type === "group" && <FilterJoinedButton />}
       </div>
       <ScrollMenu
         LeftArrow={hover || isMobile() ? LeftArrow : <></>}
@@ -134,5 +112,5 @@ export const SliderList = ({ item, map, type, filters, filterProps, groups, isMi
     </div>
   );
 
-  return shouldRenderList ? _List : null;
+  return _List;
 };
