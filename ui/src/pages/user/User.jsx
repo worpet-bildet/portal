@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useStore } from "@state/store";
 import { getDefaultCurators } from "@state/store";
 import { SliderList } from "@components/List/SliderList";
@@ -13,6 +13,7 @@ export function User() {
   const { urbit, ship } = usePortal();
   const { groups } = useGroupState();
   const { patp } = useParams();
+  const navigate = useNavigate();
   const defaultCurators = useStore(getDefaultCurators);
   const [curatorList, setCuratorList] = useState(null);
   const [userIsIndexed, setUserIsIndexed] = useState(false);
@@ -86,7 +87,7 @@ export function User() {
   };
 
   const editList = keyStr => {
-    window.location = `/apps/portal/list/${encodeURIComponent(keyStr)}/edit`;
+    navigate(`/list/${encodeURIComponent(keyStr)}/edit`);
   };
 
   const indexMe = b => {

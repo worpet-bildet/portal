@@ -115,7 +115,7 @@ export const validateItemPath = path => {
 };
 
 export const defaultListUrl = myShip => {
-  return `/apps/portal/list/${encodeURIComponent(`/~${myShip}/list/list/2000.1.1`)}/edit`;
+  return `/list/${encodeURIComponent(`/~${myShip}/list/list/2000.1.1`)}/edit`;
 };
 
 export const sanitiseTextFieldsRecursive = objectOrText => {

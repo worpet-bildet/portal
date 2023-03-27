@@ -30,7 +30,6 @@ export function EditGeneralForm({ poke, setPoke, action, onSave }) {
       json: sanitisedPoke,
       onSuccess: e => {
         if (onSave) return onSave(e);
-        window.location.reload();
       },
       onError: e => {
         toast.error(`Could not save ${title}`);

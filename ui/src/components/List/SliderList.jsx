@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { ScrollMenu } from "react-horizontal-scrolling-menu";
 import { isEmpty } from "lodash";
 import { ItemTile } from "../Item/ItemTile";
@@ -8,6 +9,7 @@ import { isMobile } from "@utils/mobile";
 
 export const SliderList = ({ item, map, type, groups, isMine }) => {
   if (!isMine && isEmpty(map)) return <></>;
+  const navigate = useNavigate();
   const [hover, setHover] = useState(false);
   const [hideJoinedGroups, setHideJoinedGroups] = useState(false);
   const [listOrder, setListOrder] = useState([]);
@@ -17,7 +19,7 @@ export const SliderList = ({ item, map, type, groups, isMine }) => {
   }, [item]);
 
   const editList = keyStr => {
-    window.location = `/apps/portal/list/${encodeURIComponent(keyStr)}/edit`;
+    navigate(`/list/${encodeURIComponent(keyStr)}/edit`);
   };
 
   const mappedCards = useMemo(() => {

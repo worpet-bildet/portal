@@ -17,7 +17,8 @@ export const useStore = createStore((set, get) => ({
     get().indexAll(initialState);
   },
   onUpdate: update => {
-    if (isNewSub(update)) get().scryBeforeIndex(update);
+    if (isNewSub(update)) return get().scryBeforeIndex(update);
+    get().mergeUpdate(update);
   },
   scryBeforeIndex: update => {
     // If we literally just subbed to this person, wait a couple seconds and
@@ -31,12 +32,42 @@ export const useStore = createStore((set, get) => ({
       }
     };
     doUpdate();
+    // don't bother refreshing if it was us that submitted this evt
+    if (update.evt.srcIsOur) return;
     setTimeout(doUpdate, 500);
     setTimeout(doUpdate, 1000);
     setTimeout(doUpdate, 2000);
     setTimeout(doUpdate, 4000);
     setTimeout(doUpdate, 8000);
     setTimeout(doUpdate, 12000);
+  },
+  mergeUpdate: update => {
+    return set(
+      produce(draft => {
+        const {
+          evt: {
+            item: {
+              keyObj: { ship },
+              keyStr,
+              data,
+            },
+          },
+        } = update;
+        // This is a bit crap, but it works and it will be a lot easier to do
+        // this once we flatten all of our data
+        if (!draft.defaultCurators[ship]) return;
+        const _map = draft.defaultCurators[ship].map;
+        if (_map[keyStr]) {
+          draft.defaultCurators[ship].map[keyStr].item.data = data;
+        } else {
+          for (let _list in _map) {
+            if (_map[_list] && _map[_list].map[keyStr]) {
+              draft.defaultCurators[ship].map[_list].map[keyStr].data = data;
+            }
+          }
+        }
+      })
+    );
   },
   setInitialState: state =>
     set(

@@ -75,14 +75,14 @@ export default function AppBar() {
   const MySigil = () => {
     // sigil-js can't render moons
     return (
-      <a href={"/apps/portal/~" + myShip}>
+      <NavLink to={`~${myShip}`}>
         {sigil({
           patp: myShip?.length < "14" ? myShip : "worpet-bildet",
           renderer: reactRenderer,
           size: "50",
           colors: ["black", "white"],
         })}
-      </a>
+      </NavLink>
     );
   };
 

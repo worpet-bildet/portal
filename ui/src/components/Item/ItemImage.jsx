@@ -56,7 +56,7 @@ export const ItemImage = ({ src, patp, type, container, name, color, onError }) 
       className="w-full pt-100 object-cover rounded-xl bg-gray-200"
       src={getImageSrc(src, type)}
       alt={`${type}-image`}
-      onError={() => onError(true)}
+      onError={() => (onError ? onError(true) : null)}
       style={{ height: `${imageSize}px` || `0px` }}
     />
   );

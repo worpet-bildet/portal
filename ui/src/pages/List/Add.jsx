@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import { usePortal } from "@state/usePortal";
 import { EditGeneralForm } from "@components/Form/EditGeneralForm";
 import { defaultListUrl } from "@utils/format";
 
 export function Add() {
+  const navigate = useNavigate();
   const { ship } = usePortal();
   const [addListPoke, setAddListPoke] = useState(null);
 
@@ -52,7 +55,8 @@ export function Add() {
   };
 
   const handleSave = e => {
-    window.location = defaultListUrl(ship);
+    toast.success("Saved");
+    navigate(defaultListUrl(ship));
   };
 
   if (!addListPoke) return <></>;
