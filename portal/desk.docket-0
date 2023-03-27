@@ -2,7 +2,7 @@
   title+'Portal'
   info+'A tool for decentralized curation and discovery of groups, apps and content on Urbit.'
   color+0x0
-  version+[0 0 1]
+  version+[0 0 2]
   website+''
   license+''
   image+'https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/tile2.svg'

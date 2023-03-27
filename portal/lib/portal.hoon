@@ -443,7 +443,7 @@
       ~&  "%portal: item is default, not allowed to delete"
       [%unchanged all-items]
     ?.  (~(has by all-items) key.upd)
-      ~&  "%portal: {(spud (key-to-path:conv key.upd))} does not exist"
+      ::~&  "%portal: {(spud (key-to-path:conv key.upd))} does not exist"
       [%unchanged all-items]
     [%changed (~(del by all-items) key.upd)]
   ::
@@ -554,16 +554,23 @@
     :: ~&  >  ~(wyt in keys-to-keep)
     :: ~&  "item number to purge"
     :: ~&  >  len
-    |-  ?:  =(n len)
+    =.  return
+    |-  ?:  |(=(n len) =(keys ~))  return
+    ::return
     :: ~&  "items kept"
     :: ~&  >  ~(wyt by `^all-items`+.return)
-    return
-    =/  new  (del:on-action items.return our src now [%del (snag n keys)])
-    %=  $
-      -.return  (weld -.return -.new)
-      +.return  +.new
-      n  +(n)
-    ==
+      =/  new  (del:on-action items.return our src now [%del (snag n keys)])
+      %=  $
+        -.return  (weld -.return -.new)
+        +.return  +.new
+        n  +(n)
+      ==
+    =/  key-set  ~(key by items.return)
+    =/  key-list  ~(tap in key-set)
+    ~&  "%portal: purge done"
+    :: refreshes kept nonitems kept after purge
+    [(weld (get-nonitems:portal-manager our key-list) -.return) +.return]
+
   ::
   ++  on-action
     |%
@@ -1021,7 +1028,7 @@
         ^-  (list card)
         =/  wire  (key-to-path:conv key.upd)
         ?:  (~(has by wex) [wire ship.key.upd %portal-store])
-          ~&  "%portal-store: already subscribed to {(spud wire)}"
+          ::~&  "%portal-store: already subscribed to {(spud wire)}"
           ~
         ::~&  "%portal-store: subscribing to {(spud wire)}"
         [%pass wire %agent [ship.key.upd %portal-store] %watch wire]~
@@ -1260,11 +1267,10 @@
         %list-nonitem-group
       =/  key-list  (key-text-list-to-key-list:conv group-key-list.bespoke.data.item)
       ::  if you do set-difference you keep old data, if you don't do set difference you constantly overwrite fine data
-      ::  =/  filtered-set  (set-difference:keys (silt key-list) (get-all-keys:scry our now))
-      ::  =/  filtered-list  ~(tap in filtered-set)
-      ::put ->
-      %-  zing
-      (turn key-list |=(=key (put-empty-nonitem:portal-manager our key)))
+      =/  filtered-set  (set-difference:keys (silt key-list) (get-all-keys:scry our now))
+      =/  filtered-list  ~(tap in filtered-set)
+       %-  zing
+      (turn filtered-list |=(=key (put-empty-nonitem:portal-manager our key)))
     ::
         %list-app
       =/  key-list  (key-text-list-to-key-list:conv app-key-list.bespoke.data.item)
@@ -1289,8 +1295,10 @@
     ::
         %list-nonitem-ship
       =/  key-list  (key-text-list-to-key-list:conv ship-key-list.bespoke.data.item)
+      =/  filtered-set  (set-difference:keys (silt key-list) (get-all-keys:scry our now))
+      =/  filtered-list  ~(tap in filtered-set)
       %-  zing
-      (turn key-list |=(=key (put-empty-nonitem:portal-manager our key)))
+      (turn filtered-list |=(=key (put-empty-nonitem:portal-manager our key)))
     ==
   ::
   ++  sub-to-list-keys
@@ -1343,6 +1351,13 @@
       :: (turn filtered-list
       :: (turn filtered-list (cury act-to-act-card:cards our))
     ==
+  ::
+  ++  get-nonitems
+    |=  [our=ship =key-list]
+    ^-  (list card)
+    =/  filtered-list  (skim-nonitem:keys key-list)
+    %-  zing
+    (turn filtered-list |=(=key (put-empty-nonitem:portal-manager our key)))
   ::
   ::  whatever nonitem you are adding, use this
   ++  put-empty-nonitem

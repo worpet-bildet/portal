@@ -205,12 +205,12 @@
     ?~  p.sign
       ::~&  "%portal-store: subscribe to {(spud wire)} succeeded"
       `this
-    ~&  "%portal-store: subscribe to {(spud wire)} failed"
+    ::~&  "%portal-store: subscribe to {(spud wire)} failed"
     `this
     ::
       %kick
     =/  key  (path-to-key:conv wire)
-    ~&  "%portal-store: got kick from {(spud wire)}, resubscribing..."
+    ::~&  "%portal-store: got kick from {(spud wire)}, resubscribing..."
     :_  this
     [%pass wire %agent [ship.key %portal-store] %watch wire]~
     ::
