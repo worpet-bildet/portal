@@ -28,9 +28,9 @@ export const UserIndex = () => {
       <div className="text-xl font-bold">Portal User Index</div>
       <div>
         Add your ship here by visiting your{" "}
-        <a href={`~${ship}`} className="text-[#0284c7]">
-          profile page.
-        </a>
+        <span className="text-[#0284c7]">
+          <NavLink to={`/~${ship}`}>profile page.</NavLink>
+        </span>
       </div>
       {userIndex
         ?.sort((a, b) => {
@@ -39,7 +39,7 @@ export const UserIndex = () => {
         })
         .map(({ keyObj: { ship } }) => {
           return (
-            <div className="flex flex-row items-center">
+            <div className="flex flex-row items-center" key={ship}>
               <div className="w-20" ref={imageContainerRef}>
                 <ItemImage patp={ship} type={"ship"} container={imageContainerRef} />
               </div>

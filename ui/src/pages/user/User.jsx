@@ -62,17 +62,19 @@ export function User() {
   }, [patp, defaultCurators, ship]);
 
   const renderList = ({ item, map }) => {
-    if (!isMe && (!item || !map)) return <></>;
-    if (item?.keyStr?.includes("index")) return;
+    // if (!isMe && (!item || !map)) return <></>;
+    // if (item?.keyStr?.includes("index")) return;
     return (
-      <SliderList
-        item={item}
-        key={item.keyStr}
-        map={map}
-        type={getType(item)}
-        groups={groups}
-        isMine={isMe}
-      ></SliderList>
+      <div key={item.keyStr}>
+        <SliderList
+          item={item}
+          key={item.keyStr}
+          map={map}
+          type={getType(item)}
+          groups={groups}
+          isMine={isMe}
+        ></SliderList>
+      </div>
     );
   };
   const listsByType = () => {

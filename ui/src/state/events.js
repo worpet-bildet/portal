@@ -8,7 +8,7 @@ export const handleEvent =
     if (action === "portal-nested-all-items") {
       return factActions.onInitialLoad(evt);
     }
-    if (action === "portal-front-end-update") {
+    if (evt.action !== "del" && action === "portal-front-end-update") {
       return factActions.onUpdate({ evt, action, urbit });
     }
   };

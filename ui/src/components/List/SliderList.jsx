@@ -8,7 +8,6 @@ import { LeftArrow, RightArrow } from "./SliderArrows";
 import { isMobile } from "@utils/mobile";
 
 export const SliderList = ({ item, map, type, groups, isMine }) => {
-  if (!isMine && isEmpty(map)) return <></>;
   const navigate = useNavigate();
   const [hover, setHover] = useState(false);
   const [hideJoinedGroups, setHideJoinedGroups] = useState(false);
@@ -23,20 +22,20 @@ export const SliderList = ({ item, map, type, groups, isMine }) => {
   };
 
   const mappedCards = useMemo(() => {
-    if (isEmpty(map)) return null;
+    if ((!isMine && isEmpty(map)) || item?.keyStr?.includes("index")) return null;
     let orderedItems = [];
     listOrder.forEach(l => {
       if (map[l.keyStr]) orderedItems.push(map[l.keyStr]);
     });
     return orderedItems.map(val => {
+      const key = val.keyStr;
       if (hideJoinedGroups) {
         const { ship, cord } = val?.data?.bespoke?.keyObj;
         const nameKey = `${ship}/${cord}`;
         if (groups[nameKey]) {
-          return <></>;
+          return <div key={key}></div>;
         }
       }
-      const key = val.keyStr;
       return (
         <Card
           itemId={key} // NOTE: itemId is required for track items
