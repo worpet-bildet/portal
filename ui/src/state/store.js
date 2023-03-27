@@ -58,6 +58,8 @@ export const useStore = createStore((set, get) => ({
         if (!draft.defaultCurators[ship]) return;
         const _map = draft.defaultCurators[ship].map;
         if (_map[keyStr]) {
+          if (!draft.defaultCurators[ship].map[keyStr].item)
+            draft.defaultCurators[ship].map[keyStr].item = {};
           draft.defaultCurators[ship].map[keyStr].item.data = data;
         } else {
           for (let _list in _map) {

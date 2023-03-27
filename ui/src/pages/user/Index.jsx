@@ -1,8 +1,9 @@
 import React, { createRef, useEffect, useState } from "react";
-import { ItemImage } from "../../components/Item/ItemImage";
-import { getDefaultCurators } from "../../state/store";
-import { useStore } from "../../state/store";
-import { usePortal } from "../../state/usePortal";
+import { NavLink } from "react-router-dom";
+import { ItemImage } from "@components/Item/ItemImage";
+import { getDefaultCurators } from "@state/store";
+import { useStore } from "@state/store";
+import { usePortal } from "@state/usePortal";
 
 const INDEXER_SHIP = "~worpet-bildet";
 const INDEXER_LIST = `/${INDEXER_SHIP}/list/nonitem/ship/index`;
@@ -42,9 +43,9 @@ export const UserIndex = () => {
               <div className="w-20" ref={imageContainerRef}>
                 <ItemImage patp={ship} type={"ship"} container={imageContainerRef} />
               </div>
-              <a className="pl-2 text-[#0284c7] py-1" href={`${ship}`}>
-                {ship}
-              </a>
+              <div className="pl-2 text-[#0284c7] py-1">
+                <NavLink to={`/${ship}`}>{ship}</NavLink>
+              </div>
             </div>
           );
         })}
