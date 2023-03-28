@@ -23,12 +23,8 @@ export function User() {
     if (!patp || !defaultCurators) return;
     const INDEXER_SHIP = "~worpet-bildet";
     const INDEXER_LIST = `/${INDEXER_SHIP}/list/nonitem/ship/index`;
-    let index = Object.values(
-      defaultCurators[INDEXER_SHIP]?.map[INDEXER_LIST]?.map || {}
-    );
-    setUserIsIndexed(
-      !index?.find(({ keyObj: { ship } }) => ship === patp) ? false : true
-    );
+    let index = Object.keys(defaultCurators[INDEXER_SHIP]?.map[INDEXER_LIST]?.map || {});
+    setUserIsIndexed(!index?.find(ship => ship === patp) ? false : true);
   }, [patp, defaultCurators]);
 
   const subscribeTo = ship => {
