@@ -42,31 +42,32 @@ export const useStore = createStore((set, get) => ({
     setTimeout(doUpdate, 12000);
   },
   mergeUpdate: update => {
-    return set(
+    set(
       produce(draft => {
         const {
-          evt: {
-            item: {
-              keyObj: { ship },
-              keyStr,
-              data,
-            },
-          },
+          evt: { item, map },
         } = update;
+        const {
+          keyObj: { ship },
+          keyStr,
+          data,
+        } = item;
         // This is a bit crap, but it works and it will be a lot easier to do
         // this once we flatten all of our data
         if (!draft.defaultCurators[ship]) return;
-        const _map = draft.defaultCurators[ship].map;
+        const _defaultCurators = { ...draft.defaultCurators };
+        const _map = _defaultCurators[ship].map;
         if (_map[keyStr]) {
-          if (!draft.defaultCurators[ship].map[keyStr].item)
-            draft.defaultCurators[ship].map[keyStr].item = {};
-          draft.defaultCurators[ship].map[keyStr].item.data = data;
+          _defaultCurators[ship].map[keyStr].map = map;
+          _defaultCurators[ship].map[keyStr].item = item;
+          draft.defaultCurators = _defaultCurators;
         } else {
           for (let _list in _map) {
             if (_map[_list] && _map[_list].map[keyStr]) {
-              draft.defaultCurators[ship].map[_list].map[keyStr].data = data;
+              _defaultCurators[ship].map[_list].map[keyStr].data = data;
             }
           }
+          draft.defaultCurators = _defaultCurators;
         }
       })
     );

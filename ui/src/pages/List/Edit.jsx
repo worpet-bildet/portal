@@ -74,7 +74,7 @@ export function Edit() {
     for (let k of payload) {
       items.push(map[k?.keyStr]);
     }
-    setListItems(items);
+    setListItems(items.filter(i => !!i));
   }, [list]);
 
   const typesOfBespokeInput = {
