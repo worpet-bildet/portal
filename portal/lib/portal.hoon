@@ -1012,15 +1012,21 @@
           :~  [%pass /del %agent [our %portal-manager] %poke %portal-update !>(upd)]
               [%give %fact [/front-end-update]~ %portal-front-end-update !>((make-front-end-update all-items our src upd))]
           ==
+        ?:  =(-.type.key.upd %nonitem)
+          %+  welp
+          ?+    type.key.upd    ~
+              [%nonitem %app ~]
+            =/  wire  [%treaty (key-to-path:conv key.upd)]
+            [%pass wire %agent [ship.key.upd %treaty] %leave ~]~
+              [%nonitem %group ~]
+            =/  wire  [%get-group-preview /(scot %p ship.key.upd)/[`@tas`cord.key.upd]]
+            [%pass wire %agent [ship.key.upd %groups] %leave ~]~
+          ==
+          ?:  =(our ship.key.upd)
+            [%give %fact [(key-to-path:conv key.upd)]~ [%portal-update !>(upd)]]~
+          ~
         ?:  =(our ship.key.upd)
           [%give %fact [(key-to-path:conv key.upd)]~ [%portal-update !>(upd)]]~
-        ?:  =(-.type.key.upd %nonitem)  ~
-        ::   ?-    type.key.upd
-        ::       [%nonitem %group ~]
-        ::     [%pass (key-to-path:conv key.upd) %agent [ship.key.upd %portal-store] %leave ~]~
-        ::       [%nonitem %app ~]
-        ::     [%pass (key-to-path:conv key.upd) %agent [ship.key.upd %portal-store] %leave ~]~
-        ::   ==
         [%pass (key-to-path:conv key.upd) %agent [ship.key.upd %portal-store] %leave ~]~
       ::
       ++  sub
