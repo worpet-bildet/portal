@@ -10,13 +10,14 @@
 +$  nodes  (mip:mip node node edge)
 +$  edges  (mip:mip app tag nodeset)
 ::
-+$  app  term
-+$  tag  path  ::  cannot be ~
++$  app  term  ::  portal-store
++$  tag  path  ::  /list/1    /list/2
+               ::  /listed/1  /listed/2  etc.
 ::
 +$  node
   $%  [%ship @p]
       [%address @ux]
-      [%entity =app name=@t]
+      [%entity =app name=@t]  ::  item key goes here
   ==
 ::
 +$  edge     (jug app tag)

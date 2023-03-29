@@ -2,78 +2,48 @@
 |%
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
+::  vase -u data types ->  !>(), arbitrary code?
 ::  Basic Outline
 ::
 ::  item types
-+$  type  :: this is fucked, needs work, change it to item-type, so its not confusing with type.key
-  $%
-        [%nonitem %group ~]
-        [%nonitem %ship ~]
-        [%nonitem %app ~]
-    ::
-
-        [%enditem %app ~]
-        [%enditem %other ~]
-    ::
-    ::  [%app ~]
-    ::
-            [%list ~]
-              ::[%list %nonitem ~]
-                :: [%list %nonitem %group ~]
-                :: [%list %nonitem %ship ~]
-                :: [%list %nonitem %app ~]
-              ::[%list %enditem ~]
-              ::   [%list %enditem %other ~]
-              ::   [%list %enditem %app ~]
-              :: [%list %app ~]
-              [%list %list ~]
++$  type
+  $%  [%nonitem %group ~]
+      [%nonitem %ship ~]
+      [%nonitem %app ~]
+      [%enditem %app ~]
+      [%enditem %other ~]
+      [%list ~]
+      [%list %list ~]
       [%validity-store ~]
-    ::
-
   ==
 ::
-+$  item-type  :: this is fucked, needs work, change it to item-type, so its not confusing with type.key
-  $%  [%nonitem ~]
-        [%nonitem %group ~]
-        [%nonitem %ship ~]
-        [%nonitem %app ~]
-    ::
-      [%enditem ~]
-        [%enditem %app ~]
-        [%enditem %other ~]
-    ::
-      [%app ~]
-    ::
++$  item-type
+  $%  [%nonitem %group ~]
+      [%nonitem %ship ~]
+      [%nonitem %app ~]
+      [%enditem %app ~]
+      [%enditem %other ~]
       [%validity-store ~]
-    ==
+  ==
 ::
 +$  list-type
   $%  [%list ~]
-
-        [%list %list ~]
+      [%list %list ~]
   ==
+::
 ::  key of an item
 +$  key  [=ship type=path =cord]
++$  path-key  [knot knot knot ~]
 ::
-::  all-items is the state of %portal-store
-::  only %.y pointers
-+$  all-items  (map key item)
-::
-::  delivered to the frontend
-+$  nested-all-items  (map key cur-obj)
-::
-+$  cur-obj  [=item =lis-map]
-+$  lis-map  (map key lis-obj)
-+$  lis-obj  [item=?(~ item) =end-map]
-+$  end-map  (map key ?(~ item))
-::
++$  items  (map key item)
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
 ::  Item Parts
 ::
-+$  item  ::TODO how to handle nonitems in general?
-  $:  =data
++$  item
+  $:  =key
+      =data
       =meta
       =social
       =sig
@@ -86,7 +56,7 @@
   ==
 ::
 +$  meta
-  $:  =updated-at                      ::  when '~2000.1.1' means it has not been updated
+  $:  =updated-at                      ::  '~2000.1.1' means it wasn't updated
       permissions=(list @p)            ::  not used yet. auto- ~[our.bowl].
       =reach                           ::  not used yet
       outside-sigs=(list signature)    ::  not used yet
@@ -123,14 +93,14 @@
 ::  data specific to the item type
 ::  TODO how to branch on path instead of just tag?
 +$  bespoke
-  $%  [%nonitem-ship key=[=ship type=[%nonitem %ship ~] =cord] ~]
-      [%nonitem-group key=[=ship type=[%nonitem %group ~] =cord] ~]
-      [%nonitem-app key=[=ship type=[%nonitem %app ~] =cord] =treaty]
-      [%enditem-other key=[=ship type=[%enditem %other ~] =cord] ~]
-      [%enditem-app key=[=ship type=[%enditem %app ~] =cord] dist-desk=@t sig=signature =treaty]
-      [%list key=[=ship type=list-type =cord] =key-text-list]
-      [%list-list key=[=ship type=[%list %list ~] =cord] =list-key-list]
-      [%validity-store key=[=ship type=[%validity-store ~] =cord] =validity-records]
+  $%  [%nonitem-ship ~]
+      [%nonitem-group ~]
+      [%nonitem-app =treaty]
+      [%enditem-other ~]
+      [%enditem-app dist-desk=@t sig=signature =treaty]
+      [%list =key-list]
+      [%list-list =list-key-list]
+      [%validity-store =validity-records]
   ==
 ::
 ::  when inputting bespoke data, you sometimes don't need to input all of it
@@ -140,15 +110,13 @@
       [%nonitem-app ~]
       [%enditem-other ~]
       [%enditem-app dist-desk=@t]
-      [%list =key-text-list]
+      [%list =key-list]
       [%list-list =list-key-list]
       [%validity-store =validity-records]
   ==
 ::
-+$  key-text-list       (list [=key text=cord])
 ::
-+$  list-key-list         (list [key=[=ship type=list-type =cord] text=cord])
-::
++$  list-key-list         (list key=[=ship type=list-type =cord])
 ::
 +$  key-list  (list key)
 +$  key-set  (set key)
@@ -200,8 +168,8 @@
 ::  Validity Store Structures
 ::
 +$  check-date  @da
-+$  result  (unit ?)
-+$  validation-result  [validity-checker=@t =result reason=@t]
++$  v-result  (unit ?)
++$  validation-result  [validity-checker=@t =v-result reason=@t]
 ::
 +$  validation-time-map  ((mop check-date validation-result) gth)
 ++  valid-mop  ((on check-date validation-result) gth)
@@ -217,7 +185,7 @@
 +$  signature   [hex=@ux =ship =life]
 ::
 +$  sig-input
-  $%  [%item =data =meta =social]     ::  for signing the item each time it is edited
+  $%  [%item =key =data =meta =social]     ::  for signing the item each time it is edited
       [%key =key]                            ::  for signing item by somebody from the outside (not in use yet)
       [%app =key desk-name=@tas]            ::  for signing apps by the distributor ship
   ==
@@ -247,5 +215,25 @@
 ::
 ::
 ::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::
+::  Scry Results
+::
+::  TODO write scry paths next to results, with examples
+::
+::  comes from %portal-store
++$  store-result
+  $@  ?
+  $%  [%items items]
+      [%keys key-set]
+      [%item item]
+      :: [%item nodeset]
+      :: [%tags (set tag)]
+      :: [%app-tags (set tag)]
+      :: [%app (map tag nodeset)]
+  ==
+::
+::  comes from %portal-manager
++$  manager-result  ?
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 --

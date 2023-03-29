@@ -11,15 +11,16 @@
       =default-curators
       =portal-curator
   ==
+::  TODO test state-1 to state-1 transition, probably won't be a problem
 +$  state-1
   $:  %1
       =default-curators
       =portal-curator
-      purge-timer=?
-      purge-time=@dr
-      portal-indexer=@p
-      indexed-as-curator=?
-      onboarded=?
+      =purge-timer
+      =purge-time
+      =portal-indexer
+      =indexed-as-curator
+      =onboarded
   ==
 +$  card  card:agent:gall
 --
@@ -34,7 +35,7 @@
   ^-  (quip card _this)
   =/  new-user-event      [%join now.bowl (get-ship-type:misc our.bowl) `@ux`(shax our.bowl)]
   =/  default-curators    (silt (limo ~[[~worpet-bildet /list/list '~2000.1.1']]))
-  =/  portal-curator      [~dister-doznec-dilryd-mopreg /list/list '~2000.1.1']  ::TODO change to worpet-bildet
+  =/  portal-curator      [~tactyl-darlup-dilryd-mopreg /list/list '~2000.1.1']  ::  TODO change to worpet-bildet
   =/  purge-timer         %.y
   =/  purge-time          ~d1
   =/  portal-indexer      ~worpet-bildet
@@ -88,18 +89,11 @@
     ::  TODO abstract a portal-manager add/edit/etc function which does stuff based on action and type
     ::  maybe not needed? aim for simplicity.
     =/  act-set  %-  silt   ^-  (list term)
-      ~[%add %edit %edit-general %sub %del %add-to-default-list %overwrite-list %put-nonitem %edit-docket %add-item-to-list %purge]
+      ~[%add %edit %sub %del %add-to-default-list %put-nonitem %edit-docket %add-item-to-list %purge]
     ?:  (~(has in act-set) -.act)
+      ~&  "sending poke"
       :_  this
       ~[(~(poke pass:io /act) [our.bowl %portal-store] portal-action+vase)]
-    ::
-    :: ?:  =(-.act %add-items-and-list)
-    ::   :_  this
-    ::   (add-items-and-list:on-action:portal-manager our.bowl src.bowl now.bowl act)
-    :: ::
-    :: ?:  =(-.act %add-items-and-edit-list)
-    ::   :_  this
-    ::   (add-items-and-edit-list:on-action:portal-manager our.bowl src.bowl now.bowl act)
     ::
     ?:  =(-.act %onboarded)
       ?+  -.act  !!
@@ -113,86 +107,35 @@
       :_  this(indexed-as-curator toggle.act)
       [(poke-msg [portal-indexer %portal-manager] portal-message+!>([%index-as-curator src.bowl toggle.act]))]~
       ::
-        %comment
-      :_  this
-      [(poke-msg [ship.key.act %portal-manager] portal-message+vase)]~
-      ::
-        %edit-comment
-      :_  this
-      [(poke-msg [ship.key.act %portal-manager] portal-message+vase)]~
-      ::
-        %del-comment
-      :_  this
-      [(poke-msg [ship.key.act %portal-manager] portal-message+vase)]~
-      ::
-        %rate
-      :_  this
-      [(poke-msg [ship.key.act %portal-manager] portal-message+vase)]~
-      ::
-        %unrate
-      :_  this
-      [(poke-msg [ship.key.act %portal-manager] portal-message+vase)]~
-      ::
-        %review
-      :_  this
-      [(poke-msg [ship.key.act %portal-manager] portal-message+vase)]~
-      ::
-        %del-review
-      :_  this
-      [(poke-msg [ship.key.act %portal-manager] portal-message+vase)]~
-      ::
-        %sign-app
-      =/  sig  (sign:sig our.bowl now.bowl [%app key.act desk-name.act])
-      =/  cage  portal-message+!>([%sign-app key.act sig])
-      :_  this
-      ~[(poke-msg [ship.key.act %portal-manager] cage)]
-      ::
-        %join-group
-      ?.  ?=([%nonitem %group *] type.key.act)  `this
-      =/  cage  group-join+!>([flag=[ship.key.act `@tas`cord.key.act] join-all=&])
-      :_  this
-      [%pass /group-join %agent [our.bowl %groups] %poke cage]~
-      ::
         %get-group-preview
       ::  not sub -> not perfectly updated, either too much or too little
       =/  path  /groups/(scot %p ship.flag.act)/[term.flag.act]/preview
-      =/  wire  [%get-group-preview /(scot %p ship.flag.act)/[term.flag.act]]
+      =/  wire  [%get-group-preview (key-to-path-key:conv key.act)]
       =/  sub-status  (~(gut by wex.bowl) [wire ship.flag.act %groups] ~)
       :_  this
       ?~  sub-status
-        [%pass wire %agent [ship.flag.act %groups] %watch path]~
-      ?:  =(acked.sub-status %.n)
         [%pass wire %agent [ship.flag.act %groups] %watch path]~
       ~
       ::
         %get-docket
       ::  not sub -> not perfectly updated, either too much or too little
       =/  path  /treaty/(scot %p ship.act)/[desk.act]
-      =/  wire  [%treaty (key-to-path:conv key.act)]
+      =/  wire  [%treaty (key-to-path-key:conv key.act)]
       =/  sub-status  (~(gut by wex.bowl) [wire ship.act %treaty] ~)
       :_  this
       ?~  sub-status
-        [%pass wire %agent [ship.act %treaty] %watch path]~
-      ?:  =(acked.sub-status %.n)
         [%pass wire %agent [ship.act %treaty] %watch path]~
       ~
     ==
     ::
       %portal-message
     =/  msg  !<(message vase)
-    ?+    -.msg
-      ::  All messages
-      :_  this
-      ~[(~(poke pass:io /msg) [our.bowl %portal-store] portal-message+vase)]
-      ::
-      ::  Index-as-Curator
-      ::  TODO implement for all
-        %index-as-curator
+    ::  TODO src.bowl src.msg problem kad store misli da je src our
+    ::   a ne vanjski jer dolazi od portal-managera
       ?>  =(src.bowl src.msg)
+      ?>  =(-.msg %index-as-curator)
       :_  this
       ~[(~(poke pass:io /msg) [our.bowl %portal-store] portal-message+vase)]
-    ==
-
     ::
     ::  when %portal-store makes/receives an update, it notifies %portal-manager
     ::  then %portal-manager decides what it needs to do with it
@@ -203,11 +146,11 @@
     ?+    -.upd    (on-poke:default mark vase)
         %put
       :_  this
-      (put:on-update:portal-manager our.bowl now.bowl upd)
+      (put:on-update:manager our.bowl now.bowl upd)
       ::
         %del
       :_  this
-      (del:on-update:portal-manager upd)
+      (del:on-update:manager upd)
     ==
   ==
 ::
@@ -236,30 +179,28 @@
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
   ?+    wire    (on-agent:default wire sign)
-      [%treaty *]
+      [%treaty @ @ @ ~]
     ?+    -.sign    (on-agent:default wire sign)
         %watch-ack  `this
         %kick       `this
-      ::
         %fact
       =/  treaty  !<(treaty:treaty q.cage.sign)
-      =/  key  (path-to-key:conv +.wire)
+      =/  key  (path-key-to-key:conv `path-key`+.wire)
       ?+    type.key    !!
           [%enditem %app ~]
         :_  this
         ~[(act-to-act-card:cards [%edit-docket key treaty] our.bowl %portal-store)]
           [%nonitem %app ~]
         :_  this
-        :~  [(fill-nonitem-app-data:portal-manager [our.bowl [%fill-nonitem-app key treaty]])]
+        :~  [(fill-nonitem-app-data:manager [our.bowl [%fill-nonitem-app key treaty]])]
             [%pass wire %agent [ship.key %treaty] %leave ~]
         ==
       ==
     ==
-      [%get-group-preview *]
+      [%get-group-preview @ @ @ ~]
     ?+    -.sign    (on-agent:default wire sign)
         %watch-ack  `this
         %kick       `this
-      ::
         %fact
       =/  preview  !<(preview:groups q.cage.sign)
       =/  act
@@ -270,7 +211,7 @@
           image.meta.preview
         ==
       :_  this
-      :~  (fill-group-data:portal-manager [our.bowl act])
+      :~  (fill-group-data:manager [our.bowl act])
           [%pass wire %agent [p.flag.preview %groups] %leave ~]
       ==
     ==

@@ -20,20 +20,20 @@
       =/  transform
         |=  [=key acked=?]
         ^-  [@t json]
-        [(spat (key-to-path:conv key)) b+acked]
+        [(spat (key-to-path-key:conv key)) b+acked]
       =/  l  (turn ~(tap by mapp) transform)
       [%o `(map @t json)`(malt l)]
     --
-  ++  enjs-result
-    |=  =result
+  ++  enjs-v-result
+    |=  =v-result
     ^-  json
-    ?~  result
+    ?~  v-result
       %-  pairs
       :~  ['valid' ~]
           ['noResult' b+%.y]
       ==
     %-  pairs
-    :~  ['valid' b++.result]
+    :~  ['valid' b++.v-result]
         ['noResult' b+%.n]
     ==
   ++  enjs-front-end-update
@@ -45,54 +45,15 @@
         ['keyObj' (enjs-key key.front-end-update)]
         ['keyStr' (enjs-jam-key key.front-end-update)]
         ['item' ?~(item.front-end-update ~ (enjs-item-or-null item.front-end-update))]
-        ['map' (enjs-end-map end-map.front-end-update)]
         ['face' s+(crip (weld (trip update.front-end-update) (spud type.key.front-end-update)))]
     ==
-  ++  enjs-nested-all-items
-    |=  =nested-all-items
-    ^-  json
-    =/  transform
-      |=  [=key =cur-obj]
-      [(@t p.+:(enjs-jam-key key)) (enjs-cur-object cur-obj)]
-    =/  l  (turn ~(tap by nested-all-items) transform)
-    [%o `(map @t json)`(malt l)]
-  ++  enjs-cur-object
-    |=  =cur-obj
-    ^-  json
-    %-  pairs
-    :~  ['item' (enjs-item-or-null item.cur-obj)]
-        ['map' (enjs-list-map lis-map.cur-obj)]
-    ==
-  ++  enjs-list-map
-    |=  =lis-map
-    ^-  json
-    =/  transform
-      |=  [=key =lis-obj]
-      [(@t p.+:(enjs-jam-key key)) (enjs-list-object lis-obj)]
-    =/  l  (turn ~(tap by lis-map) transform)
-    [%o `(map @t json)`(malt l)]
-  ++  enjs-list-object
-    |=  =lis-obj
-    ^-  json
-    %-  pairs
-    :~  ['item' (enjs-item-or-null item.lis-obj)]
-        ['map' (enjs-end-map end-map.lis-obj)]
-    ==
-  ++  enjs-end-map
-    |=  =end-map
-    ^-  json
-    =/  transform
-      |=  [=key item=?(~ item)]
-      [(@t p.+:(enjs-jam-key key)) ?~(item ~ (enjs-item-or-null item))]
-    =/  l  (turn ~(tap by end-map) transform)
-    [%o `(map @t json)`(malt l)]
   ++  enjs-item-or-null
     |=  [item=?(~ item)]
     ^-  json
     ?~  item  ~
     %-  pairs
-    :~  ['keyStr' (enjs-jam-key key.bespoke.data.item)]
-        ['keyObj' (enjs-key key.bespoke.data.item)]
+    :~  ['keyStr' (enjs-jam-key key.item)]
+        ['keyObj' (enjs-key key.item)]
         ['data' (enjs-data data.item)]
         ['meta' (enjs-meta meta.item)]
         ['social' (enjs-social social.item)]
@@ -102,10 +63,10 @@
     |=  [=key =item]
     ^-  json
     (enjs-item-or-null item)
-  ++  enjs-all-items
-    |=  =all-items
+  ++  enjs-items
+    |=  =items
     ^-  json
-    =/  lis  ~(tap by all-items)
+    =/  lis  ~(tap by items)
     [%a (turn lis enjs-key-and-item)]
   ++  enjs-meta
     |=  [=meta]
@@ -141,59 +102,18 @@
       |=  [=bespoke]
       ^-  json
       ?-    -.bespoke
-          %nonitem-ship
-        %-  pairs
-        :~  ['keyStr' (enjs-jam-key key.bespoke)]
-            ['keyObj' (enjs-key key.bespoke)]
-            ['payload' s+'']
-        ==
-          %nonitem-group
-        %-  pairs
-        :~  ['keyStr' (enjs-jam-key key.bespoke)]
-            ['keyObj' (enjs-key key.bespoke)]
-            ['payload' s+'']
-        ==
-          %nonitem-app
-        %-  pairs
-        :~  ['keyStr' (enjs-jam-key key.bespoke)]
-            ['keyObj' (enjs-key key.bespoke)]
-            ['payload' (treaty:enjs:treaty treaty.bespoke)]
-        ==
-          %enditem-app
-        %-  pairs
-        :~  ['keyStr' (enjs-jam-key key.bespoke)]
-            ['keyObj' (enjs-key key.bespoke)]
-            :-  'payload'
-            %-  pairs
-            :~  ['distDesk' s+dist-desk.bespoke]
-                ['signature' (enjs-sig sig.bespoke)]
-                ['treaty' (treaty:enjs:treaty treaty.bespoke)]
-            ==
-        ==
-          %enditem-other
-        %-  pairs
-        :~  ['keyStr' (enjs-jam-key key.bespoke)]
-            ['keyObj' (enjs-key key.bespoke)]
-            ['payload' s+'']
-        ==
-          %list
-        %-  pairs
-        :~  ['keyStr' (enjs-jam-key key.bespoke)]
-            ['keyObj' (enjs-key key.bespoke)]
-            ['payload' (enjs-key-text-list key-text-list.bespoke)]
-        ==
-          %list-list
-        %-  pairs
-        :~  ['keyStr' (enjs-jam-key key.bespoke)]
-            ['keyObj' (enjs-key key.bespoke)]
-            ['payload' (enjs-key-text-list list-key-list.bespoke)]
-        ==
-          %validity-store
-        %-  pairs
-        :~  ['keyStr' (enjs-jam-key key.bespoke)]
-            ['keyObj' (enjs-key key.bespoke)]
-            ['payload' s+'']
-        ==
+        %nonitem-ship    s+''
+        %nonitem-group   s+''
+        %nonitem-app     (treaty:enjs:treaty treaty.bespoke)
+        %enditem-app     %-  pairs
+                         :~  ['distDesk' s+dist-desk.bespoke]
+                             ['signature' (enjs-sig sig.bespoke)]
+                             ['treaty' (treaty:enjs:treaty treaty.bespoke)]
+                         ==
+        %enditem-other   s+''
+        %list            (enjs-key-list key-list.bespoke)
+        %list-list       (enjs-key-list list-key-list.bespoke)
+        %validity-store  s+''
       ==
     --
   ++  enjs-social
@@ -278,20 +198,6 @@
     :-  %a
     %+  turn  key-list
     |=(=key (enjs-jam-key key))
-  ++  enjs-key-text-list
-    |=  =key-text-list
-    ^-  json
-    :-  %a
-    %+  turn  key-text-list
-    |=([=key text=cord] (enjs-key-text key text))
-  ++  enjs-key-text
-    |=  [=key text=cord]
-    ^-  json
-    %-  pairs
-    :~  ['keyStr' (enjs-jam-key key)]
-        ['keyObj' (enjs-key key)]
-        ['text' s+text]
-    ==
   ++  enjs-key-list
     |=  =key-list
     ^-  json
@@ -315,7 +221,7 @@
   ++  enjs-jam-key
     |=  =key
     ^-  json
-    s+(spat (key-to-path:conv key))
+    s+(spat (key-to-path-key:conv key))
   ++  enjs-key
     |=  =key
     ^-  json
@@ -349,18 +255,8 @@
     :~  [%add (ot ~[ship+dejs-ship type+dejs-type general+dejs-general bespoke-input+dejs-bespoke-input])]
         [%add-item-to-list (ot ~[list-key+dejs-key ship+dejs-ship type+dejs-type general+dejs-general bespoke-input+dejs-bespoke-input])]
         [%edit (ot ~[key+dejs-key general+dejs-general bespoke-input+dejs-bespoke-input])]
-        [%edit-general (ot ~[key+dejs-key general+dejs-general])]
         [%sub (ot ~[key+dejs-key])]
         [%del (ot ~[key+dejs-key])]
-        [%overwrite-list (ot ~[key+dejs-key key-text-list+dejs-key-text-list])]
-        [%comment (ot ~[key+dejs-key text+so])]
-        [%edit-comment (ot ~[key+dejs-key created-at+so text+so])]
-        [%del-comment (ot ~[key+dejs-key created-at+so])]
-        [%rate (ot ~[key+dejs-key rating-num+ni])]
-        [%unrate (ot ~[key+dejs-key])]
-        [%review (ot ~[key+dejs-key text+so hash+dejs-hash is-safe+bo])]
-        [%del-review (ot ~[key+dejs-key])]
-        [%join-group (ot ~[key+dejs-key])]
         [%index-as-curator (ot ~[toggle+bo])]
     ==
   ++  dejs-general
@@ -382,16 +278,11 @@
     %-  bespoke-input
     %.  jon
     %-  of
-    :~  [%list (ot ~[key-text-list+dejs-key-text-list])]
+    :~  [%list (ot ~[key-list+dejs-key-list])]
         [%enditem-app (ot ~[dist-desk+so])]
         [%enditem-other so]
-        [%list-list (ot ~[list-key-list+dejs-key-text-list])]
+        [%list-list (ot ~[list-key-list+dejs-key-list])]
     ==
-  ++  dejs-key-text-list
-    |=  jon=json
-    ^-  key-text-list
-    %.  jon
-    (ar dejs-key-text)
   ++  dejs-key-text
     |=  jon=json
     ^-  [key cord]
