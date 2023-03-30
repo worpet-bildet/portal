@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { usePortal } from "@state/usePortal";
+import { useStore, refreshAppState as _refreshAppState } from "@state/store";
 import { EditGeneralForm } from "@components/Form/EditGeneralForm";
 import { defaultListUrl } from "@utils/format";
 
 export function Add() {
   const navigate = useNavigate();
   const { ship } = usePortal();
+  const refreshAppState = useStore(_refreshAppState);
   const [addListPoke, setAddListPoke] = useState(null);
 
   const defaultGeneral = {
@@ -56,6 +58,7 @@ export function Add() {
 
   const handleSave = e => {
     toast.success("Saved");
+    refreshAppState();
     navigate(defaultListUrl(ship));
   };
 
