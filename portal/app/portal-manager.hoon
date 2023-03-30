@@ -161,8 +161,6 @@
       :_  this
       ?~  sub-status
         [%pass wire %agent [ship.flag.act %groups] %watch path]~
-      ?:  =(acked.sub-status %.n)
-        [%pass wire %agent [ship.flag.act %groups] %watch path]~
       ~
       ::
         %get-docket
@@ -172,8 +170,6 @@
       =/  sub-status  (~(gut by wex.bowl) [wire ship.act %treaty] ~)
       :_  this
       ?~  sub-status
-        [%pass wire %agent [ship.act %treaty] %watch path]~
-      ?:  =(acked.sub-status %.n)
         [%pass wire %agent [ship.act %treaty] %watch path]~
       ~
     ==
