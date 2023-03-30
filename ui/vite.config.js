@@ -6,12 +6,19 @@ import { defineConfig, loadEnv } from "vite";
 // https://vitejs.dev/config/
 export default ({ mode }) => {
   Object.assign(process.env, loadEnv(mode, process.cwd()));
-  const SHIP_URL = process.env.SHIP_URL || process.env.VITE_SHIP_URL || "";
+  const SHIP_URL =
+    mode === "production" ? "" : process.env.SHIP_URL || process.env.VITE_SHIP_URL || "";
   console.log(SHIP_URL);
+
+  console.log(`Building for ${mode}`);
 
   return defineConfig({
     plugins: [
-      urbitPlugin({ base: "portal", target: SHIP_URL, secure: false }),
+      urbitPlugin({
+        base: "portal",
+        target: SHIP_URL,
+        secure: false,
+      }),
       reactRefresh(),
     ],
     resolve: {
