@@ -90,7 +90,9 @@
     =/  list-key-list  ~[cur-key]
     ::
     ::  (map list-list-key list-list-item)
-    =/  list-list-map  (malt (turn list-key-list |=(=key [key (~(got by all-items) key)])))
+    =/  list-list-list  ;;  (list [key ?(~ item)])  (turn list-key-list |=(=key [key (~(gut by all-items) key ~)]))
+    =.  list-list-list  ;;  (list [key item])  (skip list-list-list |=([=key item=?(~ item)] ?~(item %.y %.n)))
+    =/  list-list-map  ;;  (map key item)  (malt list-list-list)
     ::
     ::  (map list-list-key [list-list-item (map list-pointer list-item)])
     =/  list-list-list-map  (~(run by list-list-map) |=(=item (list-list-item-to-map all-items item)))
