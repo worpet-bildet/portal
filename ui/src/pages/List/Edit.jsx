@@ -10,7 +10,7 @@ import {
   Bars3Icon,
 } from "@heroicons/react/24/outline";
 import { toast } from "react-toastify";
-import { useStore } from "@state/store";
+import { useStore, refreshAppState as _refreshAppState } from "@state/store";
 import { getDefaultCurators } from "@state/store";
 import {
   getShortTitle,
@@ -32,6 +32,7 @@ export function Edit() {
   const { listkey } = useParams();
   const navigate = useNavigate();
   const defaultCurators = useStore(getDefaultCurators);
+  const refreshAppState = useStore(_refreshAppState);
 
   const [list, setList] = useState(null);
   const [editListPoke, setEditListPoke] = useState(null);
@@ -277,6 +278,7 @@ export function Edit() {
 
   const onPokeSuccess = () => {
     toast.success("Saved changes");
+    refreshAppState();
     if (showAddItemForm) toggleAddItemForm();
   };
 

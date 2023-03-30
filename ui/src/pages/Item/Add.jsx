@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getDefaultCurators } from "@state/store";
+import { getDefaultCurators, refreshAppState as _refreshAppState } from "@state/store";
 import { useStore } from "@state/store";
 import { usePortal } from "@state/usePortal";
 import { EditGeneralForm } from "@components/Form/EditGeneralForm";
@@ -9,6 +9,7 @@ export function Add() {
   const { listkey } = useParams();
   const { ship } = usePortal();
   const defaultCurators = useStore(getDefaultCurators);
+  const refreshAppState = useStore(_refreshAppState);
   const [list, setList] = useState(null);
   const [addItemPoke, setAddItemPoke] = useState(null);
   const navigate = useNavigate();
@@ -58,6 +59,7 @@ export function Add() {
         setPoke={setAddItemPoke}
         action="add-item-to-list"
         onSave={() => {
+          refreshAppState();
           navigate(-1); // TODO: rethink this, probably better to navigate 1 level up this heirarchy: profile page <- profile page (edit mode) <- edit list <- edit item
         }}
       />

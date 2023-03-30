@@ -5,8 +5,8 @@ import { MotionConfig } from "framer-motion";
 import { ToastContainer } from "react-toastify";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
-import { usePortalSubscription } from "@state/usePortal";
-import { useLandscapeSubscription } from "@state/useLandscape";
+import { getState } from "@state/usePortal";
+// import { useLandscapeSubscription } from "@state/useLandscape";
 import Layout from "@components/Layout";
 import { User } from "@pages/User/User";
 import { UserIndex } from "@pages/User/Index";
@@ -18,6 +18,7 @@ import ReactGA from "react-ga";
 import "./index.css";
 
 import theme from "./theme/theme";
+import { useStore, onInitialLoad } from "./state/store";
 
 const router = createBrowserRouter(
   [
@@ -56,8 +57,8 @@ const router = createBrowserRouter(
 );
 
 export function App() {
-  usePortalSubscription();
-  useLandscapeSubscription();
+  useStore(onInitialLoad)(getState);
+  // useLandscapeSubscription();
   ReactGA.initialize("G-HC9S8FMZ6C");
 
   return (

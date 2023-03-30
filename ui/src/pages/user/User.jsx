@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { isEmpty } from "lodash";
 import { useStore } from "@state/store";
-import { getDefaultCurators } from "@state/store";
+import { getDefaultCurators, mergeStateUpdate as _mergeStateUpdate } from "@state/store";
 import { SliderList } from "@components/List/SliderList";
 import { ItemImage } from "@components/Item/ItemImage";
 import { LoadingSpinner } from "@components/LoadingSpinner";
@@ -15,6 +16,7 @@ export function User() {
   const { patp } = useParams();
   const navigate = useNavigate();
   const defaultCurators = useStore(getDefaultCurators);
+  const mergeStateUpdate = useStore(_mergeStateUpdate);
   const [curatorList, setCuratorList] = useState(null);
   const [userIsIndexed, setUserIsIndexed] = useState(false);
   const [isMe, setIsMe] = useState(false);
@@ -28,7 +30,7 @@ export function User() {
   }, [patp, defaultCurators]);
 
   const subscribeTo = ship => {
-    urbit.poke({
+    return urbit.poke({
       app: "portal-manager",
       mark: "portal-action",
       json: {
@@ -43,11 +45,35 @@ export function User() {
     });
   };
 
-  useEffect(() => {
-    if (urbit && patp && !isMe) {
-      subscribeTo(patp);
+  const scryLists = async ship => {
+    const listKey = `/${ship}/list/list/~2000.1.1`;
+    try {
+      const data = await urbit.scry({
+        app: "portal-store",
+        path: `/item/nested/${ship}/list/list/~2000.1.1`,
+      });
+      mergeStateUpdate({ [ship]: data[listKey] });
+    } catch (e) {
+      // Maybe try scry again?
     }
-  }, [patp, isMe, urbit]);
+  };
+
+  // This is kinda hacky but it's going to work for now
+  const scryListsWithBackoff = ship => {
+    setTimeout(() => scryLists(ship), 1000);
+    setTimeout(() => scryLists(ship), 2000);
+    setTimeout(() => scryLists(ship), 4000);
+    setTimeout(() => scryLists(ship), 8000);
+    setTimeout(() => scryLists(ship), 12000);
+  };
+
+  useEffect(() => {
+    // for some reason we're still subscribing twice but it can wait
+    if (urbit && patp && !isMe && !isEmpty(defaultCurators) && !defaultCurators[patp]) {
+      subscribeTo(patp);
+      scryListsWithBackoff(patp);
+    }
+  }, [patp, isMe, urbit, defaultCurators]);
 
   useEffect(() => {
     // We should search the default curators here
@@ -58,8 +84,8 @@ export function User() {
   }, [patp, defaultCurators, ship]);
 
   const renderList = ({ item, map }) => {
-    // if (!isMe && (!item || !map)) return <></>;
-    // if (item?.keyStr?.includes("index")) return;
+    if (!isMe && (isEmpty(item) || isEmpty(map))) return <></>;
+    if (item?.keyStr?.includes("index")) return;
     return (
       <div key={item.keyStr}>
         <SliderList
@@ -105,9 +131,9 @@ export function User() {
   if (!curatorList) return <LoadingSpinner />;
 
   const {
-    general: { title, description, image },
     item: {
       data: {
+        general: { title, description, image },
         bespoke: { keyStr },
       },
     },

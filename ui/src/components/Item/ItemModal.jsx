@@ -33,7 +33,7 @@ export function ItemModal({
     if (type === "app") {
       const {
         bespoke: {
-          keyObj: { ship, cord },
+          keyObj: { ship },
         },
       } = data;
       const uri = `/apps/grid/leap/search/${ship}/apps`;
