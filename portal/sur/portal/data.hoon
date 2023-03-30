@@ -93,26 +93,26 @@
 ::  data specific to the item type
 ::  TODO how to branch on path instead of just tag?
 +$  bespoke
-  $%  [%nonitem-ship ~]
-      [%nonitem-group ~]
-      [%nonitem-app =treaty]
-      [%enditem-other ~]
-      [%enditem-app dist-desk=@t sig=signature =treaty]
-      [%list =key-list]
-      [%list-list =list-key-list]
-      [%validity-store =validity-records]
+  $%  [[%nonitem %ship ~] ~]
+      [[%nonitem %group ~] ~]
+      [[%nonitem %app ~] =treaty]
+      [[%enditem %other ~] ~]
+      [[%enditem %app ~] dist-desk=@t sig=signature =treaty]
+      [[%list ~] =key-list]
+      [[%list %list ~] =list-key-list]
+      [[%validity-store ~] =validity-records]
   ==
 ::
 ::  when inputting bespoke data, you sometimes don't need to input all of it
 +$  bespoke-input
-  $%  [%nonitem-ship ~]
-      [%nonitem-group ~]
-      [%nonitem-app ~]
-      [%enditem-other ~]
-      [%enditem-app dist-desk=@t]
-      [%list =key-list]
-      [%list-list =list-key-list]
-      [%validity-store =validity-records]
+  $%  [[%nonitem %ship ~] ~]
+      [[%nonitem %group ~] ~]
+      [[%nonitem %app ~] ~]
+      [[%enditem %other ~] ~]
+      [[%enditem %app ~] dist-desk=@t]
+      [[%list ~] =key-list]
+      [[%list %list ~] =list-key-list]
+      [[%validity-store ~] =validity-records]
   ==
 ::
 ::
@@ -168,8 +168,8 @@
 ::  Validity Store Structures
 ::
 +$  check-date  @da
-+$  v-result  (unit ?)
-+$  validation-result  [validity-checker=@t =v-result reason=@t]
++$  valid  (unit ?)
++$  validation-result  [validity-checker=@t =valid reason=@t]
 ::
 +$  validation-time-map  ((mop check-date validation-result) gth)
 ++  valid-mop  ((on check-date validation-result) gth)
@@ -224,13 +224,10 @@
 ::  comes from %portal-store
 +$  store-result
   $@  ?
-  $%  [%items items]
-      [%keys key-set]
-      [%item item]
-      :: [%item nodeset]
-      :: [%tags (set tag)]
-      :: [%app-tags (set tag)]
-      :: [%app (map tag nodeset)]
+  $%  [%items =items]
+      [%keys =key-set]
+      [%item item=?(~ item)]
+      [%valid =valid]
   ==
 ::
 ::  comes from %portal-manager

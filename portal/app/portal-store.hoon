@@ -1,5 +1,5 @@
 /-  *portal-data, *portal-update, *portal-front-end-update, *portal-message
-/+  default-agent, dbug, *portal, *agentio
+/+  default-agent, dbug, *portal
 |%
 +$  versioned-state
   $%  state-0
@@ -24,14 +24,14 @@
   ^-  (quip card _this)
   =.  state  *state-0
   =^  cards-1  items
-    (validity-store:default:store items our.bowl now.bowl)
+    (validity-store:create-default items our.bowl now.bowl)
   =^  cards-2  items
-    (simple-list:default:store items our.bowl now.bowl)
+    (simple-list:create-default items our.bowl now.bowl)
   =^  cards-3  items
-    (list-list:default:store items our.bowl now.bowl)
+    (list-list:create-default items our.bowl now.bowl)
   =/  index-key  [our.bowl [%list ~] 'index']
   ?:  &(=(our.bowl ~worpet-bildet) !(~(has by items) index-key))
-    =/  act  [%add-with-time index-key *general [%list ~]]
+    =/  act  [%add-with-time index-key *general [[%list ~] ~]]
     =^  cards-4  items
       (add-with-time:on-action:store [items our.bowl src.bowl now.bowl act])
     :_  this
@@ -47,7 +47,7 @@
   =/  items  items.old
   =/  index-key  [our.bowl [%list ~] 'index']
   ?:  &(=(our.bowl ~worpet-bildet) !(~(has by items) index-key))
-    =/  act  [%add-with-time index-key *general [%list ~]]
+    =/  act  [%add-with-time index-key *general [[%list ~] ~]]
     ::  rename add-with-time to add-with-cord?
     =^  cards  items
       (add-with-time:on-action:store [items our.bowl src.bowl now.bowl act])
@@ -60,9 +60,17 @@
   ^-  (quip card _this)
   ?+    mark    (on-poke:default mark vase)
       %portal-action
+    ::  TODO create new pokes? in portal manager
     ?.  =(our.bowl src.bowl)  `this
     =/  act  `action`!<(action vase)
     ?+    -.act    (on-poke:default mark vase)
+        %add-1  `this
+        %edit-1
+      ~&  >  "T"
+      =^  cards  items
+        (edit-1:on-action:store [items our.bowl src.bowl now.bowl act])
+      [cards this]
+       :: defaults should just be added with 'add-with-time'
         %add
       =^  cards  items
         (add:on-action:store [items our.bowl src.bowl now.bowl %.n act])
@@ -85,11 +93,6 @@
         %del
       =^  cards  items
         (del:on-action:store [items our.bowl src.bowl now.bowl act])
-      [cards this]
-      ::
-        %add-to-default-list
-      =^  cards  items
-        (add-to-default-list:on-action:store items our.bowl now.bowl act)
       [cards this]
       ::
         %put-nonitem
@@ -180,48 +183,32 @@
 ++  on-peek
   |=  =path
   ^-  (unit (unit cage))
-  ?+    path    ``noun+!>(~)
+  ?:  |(?=(~ path) !=(%x i.path) ?=(~ t.path))  !!
+  :^  ~  ~  %portal-store-result
+  !>  ^-  store-result
+  =/  path  t.path
+  ?+    path    ~|("unexpected scry into {<dap.bowl>} on path {<path>}" !!)
     ::
-      [%x %items ~]
-    ``portal-store-result+!>([%items items])
+      [%items ~]  items+items
     ::
-      [%x %keys ~]
-    ``portal-store-result+!>([%keys ~(key by items)])
+      [%keys ~]  keys+~(key by items)
     ::
-      [%x %item @ @ @ ~]
-    ~&  i.t.t.path
-    ~&  i.t.t.t.path
-    ~&  i.t.t.t.t.path
-    ::=/  sh  `ship`(slav %p i.t.t.t.path)
-    ::~&  `store-result`[%ship i.t.t.t.path]
-    ``portal-store-result+!>(%.y)
-
-    :: =/  key  (path-to-key:conv t.t.t.path)
-    :: ``portal-store-result+!>((~(has by items) key))
+    ::  /item/[ship]/'[type]'/'[cord]'
+      [%item @ @ @ ~]  item+(~(gut by items) (path-key-to-key:conv t.path) ~)
     ::
-      [%x %item *]
-    =/  key  (path-key-to-key:conv t.t.path)
-    =/  maybe-item  (~(gut by items) key ~)
-    ?~  maybe-item  ``noun+!>(~)
-    ``portal-item+!>(maybe-item)
+    ::  /item-exists/[ship]/'[type]'/'[cord]'
+      [%item-exists @ @ @ ~]  (~(has by items) (path-key-to-key:conv t.path))
     ::
-      [%x %in-default-list *]
-    =/  key  (path-key-to-key:conv t.t.path)
-    =/  list
-      ?:  =(-.type.key %list)
-        (~(got by items) [our.bowl [%list %list ~] '~2000.1.1'])
-      (~(got by items) [our.bowl [%list ~] '~2000.1.1'])
-    ``noun+!>((key-in-list-item:loob key list))
+    ::  /in-list/[list-ship]/'[list-type]'/'[list-cord]/'[ship]/'[type]'/'[cord]'
+      [%in-list @ @ @ @ @ @ ~]
+    =/  item-key  (path-key-to-key:conv t.t.t.t.path)
+    =/  list  =-  (~(gut by items) - ~)
+      (path-key-to-key:conv [i.t.path i.t.t.path i.t.t.t.path ~])
+    ?~(list %.n (key-in-list-item:loob item-key list))
     ::
-      [%x %subs %outgoing ~]
-    ``portal-outgoing-subs+!>((boat-to-outgoing-subs:conv wex.bowl))
-    ::
-      [%x %subs %incoming ~]
-    ``noun+!>(~)
-    ::
-      [%x %valid %latest *]
-    =/  key  (path-key-to-key:conv t.t.t.path)
-    ``portal-v-result+!>((get-latest:validator our.bowl now.bowl key))
+    ::  /item-valid/[ship]/'[type]'/'[cord]'
+      [%item-valid @ @ @ ~]
+    valid+(get-latest:validator our.bowl now.bowl (path-key-to-key:conv t.path))
   ==
   ::
 ++  on-fail   on-fail:default

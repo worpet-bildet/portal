@@ -89,7 +89,7 @@
     ::  TODO abstract a portal-manager add/edit/etc function which does stuff based on action and type
     ::  maybe not needed? aim for simplicity.
     =/  act-set  %-  silt   ^-  (list term)
-      ~[%add %edit %sub %del %add-to-default-list %put-nonitem %edit-docket %add-item-to-list %purge]
+      ~[%add %add-1 %edit %sub %del %add-to-default-list %put-nonitem %edit-docket %add-item-to-list %purge]
     ?:  (~(has in act-set) -.act)
       ~&  "sending poke"
       :_  this
@@ -189,10 +189,10 @@
       ?+    type.key    !!
           [%enditem %app ~]
         :_  this
-        ~[(act-to-act-card:cards [%edit-docket key treaty] our.bowl %portal-store)]
+        ~[(~(act cards our.bowl %portal-store) [%edit-docket key treaty])]
           [%nonitem %app ~]
         :_  this
-        :~  [(fill-nonitem-app-data:manager [our.bowl [%fill-nonitem-app key treaty]])]
+        :~  [(fill-nonitem:manager [our.bowl [%fill-nonitem-app key treaty]])]
             [%pass wire %agent [ship.key %treaty] %leave ~]
         ==
       ==
@@ -211,7 +211,7 @@
           image.meta.preview
         ==
       :_  this
-      :~  (fill-group-data:manager [our.bowl act])
+      :~  (fill-nonitem:manager [our.bowl act])
           [%pass wire %agent [p.flag.preview %groups] %leave ~]
       ==
     ==

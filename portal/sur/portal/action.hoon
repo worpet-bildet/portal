@@ -7,7 +7,6 @@
       [%edit =key =general =bespoke-input]
       ::  creates item and adds it to specified list
       [%add-item-to-list list-key=[=ship type=[%list ~] =cord] =ship =type =general =bespoke-input]
-      [%add-to-default-list =key]
       [%sub =key]
       [%del =key]
       ::
@@ -25,5 +24,18 @@
       ::
       [%index-as-curator toggle=?]
       [%onboarded toggle=?]
-  ==
+      :: units are optional args
+      [%add-1 ?]
+      $:  %edit-1   =key
+                    title=(unit @t)
+                    link=(unit @t)
+                    description=(unit @t)
+                    tags=(unit tags)
+                    properties=(unit properties)
+                    pictures=(unit pictures)
+                    image=(unit @t)
+                    color=(unit @t)
+                    bespoke-input=(unit bespoke-input)
+      ==
+    ==
 --

@@ -1,14 +1,14 @@
 /-  *portal-data
 /+  portal-json
-|_  res=v-result
+|_  val=valid
 ++  grow
   |%
-  ++  noun  res
-  ++  json  (enjs-v-result:enjs:portal-json res)
+  ++  noun  val
+  ++  json  (enjs-valid:enjs:portal-json val)
   --
 ++  grab
   |%
-  ++  noun  v-result
+  ++  noun  valid
   --
 ++  grad  %noun
 --

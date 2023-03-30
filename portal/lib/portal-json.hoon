@@ -24,16 +24,16 @@
       =/  l  (turn ~(tap by mapp) transform)
       [%o `(map @t json)`(malt l)]
     --
-  ++  enjs-v-result
-    |=  =v-result
+  ++  enjs-valid
+    |=  =valid
     ^-  json
-    ?~  v-result
+    ?~  valid
       %-  pairs
       :~  ['valid' ~]
           ['noResult' b+%.y]
       ==
     %-  pairs
-    :~  ['valid' b++.v-result]
+    :~  ['valid' b++.valid]
         ['noResult' b+%.n]
     ==
   ++  enjs-front-end-update
@@ -102,18 +102,18 @@
       |=  [=bespoke]
       ^-  json
       ?-    -.bespoke
-        %nonitem-ship    s+''
-        %nonitem-group   s+''
-        %nonitem-app     (treaty:enjs:treaty treaty.bespoke)
-        %enditem-app     %-  pairs
+        [%nonitem %ship ~]    s+''
+        [%nonitem %group ~]   s+''
+        [%nonitem %app ~]     (treaty:enjs:treaty treaty.bespoke)
+        [%enditem %app ~]     %-  pairs
                          :~  ['distDesk' s+dist-desk.bespoke]
                              ['signature' (enjs-sig sig.bespoke)]
                              ['treaty' (treaty:enjs:treaty treaty.bespoke)]
                          ==
-        %enditem-other   s+''
-        %list            (enjs-key-list key-list.bespoke)
-        %list-list       (enjs-key-list list-key-list.bespoke)
-        %validity-store  s+''
+        [%enditem %other ~]   s+''
+        [%list ~]            (enjs-key-list key-list.bespoke)
+        [%list %list ~]       (enjs-key-list list-key-list.bespoke)
+        [%validity-store ~]  s+''
       ==
     --
   ++  enjs-social
