@@ -166,5 +166,7 @@ export const unsanitiseTextFieldsRecursive = objectOrText => {
 export const urbitTime = timestamp => {
   // turn this into a date object
   const date = new Date(timestamp);
-  return `${date.getUTCFullYear()}.${date.getUTCMonth()}.${date.getUTCDate()}..${date.getUTCHours()}.${date.getUTCMinutes()}.${date.getUTCSeconds()}`;
+  return `${date.getUTCFullYear()}.${
+    date.getUTCMonth() + 1
+  }.${date.getUTCDate()}..${date.getUTCHours()}.${date.getUTCMinutes()}.${date.getUTCSeconds()}`;
 };
