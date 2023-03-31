@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getDefaultCurators, refreshAppState as _refreshAppState } from "@state/store";
 import { useStore } from "@state/store";
 import { EditGeneralForm } from "@components/Form/EditGeneralForm";
-import { getShortTitle, getType } from "@utils/format";
+import { getShortTitle, getType, urbitTime } from "@utils/format";
 
 export function Edit() {
   const { listkey, itemkey } = useParams();
@@ -31,6 +31,7 @@ export function Edit() {
     setEditItemPoke({
       edit: {
         key: { ...keyObj },
+        text: urbitTime(Date.now()),
         general: { ...general, properties: {} },
         "bespoke-input": { "enditem-other": "" },
       },

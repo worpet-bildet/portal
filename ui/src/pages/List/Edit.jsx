@@ -20,6 +20,7 @@ import {
   validateItemPath,
   getDescription,
   unsanitiseTextFieldsRecursive,
+  urbitTime,
 } from "@utils/format";
 import { usePortal } from "@state/usePortal";
 import { ItemImage } from "@components/Item/ItemImage";
@@ -261,7 +262,7 @@ export function Edit() {
         cord: path,
         type: `/nonitem/${listType}`,
       },
-      text: `${patp}/${path}`,
+      text: urbitTime(Date.now()),
     };
     let x = pokeListItems.map(i => i);
     x.push(newItem);

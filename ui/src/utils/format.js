@@ -160,3 +160,11 @@ export const unsanitiseTextFieldsRecursive = objectOrText => {
   }
   return cloned;
 };
+
+// unixtimestamp to
+// '~2018.5.14..22.31.46'
+export const urbitTime = timestamp => {
+  // turn this into a date object
+  const date = new Date(timestamp);
+  return `${date.getUTCFullYear()}.${date.getUTCMonth()}.${date.getUTCDate()}..${date.getUTCHours()}.${date.getUTCMinutes()}.${date.getUTCSeconds()}`;
+};
