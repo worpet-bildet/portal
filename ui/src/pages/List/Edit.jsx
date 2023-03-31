@@ -93,14 +93,12 @@ export function Edit() {
       item: {
         data: {
           general,
-          bespoke: { keyObj },
+          bespoke: { keyObj, payload },
         },
       },
     } = list;
-    let _pokeListItems = listItems.map(i => {
-      let keyObj = { key: i.keyObj || i.item?.keyObj, text: i.keyStr || i.item?.keyStr };
-      return keyObj;
-    });
+
+    let _pokeListItems = payload.map(i => ({ key: i.keyObj, text: i.text }));
     setPokeListItems(_pokeListItems);
 
     let pokeBespokeKeyString = keyObj?.type?.slice(1).replace(/\//g, "-");
@@ -122,22 +120,19 @@ export function Edit() {
 
   // too much duplicated code here but i'm in a bit of a rush
   const removeItem = i => {
-    const temp = listItems.filter(
+    const {
+      item: {
+        data: {
+          bespoke: { keyObj, payload },
+        },
+      },
+    } = list;
+    const temp = payload.filter(
       li =>
         (li.keyStr && li.keyStr !== i.keyStr) ||
         (li.item?.keyStr && li.item?.keyStr !== i.item?.keyStr)
     );
-    const {
-      item: {
-        data: {
-          bespoke: { keyObj },
-        },
-      },
-    } = list;
-    let _pokeListItems = temp.map(i => {
-      let keyObj = { key: i.keyObj || i.item?.keyObj, text: i.keyStr || i.item?.keyStr };
-      return keyObj;
-    });
+    let _pokeListItems = temp.map(i => ({ key: i.keyObj, text: i.text }));
     let pokeBespokeKeyString = keyObj?.type?.slice(1).replace(/\//g, "-");
     const poke = {
       edit: {
@@ -268,7 +263,6 @@ export function Edit() {
     x.push(newItem);
     setPokeListItems(x);
     let poke = {
-      // edit: { ...editListPoke.edit, "bespoke-input": { [pokeListType]: x } },
       edit: {
         ...editListPoke.edit,
         "bespoke-input": { [pokeListType]: { [typesOfBespokeInput[pokeListType]]: x } },
