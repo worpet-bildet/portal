@@ -1,6 +1,7 @@
 import React, { Fragment, useEffect } from "react";
+import ReactGA4 from "react-ga4";
 import ResponsiveAppBar from "./AppBar";
-import { Outlet, useMatch, useNavigate } from "react-router-dom";
+import { Outlet, useMatch, useNavigate, useLocation } from "react-router-dom";
 
 export default function Layout() {
   const navigate = useNavigate();
@@ -8,6 +9,15 @@ export default function Layout() {
   useEffect(() => {
     if (atRoot) navigate("/~worpet-bildet");
   }, [atRoot]);
+
+  const location = useLocation();
+  useEffect(() => {
+    ReactGA4.send({
+      hitType: "pageview",
+      page: location.pathname,
+      title: location.pathname,
+    });
+  }, [location]);
 
   return (
     <Fragment>

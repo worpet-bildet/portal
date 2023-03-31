@@ -75,7 +75,7 @@ export default function AppBar() {
   const MySigil = () => {
     // sigil-js can't render moons
     return (
-      <NavLink to={`~${myShip}`}>
+      <NavLink to={`~${myShip}`} key={myShip}>
         {sigil({
           patp: myShip?.length < "14" ? myShip : "worpet-bildet",
           renderer: reactRenderer,
@@ -164,15 +164,12 @@ export default function AppBar() {
             <div className="space-y-1 px-2 pt-2 pb-3">
               {navigation.map(item =>
                 item.name === "Feedback" ? (
-                  <div className="w-full flex flex-row justify-end">
+                  <div className="w-full flex flex-row justify-end" key={item.name}>
                     <a
-                      key={item.name}
                       className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium cursor-pointer"
                       onClick={() => {
                         joinFeedbackGroup(item.href);
                       }}
-                      // href={item.href}
-                      // target="_blank"
                     >
                       Feedback
                     </a>
