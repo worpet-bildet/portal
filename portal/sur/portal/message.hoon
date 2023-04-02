@@ -13,5 +13,8 @@
       [%sign-app =key =signature]
       ::
       [%index-as-curator src=ship toggle=?]
+      ::
+      [%feed-update src=ship =key-text-list]
+      [%feed =feed]
   ==
 --

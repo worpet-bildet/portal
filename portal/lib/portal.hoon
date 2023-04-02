@@ -1,5 +1,5 @@
 /-  *portal-data, *portal-update, *portal-action, *portal-front-end-update,
-    *portal-config
+    *portal-config, *portal-message
 /+  sig, agentio, mip
 |%
 +$  card  card:agent:gall
@@ -326,6 +326,11 @@
     |=  [=action our=ship app=term]
     ^-  card
     [%pass /act %agent [our app] %poke %portal-action !>(action)]
+  ::
+  ++  msg-to-msg-card
+    |=  [=message our=ship app=term]
+    ^-  card
+    [%pass /act %agent [our app] %poke %portal-message !>(message)]
   ::
   ++  upd-to-upd-card
     |=  [our=ship =update]
@@ -732,12 +737,12 @@
       ==
     ::
     ++  add-item-to-list  ::TODO /list/app
-      |=  [=all-items our=ship src=ship now=time act=[%add-item-to-list list-key=[=ship type=?([%list %app ~] [%list %enditem %other ~]) =cord] =ship =type =general =bespoke-input]]
+      |=  [=all-items our=ship src=ship now=time act=[%add-item-to-list list-key=[=ship type=?([%list %app ~] [%list %enditem %other ~]) =cord] =ship =type =general =bespoke-input text=cord]]
       ^-  [(list card) ^all-items]
       =/  list  (~(got by all-items) list-key.act)
       ?+    -.bespoke.data.list    [~ all-items]
           %list-enditem-other
-        =/  bespoke-input  [%list-enditem-other (snoc other-key-list.bespoke.data.list [[ship.act [%enditem %other ~] `@t`(scot %da now)] 'Auto-recommended'])]
+        =/  bespoke-input  [%list-enditem-other (snoc other-key-list.bespoke.data.list [[ship.act [%enditem %other ~] `@t`(scot %da now)] text.act])]
         =/  list-act  [%edit list-key.act general.data.list bespoke-input]
         =^  cards1  all-items
           (add-with-time all-items our src now [%add-with-time [ship.act type.act `@t`(scot %da now)] general.act bespoke-input.act])
@@ -918,7 +923,7 @@
     ++  index-as-curator  ::idempotent toggle
       |=  [=all-items our=ship src=ship now=time act=[%index-as-curator src=ship toggle=?]]
       ^-  [(list card) ^all-items]
-      ?>  =(our ~worpet-bildet)
+      ?>  =(our ~master-dilryd-mopreg)
       =/  index-key  [our [%list %nonitem %ship ~] 'index']
       =/  index  (~(gut by all-items) index-key ~)
       ?~  index  ~&  "%portal-store: index doesn't exist"  [~ all-items]
@@ -1212,55 +1217,53 @@
     ::  how do we as a user/curator go around discovering/addign items
     ::  do lists from those items get auto fetched if we added them?
     ++  put
-      |=  [our=ship now=time upd=[%put =key =item]]
+      |=  [our=ship now=time portal-indexer=@p upd=[%put =key =item]]
       ^-  (list card)
-      ?:  &(=(-.type.key.upd %validity-store) =(our ship.key.upd))
-        ~
-      ?:  =(-.type.key.upd %nonitem)
-        ~
-      %+  weld
-        ?.  =(our ship.key.upd)  ~
-        ?+    type.key.upd    ~
-          ::   [%enditem %other ~]
-          :: ?:  (in-default-list:scry our now key.upd)  ~
-          :: ~[(act-to-act-card:cards [%add-to-default-list key.upd] our %portal-store)]
-            [%enditem %app ~]
-          ?+    -.bespoke.data.item.upd    !!
-              %enditem-app
-            =/  dist-desk  (parse-dist-desk:misc dist-desk.bespoke.data.item.upd)
-            ::%+  weld
-            ?~  dist-desk  ~
-            ~[(act-to-act-card:cards [%get-docket key.upd -.u.dist-desk +.u.dist-desk] our %portal-manager)]
-            :: ?:  (in-default-list:scry our now key.upd)  ~
-            :: ~[(act-to-act-card:cards [%add-to-default-list key.upd] our %portal-store)]
-          ==
+      %+  welp
+      ?+    type.key.upd
+        ::  default
+          ~
+        ::
+          [%validity-store ~]  ~
+        ::
+          [%nonitem @ ~]  ~
+        ::
+        ::   [%enditem %app ~]
+        :: ?.  =(our ship.key.upd)  ~
+        :: =/  dist-desk  (parse-dist-desk:misc dist-desk.bespoke.data.item.upd)
+        :: ?~  dist-desk  ~
+        :: ~[(act-to-act-card:cards [%get-docket key.upd -.u.dist-desk +.u.dist-desk] our %portal-manager)]
+        ::
+          [%list *]
+        %-  zing
+        :~  (sub-to-list-keys our now item.upd)
+            (get-list-nonitems our now item.upd)
+            ?.  =(our ship.key.upd)  ~
+            ?+    -.bespoke.data.item.upd    ~
+                %list-app
+              %+  weld
+              ~[(msg-to-msg-card:cards [%feed-update our app-key-list.bespoke.data.item.upd] portal-indexer %portal-manager)]
+              ?:  (in-default-list:scry our now key.bespoke.data.item.upd)  ~
+              ~[(act-to-act-card:cards [%add-to-default-list key.bespoke.data.item.upd] our %portal-store)]
+                %list-nonitem-group
+              %+  weld
+              ~[(msg-to-msg-card:cards [%feed-update our group-key-list.bespoke.data.item.upd] portal-indexer %portal-manager)]
+              ?:  (in-default-list:scry our now key.bespoke.data.item.upd)  ~
+              ~[(act-to-act-card:cards [%add-to-default-list key.bespoke.data.item.upd] our %portal-store)]
+                %list-enditem-other
+              %+  weld
+              ~[(msg-to-msg-card:cards [%feed-update our other-key-list.bespoke.data.item.upd] portal-indexer %portal-manager)]
+              ?:  (in-default-list:scry our now key.bespoke.data.item.upd)  ~
+              ~[(act-to-act-card:cards [%add-to-default-list key.bespoke.data.item.upd] our %portal-store)]
+                %list-nonitem-ship
+              %+  weld
+              ~[(msg-to-msg-card:cards [%feed-update our ship-key-list.bespoke.data.item.upd] portal-indexer %portal-manager)]
+              ?:  (in-default-list:scry our now key.bespoke.data.item.upd)  ~
+              ~[(act-to-act-card:cards [%add-to-default-list key.bespoke.data.item.upd] our %portal-store)]
+            ==
         ==
-      %+  weld
-        ?+    -.type.key.upd    ~
-            %list
-          %-  zing
-          :~  (sub-to-list-keys our now item.upd)
-              (get-list-nonitems our now item.upd)
-              ?.  =(our ship.key.upd)  ~
-              ?+    type.key.upd    ~
-                  [%list %app ~]
-                ?:  (in-default-list:scry our now key.upd)  ~
-                ~[(act-to-act-card:cards [%add-to-default-list key.upd] our %portal-store)]
-                  [%list %nonitem %group ~]
-                ?:  (in-default-list:scry our now key.upd)  ~
-                ~[(act-to-act-card:cards [%add-to-default-list key.upd] our %portal-store)]
-                  [%list %enditem %other ~]
-                ?:  (in-default-list:scry our now key.upd)  ~
-                ~[(act-to-act-card:cards [%add-to-default-list key.upd] our %portal-store)]
-                  [%list %nonitem %ship ~]
-                ?:  (in-default-list:scry our now key.upd)  ~
-                ~[(act-to-act-card:cards [%add-to-default-list key.upd] our %portal-store)]
-              ==
-          ==
-        ==
-      =/  val  (default-v1:validator our now key.upd item.upd)
-      ?~  val  ~
-      val
+      ==
+      (default-v1:validator our now key.upd item.upd)
     ::
     ++  del
       |=  [upd=[%del =key]]
@@ -1388,6 +1391,7 @@
         ~[(act-to-act-card:cards [%put-nonitem key [data meta *social *signature]] our %portal-store)]
           [%nonitem %app ~]
         =/  data  [[%nonitem-app key(type [%nonitem %app ~]) *treaty] *general]
+        ~&  key
         :~  (act-to-act-card:cards [%put-nonitem key [data meta *social *signature]] our %portal-store)
             (act-to-act-card:cards [%get-docket key ship.key cord.key] our %portal-manager)
         ==
