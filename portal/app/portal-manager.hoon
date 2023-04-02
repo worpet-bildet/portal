@@ -5,6 +5,7 @@
 +$  versioned-state
   $%  state-0
       state-1
+      state-2
   ==
 +$  state-0
   $:  %0
@@ -21,10 +22,21 @@
       indexed-as-curator=?
       onboarded=?
   ==
++$  state-2
+  $:  %2
+      =feed
+      =default-curators
+      =portal-curator
+      purge-timer=?
+      purge-time=@dr
+      portal-indexer=@p
+      indexed-as-curator=?
+      onboarded=?
+  ==
 +$  card  card:agent:gall
 --
 %-  agent:dbug
-=|  state-1
+=|  state-2
 =*  state  -
 ^-  agent:gall
 |_  =bowl:gall
@@ -37,10 +49,12 @@
   =/  portal-curator      [~worpet-bildet /list/list '~2000.1.1']
   =/  purge-timer         %.y
   =/  purge-time          ~d1
-  =/  portal-indexer      ~worpet-bildet
+  =/  portal-indexer      ~master-dilryd-mopreg
   =/  indexed-as-curator  %.n
   =/  onboarded           %.n
+  =/  feed                *^feed
   :_  %=  this
+        feed                feed
         default-curators    default-curators
         portal-curator      portal-curator
         purge-timer         purge-timer
@@ -66,14 +80,15 @@
   =/  purge-time  ~d1
   ?-    -.old
       %0
-    :_  this(state [%1 default-curators.old portal-curator.old %.y purge-time ~worpet-bildet %.n %.n])
+    :_  this(state [%2 *^feed default-curators.old portal-curator.old %.y purge-time ~master-dilryd-mopreg %.n %.n])
     [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]~
       %1
-    ?:  =(purge-timer %.y)  `this(state old)
-      ::  TODO
-      ::  cancel old timer
-      ::  add new one with new purge-time
-    :_  this(purge-timer %.y)
+    :_  this(state [%2 *^feed +.old])
+    ?:  =(purge-timer %.y)  ~
+    [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]~
+      %2
+    :_  this(state old)
+    ?:  =(purge-timer %.y)  ~
     [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]~
   ==
 ::
@@ -171,7 +186,9 @@
       :_  this
       ?~  sub-status
         [%pass wire %agent [ship.act %treaty] %watch path]~
-      ~
+      :~  [%pass wire %agent [ship.act %treaty] %leave ~]
+          [%pass wire %agent [ship.act %treaty] %watch path]
+      ==
     ==
     ::
       %portal-message
@@ -187,6 +204,24 @@
       ?>  =(src.bowl src.msg)
       :_  this
       ~[(~(poke pass:io /msg) [our.bowl %portal-store] portal-message+vase)]
+      ::
+        %feed-update
+      ?>  =(src.bowl src.msg)
+      ?>  =(our.bowl portal-indexer)
+
+      ~&  >  "%portal-manager: got feed update"
+      ::  TODO too much subbing/network traffic???
+      ::
+      ::
+      ::  key-text-list key time
+      =/  feed  %+  weld
+      (turn key-text-list.msg |=([=key text=cord] [text src.msg key]))
+      feed
+      ::  handler za ako dobijem 'auto recommended' a ne vrijeme
+      ::     pokusat parseat kao vrijeme, ako faila ne stavit
+      ::  just weld, and when everything work, sort correctly
+      ~&  feed
+      `this(feed feed)
     ==
 
     ::
@@ -199,7 +234,7 @@
     ?+    -.upd    (on-poke:default mark vase)
         %put
       :_  this
-      (put:on-update:portal-manager our.bowl now.bowl upd)
+      (put:on-update:portal-manager our.bowl now.bowl portal-indexer upd)
       ::
         %del
       :_  this
