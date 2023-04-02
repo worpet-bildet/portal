@@ -49,7 +49,7 @@
       =sig
   ==
 ::
-::
+::  put general first?
 +$  data
   $:  =bespoke
       =general
@@ -91,25 +91,12 @@
 +$  pictures  (list @t)
 ::
 ::  data specific to the item type
-::  TODO how to branch on path instead of just tag?
 +$  bespoke
   $%  [[%nonitem %ship ~] ~]
       [[%nonitem %group ~] ~]
       [[%nonitem %app ~] =treaty]
       [[%enditem %other ~] ~]
       [[%enditem %app ~] dist-desk=@t sig=signature =treaty]
-      [[%list ~] =key-list]
-      [[%list %list ~] =list-key-list]
-      [[%validity-store ~] =validity-records]
-  ==
-::
-::  when inputting bespoke data, you sometimes don't need to input all of it
-+$  bespoke-input
-  $%  [[%nonitem %ship ~] ~]
-      [[%nonitem %group ~] ~]
-      [[%nonitem %app ~] ~]
-      [[%enditem %other ~] ~]
-      [[%enditem %app ~] dist-desk=@t]
       [[%list ~] =key-list]
       [[%list %list ~] =list-key-list]
       [[%validity-store ~] =validity-records]

@@ -252,9 +252,9 @@
     %-  action
     %.  jon
     %-  of
-    :~  [%add (ot ~[ship+dejs-ship type+dejs-type general+dejs-general bespoke-input+dejs-bespoke-input])]
-        [%add-item-to-list (ot ~[list-key+dejs-key ship+dejs-ship type+dejs-type general+dejs-general bespoke-input+dejs-bespoke-input])]
-        [%edit (ot ~[key+dejs-key general+dejs-general bespoke-input+dejs-bespoke-input])]
+    :~  [%add (ot ~[ship+dejs-ship type+dejs-type general+dejs-general bespoke+dejs-bespoke])]
+        [%add-item-to-list (ot ~[list-key+dejs-key ship+dejs-ship type+dejs-type general+dejs-general bespoke+dejs-bespoke])]
+        [%edit (ot ~[key+dejs-key general+dejs-general bespoke+dejs-bespoke])]
         [%sub (ot ~[key+dejs-key])]
         [%del (ot ~[key+dejs-key])]
         [%index-as-curator (ot ~[toggle+bo])]
@@ -273,9 +273,9 @@
         image+so
         color+so
     ==
-  ++  dejs-bespoke-input
+  ++  dejs-bespoke
     |=  jon=json
-    %-  bespoke-input
+    %-  bespoke
     %.  jon
     %-  of
     :~  [%list (ot ~[key-list+dejs-key-list])]

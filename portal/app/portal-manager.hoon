@@ -125,7 +125,9 @@
       :_  this
       ?~  sub-status
         [%pass wire %agent [ship.act %treaty] %watch path]~
-      ~
+      :~  [%pass wire %agent [ship.act %treaty] %leave ~]
+          [%pass wire %agent [ship.act %treaty] %watch path]
+      ==
     ==
     ::
       %portal-message

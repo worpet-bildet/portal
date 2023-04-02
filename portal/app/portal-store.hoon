@@ -66,10 +66,12 @@
     ?+    -.act    (on-poke:default mark vase)
         %add-1  `this
         %edit-1
-      ~&  >  "T"
-      =^  cards  items
-        (edit-1:on-action:store [items our.bowl src.bowl now.bowl act])
-      [cards this]
+      =/  item  (~(gut by items) key.act ~)
+      ?~  item  `this
+      =.  item
+        (edit-1:on-action:store [our.bowl now.bowl item act])
+      =.  items  (~(put by items) key.item item)
+      `this
        :: defaults should just be added with 'add-with-time'
         %add
       =^  cards  items

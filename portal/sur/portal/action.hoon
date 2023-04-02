@@ -2,11 +2,11 @@
 |%
 ::
 +$  action
-  $%  [%add =ship =type =general =bespoke-input]
-      [%add-with-time =key =general =bespoke-input]
-      [%edit =key =general =bespoke-input]
+  $%  [%add =ship =type =general =bespoke]
+      [%add-with-time =key =general =bespoke]
+      [%edit =key =general =bespoke]
       ::  creates item and adds it to specified list
-      [%add-item-to-list list-key=[=ship type=[%list ~] =cord] =ship =type =general =bespoke-input]
+      [%add-item-to-list list-key=[=ship type=[%list ~] =cord] =ship =type =general =bespoke]
       [%sub =key]
       [%del =key]
       ::
@@ -25,7 +25,19 @@
       [%index-as-curator toggle=?]
       [%onboarded toggle=?]
       :: units are optional args
-      [%add-1 ?]
+      $:  %add-1    ship=(unit ship)
+                    type=(unit type)
+                    cord=(unit cord)
+                    title=(unit @t)
+                    link=(unit @t)
+                    description=(unit @t)
+                    tags=(unit tags)
+                    properties=(unit properties)
+                    pictures=(unit pictures)
+                    image=(unit @t)
+                    color=(unit @t)
+                    bespoke=(unit bespoke)
+      ==
       $:  %edit-1   =key
                     title=(unit @t)
                     link=(unit @t)
@@ -35,7 +47,7 @@
                     pictures=(unit pictures)
                     image=(unit @t)
                     color=(unit @t)
-                    bespoke-input=(unit bespoke-input)
+                    bespoke=(unit bespoke)
       ==
     ==
 --
