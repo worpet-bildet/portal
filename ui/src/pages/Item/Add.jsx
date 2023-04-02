@@ -4,6 +4,7 @@ import { getDefaultCurators, refreshAppState as _refreshAppState } from "@state/
 import { useStore } from "@state/store";
 import { usePortal } from "@state/usePortal";
 import { EditGeneralForm } from "@components/Form/EditGeneralForm";
+import { urbitTime } from "@utils/format";
 
 export function Add() {
   const { listkey } = useParams();
@@ -41,6 +42,7 @@ export function Add() {
         "list-key": { ...list?.item?.keyObj },
         ship: `~${ship}`,
         type,
+        text: urbitTime(Date.now()),
         general: { ...defaultGeneral },
         "bespoke-input": { "enditem-other": "" },
       },
