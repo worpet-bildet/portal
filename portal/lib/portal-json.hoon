@@ -308,6 +308,21 @@
     :-  %a
     %+  turn  key-list
     |=(=key (enjs-jam-key key))
+  ++  enjs-feed
+    |=  [=feed]
+    ^-  json
+    :-  %a
+    %+  turn  feed
+    |=([time=cord =^ship =key] (enjs-time-ship-key time ship key))
+  ++  enjs-time-ship-key
+    |=  [time=cord =^ship =key]
+    ^-  json
+    %-  pairs
+    :~  ['keyStr' (enjs-jam-key key)]
+        ['keyObj' (enjs-key key)]
+        ['time' s+time]
+        ['ship' s+`@t`(scot %p ship)]
+    ==
   ++  enjs-key-text-list
     |=  =key-text-list
     ^-  json

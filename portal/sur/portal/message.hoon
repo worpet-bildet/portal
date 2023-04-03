@@ -14,7 +14,8 @@
       ::
       [%index-as-curator src=ship toggle=?]
       ::
-      [%feed-update src=ship =key-text-list]
+      ::  updates indexer with new stuff for the feed
+      [%feed-update src=ship =feed]
       [%feed =feed]
   ==
 --

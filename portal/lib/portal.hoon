@@ -1217,16 +1217,16 @@
     ::  how do we as a user/curator go around discovering/addign items
     ::  do lists from those items get auto fetched if we added them?
     ++  put
-      |=  [our=ship now=time portal-indexer=@p upd=[%put =key =item]]
-      ^-  (list card)
-      %+  welp
+      |=  [our=ship now=time my-feed=feed portal-indexer=@p upd=[%put =key =item]]
+      ^-  [(list card) feed]
+      :: %+  welp
       ?+    type.key.upd
         ::  default
-          ~
+          [~ my-feed]
         ::
-          [%validity-store ~]  ~
+          [%validity-store ~]  [~ my-feed]
         ::
-          [%nonitem @ ~]  ~
+          [%nonitem @ ~]  [~ my-feed]
         ::
         ::   [%enditem %app ~]
         :: ?.  =(our ship.key.upd)  ~
@@ -1235,40 +1235,82 @@
         :: ~[(act-to-act-card:cards [%get-docket key.upd -.u.dist-desk +.u.dist-desk] our %portal-manager)]
         ::
           [%list *]
+        =/  [cards=(list card) new-my-feed=feed]
+          ?.  =(our ship.key.upd)  [~ my-feed]
+          ?+    -.bespoke.data.item.upd    [~ my-feed]
+              %list-app
+            =/  out  (update-my-feed portal-indexer our app-key-list.bespoke.data.item.upd my-feed)
+            :-  %+  weld
+            ?:  (in-default-list:scry our now key.bespoke.data.item.upd)  ~
+            ~[(act-to-act-card:cards [%add-to-default-list key.bespoke.data.item.upd] our %portal-store)]
+              -.out
+            +.out
+              %list-nonitem-group
+            =/  out  (update-my-feed portal-indexer our group-key-list.bespoke.data.item.upd my-feed)
+            :-  %+  weld
+            ?:  (in-default-list:scry our now key.bespoke.data.item.upd)  ~
+            ~[(act-to-act-card:cards [%add-to-default-list key.bespoke.data.item.upd] our %portal-store)]
+              -.out
+            +.out
+              %list-enditem-other
+            =/  out  (update-my-feed portal-indexer our other-key-list.bespoke.data.item.upd my-feed)
+            :-  %+  weld
+            ?:  (in-default-list:scry our now key.bespoke.data.item.upd)  ~
+            ~[(act-to-act-card:cards [%add-to-default-list key.bespoke.data.item.upd] our %portal-store)]
+              -.out
+            +.out
+              %list-nonitem-ship
+            =/  out  (update-my-feed portal-indexer our ship-key-list.bespoke.data.item.upd my-feed)
+            :-  %+  weld
+            ?:  (in-default-list:scry our now key.bespoke.data.item.upd)  ~
+            ~[(act-to-act-card:cards [%add-to-default-list key.bespoke.data.item.upd] our %portal-store)]
+              -.out
+            +.out
+          ==
+        :_  new-my-feed
         %-  zing
         :~  (sub-to-list-keys our now item.upd)
             (get-list-nonitems our now item.upd)
-            ?.  =(our ship.key.upd)  ~
-            ?+    -.bespoke.data.item.upd    ~
-                %list-app
-              %+  weld
-              ~[(msg-to-msg-card:cards [%feed-update our app-key-list.bespoke.data.item.upd] portal-indexer %portal-manager)]
-              ?:  (in-default-list:scry our now key.bespoke.data.item.upd)  ~
-              ~[(act-to-act-card:cards [%add-to-default-list key.bespoke.data.item.upd] our %portal-store)]
-                %list-nonitem-group
-              %+  weld
-              ~[(msg-to-msg-card:cards [%feed-update our group-key-list.bespoke.data.item.upd] portal-indexer %portal-manager)]
-              ?:  (in-default-list:scry our now key.bespoke.data.item.upd)  ~
-              ~[(act-to-act-card:cards [%add-to-default-list key.bespoke.data.item.upd] our %portal-store)]
-                %list-enditem-other
-              %+  weld
-              ~[(msg-to-msg-card:cards [%feed-update our other-key-list.bespoke.data.item.upd] portal-indexer %portal-manager)]
-              ?:  (in-default-list:scry our now key.bespoke.data.item.upd)  ~
-              ~[(act-to-act-card:cards [%add-to-default-list key.bespoke.data.item.upd] our %portal-store)]
-                %list-nonitem-ship
-              %+  weld
-              ~[(msg-to-msg-card:cards [%feed-update our ship-key-list.bespoke.data.item.upd] portal-indexer %portal-manager)]
-              ?:  (in-default-list:scry our now key.bespoke.data.item.upd)  ~
-              ~[(act-to-act-card:cards [%add-to-default-list key.bespoke.data.item.upd] our %portal-store)]
-            ==
+            cards
         ==
       ==
-      (default-v1:validator our now key.upd item.upd)
+      :: (default-v1:validator our now key.upd item.upd)
     ::
     ++  del
       |=  [upd=[%del =key]]
       ^-  (list card)
       ~
+    ::
+      :: find ship + key
+      ::   ship+key=ship+key
+      ::   - if yes -> if time=time -> nothing
+      ::            -> if no -> prepend, and DONT delete previous
+      ::   - if no -> prepend
+
+    ++  update-my-feed
+      |=  [portal-indexer=ship our=ship =key-text-list my-feed=feed]
+      ^-  [(list card) feed]
+      =/  feed-upd  (turn key-text-list |=([=key text=cord] [text our key]))
+      =/  n  0
+      =/  len  (lent feed-upd)
+      =/  new-feed-upd  *feed
+      |-  ?:  =(n len)
+        ~&  "new-feed-upd"
+        ~&  >  new-feed-upd
+        ~&  "my-feed"
+        ~&  >  my-feed
+        ~&  "new-my-feed"
+        ~&  (weld new-feed-upd my-feed)
+        ::  TODO test that it works correctly
+        ::  NOTE revisit the 1000 limit of edit history. if the person gets over it,
+        ::  old stuff starts showing up in portal-indexer full-feed
+        :_  (oust [1.000 (lent new-feed-upd)] (weld new-feed-upd my-feed))
+        ~[(msg-to-msg-card:cards [%feed-update our new-feed-upd] portal-indexer %portal-manager)]
+      =/  key-text  (snag n feed-upd)
+      %=  $
+        n  +(n)
+        new-feed-upd  ~&  new-feed-upd  ?~((find [key-text]~ my-feed) (snoc new-feed-upd key-text) new-feed-upd)
+      ==
     --
   ::
   ++  get-list-nonitems
@@ -1391,7 +1433,6 @@
         ~[(act-to-act-card:cards [%put-nonitem key [data meta *social *signature]] our %portal-store)]
           [%nonitem %app ~]
         =/  data  [[%nonitem-app key(type [%nonitem %app ~]) *treaty] *general]
-        ~&  key
         :~  (act-to-act-card:cards [%put-nonitem key [data meta *social *signature]] our %portal-store)
             (act-to-act-card:cards [%get-docket key ship.key cord.key] our %portal-manager)
         ==

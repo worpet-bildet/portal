@@ -24,7 +24,9 @@
   ==
 +$  state-2
   $:  %2
-      =feed
+      my-feed=feed
+      latest-feed=feed
+      full-feed=feed
       =default-curators
       =portal-curator
       purge-timer=?
@@ -54,7 +56,9 @@
   =/  onboarded           %.n
   =/  feed                *^feed
   :_  %=  this
-        feed                feed
+        my-feed             feed
+        latest-feed         feed
+        full-feed           feed
         default-curators    default-curators
         portal-curator      portal-curator
         purge-timer         purge-timer
@@ -80,15 +84,17 @@
   =/  purge-time  ~d1
   ?-    -.old
       %0
-    :_  this(state [%2 *^feed default-curators.old portal-curator.old %.y purge-time ~master-dilryd-mopreg %.n %.n])
+    :_  this(state [%2 *^feed *^feed *^feed default-curators.old portal-curator.old %.y purge-time ~master-dilryd-mopreg %.n %.n])
     [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]~
       %1
-    :_  this(state [%2 *^feed +.old])
-    ?:  =(purge-timer %.y)  ~
+    :_  this(state [%2 *^feed *^feed *^feed +.old])
+    ?:  =(purge-timer.old %.y)  ~
     [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]~
       %2
-    :_  this(state old)
-    ?:  =(purge-timer %.y)  ~
+      :_  this(state old)
+    %+  welp
+    [%pass /feed %agent [portal-indexer.old %portal-manager] %watch /feed]~
+    ?:  =(purge-timer.old %.y)  ~
     [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]~
   ==
 ::
@@ -202,26 +208,36 @@
       ::  TODO implement for all
         %index-as-curator
       ?>  =(src.bowl src.msg)
+      ?>  =(our.bowl portal-indexer)
       :_  this
       ~[(~(poke pass:io /msg) [our.bowl %portal-store] portal-message+vase)]
       ::
+      ::  add new stuff to feed
         %feed-update
       ?>  =(src.bowl src.msg)
       ?>  =(our.bowl portal-indexer)
-
       ~&  >  "%portal-manager: got feed update"
-      ::  TODO too much subbing/network traffic???
       ::
-      ::
-      ::  key-text-list key time
-      =/  feed  %+  weld
-      (turn key-text-list.msg |=([=key text=cord] [text src.msg key]))
-      feed
+            :: feed as item????
+            :: limit to 200 items
+            ::
+            :: SSS to 200 key feed
+            ::
+      ::  TODO test ousting with smaller lengths
+      =.  full-feed  (oust [200 (lent feed.msg)] (weld feed.msg full-feed))
+      ~&  >  "new feed"
+      ~&  full-feed
+      :_  this
+      [%give %fact [/feed]~ %portal-feed !>(full-feed)]~
+
+
       ::  handler za ako dobijem 'auto recommended' a ne vrijeme
       ::     pokusat parseat kao vrijeme, ako faila ne stavit
       ::  just weld, and when everything work, sort correctly
-      ~&  feed
-      `this(feed feed)
+      :: ~&  feed
+      :: `this(feed feed)
+      :: start/offset scry za  keyeve
+      :: user should keep requesting keys from the index basically
     ==
 
     ::
@@ -233,8 +249,9 @@
     =/  upd  !<(update vase)
     ?+    -.upd    (on-poke:default mark vase)
         %put
-      :_  this
-      (put:on-update:portal-manager our.bowl now.bowl portal-indexer upd)
+      =^  cards  my-feed
+      (put:on-update:portal-manager our.bowl now.bowl my-feed portal-indexer upd)
+      [cards this]
       ::
         %del
       :_  this
@@ -252,12 +269,23 @@
       [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]
   ==
 ::
-++  on-watch  on-watch:default
+++  on-watch
+  |=  =path
+  ^-  (quip card _this)
+   ~&  >  "got request"
+   ~&  src.bowl
+  ?:  =(path /feed)
+    :_  this
+    [%give %fact ~ %portal-feed !>(`feed`full-feed)]~
+  `this
+::
 ++  on-leave  on-leave:default
 ++  on-peek
   |=  =path
   ^-  (unit (unit cage))
   ?+    path    (on-peek:default path)
+      [%x %feed ~]
+    ``portal-feed+!>(full-feed)
       [%x %indexed-as-curator ~]
     ``bool+!>(indexed-as-curator)
       [%x %onboarded ~]
@@ -267,6 +295,17 @@
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
   ?+    wire    (on-agent:default wire sign)
+      [%feed ~]
+    ~&  >  "GOT FEED SUB RESPONSE"
+    ?+    -.sign    (on-agent:default wire sign)
+        %watch-ack  `this
+        %kick       `this
+      ::
+        %fact
+      =.  full-feed  !<(feed q.cage.sign)
+      ~&  >>  "full-feed changeD?"
+      `this
+    ==
       [%treaty *]
     ?+    -.sign    (on-agent:default wire sign)
         %watch-ack  `this
