@@ -89,11 +89,11 @@ export const getWebsite = (val, type) => {
 
 export const getImage = (data, groups) => {
   return (
-    data?.data?.general?.image ||
-    data?.general?.image ||
-    data?.icon?.src ||
-    data?.bespoke?.payload?.docket?.image ||
     data?.bespoke?.payload?.image ||
+    data?.bespoke?.payload?.docket?.image ||
+    data?.general?.image ||
+    data?.data?.general?.image ||
+    data?.icon?.src ||
     (groups ? groups[`${data?.keyObj?.ship}/${data?.keyObj?.cord}`]?.meta?.image : false)
   );
 };
@@ -172,3 +172,20 @@ export const urbitTime = timestamp => {
     date.getUTCSeconds() < 10 ? "0" + date.getUTCSeconds() : date.getUTCSeconds()
   }`;
 };
+
+// unixtimestamp from
+// '~2018.5.14..22.31.46'
+export const fromUrbitTime = timestring => {
+  let parts = timestring.split(".");
+  const date = new Date(
+    parts[0].substring(1),
+    parts[1] - 1,
+    parts[2],
+    parts[4],
+    parts[5],
+    parts[6]
+  );
+  return date.getTime();
+};
+export const getColor = data =>
+  data?.bespoke?.payload?.color?.split(".").join("").substring(2);

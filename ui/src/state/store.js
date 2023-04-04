@@ -1,21 +1,27 @@
 import produce from "immer";
 import keyBy from "lodash/keyBy";
 import { createStore } from "./middleware";
-import { getState } from "./usePortal";
+import { getState, getFeed as getFeedItems } from "./usePortal";
 
 export const mergeStateUpdate = state => state.mergeStateUpdate;
 export const getDefaultCurators = state => state.defaultCurators;
-export const onInitialLoad = state => state.onInitialLoad;
+export const getFeed = state => state.feed;
 export const onUpdate = state => state.onUpdate;
 export const refreshAppState = state => state.refreshAppState;
 
 export const useStore = createStore((set, get) => ({
   defaultCurators: {},
+  feed: [],
   refreshAppState: async () => {
-    get().onInitialLoad(getState);
+    get().indexAll(await getState());
+    get().onFeed(await getFeedItems());
   },
-  onInitialLoad: async initialState => {
-    get().indexAll(await initialState());
+  onFeed: async feed => {
+    set(
+      produce(draft => {
+        draft.feed = feed;
+      })
+    );
   },
   mergeStateUpdate: update => {
     set(

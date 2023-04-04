@@ -6,7 +6,7 @@ import Modal from "react-modal";
 
 import { getTitles } from "@utils/format";
 import { getWebsite } from "@utils/format";
-import { getDescription } from "@utils/format";
+import { getDescription, getColor } from "@utils/format";
 
 import { ItemModal } from "./ItemModal";
 import { ItemImage } from "./ItemImage";
@@ -62,7 +62,6 @@ export function ItemTile(props) {
     );
   };
 
-  const getColor = () => data?.bespoke?.payload?.color?.split(".").join("").substring(2);
   return data ? (
     <li className={`flex mr-5 text-sm leading-tight ${isJoined ? `"` : ""}`}>
       {/* TODO: Think about wrapping this modal so there is no need for inline style here */}
@@ -119,7 +118,7 @@ export function ItemTile(props) {
                   container={imageContainerRef}
                   type={getItemType()}
                   name={shortTitle}
-                  color={getColor()}
+                  color={getColor(data)}
                   onError={setImageError}
                 />
               ) : null}

@@ -10,6 +10,7 @@ import { getState } from "@state/usePortal";
 import Layout from "@components/Layout";
 import { User } from "@pages/User/User";
 import { UserIndex } from "@pages/User/Index";
+import { Feed } from "@pages/Feed";
 import { Add as AddList } from "@pages/List/Add";
 import { Edit as EditList } from "@pages/List/Edit";
 import { Add as AddItem } from "@pages/Item/Add";
@@ -18,7 +19,7 @@ import ReactGA from "react-ga";
 import "./index.css";
 
 import theme from "./theme/theme";
-import { useStore, onInitialLoad } from "./state/store";
+import { useStore, refreshAppState } from "./state/store";
 
 const router = createBrowserRouter(
   [
@@ -33,6 +34,10 @@ const router = createBrowserRouter(
         {
           path: "index",
           element: <UserIndex />,
+        },
+        {
+          path: "feed",
+          element: <Feed />,
         },
         {
           path: "list/add",
@@ -57,7 +62,7 @@ const router = createBrowserRouter(
 );
 
 export function App() {
-  useStore(onInitialLoad)(getState);
+  useStore(refreshAppState)();
   // useLandscapeSubscription();
   ReactGA.initialize("G-HC9S8FMZ6C");
 

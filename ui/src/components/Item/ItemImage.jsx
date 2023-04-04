@@ -31,6 +31,7 @@ export const ItemImage = ({ src, patp, type, container, name, color, onError }) 
   if (!checkUrl(getImageSrc(src, type))) {
     src = defaultImg[type];
   }
+  console.log({ type, src });
   if (type && type !== "ship" && src === defaultImg[type]) {
     return (
       <div

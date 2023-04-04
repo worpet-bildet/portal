@@ -24,6 +24,11 @@ function buildNav(myShip) {
       section: "all",
     },
     {
+      name: "Feed",
+      href: `/feed`,
+      section: "all",
+    },
+    {
       name: "User Index",
       href: `/index`,
       section: "all",

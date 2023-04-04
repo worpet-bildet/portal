@@ -18,6 +18,13 @@ export const poke = p => {
 export const getState = () => {
   return scry({
     app: "portal-store",
-    path: `/all/nested`,
+    path: "/all/nested",
+  });
+};
+
+export const getFeed = () => {
+  return scry({
+    app: "portal-manager",
+    path: "/feed",
   });
 };
