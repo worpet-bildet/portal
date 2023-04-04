@@ -1,6 +1,6 @@
 /-  *portal-data, *portal-action, *portal-message, *portal-logs, *portal-config,
-    groups, treaty
-/+  default-agent, dbug, *portal, io=agentio, sig
+    groups, treaty, portal-feed
+/+  default-agent, dbug, *portal, io=agentio, sig, sss
 |%
 +$  versioned-state
   $%  state-0
@@ -38,12 +38,18 @@
 +$  card  card:agent:gall
 --
 %-  agent:dbug
+=/  sub-feed  (mk-subs:sss portal-feed ,[%feed ~])
+=/  pub-feed  (mk-pubs:sss portal-feed ,[%feed ~])
 =|  state-2
 =*  state  -
 ^-  agent:gall
 |_  =bowl:gall
 +*  this      .
     default   ~(. (default-agent this %|) bowl)
+    du-feed  =/  du  (du:sss portal-feed ,[%feed ~])
+    (du pub-feed bowl -:!>(*result:du))
+    da-feed  =/  da  (da:sss portal-feed ,[%feed ~])
+            (da sub-feed bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
 ++  on-init
   ^-  (quip card _this)
   =/  new-user-event      [%join now.bowl (get-ship-type:misc our.bowl) `@ux`(shax our.bowl)]
@@ -55,6 +61,8 @@
   =/  indexed-as-curator  %.n
   =/  onboarded           %.n
   =/  feed                *^feed
+  =^  cards  sub-feed
+    (surf:da-feed portal-indexer %portal-manager [%feed ~])
   :_  %=  this
         my-feed             feed
         latest-feed         feed
@@ -67,33 +75,35 @@
         indexed-as-curator  indexed-as-curator
         onboarded           onboarded
       ==
+  %+  welp  cards
   :~  (~(poke pass:io /act) [our.bowl %portal-store] %portal-action !>([%sub portal-curator]))
       (~(poke pass:io /new-user) [-.portal-curator %portal-logs] %portal-new-user-event !>(new-user-event))
       [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]
   ==
 ::
-++  on-save  !>(state)
+++  on-save  !>([state pub-feed sub-feed])
 ++  on-load
   |=  old=vase
   ^-  (quip card _this)
-  ::  later:
-  ::  upon update, new default curators can be added by us
-  ::  and added to portal-curators
-  ::  if user unsubs from a curator, then they are not added
-  =/  old  !<(versioned-state old)
   =/  purge-time  ~d1
-  ?-    -.old
+  ?:  =(%2 -.-.q.old)
+    =/  old  !<([=state-2 =_pub-feed =_sub-feed] old)
+    =^  cards  sub-feed.old
+      (surf:da-feed portal-indexer.state-2.old %portal-manager [%feed ~])
+    :_  this(state state-2.old, pub-feed pub-feed.old, sub-feed sub-feed.old)
+    ;:  welp
+      cards
+      [%pass /feed %agent [portal-indexer.state-2.old %portal-manager] %watch /feed]~
+      ?:  =(purge-timer.state-2.old %.y)  ~
+      [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]~
+    ==
+  =/  old  !<(versioned-state old)
+  ?+    -.old    !!
       %0
     :_  this(state [%2 *^feed *^feed *^feed default-curators.old portal-curator.old %.y purge-time ~master-dilryd-mopreg %.n %.n])
     [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]~
       %1
     :_  this(state [%2 *^feed *^feed *^feed +.old])
-    ?:  =(purge-timer.old %.y)  ~
-    [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]~
-      %2
-      :_  this(state old)
-    %+  welp
-    [%pass /feed %agent [portal-indexer.old %portal-manager] %watch /feed]~
     ?:  =(purge-timer.old %.y)  ~
     [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]~
   ==
@@ -126,7 +136,6 @@
       ?+  -.act  !!
         %onboarded  `this(onboarded toggle.act)
       ==
-
     ::
     =/  poke-msg  ~(poke pass:io /msg)
     ?+    -.act    `this
@@ -217,19 +226,14 @@
       ?>  =(src.bowl src.msg)
       ?>  =(our.bowl portal-indexer)
       ~&  >  "%portal-manager: got feed update"
-      ::
-            :: feed as item????
-            :: limit to 200 items
-            ::
-            :: SSS to 200 key feed
-            ::
+      :: feed as item????
       ::  TODO test ousting with smaller lengths
-      =.  full-feed  (oust [200 (lent feed.msg)] (weld feed.msg full-feed))
-      ~&  >  "new feed"
-      ~&  full-feed
-      :_  this
-      [%give %fact [/feed]~ %portal-feed !>(full-feed)]~
-
+      ::=.  full-feed  (oust [200 (lent feed.msg)] (weld feed.msg full-feed))
+      :: ~&  >  "new feed"
+      :: ~&  full-feed
+      =^  cards  pub-feed  (give:du-feed [%feed ~] feed.msg)
+      ~&  >  "pub-feed is: {<read:du-feed>}"
+      [cards this]
 
       ::  handler za ako dobijem 'auto recommended' a ne vrijeme
       ::     pokusat parseat kao vrijeme, ako faila ne stavit
@@ -239,7 +243,29 @@
       :: start/offset scry za  keyeve
       :: user should keep requesting keys from the index basically
     ==
-
+    ::
+      %sss-to-pub
+    =/  msg  !<(into:du-feed (fled:sss vase))
+    =^  cards  pub-feed  (apply:du-feed msg)
+    [cards this]
+    ::
+      %sss-feed
+    =^  cards  sub-feed  (apply:da-feed !<(into:da-feed (fled:sss vase)))
+    ~&  >  "sub-feed is: {<read:da-feed>}"
+    [cards this]
+    ::
+      %sss-on-rock
+    =/  msg  !<(from:da-feed (fled:sss vase))
+    ~?  ?=(^ rock.msg)
+      "last message from {<from.msg>} on {<src.msg>} is {<,.-.rock.msg>}"
+    ?<  ?=([%crash *] rock.msg)
+    ?~  wave.msg  `this
+    =/  key-list  (feed-to-key-list:conv `feed`u.wave.msg)
+    =/  filtered-set  (set-difference:keys (silt key-list) (get-all-keys:scry our.bowl now.bowl))
+    =/  filtered-list  ~(tap in filtered-set)
+    :_  this  %+  welp
+    (keys-to-sub-cards:cards our.bowl filtered-list)
+    (get-nonitems:portal-manager our.bowl filtered-list)
     ::
     ::  when %portal-store makes/receives an update, it notifies %portal-manager
     ::  then %portal-manager decides what it needs to do with it
@@ -257,54 +283,55 @@
       :_  this
       (del:on-update:portal-manager upd)
     ==
+
   ==
 ::
 ++  on-arvo
   |=  [=wire sign=sign-arvo]
   ^-  (quip card:agent:gall _this)
-  ?>  ?=([%purge-timer ~] wire)
-  ?>  ?=([%khan %arow *] sign)
-  :_  this
-  :~  [(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>([%purge default-curators portal-curator]))]
-      [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]
+  ?+  wire  `this
+      [%purge-timer ~]
+    ?>  ?=([%khan %arow *] sign)
+    :_  this
+    :~  [(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>([%purge default-curators portal-curator]))]
+        [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]
+    ==
+    ::
+      [~ %sss %behn @ @ @ %feed ~]
+    [(behn:da-feed |3:wire) this]
   ==
 ::
-++  on-watch
-  |=  =path
-  ^-  (quip card _this)
-   ~&  >  "got request"
-   ~&  src.bowl
-  ?:  =(path /feed)
-    :_  this
-    [%give %fact ~ %portal-feed !>(`feed`full-feed)]~
-  `this
-::
+++  on-watch  on-watch:default
 ++  on-leave  on-leave:default
 ++  on-peek
   |=  =path
   ^-  (unit (unit cage))
   ?+    path    (on-peek:default path)
       [%x %feed ~]
-    ``portal-feed+!>(full-feed)
+    ``portal-feed+!>(rock:(~(got by read:da-feed) [portal-indexer %portal-manager [%feed ~]]))
       [%x %indexed-as-curator ~]
     ``bool+!>(indexed-as-curator)
       [%x %onboarded ~]
     ``bool+!>(onboarded)
   ==
+
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
   ?+    wire    (on-agent:default wire sign)
-      [%feed ~]
-    ~&  >  "GOT FEED SUB RESPONSE"
-    ?+    -.sign    (on-agent:default wire sign)
-        %watch-ack  `this
-        %kick       `this
-      ::
-        %fact
-      =.  full-feed  !<(feed q.cage.sign)
-      ~&  >>  "full-feed changeD?"
+      [~ %sss *]
+    ?>  ?=(%poke-ack -.sign)
+    ?~  p.sign  `this
+    %-  (slog u.p.sign)
+    ?+    wire   `this
+        [~ %sss %on-rock @ @ @ %feed ~]
+      =.  sub-feed  (chit:da-feed |3:wire sign)
+      ~&  >  "sub-feed is: {<read:da-feed>}"
       `this
+        [~ %sss %scry-request @ @ @ %feed ~]
+      =^  cards  sub-feed  (tell:da-feed |3:wire sign)
+      ~&  >  "sub-feed is: {<read:da-feed>}"
+      [cards this]
     ==
       [%treaty *]
     ?+    -.sign    (on-agent:default wire sign)

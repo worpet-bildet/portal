@@ -57,6 +57,11 @@
         (flop (snip (flop (snip path))))
         (rear path)
   ::
+  ++  feed-to-key-list
+    |=  [=feed]
+    ^-  key-list
+    (turn feed |=([time=cord =ship =key] key))
+  ::
   ++  key-list-to-key-text-list  :: make key-text-list with empty comments
     |=  [=key-list]
     ^-  key-text-list
@@ -315,7 +320,8 @@
   ++  keys-to-sub-cards
     |=  [our=ship =key-list]
     ^-  (list card)
-    (turn key-list (cury key-to-sub-card our))
+    =-  (turn - (cury key-to-sub-card our))
+    (skip-nonitem:keys key-list)
   ::
   ++  key-to-sub-card
     |=  [our=ship =key]
