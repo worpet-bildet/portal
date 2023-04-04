@@ -11,7 +11,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { toast } from "react-toastify";
 import { useStore, refreshAppState as _refreshAppState } from "@state/store";
-import { getDefaultCurators } from "@state/store";
+import { getCurators } from "@state/store";
 import {
   getShortTitle,
   getLongTitle,
@@ -32,7 +32,7 @@ export function Edit() {
   const { groups } = useGroupState();
   const { listkey } = useParams();
   const navigate = useNavigate();
-  const defaultCurators = useStore(getDefaultCurators);
+  const curators = useStore(getCurators);
   const refreshAppState = useStore(_refreshAppState);
 
   const [list, setList] = useState(null);
@@ -56,9 +56,9 @@ export function Edit() {
   useEffect(() => {
     let mapkey = listkey.slice(1);
     mapkey = mapkey.slice(0, mapkey.indexOf("/"));
-    let _list = defaultCurators[mapkey]?.map[listkey] || defaultCurators[mapkey];
+    let _list = curators[mapkey]?.map[listkey] || curators[mapkey];
     setList(unsanitiseTextFieldsRecursive(_list));
-  }, [listkey, defaultCurators]);
+  }, [listkey, curators]);
 
   useEffect(() => {
     if (!list) return;

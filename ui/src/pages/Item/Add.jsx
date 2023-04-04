@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getDefaultCurators, refreshAppState as _refreshAppState } from "@state/store";
+import { getCurators, refreshAppState as _refreshAppState } from "@state/store";
 import { useStore } from "@state/store";
 import { usePortal } from "@state/usePortal";
 import { EditGeneralForm } from "@components/Form/EditGeneralForm";
@@ -9,7 +9,7 @@ import { urbitTime } from "@utils/format";
 export function Add() {
   const { listkey } = useParams();
   const { ship } = usePortal();
-  const defaultCurators = useStore(getDefaultCurators);
+  const curators = useStore(getCurators);
   const refreshAppState = useStore(_refreshAppState);
   const [list, setList] = useState(null);
   const [addItemPoke, setAddItemPoke] = useState(null);
@@ -29,8 +29,8 @@ export function Add() {
   useEffect(() => {
     let listmapkey = listkey.slice(1);
     listmapkey = listmapkey.slice(0, listmapkey.indexOf("/"));
-    setList(defaultCurators[listmapkey]?.map[listkey]);
-  }, [listkey, defaultCurators]);
+    setList(curators[listmapkey]?.map[listkey]);
+  }, [listkey, curators]);
 
   useEffect(() => {
     if (!ship || !list) return;

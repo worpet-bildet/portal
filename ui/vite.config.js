@@ -17,6 +17,7 @@ export default ({ mode }) => {
       urbitPlugin({
         base: "portal",
         target: SHIP_URL,
+        changeOrigin: true,
         secure: false,
       }),
       reactRefresh(),

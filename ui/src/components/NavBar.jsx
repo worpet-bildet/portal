@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
 import { Disclosure } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { sigil, reactRenderer } from "@tlon/sigil-js";
 import { usePortal } from "@state/usePortal";
-import { NavLink } from "react-router-dom";
 
 const GROUP_FLAG = "~worpet-bildet/portal";
 
-function buildNav(myShip) {
+const buildNav = myShip => {
   const defaultListUrl = `/list/${encodeURIComponent(
     `/~${myShip}/list/list/2000.1.1`
   )}/edit`;
@@ -45,22 +45,16 @@ function buildNav(myShip) {
     },
   ];
   return nav;
-}
+};
 
-export default function AppBar() {
-  const [myShip, setMyShip] = useState(null);
+export default function NavBar() {
   let { ship, urbit } = usePortal();
   const [navigation, setNavigation] = useState(buildNav());
 
   useEffect(() => {
     if (!ship) return;
-    setMyShip(ship);
+    setNavigation(buildNav(ship));
   }, [ship]);
-
-  useEffect(() => {
-    if (!myShip) return;
-    setNavigation(buildNav(myShip));
-  }, [myShip]);
 
   const joinFeedbackGroup = async redirectTo => {
     urbit.poke({
@@ -80,9 +74,9 @@ export default function AppBar() {
   const MySigil = () => {
     // sigil-js can't render moons
     return (
-      <NavLink to={`~${myShip}`}>
+      <NavLink to={`~${ship}`} key={ship}>
         {sigil({
-          patp: myShip?.length < "14" ? myShip : "worpet-bildet",
+          patp: ship?.length < "14" ? ship : "worpet-bildet",
           renderer: reactRenderer,
           size: "50",
           colors: ["black", "white"],
@@ -146,7 +140,6 @@ export default function AppBar() {
                         <div key={item.name}>
                           <NavLink
                             to={item.href}
-                            key={item.name}
                             className={
                               "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                             }
@@ -169,15 +162,12 @@ export default function AppBar() {
             <div className="space-y-1 px-2 pt-2 pb-3">
               {navigation.map(item =>
                 item.name === "Feedback" ? (
-                  <div className="w-full flex flex-row justify-end">
+                  <div className="w-full flex flex-row justify-end" key={item.name}>
                     <a
-                      key={item.name}
                       className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium cursor-pointer"
                       onClick={() => {
                         joinFeedbackGroup(item.href);
                       }}
-                      // href={item.href}
-                      // target="_blank"
                     >
                       Feedback
                     </a>

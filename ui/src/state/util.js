@@ -59,16 +59,16 @@ export const indexPages = pages => {
 export const getBP = _item => _item.data.bespoke.payload;
 
 export const getListFromDCMap = (_draft, _ship, _res) => {
-  _draft.defaultCurators[_ship] = _draft.defaultCurators[_ship] || [{ map: [] }];
-  return _draft.defaultCurators[_ship][0].map[0].find(
+  _draft.curators[_ship] = _draft.curators[_ship] || [{ map: [] }];
+  return _draft.curators[_ship][0].map[0].find(
     el => el.general.title === _res.data.general.title
   );
 };
 
 export const getListAtDCType = (_draft, _ship, _type, item = {}) => {
-  _draft.defaultCurators[_ship] = _draft.defaultCurators[_ship] || [{ map: [] }];
-  return _draft.defaultCurators[_ship][0].map?.length
-    ? _draft.defaultCurators[_ship][0].map[0].find(
+  _draft.curators[_ship] = _draft.curators[_ship] || [{ map: [] }];
+  return _draft.curators[_ship][0].map?.length
+    ? _draft.curators[_ship][0].map[0].find(
         el => el.keys.keyTypes[el.keys.keyTypes.length - 1] === _type[_type.length - 1]
       )
     : "";

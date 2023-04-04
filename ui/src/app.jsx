@@ -4,10 +4,7 @@ import "font-awesome/css/font-awesome.min.css";
 import { MotionConfig } from "framer-motion";
 import { ToastContainer } from "react-toastify";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import "react-toastify/dist/ReactToastify.css";
-import { getState } from "@state/usePortal";
-// import { useLandscapeSubscription } from "@state/useLandscape";
-import Layout from "@components/Layout";
+import Layout from "./Layout";
 import { User } from "@pages/User/User";
 import { UserIndex } from "@pages/User/Index";
 import { Feed } from "@pages/Feed";
@@ -15,7 +12,8 @@ import { Add as AddList } from "@pages/List/Add";
 import { Edit as EditList } from "@pages/List/Edit";
 import { Add as AddItem } from "@pages/Item/Add";
 import { Edit as EditItem } from "@pages/Item/Edit";
-import ReactGA from "react-ga";
+import ReactGA4 from "react-ga4";
+import "react-toastify/dist/ReactToastify.css";
 import "./index.css";
 
 import theme from "./theme/theme";
@@ -63,9 +61,7 @@ const router = createBrowserRouter(
 
 export function App() {
   useStore(refreshAppState)();
-  // useLandscapeSubscription();
-  ReactGA.initialize("G-HC9S8FMZ6C");
-
+  ReactGA4.initialize("G-HC9S8FMZ6C");
   return (
     <React.Fragment>
       <ThemeProvider theme={theme}>

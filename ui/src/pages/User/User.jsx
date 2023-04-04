@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { isEmpty } from "lodash";
 import { useStore } from "@state/store";
-import { getDefaultCurators, mergeStateUpdate as _mergeStateUpdate } from "@state/store";
+import { getCurators, mergeStateUpdate as _mergeStateUpdate } from "@state/store";
 import { SliderList } from "@components/List/SliderList";
 import { ItemImage } from "@components/Item/ItemImage";
 import { LoadingSpinner } from "@components/LoadingSpinner";
@@ -15,19 +15,20 @@ export function User() {
   const { groups } = useGroupState();
   const { patp } = useParams();
   const navigate = useNavigate();
-  const defaultCurators = useStore(getDefaultCurators);
+  const curators = useStore(getCurators);
   const mergeStateUpdate = useStore(_mergeStateUpdate);
   const [curatorList, setCuratorList] = useState(null);
   const [userIsIndexed, setUserIsIndexed] = useState(false);
+  const [scryInterval, setScryInterval] = useState(null);
   const [isMe, setIsMe] = useState(false);
 
   useEffect(() => {
-    if (!patp || !defaultCurators) return;
+    if (!patp || !curators) return;
     const INDEXER_SHIP = "~worpet-bildet";
     const INDEXER_LIST = `/${INDEXER_SHIP}/list/nonitem/ship/index`;
-    let index = Object.keys(defaultCurators[INDEXER_SHIP]?.map[INDEXER_LIST]?.map || {});
+    let index = Object.keys(curators[INDEXER_SHIP]?.map[INDEXER_LIST]?.map || {});
     setUserIsIndexed(!index?.find(ship => ship === patp) ? false : true);
-  }, [patp, defaultCurators]);
+  }, [patp, curators]);
 
   const subscribeTo = ship => {
     return urbit.poke({
@@ -58,30 +59,28 @@ export function User() {
     }
   };
 
-  // This is kinda hacky but it's going to work for now
-  const scryListsWithBackoff = ship => {
-    setTimeout(() => scryLists(ship), 1000);
-    setTimeout(() => scryLists(ship), 2000);
-    setTimeout(() => scryLists(ship), 4000);
-    setTimeout(() => scryLists(ship), 8000);
-    setTimeout(() => scryLists(ship), 12000);
-  };
+  // We give it twelve seconds before giving up
+  useEffect(() => {
+    if (scryInterval) setTimeout(() => clearInterval(scryInterval), 12000);
+  }, [scryInterval]);
 
   useEffect(() => {
-    // for some reason we're still subscribing twice but it can wait
-    if (urbit && patp && !isMe && !isEmpty(defaultCurators) && !defaultCurators[patp]) {
-      subscribeTo(patp);
-      scryListsWithBackoff(patp);
-    }
-  }, [patp, isMe, urbit, defaultCurators]);
-
-  useEffect(() => {
-    // We should search the default curators here
-    if (!defaultCurators || Object.values(defaultCurators).length < 1 || !patp) return;
-    let l = unsanitiseTextFieldsRecursive(defaultCurators[patp]);
-    setCuratorList(l);
+    if (isEmpty(curators) || !patp || !curators[patp]) return;
+    setCuratorList(unsanitiseTextFieldsRecursive(curators[patp]));
     setIsMe(patp.slice(1) === ship);
-  }, [patp, defaultCurators, ship]);
+  }, [curators, patp]);
+
+  useEffect(() => {
+    // this is super dumb but we might not have all the data yet, so do ~2 more scries
+    if (curatorList && scryInterval) setTimeout(() => clearInterval(scryInterval), 2000);
+    async function subscribe() {
+      setScryInterval(setInterval(() => scryLists(patp), 1000));
+      await subscribeTo(patp);
+    }
+    if (!isEmpty(curators) && !curators[patp] && !curatorList && !scryInterval) {
+      subscribe();
+    }
+  }, [ship, patp, curatorList, curators]);
 
   const renderList = ({ item, map }) => {
     if (!isMe && (isEmpty(item) || isEmpty(map))) return <></>;
