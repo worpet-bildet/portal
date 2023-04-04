@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useParams, useNavigate } from "react-router-dom";
-import { getDefaultCurators, refreshAppState as _refreshAppState } from "@state/store";
+import { getCurators, refreshAppState as _refreshAppState } from "@state/store";
 import { useStore } from "@state/store";
 import { EditGeneralForm } from "@components/Form/EditGeneralForm";
 import { getShortTitle, getType } from "@utils/format";
@@ -9,7 +9,7 @@ import { getShortTitle, getType } from "@utils/format";
 export function Edit() {
   const { listkey, itemkey } = useParams();
   const navigate = useNavigate();
-  const defaultCurators = useStore(getDefaultCurators);
+  const curators = useStore(getCurators);
   const refreshAppState = useStore(_refreshAppState);
   let [item, setItem] = useState(null);
   let [editItemPoke, setEditItemPoke] = useState(null);
@@ -17,9 +17,9 @@ export function Edit() {
   useEffect(() => {
     let listmapkey = listkey.slice(1);
     listmapkey = listmapkey.slice(0, listmapkey.indexOf("/"));
-    let list = defaultCurators[listmapkey]?.map[listkey];
+    let list = curators[listmapkey]?.map[listkey];
     setItem(list?.map[itemkey]);
-  }, [listkey, defaultCurators]);
+  }, [listkey, curators]);
 
   useEffect(() => {
     if (!item) return;

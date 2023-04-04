@@ -1,7 +1,7 @@
 import React, { createRef, useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { ItemImage } from "@components/Item/ItemImage";
-import { getDefaultCurators } from "@state/store";
+import { getCurators } from "@state/store";
 import { useStore } from "@state/store";
 import { usePortal } from "@state/usePortal";
 
@@ -10,14 +10,12 @@ const INDEXER_LIST = `/${INDEXER_SHIP}/list/nonitem/ship/index`;
 
 export const UserIndex = () => {
   const { ship } = usePortal();
-  const defaultCurators = useStore(getDefaultCurators);
+  const curators = useStore(getCurators);
   const [userIndex, setUserIndex] = useState([]);
   useEffect(() => {
-    if (!defaultCurators || !defaultCurators[INDEXER_SHIP]) return;
-    setUserIndex(
-      Object.values(defaultCurators[INDEXER_SHIP].map[INDEXER_LIST]?.map || {})
-    );
-  }, [defaultCurators]);
+    if (!curators || !curators[INDEXER_SHIP]) return;
+    setUserIndex(Object.values(curators[INDEXER_SHIP].map[INDEXER_LIST]?.map || {}));
+  }, [curators]);
 
   let imageContainerRef = createRef();
 

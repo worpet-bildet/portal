@@ -1,11 +1,10 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import "font-awesome/css/font-awesome.min.css";
 import { MotionConfig } from "framer-motion";
 import { ToastContainer } from "react-toastify";
 import { createBrowserRouter, RouterProvider, useLocation } from "react-router-dom";
-import { getState } from "@state/usePortal";
-import Layout from "@components/Layout";
+import Layout from "./Layout";
 import { User } from "@pages/User/User";
 import { UserIndex } from "@pages/User/Index";
 import { Add as AddList } from "@pages/List/Add";
@@ -17,7 +16,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "./index.css";
 
 import theme from "./theme/theme";
-import { useStore, onInitialLoad } from "./state/store";
+import { useStore, refreshAppState } from "./state/store";
 
 const router = createBrowserRouter(
   [
@@ -56,7 +55,7 @@ const router = createBrowserRouter(
 );
 
 export function App() {
-  useStore(onInitialLoad)(getState);
+  useStore(refreshAppState)();
   ReactGA4.initialize("G-HC9S8FMZ6C");
   return (
     <React.Fragment>

@@ -4,23 +4,20 @@ import { createStore } from "./middleware";
 import { getState } from "./usePortal";
 
 export const mergeStateUpdate = state => state.mergeStateUpdate;
-export const getDefaultCurators = state => state.defaultCurators;
-export const onInitialLoad = state => state.onInitialLoad;
+export const getCurators = state => state.curators;
 export const onUpdate = state => state.onUpdate;
 export const refreshAppState = state => state.refreshAppState;
 
 export const useStore = createStore((set, get) => ({
-  defaultCurators: {},
+  curators: {},
   refreshAppState: async () => {
-    get().onInitialLoad(getState);
-  },
-  onInitialLoad: async initialState => {
-    get().indexAll(await initialState());
+    get().indexAll(await getState());
   },
   mergeStateUpdate: update => {
     set(
       produce(draft => {
-        draft.defaultCurators = { ...draft.defaultCurators, ...update };
+        console.log("mergoooor");
+        draft.curators = { ...draft.curators, ...update };
       })
     );
   },
@@ -29,7 +26,8 @@ export const useStore = createStore((set, get) => ({
       produce(draft => {
         const index = Object.values(pages);
         const curators = keyBy(index, "item.keyObj.ship");
-        draft.defaultCurators = { ...draft.defaultCurators, ...curators };
+        console.log("indexooooor");
+        draft.curators = { ...draft.curators, ...curators };
       })
     ),
 }));
