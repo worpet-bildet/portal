@@ -1,11 +1,11 @@
 export const getType = item => {
-  let typeKey = item?.data?.bespoke?.keyObj?.type || "list";
+  let typeKey = item?.keyObj?.type || item?.data?.bespoke?.keyObj?.type || "list";
   return typeKey?.slice(typeKey.lastIndexOf("/") + 1);
 };
 
 export const getShortTitle = (val, type) => {
-  if (val?.data?.bespoke?.keyObj.type.includes("ship")) {
-    return val?.data?.bespoke?.keyObj.ship;
+  if (getType(val) === "ship") {
+    return val.keyObj?.ship || val?.data?.bespoke?.keyObj.ship;
   }
   if (val?.data?.bespoke?.keyObj.type.includes("group")) {
     const generalTitle = val?.data?.general?.title;

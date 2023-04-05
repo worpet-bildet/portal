@@ -85,6 +85,7 @@ export const Feed = () => {
             <div className="flex flex-row items-center w-44 h-44" ref={imageContainerRef}>
               <ItemImage
                 src={getImage(item.data)}
+                patp={getType(item) === "ship" ? item.keyObj?.ship : null}
                 type={getType(item)}
                 name={getShortTitle(item)}
                 container={imageContainerRef}
@@ -99,31 +100,33 @@ export const Feed = () => {
             </div>
           </div>
         </div>
-        <Modal
-          isOpen={modalIsOpen}
-          onRequestClose={() => setModalIsOpen(false)}
-          ariaHideApp={false}
-          contentLabel="Item Modal"
-          style={{
-            content: {
-              position: "relative",
-              margin: "20px",
-              inset: 0,
-              display: "none", // wtf
-            },
-          }}
-        >
-          <ItemModal
-            title={getShortTitle(item)}
-            path={getLongTitle(item)}
-            description={getDescription(item)}
-            image={getImage(item.data)}
-            type={getType(item)}
+        {getType(item) !== "ship" && (
+          <Modal
+            isOpen={modalIsOpen}
             onRequestClose={() => setModalIsOpen(false)}
-            data={item.data}
-            buttonDisabled={isJoined}
-          ></ItemModal>
-        </Modal>
+            ariaHideApp={false}
+            contentLabel="Item Modal"
+            style={{
+              content: {
+                position: "relative",
+                margin: "20px",
+                inset: 0,
+                display: "none", // wtf
+              },
+            }}
+          >
+            <ItemModal
+              title={getShortTitle(item)}
+              path={getLongTitle(item)}
+              description={getDescription(item)}
+              image={getImage(item.data)}
+              type={getType(item)}
+              onRequestClose={() => setModalIsOpen(false)}
+              data={item.data}
+              buttonDisabled={isJoined}
+            ></ItemModal>
+          </Modal>
+        )}
       </div>
     );
   };

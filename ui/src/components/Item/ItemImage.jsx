@@ -10,6 +10,7 @@ export const ItemImage = ({ src, patp, type, container, name, color, onError }) 
     setImageSize(container?.current?.clientWidth);
   }, [container]);
 
+  console.log({ type, src, patp });
   if (!src && patp && patp.length <= "14") {
     return (
       <>
@@ -31,8 +32,8 @@ export const ItemImage = ({ src, patp, type, container, name, color, onError }) 
   if (!checkUrl(getImageSrc(src, type))) {
     src = defaultImg[type];
   }
-  console.log({ type, src });
   if (type && type !== "ship" && src === defaultImg[type]) {
+    console.log("thign");
     return (
       <div
         className="flex flex-col justify-center items-center w-full h-full text-clip rounded-sm sm:rounded-xl bg-black text-lg sm:text-5xl"
