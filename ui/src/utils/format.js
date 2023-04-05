@@ -20,10 +20,10 @@ export const getShortTitle = (val, type) => {
   if (val?.data?.bespoke?.keyObj.type.includes("app")) {
     return `${val?.data?.bespoke?.keyObj.cord}`;
   }
-  if (type === "other") {
+  if (getType(val) === "other") {
     return val?.data?.general?.title;
   }
-  if (type === "list") {
+  if (getType(val) === "list") {
     return val?.item?.data?.general?.title;
   }
 };
@@ -52,19 +52,19 @@ export const getTitles = (val, type) => [
 ];
 
 export const getDescription = (val, type) => {
-  if (val?.data?.bespoke?.keyObj.type.includes("ship")) {
+  if (getType(val) === "ship") {
     return "";
   }
-  if (val?.data?.bespoke?.keyObj.type.includes("group")) {
+  if (getType(val) === "group") {
     return val?.data?.general?.description;
   }
-  if (val?.data?.bespoke?.keyObj.type.includes("app")) {
+  if (getType(val) === "app") {
     return val?.data?.bespoke?.payload?.info;
   }
-  if (type === "other") {
+  if (getType(val) === "other") {
     return val?.data?.general?.description;
   }
-  if (type === "list") {
+  if (getType(val) === "list") {
     return val?.item?.data?.general?.description;
   }
 };

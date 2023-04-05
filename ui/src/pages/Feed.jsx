@@ -24,8 +24,8 @@ export const Feed = () => {
   const [items, setItems] = useState([]);
 
   useEffect(() => {
-    // console.log({ feedPage: feed });
     async function getItems() {
+      console.log("getting items");
       setItems(
         await Promise.all(
           feed.map(async f => {
@@ -33,6 +33,7 @@ export const Feed = () => {
               app: "portal-store",
               path: `/item${f.keyStr}`,
             });
+            console.log("got item", res);
             return { ...f, ...res };
           })
         )
@@ -42,10 +43,6 @@ export const Feed = () => {
       getItems();
     }
   }, [feed]);
-
-  useEffect(() => {
-    console.log({ items });
-  }, [items]);
 
   const renderSigil = patp => {
     return sigil({
@@ -134,7 +131,11 @@ export const Feed = () => {
   return (
     <div className="w-full h-full p-12">
       <div className="text-2xl font-bold">Latest Activity</div>
-      {items.length === 0 ? <>Loading...</> : items.map(f => <FeedItem item={f} />)}
+      {items.length === 0 ? (
+        <>Loading...</>
+      ) : (
+        items.map(f => <FeedItem key={f.time} item={f} />)
+      )}
     </div>
   );
 };

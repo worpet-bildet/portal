@@ -26,7 +26,6 @@ export const useStore = createStore((set, get) => ({
   mergeStateUpdate: update => {
     set(
       produce(draft => {
-        console.log("mergoooor");
         draft.curators = { ...draft.curators, ...update };
       })
     );
@@ -36,7 +35,6 @@ export const useStore = createStore((set, get) => ({
       produce(draft => {
         const index = Object.values(pages);
         const curators = keyBy(index, "item.keyObj.ship");
-        console.log("indexooooor");
         draft.curators = { ...draft.curators, ...curators };
       })
     ),
