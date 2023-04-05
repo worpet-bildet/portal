@@ -25,12 +25,12 @@ export const Feed = () => {
     return sigil({
       patp: patp?.length < "14" ? patp : "worpet-bildet",
       renderer: reactRenderer,
-      size: "30",
+      size: "50",
       colors: ["black", "white"],
     });
   };
 
-  const FeedItem = ({ item }) => {
+  const FeedItem = ({ item, index }) => {
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [isJoined, setIsJoined] = useState(false);
     if (groups[item.keyStr]) {
@@ -38,18 +38,28 @@ export const Feed = () => {
     }
     const imageContainerRef = useRef();
     return (
-      <div className="my-10">
-        <div className="flex flex-col md:flex-row justify-between pb-1">
-          <div className="flex flex-col md:flex-row items-start md:items-center">
+      <div
+        className={`py-10 px-10 border-gray-700 border border-b ${
+          index === 0 ? "rounded-t-xl" : "border-t-0"
+        }`}
+      >
+        <div className="flex flex-col md:flex-row justify-between items-center pb-1">
+          <div className="flex flex-col items-start">
             <div className="flex flex-row items-center">
               <div className="mr-4">{renderSigil(item.ship)}</div>
-              <NavLink to={`/${item.ship}`}>
-                <span className="text-blue-500">{item.ship}</span>
-              </NavLink>
+              <div>
+                <div className="flex flex-row">
+                  <NavLink to={`/${item.ship}`}>
+                    <span className="text-blue-500">{item.ship}</span>
+                  </NavLink>
+                  <div className="text-gray-400 ml-1">
+                    · {timeago.format(fromUrbitTime(item.time))}
+                  </div>
+                </div>
+                <div className="pl-1 text-gray-400"> %{getType(item)}</div>
+              </div>
             </div>
-            <span className="pl-1"> recommended</span>
           </div>
-          <div>{timeago.format(fromUrbitTime(item.time))}</div>
         </div>
         <div
           className="flex flex-row justify-between items-center p-0 md:p-5 rounded-xl cursor-pointer hover:bg-gray-500"
@@ -106,16 +116,16 @@ export const Feed = () => {
   };
 
   return (
-    <div className="w-full h-full p-12">
-      <div className="text-2xl font-bold">Latest Activity</div>
+    <div className="w-3/4 h-full py-12">
+      <div className="text-2xl font-bold pb-5">Latest Activity</div>
       {feed.length === 0 ? (
         <>Loading...</>
       ) : (
         feed
           .map(f => f) // clone so we can sort
           .sort((a, b) => a.time - b.time)
-          .map(f => {
-            return f.data ? <FeedItem key={f.keyStr} item={f} /> : <></>;
+          .map((f, i) => {
+            return f.data ? <FeedItem key={f.keyStr} item={f} index={i} /> : <></>;
           })
       )}
     </div>
