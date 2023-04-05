@@ -37,7 +37,7 @@
       [%join-group =key]
       [%get-group-preview flag=[=ship =term]]
       ::
-      [%purge =default-curators =portal-curator]
+      [%purge =default-curators =portal-curator items-to-keep=key-list]
       ::
       [%index-as-curator toggle=?]
       ::

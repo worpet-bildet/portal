@@ -534,7 +534,7 @@
   ::
   ::  purges all foreign items except those from default-curators and portal-curator
   ++  purge
-    |=  [=all-items our=ship src=ship now=time act=[%purge =default-curators =portal-curator]]
+    |=  [=all-items our=ship src=ship now=time act=[%purge =default-curators =portal-curator to-keep=key-list]]
     ^-  [(list card) ^all-items]
     =/  all-items-key-set  ~(key by all-items)
     =/  key-list  ~(tap in all-items-key-set)
@@ -555,6 +555,8 @@
     =/  our-items-keys  `(list key)`(zing (turn our-lists-items |=(=item (list-item-to-key-list:misc item))))  :: ITEM KEYLIST
     =/  keys-to-keep  (~(uni in (silt our-keys)) (silt our-lists-keys))
     =.  keys-to-keep  (~(uni in keys-to-keep) (silt our-items-keys))
+    ~&  >>  to-keep.act
+    =.  keys-to-keep  (~(uni in keys-to-keep) (silt to-keep.act))
     :: our-list-lists-keys is redundant
     =/  keys-to-purge  (~(dif in all-items-key-set) keys-to-keep)
     =/  keys  ~(tap in keys-to-purge)

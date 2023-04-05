@@ -119,10 +119,18 @@
     ::  TODO abstract a portal-manager add/edit/etc function which does stuff based on action and type
     ::  maybe not needed? aim for simplicity.
     =/  act-set  %-  silt   ^-  (list term)
-      ~[%add %edit %edit-general %sub %del %add-to-default-list %overwrite-list %put-nonitem %edit-docket %add-item-to-list %purge]
+      ~[%add %edit %edit-general %sub %del %add-to-default-list %overwrite-list %put-nonitem %edit-docket %add-item-to-list]
     ?:  (~(has in act-set) -.act)
       :_  this
       ~[(~(poke pass:io /act) [our.bowl %portal-store] portal-action+vase)]
+    ::
+    ?:  =(-.act %purge)
+      =/  items-to-keep  (feed-to-key-list:conv rock:(~(got by read:da-feed) [portal-indexer %portal-manager [%feed ~]]))
+      ~&  >>>  items-to-keep
+      :_  this
+      :~  [(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>([%purge default-curators portal-curator items-to-keep]))]
+      ==
+
     ::
     ?:  =(-.act %add-items-and-list)
       :_  this
@@ -292,8 +300,9 @@
   ?+  wire  `this
       [%purge-timer ~]
     ?>  ?=([%khan %arow *] sign)
+    =/  items-to-keep  (feed-to-key-list:conv rock:(~(got by read:da-feed) [portal-indexer %portal-manager [%feed ~]]))
     :_  this
-    :~  [(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>([%purge default-curators portal-curator]))]
+    :~  [(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>([%purge default-curators portal-curator items-to-keep]))]
         [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]
     ==
     ::

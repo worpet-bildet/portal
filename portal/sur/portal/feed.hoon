@@ -6,5 +6,5 @@
 +$  wave  feed
 ++  wash
   |=  [=rock =wave]
-  (oust [200 (lent wave)] (weld wave rock))
+  (oust [200 (lent wave)] (weld wave rock))  ::(lent wave) jelovo dovoljno
 --
