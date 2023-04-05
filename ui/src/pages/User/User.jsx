@@ -61,18 +61,26 @@ export function User() {
 
   // We give it twelve seconds before giving up
   useEffect(() => {
-    if (scryInterval) setTimeout(() => clearInterval(scryInterval), 12000);
+    if (scryInterval)
+      setTimeout(() => {
+        clearInterval(scryInterval);
+        setScryInterval(null);
+      }, 12000);
   }, [scryInterval]);
 
   useEffect(() => {
-    if (isEmpty(curators) || !patp || !curators[patp]) return;
+    if (isEmpty(curators) || !patp) return;
     setCuratorList(unsanitiseTextFieldsRecursive(curators[patp]));
     setIsMe(patp.slice(1) === ship);
   }, [curators, patp]);
 
   useEffect(() => {
     // this is super dumb but we might not have all the data yet, so do ~2 more scries
-    if (curatorList && scryInterval) setTimeout(() => clearInterval(scryInterval), 2000);
+    if (curatorList && scryInterval)
+      setTimeout(() => {
+        clearInterval(scryInterval);
+        setScryInterval(null);
+      }, 2000);
     async function subscribe() {
       setScryInterval(setInterval(() => scryLists(patp), 1000));
       await subscribeTo(patp);
