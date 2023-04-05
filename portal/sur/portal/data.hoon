@@ -147,6 +147,7 @@
 +$  key-set  (set key)
 ::
 +$  feed  (list [time=cord =ship =key])
++$  feed-items  (list item)
 ::
 ::
 ::

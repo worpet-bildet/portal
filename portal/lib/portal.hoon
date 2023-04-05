@@ -1259,6 +1259,8 @@
               -.out
             +.out
               %list-enditem-other
+            ~&  >>  "OTEHR"
+            ~&  >>  other-key-list
             =/  out  (update-my-feed portal-indexer our other-key-list.bespoke.data.item.upd my-feed)
             :-  %+  weld
             ?:  (in-default-list:scry our now key.bespoke.data.item.upd)  ~

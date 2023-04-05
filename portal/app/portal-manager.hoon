@@ -251,7 +251,7 @@
     ::
       %sss-feed
     =^  cards  sub-feed  (apply:da-feed !<(into:da-feed (fled:sss vase)))
-    ~&  >  "sub-feed is: {<read:da-feed>}"
+    ::~&  >  "sub-feed is: {<read:da-feed>}"
     [cards this]
     ::
       %sss-on-rock
@@ -309,6 +309,16 @@
   ?+    path    (on-peek:default path)
       [%x %feed ~]
     ``portal-feed+!>(rock:(~(got by read:da-feed) [portal-indexer %portal-manager [%feed ~]]))
+    ::  start and offset
+      [%x %feed-items @ @ ~]
+    ~&  %+  slav  %ud  i.t.t.path
+    ~&  %+  slav  %ud  i.t.t.t.path
+    =/  feed  %+  swag  [(slav %ud i.t.t.path) (slav %ud i.t.t.t.path)]
+      rock:(~(got by read:da-feed) [portal-indexer %portal-manager [%feed ~]])
+    ~&  >>  feed
+    =/  all-items  (get-all-items:scry our.bowl now.bowl)
+    =/  feed-items  `^feed-items`(murn feed |=([time=cord =ship =key] (~(get by all-items) key)))
+    ``portal-feed-items+!>(feed-items)
       [%x %indexed-as-curator ~]
     ``bool+!>(indexed-as-curator)
       [%x %onboarded ~]
@@ -326,11 +336,11 @@
     ?+    wire   `this
         [~ %sss %on-rock @ @ @ %feed ~]
       =.  sub-feed  (chit:da-feed |3:wire sign)
-      ~&  >  "sub-feed is: {<read:da-feed>}"
+      ::~&  >  "sub-feed is: {<read:da-feed>}"
       `this
         [~ %sss %scry-request @ @ @ %feed ~]
       =^  cards  sub-feed  (tell:da-feed |3:wire sign)
-      ~&  >  "sub-feed is: {<read:da-feed>}"
+      ::~&  >  "sub-feed is: {<read:da-feed>}"
       [cards this]
     ==
       [%treaty *]

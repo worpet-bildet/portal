@@ -308,6 +308,12 @@
     :-  %a
     %+  turn  key-list
     |=(=key (enjs-jam-key key))
+  ++  enjs-feed-items
+    |=  [=feed-items]
+    ^-  json
+    :-  %a
+    %+  turn  feed-items
+    |=([=item] (enjs-item-or-null item))
   ++  enjs-feed
     |=  [=feed]
     ^-  json
