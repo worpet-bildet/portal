@@ -51,6 +51,7 @@
     "react-router": "^6.9.0",
     "react-router-dom": "^6.9.0",
     "react-toastify": "^9.1.1",
+    "timeago.js": "^4.0.2",
     "urbit-ob": "^5.0.1",
     "zustand": "^4.3.2"
   },
