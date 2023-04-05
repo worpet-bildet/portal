@@ -61,7 +61,7 @@ const router = createBrowserRouter(
 
 export function App() {
   useStore(refreshAppState)();
-  ReactGA4.initialize("G-HC9S8FMZ6C");
+  // ReactGA4.initialize("G-HC9S8FMZ6C");
   return (
     <React.Fragment>
       <ThemeProvider theme={theme}>

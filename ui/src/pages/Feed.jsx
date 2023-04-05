@@ -3,8 +3,7 @@ import Modal from "react-modal";
 import { sigil, reactRenderer } from "@tlon/sigil-js";
 import { NavLink } from "react-router-dom";
 import * as timeago from "timeago.js";
-import { getFeed, useStore } from "@state/store";
-import { scry } from "@state/usePortal";
+import { getFeedItems, useStore } from "@state/store";
 import { useGroupState } from "@lib/state/groups/groups";
 import {
   fromUrbitTime,
@@ -20,29 +19,7 @@ import { ItemModal } from "@components/Item/ItemModal";
 
 export const Feed = () => {
   const { groups } = useGroupState();
-  const feed = useStore(getFeed);
-  const [items, setItems] = useState([]);
-
-  useEffect(() => {
-    async function getItems() {
-      console.log("getting items");
-      setItems(
-        await Promise.all(
-          feed.map(async f => {
-            const res = await scry({
-              app: "portal-store",
-              path: `/item${f.keyStr}`,
-            });
-            console.log("got item", res);
-            return { ...f, ...res };
-          })
-        )
-      );
-    }
-    if (feed.length > 0) {
-      getItems();
-    }
-  }, [feed]);
+  const feed = useStore(getFeedItems);
 
   const renderSigil = patp => {
     return sigil({
@@ -131,10 +108,15 @@ export const Feed = () => {
   return (
     <div className="w-full h-full p-12">
       <div className="text-2xl font-bold">Latest Activity</div>
-      {items.length === 0 ? (
+      {feed.length === 0 ? (
         <>Loading...</>
       ) : (
-        items.map(f => <FeedItem key={f.time} item={f} />)
+        feed
+          .map(f => f) // clone so we can sort
+          .sort((a, b) => a.time - b.time)
+          .map(f => {
+            return f.data ? <FeedItem key={f.keyStr} item={f} /> : <></>;
+          })
       )}
     </div>
   );

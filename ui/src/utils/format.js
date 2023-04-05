@@ -176,6 +176,7 @@ export const urbitTime = timestamp => {
 // unixtimestamp from
 // '~2018.5.14..22.31.46'
 export const fromUrbitTime = timestring => {
+  const msOffset = new Date().getTimezoneOffset() * 60 * 1000;
   let parts = timestring.split(".");
   const date = new Date(
     parts[0].substring(1),
@@ -185,7 +186,7 @@ export const fromUrbitTime = timestring => {
     parts[5],
     parts[6]
   );
-  return date.getTime();
+  return date.getTime() - msOffset;
 };
 export const getColor = data =>
   data?.bespoke?.payload?.color?.split(".").join("").substring(2);

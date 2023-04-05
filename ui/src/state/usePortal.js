@@ -27,4 +27,9 @@ export const getFeed = () => {
     app: "portal-manager",
     path: "/feed",
   });
+
+  // return scry({
+  //   app: "portal-manager",
+  //   path: "/feed-items/0/50",
+  // });
 };
