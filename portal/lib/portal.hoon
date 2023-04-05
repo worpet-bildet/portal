@@ -555,7 +555,6 @@
     =/  our-items-keys  `(list key)`(zing (turn our-lists-items |=(=item (list-item-to-key-list:misc item))))  :: ITEM KEYLIST
     =/  keys-to-keep  (~(uni in (silt our-keys)) (silt our-lists-keys))
     =.  keys-to-keep  (~(uni in keys-to-keep) (silt our-items-keys))
-    ~&  >>  to-keep.act
     =.  keys-to-keep  (~(uni in keys-to-keep) (silt to-keep.act))
     :: our-list-lists-keys is redundant
     =/  keys-to-purge  (~(dif in all-items-key-set) keys-to-keep)
@@ -563,17 +562,8 @@
     =/  len  (lent keys)
     =/  n  0
     =/  return  [*(list card) items=all-items]
-    :: ~&  "all-items-key-set"
-    :: ~&  >  ~(wyt in all-items-key-set)
-    :: ~&  "item number to keep"
-    :: ~&  >  ~(wyt in keys-to-keep)
-    :: ~&  "item number to purge"
-    :: ~&  >  len
     =.  return
     |-  ?:  |(=(n len) =(keys ~))  return
-    ::return
-    :: ~&  "items kept"
-    :: ~&  >  ~(wyt by `^all-items`+.return)
       =/  new  (del:on-action items.return our src now [%del (snag n keys)])
       %=  $
         -.return  (weld -.return -.new)
@@ -1261,8 +1251,6 @@
               -.out
             +.out
               %list-enditem-other
-            ~&  >>  "OTEHR"
-            ~&  >>  other-key-list
             =/  out  (update-my-feed portal-indexer our other-key-list.bespoke.data.item.upd my-feed)
             :-  %+  weld
             ?:  (in-default-list:scry our now key.bespoke.data.item.upd)  ~
@@ -1305,13 +1293,6 @@
       =/  len  (lent feed-upd)
       =/  new-feed-upd  *feed
       |-  ?:  =(n len)
-        ~&  "new-feed-upd"
-        ~&  >  new-feed-upd
-        ~&  "my-feed"
-        ~&  >  my-feed
-        ~&  "new-my-feed"
-        ~&  (weld new-feed-upd my-feed)
-        ::  TODO test that it works correctly
         ::  NOTE revisit the 1000 limit of edit history. if the person gets over it,
         ::  old stuff starts showing up in portal-indexer full-feed
         :_  (oust [1.000 (lent new-feed-upd)] (weld new-feed-upd my-feed))
@@ -1319,7 +1300,7 @@
       =/  key-text  (snag n feed-upd)
       %=  $
         n  +(n)
-        new-feed-upd  ~&  new-feed-upd  ?~((find [key-text]~ my-feed) (snoc new-feed-upd key-text) new-feed-upd)
+        new-feed-upd  ?~((find [key-text]~ my-feed) (snoc new-feed-upd key-text) new-feed-upd)
       ==
     --
   ::

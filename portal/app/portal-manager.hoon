@@ -25,8 +25,6 @@
 +$  state-2
   $:  %2
       my-feed=feed
-      latest-feed=feed
-      full-feed=feed
       =default-curators
       =portal-curator
       purge-timer=?
@@ -65,8 +63,6 @@
     (surf:da-feed portal-indexer %portal-manager [%feed ~])
   :_  %=  this
         my-feed             feed
-        latest-feed         feed
-        full-feed           feed
         default-curators    default-curators
         portal-curator      portal-curator
         purge-timer         purge-timer
@@ -86,6 +82,16 @@
   |=  old=vase
   ^-  (quip card _this)
   =/  purge-time  ~d1
+  ?:  =(%1 -.q.old)
+    =/  old  !<(state-1 old)
+    =^  cards  sub-feed
+      (surf:da-feed portal-indexer.old %portal-manager [%feed ~])
+    :_  this(state [%2 *^feed +.old])
+    ;:  welp
+      cards
+      ?:  =(purge-timer.old %.y)  ~
+      [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]~
+    ==
   ?:  =(%2 -.-.q.old)
     =/  old  !<([=state-2 =_pub-feed =_sub-feed] old)
     =^  cards  sub-feed.old
@@ -93,18 +99,13 @@
     :_  this(state state-2.old, pub-feed pub-feed.old, sub-feed sub-feed.old)
     ;:  welp
       cards
-      [%pass /feed %agent [portal-indexer.state-2.old %portal-manager] %watch /feed]~
       ?:  =(purge-timer.state-2.old %.y)  ~
       [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]~
     ==
   =/  old  !<(versioned-state old)
   ?+    -.old    !!
       %0
-    :_  this(state [%2 *^feed *^feed *^feed default-curators.old portal-curator.old %.y purge-time ~master-dilryd-mopreg %.n %.n])
-    [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]~
-      %1
-    :_  this(state [%2 *^feed *^feed *^feed +.old])
-    ?:  =(purge-timer.old %.y)  ~
+    :_  this(state [%2 *^feed default-curators.old portal-curator.old %.y purge-time ~master-dilryd-mopreg %.n %.n])
     [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]~
   ==
 ::
@@ -126,11 +127,9 @@
     ::
     ?:  =(-.act %purge)
       =/  items-to-keep  (feed-to-key-list:conv rock:(~(got by read:da-feed) [portal-indexer %portal-manager [%feed ~]]))
-      ~&  >>>  items-to-keep
       :_  this
       :~  [(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>([%purge default-curators portal-curator items-to-keep]))]
       ==
-
     ::
     ?:  =(-.act %add-items-and-list)
       :_  this
@@ -233,23 +232,9 @@
         %feed-update
       ?>  =(src.bowl src.msg)
       ?>  =(our.bowl portal-indexer)
-      ~&  >  "%portal-manager: got feed update"
-      :: feed as item????
-      ::  TODO test ousting with smaller lengths
-      ::=.  full-feed  (oust [200 (lent feed.msg)] (weld feed.msg full-feed))
-      :: ~&  >  "new feed"
-      :: ~&  full-feed
       =^  cards  pub-feed  (give:du-feed [%feed ~] feed.msg)
-      ~&  >  "pub-feed is: {<read:du-feed>}"
+      ::~&  >  "pub-feed is: {<read:du-feed>}"
       [cards this]
-
-      ::  handler za ako dobijem 'auto recommended' a ne vrijeme
-      ::     pokusat parseat kao vrijeme, ako faila ne stavit
-      ::  just weld, and when everything work, sort correctly
-      :: ~&  feed
-      :: `this(feed feed)
-      :: start/offset scry za  keyeve
-      :: user should keep requesting keys from the index basically
     ==
     ::
       %sss-to-pub
@@ -320,11 +305,8 @@
     ``portal-feed+!>(rock:(~(got by read:da-feed) [portal-indexer %portal-manager [%feed ~]]))
     ::  start and offset
       [%x %feed-items @ @ ~]
-    ~&  %+  slav  %ud  i.t.t.path
-    ~&  %+  slav  %ud  i.t.t.t.path
     =/  feed  %+  swag  [(slav %ud i.t.t.path) (slav %ud i.t.t.t.path)]
       rock:(~(got by read:da-feed) [portal-indexer %portal-manager [%feed ~]])
-    ~&  >>  feed
     =/  all-items  (get-all-items:scry our.bowl now.bowl)
     =/  feed-items  `^feed-items`(murn feed |=([time=cord =ship =key] (~(get by all-items) key)))
     ``portal-feed-items+!>(feed-items)
