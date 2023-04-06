@@ -21,9 +21,8 @@ export const useStore = createStore((set, get) => ({
     set(
       produce(draft => {
         for (let f of feed) {
-          draft.feed[f.keyStr] = f;
+          draft.feed[`${f.ship}${f.keyStr}`] = f;
         }
-        // draft.feed = feed;
         feed.forEach(f => {
           scry({
             app: "portal-store",
@@ -38,7 +37,8 @@ export const useStore = createStore((set, get) => ({
   mergeFeedItem: item => {
     set(
       produce(draft => {
-        if (draft.feedItems[item.keyStr] !== item) draft.feedItems[item.keyStr] = item;
+        if (draft.feedItems[`${item.ship}${item.keyStr}`] !== item)
+          draft.feedItems[`${item.ship}${item.keyStr}`] = item;
       })
     );
   },
