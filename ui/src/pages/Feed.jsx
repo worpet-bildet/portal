@@ -143,9 +143,10 @@ export const Feed = () => {
           {Object.values(feed)
             .map(f => f) // clone so we can sort
             .filter(f => !!f)
+            .filter(f => f.time !== "Auto-recommended")
             .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time))
             .map((f, i) => {
-              return <FeedItem key={f.time} item={f} index={i} />;
+              return <FeedItem key={`${f.time}${f.keyStr}`} item={f} index={i} />;
             })}
         </div>
       )}

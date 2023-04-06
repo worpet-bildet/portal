@@ -20,7 +20,7 @@ export const NewPostForm = () => {
             "list-key": {
               ship: `~${api.ship}`,
               type: "/list/enditem/other",
-              cord: "~2000.1.1", // the default list key
+              cord: "~2000.1.2", // the default list key
             },
             ship: `~${ship}`,
             type: "/enditem/other",
