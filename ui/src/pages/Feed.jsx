@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import Modal from "react-modal";
+import { useNavigate } from "react-router-dom";
 import { sigil, reactRenderer } from "@tlon/sigil-js";
 import { NavLink } from "react-router-dom";
 import * as timeago from "timeago.js";
@@ -18,6 +19,7 @@ import { ItemImage } from "@components/Item/ItemImage";
 import { ItemModal } from "@components/Item/ItemModal";
 
 export const Feed = () => {
+  const navigate = useNavigate();
   const { groups } = useGroupState();
   const feed = useStore(getFeedItems);
 
@@ -31,6 +33,7 @@ export const Feed = () => {
   };
 
   const FeedItem = ({ item, index }) => {
+    if (getType(item) !== "ship" && !item.data) return <></>;
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [isJoined, setIsJoined] = useState(false);
     if (groups[item.keyStr]) {
@@ -63,7 +66,12 @@ export const Feed = () => {
         </div>
         <div
           className="flex flex-row justify-between items-center p-0 md:p-5 rounded-xl cursor-pointer hover:bg-gray-500"
-          onClick={() => setModalIsOpen(true)}
+          onClick={() => {
+            if (getType(item) === "ship") {
+              return navigate(`/${item.keyObj.ship}`);
+            }
+            setModalIsOpen(true);
+          }}
         >
           <div className="flex flex-col items-start md:flex-row md:items-center">
             <div className="flex flex-row items-center w-44 h-44" ref={imageContainerRef}>
@@ -123,9 +131,10 @@ export const Feed = () => {
       ) : (
         feed
           .map(f => f) // clone so we can sort
+          .filter(f => !!f)
           .sort((a, b) => a.time - b.time)
           .map((f, i) => {
-            return f.data ? <FeedItem key={f.keyStr} item={f} index={i} /> : <></>;
+            return <FeedItem key={f.time} item={f} index={i} />;
           })
       )}
     </div>
