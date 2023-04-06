@@ -76,7 +76,11 @@ export const Feed = () => {
           </div>
         </div>
         <div
-          className="flex flex-row justify-between items-center p-0 md:p-5 rounded-xl cursor-pointer hover:bg-gray-500"
+          className={`flex flex-row justify-between items-center p-0 md:p-5 rounded-xl ${
+            getType(item) !== "ship" && getWebsite(item)
+              ? "cursor-pointer hover:bg-gray-500"
+              : ""
+          }`}
           onClick={() => {
             if (getType(item) === "ship") {
               return navigate(`/${item.keyObj.ship}`);
