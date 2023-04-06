@@ -14,9 +14,11 @@ import {
   getLongTitle,
   getType,
   getColor,
+  getWebsite,
 } from "@utils/format";
 import { ItemImage } from "@components/Item/ItemImage";
 import { ItemModal } from "@components/Item/ItemModal";
+import { NewPostForm } from "@components/Form/NewPostForm";
 
 export const Feed = () => {
   const navigate = useNavigate();
@@ -74,16 +76,23 @@ export const Feed = () => {
           }}
         >
           <div className="flex flex-col items-start md:flex-row md:items-center">
-            <div className="flex flex-row items-center w-44 h-44" ref={imageContainerRef}>
-              <ItemImage
-                src={getImage(item.data)}
-                patp={getType(item) === "ship" ? item.keyObj?.ship : null}
-                type={getType(item)}
-                name={getShortTitle(item)}
-                container={imageContainerRef}
-                color={getColor(item.data)}
-              />
-            </div>
+            {getType(item) === "other" && !getImage(item.data) ? (
+              <></>
+            ) : (
+              <div
+                className="flex flex-row items-center w-44 h-44"
+                ref={imageContainerRef}
+              >
+                <ItemImage
+                  src={getImage(item.data)}
+                  patp={getType(item) === "ship" ? item.keyObj?.ship : null}
+                  type={getType(item)}
+                  name={getShortTitle(item)}
+                  container={imageContainerRef}
+                  color={getColor(item.data)}
+                />
+              </div>
+            )}
             <div>
               <div className="md:ml-3">
                 <div className="text-xl font-bold">{getShortTitle(item)}</div>
@@ -92,7 +101,7 @@ export const Feed = () => {
             </div>
           </div>
         </div>
-        {getType(item) !== "ship" && (
+        {getType(item) !== "ship" && getWebsite(item) && (
           <Modal
             isOpen={modalIsOpen}
             onRequestClose={() => setModalIsOpen(false)}
@@ -126,16 +135,19 @@ export const Feed = () => {
   return (
     <div className="w-3/4 h-full py-12">
       <div className="text-2xl font-bold pb-5">Latest Activity</div>
-      {feed.length === 0 ? (
+      {Object.values(feed).length === 0 ? (
         <>Loading...</>
       ) : (
-        feed
-          .map(f => f) // clone so we can sort
-          .filter(f => !!f)
-          .sort((a, b) => a.time - b.time)
-          .map((f, i) => {
-            return <FeedItem key={f.time} item={f} index={i} />;
-          })
+        <div>
+          <NewPostForm />
+          {Object.values(feed)
+            .map(f => f) // clone so we can sort
+            .filter(f => !!f)
+            .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time))
+            .map((f, i) => {
+              return <FeedItem key={f.time} item={f} index={i} />;
+            })}
+        </div>
       )}
     </div>
   );
