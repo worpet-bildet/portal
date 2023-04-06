@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import reactStringReplace from "react-string-replace";
 import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";
@@ -25,6 +25,16 @@ export const Feed = () => {
   const navigate = useNavigate();
   const { groups } = useGroupState();
   const feed = useStore(getFeedItems);
+
+  useEffect(() => {
+    console.log({ feed });
+  });
+
+  const withNewLines = txt => {
+    return reactStringReplace(txt, /\n/g, match => {
+      return <div>{match == "" ? <>&nbsp;</> : match}</div>;
+    });
+  };
 
   const withLinks = txt => {
     return reactStringReplace(txt, /(https?:\/\/\S+)/g, (match, i) => (
@@ -109,7 +119,9 @@ export const Feed = () => {
             <div>
               <div className="md:ml-3">
                 <div className="text-xl font-bold">{getShortTitle(item)}</div>
-                <div>{withLinks(getDescription(item))}</div>
+                <div className="flex flex-col">
+                  {withNewLines(withLinks(getDescription(item)))}
+                </div>
               </div>
             </div>
           </div>

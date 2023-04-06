@@ -49,6 +49,10 @@ export const NewPostForm = () => {
         }}
         placeholder="share something"
         value={description}
+        onKeyUp={e => {
+          e.target.style.height = "inherit";
+          e.target.style.height = `${e.target.scrollHeight}px`;
+        }}
       >
         {description}
       </textarea>
