@@ -26,10 +26,6 @@ export const Feed = () => {
   const { groups } = useGroupState();
   const feed = useStore(getFeedItems);
 
-  useEffect(() => {
-    console.log({ feed });
-  });
-
   const withNewLines = txt => {
     return reactStringReplace(txt, /\n/g, match => {
       return <div>{match == "" ? <>&nbsp;</> : match}</div>;
@@ -87,7 +83,7 @@ export const Feed = () => {
         </div>
         <div
           className={`flex flex-row justify-between items-center p-0 md:p-5 rounded-xl ${
-            getType(item) !== "ship" && getWebsite(item)
+            getType(item) === "ship" || getWebsite(item)
               ? "cursor-pointer hover:bg-gray-500"
               : ""
           }`}
