@@ -93,6 +93,7 @@ export function User() {
   const renderList = ({ item, map }) => {
     if (!isMe && (isEmpty(item) || isEmpty(map))) return <></>;
     if (item?.keyStr?.includes("index")) return;
+    if (item?.keyStr?.includes("2000.1.2")) return;
     return (
       <div key={item.keyStr}>
         <SliderList

@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
+import reactStringReplace from "react-string-replace";
 import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";
 import { sigil, reactRenderer } from "@tlon/sigil-js";
@@ -24,6 +25,14 @@ export const Feed = () => {
   const navigate = useNavigate();
   const { groups } = useGroupState();
   const feed = useStore(getFeedItems);
+
+  const withLinks = txt => {
+    return reactStringReplace(txt, /(https?:\/\/\S+)/g, (match, i) => (
+      <a className="text-blue-500 underline" key={match + i} href={match}>
+        {match}
+      </a>
+    ));
+  };
 
   const renderSigil = patp => {
     return sigil({
@@ -96,7 +105,7 @@ export const Feed = () => {
             <div>
               <div className="md:ml-3">
                 <div className="text-xl font-bold">{getShortTitle(item)}</div>
-                <div>{getDescription(item)}</div>
+                <div>{withLinks(getDescription(item))}</div>
               </div>
             </div>
           </div>
