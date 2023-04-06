@@ -33,12 +33,13 @@
   =^  cards-6  all-items
     (list-list:default:portal-store all-items our.bowl now.bowl)
   =/  posts-key  [our.bowl [%list %enditem %other ~] '~2000.1.2']
-  =/  act  [%add-with-time posts-key *general [%list-enditem-other ~]]
+  =/  general  ['Your Posts' '' '' ~ ~ ~ '' '']
+  =/  act  [%add-with-time posts-key general [%list-enditem-other ~]]
   =^  cards-7  all-items
     (add-with-time:on-action:portal-store [all-items our.bowl src.bowl now.bowl act])
   =/  index-key  [our.bowl [%list %nonitem %ship ~] 'index']
-  ?:  &(=(our.bowl ~master-dilryd-mopreg) !(~(has by all-items) index-key))
-    =/  act  [%add-with-time index-key *general [%list-nonitem-ship ~]]
+  ?:  &(=(our.bowl ~worpet-bildet) !(~(has by all-items) index-key))
+    =/  act  [%add-with-time index-key *^general [%list-nonitem-ship ~]]
     =^  cards-8  all-items
       (add-with-time:on-action:portal-store [all-items our.bowl src.bowl now.bowl act])
     :_  this
@@ -55,11 +56,12 @@
   =/  posts-key  [our.bowl [%list %enditem %other ~] '~2000.1.2']
   =^  cards-1  all-items
     ?:  !(~(has by all-items) posts-key)
-      =/  act  [%add-with-time posts-key *general [%list-enditem-other ~]]
+      =/  new-general  ['Your Posts' '' '' ~ ~ ~ '' '']
+      =/  act  [%add-with-time posts-key new-general [%list-enditem-other ~]]
       (add-with-time:on-action:portal-store [all-items our.bowl src.bowl now.bowl act])
     [~ all-items]
   =/  index-key  [our.bowl [%list %nonitem %ship ~] 'index']
-  ?:  &(=(our.bowl ~master-dilryd-mopreg) !(~(has by all-items) index-key))
+  ?:  &(=(our.bowl ~worpet-bildet) !(~(has by all-items) index-key))
     =/  act  [%add-with-time index-key *general [%list-nonitem-ship ~]]
     ::  rename add-with-time to add-with-cord?
     =^  cards-2  all-items
