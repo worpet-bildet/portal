@@ -55,7 +55,7 @@
   =/  portal-curator      [~worpet-bildet /list/list '~2000.1.1']
   =/  purge-timer         %.y
   =/  purge-time          ~d1
-  =/  portal-indexer      ~master-dilryd-mopreg
+  =/  portal-indexer      ~worpet-bildet
   =/  indexed-as-curator  %.n
   =/  onboarded           %.n
   =/  feed                *^feed
@@ -105,7 +105,7 @@
   =/  old  !<(versioned-state old)
   ?+    -.old    !!
       %0
-    :_  this(state [%2 *^feed default-curators.old portal-curator.old %.y purge-time ~master-dilryd-mopreg %.n %.n])
+    :_  this(state [%2 *^feed default-curators.old portal-curator.old %.y purge-time ~worpet-bildet %.n %.n])
     [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]~
   ==
 ::
