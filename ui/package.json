@@ -50,6 +50,7 @@
     "react-modal": "^3.16.1",
     "react-router": "^6.9.0",
     "react-router-dom": "^6.9.0",
+    "react-string-replace": "^1.1.0",
     "react-toastify": "^9.1.1",
     "timeago.js": "^4.0.2",
     "urbit-ob": "^5.0.1",

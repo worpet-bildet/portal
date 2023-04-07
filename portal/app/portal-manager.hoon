@@ -249,8 +249,8 @@
     ::
       %sss-on-rock
     =/  msg  !<(from:da-feed (fled:sss vase))
-    ~?  ?=(^ rock.msg)
-      "last message from {<from.msg>} on {<src.msg>} is {<,.-.rock.msg>}"
+    :: ~?  ?=(^ rock.msg)
+    ::   "last message from {<from.msg>} on {<src.msg>} is {<,.-.rock.msg>}"
     ?<  ?=([%crash *] rock.msg)
     ?~  wave.msg  `this
     =/  key-list  (feed-to-key-list:conv `feed`u.wave.msg)

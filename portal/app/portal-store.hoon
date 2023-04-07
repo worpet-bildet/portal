@@ -32,15 +32,20 @@
     (other-list:default:portal-store all-items our.bowl now.bowl)
   =^  cards-6  all-items
     (list-list:default:portal-store all-items our.bowl now.bowl)
+  =/  posts-key  [our.bowl [%list %enditem %other ~] '~2000.1.2']
+  =/  general  ['Your Posts' '' '' ~ ~ ~ '' '']
+  =/  act  [%add-with-time posts-key general [%list-enditem-other ~]]
+  =^  cards-7  all-items
+    (add-with-time:on-action:portal-store [all-items our.bowl src.bowl now.bowl act])
   =/  index-key  [our.bowl [%list %nonitem %ship ~] 'index']
   ?:  &(=(our.bowl ~worpet-bildet) !(~(has by all-items) index-key))
-    =/  act  [%add-with-time index-key *general [%list-nonitem-ship ~]]
-    =^  cards-7  all-items
+    =/  act  [%add-with-time index-key *^general [%list-nonitem-ship ~]]
+    =^  cards-8  all-items
       (add-with-time:on-action:portal-store [all-items our.bowl src.bowl now.bowl act])
     :_  this
-    (zing ~[cards-1 cards-2 cards-3 cards-4 cards-5 cards-6 cards-7])
+    (zing ~[cards-1 cards-2 cards-3 cards-4 cards-5 cards-6 cards-7 cards-8])
   :_  this
-  (zing ~[cards-1 cards-2 cards-3 cards-4 cards-5 cards-6])
+  (zing ~[cards-1 cards-2 cards-3 cards-4 cards-5 cards-6 cards-7])
 ::
 ++  on-save  !>(state)
 ++  on-load
@@ -48,14 +53,21 @@
   ^-  (quip card _this)
   =/  old  !<(state-0 old)
   =/  all-items  all-items.old
+  =/  posts-key  [our.bowl [%list %enditem %other ~] '~2000.1.2']
+  =^  cards-1  all-items
+    ?:  !(~(has by all-items) posts-key)
+      =/  new-general  ['Your Posts' '' '' ~ ~ ~ '' '']
+      =/  act  [%add-with-time posts-key new-general [%list-enditem-other ~]]
+      (add-with-time:on-action:portal-store [all-items our.bowl src.bowl now.bowl act])
+    [~ all-items]
   =/  index-key  [our.bowl [%list %nonitem %ship ~] 'index']
   ?:  &(=(our.bowl ~worpet-bildet) !(~(has by all-items) index-key))
     =/  act  [%add-with-time index-key *general [%list-nonitem-ship ~]]
     ::  rename add-with-time to add-with-cord?
-    =^  cards  all-items
+    =^  cards-2  all-items
       (add-with-time:on-action:portal-store [all-items our.bowl src.bowl now.bowl act])
-    [cards this(all-items all-items)]
-  `this(state old)
+    [(welp cards-1 cards-2) this(all-items all-items)]
+  [cards-1 this(all-items all-items)]
 ::
 ::  all portal-action and portal-message go into portal-update
 ++  on-poke

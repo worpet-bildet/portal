@@ -190,3 +190,14 @@ export const fromUrbitTime = timestring => {
 };
 export const getColor = data =>
   data?.bespoke?.payload?.color?.split(".").join("").substring(2);
+
+export const defaultGeneral = {
+  title: "",
+  description: "",
+  image: "",
+  link: "",
+  color: "",
+  pictures: [],
+  tags: [],
+  properties: {},
+};

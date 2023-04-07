@@ -4,7 +4,7 @@ import { getCurators, refreshAppState as _refreshAppState } from "@state/store";
 import { useStore } from "@state/store";
 import { usePortal } from "@state/usePortal";
 import { EditGeneralForm } from "@components/Form/EditGeneralForm";
-import { urbitTime } from "@utils/format";
+import { urbitTime, defaultGeneral } from "@utils/format";
 
 export function Add() {
   const { listkey } = useParams();
@@ -14,17 +14,6 @@ export function Add() {
   const [list, setList] = useState(null);
   const [addItemPoke, setAddItemPoke] = useState(null);
   const navigate = useNavigate();
-
-  const defaultGeneral = {
-    title: "",
-    description: "",
-    image: "",
-    link: "",
-    color: "",
-    pictures: [],
-    tags: [],
-    properties: {},
-  };
 
   useEffect(() => {
     let listmapkey = listkey.slice(1);
