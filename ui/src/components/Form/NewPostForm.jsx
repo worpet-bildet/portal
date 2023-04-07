@@ -31,6 +31,10 @@ export const NewPostForm = () => {
         },
       }).then(() => {
         setTimeout(refreshApp, 1000);
+        setTimeout(refreshApp, 2000);
+        setTimeout(refreshApp, 3000);
+        setTimeout(refreshApp, 4000);
+        setTimeout(refreshApp, 5000);
       }),
       {
         pending: "Posting...",
