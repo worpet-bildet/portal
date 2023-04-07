@@ -63,7 +63,7 @@ export const Feed = () => {
           <div className="flex flex-col md:flex-row justify-between items-center pb-1">
             <div className="flex flex-col items-start">
               <div className="flex flex-row items-center">
-                <div className="mr-4">{renderSigil(item.ship)}</div>
+                <div className="mr-4">{renderSigil(item.ship.slice(1))}</div>
                 <div>
                   <div className="flex flex-row">
                     <NavLink to={`/${item.ship}`}>
