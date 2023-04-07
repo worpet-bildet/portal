@@ -16,32 +16,27 @@ const buildNav = myShip => {
     {
       name: "New Post",
       href: defaultListUrl,
-      section: "all",
     },
     {
       name: "Home",
       href: `/~worpet-bildet`,
-      section: "all",
     },
     {
       name: "Feed",
       href: `/feed`,
-      section: "all",
+      dot: true,
     },
     {
       name: "User Index",
       href: `/index`,
-      section: "all",
     },
     {
       name: "Feedback",
       href: `${window.location.origin}/apps/groups/groups/~worpet-bildet/portal/channels/chat/~worpet-bildet/feedback---support`,
-      section: "all",
     },
     {
       name: "My Profile",
       href: `/~${myShip}`,
-      section: "all",
     },
   ];
   return nav;
@@ -69,6 +64,10 @@ export default function NavBar() {
         window.open(redirectTo, "_blank");
       },
     });
+  };
+
+  const NavDot = () => {
+    return <div className="rounded-2xl bg-blue-500 absolute top-1 right-1 h-2 w-2"></div>;
   };
 
   const MySigil = () => {
@@ -141,9 +140,10 @@ export default function NavBar() {
                           <NavLink
                             to={item.href}
                             className={
-                              "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                              "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium relative"
                             }
                           >
+                            {item.dot ? <NavDot /> : <></>}
                             {item.name}
                           </NavLink>
                         </div>

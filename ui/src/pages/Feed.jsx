@@ -58,65 +58,63 @@ export const Feed = () => {
     }
     const imageContainerRef = useRef();
     return (
-      <div
-        className={`py-10 px-10 border-gray-700 border border-b ${
-          index === 0 ? "rounded-t-xl" : "border-t-0"
-        }`}
-      >
-        <div className="flex flex-col md:flex-row justify-between items-center pb-1">
-          <div className="flex flex-col items-start">
-            <div className="flex flex-row items-center">
-              <div className="mr-4">{renderSigil(item.ship)}</div>
-              <div>
-                <div className="flex flex-row">
-                  <NavLink to={`/${item.ship}`}>
-                    <span className="text-blue-500">{item.ship}</span>
-                  </NavLink>
-                  <div className="text-gray-400 ml-1">
-                    · {timeago.format(fromUrbitTime(item.time))}
+      <div className="py-10 border-gray-700 border-b">
+        <div className="px-10">
+          <div className="flex flex-col md:flex-row justify-between items-center pb-1">
+            <div className="flex flex-col items-start">
+              <div className="flex flex-row items-center">
+                <div className="mr-4">{renderSigil(item.ship)}</div>
+                <div>
+                  <div className="flex flex-row">
+                    <NavLink to={`/${item.ship}`}>
+                      <span className="text-blue-500">{item.ship}</span>
+                    </NavLink>
+                    <div className="text-gray-400 ml-1">
+                      · {timeago.format(fromUrbitTime(item.time))}
+                    </div>
                   </div>
+                  <div className="pl-1 text-gray-400"> %{getType(item)}</div>
                 </div>
-                <div className="pl-1 text-gray-400"> %{getType(item)}</div>
               </div>
             </div>
           </div>
-        </div>
-        <div
-          className={`flex flex-row justify-between items-center p-0 md:p-5 rounded-xl ${
-            getType(item) === "ship" || getWebsite(item)
-              ? "cursor-pointer hover:bg-gray-500"
-              : ""
-          }`}
-          onClick={() => {
-            if (getType(item) === "ship") {
-              return navigate(`/${item.keyObj.ship}`);
-            }
-            setModalIsOpen(true);
-          }}
-        >
-          <div className="flex flex-col items-start md:flex-row md:items-center">
-            {getType(item) === "other" && !getImage(item.data) ? (
-              <></>
-            ) : (
-              <div
-                className="flex flex-row items-center w-44 h-44"
-                ref={imageContainerRef}
-              >
-                <ItemImage
-                  src={getImage(item.data)}
-                  patp={getType(item) === "ship" ? item.keyObj?.ship : null}
-                  type={getType(item)}
-                  name={getShortTitle(item)}
-                  container={imageContainerRef}
-                  color={getColor(item.data)}
-                />
-              </div>
-            )}
-            <div>
-              <div className="md:ml-3">
-                <div className="text-xl font-bold">{getShortTitle(item)}</div>
-                <div className="flex flex-col">
-                  {withNewLines(withLinks(getDescription(item)))}
+          <div
+            className={`flex flex-row justify-between items-center p-0 md:p-5 rounded-xl ${
+              getType(item) === "ship" || getWebsite(item)
+                ? "cursor-pointer hover:bg-gray-500"
+                : ""
+            }`}
+            onClick={() => {
+              if (getType(item) === "ship") {
+                return navigate(`/${item.keyObj.ship}`);
+              }
+              setModalIsOpen(true);
+            }}
+          >
+            <div className="flex flex-col items-start md:flex-row md:items-center">
+              {getType(item) === "other" && !getImage(item.data) ? (
+                <></>
+              ) : (
+                <div
+                  className="flex flex-row items-center w-44 h-44"
+                  ref={imageContainerRef}
+                >
+                  <ItemImage
+                    src={getImage(item.data)}
+                    patp={getType(item) === "ship" ? item.keyObj?.ship : null}
+                    type={getType(item)}
+                    name={getShortTitle(item)}
+                    container={imageContainerRef}
+                    color={getColor(item.data)}
+                  />
+                </div>
+              )}
+              <div>
+                <div className="md:ml-3">
+                  <div className="text-xl font-bold">{getShortTitle(item)}</div>
+                  <div className="flex flex-col">
+                    {withNewLines(withLinks(getDescription(item)))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -159,8 +157,10 @@ export const Feed = () => {
       {Object.values(feed).length === 0 ? (
         <>Loading...</>
       ) : (
-        <div>
-          <NewPostForm />
+        <div className={`pt-10 border-gray-700 border border-b rounded-t-xl`}>
+          <div className="pb-5 border-b border-gray-700">
+            <NewPostForm />
+          </div>
           {Object.values(feed)
             .map(f => f) // clone so we can sort
             .filter(f => !!f)

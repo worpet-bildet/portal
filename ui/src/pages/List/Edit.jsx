@@ -182,6 +182,10 @@ export function Edit() {
         <Draggable onPosChange={getChangedPos}>
           {listItems.map((i, k) => {
             const canEdit = getType(i) === "other" || getType(i) === "list";
+            // can't delete default lists
+            const canDelete = !i?.item?.keyStr.includes("2000.1.1");
+            // don't show posts list
+            if (i?.item?.keyStr.includes("2000.1.2")) return <></>;
             return (
               <div
                 className="flex flex-row w-full justify-between items-center sm:p-2"
@@ -219,14 +223,16 @@ export function Edit() {
                       </div>
                     </button>
                   ) : null}
-                  <button
-                    className="p-2 hover:bg-red-500 rounded-lg"
-                    onClick={() => removeItem(i)}
-                  >
-                    <div className="w-5 md:w-10">
-                      <TrashIcon />
-                    </div>
-                  </button>
+                  {canDelete ? (
+                    <button
+                      className="p-2 hover:bg-red-500 rounded-lg"
+                      onClick={() => removeItem(i)}
+                    >
+                      <div className="w-5 md:w-10">
+                        <TrashIcon />
+                      </div>
+                    </button>
+                  ) : null}
                 </div>
               </div>
             );

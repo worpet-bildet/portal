@@ -40,7 +40,7 @@ export const NewPostForm = () => {
   };
 
   return (
-    <div className="flex flex-col items-end mb-4">
+    <div className="flex flex-col items-end mb-4 px-10">
       <textarea
         className="bg-transparent border border-gray-600 w-full mb-3 text-white resize-none"
         onChange={e => {
