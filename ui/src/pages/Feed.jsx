@@ -49,7 +49,7 @@ export const Feed = () => {
     });
   };
 
-  const FeedItem = ({ item, index }) => {
+  const FeedItem = ({ item }) => {
     if (getType(item) !== "ship" && !item.data) return <></>;
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [isJoined, setIsJoined] = useState(false);
@@ -144,6 +144,7 @@ export const Feed = () => {
               onRequestClose={() => setModalIsOpen(false)}
               data={item.data}
               buttonDisabled={isJoined}
+              website={getWebsite(item)}
             ></ItemModal>
           </Modal>
         )}

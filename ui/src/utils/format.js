@@ -7,7 +7,7 @@ export const getShortTitle = (val, type) => {
   if (getType(val) === "ship") {
     return val.keyObj?.ship || val?.data?.bespoke?.keyObj.ship;
   }
-  if (val?.data?.bespoke?.keyObj.type.includes("group")) {
+  if (getType(val) === "group") {
     const generalTitle = val?.data?.general?.title;
     const groupTitle = val?.keys?.keyObj?.cord || val?.keyObj?.cord;
     const host = val?.keys?.keyObj?.ship || val?.keyObj?.ship;
@@ -17,7 +17,7 @@ export const getShortTitle = (val, type) => {
       ? `${groupTitle.replace(/-/g, " ")}`
       : "no title found";
   }
-  if (val?.data?.bespoke?.keyObj.type.includes("app")) {
+  if (getType(val) === "app") {
     return `${val?.data?.bespoke?.keyObj.cord}`;
   }
   if (getType(val) === "other") {
@@ -29,19 +29,19 @@ export const getShortTitle = (val, type) => {
 };
 
 export const getLongTitle = (val, type) => {
-  if (val?.data?.bespoke?.keyObj.type.includes("ship")) {
+  if (getType(val) === "ship") {
     return val?.data?.bespoke?.keyObj.ship;
   }
-  if (val?.data?.bespoke?.keyObj.type.includes("group")) {
+  if (getType(val) === "group") {
     return `${val?.data?.bespoke?.keyObj.ship}/${val?.data?.bespoke?.keyObj.cord}`;
   }
-  if (val?.data?.bespoke?.keyObj.type.includes("app")) {
+  if (getType(val) === "app") {
     return `${val?.data?.bespoke?.keyObj.ship}/${val?.data?.bespoke?.keyObj.cord}`;
   }
-  if (type === "other") {
+  if (getType(val) === "other") {
     return val?.data?.general?.title;
   }
-  if (type === "list") {
+  if (getType(val) === "list") {
     return val?.item?.data?.general?.title;
   }
 };
@@ -70,19 +70,20 @@ export const getDescription = (val, type) => {
 };
 
 export const getWebsite = (val, type) => {
-  if (val?.data?.bespoke?.keyObj.type.includes("ship")) {
+  // console.log({ val });
+  if (getType(val) === "ship") {
     return "";
   }
-  if (val?.data?.bespoke?.keyObj.type.includes("group")) {
+  if (getType(val) === "group") {
     return "web+urbitgraph://1/group/" + getLongTitle(val, type);
   }
-  if (val?.data?.bespoke?.keyObj.type.includes("app")) {
+  if (getType(val) === "app") {
     return val?.data?.bespoke?.payload?.website;
   }
-  if (type === "other") {
+  if (getType(val) === "other") {
     return val?.data?.general?.link;
   }
-  if (type === "list") {
+  if (getType(val) === "list") {
     return "";
   }
 };
