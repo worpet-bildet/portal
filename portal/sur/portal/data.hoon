@@ -7,24 +7,17 @@
 ::  item types
 +$  type
   $%  path
-      [%nonitem ~]
-        [%nonitem %group ~]
-        [%nonitem %ship ~]
-    ::
       [%enditem ~]
-        [%enditem %app ~]
-        [%enditem %other ~]
+      [%nonitem ~]
+      [%group ~]
+      [%ship ~]
+      [%app ~]
+      [%other ~]
     ::
+      :: TODO - types for structural definitions, cords for behavioural
+      ::  definitions. e.g. /list/index; /list/bin; /list/drafts
+      :: /'enditem/app'/something
       [%list ~]
-        [%list %nonitem ~]
-          [%list %nonitem %group ~]
-          [%list %nonitem %ship ~]
-          [%list %nonitem %app ~]
-        [%list %enditem ~]
-          [%list %enditem %other ~]
-          [%list %enditem %app ~]
-        [%list %app ~]
-        [%list %list ~]
     ::
       [%validity-store ~]
   ==
@@ -131,6 +124,8 @@
       [%list-list =list-key-list]
       [%validity-store =validity-records]
   ==
+:: TODO
++$  list-item-meta        [added-to-list-at=cord curator-note=cord]
 ::
 +$  key-text-list       (list [=key text=cord])
 ::

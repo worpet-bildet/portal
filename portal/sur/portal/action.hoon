@@ -2,10 +2,14 @@
 |%
 ::
 +$  action
-  $%  [%add =ship =type =general =bespoke-input]
+  $%  [%add (list list-key=[=ship type=[%list *] =cord]) =ship =type =general =bespoke-input]
+
+      :: TODO - make general and bespoke-input args optional
       [%edit =key =general =bespoke-input]
-      [%edit-general =key =general]
-      [%overwrite-list key=[=ship type=[%list type] =cord] =key-text-list]
+
+      :: TODO
+      [%delete-list-item =key list-item-key=key]
+
       ::
       ::  creates item and adds it to specified list
       [%add-item-to-list list-key=[=ship type=[%list %enditem %other ~] =cord] =ship =type =general =bespoke-input text=cord]
