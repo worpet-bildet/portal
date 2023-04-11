@@ -6,29 +6,33 @@
 ::
 ::  item types
 +$  type
-  $%  path
-      [%enditem ~]
-      [%nonitem ~]
-      [%group ~]
-      [%ship ~]
-      [%app ~]
-      [%other ~]
+  $%  [%inner %app ~]
+      [%inner %group ~]
+      [%inner %ship ~]
+      [%inner %other ~]
     ::
+      [%outer %app ~]
+      [%outer %group ~]
+      [%outer %ship ~]
       :: TODO - types for structural definitions, cords for behavioural
       ::  definitions. e.g. /list/index; /list/bin; /list/drafts
-      :: /'enditem/app'/something
+      ::  ~zod:enditem/app:something/1
+      ::  TODO find the most practical separator in hoon
+
       [%list ~]
     ::
       [%validity-store ~]
   ==
 ::
 ::  key of an item
-+$  key  [=ship =type =cord]
++$  key  [=ship =type =cord]  ::  cord = /index/1, /index/~2000.1.1
 ::
 ::  all-items is the state of %portal-store
 ::  only %.y pointers
 +$  all-items  (map key item)
+::  TODO all-items -> items
 ::
+::  TODO delete nested
 ::  delivered to the frontend
 +$  nested-all-items  (map key cur-obj)
 ::
