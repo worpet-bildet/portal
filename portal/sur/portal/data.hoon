@@ -10,6 +10,7 @@
       [%inner %group ~]
       [%inner %ship ~]
       [%inner %other ~]
+      ::/inner/other:comment/[timestamp]
     ::
       [%outer %app ~]
       [%outer %group ~]
@@ -47,31 +48,37 @@
 ::  Item Parts
 ::
 +$  item  ::TODO how to handle nonitems in general?
-  $:  =data
+  $:  =key
+      blurb=@t
+      =tags
+      ::=general  :: TODO get rid of 'data', add general and bespoke
+      =bespoke
       =meta
       =social
       =sig
   ==
 ::
 ::
-+$  data
-  $:  =bespoke
-      =general
-  ==
-::
 +$  meta
-  $:  =updated-at                      ::  when '~2000.1.1' means it has not been updated
+  $:  =created-at
+      =updated-at                      ::  when '~2000.1.1' means it has not been updated
       permissions=(list @p)            ::  not used yet. auto- ~[our.bowl].
       =reach                           ::  not used yet
-      outside-sigs=(list signature)    ::  not used yet
+      ::outside-sigs=(list signature)    ::  DELETE outside-sigs
   ==
 ::
+::  comment -> reference your parent
+::  retweet vs quote tweet
 +$  social
   $:  =comments
       =ratings
       =reviews
+      ::  retweets?
   ==
 ::
+::  soc graph only for tags initially
+::  implement tracking with SSS for MVP, then build custom remote scry for
+::  graph traversal and fetching data
 ::
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -79,25 +86,24 @@
 ::  Item Data
 ::
 ::  data which can only be changed by authorized parties
-+$  general
-  $:  title=@t
-      link=@t
-      description=@t
-      =tags
-      =properties
-      =pictures
-      image=@t
-      color=@t
-  ==
++$  general  0
+  :: $:  ::  title=@t   ->  put into bespoke
+  ::     ::  link=@t    ->  put into bespoke for other
+  ::     :: decription=@t  ::  rename to blurb=@t
+  ::     :: =tags
+  ::     ::  =pictures  ->  put into bespoke for app
+  ::     ::  image=@t   ->  into bespoke for e.g. list
+  ::     ::  color=@t   ->  into bespoke for e.g. list
+  :: ==
 ::
 +$  tags  (list @t)
-+$  properties  (map @t @t)
 +$  pictures  (list @t)
 ::
 ::  data specific to the item type
 ::  TODO how to branch on path instead of just tag?
+:: DIE
 +$  bespoke
-  $%  [%nonitem-ship key=[=ship type=[%nonitem %ship ~] =cord] ~]
+  $%  [[%nonitem %ship ~] =cord]
       [%nonitem-group key=[=ship type=[%nonitem %group ~] =cord] ~]
       [%nonitem-app key=[=ship type=[%nonitem %app ~] =cord] =treaty]
       [%enditem-other key=[=ship type=[%enditem %other ~] =cord] ~]
@@ -112,27 +118,12 @@
       [%validity-store key=[=ship type=[%validity-store ~] =cord] =validity-records]
   ==
 ::
-::  when inputting bespoke data, you sometimes don't need to input all of it
-+$  bespoke-input
-  $%  [%nonitem-ship ~]
-      [%nonitem-group ~]
-      [%nonitem-app ~]
-      [%enditem-other ~]
-      [%enditem-app dist-desk=@t]
-      [%list-enditem-other =other-key-list]
-      [%list-enditem-app =enditem-app-key-list]
-      [%list-nonitem-app =nonitem-app-key-list]
-      [%list-nonitem-group =group-key-list]
-      [%list-nonitem-ship =ship-key-list]
-      [%list-app =app-key-list]
-      [%list-list =list-key-list]
-      [%validity-store =validity-records]
-  ==
 :: TODO
 +$  list-item-meta        [added-to-list-at=cord curator-note=cord]
 ::
 +$  key-text-list       (list [=key text=cord])
 ::
+::  DIE
 +$  list-key-list         (list [key=[=ship type=[%list type] =cord] text=cord])
 +$  other-key-list        (list [key=[=ship type=[%enditem %other ~] =cord] text=cord])
 +$  enditem-app-key-list  (list [key=[=ship type=[%enditem %app ~] =cord] text=cord])
