@@ -158,7 +158,7 @@ export const Feed = () => {
   };
 
   return (
-    <div className="w-3/4 h-full py-12">
+    <div className="w-full md:w-3/4 h-full py-12">
       <div className="text-2xl font-bold pb-5">Latest Activity</div>
       {Object.values(feed).length === 0 ? (
         <>Loading...</>
