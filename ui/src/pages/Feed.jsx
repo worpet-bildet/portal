@@ -44,7 +44,7 @@ export const Feed = () => {
     return sigil({
       patp: patp?.length < "14" ? patp : "worpet-bildet",
       renderer: reactRenderer,
-      size: "50",
+      size: window.innerWidth < 700 ? 25 : 50,
       colors: ["black", "white"],
     });
   };
@@ -60,20 +60,25 @@ export const Feed = () => {
     return (
       <div className="py-10 border-gray-700 border-b">
         <div className="px-10">
-          <div className="flex flex-col md:flex-row justify-between items-center pb-1">
+          <div className="flex flex-col md:flex-row justify-between items-start pb-1">
             <div className="flex flex-col items-start">
-              <div className="flex flex-row items-center">
+              <div className="flex flex-row items-center justify-start">
                 <div className="mr-4">{renderSigil(item.ship.slice(1))}</div>
                 <div>
-                  <div className="flex flex-row">
+                  <div className="flex flex-row items-center">
                     <NavLink to={`/${item.ship}`}>
-                      <span className="text-blue-500">{item.ship}</span>
+                      <span className="text-blue-500 text-xs md:text-base">
+                        {item.ship}
+                      </span>
                     </NavLink>
-                    <div className="text-gray-400 ml-1">
+                    <div className="text-xs md:text-base text-gray-400 ml-1">
                       · {timeago.format(fromUrbitTime(item.time))}
                     </div>
                   </div>
-                  <div className="pl-1 text-gray-400"> %{getType(item)}</div>
+                  <div className="text-xs md:text-base pl-1 text-gray-400">
+                    {" "}
+                    %{getType(item)}
+                  </div>
                 </div>
               </div>
             </div>
@@ -96,7 +101,7 @@ export const Feed = () => {
                 <></>
               ) : (
                 <div
-                  className="flex flex-row items-center w-44 h-44"
+                  className="flex flex-row items-center w-24 h-24 md:w-44 md:h-44"
                   ref={imageContainerRef}
                 >
                   <ItemImage
