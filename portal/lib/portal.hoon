@@ -565,6 +565,9 @@
 ++  manager
   |%
   ::
+  ::  no more autoadding to list?
+  ::  otherwise there are weird edge cases, e.g.
+  ::  once you remove item from default list, then edit it, it gets added back to the default list
   ++  on-update
     |%
     ::  does this has to respond to foreign
@@ -584,6 +587,7 @@
           [%nonitem @ ~]       ~
         ::  if enditem app
           [%enditem %app ~]
+        ::    ?.  =(our ship.key.upd)  ~ Do i need this?
         =/  dist-desk  (parse-dist-desk:misc dist-desk.bespoke.data.item.upd)
         ?~  dist-desk  ~
         ~[(~(act cards our %portal-manager) [%get-docket key.upd -.u.dist-desk +.u.dist-desk])]

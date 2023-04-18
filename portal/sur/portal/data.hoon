@@ -2,8 +2,46 @@
 |%
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
+::
+::   things we are doing
+:: -->  renaming
+:: -->  key-path
+      ::/inner/other:comment/[timestamp]
+      :: TODO - types for structural definitions, cords for behavioural
+      ::  definitions. e.g. /list/index; /list/bin; /list/drafts
+      ::  ~zod:enditem/app:something/1
+      ::  TODO find the most practical separator in hoon
+
+:: -->  flat data
+:: -->  api (poke and scry)
+:: -->  networking scheme? (sub updates), put/del
+:: -->  feed SSS?  YES, feed item? MAYBE
+::
+::
+::  tags?                  NO
+::  comments?              NO
+::  items SSS?             NO
+:: -soc graph networking?  NO
+::
 ::  vase -u data types ->  !>(), arbitrary code?
 ::  Basic Outline
+::
+::  NEW
+::  item types
+:: +$  type
+::   $%  [%inner %app ~]
+::       [%inner %group ~]
+::       [%inner %other ~]
+::     ::
+::       [%outer %app ~]
+::       [%outer %group ~]
+::       [%outer %ship ~]
+::     ::
+::     ::  should these be prefixed by %outer?
+::       [%collection ~]  ::  prev list
+::     ::
+::       [%validity-store ~]
+::   ==
 ::
 ::  item types
 +$  type
@@ -32,13 +70,27 @@
   ==
 ::
 ::  key of an item
-+$  key  [=ship type=path =cord]
++$  key  [=ship type=path =cord]  ::  cord = /index/1, /index/~2000.1.1
 +$  path-key  [knot knot knot ~]
 ::
 +$  items  (map key item)
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
+::  NEW
+::  Item Parts
+::
+:: +$  item           ::TODO how to handle nonitems in general?
+::   $:  =key
+::       blurb=@t
+::       ::=tags      :: do we want to put tags here?, or not even that
+::       ::=general
+::       =bespoke
+::       =meta
+::       ::=social     ::  remove all ratings/comments/reviews from item
+::       =sig
+::   ==
+
 ::  Item Parts
 ::
 +$  item
@@ -55,6 +107,16 @@
       =general
   ==
 ::
+::NEW
+:: +$  meta
+::   $:  =created-at
+::       =updated-at                      ::  when '~2000.1.1' means it has not been updated
+::       permissions=(list @p)            ::  not used yet. auto- ~[our.bowl].
+::       =reach                           ::  not used yet
+::       ::outside-sigs=(list signature)    ::  DELETE outside-sigs
+::   ==
+
+::
 +$  meta
   $:  =updated-at                      ::  '~2000.1.1' means it wasn't updated
       permissions=(list @p)            ::  not used yet. auto- ~[our.bowl].
@@ -62,6 +124,15 @@
       outside-sigs=(list signature)    ::  not used yet
   ==
 ::
+::
+::  comment -> reference your parent
+::  retweet vs quote tweet
+:: +$  social
+::   $:  =comments
+::       =ratings
+::       =reviews
+::       ::  retweets?
+::   ==
 +$  social
   $:  =comments
       =ratings
@@ -74,6 +145,17 @@
 ::
 ::  Item Data
 ::
+::  NEW
+::  data which can only be changed by authorized parties
+::+$  general  0
+  :: $:  ::  title=@t   ->  put into bespoke
+  ::     ::  link=@t    ->  put into bespoke for other
+  ::     :: decription=@t  ::  rename to blurb=@t
+  ::     :: =tags
+  ::     ::  =pictures  ->  put into bespoke for app
+  ::     ::  image=@t   ->  into bespoke for e.g. list
+  ::     ::  color=@t   ->  into bespoke for e.g. list
+  :: ==
 ::  data which can only be changed by authorized parties
 +$  general
   $:  title=@t
@@ -89,6 +171,19 @@
 +$  tags  (list @t)
 +$  properties  (map @t @t)
 +$  pictures  (list @t)
+::
+::
+::  NEW
+:: +$  bespoke
+::   $%  [[%outer %ship ~] ~]
+::       [[%outer %group ~] ~]
+::       [[%outer %app ~] =treaty]
+::       [[%inner %other ~] ~]
+::       [[%inner %app ~] dist-desk=@t sig=signature =treaty]
+::       [[%list ~] =key-list]
+::       [[%validity-store ~] =validity-records]
+::   ==
+
 ::
 ::  data specific to the item type
 +$  bespoke

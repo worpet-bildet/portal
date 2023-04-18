@@ -1,6 +1,15 @@
 /-  *portal-data, *portal-config
 |%
 ::
+::  NEW
+  :: $%  [%add (list list-key=[=ship type=[%list *] =cord]) =ship =type =general =bespoke-input]
+  ::
+  ::     :: TODO - make general and bespoke-input args optional
+  ::     [%edit =key =general =bespoke-input]
+  ::
+  ::     :: TODO
+  ::     [%delete-list-item =key list-item-key=key]
+
 +$  action
   $%  [%add =ship =type =general =bespoke]
       [%add-with-time =key =general =bespoke]
@@ -24,6 +33,10 @@
       ::
       [%index-as-curator toggle=?]
       [%onboarded toggle=?]
+      ::
+      ::  command sequences/macros necessary?
+      ::
+      ::  maybe action should be action==message
       :: units are optional args
       $:  %add-1    ship=(unit ship)
                     type=(unit type)
