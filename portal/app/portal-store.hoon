@@ -26,18 +26,16 @@
   =^  cards-1  items
     (validity-store:create-default items our.bowl now.bowl)
   =^  cards-2  items
-    (simple-list:create-default items our.bowl now.bowl)
-  =^  cards-3  items
-    (list-list:create-default items our.bowl now.bowl)
-  =/  index-key  [our.bowl [%list ~] 'index']
+    (simple-collection:create-default items our.bowl now.bowl)
+  =/  index-key  [our.bowl [%collection ~] 'index']
   ?:  &(=(our.bowl ~worpet-bildet) !(~(has by items) index-key))
-    =/  act  [%add-with-time index-key *general [[%list ~] ~]]
-    =^  cards-4  items
+    =/  act  [%add-with-time index-key *general [[%collection ~] ~]]
+    =^  cards-3  items
       (add-with-time:on-action:store [items our.bowl src.bowl now.bowl act])
     :_  this
-    (zing ~[cards-1 cards-2 cards-3 cards-4])
+    (zing ~[cards-1 cards-2 cards-3])
   :_  this
-  (zing ~[cards-1 cards-2 cards-3])
+  (zing ~[cards-1 cards-2])
 ::
 ++  on-save  !>(state)
 ++  on-load
@@ -45,9 +43,9 @@
   ^-  (quip card _this)
   =/  old  !<(state-0 old)
   =/  items  items.old
-  =/  index-key  [our.bowl [%list ~] 'index']
+  =/  index-key  [our.bowl [%collection ~] 'index']
   ?:  &(=(our.bowl ~worpet-bildet) !(~(has by items) index-key))
-    =/  act  [%add-with-time index-key *general [[%list ~] ~]]
+    =/  act  [%add-with-time index-key *general [[%collection ~] ~]]
     ::  rename add-with-time to add-with-cord?
     =^  cards  items
       (add-with-time:on-action:store [items our.bowl src.bowl now.bowl act])
@@ -97,9 +95,9 @@
         (del:on-action:store [items our.bowl src.bowl now.bowl act])
       [cards this]
       ::
-        %put-nonitem
+        %put-outer
       =^  cards  items
-        (put-nonitem:on-action:store items our.bowl src.bowl act)
+        (put-outer:on-action:store items our.bowl src.bowl act)
       [cards this]
       ::
         %edit-docket
@@ -107,15 +105,15 @@
         (edit-docket:on-action:store items our.bowl src.bowl now.bowl act)
       [cards this]
       ::
-        %add-item-to-list
+        %add-item-to-col
       =^  cards  items
-        (add-item-to-list:on-action:store items our.bowl src.bowl now.bowl act)
+        (add-item-to-col:on-action:store items our.bowl src.bowl now.bowl act)
       [cards this]
       ::
-        %purge
-      =^  cards  items
-        (purge:store [items our.bowl src.bowl now.bowl act])
-      [cards this]
+      ::   %purge
+      :: =^  cards  items
+      ::   (purge:store [items our.bowl src.bowl now.bowl act])
+      :: [cards this]
     ==
       %portal-message
     ?.  =(our.bowl src.bowl)  `this
@@ -206,7 +204,7 @@
     =/  item-key  (path-key-to-key:conv t.t.t.t.path)
     =/  list  =-  (~(gut by items) - ~)
       (path-key-to-key:conv [i.t.path i.t.t.path i.t.t.t.path ~])
-    ?~(list %.n (key-in-list-item:loob item-key list))
+    ?~(list %.n (key-in-collection:loob item-key list))
     ::
     ::  /item-valid/[ship]/'[type]'/'[cord]'
       [%item-valid @ @ @ ~]

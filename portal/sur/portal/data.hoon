@@ -26,48 +26,19 @@
 ::  vase -u data types ->  !>(), arbitrary code?
 ::  Basic Outline
 ::
-::  NEW
-::  item types
-:: +$  type
-::   $%  [%inner %app ~]
-::       [%inner %group ~]
-::       [%inner %other ~]
-::     ::
-::       [%outer %app ~]
-::       [%outer %group ~]
-::       [%outer %ship ~]
-::     ::
-::     ::  should these be prefixed by %outer?
-::       [%collection ~]  ::  prev list
-::     ::
-::       [%validity-store ~]
-::   ==
 ::
 ::  item types
 +$  type
-  $%  [%nonitem %group ~]
-      [%nonitem %ship ~]
-      [%nonitem %app ~]
-      [%enditem %app ~]
-      [%enditem %other ~]
-      [%list ~]
-      [%list %list ~]
+  $%  [%outer %group ~]
+      [%outer %ship ~]
+      [%outer %app ~]
+      [%inner %app ~]
+      [%inner %other ~]
+      ::  should collection and validity-store be prefixed by %inner?
+      [%collection ~]
       [%validity-store ~]
   ==
 ::
-+$  item-type
-  $%  [%nonitem %group ~]
-      [%nonitem %ship ~]
-      [%nonitem %app ~]
-      [%enditem %app ~]
-      [%enditem %other ~]
-      [%validity-store ~]
-  ==
-::
-+$  list-type
-  $%  [%list ~]
-      [%list %list ~]
-  ==
 ::
 ::  key of an item
 +$  key  [=ship type=path =cord]  ::  cord = /index/1, /index/~2000.1.1
@@ -187,18 +158,15 @@
 ::
 ::  data specific to the item type
 +$  bespoke
-  $%  [[%nonitem %ship ~] ~]
-      [[%nonitem %group ~] ~]
-      [[%nonitem %app ~] =treaty]
-      [[%enditem %other ~] ~]
-      [[%enditem %app ~] dist-desk=@t sig=signature =treaty]
-      [[%list ~] =key-list]
-      [[%list %list ~] =list-key-list]
+  $%  [[%outer %ship ~] ~]
+      [[%outer %group ~] ~]
+      [[%outer %app ~] =treaty]
+      [[%inner %other ~] ~]
+      [[%inner %app ~] dist-desk=@t sig=signature =treaty]
+      [[%collection ~] =key-list]
       [[%validity-store ~] =validity-records]
   ==
 ::
-::
-+$  list-key-list         (list key=[=ship type=list-type =cord])
 ::
 +$  key-list  (list key)
 +$  key-set  (set key)

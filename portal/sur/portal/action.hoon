@@ -15,11 +15,11 @@
       [%add-with-time =key =general =bespoke]
       [%edit =key =general =bespoke]
       ::  creates item and adds it to specified list
-      [%add-item-to-list list-key=[=ship type=[%list ~] =cord] =ship =type =general =bespoke]
+      [%add-item-to-col col-key=[=ship type=[%collection ~] =cord] =ship =type =general =bespoke]
       [%sub =key]
       [%del =key]
       ::
-      [%put-nonitem =key =item]
+      [%put-outer =key =item]
       ::  /nonitem/app
       ::  key defines item which will be filled with treaty data
       [%get-docket =key =ship =desk]

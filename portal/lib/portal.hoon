@@ -70,36 +70,21 @@
       ==
     ==
   ::
-  ++  in-default-list
-    |=  [item-key=key]
-    ;;  ?
-    =/  list-key
-      [our ?:(=(-.type.item-key %list) [%list %list ~] [%list ~]) '~2000.1.1']
-    .^  store-result
-      %gx
-      ;:  weld
-        /(scot %p our)/portal-store/(scot %da now)/in-list
-        (key-to-path-key:conv list-key)
-        (key-to-path-key:conv item-key)
-        /noun
-      ==
-    ==
   --
-::
 ++  keys
   |%
   ::
   ::  do this stuff (and other) with wet gates
   ::  so that I can input key-list or key-text-list and it doesnt matter
-  ++  skip-nonitem
+  ++  skip-outer
     |=  [=key-list]
     ^-  ^key-list
-    (skip key-list |=([=key] ?:(=(-.type.key %nonitem) %.y %.n)))
+    (skip key-list |=([=key] ?:(=(-.type.key %outer) %.y %.n)))
   ::
-  ++  skim-nonitem
+  ++  skim-outer
     |=  [=key-list]
     ^-  ^key-list
-    (skim key-list |=([=key] ?:(=(-.type.key %nonitem) %.y %.n)))
+    (skim key-list |=([=key] ?:(=(-.type.key %outer) %.y %.n)))
   ::
   ++  skip-types
     |=  [=key-list types=(list type)]
@@ -125,14 +110,12 @@
 ++  loob
   |%
   ::
-  ++  key-in-list-item
-    |=  [=key list-item=item]
+  ++  key-in-collection
+    |=  [=key col=item]
     ^-  ?
-    ?+    -.bespoke.data.list-item    !!
-        [%list ~]
-      (key-in-key-list key key-list.bespoke.data.list-item)
-        [%list %list ~]
-      (key-in-key-list key list-key-list.bespoke.data.list-item)
+    ?+    -.bespoke.data.col    !!
+        [%collection ~]
+      (key-in-key-list key key-list.bespoke.data.col)
     ==
   ::  check whether key is in key-list
   ++  key-in-key-list
@@ -200,12 +183,11 @@
     (~(int by new-map) items)
   ::
   ::  takes list item and outputs key-list
-  ++  list-item-to-key-list
+  ++  collection-to-key-list
       |=  [=item]
       ^-  key-list
       ?+    -.bespoke.data.item    ~
-          [%list ~]  key-list.bespoke.data.item
-          [%list %list ~]  list-key-list.bespoke.data.item
+          [%collection ~]  key-list.bespoke.data.item
       ==
   --
 ::
@@ -220,87 +202,88 @@
     |=  [our=ship src=ship =items upd=[%put =key =item]]
     ^-  ^items
     ?>  =(src our)
-    ?:  &(=(-.type.key %nonitem) !=(ship.key our))  !!
+    ?:  &(=(-.type.key %outer) !=(ship.key our))  !!
     ~&  "%portal: putting {(spud (key-to-path-key:conv key.upd))}"
     (~(put by items) key.upd item.upd)
   ::
 
+  ::  TODO entire purge is based upon nested data structure
+  ::  needs to be rebuilt
   ::  purges all foreign items except those from default-curators and portal-curator
-  ++  purge
-    |=  [=items our=ship src=ship now=time act=[%purge =default-curators =portal-curator]]
-    ^-  [(list card) ^items]
-    =/  items-key-set  ~(key by items)
-    =/  key-list  ~(tap in items-key-set)
-    ::make list/set of items
-    ::diff from items
-    =/  ships  (silt (limo ~[our ship.portal-curator.act]))  ::TODO also default curators in here
-    =/  our-keys  (skim-ships:keys key-list ~(tap in ships))  ::  LISTLIST KEY LIST
-    =/  our-list-lists-keys  (skim-types:keys our-keys ~[[%list %list ~]])  :: LISTLIST KEYLIST
-    =/  our-list-lists-items  ::list items
-      %-  (list item)  %+  skip
-        ~(val by (get-items:misc items our-list-lists-keys))
-        |=(item=?(~ item) ?~(item %.y %.n))
-    =/  our-lists-keys  `(list key)`(zing (turn our-list-lists-items |=(=item (list-item-to-key-list:misc item))))  :: LIST KEYLIST
-    =/  our-lists-items
-      %-  (list item)  %+  skip
-        (turn our-lists-keys |=(=key (~(gut by items) key ~)))  :: LIST ITEMLIST
-        |=(item=?(~ item) ?~(item %.y %.n))
-    =/  our-items-keys  `(list key)`(zing (turn our-lists-items |=(=item (list-item-to-key-list:misc item))))  :: ITEM KEYLIST
-    =/  keys-to-keep  (~(uni in (silt our-keys)) (silt our-lists-keys))
-    =.  keys-to-keep  (~(uni in keys-to-keep) (silt our-items-keys))
-    :: our-list-lists-keys is redundant
-    =/  keys-to-purge  (~(dif in items-key-set) keys-to-keep)
-    =/  keys  ~(tap in keys-to-purge)
-    =/  len  (lent keys)
-    =/  n  0
-    =/  return  [*(list card) items=items]
-    :: ~&  "items-key-set"
-    :: ~&  >  ~(wyt in items-key-set)
-    :: ~&  "item number to keep"
-    :: ~&  >  ~(wyt in keys-to-keep)
-    :: ~&  "item number to purge"
-    :: ~&  >  len
-    =.  return
-      |-  ?:  =(n len)  return
-      :: ~&  "items kept"
-      :: ~&  >  ~(wyt by `^items`+.return)
-      =/  new  (del:on-action items.return our src now [%del (snag n keys)])
-      %=  $
-        -.return  (weld -.return -.new)
-        +.return  +.new
-        n  +(n)
-      ==
-    =/  key-set  ~(key by items.return)
-    =/  key-list  ~(tap in key-set)
-    ~&  "%portal: purge done"
-    :: refreshes nonitems kept after purge
-    [(weld (get-nonitems:manager our key-list) -.return) +.return]
+  :: ++  purge
+  ::   |=  [=items our=ship src=ship now=time act=[%purge =default-curators =portal-curator]]
+  ::   ^-  [(list card) ^items]
+  ::   =/  items-key-set  ~(key by items)
+  ::   =/  key-list  ~(tap in items-key-set)
+  ::   ::make list/set of items
+  ::   ::diff from items
+  ::   =/  ships  (silt (limo ~[our ship.portal-curator.act]))  ::TODO also default curators in here
+  ::   =/  our-keys  (skim-ships:keys key-list ~(tap in ships))  ::  LISTLIST KEY LIST
+  ::   =/  our-list-lists-keys  (skim-types:keys our-keys ~[[%list %list ~]])  :: LISTLIST KEYLIST
+  ::   =/  our-list-lists-items  ::list items
+  ::     %-  (list item)  %+  skip
+  ::       ~(val by (get-items:misc items our-list-lists-keys))
+  ::       |=(item=?(~ item) ?~(item %.y %.n))
+  ::   =/  our-lists-keys  `(list key)`(zing (turn our-list-lists-items |=(=item (list-item-to-key-list:misc item))))  :: LIST KEYLIST
+  ::   =/  our-lists-items
+  ::     %-  (list item)  %+  skip
+  ::       (turn our-lists-keys |=(=key (~(gut by items) key ~)))  :: LIST ITEMLIST
+  ::       |=(item=?(~ item) ?~(item %.y %.n))
+  ::   =/  our-items-keys  `(list key)`(zing (turn our-lists-items |=(=item (list-item-to-key-list:misc item))))  :: ITEM KEYLIST
+  ::   =/  keys-to-keep  (~(uni in (silt our-keys)) (silt our-lists-keys))
+  ::   =.  keys-to-keep  (~(uni in keys-to-keep) (silt our-items-keys))
+  ::   :: our-list-lists-keys is redundant
+  ::   =/  keys-to-purge  (~(dif in items-key-set) keys-to-keep)
+  ::   =/  keys  ~(tap in keys-to-purge)
+  ::   =/  len  (lent keys)
+  ::   =/  n  0
+  ::   =/  return  [*(list card) items=items]
+  ::   :: ~&  "items-key-set"
+  ::   :: ~&  >  ~(wyt in items-key-set)
+  ::   :: ~&  "item number to keep"
+  ::   :: ~&  >  ~(wyt in keys-to-keep)
+  ::   :: ~&  "item number to purge"
+  ::   :: ~&  >  len
+  ::   =.  return
+  ::     |-  ?:  =(n len)  return
+  ::     :: ~&  "items kept"
+  ::     :: ~&  >  ~(wyt by `^items`+.return)
+  ::     =/  new  (del:on-action items.return our src now [%del (snag n keys)])
+  ::     %=  $
+  ::       -.return  (weld -.return -.new)
+  ::       +.return  +.new
+  ::       n  +(n)
+  ::     ==
+  ::   =/  key-set  ~(key by items.return)
+  ::   =/  key-list  ~(tap in key-set)
+  ::   ~&  "%portal: purge done"
+  ::   :: refreshes outer items kept after purge
+  ::   [(weld (get-outer-items:manager our key-list) -.return) +.return]
   ::
     ::  bespoke-write can live separately and input into add-1 and edit-1
     ::  as a filter/funnel before the pure functions
     ::  whenever modifying bespoke, go thru this
-    ++  bespoke-write
-      |*  [=key =bespoke act=$%([%add ~] [%edit =bespoke])]
-      ::  left bespoke overwrites the right bespoke
-      ^-  ^bespoke
-      ?-    -.bespoke
-          [%nonitem %ship ~]        [[%nonitem %ship ~] ~]
-          [%nonitem %group ~]       [[%nonitem %group ~] ~]
-          [%nonitem %app ~]
-            ?-    -.act
-              %add             [[%nonitem %app ~] *treaty]
-              %edit            bespoke.act
-            ==
-          [%enditem %other ~]       [[%enditem %other ~] ~]
-          [%enditem %app ~]
-            ?-    -.act
-              %add             [[%enditem %app ~] dist-desk.bespoke *signature *treaty]
-              %edit            ?+(-.bespoke.act !! [%enditem %app ~] bespoke.act(dist-desk dist-desk.bespoke))
-            ==
-          [%list ~]                [[%list ~] key-list.bespoke]
-          [%list %list ~]           [[%list %list ~] list-key-list.bespoke]
-          [%validity-store ~]       [[%validity-store ~] validity-records.bespoke]
-      ==
+  ++  bespoke-write
+    |*  [=key =bespoke act=$%([%add ~] [%edit =bespoke])]
+    ::  left bespoke overwrites the right bespoke
+    ^-  ^bespoke
+    ?-    -.bespoke
+        [%outer %ship ~]        [[%outer %ship ~] ~]
+        [%outer %group ~]       [[%outer %group ~] ~]
+        [%outer %app ~]
+          ?-    -.act
+            %add             [[%outer %app ~] *treaty]
+            %edit            bespoke.act
+          ==
+        [%inner %other ~]       [[%inner %other ~] ~]
+        [%inner %app ~]
+          ?-    -.act
+            %add             [[%inner %app ~] dist-desk.bespoke *signature *treaty]
+            %edit            ?+(-.bespoke.act !! [%inner %app ~] bespoke.act(dist-desk dist-desk.bespoke))
+          ==
+        [%collection ~]            [[%collection ~] key-list.bespoke]
+        [%validity-store ~]       [[%validity-store ~] validity-records.bespoke]
+    ==
   ++  on-action
     |%
     ++  add
@@ -336,9 +319,9 @@
       ?+  -.act  !!  %add-1
       =-  [key data meta social (sign:sig our now [%item -])]
       :^  ^=  key   :+  (fall ship.act our)
-                        (fall type.act [%enditem %other ~])
+                        (fall type.act [%inner %other ~])
                         (fall cord.act `@t`(scot %da now))
-          ^=  data  :-  (fall bespoke.act [[%enditem %other ~] ~])  ::use bond here to make a function call?
+          ^=  data  :-  (fall bespoke.act [[%inner %other ~] ~])  ::use bond here to make a function call?
                                                                     ::  use input functions for everything?
                                                                     ::  how to sync type and bespoke when creating items?
                     :*  (fall title.act '')
@@ -396,7 +379,7 @@
     ++  sub
       |=  [our=ship src=ship now=time wex=boat:gall act=[%sub =key]]
       ^-  (list card)
-      ?:  =(-.type.key.act %nonitem)  ~
+      ?:  =(-.type.key.act %outer)  ~
       ?:  =(ship.key.act our)  ~
       =/  wire  (key-to-path-key:conv key.act)
       ?:  (~(has by wex) [wire ship.key.act %portal-store])
@@ -425,37 +408,37 @@
             ?:  =(our ship.key.act)
               [%give %fact [path-key]~ [%portal-update !>(act)]]
             [%pass path-key %agent [ship.key.act %portal-store] %leave ~]
-          ::  if nonitem
-              %nonitem
+          ::  if outer
+              %outer
             =-  [%pass [- path-key] %agent [ship.key.act -] %leave ~]
             ?+    type.key.act    !!
-                [%nonitem %app ~]    %treaty
-                [%nonitem %group ~]  %get-group-preview
+                [%outer %app ~]    %treaty
+                [%outer %group ~]  %get-group-preview
             ==
           ==
       ==
     ::
-    ++  add-item-to-list  ::TODO /list/app
-      |=  [=items our=ship src=ship now=time act=[%add-item-to-list list-key=[=ship type=[%list ~] =cord] =ship =type =general =bespoke]]
+    ++  add-item-to-col  ::TODO /list/app
+      |=  [=items our=ship src=ship now=time act=[%add-item-to-col col-key=[=ship type=[%collection ~] =cord] =ship =type =general =bespoke]]
       ^-  [(list card) ^items]
-      =/  list  (~(got by items) list-key.act)
-      ?+    -.bespoke.data.list    [~ items]
-          [%list ~]
-        =/  bespoke  [[%list ~] (snoc key-list.bespoke.data.list [ship.act [%enditem %other ~] `@t`(scot %da now)])]
-        =/  list-act  [%edit list-key.act general.data.list bespoke]
+      =/  col  (~(got by items) col-key.act)
+      ?+    -.bespoke.data.col    [~ items]
+          [%collection ~]
+        =/  bespoke  [[%collection ~] (snoc key-list.bespoke.data.col [ship.act [%inner %other ~] `@t`(scot %da now)])]
+        =/  col-act  [%edit col-key.act general.data.col bespoke]
         =^  cards1  items
           (add-with-time items our src now [%add-with-time [ship.act type.act `@t`(scot %da now)] general.act bespoke.act])
         =^  cards2  items
-          (edit items our our now list-act)
+          (edit items our our now col-act)
         [(weld cards1 cards2) items]
       ==
     ::
     ::
     ::  for now just overwrites
-    ::  long term nonitems should be able to sync with their source
+    ::  long term outer items should be able to sync with their source
     ::  and not be overwritten every time
-    ++  put-nonitem
-      |=  [=items our=ship src=ship act=[%put-nonitem =key =item]]
+    ++  put-outer
+      |=  [=items our=ship src=ship act=[%put-outer =key =item]]
       ^-  [(list card) ^items]
       :-  (put:on-poke:make-cards our src [%put key.act item.act])
       (put-item our src items [%put key.act item.act])
@@ -466,7 +449,7 @@
       =/  item  (~(gut by items) key.act ~)
       ?~  item  ~&  "%portal-store: item doesn't exist"  [~ items]
       ?+    -.bespoke.data.item    !!
-          [%enditem %app ~]
+          [%inner %app ~]
         =/  item
           %=  item
             updated-at.meta         `@t`(scot %da now)
@@ -487,22 +470,22 @@
       |=  [=items our=ship src=ship now=time act=[%index-as-curator src=ship toggle=?]]
       ^-  [(list card) ^items]
       ?>  =(our ~worpet-bildet)
-      =/  index-key  [our [%list ~] 'index']
+      =/  index-key  [our [%collection ~] 'index']
       =/  index  (~(gut by items) index-key ~)
       ?~  index  ~&  "%portal-store: index doesn't exist"  [~ items]
       ?+    -.bespoke.data.index    [~ items]
-          [%list ~]
-        =/  loc  (find [[src.act [%nonitem %ship ~] '']]~ key-list.bespoke.data.index)
+          [%collection ~]
+        =/  loc  (find [[src.act [%outer %ship ~] '']]~ key-list.bespoke.data.index)
         ?~  loc
           ?.  =(toggle.act %.y)  [~ items]
-          =/  bespoke  [[%list ~] (snoc key-list.bespoke.data.index [src.act [%nonitem %ship ~] ''])]
-          =/  list-act  [%edit index-key general.data.index bespoke]
-          (edit:on-action items our our now list-act)
+          =/  bespoke  [[%collection ~] (snoc key-list.bespoke.data.index [src.act [%outer %ship ~] ''])]
+          =/  col-act  [%edit index-key general.data.index bespoke]
+          (edit:on-action items our our now col-act)
         ?.  =(toggle.act %.n)  [~ items]
-        =/  bespoke  [[%list ~] (oust [u.loc 1] key-list.bespoke.data.index)]
-        =/  list-act  [%edit index-key general.data.index bespoke]
+        =/  bespoke  [[%collection ~] (oust [u.loc 1] key-list.bespoke.data.index)]
+        =/  col-act  [%edit index-key general.data.index bespoke]
         ::  TODO edit permission when its coming from on-message
-        (edit:on-action items our our now list-act)
+        (edit:on-action items our our now col-act)
       ==
     --
   ::
@@ -520,7 +503,7 @@
     ++  del
       |=  [=items our=ship src=ship upd=[%del =key]]
       ^-  [(list card) ^items]
-      ?:  =(-.type.key.upd %nonitem)  [~ items]
+      ?:  =(-.type.key.upd %outer)  [~ items]
       ?.  (~(has by items) key.upd)  `items
       ::~&  "%portal: {(spud (key-to-path:conv key.upd))} does not exist"
       :_  (~(del by items) key.upd)
@@ -542,7 +525,7 @@
         :~  [%pass /put %agent [our %portal-manager] %poke %portal-update !>(upd)]
             [%give %fact [/front-end-update]~ %portal-front-end-update !>((make-front-end-update our src upd))]
         ==
-        ?.  &(=(our ship.key.upd) ?!(=(-.type.key.upd %nonitem)))  ~
+        ?.  &(=(our ship.key.upd) ?!(=(-.type.key.upd %outer)))  ~
         [%give %fact [(key-to-path-key:conv key.upd)]~ [%portal-update !>(upd)]]~
       --
 
@@ -583,17 +566,17 @@
           ~
         ::  if %validity-store
           [%validity-store ~]  ~
-        ::  if %nonitem
-          [%nonitem @ ~]       ~
-        ::  if enditem app
-          [%enditem %app ~]
+        ::  if %outer
+          [%outer @ ~]       ~
+        ::  if inner app
+          [%inner %app ~]
         ::    ?.  =(our ship.key.upd)  ~ Do i need this?
         =/  dist-desk  (parse-dist-desk:misc dist-desk.bespoke.data.item.upd)
         ?~  dist-desk  ~
         ~[(~(act cards our %portal-manager) [%get-docket key.upd -.u.dist-desk +.u.dist-desk])]
         ::  if list
-          [%list *]
-        (sub-to-list-keys our now item.upd)
+        ::   [%collection *]
+        :: (sub-to-col-keys our now item.upd)
       ==
       (default-v1:validator our now key.upd item.upd)
     ::
@@ -603,45 +586,47 @@
       ~
     --
   ::
-  ++  sub-to-list-keys ::  + get-list-nonitems
-    |=  [our=ship now=time =item]
-    ^-  (list card)
-    ?+    -.bespoke.data.item    ~
-        [%list %list ~]
-      =/  key-list  (skip-ships:keys list-key-list.bespoke.data.item ~[our])
-      =/  filtered-set  (~(dif in (silt key-list)) (~(get-all-keys scry our now)))
-      =/  filtered-list  ~(tap in filtered-set)
-      (turn filtered-list |=(=key (~(act cards [our %portal-store]) sub+key)))
-
-    ::
-        [%list ~]
-      ::  nonitems
-      :: if you do set-difference you keep old data, if you don't do set difference you constantly overwrite fine data
-      :: after purge new nonitems are taken daily
-      =/  nonitem-key-list   (skim-nonitem:keys key-list.bespoke.data.item)
-      =/  filtered-set  (~(dif in (silt nonitem-key-list)) (~(get-all-keys scry our now)))
-      =/  filtered-list  ~(tap in filtered-set)
-      =/  nonitem-cards  ^-  (list card)
-         %-  zing
-        (turn filtered-list |=(=key (put-empty-nonitem:manager our key)))
-      ::  enditems
-      =/  key-list  (skip-nonitem:keys key-list.bespoke.data.item)
-      =/  key-list  (skip-ships:keys key-list ~[our])
-      =/  filtered-set  (~(dif in (silt key-list)) (~(get-all-keys scry our now)))
-      =/  filtered-list  ~(tap in filtered-set)
-      =/  enditem-cards  (turn filtered-list |=(=key (~(act cards [our %portal-store]) sub+key)))
-      (weld enditem-cards nonitem-cards)
-    ==
+  ::  based on nested data structure
+  ::  subs should be done from the frontend when needed, not automatically
+  :: ++  sub-to-col-keys ::  + get-list-outer-items
+  ::   |=  [our=ship now=time =item]
+  ::   ^-  (list card)
+  ::   ?+    -.bespoke.data.item    ~
+  ::       [%list %list ~]
+  ::     =/  key-list  (skip-ships:keys list-key-list.bespoke.data.item ~[our])
+  ::     =/  filtered-set  (~(dif in (silt key-list)) (~(get-all-keys scry our now)))
+  ::     =/  filtered-list  ~(tap in filtered-set)
+  ::     (turn filtered-list |=(=key (~(act cards [our %portal-store]) sub+key)))
   ::
-  ++  get-nonitems
+  ::   ::
+  ::       [%list ~]
+  ::     ::  outer items
+  ::     :: if you do set-difference you keep old data, if you don't do set difference you constantly overwrite fine data
+  ::     :: after purge new outer items are taken daily
+  ::     =/  outer-key-list   (skim-outer:keys key-list.bespoke.data.item)
+  ::     =/  filtered-set  (~(dif in (silt outer-key-list)) (~(get-all-keys scry our now)))
+  ::     =/  filtered-list  ~(tap in filtered-set)
+  ::     =/  outer-cards  ^-  (list card)
+  ::        %-  zing
+  ::       (turn filtered-list |=(=key (put-empty-outer:manager our key)))
+  ::     ::  inners
+  ::     =/  key-list  (skip-outer:keys key-list.bespoke.data.item)
+  ::     =/  key-list  (skip-ships:keys key-list ~[our])
+  ::     =/  filtered-set  (~(dif in (silt key-list)) (~(get-all-keys scry our now)))
+  ::     =/  filtered-list  ~(tap in filtered-set)
+  ::     =/  inner-cards  (turn filtered-list |=(=key (~(act cards [our %portal-store]) sub+key)))
+  ::     (weld inner-cards outer-cards)
+  ::   ==
+  ::
+  ++  get-outer-items
     |=  [our=ship =key-list]
     ^-  (list card)
-    =/  filtered-list  (skim-nonitem:keys key-list)
+    =/  filtered-list  (skim-outer:keys key-list)
     %-  zing
-    (turn filtered-list |=(=key (put-empty-nonitem:manager our key)))
+    (turn filtered-list |=(=key (put-empty-outer:manager our key)))
   ::
-  ::  whatever nonitem you are adding, use this
-  ++  put-empty-nonitem
+  ::  whatever outer you are adding, use this
+  ++  put-empty-outer
     |=  [our=ship =key]
     ^-  (list card)
     =/  meta
@@ -651,29 +636,29 @@
           outside-sigs=~
       ==
     ?+    type.key    !!
-        [%nonitem %group ~]
-      =/  data  [[%nonitem %group ~]~ *general]
-      :~  (~(act cards [our %portal-store]) [%put-nonitem key [key data meta *social *signature]])
+        [%outer %group ~]
+      =/  data  [[%outer %group ~]~ *general]
+      :~  (~(act cards [our %portal-store]) [%put-outer key [key data meta *social *signature]])
           (~(act cards [our %portal-manager]) [%get-group-preview key ship.key cord.key])
       ==
-        [%nonitem %ship ~]
-      =/  data  [[%nonitem %ship ~]~ *general]
-      ~[(~(act cards [our %portal-store]) [%put-nonitem key [key data meta *social *signature]])]
-        [%nonitem %app ~]
-      =/  data  [[[%nonitem %app ~] *treaty] *general]
-      :~  (~(act cards [our %portal-store]) [%put-nonitem key [key data meta *social *signature]])
+        [%outer %ship ~]
+      =/  data  [[%outer %ship ~]~ *general]
+      ~[(~(act cards [our %portal-store]) [%put-outer key [key data meta *social *signature]])]
+        [%outer %app ~]
+      =/  data  [[[%outer %app ~] *treaty] *general]
+      :~  (~(act cards [our %portal-store]) [%put-outer key [key data meta *social *signature]])
           (~(act cards [our %portal-manager]) [%get-docket key ship.key cord.key])
       ==
     ==
   ::
-  ++  fill-nonitem
-    |=  [our=ship act=$%([%fill-nonitem-group =key title=@t description=@t image=@t] [%fill-nonitem-app =key =treaty])]
+  ++  fill-outer
+    |=  [our=ship act=$%([%fill-outer-group =key title=@t description=@t image=@t] [%fill-outer-app =key =treaty])]
     ^-  card
     =/  general  *general
     =/  data
       ?-  -.act
-        %fill-nonitem-group  [[[%nonitem %group ~] ~] general(title title.act, description description.act, image image.act)]
-        %fill-nonitem-app    [[[%nonitem %app ~] treaty.act] general]
+        %fill-outer-group  [[[%outer %group ~] ~] general(title title.act, description description.act, image image.act)]
+        %fill-outer-app    [[[%outer %app ~] treaty.act] general]
       ==
     =/  meta
       :*  updated-at='~2000.1.1'
@@ -681,7 +666,7 @@
           reach=[%public blacklist=~]
           outside-sigs=~
       ==
-    (~(act cards our %portal-store) [%put-nonitem key.act [key.act data meta *social *signature]])
+    (~(act cards our %portal-store) [%put-outer key.act [key.act data meta *social *signature]])
   --
 ::
 ::  includes arms which are used to validate data
@@ -691,7 +676,7 @@
     |=  [our=ship now=time item-key=key =item]
     ^-  (list card)
     ::  slight amount of time after this
-    ?.  =(type.item-key [%enditem %app ~])  ~
+    ?.  =(type.item-key [%inner %app ~])  ~
     =/  v-store-key  `key`[our [%validity-store ~] '~2000.1.1']
     =/  validity-store
       ;;  ^item  (~(get-item scry our now) v-store-key)
@@ -728,7 +713,7 @@
     |=  [our=@p now=@da =key =item]
     ^-  valid
     ?+    -.bespoke.data.item    ~
-        [%enditem %app ~]
+        [%inner %app ~]
       =/  dist-desk  (parse-dist-desk:misc dist-desk.bespoke.data.item)
       ?~  dist-desk  [~ %.n]
       (sig key dist-name.u.dist-desk desk-name.u.dist-desk sig.bespoke.data.item our now)
@@ -757,21 +742,11 @@
 ::  convenience
 ++  create-default
   |%
-  ++  simple-list
+  ++  simple-collection
     |=  [=items our=ship now=time]
     ^-  [(list card) ^items]
-    =/  general  `general`['Main List' '' 'Your first list.' *tags *properties *pictures '' '#e8e8e8']
-    =/  act  [%add our [%list ~] general [[%list ~] ~]]
-    (add:on-action:store items our our now %.y act)
-  ::
-  ++  list-list
-    |=  [=items our=ship now=time]
-    ^-  [(list card) ^items]
-    =/  general  ['Main Curator Page' '' 'Your first curator page.' *tags *properties *pictures '' '#e8e8e8']
-    =/  =list-key-list
-      :~  [our [%list ~] '~2000.1.1']
-      ==
-    =/  act  [%add our [%list %list ~] general [[%list %list ~] list-key-list]]
+    =/  general  `general`['Main Collection' '' 'Your first collection.' *tags *properties *pictures '' '#e8e8e8']
+    =/  act  [%add our [%collection ~] general [[%collection ~] ~]]
     (add:on-action:store items our our now %.y act)
   ::
   ++  validity-store

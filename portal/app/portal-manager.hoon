@@ -89,7 +89,7 @@
     ::  TODO abstract a portal-manager add/edit/etc function which does stuff based on action and type
     ::  maybe not needed? aim for simplicity.
     =/  act-set  %-  silt   ^-  (list term)
-      ~[%add %add-1 %edit %sub %del %add-to-default-list %put-nonitem %edit-docket %add-item-to-list %purge]
+      ~[%add %add-1 %edit %sub %del %add-to-default-list %put-outer %edit-docket %add-item-to-list %purge]
     ?:  (~(has in act-set) -.act)
       ~&  "sending poke"
       :_  this
@@ -189,12 +189,12 @@
       =/  treaty  !<(treaty:treaty q.cage.sign)
       =/  key  (path-key-to-key:conv `path-key`+.wire)
       ?+    type.key    !!
-          [%enditem %app ~]
+          [%inner %app ~]
         :_  this
         ~[(~(act cards our.bowl %portal-store) [%edit-docket key treaty])]
-          [%nonitem %app ~]
+          [%outer %app ~]
         :_  this
-        :~  [(fill-nonitem:manager [our.bowl [%fill-nonitem-app key treaty]])]
+        :~  [(fill-outer:manager [our.bowl [%fill-outer-app key treaty]])]
             [%pass wire %agent [ship.key %treaty] %leave ~]
         ==
       ==
@@ -206,14 +206,14 @@
         %fact
       =/  preview  !<(preview:groups q.cage.sign)
       =/  act
-        :*  %fill-nonitem-group
-          [p.flag.preview [%nonitem %group ~] q.flag.preview]
+        :*  %fill-outer-group
+          [p.flag.preview [%outer %group ~] q.flag.preview]
           title.meta.preview
           description.meta.preview
           image.meta.preview
         ==
       :_  this
-      :~  (fill-nonitem:manager [our.bowl act])
+      :~  (fill-outer:manager [our.bowl act])
           [%pass wire %agent [p.flag.preview %groups] %leave ~]
       ==
     ==
