@@ -27,9 +27,9 @@
     (validity-store:create-default items our.bowl now.bowl)
   =^  cards-2  items
     (simple-collection:create-default items our.bowl now.bowl)
-  =/  index-key  [our.bowl [%collection ~] 'index']
+  =/  index-key  [[[%collection ~] [%def ~]] our.bowl 'index']
   ?:  &(=(our.bowl ~worpet-bildet) !(~(has by items) index-key))
-    =/  act  [%add-with-time index-key *general [[%collection ~] ~]]
+    =/  act  [%add-with-time index-key [[%collection ~] '' '' '' ~]]
     =^  cards-3  items
       (add-with-time:on-action:store [items our.bowl src.bowl now.bowl act])
     :_  this
@@ -43,9 +43,9 @@
   ^-  (quip card _this)
   =/  old  !<(state-0 old)
   =/  items  items.old
-  =/  index-key  [our.bowl [%collection ~] 'index']
+  =/  index-key  [[[%collection ~] [%def ~]] our.bowl 'index']
   ?:  &(=(our.bowl ~worpet-bildet) !(~(has by items) index-key))
-    =/  act  [%add-with-time index-key *general [[%collection ~] ~]]
+    =/  act  [%add-with-time index-key [[%collection ~] '' '' '' ~]]
     ::  rename add-with-time to add-with-cord?
     =^  cards  items
       (add-with-time:on-action:store [items our.bowl src.bowl now.bowl act])
@@ -62,14 +62,14 @@
     ?.  =(our.bowl src.bowl)  `this
     =/  act  `action`!<(action vase)
     ?+    -.act    (on-poke:default mark vase)
-        %add-1  `this
-        %edit-1
-      =/  item  (~(gut by items) key.act ~)
-      ?~  item  `this
-      =.  item
-        (edit-1:on-action:store [our.bowl now.bowl item act])
-      =.  items  (~(put by items) key.item item)
-      `this
+      ::   %add-1  `this
+      ::   %edit-1
+      :: =/  item  (~(gut by items) key.act ~)
+      :: ?~  item  `this
+      :: =.  item
+      ::   (edit-1:on-action:store [our.bowl now.bowl item act])
+      :: =.  items  (~(put by items) key.item item)
+      :: `this
        :: defaults should just be added with 'add-with-time'
         %add
       =^  cards  items

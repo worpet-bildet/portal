@@ -7,16 +7,29 @@
 ++  conv
   |%
   ::
+  ::  TODO figure out how to do key as path
+  ::  :
+  :: -->  key-path
+        :: /inner/other:comment/[timestamp]
+        ::  ~zod:enditem/app:something/1
+        ::  TODO find the most practical separator in hoon
+
   ++  key-to-path-key
     |=  [=key]
     ;;  path-key
-    ;:(weld ~[(scot %p ship.key)] ~[(spat type.key)] ~[cord.key])
+    ;:  weld
+      /(spat struc.type.key)  ::TODO maybe not spat? no cords(as in nested path) in path
+      /(spat lens.type.key)
+      ~[(scot %p ship.key)]
+      ~[time.key]
+    ==
   ::
   ++  path-key-to-key
     |*  [=path-key]
-    ^-  key
-    :+  (slav %p -:path-key)
+    ;;  key
+    :^  (stab -:path-key)
         (stab +<:path-key)
+        (slav %p +>-:path-key)
         (rear path-key)
   --
 ::
@@ -79,12 +92,12 @@
   ++  skip-outer
     |=  [=key-list]
     ^-  ^key-list
-    (skip key-list |=([=key] ?:(=(-.type.key %outer) %.y %.n)))
+    (skip key-list |=([=key] ?:(=(lens.type.key [%outer ~]) %.y %.n)))
   ::
   ++  skim-outer
     |=  [=key-list]
     ^-  ^key-list
-    (skim key-list |=([=key] ?:(=(-.type.key %outer) %.y %.n)))
+    (skim key-list |=([=key] ?:(=(lens.type.key [%outer ~]) %.y %.n)))
   ::
   ++  skip-types
     |=  [=key-list types=(list type)]
@@ -113,9 +126,9 @@
   ++  key-in-collection
     |=  [=key col=item]
     ^-  ?
-    ?+    -.bespoke.data.col    !!
+    ?+    -.bespoke.col    !!
         [%collection ~]
-      (key-in-key-list key key-list.bespoke.data.col)
+      (key-in-key-list key key-list.bespoke.col)
     ==
   ::  check whether key is in key-list
   ++  key-in-key-list
@@ -186,8 +199,8 @@
   ++  collection-to-key-list
       |=  [=item]
       ^-  key-list
-      ?+    -.bespoke.data.item    ~
-          [%collection ~]  key-list.bespoke.data.item
+      ?+    -.bespoke.item    ~
+          [%collection ~]  key-list.bespoke.item
       ==
   --
 ::
@@ -202,7 +215,7 @@
     |=  [our=ship src=ship =items upd=[%put =key =item]]
     ^-  ^items
     ?>  =(src our)
-    ?:  &(=(-.type.key %outer) !=(ship.key our))  !!
+    ?:  &(=(lens.type.key.upd [%outer ~]) !=(ship.key.upd our))  !!
     ~&  "%portal: putting {(spud (key-to-path-key:conv key.upd))}"
     (~(put by items) key.upd item.upd)
   ::
@@ -263,49 +276,45 @@
     ::  bespoke-write can live separately and input into add-1 and edit-1
     ::  as a filter/funnel before the pure functions
     ::  whenever modifying bespoke, go thru this
+  ::  do I even need this?
   ++  bespoke-write
     |*  [=key =bespoke act=$%([%add ~] [%edit =bespoke])]
     ::  left bespoke overwrites the right bespoke
     ^-  ^bespoke
     ?-    -.bespoke
-        [%outer %ship ~]        [[%outer %ship ~] ~]
-        [%outer %group ~]       [[%outer %group ~] ~]
-        [%outer %app ~]
+        [%ship ~]        bespoke
+        [%group ~]       bespoke
+        [%other ~]       bespoke
+        [%app ~]
           ?-    -.act
-            %add             [[%outer %app ~] *treaty]
-            %edit            bespoke.act
+            %add             [[%app ~] dist-desk.bespoke *signature *treaty]
+            %edit            ?+(-.bespoke.act !! [%app ~] bespoke.act(dist-desk dist-desk.bespoke))
           ==
-        [%inner %other ~]       [[%inner %other ~] ~]
-        [%inner %app ~]
-          ?-    -.act
-            %add             [[%inner %app ~] dist-desk.bespoke *signature *treaty]
-            %edit            ?+(-.bespoke.act !! [%inner %app ~] bespoke.act(dist-desk dist-desk.bespoke))
-          ==
-        [%collection ~]            [[%collection ~] key-list.bespoke]
-        [%validity-store ~]       [[%validity-store ~] validity-records.bespoke]
+        [%collection ~]            bespoke
+        [%validity-store ~]       bespoke
     ==
   ++  on-action
     |%
     ++  add
-      |=  [=items our=ship src=ship now=time default=?(%.y %.n) act=[%add =ship =type =general =bespoke]]
+      |=  [=items our=ship src=ship now=time default=?(%.y %.n) act=[%add ==type =ship =bespoke]]
       ^-  [(list card) ^items]
-      =/  key  [ship.act type.act cord=?:(=(default %.y) '~2000.1.1' `@t`(scot %da now))]
-      (add-with-time items our src now [%add-with-time key general.act bespoke.act])
+      =/  key  [type.act ship.act time=?:(=(default %.y) '~2000.1.1' `@t`(scot %da now))]
+      (add-with-time items our src now [%add-with-time key bespoke.act])
     ::
     ::  TODO portal-store should be able to add a bunch of items in one arvo cycle (once card)
     ::  used with +add-other-items-and-list from portal-manager, trying out new pattern
     ++  add-with-time
-      |=  [=items our=ship src=ship now=time act=[%add-with-time =key =general =bespoke]]
+      |=  [=items our=ship src=ship now=time act=[%add-with-time =key =bespoke]]
       ^-  [(list card) ^items]
-      =/  data  [(bespoke-write key.act bespoke.act [%add ~]) general.act]
+      =/  bespoke  (bespoke-write key.act bespoke.act [%add ~])
       =/  meta
-        :*  updated-at='~2000.1.1'
+        :*  created-at='~2000.1.1'
+            updated-at='~2000.1.1'
             permissions=~[our]
             reach=[%public blacklist=~]
-            outside-sigs=~
         ==
-      =/  item-sig  (sign:sig our now `sig-input`[%item key.act data meta *social])
-      =/  upd  [%put key.act [key.act data meta *social item-sig]]
+      =/  item-sig  (sign:sig our now `sig-input`[%item key.act bespoke meta])
+      =/  upd  [%put key.act [key.act bespoke meta item-sig]]
       :-  (put:on-poke:make-cards our src upd)
       (put-item our src items upd)
     ::
@@ -313,73 +322,73 @@
     ::  create item, create bespoke (should accept a gate for creating it)
     ::  create item is likewise one of many gates for itm creation?
     ::  maybe add validators somewhere outside before e.g. saving item
-    ++  add-1  :: rename to create item?
-      |=  [our=ship now=time act=action]
-      ^-  item
-      ?+  -.act  !!  %add-1
-      =-  [key data meta social (sign:sig our now [%item -])]
-      :^  ^=  key   :+  (fall ship.act our)
-                        (fall type.act [%inner %other ~])
-                        (fall cord.act `@t`(scot %da now))
-          ^=  data  :-  (fall bespoke.act [[%inner %other ~] ~])  ::use bond here to make a function call?
-                                                                    ::  use input functions for everything?
-                                                                    ::  how to sync type and bespoke when creating items?
-                    :*  (fall title.act '')
-                        (fall link.act '')
-                        (fall description.act '')
-                        (fall tags.act ~)
-                        (fall properties.act ~)
-                        (fall pictures.act ~)
-                        (fall image.act '')
-                        (fall color.act '')
-                    ==
-          ^=  meta  :^  updated-at='~2000.1.1'
-                        permissions=~[our]
-                        reach=[%public blacklist=~]
-                        outside-sigs=~
-          ^=  social    *social
-      ==
-    ::  stuff like sub to items in list, and effects from editing should live outside of the edit func
-    ::  people should build separate handlers for what to do with edited items
-    ++  edit-1  ::edit item
-      |=  [our=ship now=time =item act=action]
-      ^-  ^item
-      ?+  -.act  !!  %edit-1
-      =-  item(sig (sign:^sig our now [%item key.act data.- meta.- social.-]))
-      %=  item
-        updated-at.meta           `@t`(scot %da now)
-        title.general.data        (fall title.act title.general.data.item)
-        link.general.data         (fall link.act link.general.data.item)
-        description.general.data  (fall description.act description.general.data.item)
-        tags.general.data         (fall tags.act tags.general.data.item)
-        properties.general.data   (fall properties.act properties.general.data.item)
-        pictures.general.data     (fall pictures.act pictures.general.data.item)
-        image.general.data        (fall image.act image.general.data.item)
-        color.general.data        (fall color.act color.general.data.item)
-        bespoke.data              (fall bespoke.act bespoke.data.item)
-      ==  ==
-    ::
+    :: ++  add-1  :: rename to create item?
+    ::   |=  [our=ship now=time act=action]
+    ::   ^-  item
+    ::   ?+  -.act  !!  %add-1
+    ::   =-  [key data meta social (sign:sig our now [%item -])]
+    ::   :^  ^=  key   :+  (fall ship.act our)
+    ::                     (fall type.act [%inner %other ~])
+    ::                     (fall time.act `@t`(scot %da now))
+    ::       ^=  data  :-  (fall bespoke.act [[%inner %other ~] ~])  ::use bond here to make a function call?
+    ::                                                                 ::  use input functions for everything?
+    ::                                                                 ::  how to sync type and bespoke when creating items?
+    ::                 :*  (fall title.act '')
+    ::                     (fall link.act '')
+    ::                     (fall description.act '')
+    ::                     (fall tags.act ~)
+    ::                     (fall properties.act ~)
+    ::                     (fall pictures.act ~)
+    ::                     (fall image.act '')
+    ::                     (fall color.act '')
+    ::                 ==
+    ::       ^=  meta  :^  updated-at='~2000.1.1'
+    ::                     permissions=~[our]
+    ::                     reach=[%public blacklist=~]
+    ::                     outside-sigs=~
+    ::       ^=  social    *social
+    ::   ==
+    :: ::  stuff like sub to items in list, and effects from editing should live outside of the edit func
+    :: ::  people should build separate handlers for what to do with edited items
+    :: ++  edit-1  ::edit item
+    ::   |=  [our=ship now=time =item act=action]
+    ::   ^-  ^item
+    ::   ?+  -.act  !!  %edit-1
+    ::   =-  item(sig (sign:^sig our now [%item key.act - meta.- social.-]))
+    ::   %=  item
+    ::     updated-at.meta           `@t`(scot %da now)
+    ::     title.general.data        (fall title.act title.general.item)
+    ::     link.general.data         (fall link.act link.general.item)
+    ::     description.general.data  (fall description.act description.general.item)
+    ::     tags.general.data         (fall tags.act tags.general.item)
+    ::     properties.general.data   (fall properties.act properties.general.item)
+    ::     pictures.general.data     (fall pictures.act pictures.general.item)
+    ::     image.general.data        (fall image.act image.general.item)
+    ::     color.general.data        (fall color.act color.general.item)
+    ::     bespoke.data              (fall bespoke.act bespoke.item)
+    ::   ==  ==
+    :: ::
     ++  edit
-      |=  [=items our=ship src=ship now=time act=[%edit =key =general =bespoke]]
+      |=  [=items our=ship src=ship now=time act=[%edit =key =bespoke]]
       ^-  [(list card) ^items]
       ::  TODO  can-edit function to abstract permissions
       =/  item  (~(gut by items) key.act ~)
       ?~  item  ~&  "%portal-store: item doesn't exist"  [~ items]
-      =/  data  [(bespoke-write key.act bespoke.act [%edit bespoke.data.item]) general.act]
+      =/  bespoke  (bespoke-write key.act bespoke.act [%edit bespoke.item])
       =/  item
         %=  item
           updated-at.meta  `@t`(scot %da now)
-          data                  data
+          bespoke                  bespoke
         ==
-      =/  item-sig  (sign:sig our now [%item key.act data meta.item social.item])
-      =/  upd  [%put key.act [key.act data meta.item social.item item-sig]]
+      =/  item-sig  (sign:sig our now [%item key.act bespoke meta.item])
+      =/  upd  [%put key.act [key.act bespoke meta.item item-sig]]
       :-  (put:on-poke:make-cards our src upd)
       (put-item our src items upd)
     ::
     ++  sub
       |=  [our=ship src=ship now=time wex=boat:gall act=[%sub =key]]
       ^-  (list card)
-      ?:  =(-.type.key.act %outer)  ~
+      ?:  =(lens.type.key.act [%outer ~])  ~
       ?:  =(ship.key.act our)  ~
       =/  wire  (key-to-path-key:conv key.act)
       ?:  (~(has by wex) [wire ship.key.act %portal-store])
@@ -392,7 +401,7 @@
       |=  [=items our=ship src=ship now=time act=[%del =key]]
       ^-  [(list card) ^items]
       ::~&  "%portal: deleting {(spud (key-to-path:conv key.act))}"
-      ?:  &(=(cord.key.act '~2000.1.1') =(ship.key.act our))
+      ?:  &(=(time.key.act '~2000.1.1') =(ship.key.act our))
         ~&  "%portal: item is default, not allowed to delete"
         `items
       ?.  (~(has by items) key.act)
@@ -403,31 +412,31 @@
       =/  path-key  (key-to-path-key:conv key.act)
       :~  [%pass /del %agent [our %portal-manager] %poke %portal-update !>(act)]
           [%give %fact [/front-end-update]~ %portal-front-end-update !>((make-front-end-update our src act))]
-          ?+    -.type.key.act
+          ?+    lens.type.key.act
           ::  default
             ?:  =(our ship.key.act)
               [%give %fact [path-key]~ [%portal-update !>(act)]]
             [%pass path-key %agent [ship.key.act %portal-store] %leave ~]
           ::  if outer
-              %outer
+              [%outer ~]
             =-  [%pass [- path-key] %agent [ship.key.act -] %leave ~]
-            ?+    type.key.act    !!
-                [%outer %app ~]    %treaty
-                [%outer %group ~]  %get-group-preview
+            ?+    struc.type.key.act    !!
+                [%app ~]    %treaty
+                [%group ~]  %get-group-preview
             ==
           ==
       ==
     ::
     ++  add-item-to-col  ::TODO /list/app
-      |=  [=items our=ship src=ship now=time act=[%add-item-to-col col-key=[=ship type=[%collection ~] =cord] =ship =type =general =bespoke]]
+      |=  [=items our=ship src=ship now=time act=[%add-item-to-col col-key=[type=[[%collection ~] [%def ~]] =ship time=cord] =type =ship =bespoke]]
       ^-  [(list card) ^items]
       =/  col  (~(got by items) col-key.act)
-      ?+    -.bespoke.data.col    [~ items]
+      ?+    -.bespoke.col    [~ items]
           [%collection ~]
-        =/  bespoke  [[%collection ~] (snoc key-list.bespoke.data.col [ship.act [%inner %other ~] `@t`(scot %da now)])]
-        =/  col-act  [%edit col-key.act general.data.col bespoke]
+        =/  bespoke  bespoke.col(key-list (snoc key-list.bespoke.col [[[%other ~] [%def ~]] ship.act `@t`(scot %da now)]))
+        =/  col-act  [%edit col-key.act bespoke]
         =^  cards1  items
-          (add-with-time items our src now [%add-with-time [ship.act type.act `@t`(scot %da now)] general.act bespoke.act])
+          (add-with-time items our src now [%add-with-time [type.act ship.act `@t`(scot %da now)] bespoke.act])
         =^  cards2  items
           (edit items our our now col-act)
         [(weld cards1 cards2) items]
@@ -448,14 +457,14 @@
       ^-  [(list card) ^items]
       =/  item  (~(gut by items) key.act ~)
       ?~  item  ~&  "%portal-store: item doesn't exist"  [~ items]
-      ?+    -.bespoke.data.item    !!
-          [%inner %app ~]
+      ?+    -.bespoke.item    !!
+          [%app ~]
         =/  item
           %=  item
             updated-at.meta         `@t`(scot %da now)
-            treaty.bespoke.data     treaty.act
+            treaty.bespoke     treaty.act
           ==
-        =/  item-sig  (sign:sig our now (sig-input [%item key.act data.item meta.item social.item]))
+        =/  item-sig  (sign:sig our now (sig-input [%item key.act item meta.item]))
         =/  upd  [%put key.act item(sig item-sig)]
         :-  (put:on-poke:make-cards our src upd)
         (put-item our src items upd)
@@ -470,20 +479,20 @@
       |=  [=items our=ship src=ship now=time act=[%index-as-curator src=ship toggle=?]]
       ^-  [(list card) ^items]
       ?>  =(our ~worpet-bildet)
-      =/  index-key  [our [%collection ~] 'index']
+      =/  index-key  [[[%collection ~] [%def ~]] our 'index']
       =/  index  (~(gut by items) index-key ~)
       ?~  index  ~&  "%portal-store: index doesn't exist"  [~ items]
-      ?+    -.bespoke.data.index    [~ items]
+      ?+    -.bespoke.index    [~ items]
           [%collection ~]
-        =/  loc  (find [[src.act [%outer %ship ~] '']]~ key-list.bespoke.data.index)
+        =/  loc  (find [[[[%ship ~] [%outer ~]] src.act '']]~ key-list.bespoke.index)
         ?~  loc
           ?.  =(toggle.act %.y)  [~ items]
-          =/  bespoke  [[%collection ~] (snoc key-list.bespoke.data.index [src.act [%outer %ship ~] ''])]
-          =/  col-act  [%edit index-key general.data.index bespoke]
+          =/  bespoke  bespoke.index(key-list (snoc key-list.bespoke.index [[[%ship ~] [%outer ~]] src.act '']))
+          =/  col-act  [%edit index-key bespoke]
           (edit:on-action items our our now col-act)
         ?.  =(toggle.act %.n)  [~ items]
-        =/  bespoke  [[%collection ~] (oust [u.loc 1] key-list.bespoke.data.index)]
-        =/  col-act  [%edit index-key general.data.index bespoke]
+        =/  bespoke  bespoke.index(key-list (oust [u.loc 1] key-list.bespoke.index))
+        =/  col-act  [%edit index-key bespoke]
         ::  TODO edit permission when its coming from on-message
         (edit:on-action items our our now col-act)
       ==
@@ -503,7 +512,7 @@
     ++  del
       |=  [=items our=ship src=ship upd=[%del =key]]
       ^-  [(list card) ^items]
-      ?:  =(-.type.key.upd %outer)  [~ items]
+      ?:  =(lens.type.key.upd [%outer ~])  [~ items]
       ?.  (~(has by items) key.upd)  `items
       ::~&  "%portal: {(spud (key-to-path:conv key.upd))} does not exist"
       :_  (~(del by items) key.upd)
@@ -525,7 +534,7 @@
         :~  [%pass /put %agent [our %portal-manager] %poke %portal-update !>(upd)]
             [%give %fact [/front-end-update]~ %portal-front-end-update !>((make-front-end-update our src upd))]
         ==
-        ?.  &(=(our ship.key.upd) ?!(=(-.type.key.upd %outer)))  ~
+        ?.  &(=(our ship.key.upd) ?!(=(lens.type.key.upd [%outer ~])))  ~
         [%give %fact [(key-to-path-key:conv key.upd)]~ [%portal-update !>(upd)]]~
       --
 
@@ -560,24 +569,21 @@
     ++  put
       |=  [our=ship now=time upd=[%put =key =item]]
       ^-  (list card)
-      %+  welp
-      ?+    -.bespoke.data.item.upd
-          ::  default
-          ~
-        ::  if %validity-store
-          [%validity-store ~]  ~
-        ::  if %outer
-          [%outer @ ~]       ~
-        ::  if inner app
-          [%inner %app ~]
-        ::    ?.  =(our ship.key.upd)  ~ Do i need this?
-        =/  dist-desk  (parse-dist-desk:misc dist-desk.bespoke.data.item.upd)
-        ?~  dist-desk  ~
-        ~[(~(act cards our %portal-manager) [%get-docket key.upd -.u.dist-desk +.u.dist-desk])]
-        ::  if list
-        ::   [%collection *]
-        :: (sub-to-col-keys our now item.upd)
-      ==
+      :: %+  welp
+      :: ?+    -.bespoke.item.upd
+      ::     ::  default
+      ::     ~
+      ::   ::  if inner app
+      ::   ::  [%app ~]
+      ::   ::    ?.  =(our ship.key.upd)  ~ Do i need this?
+      ::   :: =/  dist-desk  (parse-dist-desk:misc dist-desk.bespoke.item.upd)
+      ::   :: ?~  dist-desk  ~
+      ::   :: ~[(~(act cards our %portal-manager) [%get-docket key.upd -.u.dist-desk +.u.dist-desk])]
+      ::
+      ::   ::  if list
+      ::   ::   [%collection *]
+      ::   :: (sub-to-col-keys our now item.upd)
+      :: ==
       (default-v1:validator our now key.upd item.upd)
     ::
     ++  del
@@ -591,9 +597,9 @@
   :: ++  sub-to-col-keys ::  + get-list-outer-items
   ::   |=  [our=ship now=time =item]
   ::   ^-  (list card)
-  ::   ?+    -.bespoke.data.item    ~
+  ::   ?+    -.bespoke.item    ~
   ::       [%list %list ~]
-  ::     =/  key-list  (skip-ships:keys list-key-list.bespoke.data.item ~[our])
+  ::     =/  key-list  (skip-ships:keys list-key-list.bespoke.item ~[our])
   ::     =/  filtered-set  (~(dif in (silt key-list)) (~(get-all-keys scry our now)))
   ::     =/  filtered-list  ~(tap in filtered-set)
   ::     (turn filtered-list |=(=key (~(act cards [our %portal-store]) sub+key)))
@@ -603,14 +609,14 @@
   ::     ::  outer items
   ::     :: if you do set-difference you keep old data, if you don't do set difference you constantly overwrite fine data
   ::     :: after purge new outer items are taken daily
-  ::     =/  outer-key-list   (skim-outer:keys key-list.bespoke.data.item)
+  ::     =/  outer-key-list   (skim-outer:keys key-list.bespoke.item)
   ::     =/  filtered-set  (~(dif in (silt outer-key-list)) (~(get-all-keys scry our now)))
   ::     =/  filtered-list  ~(tap in filtered-set)
   ::     =/  outer-cards  ^-  (list card)
   ::        %-  zing
   ::       (turn filtered-list |=(=key (put-empty-outer:manager our key)))
   ::     ::  inners
-  ::     =/  key-list  (skip-outer:keys key-list.bespoke.data.item)
+  ::     =/  key-list  (skip-outer:keys key-list.bespoke.item)
   ::     =/  key-list  (skip-ships:keys key-list ~[our])
   ::     =/  filtered-set  (~(dif in (silt key-list)) (~(get-all-keys scry our now)))
   ::     =/  filtered-list  ~(tap in filtered-set)
@@ -629,44 +635,46 @@
   ++  put-empty-outer
     |=  [our=ship =key]
     ^-  (list card)
+    ?>  =(lens.type.key [%outer ~])
     =/  meta
-      :*  updated-at='~2000.1.1'
+      :*  created-at='~2000.1.1'
+          updated-at='~2000.1.1'
           permissions=~[our]
           reach=[%public blacklist=~]
-          outside-sigs=~
       ==
-    ?+    type.key    !!
-        [%outer %group ~]
-      =/  data  [[%outer %group ~]~ *general]
-      :~  (~(act cards [our %portal-store]) [%put-outer key [key data meta *social *signature]])
-          (~(act cards [our %portal-manager]) [%get-group-preview key ship.key cord.key])
+    ?+    struc.type.key    !!
+        [%group ~]
+      =/  bespoke  [[%group ~] *data:group-preview]
+      :~  (~(act cards [our %portal-store]) [%put-outer key [key bespoke meta *signature]])
+          (~(act cards [our %portal-manager]) [%get-group-preview key ship.key time.key])
       ==
-        [%outer %ship ~]
-      =/  data  [[%outer %ship ~]~ *general]
-      ~[(~(act cards [our %portal-store]) [%put-outer key [key data meta *social *signature]])]
-        [%outer %app ~]
-      =/  data  [[[%outer %app ~] *treaty] *general]
-      :~  (~(act cards [our %portal-store]) [%put-outer key [key data meta *social *signature]])
-          (~(act cards [our %portal-manager]) [%get-docket key ship.key cord.key])
+        [%ship ~]
+      =/  bespoke  [[%ship ~] ~]
+      ~[(~(act cards [our %portal-store]) [%put-outer key [key bespoke meta *signature]])]
+        [%app ~]
+      =/  bespoke  [[[%app ~] *@t *signature *treaty]]
+      :~  (~(act cards [our %portal-store]) [%put-outer key [key bespoke meta *signature]])
+          (~(act cards [our %portal-manager]) [%get-docket key ship.key time.key])
       ==
     ==
   ::
+  ::  TODO get created-at and updated-at right here, and everywhere else
   ++  fill-outer
-    |=  [our=ship act=$%([%fill-outer-group =key title=@t description=@t image=@t] [%fill-outer-app =key =treaty])]
+    |=  [our=ship act=$%([%fill-outer-group =key =data:group-preview] [%fill-outer-app =key =treaty])]
     ^-  card
-    =/  general  *general
-    =/  data
+    ?>  =(lens.type.key.act [%outer ~])
+    =/  bespoke
       ?-  -.act
-        %fill-outer-group  [[[%outer %group ~] ~] general(title title.act, description description.act, image image.act)]
-        %fill-outer-app    [[[%outer %app ~] treaty.act] general]
+        %fill-outer-group  [[%group ~] data.act]
+        %fill-outer-app    [[%app ~] *@t *signature treaty.act]
       ==
     =/  meta
-      :*  updated-at='~2000.1.1'
+      :*  created-at='~2000.1.1'
+          updated-at='~2000.1.1'
           permissions=~[our]
           reach=[%public blacklist=~]
-          outside-sigs=~
       ==
-    (~(act cards our %portal-store) [%put-outer key.act [key.act data meta *social *signature]])
+    (~(act cards our %portal-store) [%put-outer key.act [key.act bespoke meta *signature]])
   --
 ::
 ::  includes arms which are used to validate data
@@ -676,18 +684,18 @@
     |=  [our=ship now=time item-key=key =item]
     ^-  (list card)
     ::  slight amount of time after this
-    ?.  =(type.item-key [%inner %app ~])  ~
-    =/  v-store-key  `key`[our [%validity-store ~] '~2000.1.1']
+    ?.  =(type.item-key [[%app ~] [%inner ~]])  ~
+    =/  v-store-key  `key`[[[%validity-store ~] [%def ~]] our '~2000.1.1']
     =/  validity-store
       ;;  ^item  (~(get-item scry our now) v-store-key)
-    ?+    -.bespoke.data.validity-store    ~
+    ?+    -.bespoke.validity-store    ~
         [%validity-store ~]
       =/  validation-result  ['default-v1' (new-item our now item-key item) 'default']
-      =/  validity-records  validity-records.bespoke.data.validity-store
+      =/  validity-records  validity-records.bespoke.validity-store
       =/  validation-time-map  (~(gut by validity-records) item-key *validation-time-map)
       =/  validation-time-map  (put:valid-mop validation-time-map now validation-result)
       =/  validity-records  (~(put by validity-records) item-key validation-time-map)
-      =/  edit-action  `action`[%edit v-store-key general.data.validity-store [[%validity-store ~] validity-records]]
+      =/  edit-action  `action`[%edit v-store-key [[%validity-store ~] validity-records]]
       [%pass /edit %agent [our %portal-manager] %poke %portal-action !>(edit-action)]~   :: why send card instead of calling edit function?
     ==
 
@@ -695,10 +703,10 @@
     |=  [our=ship now=time =key]
     ^-  valid
     =/  validity-store
-      ;;  item  (~(get-item scry our now) [our [%validity-store ~] '~2000.1.1'])
-    ?+    -.bespoke.data.validity-store    ~
+      ;;  item  (~(get-item scry our now) [[[%validity-store ~] [%def ~]] our '~2000.1.1'])
+    ?+    -.bespoke.validity-store    ~
         [%validity-store ~]
-      =/  validity-records  validity-records.bespoke.data.validity-store
+      =/  validity-records  validity-records.bespoke.validity-store
       =/  validation-time-map  (~(gut by validity-records) key *validation-time-map)
       ?~  validation-time-map  ~
       =/  maybe-valid  (pry:valid-mop (^validation-time-map validation-time-map))
@@ -712,11 +720,11 @@
   ++  new-item
     |=  [our=@p now=@da =key =item]
     ^-  valid
-    ?+    -.bespoke.data.item    ~
-        [%inner %app ~]
-      =/  dist-desk  (parse-dist-desk:misc dist-desk.bespoke.data.item)
+    ?+    -.bespoke.item    ~
+        [%app ~]
+      =/  dist-desk  (parse-dist-desk:misc dist-desk.bespoke.item)
       ?~  dist-desk  [~ %.n]
-      (sig key dist-name.u.dist-desk desk-name.u.dist-desk sig.bespoke.data.item our now)
+      (sig key dist-name.u.dist-desk desk-name.u.dist-desk sig.bespoke.item our now)
     ==
 
   ::
@@ -745,15 +753,13 @@
   ++  simple-collection
     |=  [=items our=ship now=time]
     ^-  [(list card) ^items]
-    =/  general  `general`['Main Collection' '' 'Your first collection.' *tags *properties *pictures '' '#e8e8e8']
-    =/  act  [%add our [%collection ~] general [[%collection ~] ~]]
+    =/  act  [%add [[%collection ~] [%def ~]] our [[%collection ~] 'Main Collection' 'Your first collection.' '' ~]]
     (add:on-action:store items our our now %.y act)
   ::
   ++  validity-store
     |=  [=items our=ship now=time]
     ^-  [(list card) ^items]
-    =/  general  ['Main Validity Store' '' 'Storage of validity of your items.' *tags *properties *pictures '' '#e8e8e8']
-    =/  act  [%add our `type`[%validity-store ~] general [[%validity-store ~] *validity-records]]
+    =/  act  [%add [[%validity-store ~] [%def ~]] our [[%validity-store ~] *validity-records]]
     (add:on-action:store items our our now %.y act)
   --
 ::

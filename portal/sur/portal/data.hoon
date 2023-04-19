@@ -1,48 +1,66 @@
-/-   *treaty
+/-   *treaty, group-preview=meta
 |%
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
+::  TODO decide how bespoke should look
+::  (for now, no new modifications to existing functionality)
+::  TODO define poke API
+::  TODO define networking scheme? (sub updates), put/del updates
 ::
-::   things we are doing
-:: -->  renaming
-:: -->  key-path
-      ::/inner/other:comment/[timestamp]
-      :: TODO - types for structural definitions, cords for behavioural
-      ::  definitions. e.g. /list/index; /list/bin; /list/drafts
-      ::  ~zod:enditem/app:something/1
-      ::  TODO find the most practical separator in hoon
-
-:: -->  flat data
-:: -->  api (poke and scry)
-:: -->  networking scheme? (sub updates), put/del
-:: -->  feed SSS?  YES, feed item? MAYBE
+::  TODO define state transition with $&
+::  TODO define state transition of existing items
+  :: /list/nonitem/group ~2000.1.1
+  :: /list/nonitem/app   ~2000.1.1
+  :: /list/enditem/other ~2000.1.1    ->   /collection
+  :: /list/nonitem/ship  ~2000.1.1    ->   /collection [the time of state transtion] (will this work?)
+  :: /list/list          ~2000.1.1    ->   /collection ~2000.1.1
+::  TODO purge
+  ::  purge all cols which are not our or worpet-bildet
+  ::  keep: all our items, all items in our col, all items in worpet-bildets cols
 ::
-::
+::  after everything works:
+::  TODO-->  feed SSS?  YES, feed item? MAYBE
 ::  tags?                  NO
 ::  comments?              NO
 ::  items SSS?             NO
-:: -soc graph networking?  NO
+::  soc graph networking?  NO
+::  optimistic rendering   NO
 ::
-::  vase -u data types ->  !>(), arbitrary code?
 ::  Basic Outline
 ::
+::::  TODO change to +$  key  [=ship =type time=cord]
++$  path-key  [knot knot knot knot ~]
 ::
-::  item types
++$  key  [=type =ship time=cord]  :: TODO switch ship and type
+::  struc is the structure of the data
+::  lens is how we see it and how we treat it
 +$  type
-  $%  [%outer %group ~]
-      [%outer %ship ~]
-      [%outer %app ~]
-      [%inner %app ~]
-      [%inner %other ~]
-      ::  should collection and validity-store be prefixed by %inner?
-      [%collection ~]
-      [%validity-store ~]
+  $%  $:  struc=[%group ~]
+          lens=$%([%outer ~])
+      ==
+      ::
+      $:  struc=[%ship ~]
+          lens=$%([%outer ~])
+      ==
+      ::
+      $:  struc=[%app ~]
+          lens=$%([%def ~] [%outer ~])
+      ==
+      ::
+      $:  struc=[%other ~]
+          lens=$%([%def ~])
+      ==
+      ::
+      $:  struc=[%collection ~]
+          lens=$%([%def ~] [%index ~])  ::  TODO make [%def ~] actually default
+      ==
+      ::
+      $:  struc=[%validity-store ~]
+          lens=$%([%def ~])
+      ==
   ==
 ::
 ::
-::  key of an item
-+$  key  [=ship type=path =cord]  ::  cord = /index/1, /index/~2000.1.1
-+$  path-key  [knot knot knot ~]
 ::
 +$  items  (map key item)
 ::
@@ -51,63 +69,19 @@
 ::  NEW
 ::  Item Parts
 ::
-:: +$  item           ::TODO how to handle nonitems in general?
-::   $:  =key
-::       blurb=@t
-::       ::=tags      :: do we want to put tags here?, or not even that
-::       ::=general
-::       =bespoke
-::       =meta
-::       ::=social     ::  remove all ratings/comments/reviews from item
-::       =sig
-::   ==
-
-::  Item Parts
-::
-+$  item
++$  item           ::TODO how to handle nonitems in general?
   $:  =key
-      =data
+      =bespoke
       =meta
-      =social
       =sig
   ==
 ::
-::  put general first?
-+$  data
-  $:  =bespoke
-      =general
-  ==
-::
-::NEW
-:: +$  meta
-::   $:  =created-at
-::       =updated-at                      ::  when '~2000.1.1' means it has not been updated
-::       permissions=(list @p)            ::  not used yet. auto- ~[our.bowl].
-::       =reach                           ::  not used yet
-::       ::outside-sigs=(list signature)    ::  DELETE outside-sigs
-::   ==
-
 ::
 +$  meta
-  $:  =updated-at                      ::  '~2000.1.1' means it wasn't updated
+  $:  created-at=@t
+      updated-at=@t                    ::  '~2000.1.1' means it wasn't updated
       permissions=(list @p)            ::  not used yet. auto- ~[our.bowl].
       =reach                           ::  not used yet
-      outside-sigs=(list signature)    ::  not used yet
-  ==
-::
-::
-::  comment -> reference your parent
-::  retweet vs quote tweet
-:: +$  social
-::   $:  =comments
-::       =ratings
-::       =reviews
-::       ::  retweets?
-::   ==
-+$  social
-  $:  =comments
-      =ratings
-      =reviews
   ==
 ::
 ::
@@ -116,54 +90,26 @@
 ::
 ::  Item Data
 ::
-::  NEW
-::  data which can only be changed by authorized parties
-::+$  general  0
-  :: $:  ::  title=@t   ->  put into bespoke
-  ::     ::  link=@t    ->  put into bespoke for other
-  ::     :: decription=@t  ::  rename to blurb=@t
-  ::     :: =tags
-  ::     ::  =pictures  ->  put into bespoke for app
-  ::     ::  image=@t   ->  into bespoke for e.g. list
-  ::     ::  color=@t   ->  into bespoke for e.g. list
-  :: ==
-::  data which can only be changed by authorized parties
-+$  general
-  $:  title=@t
-      link=@t
-      description=@t
-      =tags
-      =properties
-      =pictures
-      image=@t
-      color=@t
-  ==
-::
-+$  tags  (list @t)
-+$  properties  (map @t @t)
-+$  pictures  (list @t)
-::
-::
-::  NEW
-:: +$  bespoke
-::   $%  [[%outer %ship ~] ~]
-::       [[%outer %group ~] ~]
-::       [[%outer %app ~] =treaty]
-::       [[%inner %other ~] ~]
-::       [[%inner %app ~] dist-desk=@t sig=signature =treaty]
-::       [[%list ~] =key-list]
-::       [[%validity-store ~] =validity-records]
+:: +$  general
+::   $:  title=@t
+::       link=@t
+::       blurb=@t
+::       image=@t
+::     ::  color=@t  are we using this for anything?
 ::   ==
-
+::
 ::
 ::  data specific to the item type
 +$  bespoke
-  $%  [[%outer %ship ~] ~]
-      [[%outer %group ~] ~]
-      [[%outer %app ~] =treaty]
-      [[%inner %other ~] ~]
-      [[%inner %app ~] dist-desk=@t sig=signature =treaty]
-      [[%collection ~] =key-list]
+  $%  [[%ship ~] ~]
+      [[%group ~] =data:group-preview]   ::   $:  title=cord
+                                  ::       description=cord
+                                  ::       image=cord
+                                  ::       cover=cord
+      ::  TODO probably rename other to post?
+      [[%other ~] title=@t link=@t blurb=@t image=@t]
+      [[%app ~] dist-desk=@t sig=signature =treaty]
+      [[%collection ~] title=@t blurb=@t image=@t =key-list]  ::does it need link?
       [[%validity-store ~] =validity-records]
   ==
 ::
@@ -179,37 +125,6 @@
 ::
 ::  made with jamming the whole item, so that nobody can fake an item
 +$  sig  signature
-::
-::
-::
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::
-::  Item Social Data
-::
-+$  ratings  (map @p rating)
-+$  rating
-  $:  rating-num=@ud
-      =updated-at
-      =created-at
-  ==
-::
-+$  comments  (map com-key comment)
-+$  comment
-  $:  text=@t
-      =updated-at
-  ==
-+$  com-key  [=ship =created-at]
-::
-+$  reviews  (map ship review)
-+$  review
-  $:  text=@t
-      hash=@uv
-      is-current=?                    ::  used only for apps
-      is-safe=?                       ::  used only for apps
-      =updated-at
-      =created-at
-      =signature                      ::  not used yet
-  ==
 ::
 ::
 ::
@@ -235,7 +150,7 @@
 +$  signature   [hex=@ux =ship =life]
 ::
 +$  sig-input
-  $%  [%item =key =data =meta =social]     ::  for signing the item each time it is edited
+  $%  [%item =key =bespoke =meta]     ::  for signing the item each time it is edited
       [%key =key]                            ::  for signing item by somebody from the outside (not in use yet)
       [%app =key desk-name=@tas]            ::  for signing apps by the distributor ship
   ==
@@ -247,9 +162,6 @@
 ::  Other
 ::
 +$  ship-type  ?(%galaxy %star %planet %moon %comet)
-::
-+$  created-at  @t
-+$  updated-at  @t
 ::
 +$  bool  ?
 ::
@@ -275,8 +187,8 @@
 +$  store-result
   $@  ?
   $%  [%items =items]
-      [%keys =key-set]
       [%item item=?(~ item)]
+      [%keys =key-set]  :: TODO change to key-list
       [%valid =valid]
   ==
 ::

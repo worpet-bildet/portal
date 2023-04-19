@@ -34,8 +34,8 @@
 ++  on-init
   ^-  (quip card _this)
   =/  new-user-event      [%join now.bowl (get-ship-type:misc our.bowl) `@ux`(shax our.bowl)]
-  =/  default-curators    (silt (limo ~[[~worpet-bildet /list/list '~2000.1.1']]))
-  =/  portal-curator      [~tactyl-darlup-dilryd-mopreg /list/list '~2000.1.1']  ::  TODO change to worpet-bildet
+  =/  default-curators    (silt (limo ~[[[[%collection ~] [%def ~]] ~worpet-bildet '~2000.1.1']]))
+  =/  portal-curator      [[[%collection ~] [%def ~]] ~tactyl-darlup-dilryd-mopreg '~2000.1.1']  ::  TODO change to worpet-bildet
   =/  purge-timer         %.y
   =/  purge-time          ~d1
   =/  portal-indexer      ~worpet-bildet
@@ -51,7 +51,7 @@
         onboarded           onboarded
       ==
   :~  (~(poke pass:io /act) [our.bowl %portal-store] %portal-action !>([%sub portal-curator]))
-      (~(poke pass:io /new-user) [-.portal-curator %portal-logs] %portal-new-user-event !>(new-user-event))
+      (~(poke pass:io /new-user) [+<.portal-curator %portal-logs] %portal-new-user-event !>(new-user-event))
       [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]
   ==
 ::
@@ -107,6 +107,7 @@
       :_  this(indexed-as-curator toggle.act)
       [(poke-msg [portal-indexer %portal-manager] portal-message+!>([%index-as-curator src.bowl toggle.act]))]~
       ::
+      ::  TODO state transition wires
         %get-group-preview
       ::  not sub -> not perfectly updated, either too much or too little
       =/  path  /groups/(scot %p ship.flag.act)/[term.flag.act]/preview
@@ -117,6 +118,7 @@
         [%pass wire %agent [ship.flag.act %groups] %watch path]~
       ~
       ::
+      ::  TODO state transition wires
         %get-docket
       ::  not sub -> not perfectly updated, either too much or too little
       =/  path  /treaty/(scot %p ship.act)/[desk.act]
@@ -181,7 +183,7 @@
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
   ?+    wire    (on-agent:default wire sign)
-      [%treaty @ @ @ ~]
+      [%treaty @ @ @ @ ~]
     ?+    -.sign    (on-agent:default wire sign)
         %watch-ack  `this
         %kick       `this
@@ -189,17 +191,17 @@
       =/  treaty  !<(treaty:treaty q.cage.sign)
       =/  key  (path-key-to-key:conv `path-key`+.wire)
       ?+    type.key    !!
-          [%inner %app ~]
+          [[%app ~] [%def ~]]
         :_  this
         ~[(~(act cards our.bowl %portal-store) [%edit-docket key treaty])]
-          [%outer %app ~]
+          [[%app ~] [%outer ~]]
         :_  this
         :~  [(fill-outer:manager [our.bowl [%fill-outer-app key treaty]])]
             [%pass wire %agent [ship.key %treaty] %leave ~]
         ==
       ==
     ==
-      [%get-group-preview @ @ @ ~]
+      [%get-group-preview @ @ @ @ ~]
     ?+    -.sign    (on-agent:default wire sign)
         %watch-ack  `this
         %kick       `this
@@ -207,10 +209,8 @@
       =/  preview  !<(preview:groups q.cage.sign)
       =/  act
         :*  %fill-outer-group
-          [p.flag.preview [%outer %group ~] q.flag.preview]
-          title.meta.preview
-          description.meta.preview
-          image.meta.preview
+          [[[%group ~] [%outer ~]] flag.preview]
+          meta.preview
         ==
       :_  this
       :~  (fill-outer:manager [our.bowl act])

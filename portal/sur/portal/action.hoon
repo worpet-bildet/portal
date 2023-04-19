@@ -2,20 +2,34 @@
 |%
 ::
 ::  NEW
-  :: $%  [%add (list list-key=[=ship type=[%list *] =cord]) =ship =type =general =bespoke-input]
+::  key -> ship struc type time
+::
+::  TODO define pokes with Tom
+
+  :: $%
+  ::   should also define time, if ~, then time auto added?
+  ::   time should be optional arg? (unit)
+  ::   $:  %add
+  ::      collections=(list [=ship struc=[%collection ~] type=path time=cord])
+  ::      =ship
+  ::      =type
+  ::      =general
+  ::      =bespoke-input
+  ::   ==
   ::
   ::     :: TODO - make general and bespoke-input args optional
   ::     [%edit =key =general =bespoke-input]
+  ::     should edit have control over in which list sth is?
   ::
   ::     :: TODO
   ::     [%delete-list-item =key list-item-key=key]
-
 +$  action
-  $%  [%add =ship =type =general =bespoke]
-      [%add-with-time =key =general =bespoke]
-      [%edit =key =general =bespoke]
+  $%  [%add =type =ship =bespoke]
+  ::  TODO rename
+      [%add-with-time =key =bespoke]
+      [%edit =key =bespoke]
       ::  creates item and adds it to specified list
-      [%add-item-to-col col-key=[=ship type=[%collection ~] =cord] =ship =type =general =bespoke]
+      [%add-item-to-col col-key=[type=[[%collection ~] [%def ~]] =ship time=cord] =type =ship =bespoke]
       [%sub =key]
       [%del =key]
       ::
@@ -38,29 +52,29 @@
       ::
       ::  maybe action should be action==message
       :: units are optional args
-      $:  %add-1    ship=(unit ship)
-                    type=(unit type)
-                    cord=(unit cord)
-                    title=(unit @t)
-                    link=(unit @t)
-                    description=(unit @t)
-                    tags=(unit tags)
-                    properties=(unit properties)
-                    pictures=(unit pictures)
-                    image=(unit @t)
-                    color=(unit @t)
-                    bespoke=(unit bespoke)
-      ==
-      $:  %edit-1   =key
-                    title=(unit @t)
-                    link=(unit @t)
-                    description=(unit @t)
-                    tags=(unit tags)
-                    properties=(unit properties)
-                    pictures=(unit pictures)
-                    image=(unit @t)
-                    color=(unit @t)
-                    bespoke=(unit bespoke)
-      ==
+      :: $:  %add-1    ship=(unit ship)
+      ::               type=(unit type)
+      ::               cord=(unit cord)
+      ::               title=(unit @t)
+      ::               link=(unit @t)
+      ::               description=(unit @t)
+      ::               tags=(unit tags)
+      ::               properties=(unit properties)
+      ::               pictures=(unit pictures)
+      ::               image=(unit @t)
+      ::               color=(unit @t)
+      ::               bespoke=(unit bespoke)
+      :: ==
+      :: $:  %edit-1   =key
+      ::               title=(unit @t)
+      ::               link=(unit @t)
+      ::               description=(unit @t)
+      ::               tags=(unit tags)
+      ::               properties=(unit properties)
+      ::               pictures=(unit pictures)
+      ::               image=(unit @t)
+      ::               color=(unit @t)
+      ::               bespoke=(unit bespoke)
+      :: ==
     ==
 --
