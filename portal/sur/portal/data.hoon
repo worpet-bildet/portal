@@ -2,10 +2,21 @@
 |%
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
-::  TODO decide how bespoke should look
-::  (for now, no new modifications to existing functionality)
 ::  TODO define poke API
 ::  TODO define networking scheme? (sub updates), put/del updates
+::
+::  OLD
+::  /list/list
+::     /list
+::         /item
+::
+::  NEW
+:: /list
+::     /list
+::     /list
+::     /item
+::     /list
+::     /item
 ::
 ::  TODO define state transition with $&
 ::  TODO define state transition of existing items
@@ -18,10 +29,15 @@
   ::  purge all cols which are not our or worpet-bildet
   ::  keep: all our items, all items in our col, all items in worpet-bildets cols
 ::
-::  after everything works:
+::  --  after everything works--
 ::  TODO-->  feed SSS?  YES, feed item? MAYBE
+::  TODO decide how bespoke should look
+::  (for now, with new modifications to existing functionality)
 ::  tags?                  NO
 ::  comments?              NO
+::    ->  comments inside the item but with ID, so they can be added to soc gr
+::    ->  the owner of the items will then also be the owner of the comment
+::    ->  also think thru retweet(amp)/quote tweet/reply
 ::  items SSS?             NO
 ::  soc graph networking?  NO
 ::  optimistic rendering   NO
@@ -31,34 +47,20 @@
 ::::  TODO change to +$  key  [=ship =type time=cord]
 +$  path-key  [knot knot knot knot ~]
 ::
-+$  key  [=type =ship time=cord]  :: TODO switch ship and type
++$  key  [=struc =ship =cord time=cord]  :: TODO switch ship and type
 ::  struc is the structure of the data
 ::  lens is how we see it and how we treat it
-+$  type
-  $%  $:  struc=[%group ~]
-          lens=$%([%outer ~])
-      ==
-      ::
-      $:  struc=[%ship ~]
-          lens=$%([%outer ~])
-      ==
-      ::
-      $:  struc=[%app ~]
-          lens=$%([%def ~] [%outer ~])
-      ==
-      ::
-      $:  struc=[%other ~]
-          lens=$%([%def ~])
-      ==
-      ::
-      $:  struc=[%collection ~]
-          lens=$%([%def ~] [%index ~])  ::  TODO make [%def ~] actually default
-      ==
-      ::
-      $:  struc=[%validity-store ~]
-          lens=$%([%def ~])
-      ==
++$  struc
+  $%  [%group ~]
+      [%ship ~]
+      [%app ~]
+      [%other ~]
+      [%collection ~]
+      [%validity-store ~]
+      ::  TODO  profile
   ==
+::
+::
 ::
 ::
 ::
@@ -69,6 +71,7 @@
 ::  NEW
 ::  Item Parts
 ::
+::  add lens [%deleted ~]
 +$  item           ::TODO how to handle nonitems in general?
   $:  =key
       =bespoke
@@ -90,27 +93,19 @@
 ::
 ::  Item Data
 ::
-:: +$  general
-::   $:  title=@t
-::       link=@t
-::       blurb=@t
-::       image=@t
-::     ::  color=@t  are we using this for anything?
-::   ==
-::
 ::
 ::  data specific to the item type
 +$  bespoke
-  $%  [[%ship ~] ~]
-      [[%group ~] =data:group-preview]   ::   $:  title=cord
-                                  ::       description=cord
-                                  ::       image=cord
-                                  ::       cover=cord
+  $%  [struc=[%ship ~] lens=$%([%temp ~]) ~]
+      [struc=[%group ~] lens=$%([%temp ~]) =data:group-preview]
       ::  TODO probably rename other to post?
-      [[%other ~] title=@t link=@t blurb=@t image=@t]
-      [[%app ~] dist-desk=@t sig=signature =treaty]
-      [[%collection ~] title=@t blurb=@t image=@t =key-list]  ::does it need link?
-      [[%validity-store ~] =validity-records]
+      [struc=[%other ~] lens=$%([%deleted ~] [%def ~]) title=@t blurb=@t link=@t image=@t]
+      [struc=[%app ~] lens=$%([%temp ~] [%deleted ~] [%def ~]) dist-desk=@t sig=signature =treaty]
+      [struc=[%collection ~] lens=$%([%index ~] [%deleted ~] [%def ~]) title=@t blurb=@t image=@t =key-list]  ::does it need link?
+      ::  TODO /list/list becomes these 2 things:
+      ::  1. to profile type?
+      ::  2. default colletion to store all your collections
+      [struc=[%validity-store ~] lens=$%([%def ~]) =validity-records]
   ==
 ::
 ::
@@ -151,8 +146,8 @@
 ::
 +$  sig-input
   $%  [%item =key =bespoke =meta]     ::  for signing the item each time it is edited
-      [%key =key]                            ::  for signing item by somebody from the outside (not in use yet)
-      [%app =key desk-name=@tas]            ::  for signing apps by the distributor ship
+      [%key =key]                      ::  for signing item by somebody from the outside (not in use yet)
+      [%app =key desk-name=@tas]      ::  for signing apps by the distributor ship
   ==
 ::
 ::
