@@ -1,4 +1,4 @@
-/-  *portal-data, *portal-update, *portal-front-end-update, *portal-message
+/-  *portal-data, *portal-message
 /+  default-agent, dbug, *portal
 |%
 +$  versioned-state
@@ -23,17 +23,33 @@
 ++  on-init
   ^-  (quip card _this)
   =.  state  *state-0
-  =^  cards-1  items
-    (validity-store:create-default items our.bowl now.bowl)
-  =^  cards-2  items
-    (simple-collection:create-default items our.bowl now.bowl)
-  =/  index-key  [[[%collection ~] [%def ~]] our.bowl 'index']
-  ?:  &(=(our.bowl ~worpet-bildet) !(~(has by items) index-key))
-    =/  act  [%add-with-time index-key [[%collection ~] '' '' '' ~]]
-    =^  cards-3  items
-      (add-with-time:on-action:store [items our.bowl src.bowl now.bowl act])
-    :_  this
-    (zing ~[cards-1 cards-2 cards-3])
+  =*  store-core  ~(. store [bowl items ~])
+  =/  col-create  :*
+    %create
+    ~
+    [~ '~2000.1.1']
+    [%def ~]
+    [[%collection ~] 'Main Collection' 'Your first collection.' '' ~]
+    ~
+  ==
+  =/  val-create  ^-  action  :*
+    %create
+    ~
+    [~ '~2000.1.1']
+    [%def ~]
+    [[%validity-store ~] *validity-records]
+    [~ [[%collection ~] our.bowl '' '~2000.1.1']]
+  ==
+  =^  cards-1  items  (create:on-act:on-poke:store-core col-create)
+  =^  cards-2  items  (create:on-act:on-poke:store-core val-create)
+
+  :: =/  index-key  [[[%collection ~] [%def ~]] our.bowl 'index']
+  :: ?:  &(=(our.bowl ~worpet-bildet) !(~(has by items) index-key))
+  ::   =/  act  [%add-with-time index-key [[%collection ~] '' '' '' ~]]
+  ::   =^  cards-3  items
+  ::     (add-with-time:on-action:store [items our.bowl src.bowl now.bowl act])
+  ::   :_  this
+  ::   (zing ~[cards-1 cards-2 cards-3])
   :_  this
   (zing ~[cards-1 cards-2])
 ::
@@ -42,14 +58,14 @@
   |=  old=vase
   ^-  (quip card _this)
   =/  old  !<(state-0 old)
-  =/  items  items.old
-  =/  index-key  [[[%collection ~] [%def ~]] our.bowl 'index']
-  ?:  &(=(our.bowl ~worpet-bildet) !(~(has by items) index-key))
-    =/  act  [%add-with-time index-key [[%collection ~] '' '' '' ~]]
-    ::  rename add-with-time to add-with-cord?
-    =^  cards  items
-      (add-with-time:on-action:store [items our.bowl src.bowl now.bowl act])
-    [cards this(items items)]
+  :: =/  items  items.old
+  :: =/  index-key  [[[%collection ~] [%def ~]] our.bowl 'index']
+  :: ?:  &(=(our.bowl ~worpet-bildet) !(~(has by items) index-key))
+  ::   =/  act  [%add-with-time index-key [[%collection ~] '' '' '' ~]]
+  ::   ::  rename add-with-time to add-with-cord?
+  ::   =^  cards  items
+  ::     (add-with-time:on-action:store [items our.bowl src.bowl now.bowl act])
+  ::   [cards this(items items)]
   `this(state old)
 ::
 ::  all portal-action and portal-message go into portal-update
@@ -58,74 +74,49 @@
   ^-  (quip card _this)
   ?+    mark    (on-poke:default mark vase)
       %portal-action
-    ::  TODO create new pokes? in portal manager
     ?.  =(our.bowl src.bowl)  `this
     =/  act  `action`!<(action vase)
+    =/  store  ~(. store [bowl items ~])
     ?+    -.act    (on-poke:default mark vase)
-      ::   %add-1  `this
-      ::   %edit-1
-      :: =/  item  (~(gut by items) key.act ~)
-      :: ?~  item  `this
-      :: =.  item
-      ::   (edit-1:on-action:store [our.bowl now.bowl item act])
-      :: =.  items  (~(put by items) key.item item)
-      :: `this
-       :: defaults should just be added with 'add-with-time'
-        %add
-      =^  cards  items
-        (add:on-action:store [items our.bowl src.bowl now.bowl %.n act])
-      [cards this]
+      %create  =^(cards items (create:on-act:on-poke:store act) [cards this])
       ::
-        %add-with-time
-      =^  cards  items
-        (add-with-time:on-action:store [items our.bowl src.bowl now.bowl act])
-      [cards this]
+      %replace  =^(cards items (replace:on-act:on-poke:store act) [cards this])
       ::
-        %edit
-      =^  cards  items
-        (edit:on-action:store [items our.bowl src.bowl now.bowl act])
-      [cards this]
+      %edit  =^(cards items (edit:on-act:on-poke:store act) [cards this])
       ::
-        %sub
-      :_  this
-        (sub:on-action:store [our.bowl src.bowl now.bowl wex.bowl act])
+        %sub  `this
+      :: :_  this
+      ::   (sub:on-action:store [our.bowl src.bowl now.bowl wex.bowl act])
       ::
-        %del
-      =^  cards  items
-        (del:on-action:store [items our.bowl src.bowl now.bowl act])
-      [cards this]
+        %delete  `this
+      :: =^  cards  items
+      ::   (del:on-action:store [items our.bowl src.bowl now.bowl act])
+      :: [cards this]
       ::
-        %put-outer
-      =^  cards  items
-        (put-outer:on-action:store items our.bowl src.bowl act)
-      [cards this]
-      ::
-        %edit-docket
-      =^  cards  items
-        (edit-docket:on-action:store items our.bowl src.bowl now.bowl act)
-      [cards this]
-      ::
-        %add-item-to-col
-      =^  cards  items
-        (add-item-to-col:on-action:store items our.bowl src.bowl now.bowl act)
-      [cards this]
+        %edit-docket  `this
+      :: =^  cards  items
+      ::   (edit-docket:on-action:store items our.bowl src.bowl now.bowl act)
+      :: [cards this]
       ::
       ::   %purge
       :: =^  cards  items
       ::   (purge:store [items our.bowl src.bowl now.bowl act])
       :: [cards this]
     ==
-      %portal-message
-    ?.  =(our.bowl src.bowl)  `this
-    =/  msg  `message`!<(message vase)
-      =^  cards  items
-        (index-as-curator:on-message:store [items our.bowl src.bowl now.bowl msg])
-      [cards this]
+      %portal-message  `this
+    :: ?.  =(our.bowl src.bowl)  `this
+    :: =/  msg  `message`!<(message vase)
+    ::   =^  cards  items
+    ::     (index-as-curator:on-message:store [items our.bowl src.bowl now.bowl msg])
+    ::   [cards this]
   ==
 ::
 ++  on-arvo   on-arvo:default
 ::
 ++  on-watch
+  ::  there will be paths
+  ::  /updates   ::  for all updates
+  ::  /[struc]/[ship]/[cord]/[time]   ::  for updates for the specific key
   |=  =path
   ^-  (quip card _this)
   ?:  =(path /items)
@@ -139,7 +130,7 @@
   =/  item  (~(gut by items) (path-key-to-key:conv path) ~)
   :_  this
   ?~  item  ~
-  [%give %fact ~ %portal-update !>(`update`[%put key.item item])]~
+  [%give %fact ~ %portal-update !>(`update:^item`item)]~
 ::
 ++  on-leave  on-leave:default
 ::
@@ -162,22 +153,23 @@
     ::
       %fact
     =/  key  (path-key-to-key:conv wire)
-    =/  upd  !<(update q.cage.sign)
+    =/  upd  !<(update:item q.cage.sign)
     ~&  "%portal-store: received update from {(spud wire)}"
-    ?+    -.upd    `this
-      ::
-      ::  basically %init/%add/%edit
-        %put
-      =^  cards  items
-        (put:on-agent:store items our.bowl src.bowl upd)
-      [cards this]
-      ::
-      ::  receiving a delete (distinct from unsubbing)
-        %del
-      =^  cards  items
-        (del:on-agent:store items our.bowl src.bowl upd)
-      [cards this]
-    ==
+    !!
+    :: ?+    -.upd    `this
+    ::   ::
+    ::   ::  basically %init/%add/%edit
+    ::     %put
+    ::   =^  cards  items
+    ::     (put:on-agent:store items our.bowl src.bowl upd)
+    ::   [cards this]
+    ::   ::
+    ::   ::  receiving a delete (distinct from unsubbing)
+    ::     %del  `this
+    ::   :: =^  cards  items
+    ::   ::   (del:on-agent:store items our.bowl src.bowl upd)
+    ::   :: [cards this]
+    :: ==
   ==
 ::
 ++  on-peek

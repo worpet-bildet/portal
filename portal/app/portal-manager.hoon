@@ -11,7 +11,7 @@
       =default-curators
       =portal-curator
   ==
-::  TODO test state-1 to state-1 transition, probably won't be a problem
+::  TODO clean up portal manager state
 +$  state-1
   $:  %1
       =default-curators
@@ -34,8 +34,8 @@
 ++  on-init
   ^-  (quip card _this)
   =/  new-user-event      [%join now.bowl (get-ship-type:misc our.bowl) `@ux`(shax our.bowl)]
-  =/  default-curators    (silt (limo ~[[[[%collection ~] [%def ~]] ~worpet-bildet '~2000.1.1']]))
-  =/  portal-curator      [[[%collection ~] [%def ~]] ~tactyl-darlup-dilryd-mopreg '~2000.1.1']  ::  TODO change to worpet-bildet
+  =/  default-curators    *^default-curators :: (silt (limo ~[[[[%collection ~] [%def ~]] ~worpet-bildet '~2000.1.1']]))
+  =/  portal-curator      *^portal-curator  :: [[[%collection ~] [%def ~]] ~tactyl-darlup-dilryd-mopreg '~2000.1.1']  ::  TODO change to worpet-bildet
   =/  purge-timer         %.y
   =/  purge-time          ~d1
   =/  portal-indexer      ~worpet-bildet
@@ -144,18 +144,19 @@
     ::  when %portal-store makes/receives an update, it notifies %portal-manager
     ::  then %portal-manager decides what it needs to do with it
       %portal-update
-    ::  TODO assert that it comes from our %portal-store
+    ::  TODO PM should sub to PS and receive updates on-agent
     ?.  =(our.bowl src.bowl)  `this
-    =/  upd  !<(update vase)
-    ?+    -.upd    (on-poke:default mark vase)
-        %put
-      :_  this
-      (put:on-update:manager our.bowl now.bowl upd)
-      ::
-        %del
-      :_  this
-      (del:on-update:manager upd)
-    ==
+    `this
+  ::   =/  upd  !<(update vase)
+  ::   ?+    -.upd    (on-poke:default mark vase)
+  ::       %put
+  ::     :_  this
+  ::     (put:on-update:manager our.bowl now.bowl upd)
+  ::     ::
+  ::       %del
+  ::     :_  this
+  ::     (del:on-update:manager upd)
+  ::   ==
   ==
 ::
 ++  on-arvo
@@ -190,13 +191,13 @@
         %fact
       =/  treaty  !<(treaty:treaty q.cage.sign)
       =/  key  (path-key-to-key:conv `path-key`+.wire)
-      ?+    type.key    !!
-          [[%app ~] [%def ~]]
+      ?+    struc.key    !!
+        ::   [[%app ~] [%def ~]]
+        :: :_  this
+        :: ~[(~(act cards our.bowl %portal-store) [%edit-docket key treaty])]
+          [%app ~]
         :_  this
-        ~[(~(act cards our.bowl %portal-store) [%edit-docket key treaty])]
-          [[%app ~] [%outer ~]]
-        :_  this
-        :~  [(fill-outer:manager [our.bowl [%fill-outer-app key treaty]])]
+        :~  ::[(fill-outer:manager [our.bowl [%fill-outer-app key treaty]])]
             [%pass wire %agent [ship.key %treaty] %leave ~]
         ==
       ==
@@ -209,11 +210,11 @@
       =/  preview  !<(preview:groups q.cage.sign)
       =/  act
         :*  %fill-outer-group
-          [[[%group ~] [%outer ~]] flag.preview]
+          [[%group ~] flag.preview]
           meta.preview
         ==
       :_  this
-      :~  (fill-outer:manager [our.bowl act])
+      :~  ::  (fill-outer:manager [our.bowl act])
           [%pass wire %agent [p.flag.preview %groups] %leave ~]
       ==
     ==

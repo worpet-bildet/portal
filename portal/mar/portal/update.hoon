@@ -1,12 +1,12 @@
 /-  *portal-update
-|_  upd=update
+|_  upd=update:item
 ++  grow
   |%
   ++  noun  upd
   --
 ++  grab
   |%
-  ++  noun  update
+  ++  noun  update:item
   --
 ++  grad  %noun
 --

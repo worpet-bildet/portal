@@ -2,9 +2,10 @@
 |%
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
-::  TODO define poke API
 ::  TODO define networking scheme? (sub updates), put/del updates
-::
+::  TODO json coversions such that FE doesnt have to input an optional arg
+::  if they dont want to
+
 ::  OLD
 ::  /list/list
 ::     /list
@@ -17,6 +18,13 @@
 ::     /item
 ::     /list
 ::     /item
+:: Should we store everything in main collection?
+:: E.g. do we store %validity-store there?
+:: validity store is used for storing the validity of items
+:: another example, do we store the feed or index there?
+:: do we store only our items, or also stuff we sub to?
+:: worth discussing over a call, we can do tmrw if you want
+
 ::
 ::  TODO define state transition with $&
 ::  TODO define state transition of existing items
@@ -31,6 +39,7 @@
 ::
 ::  --  after everything works--
 ::  TODO-->  feed SSS?  YES, feed item? MAYBE
+::  TODO - each bespoke has its own diffs? (SSS)
 ::  TODO decide how bespoke should look
 ::  (for now, with new modifications to existing functionality)
 ::  tags?                  NO
@@ -47,7 +56,7 @@
 ::::  TODO change to +$  key  [=ship =type time=cord]
 +$  path-key  [knot knot knot knot ~]
 ::
-+$  key  [=struc =ship =cord time=cord]  :: TODO switch ship and type
++$  key  [=struc =ship =cord time=cord]
 ::  struc is the structure of the data
 ::  lens is how we see it and how we treat it
 +$  struc
@@ -60,7 +69,14 @@
       ::  TODO  profile
   ==
 ::
++$  lens
+  $%  [%def ~]
+      [%deleted ~]
+      [%temp ~]
+      [%index ~]
+  ==
 ::
+::  TODO struc-lens validator
 ::
 ::
 ::
@@ -71,18 +87,44 @@
 ::  NEW
 ::  Item Parts
 ::
-::  add lens [%deleted ~]
-+$  item           ::TODO how to handle nonitems in general?
-  $:  =key
-      =bespoke
-      =meta
-      =sig
-  ==
+::  TODO a separate validation function for if lens is compatible with struc ?
+::
+++  item
+  =<  item
+  |%
+  +$  item
+    $:  =key
+        =lens
+        =bespoke
+        =meta
+        =sig
+    ==
+  +$  update  item ::  rename to diff? or add +$  diff?
+  --
+
+
+  :: just =item, also for del
+
+  ::  delete -> removes from main collection
+  ::         -> adds %deleted lens
+
+  :: %create
+  ::   - new-item -> update
+  ::   - edit-col -> update
+  :: %append
+  :: %prepend
+  ::
+  :: - simply get item
+  :: %replace
+  :: %edit
+  :: %delete
+
 ::
 ::
 +$  meta
   $:  created-at=@t
       updated-at=@t                    ::  '~2000.1.1' means it wasn't updated
+                                       ::  TODO updated at '~2000.1.1' -> ''
       permissions=(list @p)            ::  not used yet. auto- ~[our.bowl].
       =reach                           ::  not used yet
   ==
@@ -96,16 +138,16 @@
 ::
 ::  data specific to the item type
 +$  bespoke
-  $%  [struc=[%ship ~] lens=$%([%temp ~]) ~]
-      [struc=[%group ~] lens=$%([%temp ~]) =data:group-preview]
+  $%  [struc=[%ship ~] ~]
+      [struc=[%group ~] =data:group-preview]
       ::  TODO probably rename other to post?
-      [struc=[%other ~] lens=$%([%deleted ~] [%def ~]) title=@t blurb=@t link=@t image=@t]
-      [struc=[%app ~] lens=$%([%temp ~] [%deleted ~] [%def ~]) dist-desk=@t sig=signature =treaty]
-      [struc=[%collection ~] lens=$%([%index ~] [%deleted ~] [%def ~]) title=@t blurb=@t image=@t =key-list]  ::does it need link?
+      [struc=[%other ~] title=@t blurb=@t link=@t image=@t]
+      [struc=[%app ~] dist-desk=@t sig=signature =treaty]
+      [struc=[%collection ~] title=@t blurb=@t image=@t =key-list]  ::does it need link?
       ::  TODO /list/list becomes these 2 things:
       ::  1. to profile type?
       ::  2. default colletion to store all your collections
-      [struc=[%validity-store ~] lens=$%([%def ~]) =validity-records]
+      [struc=[%validity-store ~] =validity-records]
   ==
 ::
 ::
@@ -145,7 +187,7 @@
 +$  signature   [hex=@ux =ship =life]
 ::
 +$  sig-input
-  $%  [%item =key =bespoke =meta]     ::  for signing the item each time it is edited
+  $%  [%item =key =lens =bespoke =meta]     ::  for signing the item each time it is edited
       [%key =key]                      ::  for signing item by somebody from the outside (not in use yet)
       [%app =key desk-name=@tas]      ::  for signing apps by the distributor ship
   ==
