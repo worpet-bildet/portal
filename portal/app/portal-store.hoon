@@ -24,25 +24,16 @@
   ^-  (quip card _this)
   =.  state  *state-0
   =*  store-core  ~(. store [bowl items ~])
-  =/  col-create  :*
-    %create
-    ~
-    [~ '~2000.1.1']
-    `[%def ~]
-    `[[%collection ~] 'Main Collection' 'Your first collection.' '' ~]
-    ~
-  ==
-  =/  val-create  ^-  action  :*
-    %create
-    ~
-    [~ '~2000.1.1']
-    `[%def ~]
+  =/  col-create  :*  %create  ~  ~  `'~2000.1.1'  `[%def ~]
+    `[[%collection ~] 'Main Collection' 'Your first collection.' '' ~]  
+    `[[%collection ~] our.bowl '' '~2000.1.1']  ==
+  =/  val-create  :*  %create  ~  ~  `'~2000.1.1'  `[%def ~]
     `[[%validity-store ~] *validity-records]
-    [~ [[%collection ~] our.bowl '' '~2000.1.1']]
-  ==
+    `[[%collection ~] our.bowl '' '~2000.1.1']  ==
   =^  cards-1  items  (create:on-act:on-poke:store-core col-create)
   =^  cards-2  items  (create:on-act:on-poke:store-core val-create)
-
+  :_  this  
+  (zing ~[cards-1 cards-2])
   :: =/  index-key  [[[%collection ~] [%def ~]] our.bowl 'index']
   :: ?:  &(=(our.bowl ~worpet-bildet) !(~(has by items) index-key))
   ::   =/  act  [%add-with-time index-key [[%collection ~] '' '' '' ~]]
@@ -50,14 +41,13 @@
   ::     (add-with-time:on-action:store [items our.bowl src.bowl now.bowl act])
   ::   :_  this
   ::   (zing ~[cards-1 cards-2 cards-3])
-  :_  this
-  (zing ~[cards-1 cards-2])
 ::
 ++  on-save  !>(state)
 ++  on-load
   |=  old=vase
   ^-  (quip card _this)
   =/  old  !<(state-0 old)
+  `this(state old)
   :: =/  items  items.old
   :: =/  index-key  [[[%collection ~] [%def ~]] our.bowl 'index']
   :: ?:  &(=(our.bowl ~worpet-bildet) !(~(has by items) index-key))
@@ -66,23 +56,17 @@
   ::   =^  cards  items
   ::     (add-with-time:on-action:store [items our.bowl src.bowl now.bowl act])
   ::   [cards this(items items)]
-  `this(state old)
 ::
-::  all portal-action and portal-message go into portal-update
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
+  ?.  =(our.bowl src.bowl)  `this
+  =/  store  ~(. store [bowl items ~])
   ?+    mark    (on-poke:default mark vase)
       %portal-action
-    ?.  =(our.bowl src.bowl)  `this
-    =/  act  `action`!<(action vase)
-    =/  store  ~(. store [bowl items ~])
+    =/  act  !<(action vase)
     ?+    -.act    (on-poke:default mark vase)
-      %create  =^  cards  items 
-      (create:on-act:on-poke:store act)
-      ~&  >>>  (lent cards)
-      ~&  >  cards
-      [cards this]
+      %create  =^(cards items (create:on-act:on-poke:store act) [cards this])
       ::
       %replace  =^(cards items (replace:on-act:on-poke:store act) [cards this])
       ::
@@ -118,22 +102,10 @@
 ::
 ++  on-arvo   on-arvo:default
 ::
-++  on-watch
-  ::  there will be paths
-  ::  /updates   ::  for all updates
-  ::  /[struc]/[ship]/[cord]/[time]   ::  for updates for the specific key
+++  on-watch  ::  should it return items on initial sub?
   |=  =path
   ^-  (quip card _this)
-  ?:  =(path /items)
-    :_  this
-    [%give %fact ~ %portal-items !>(`^items`items)]~
-  ::
-  ?:  =(path /updates)  `this
-  ::
-  =/  item  (~(gut by items) (path-key-to-key:conv path) ~)
-  :_  this
-  ?~  item  ~
-  [%give %fact ~ %portal-update !>(`update:^item`item)]~
+  `this
 ::
 ++  on-leave  on-leave:default
 ::
@@ -188,21 +160,20 @@
     ::
       [%keys ~]  keys+~(key by items)
     ::
-    ::  /item/[ship]/'[type]'/'[cord]'
-      [%item @ @ @ ~]  item+(~(gut by items) (path-key-to-key:conv t.path) ~)
+      [%item *]  item+(~(gut by items) (path-key-to-key:conv t.path) ~)
     ::
     ::  /item-exists/[ship]/'[type]'/'[cord]'
-      [%item-exists @ @ @ ~]  (~(has by items) (path-key-to-key:conv t.path))
+      [%item-exists *]  (~(has by items) (path-key-to-key:conv t.path))
     ::
     ::  /in-list/[list-ship]/'[list-type]'/'[list-cord]/'[ship]/'[type]'/'[cord]'
-      [%in-list @ @ @ @ @ @ ~]
-    =/  item-key  (path-key-to-key:conv t.t.t.t.path)
-    =/  list  =-  (~(gut by items) - ~)
-      (path-key-to-key:conv [i.t.path i.t.t.path i.t.t.t.path ~])
-    ?~(list %.n (key-in-collection:loob item-key list))
+    ::   [%in-list @ @ @ @ @ @ ~]
+    :: =/  item-key  (path-key-to-key:conv t.t.t.t.path)
+    :: =/  list  =-  (~(gut by items) - ~)
+    ::   (path-key-to-key:conv [i.t.path i.t.t.path i.t.t.t.path ~])
+    :: ?~(list %.n (key-in-collection:loob item-key list))
     ::
     ::  /item-valid/[ship]/'[type]'/'[cord]'
-      [%item-valid @ @ @ ~]
+      [%item-valid *]
     valid+(get-latest:validator our.bowl now.bowl (path-key-to-key:conv t.path))
   ==
   ::

@@ -8,21 +8,21 @@
   ::
   ++  key-to-path-key
     |=  [=key]
-    ;;  path-key
+    ^-  path 
     ;:  weld
-      /(spat struc.key)
+      struc.key
       ~[(scot %p ship.key)]
       ~[cord.key]
       ~[time.key]
     ==
   ::
   ++  path-key-to-key
-    |*  [=path-key]
+    |=  [=path]
     ;;  key
-    :^  (stab -:path-key)
-        (slav %p +<:path-key)
-        +>-:path-key
-        (rear path-key)
+    :^  ;;  struc  (scag (sub (lent path) 3) `(list @tas)`path)
+        `ship`(slav %p +<:path)
+        `cord`+>-:path
+        `cord`+>+<:path
   --
 ::
 ::  add ++store and ++manager or put into ++store and ++manager?
@@ -209,9 +209,6 @@
     (~(del by items) key)
   ::
   ::
-  :: delete should remove from main collection
-  :: and put %deleted lens
-  :: deletes an item (yours or foreign)
   ::
   ::  helper methods
   ++  cards-methods  ::  all arms here should append to the list of cards
@@ -265,7 +262,6 @@
     ++  edit
       |=  [=item act=action]
       ^-  ^item
-      ?>  =(src.bowl our.bowl)
       ?.  ?=([%edit *] act)  !!
       ?>  =(key.item key.act)
       =.  item
@@ -313,8 +309,6 @@
     ++  replace
       |=  [=item act=action]
       ^-  ^item
-      ::  TODO if it comes from PM its always our, so check
-      ?>  =(src.bowl our.bowl)             ::  on portal manager?
       ?.  ?=([%replace *] act)  !!
       ?>  =(key.item key.act)
       =.  item
@@ -328,16 +322,13 @@
       item(sig sig)
     ::
     ++  create
-      ::  what if already in list?
-      ::  and (also?) just needs to create temp
       |=  [act=action]
       ^-  item
-      ?>  =(src.bowl our.bowl)
       ?.  ?=([%create *] act)  !!     ::  assert that action is %create
       =/  lens      (fall lens.act *lens)
       =/  bespoke   (fall bespoke.act *bespoke)
       =/  key  :^   -.bespoke
-                    our.bowl
+                    (fall ship.act our.bowl)
                     (fall cord.act '')
                     (fall time.act `@t`(scot %da now.bowl))
       =/  meta  :^  created-at=`@t`(scot %da now.bowl)
@@ -380,7 +371,6 @@
     ++  delete
       |=  [=item act=action]
       ^-  ^item
-      ?>  =(src.bowl our.bowl)
       ?.  ?=([%delete *] act)  !!
       ?>  =(key.item key.act)
       =.  item
@@ -404,17 +394,14 @@
   ::
   ++  on-poke  ::  all arms here should output [cards state]
     |%
-    ::
-    ::  a lot of these are boilerplate
-    ::  can/should it be abstracted?
     ++  on-act
       |%
       ++  sub
         |=  [act=action]
         ^-  [(list card) ^items]
         ?.  ?=([%sub *] act)  !!
-        ?:  =(time.key.act '')   `items  :: infers that it's %temp
-        ?:  =(ship.key.act our.bowl)  `items
+        ?:  =(time.key.act '')        `items  :: infers that it's %temp
+        ?:  =(ship.key.act our.bowl)  `items  :: don't subscribe to our item
         =/  wire  (key-to-path-key:conv key.act)
         ?:  (~(has by wex.bowl) [wire ship.key.act %portal-store])  `items
         :_  items
@@ -442,6 +429,7 @@
         =.  cards  (put:cards-methods item)
         =.  items  (put-item item)
         ?~  append-to.act  [cards items]
+        ::  TODO check if already in list (if doing put with temp)
         (append [%append key.item (need append-to.act)])
       ::
       ++  append
@@ -465,6 +453,7 @@
         =/  col  (remove-from-col:item-methods (get-item col-key.act) act)
         [(put:cards-methods col) (put-item col)]
       ::
+      ::  purge should remove from main collection, not delete
       ++  delete
         |=  [act=action]
         ^-  [(list card) ^items]

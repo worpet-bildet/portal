@@ -13,12 +13,18 @@
 ::
 ::  NEW  ->
 ::  TODO DISCUSS the items which are in lists should also be in main list/collection?
-:: /list
-::     /list
-::     /list
-::     /item
-::     /list
-::     /item
+:: /maincol
+::    /col1
+      ::     /item1
+      ::     /item2
+      :: /col2
+      :: /item1
+      :: [all our items]
+      :: [temp?]
+      :: [~zods item]
+
+
+
 :: Should we store everything in main collection?
 :: E.g. do we store %validity-store there?
 :: validity store is used for storing the validity of items
@@ -54,8 +60,6 @@
 ::
 ::  Basic Outline
 ::
-::::  TODO change to +$  key  [=ship =type time=cord]
-+$  path-key  [knot knot knot knot ~]
 ::
 +$  key  [=struc =ship =cord time=cord]
 ::  struc is the structure of the data
@@ -64,9 +68,9 @@
   $%  [%group ~]
       [%ship ~]
       [%app ~]
-      [%other ~]
       [%collection ~]
       [%validity-store ~]
+      [%other ~]
       ::  TODO  profile
   ==
 ::

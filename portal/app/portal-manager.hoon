@@ -190,16 +190,19 @@
         %kick       `this
         %fact
       =/  treaty  !<(treaty:treaty q.cage.sign)
-      =/  key  (path-key-to-key:conv `path-key`+.wire)
-      ?+    struc.key    !!
-        ::   [[%app ~] [%def ~]]
-        :: :_  this
-        :: ~[(~(act cards our.bowl %portal-store) [%edit-docket key treaty])]
-          [%app ~]
-        :_  this
-        :~  ::[(fill-outer:manager [our.bowl [%fill-outer-app key treaty]])]
-            [%pass wire %agent [ship.key %treaty] %leave ~]
+      =/  key  (path-key-to-key:conv +.wire)
+      =/  act
+        :*  %create
+          `ship.key
+          `cord.key
+          `time.key
+          `[%temp ~]
+          `[[%app ~] '' *signature treaty]
+          `[[%collection ~] our.bowl '' '~2000.1.1']
         ==
+      :_  this
+      :~  [(~(act cards [our.bowl %portal-store]) act)]
+          [%pass wire %agent [ship.key %treaty] %leave ~]
       ==
     ==
       [%get-group-preview @ @ @ @ ~]
@@ -208,13 +211,17 @@
         %kick       `this
         %fact
       =/  preview  !<(preview:groups q.cage.sign)
-      =/  act
-        :*  %fill-outer-group
-          [[%group ~] flag.preview]
-          meta.preview
+      =/  act  
+        :*  %create
+          `p.flag.preview
+          `q.flag.preview
+          `''
+          `[%temp ~]
+          `[[%group ~] meta.preview]
+          `[[%collection ~] our.bowl '' '~2000.1.1']
         ==
       :_  this
-      :~  ::  (fill-outer:manager [our.bowl act])
+      :~  [(~(act cards [our.bowl %portal-store]) act)]
           [%pass wire %agent [p.flag.preview %groups] %leave ~]
       ==
     ==

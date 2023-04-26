@@ -248,16 +248,18 @@
   ++  enjs-jam-key
     |=  =key
     ^-  json
-    :-  %s  %-  crip
-    ;:  weld
-      (spud struc.key)
-      "|"
-      (scow %p ship.key)
-      "|"
-      (trip cord.key)
-      "|"
-      (trip time.key)
-    ==
+    (path:enjs:format (key-to-path-key:conv key))
+    ::  %-  crip
+    ::  ;:  weld
+    ::    (spud struc.key)
+    ::    "|"
+    ::    (scow %p ship.key)
+    ::    "|"
+    ::    (trip cord.key)
+    ::    "|"
+    ::    (trip time.key)
+    ::  ==
+
   ++  enjs-key
     |=  =key
     ^-  json
@@ -301,7 +303,8 @@
     ?+    -.jn    jn
         %create
       =/  raw  %.  ;;((map @t json) +>:jn)
-      %-  ot-raw  :~  cord+so
+      %-  ot-raw  :~  ship+dejs-soft-ship
+                      cord+so
                       time+so
                       lens+dejs-soft-path
                       bespoke+dejs-soft-bespoke
