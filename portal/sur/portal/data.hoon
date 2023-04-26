@@ -11,7 +11,8 @@
 ::     /list
 ::         /item
 ::
-::  NEW
+::  NEW  ->
+::  TODO DISCUSS the items which are in lists should also be in main list/collection?
 :: /list
 ::     /list
 ::     /list
@@ -70,10 +71,12 @@
   ==
 ::
 +$  lens
-  $%  [%def ~]
-      [%deleted ~]
-      [%temp ~]
+  $%  [%deleted ~]   ::  should not put this over temp? or should you?
+      [%temp ~]   ::  TODO metadata on temp? instead of overwriting use updated-at
+                  ::  does this create a mess with subbing or no? it does destroy
+                  ::  the globally unique namespace, i.e. it does not apply to temp items
       [%index ~]
+      [%def ~]
   ==
 ::
 ::  TODO struc-lens validator
@@ -135,19 +138,20 @@
 ::
 ::  Item Data
 ::
+::  each item in collection should have META data
 ::
 ::  data specific to the item type
 +$  bespoke
   $%  [struc=[%ship ~] ~]
       [struc=[%group ~] =data:group-preview]
-      ::  TODO probably rename other to post?
-      [struc=[%other ~] title=@t blurb=@t link=@t image=@t]
       [struc=[%app ~] dist-desk=@t sig=signature =treaty]
       [struc=[%collection ~] title=@t blurb=@t image=@t =key-list]  ::does it need link?
       ::  TODO /list/list becomes these 2 things:
       ::  1. to profile type?
       ::  2. default colletion to store all your collections
       [struc=[%validity-store ~] =validity-records]
+      ::  TODO probably rename other to post?
+      [struc=[%other ~] title=@t blurb=@t link=@t image=@t]
   ==
 ::
 ::

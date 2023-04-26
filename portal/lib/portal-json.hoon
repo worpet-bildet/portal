@@ -1,4 +1,4 @@
-/-  *portal-data, *portal-action, *portal-front-end-update
+/-  *portal-data, *portal-action
 /+  *portal, docket, treaty
 |%
 ++  enjs
@@ -59,6 +59,18 @@
   ::       ['social' (enjs-social social.item)]
   ::       ['sig' (enjs-sig sig.item)]
   ::   ==
+    ++  enjs-update
+    |=  [=item]
+    ^-  json
+    %-  pairs
+    :~  ['keyStr' (enjs-jam-key key.item)]
+        ['keyObj' (enjs-key key.item)]
+        ['lens' (path lens.item)]
+        ['bespoke' (enjs-bespoke bespoke.item)]
+        ['meta' (enjs-meta meta.item)]
+        ['sig' (enjs-sig sig.item)]
+    ==
+
   :: ++  enjs-key-and-item
   ::   |=  [=key =item]
   ::   ^-  json
@@ -68,15 +80,15 @@
   ::   ^-  json
   ::   =/  lis  ~(tap by items)
   ::   [%a (turn lis enjs-key-and-item)]
-  :: ++  enjs-meta
-  ::   |=  [=meta]
-  ::   ^-  json
-  ::   %-  pairs
-  ::   :~  ['updatedAt' s+updated-at.meta]
-  ::       ['permissions N/A' s+'']
-  ::       ['reach N/A' s+'']
-  ::       ['outside-sigs N/A' s+'']
-  ::   ==
+  ++  enjs-meta
+    |=  [=meta]
+    ^-  json
+    %-  pairs
+    :~  ['createdAt' s+created-at.meta]
+        ['updatedAt' s+updated-at.meta] 
+        ['permissions N/A' s+'']
+        ['reach N/A' s+'']
+    ==
   :: ++  enjs-data
   ::   |=  [=data]
   ::   ^-  json
@@ -98,23 +110,36 @@
   ::         ['image' s+image.general]
   ::         ['color' s+color.general]
   ::     ==
-  ::   ++  enjs-bespoke
-  ::     |=  [=bespoke]
-  ::     ^-  json
-  ::     ?-    -.bespoke
-  ::       [%nonitem %ship ~]    s+''
-  ::       [%nonitem %group ~]   s+''
-  ::       [%nonitem %app ~]     (treaty:enjs:treaty treaty.bespoke)
-  ::       [%enditem %app ~]     %-  pairs
-  ::                        :~  ['distDesk' s+dist-desk.bespoke]
-  ::                            ['signature' (enjs-sig sig.bespoke)]
-  ::                            ['treaty' (treaty:enjs:treaty treaty.bespoke)]
-  ::                        ==
-  ::       [%enditem %other ~]   s+''
-  ::       [%list ~]            (enjs-key-list key-list.bespoke)
-  ::       [%list %list ~]       (enjs-key-list list-key-list.bespoke)
-  ::       [%validity-store ~]  s+''
-  ::     ==
+  ++  enjs-bespoke
+    |=  [=bespoke]
+    ^-  json
+    ?-    -.bespoke
+      [%ship ~]          s+''
+      [%group ~]         %-  pairs
+                         :~  ['title' s+title.data.bespoke]
+                             ['description' s+description.data.bespoke]
+                             ['image' s+image.data.bespoke]
+                             ['cover' s+cover.data.bespoke]
+                         ==
+      [%app ~]           %-  pairs
+                         :~  ['distDesk' s+dist-desk.bespoke]
+                             ['signature' (enjs-sig sig.bespoke)]
+                             ['treaty' (treaty:enjs:treaty treaty.bespoke)]
+                         ==
+      [%other ~]         %-  pairs
+                         :~  ['title' s+title.bespoke]
+                             ['blurb' s+blurb.bespoke]
+                             ['link' s+link.bespoke]
+                             ['image' s+image.bespoke]
+                         ==
+      [%collection ~]    %-  pairs
+                         :~  ['title' s+title.bespoke]
+                             ['blurb' s+blurb.bespoke]
+                             ['image' s+image.bespoke]
+                             ['key-list' (enjs-key-list key-list.bespoke)]
+                         ==      
+      [%validity-store ~]  s+''
+    ==
   ::   --
   :: ++  enjs-social
   ::   |=  =social
@@ -225,11 +250,11 @@
     ^-  json
     :-  %s  %-  crip
     ;:  weld
-      (spud struc.type.key)
-      "|"
-      (spud lens.type.key)
+      (spud struc.key)
       "|"
       (scow %p ship.key)
+      "|"
+      (trip cord.key)
       "|"
       (trip time.key)
     ==
@@ -237,9 +262,9 @@
     |=  =key
     ^-  json
     %-  pairs
-    :~  ['ship' (enjs-ship ship.key)]
-        ['struc' s+(spat struc.type.key)]
-        ['lens' s+(spat lens.type.key)]
+    :~  ['struc' s+(spat struc.key)]
+        ['ship' (enjs-ship ship.key)]
+        ['cord' s+cord.key]
         ['time' s+time.key]
     ==
     ::
@@ -257,83 +282,156 @@
 ::
 ::
 ++  dejs
-  =,  dejs:format
+  =,  format
   |%
   ++  dejs-action
     |=  jon=json
-    %-  action
+    ;;  action
+    =,  dejs-soft
+    =/  jn  %.  jon
+            %-  of:dejs
+            :~  [%create json]
+                [%edit json]
+                [%append (ot:dejs ~[item-key+dejs-key col-key+dejs-key])]
+                [%prepend (ot:dejs ~[item-key+dejs-key col-key+dejs-key])]
+                [%remove (ot:dejs ~[item-key+dejs-key col-key+dejs-key])]
+                [%delete (ot:dejs ~[key+dejs-key])]
+                [%sub (ot:dejs ~[key+dejs-key])]
+            ==
+    ?+    -.jn    jn
+        %create
+      =/  raw  %.  ;;((map @t json) +>:jn)
+      %-  ot-raw  :~  cord+so
+                      time+so
+                      lens+dejs-soft-path
+                      bespoke+dejs-soft-bespoke
+                      append-to+dejs-soft-key
+                  ==
+      create+(pole-to-cell raw)
+        %edit
+      =/  raw  %.  ;;((map @t json) +>:jn)
+      %-  ot-raw  :~  key+dejs-soft-key
+                      lens+dejs-soft-path
+                      bespoke+dejs-soft-bespoke-edit
+                  ==
+      =/  edit  (pole-to-cell raw)
+      edit+edit(- (need -.edit))
+    ==
+  ::
+  ++  pole-to-cell
+    |*  pol=(pole *)
+    ?~  pol  !!
+    ?~  +.pol
+      -.pol
+    [-.pol (pole-to-cell +.pol)]
+  ::
+  ++  dejs-soft-bespoke-edit  ::use ot-raw
+    |=  jon=json
+    =,  dejs-soft
+    =/  jn  %.  jon
+            %-  of:dejs
+            :~  [%'/other' json]
+                [%'/app' json]
+                [%'/collection' json]
+            ==
+    ?-    -.jn
+        %'/other'
+      =/  raw  %.  ;;((map @t json) +>:jn)
+      %-  ot-raw  :~  title+so
+                      blurb+so
+                      link+so
+                      image+so
+                  ==
+      other+(pole-to-cell raw)
+        %'/collection'
+      =/  raw  %.  ;;((map @t json) +>:jn)
+      %-  ot-raw  :~  title+so
+                      blurb+so
+                      image+so
+                      key-list+dejs-soft-key-list
+                  ==
+      other+(pole-to-cell raw)
+        %'/app'  !!
+    ==
+  ::
+  ++  dejs-soft-bespoke
+    |=  jon=json
+    ;;  (unit bespoke)
+    =,  dejs-soft
+    =/  b  
     %.  jon
     %-  of
-    :~  [%add (ot ~[ship+dejs-ship type+dejs-type general+dejs-general bespoke+dejs-bespoke])]
-        [%add-item-to-list (ot ~[list-key+dejs-key ship+dejs-ship type+dejs-type general+dejs-general bespoke+dejs-bespoke])]
-        [%edit (ot ~[key+dejs-key general+dejs-general bespoke+dejs-bespoke])]
-        [%sub (ot ~[key+dejs-key])]
-        [%del (ot ~[key+dejs-key])]
-        [%index-as-curator (ot ~[toggle+bo])]
+    :~  [%'/ship' so]
+        [%'/collection' (ot ~[title+so blurb+so image+so key-list+dejs-soft-key-list])]
+        [%'/other' (ot ~[title+so blurb+so link+so image+so])]
     ==
-  ++  dejs-general
-    |=  jon=json
-    ^-  general
-    %.  jon
-    %-  ot
-    :~  title+so
-        link+so
-        description+so
-        tags+(ar so)
-        properties+(om so)
-        pictures+(ar so)
-        image+so
-        color+so
-    ==
-  ++  dejs-bespoke
-    |=  jon=json
-    %-  bespoke
-    %.  jon
-    %-  of
-    :~  [%list (ot ~[key-list+dejs-key-list])]
-        [%enditem-app (ot ~[dist-desk+so])]
-        [%enditem-other so]
-        [%list-list (ot ~[list-key-list+dejs-key-list])]
-    ==
+    (biff b |=(b=[@t *] (some b(- (stab -.b)))))
+  ::
   ++  dejs-key-text
     |=  jon=json
     ^-  [key cord]
     %.  jon
-    %-  ot
+    %-  ot:dejs
     :~  key+dejs-key
-        text+so
+        text+so:dejs
     ==
   ++  dejs-key-list
     |=  jon=json
     ^-  key-list
     %.  jon
-    (ar dejs-key)
+    (ar:dejs dejs-key)
+  ++  dejs-soft-key-list
+    |=  jon=json
+    ^-  (unit key-list)
+    %.  jon
+    (ar:dejs-soft dejs-soft-key)
   ++  dejs-key
     |=  jon=json
-    ^-  key
+    ;;  key
     %.  jon
-    %-  ot
-    :~  ship+dejs-ship
-        type+dejs-type
-        cord+so
+    %-  ot:dejs
+    :~  struc+dejs-path
+        ship+dejs-ship
+        cord+so:dejs
+        time+so:dejs
     ==
-  ++  dejs-type
+  ++  dejs-soft-key
     |=  jon=json
-    ^-  ^type
-    (^type (stab (so jon)))
+    ;;  (unit key)
+    %.  jon
+    %-  ot:dejs-soft
+    :~  struc+dejs-soft-path
+        ship+dejs-soft-ship
+        cord+so:dejs-soft
+        time+so:dejs-soft
+    ==
+  ++  dejs-path
+    |=  jon=json
+    ^-  path
+    (path (stab (so:dejs jon)))
+  ++  dejs-soft-path
+    |=  jon=json
+    ^-  (unit path)
+    ?~  jon  ~
+    (some (path (stab (so:dejs jon))))
   ++  dejs-ship
     |=  jon=json
     ^-  @p
-    ((se %p) jon)
+    ((se:dejs %p) jon)
+  ++  dejs-soft-ship
+    |=  jon=json
+    ^-  (unit @p)
+    ?~  jon  ~
+    (some ((se:dejs %p) jon))
   ++  dejs-hash
     |=  jon=json
     ^-  @uv
-    `@uv`(slav %uv (so jon))
+    `@uv`(slav %uv (so:dejs jon))
   ++  dejs-key-set
     |=  jon=json
     ^-  key-set
     %-  silt
     %.  jon
-    (ar dejs-key)
+    (ar:dejs dejs-key)
   --
 --

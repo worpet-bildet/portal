@@ -184,10 +184,11 @@
       ==
   --
 ::
-::  TODO where to put validators?
+::  TODO where to put validators? --->  upstream rather than downstream?
 ::  - permissions (vjv izvuc tako da se ne ponavlja stalno ?> =(src our)
 ::  - actions validators su takoder boilerplate
 ::  -  ?> =(key act) i ovo isto
+::  - sve rascistit tak da mogu reasonat o tim stvarima
 ++  store
   |_  [=bowl:gall =items cards=_*(list card)]
   ::
@@ -207,56 +208,57 @@
     ^-  ^items
     (~(del by items) key)
   ::
-  ++  del-cards
-
-    =/  path-key  (key-to-path-key:conv key.act)
-    ?+    lens.type.key.act
-    ::  default
-    ?:  =(our ship.key.act)
-    [%give %fact [path-key]~ [%portal-update !>(act)]]
-    [%pass path-key %agent [ship.key.act %portal-store] %leave ~]
-    ::  if temp
-    [%temp ~]
-    =-  [%pass [- path-key] %agent [ship.key.act -] %leave ~]
-    ?+    struc.type.key.act    !!
-    [%app ~]    %treaty
-    [%group ~]  %get-group-preview
-    ==
-    ==
-    ==
-cards all cases
-- on-action put
-- on-action del
-- on-action sub
-- on-agent put
-- on-agent del
-- on-message ? how to treat?
   ::
   :: delete should remove from main collection
   :: and put %deleted lens
   :: deletes an item (yours or foreign)
-  ++  add-cards
-    ::  TODO eventually specify diffs for SSS
-    |=  [=item]
-    ^-  (list card)
-    ?+  -.act
-      ::  default
+  ::
+  ::  helper methods
+  ++  cards-methods  ::  all arms here should append to the list of cards
+    ::  TODO
+    :: - on-action sub
+    |%
+    ::  whether its on-agent or on-poke
+    ++  put  ::  for on action, on message
+      ::  TODO eventually specify diffs for SSS
+      |=  [=item]
+      ^-  (list card)
       ;:  welp
-      cards
-      ::  all changes in local state
-      [%give %fact [/updates]~ %portal-update !>(item)]~
-      ::  all changes in items that are ours
-      ?.  &(=(our.bowl ship.key.item) ?!(=(lens.item [%temp ~])))
-      ~
-      [%give %fact [(key-to-path-key:conv key.item)]~ %portal-update !>(item)]~
+        cards
+        ::  all changes in local state
+        [%give %fact [/updates]~ %portal-update !>(item)]~
+        ::  all changes in items that are ours
+        ?.  &(=(our.bowl ship.key.item) ?!(=(lens.item [%temp ~])))
+          ~
+        [%give %fact [(key-to-path-key:conv key.item)]~ %portal-update !>(item)]~
       ==
       ::    fe-update
       ::    PM update
       ::    subs update
       ::  previous card making exception:  validity store -> no cards
     ::
-    ==
-  ::
+    ++  del
+      |=  [=item]
+      ^-  (list card)
+      =/  path-key  (key-to-path-key:conv key.item)
+      ;:  welp
+        cards
+        [%give %fact [path-key]~ [%portal-update !>(item)]]~  ::  general updates
+        ?+    lens.item    ::  sub path handle
+        ::  default
+          ?:  =(our.bowl ship.key.item)
+            [%give %fact [(key-to-path-key:conv key.item)]~ %portal-update !>(item)]~
+          [%pass path-key %agent [ship.key.item %portal-store] %leave ~]~
+        ::  if temp
+          [%temp ~]
+        =-  [%pass [- path-key] %agent [ship.key.item -] %leave ~]~
+          ?+    struc.key.item    !!
+            [%app ~]    %treaty
+            [%group ~]  %get-group-preview
+          ==
+        ==
+      ==
+    --
   ::  helper methods
   ++  item-methods  ::  all arms here should output item
     |%
@@ -275,31 +277,32 @@ cards all cases
           (fall lens.act lens.item)
           ::
             bespoke
-          ?-  -.bespoke.act
+          ?~  bespoke.act  bespoke.item
+          ?-  -.u.bespoke.act
               [%other ~]
             ?.  ?=([%other ~] -.bespoke.item)  !!
             :*  [%other ~]
-                (fall title.bespoke.act title.bespoke.item)
-                (fall blurb.bespoke.act blurb.bespoke.item)
-                (fall link.bespoke.act link.bespoke.item)
-                (fall image.bespoke.act image.bespoke.item)
+                (fall title.u.bespoke.act title.bespoke.item)
+                (fall blurb.u.bespoke.act blurb.bespoke.item)
+                (fall link.u.bespoke.act link.bespoke.item)
+                (fall image.u.bespoke.act image.bespoke.item)
             ==
             ::
               [%app ~]
             ?.  ?=([%app ~] -.bespoke.item)  !!
             :*  [%app ~]
-                (fall dist-desk.bespoke.act dist-desk.bespoke.item)
-                (fall sig.bespoke.act sig.bespoke.item)
-                (fall treaty.bespoke.act treaty.bespoke.item)
+                (fall dist-desk.u.bespoke.act dist-desk.bespoke.item)
+                (fall sig.u.bespoke.act sig.bespoke.item)
+                (fall treaty.u.bespoke.act treaty.bespoke.item)
             ==
             ::
               [%collection ~]
             ?.  ?=([%collection ~] -.bespoke.item)  !!
             :*  [%collection ~]
-                (fall title.bespoke.act title.bespoke.item)
-                (fall blurb.bespoke.act blurb.bespoke.item)
-                (fall image.bespoke.act image.bespoke.item)
-                (fall key-list.bespoke.act key-list.bespoke.item)
+                (fall title.u.bespoke.act title.bespoke.item)
+                (fall blurb.u.bespoke.act blurb.bespoke.item)
+                (fall image.u.bespoke.act image.bespoke.item)
+                (fall key-list.u.bespoke.act key-list.bespoke.item)
             ==
           ==
         ==
@@ -331,7 +334,9 @@ cards all cases
       ^-  item
       ?>  =(src.bowl our.bowl)
       ?.  ?=([%create *] act)  !!     ::  assert that action is %create
-      =/  key  :^   -.bespoke.act
+      =/  lens      (fall lens.act *lens)
+      =/  bespoke   (fall bespoke.act *bespoke)
+      =/  key  :^   -.bespoke
                     our.bowl
                     (fall cord.act '')
                     (fall time.act `@t`(scot %da now.bowl))
@@ -340,9 +345,11 @@ cards all cases
                     permissions=~[our.bowl]
                     reach=[%public ~]
       =/  sig  %^  sign:sig  our.bowl  now.bowl
-        [%item key lens.act bespoke.act meta]
-      [key lens.act bespoke.act meta sig]  ::  return item
+        [%item key lens bespoke meta]
+      [key lens bespoke meta sig]  ::  return item
     ::
+    ::  TODO abstract collection methods?
+    ::  such that it takes in a gate that arbitrarily modifies the key list
     ++  append-to-col
       |=  [col=item act=action]
       ^-  ^item
@@ -350,7 +357,7 @@ cards all cases
       ?.  ?=([%collection ~] -.bespoke.col)  !!
       =/  new-key-list  (snoc key-list.bespoke.col item-key.act)
       %+  edit  col
-        [%edit col-key.act ~ [[%collection ~] ~ ~ ~ [~ new-key-list]]]
+        [%edit col-key.act ~ `[[%collection ~] ~ ~ ~ `new-key-list]]
     ::
     ++  prepend-to-col
       |=  [col=item act=action]
@@ -359,8 +366,16 @@ cards all cases
       ?.  ?=([%collection ~] -.bespoke.col)  !!
       =/  new-key-list  [item-key.act key-list.bespoke.col]
       %+  edit  col
-        [%edit col-key.act ~ [[%collection ~] ~ ~ ~ [~ new-key-list]]]
-        ::
+        [%edit col-key.act ~ `[[%collection ~] ~ ~ ~ `new-key-list]]
+    ::
+    ++  remove-from-col
+      |=  [col=item act=action]
+      ^-  ^item
+      ?.  ?=([%remove *] act)  !!
+      ?.  ?=([%collection ~] -.bespoke.col)  !!
+      =/  new-key-list  (skip key-list.bespoke.col |=(=key =(key item-key.act)))
+      %+  edit  col
+        [%edit col-key.act ~ `[[%collection ~] ~ ~ ~ `new-key-list]]
     ::
     ++  delete
       |=  [=item act=action]
@@ -376,94 +391,93 @@ cards all cases
       =/  sig  %^  sign:sig  our.bowl  now.bowl
         [%item key.act lens.item bespoke.item meta.item]
       item(sig sig)
+    ::
+    --
+  ::
+  ++  on-agent
+    |%
+    ++  put  ::  delete is also here, it adds %deleted lens
+      |=  [=item]
+      ^-  [(list card) ^items]
+      [(put:cards-methods item) (put-item item)]
     --
   ::
   ++  on-poke  ::  all arms here should output [cards state]
     |%
+    ::
+    ::  a lot of these are boilerplate
+    ::  can/should it be abstracted?
     ++  on-act
       |%
+      ++  sub
+        |=  [act=action]
+        ^-  [(list card) ^items]
+        ?.  ?=([%sub *] act)  !!
+        ?:  =(time.key.act '')   `items  :: infers that it's %temp
+        ?:  =(ship.key.act our.bowl)  `items
+        =/  wire  (key-to-path-key:conv key.act)
+        ?:  (~(has by wex.bowl) [wire ship.key.act %portal-store])  `items
+        :_  items
+        [%pass wire %agent [ship.key.act %portal-store] %watch wire]~
+      ::
       ++  edit
         |=  [act=action]
         ^-  [(list card) ^items]
         ?.  ?=([%edit *] act)  !!
         =/  item  (edit:item-methods (get-item key.act) act)
-        [(add-cards item) (put-item item)]
+        [(put:cards-methods item) (put-item item)]
       ::
       ++  replace
         |=  [act=action]
         ^-  [(list card) ^items]
         ?.  ?=([%replace *] act)  !!
         =/  item  (replace:item-methods (get-item key.act) act)
-        [(add-cards item) (put-item item)]
+        [(put:cards-methods item) (put-item item)]
       ::
       ++  create
         |=  [act=action]
         ^-  [(list card) ^items]
         ?.  ?=([%create *] act)  !!
         =/  item  (create:item-methods act)
-        =.  cards  (add-cards item)
+        =.  cards  (put:cards-methods item)
         =.  items  (put-item item)
         ?~  append-to.act  [cards items]
-        (append [%append (need append-to.act) key.item])
+        (append [%append key.item (need append-to.act)])
       ::
       ++  append
         |=  [act=action]
         ^-  [(list card) ^items]
         ?.  ?=([%append *] act)  !!
         =/  col  (append-to-col:item-methods (get-item col-key.act) act)
-        [(add-cards col) (put-item col)]
+        [(put:cards-methods col) (put-item col)]
       ::
       ++  prepend
         |=  [act=action]
         ^-  [(list card) ^items]
-        ?.  ?=([%append *] act)  !!
+        ?.  ?=([%prepend *] act)  !!
         =/  col  (prepend-to-col:item-methods (get-item col-key.act) act)
-        [(add-cards col) (put-item col)]
+        [(put:cards-methods col) (put-item col)]
+      ::
+      ++  remove
+        |=  [act=action]
+        ^-  [(list card) ^items]
+        ?.  ?=([%remove *] act)  !!
+        =/  col  (remove-from-col:item-methods (get-item col-key.act) act)
+        [(put:cards-methods col) (put-item col)]
       ::
       ++  delete
         |=  [act=action]
         ^-  [(list card) ^items]
         ?.  ?=([%delete *] act)  !!
-        ?:  &(=(time.key.act '~2000.1.1') =(ship.key.act our))
-          ~&  "%portal: item is default, not allowed to delete"
-          `items
-
+        ?:  &(=(time.key.act '~2000.1.1') =(ship.key.act our.bowl))
+          ~&  "%portal: item is default, not allowed to delete"  `items
         =/  item  (delete:item-methods (get-item key.act) act)
-        [(add-cards item) (put-item item)]
+        [(del:cards-methods item) (put-item item)]
       --
     --
 
-      :: ++  on-agent
-      :: |%
-      :: ++  put
-      :: |=  [our=ship src=ship upd=[%put =key =item]]
-      :: ^-  [(list card) ^items]
-      :: ~&  "%portal: putting {(spud (key-to-path-key:conv key.upd))}"
-      :: :_  (~(put by items) key.upd item.upd)
-      :: :~  [%pass /put %agent [our %portal-manager] %poke %portal-update !>(upd)]
-      :: [%give %fact [/front-end-update]~ %portal-front-end-update !>((make-front-end-update our src upd))]
-      :: ==
-      :: --
-
       ::
-      --
-      ::  maybe add validators somewhere outside before e.g. saving item
-      ::=?
-
-
-
-      ::
-      ::  put-item should be doing the checks because it's the last line of defense
-      ::  for receiving items, from local %portal-manager or foreign %portal-store
-      :: ++  put-item
-      ::   |=  [our=ship src=ship =items upd=[%put =key =item]]
-      ::   ^-  ^items
-      ::   ?>  =(src our)
-      ::   ?:  &(=(lens.type.key.upd [%temp ~]) !=(ship.key.upd our))  !!
-      ::   ~&  "%portal: putting {(spud (key-to-path-key:conv key.upd))}"
-      ::   (~(put by items) key.upd item.upd)
-      ::
-
+  --
       ::  TODO entire purge is based upon nested data structure
       ::  needs to be rebuilt
       ::  purges all foreign items except those from default-curators and portal-curator
@@ -517,41 +531,13 @@ cards all cases
       ::   :: refreshes temp items kept after purge
       ::   [(weld (get-temp-items:manager our key-list) -.return) +.return]
       ::
-    ::
-    :: ++  del :: on.agent
-    ::   |=  [=items our=ship src=ship upd=[%del =key]]
-    ::   ^-  [(list card) ^items]
-    ::   ?:  =(lens.type.key.upd [%temp ~])  [~ items]
-    ::   ?.  (~(has by items) key.upd)  `items
-    ::   ::~&  "%portal: {(spud (key-to-path:conv key.upd))} does not exist"
-    ::   :_  (~(del by items) key.upd)
-    ::   ::~&  "%portal-store: unsubscribing from {(spud (key-to-path:conv key.upd))}"
-    ::   :~  [%pass /del %agent [our %portal-manager] %poke %portal-update !>(upd)]
-    ::       [%give %fact [/front-end-update]~ %portal-front-end-update !>((make-front-end-update our src upd))]
-    ::   ==
 
-    :: ++  sub
-    ::   |=  [our=ship src=ship now=time wex=boat:gall act=[%sub =key]]
-    ::   ^-  (list card)
-    ::   ?:  =(lens.type.key.act [%temp ~])  ~
-    ::   ?:  =(ship.key.act our)  ~
-    ::   =/  wire  (key-to-path-key:conv key.act)
-    ::   ?:  (~(has by wex) [wire ship.key.act %portal-store])
-    ::     ~&  "%portal-store: already subscribed to {(spud wire)}"
-    ::     ~
-    ::   ::~&  "%portal-store: subscribing to {(spud wire)}"
-    ::   [%pass wire %agent [ship.key.act %portal-store] %watch wire]~
-    :: ::
-    ::
-    ::
-
-    ::
-    ::
     ::
     ::  for now just overwrites
     ::  long term temp items should be able to sync with their source
     ::  and not be overwritten every time
     ::  TODO use create/replace/edit
+    ::  clarify where to conceptually put methods like this
     :: ++  put-temp
     ::   |=  [=items our=ship src=ship act=[%put-temp =key =item]]
     ::   ^-  [(list card) ^items]

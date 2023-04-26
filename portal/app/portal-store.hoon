@@ -28,16 +28,16 @@
     %create
     ~
     [~ '~2000.1.1']
-    [%def ~]
-    [[%collection ~] 'Main Collection' 'Your first collection.' '' ~]
+    `[%def ~]
+    `[[%collection ~] 'Main Collection' 'Your first collection.' '' ~]
     ~
   ==
   =/  val-create  ^-  action  :*
     %create
     ~
     [~ '~2000.1.1']
-    [%def ~]
-    [[%validity-store ~] *validity-records]
+    `[%def ~]
+    `[[%validity-store ~] *validity-records]
     [~ [[%collection ~] our.bowl '' '~2000.1.1']]
   ==
   =^  cards-1  items  (create:on-act:on-poke:store-core col-create)
@@ -78,22 +78,27 @@
     =/  act  `action`!<(action vase)
     =/  store  ~(. store [bowl items ~])
     ?+    -.act    (on-poke:default mark vase)
-      %create  =^(cards items (create:on-act:on-poke:store act) [cards this])
+      %create  =^  cards  items 
+      (create:on-act:on-poke:store act)
+      ~&  >>>  (lent cards)
+      ~&  >  cards
+      [cards this]
       ::
       %replace  =^(cards items (replace:on-act:on-poke:store act) [cards this])
       ::
       %edit  =^(cards items (edit:on-act:on-poke:store act) [cards this])
       ::
-        %sub  `this
-      :: :_  this
-      ::   (sub:on-action:store [our.bowl src.bowl now.bowl wex.bowl act])
+      %sub  =^(cards items (sub:on-act:on-poke:store act) [cards this])
       ::
-        %delete  `this
-      :: =^  cards  items
-      ::   (del:on-action:store [items our.bowl src.bowl now.bowl act])
-      :: [cards this]
+      %append  =^(cards items (append:on-act:on-poke:store act) [cards this])
       ::
-        %edit-docket  `this
+      %prepend  =^(cards items (prepend:on-act:on-poke:store act) [cards this])
+      ::
+      %remove  =^(cards items (remove:on-act:on-poke:store act) [cards this])
+      ::
+      %delete  =^(cards items (delete:on-act:on-poke:store act) [cards this])
+      ::
+      %edit-docket  `this
       :: =^  cards  items
       ::   (edit-docket:on-action:store items our.bowl src.bowl now.bowl act)
       :: [cards this]
@@ -123,9 +128,7 @@
     :_  this
     [%give %fact ~ %portal-items !>(`^items`items)]~
   ::
-  ?:  =(path /front-end-update)
-    :_  this
-    [%give %fact ~ %portal-items !>(`^items`items)]~
+  ?:  =(path /updates)  `this
   ::
   =/  item  (~(gut by items) (path-key-to-key:conv path) ~)
   :_  this

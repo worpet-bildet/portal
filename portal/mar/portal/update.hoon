@@ -3,6 +3,7 @@
 ++  grow
   |%
   ++  noun  upd
+  ++  json  (enjs-update:enjs:portal-json upd)
   --
 ++  grab
   |%
