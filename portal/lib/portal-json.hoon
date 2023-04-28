@@ -47,18 +47,18 @@
   ::       ['item' ?~(item.front-end-update ~ (enjs-item-or-null item.front-end-update))]
   ::       ['face' s+(crip (weld (trip update.front-end-update) (spud type.key.front-end-update)))]
   ::   ==
-  :: ++  enjs-item-or-null
-  ::   |=  [item=?(~ item)]
-  ::   ^-  json
-  ::   ?~  item  ~
-  ::   %-  pairs
-  ::   :~  ['keyStr' (enjs-jam-key key.item)]
-  ::       ['keyObj' (enjs-key key.item)]
-  ::       ['data' (enjs-data data.item)]
-  ::       ['meta' (enjs-meta meta.item)]
-  ::       ['social' (enjs-social social.item)]
-  ::       ['sig' (enjs-sig sig.item)]
-  ::   ==
+  ++  enjs-item-or-null
+    |=  [item=?(~ item)]
+    ^-  json
+    ?~  item  ~
+    %-  pairs
+    :~  ['keyStr' (enjs-jam-key key.item)]
+        ['keyObj' (enjs-key key.item)]
+        ['lens' (path lens.item)]
+        ['bespoke' (enjs-bespoke bespoke.item)]
+        ['meta' (enjs-meta meta.item)]
+        ['sig' (enjs-sig sig.item)]
+    ==
     ++  enjs-update
     |=  [=item]
     ^-  json
@@ -70,22 +70,39 @@
         ['meta' (enjs-meta meta.item)]
         ['sig' (enjs-sig sig.item)]
     ==
+  ::
+    ++  enjs-store-result
+    :: +$  store-result
+    :: $@  ?
+    :: $%  [%items =items]
+    ::     [%item item=?(~ item)]
+    ::     [%keys =key-set]  :: TODO change to key-list
+    ::     [%valid =valid]
+    :: ==
+    |=  [=store-result]
+    ^-  json
+    :: ?@  b+store-result
+    ?+  -.store-result  !!
+          %items  %-  frond  'items'  (enjs-items items.store-result)
+          %item  %-  frond  'item'  (enjs-update item.store-result)
+    ==
 
-  :: ++  enjs-key-and-item
-  ::   |=  [=key =item]
-  ::   ^-  json
-  ::   (enjs-item-or-null item)
-  :: ++  enjs-items
-  ::   |=  =items
-  ::   ^-  json
-  ::   =/  lis  ~(tap by items)
-  ::   [%a (turn lis enjs-key-and-item)]
+
+  ++  enjs-key-and-item
+    |=  [=key =item]
+    ^-  json
+    (enjs-item-or-null item)
+  ++  enjs-items
+    |=  =items
+    ^-  json
+    =/  lis  ~(tap by items)
+    [%a (turn lis enjs-key-and-item)]
   ++  enjs-meta
     |=  [=meta]
     ^-  json
     %-  pairs
     :~  ['createdAt' s+created-at.meta]
-        ['updatedAt' s+updated-at.meta] 
+        ['updatedAt' s+updated-at.meta]
         ['permissions N/A' s+'']
         ['reach N/A' s+'']
     ==
@@ -137,7 +154,7 @@
                              ['blurb' s+blurb.bespoke]
                              ['image' s+image.bespoke]
                              ['key-list' (enjs-key-list key-list.bespoke)]
-                         ==      
+                         ==
       [%validity-store ~]  s+''
     ==
   ::   --
@@ -361,7 +378,7 @@
     |=  jon=json
     ;;  (unit bespoke)
     =,  dejs-soft
-    =/  b  
+    =/  b
     %.  jon
     %-  of
     :~  [%'/ship' so]

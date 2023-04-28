@@ -4,6 +4,7 @@
 ++  grow
   |%
   ++  noun  str
+  ++  json  (enjs-store-result:enjs:portal-json str)
   --
 ++  grab
   |%

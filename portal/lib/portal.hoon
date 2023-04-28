@@ -8,7 +8,7 @@
   ::
   ++  key-to-path-key
     |=  [=key]
-    ^-  path 
+    ^-  path
     ;:  weld
       struc.key
       ~[(scot %p ship.key)]
@@ -190,50 +190,50 @@
 ::  TODO fundamental commands (actions) and composite commands
 ++  manager
   |%
-  ++  on-poke
-    |%
-    OVDJE
-    ++  on-act  ::  all arms here should output cards
-                ::  TODO cleanup PM state and maybe output that then
-      |%
-      ::  s
-      ++  sub
-        |=  [act=action]
-        ^-  (list card)
-        ?.  ?=([%sub *] act)  !!
-        ::branch on if temp or no
-        ::  don't subscribe to our item 
-        ::  THINK should I put validations like this downstream or upstream?
-        ::  -> depending on where's the bottleneck -> put it in the bottleneck
-        :: ?:  &(=(ship.key.act our.bowl) =(cord.key.act ''))         `items
-        =/  wire  (key-to-path-key:conv key.act)
-        ::  don't subscribe to what you are already subbed to
-        ?:  (~(has by wex.bowl) [wire ship.key.act %portal-store])  `items
-        :: ?+  cord.key.act
-          ::  default
-          :_  items
-          [%pass wire %agent [ship.key.act %portal-store] %watch wire]~
-          ::
-          ::  TODO all actions from PM,
-          ::  TODO sub from PM, sub branch on temp
-          :: ::  if temp
-          ::   ''
-          :: ::  should it sub from portal store or portal manager?
-          :: ::  data flow, thru PM or no?
-          :: =-  [%pass [- path-key] %agent [ship.key.item -] %watch ~]~
-          :: ?+    struc.key.act    !!
-          ::   [%app ~]    %treaty
-          ::   [%group ~]  %get-group-preview
-          :: ==
+  :: ++  on-poke
+  ::   |%
+  ::   OVDJE
+  ::   ++  on-act  ::  all arms here should output cards
+  ::               ::  TODO cleanup PM state and maybe output that then
+  ::     |%
+  ::     ::  s
+  ::     ++  sub
+  ::       |=  [act=action]
+  ::       ^-  (list card)
+  ::       ?.  ?=([%sub *] act)  !!
+  ::       ::branch on if temp or no
+  ::       ::  don't subscribe to our item
+  ::       ::  THINK should I put validations like this downstream or upstream?
+  ::       ::  -> depending on where's the bottleneck -> put it in the bottleneck
+  ::       :: ?:  &(=(ship.key.act our.bowl) =(cord.key.act ''))         `items
+  ::       =/  wire  (key-to-path-key:conv key.act)
+  ::       ::  don't subscribe to what you are already subbed to
+  ::       ?:  (~(has by wex.bowl) [wire ship.key.act %portal-store])  `items
+  ::       :: ?+  cord.key.act
+  ::         ::  default
+  ::         :_  items
+  ::         [%pass wire %agent [ship.key.act %portal-store] %watch wire]~
+  ::         ::
+  ::         ::  TODO all actions from PM,
+  ::         ::  TODO sub from PM, sub branch on temp
+  ::         :: ::  if temp
+  ::         ::   ''
+  ::         :: ::  should it sub from portal store or portal manager?
+  ::         :: ::  data flow, thru PM or no?
+  ::         :: =-  [%pass [- path-key] %agent [ship.key.item -] %watch ~]~
+  ::         :: ?+    struc.key.act    !!
+  ::         ::   [%app ~]    %treaty
+  ::         ::   [%group ~]  %get-group-preview
+  ::         :: ==
 
-          :: :_  items
+  ::         :: :_  items
 
-        :: ==
+  ::       :: ==
 
-        :: ?:  =(time.key.act '')        `items  :: infers that it's %temp
+  ::       :: ?:  =(time.key.act '')        `items  :: infers that it's %temp
 
-      --
-    --
+  ::     --
+  ::   --
 
   ++  on-update
     |%
@@ -584,7 +584,7 @@
         |=  [act=action]
         ^-  [(list card) ^items]
         ?.  ?=([%sub *] act)  !!
-        ::  don't subscribe to our item 
+        ::  don't subscribe to our item
         ?:  &(=(ship.key.act our.bowl) =(cord.key.act ''))         `items
         =/  wire  (key-to-path-key:conv key.act)
         ::  don't subscribe to what you are already subbed to
@@ -637,7 +637,7 @@
         ::  TODO check if already in list (if doing put with temp)
         ::  or a mechanism for always removing before adding
         (append [%append key.item (need append-to.act)])
-        ::  also -> main collection deduplication 
+        ::  also -> main collection deduplication
         ::  (preventing duplication in the first place)
       ::
       ++  append
