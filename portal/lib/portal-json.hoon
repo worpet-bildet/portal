@@ -71,20 +71,20 @@
         ['sig' (enjs-sig sig.item)]
     ==
   ::
-    ++  enjs-store-result
-    :: +$  store-result
+      :: +$  store-result
     :: $@  ?
     :: $%  [%items =items]
     ::     [%item item=?(~ item)]
     ::     [%keys =key-set]  :: TODO change to key-list
     ::     [%valid =valid]
     :: ==
+    ++  enjs-store-result
     |=  [=store-result]
     ^-  json
-    :: ?@  b+store-result
+    ?@  store-result  b+store-result
     ?+  -.store-result  !!
-          %items  %-  frond  'items'  (enjs-items items.store-result)
-          %item  %-  frond  'item'  (enjs-update item.store-result)
+          %items  %+  frond  'items'  (enjs-items items.store-result)
+          %item  %+  frond  'item'  (enjs-item-or-null item.store-result)
     ==
 
 
