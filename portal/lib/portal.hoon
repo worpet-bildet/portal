@@ -184,6 +184,89 @@
       ==
   --
 ::
+::
+
+::  'macros' of commands happen on portal-manager level
+::  TODO fundamental commands (actions) and composite commands
+++  manager
+  |%
+  ++  on-poke
+    |%
+    OVDJE
+    ++  on-act  ::  all arms here should output cards
+                ::  TODO cleanup PM state and maybe output that then
+      |%
+      ::  s
+      ++  sub
+        |=  [act=action]
+        ^-  (list card)
+        ?.  ?=([%sub *] act)  !!
+        ::branch on if temp or no
+        ::  don't subscribe to our item 
+        ::  THINK should I put validations like this downstream or upstream?
+        ::  -> depending on where's the bottleneck -> put it in the bottleneck
+        :: ?:  &(=(ship.key.act our.bowl) =(cord.key.act ''))         `items
+        =/  wire  (key-to-path-key:conv key.act)
+        ::  don't subscribe to what you are already subbed to
+        ?:  (~(has by wex.bowl) [wire ship.key.act %portal-store])  `items
+        :: ?+  cord.key.act
+          ::  default
+          :_  items
+          [%pass wire %agent [ship.key.act %portal-store] %watch wire]~
+          ::
+          ::  TODO all actions from PM,
+          ::  TODO sub from PM, sub branch on temp
+          :: ::  if temp
+          ::   ''
+          :: ::  should it sub from portal store or portal manager?
+          :: ::  data flow, thru PM or no?
+          :: =-  [%pass [- path-key] %agent [ship.key.item -] %watch ~]~
+          :: ?+    struc.key.act    !!
+          ::   [%app ~]    %treaty
+          ::   [%group ~]  %get-group-preview
+          :: ==
+
+          :: :_  items
+
+        :: ==
+
+        :: ?:  =(time.key.act '')        `items  :: infers that it's %temp
+
+      --
+    --
+
+  ++  on-update
+    |%
+    ::  does this has to respond to foreign
+    ::  or it can also respond to us?
+    ++  put
+      |=  [our=ship now=time upd=[%put =key =item]]
+      ^-  (list card)
+      :: %+  welp
+      :: ?+    -.bespoke.item.upd
+      ::     ::  default
+      ::     ~
+      ::   ::  if inner app
+      ::   ::  [%app ~]
+      ::   ::    ?.  =(our ship.key.upd)  ~ Do i need this?
+      ::   :: =/  dist-desk  (parse-dist-desk:misc dist-desk.bespoke.item.upd)
+      ::   :: ?~  dist-desk  ~
+      ::   :: ~[(~(act cards our %portal-manager) [%get-docket key.upd -.u.dist-desk +.u.dist-desk])]
+      ::
+      ::   ::  if list
+      ::   ::   [%collection *]
+      ::   :: (sub-to-col-keys our now item.upd)
+      :: ==
+      (default-v1:validator our now key.upd item.upd)
+    ::
+    ++  del
+      |=  [upd=[%del =key]]
+      ^-  (list card)
+      ~
+    --
+  ::
+  --
+::
 ::  TODO where to put validators? --->  upstream rather than downstream?
 ::  - permissions (vjv izvuc tako da se ne ponavlja stalno ?> =(src our)
 ::  - actions validators su takoder boilerplate
@@ -387,25 +470,147 @@
   ++  on-agent
     |%
     ++  put  ::  delete is also here, it adds %deleted lens
-      |=  [=item]
+      |=  [item=update:item]
       ^-  [(list card) ^items]
       [(put:cards-methods item) (put-item item)]
     --
   ::
-  ++  on-poke  ::  all arms here should output [cards state]
+  ++  on-poke  ::  all arms here should output [cards items]
     |%
     ++  on-act
       |%
-      ++  sub
+
+        ::
+  ::  based on nested data structure
+  ::  subs should be done from the frontend when needed, not automatically
+  :: ++  sub-to-col-keys ::  + get-list-temp-items
+  ::   |=  [our=ship now=time =item]
+  ::   ^-  (list card)
+  ::   ?+    -.bespoke.item    ~
+  ::       [%list %list ~]
+  ::     =/  key-list  (skip-ships:keys list-key-list.bespoke.item ~[our])
+  ::     =/  filtered-set  (~(dif in (silt key-list)) (~(get-all-keys scry our now)))
+  ::     =/  filtered-list  ~(tap in filtered-set)
+  ::     (turn filtered-list |=(=key (~(act cards [our %portal-store]) sub+key)))
+  ::
+  ::   ::
+  ::       [%list ~]
+  ::     ::  temp items
+  ::     :: if you do set-difference you keep old data, if you don't do set difference you constantly overwrite fine data
+  ::     :: after purge new temp items are taken daily
+  ::     =/  temp-key-list   (skim-temp:keys key-list.bespoke.item)
+  ::     =/  filtered-set  (~(dif in (silt temp-key-list)) (~(get-all-keys scry our now)))
+  ::     =/  filtered-list  ~(tap in filtered-set)
+  ::     =/  temp-cards  ^-  (list card)
+  ::        %-  zing
+  ::       (turn filtered-list |=(=key (put-empty-temp:manager our key)))
+  ::     ::  inners
+  ::     =/  key-list  (skip-temp:keys key-list.bespoke.item)
+  ::     =/  key-list  (skip-ships:keys key-list ~[our])
+  ::     =/  filtered-set  (~(dif in (silt key-list)) (~(get-all-keys scry our now)))
+  ::     =/  filtered-list  ~(tap in filtered-set)
+  ::     =/  inner-cards  (turn filtered-list |=(=key (~(act cards [our %portal-store]) sub+key)))
+  ::     (weld inner-cards temp-cards)
+  ::   ==
+  ::
+
+          ::  for now just overwrites
+    ::  long term temp items should be able to sync with their source
+    ::  and not be overwritten every time
+    ::  TODO use create/replace/edit
+    ::  clarify where to conceptually put methods like this
+    :: ++  put-temp
+    ::   |=  [=items our=ship src=ship act=[%put-temp =key =item]]
+    ::   ^-  [(list card) ^items]
+    ::   :-  (put:on-poke:add-cards our src [%put key.act item.act])
+    ::   (put-item our src items [%put key.act item.act])
+    :: ::
+    :: ++  edit-docket
+    ::   |=  [=items our=ship src=ship now=time act=[%edit-docket =key =treaty]]
+    ::   ^-  [(list card) ^items]
+    ::   =/  item  (~(gut by items) key.act ~)
+    ::   ?~  item  ~&  "%portal-store: item doesn't exist"  [~ items]
+    ::   ?+    -.bespoke.item    !!
+    ::       [%app ~]
+    ::     =/  item
+    ::       %=  item
+    ::         updated-at.meta         `@t`(scot %da now)
+    ::         treaty.bespoke     treaty.act
+    ::       ==
+    ::     =/  item-sig  (sign:sig our now (sig-input [%item key.act item meta.item]))
+    ::     =/  upd  [%put key.act item(sig item-sig)]
+    ::     :-  (put:on-poke:add-cards our src upd)
+    ::     (put-item our src items upd)
+    ::   ==
+    ::
+  ::  whatever temp you are adding, use this
+  :: ++  put-empty-temp
+  ::   |=  [our=ship =key]
+  ::   ^-  (list card)
+  ::   =/  meta
+  ::     :*  created-at=''
+  ::         updated-at=''
+  ::         permissions=~[our]
+  ::         reach=[%public blacklist=~]
+  ::     ==
+  ::   ?+    struc.key    !!
+  ::       [%group ~]
+  ::     =/  bespoke  [[%group ~] [%temp ~] *data:group-preview]
+  ::     :~  (~(act cards [our %portal-store]) [%put-temp key [key bespoke meta *signature]])
+  ::         (~(act cards [our %portal-manager]) [%get-group-preview key ship.key time.key])
+  ::     ==
+  ::       [%ship ~]
+  ::     =/  bespoke  [[%ship ~] [%temp ~] ~]
+  ::     ~[(~(act cards [our %portal-store]) [%put-temp key [key bespoke meta *signature]])]
+  ::       [%app ~]
+  ::     =/  bespoke  [[[%app ~] [%temp ~] *@t *signature *treaty]]
+  ::     :~  (~(act cards [our %portal-store]) [%put-temp key [key bespoke meta *signature]])
+  ::         (~(act cards [our %portal-manager]) [%get-docket key ship.key time.key])
+  ::     ==
+  ::   ==
+  ::
+      :: sub ->  if cord nonempty  ->  create empty temp -> on-agent -> edit/replace temp
+      ::                             :*  %create
+      ::                               `ship.key
+      ::                               `cord.key
+      ::                               `''
+      ::                               `[%temp ~]
+      ::                               `[[%app ~] '' *signature treaty] or %group
+      ::                               `[[%collection ~] our.bowl '' '~2000.1.1']
+      ::                             ==
+      ::
+      ::
+      ++  sub  ::  TODO modify just for PS
         |=  [act=action]
         ^-  [(list card) ^items]
         ?.  ?=([%sub *] act)  !!
-        ?:  =(time.key.act '')        `items  :: infers that it's %temp
-        ?:  =(ship.key.act our.bowl)  `items  :: don't subscribe to our item
+        ::  don't subscribe to our item 
+        ?:  &(=(ship.key.act our.bowl) =(cord.key.act ''))         `items
         =/  wire  (key-to-path-key:conv key.act)
+        ::  don't subscribe to what you are already subbed to
         ?:  (~(has by wex.bowl) [wire ship.key.act %portal-store])  `items
-        :_  items
-        [%pass wire %agent [ship.key.act %portal-store] %watch wire]~
+        :: ?+  cord.key.act
+          ::  default
+          :_  items
+          [%pass wire %agent [ship.key.act %portal-store] %watch wire]~
+          ::
+          ::  TODO all actions from PM,
+          ::  TODO sub from PM, sub branch on temp
+          :: ::  if temp
+          ::   ''
+          :: ::  should it sub from portal store or portal manager?
+          :: ::  data flow, thru PM or no?
+          :: =-  [%pass [- path-key] %agent [ship.key.item -] %watch ~]~
+          :: ?+    struc.key.act    !!
+          ::   [%app ~]    %treaty
+          ::   [%group ~]  %get-group-preview
+          :: ==
+
+          :: :_  items
+
+        :: ==
+
+        :: ?:  =(time.key.act '')        `items  :: infers that it's %temp
       ::
       ++  edit
         |=  [act=action]
@@ -430,7 +635,10 @@
         =.  items  (put-item item)
         ?~  append-to.act  [cards items]
         ::  TODO check if already in list (if doing put with temp)
+        ::  or a mechanism for always removing before adding
         (append [%append key.item (need append-to.act)])
+        ::  also -> main collection deduplication 
+        ::  (preventing duplication in the first place)
       ::
       ++  append
         |=  [act=action]
@@ -522,35 +730,6 @@
       ::
 
     ::
-    ::  for now just overwrites
-    ::  long term temp items should be able to sync with their source
-    ::  and not be overwritten every time
-    ::  TODO use create/replace/edit
-    ::  clarify where to conceptually put methods like this
-    :: ++  put-temp
-    ::   |=  [=items our=ship src=ship act=[%put-temp =key =item]]
-    ::   ^-  [(list card) ^items]
-    ::   :-  (put:on-poke:add-cards our src [%put key.act item.act])
-    ::   (put-item our src items [%put key.act item.act])
-    :: ::
-    :: ++  edit-docket
-    ::   |=  [=items our=ship src=ship now=time act=[%edit-docket =key =treaty]]
-    ::   ^-  [(list card) ^items]
-    ::   =/  item  (~(gut by items) key.act ~)
-    ::   ?~  item  ~&  "%portal-store: item doesn't exist"  [~ items]
-    ::   ?+    -.bespoke.item    !!
-    ::       [%app ~]
-    ::     =/  item
-    ::       %=  item
-    ::         updated-at.meta         `@t`(scot %da now)
-    ::         treaty.bespoke     treaty.act
-    ::       ==
-    ::     =/  item-sig  (sign:sig our now (sig-input [%item key.act item meta.item]))
-    ::     =/  upd  [%put key.act item(sig item-sig)]
-    ::     :-  (put:on-poke:add-cards our src upd)
-    ::     (put-item our src items upd)
-    ::   ==
-    ::
 
   ::
   :: ++  on-message
@@ -578,126 +757,7 @@
   ::     ==
   ::   --
   ::
-    ::
-  ::
-  ::
-::
-::  'macros' of commands happen on portal-manager level
-::  TODO fundamental commands (actions) and composite commands
-++  manager
-  |%
-  ::
-  ::  no more autoadding to list?
-  ::  otherwise there are weird edge cases, e.g.
-  ::  once you remove item from default list, then edit it, it gets added back to the default list
-  ++  on-update
-    |%
-    ::  does this has to respond to foreign
-    ::  or it can also respond to us?
-    ::  how do we as a user/curator go around discovering/addign items
-    ::  do lists from those items get auto fetched if we added them?
-    ++  put
-      |=  [our=ship now=time upd=[%put =key =item]]
-      ^-  (list card)
-      :: %+  welp
-      :: ?+    -.bespoke.item.upd
-      ::     ::  default
-      ::     ~
-      ::   ::  if inner app
-      ::   ::  [%app ~]
-      ::   ::    ?.  =(our ship.key.upd)  ~ Do i need this?
-      ::   :: =/  dist-desk  (parse-dist-desk:misc dist-desk.bespoke.item.upd)
-      ::   :: ?~  dist-desk  ~
-      ::   :: ~[(~(act cards our %portal-manager) [%get-docket key.upd -.u.dist-desk +.u.dist-desk])]
-      ::
-      ::   ::  if list
-      ::   ::   [%collection *]
-      ::   :: (sub-to-col-keys our now item.upd)
-      :: ==
-      (default-v1:validator our now key.upd item.upd)
-    ::
-    ++  del
-      |=  [upd=[%del =key]]
-      ^-  (list card)
-      ~
-    --
-  ::
-  ::  based on nested data structure
-  ::  subs should be done from the frontend when needed, not automatically
-  :: ++  sub-to-col-keys ::  + get-list-temp-items
-  ::   |=  [our=ship now=time =item]
-  ::   ^-  (list card)
-  ::   ?+    -.bespoke.item    ~
-  ::       [%list %list ~]
-  ::     =/  key-list  (skip-ships:keys list-key-list.bespoke.item ~[our])
-  ::     =/  filtered-set  (~(dif in (silt key-list)) (~(get-all-keys scry our now)))
-  ::     =/  filtered-list  ~(tap in filtered-set)
-  ::     (turn filtered-list |=(=key (~(act cards [our %portal-store]) sub+key)))
-  ::
-  ::   ::
-  ::       [%list ~]
-  ::     ::  temp items
-  ::     :: if you do set-difference you keep old data, if you don't do set difference you constantly overwrite fine data
-  ::     :: after purge new temp items are taken daily
-  ::     =/  temp-key-list   (skim-temp:keys key-list.bespoke.item)
-  ::     =/  filtered-set  (~(dif in (silt temp-key-list)) (~(get-all-keys scry our now)))
-  ::     =/  filtered-list  ~(tap in filtered-set)
-  ::     =/  temp-cards  ^-  (list card)
-  ::        %-  zing
-  ::       (turn filtered-list |=(=key (put-empty-temp:manager our key)))
-  ::     ::  inners
-  ::     =/  key-list  (skip-temp:keys key-list.bespoke.item)
-  ::     =/  key-list  (skip-ships:keys key-list ~[our])
-  ::     =/  filtered-set  (~(dif in (silt key-list)) (~(get-all-keys scry our now)))
-  ::     =/  filtered-list  ~(tap in filtered-set)
-  ::     =/  inner-cards  (turn filtered-list |=(=key (~(act cards [our %portal-store]) sub+key)))
-  ::     (weld inner-cards temp-cards)
-  ::   ==
-  ::
-  ::
-  ::  whatever temp you are adding, use this
-  :: ++  put-empty-temp
-  ::   |=  [our=ship =key]
-  ::   ^-  (list card)
-  ::   =/  meta
-  ::     :*  created-at='~2000.1.1'
-  ::         updated-at='~2000.1.1'
-  ::         permissions=~[our]
-  ::         reach=[%public blacklist=~]
-  ::     ==
-  ::   ?+    struc.key    !!
-  ::       [%group ~]
-  ::     =/  bespoke  [[%group ~] [%temp ~] *data:group-preview]
-  ::     :~  (~(act cards [our %portal-store]) [%put-temp key [key bespoke meta *signature]])
-  ::         (~(act cards [our %portal-manager]) [%get-group-preview key ship.key time.key])
-  ::     ==
-  ::       [%ship ~]
-  ::     =/  bespoke  [[%ship ~] [%temp ~] ~]
-  ::     ~[(~(act cards [our %portal-store]) [%put-temp key [key bespoke meta *signature]])]
-  ::       [%app ~]
-  ::     =/  bespoke  [[[%app ~] [%temp ~] *@t *signature *treaty]]
-  ::     :~  (~(act cards [our %portal-store]) [%put-temp key [key bespoke meta *signature]])
-  ::         (~(act cards [our %portal-manager]) [%get-docket key ship.key time.key])
-  ::     ==
-  ::   ==
-  ::
-  ::  TODO get created-at and updated-at right here, and everywhere else
-  :: ++  fill-temp
-  ::   |=  [our=ship act=$%([%fill-temp-group =key =data:group-preview] [%fill-temp-app =key =treaty])]
-  ::   ^-  card
-  ::   =/  bespoke
-  ::     ?-  -.act
-  ::       %fill-temp-group  [[%group ~] [%temp ~] data.act]
-  ::       %fill-temp-app    [[%app ~] [%temp ~] *@t *signature treaty.act]
-  ::     ==
-  ::   =/  meta
-  ::     :*  created-at='~2000.1.1'
-  ::         updated-at='~2000.1.1'
-  ::         permissions=~[our]
-  ::         reach=[%public blacklist=~]
-  ::     ==
-  ::   (~(act cards our %portal-store) [%put-temp key.act [key.act bespoke meta *signature]])
-  --
+
 ::
 ::  includes arms which are used to validate data
 ++  validator

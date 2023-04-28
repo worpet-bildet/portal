@@ -36,7 +36,7 @@
       ::  somewhere in the logic it should be accounted for
       ::: that the item was deleted
       ::
-      [%sub =key]
+      [%sub =key]  ::  TODO for temp items
       ::
       ::  key defines item which will be filled with treaty data
       [%get-docket =key =ship =desk]

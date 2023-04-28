@@ -105,7 +105,12 @@
 ++  on-watch  ::  should it return items on initial sub?
   |=  =path
   ^-  (quip card _this)
-  `this
+  ?:  =(path /updates)  `this
+  =/  item  (~(gut by items) (path-key-to-key:conv path) ~)
+  :_  this
+  ?~  item  ~
+  [%give %fact ~ %portal-update !>(item)]~
+
 ::
 ++  on-leave  on-leave:default
 ::
@@ -127,24 +132,12 @@
     [%pass wire %agent [ship.key %portal-store] %watch wire]~
     ::
       %fact
+    =/  store  ~(. store [bowl items ~])
     =/  key  (path-key-to-key:conv wire)
     =/  upd  !<(update:item q.cage.sign)
     ~&  "%portal-store: received update from {(spud wire)}"
-    !!
-    :: ?+    -.upd    `this
-    ::   ::
-    ::   ::  basically %init/%add/%edit
-    ::     %put
-    ::   =^  cards  items
-    ::     (put:on-agent:store items our.bowl src.bowl upd)
-    ::   [cards this]
-    ::   ::
-    ::   ::  receiving a delete (distinct from unsubbing)
-    ::     %del  `this
-    ::   :: =^  cards  items
-    ::   ::   (del:on-agent:store items our.bowl src.bowl upd)
-    ::   :: [cards this]
-    :: ==
+    =^  cards  items  (put:on-agent:store upd)
+    [cards this]
   ==
 ::
 ++  on-peek
@@ -160,6 +153,7 @@
     ::
       [%keys ~]  keys+~(key by items)
     ::
+    ::  TODO maybe s+'"/a/'/a/b'/c"' would work?
       [%item *]  item+(~(gut by items) (path-key-to-key:conv t.path) ~)
     ::
     ::  /item-exists/[ship]/'[type]'/'[cord]'

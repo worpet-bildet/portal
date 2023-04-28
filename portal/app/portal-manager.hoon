@@ -81,28 +81,24 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
+  ?.  =(our.bowl src.bowl)  `this
   ?+    mark    (on-poke:default mark vase)
       %portal-action
-    ?.  =(our.bowl src.bowl)  `this
     =/  act  !<(action vase)
     ::
-    ::  TODO abstract a portal-manager add/edit/etc function which does stuff based on action and type
-    ::  maybe not needed? aim for simplicity.
-    =/  act-set  %-  silt   ^-  (list term)
-      ~[%add %add-1 %edit %sub %del %add-to-default-list %put-outer %edit-docket %add-item-to-list %purge]
-    ?:  (~(has in act-set) -.act)
-      ~&  "sending poke"
+    =+  %-  silt  ^-  (list term)
+      ~[%create %edit %replace %delete %append %prepend %remove]
+    ?:  (~(has in -) -.act)
       :_  this
       ~[(~(poke pass:io /act) [our.bowl %portal-store] portal-action+vase)]
     ::
-    ?:  =(-.act %onboarded)
-      ?+  -.act  !!
-        %onboarded  `this(onboarded toggle.act)
-      ==
-
-    ::
     =/  poke-msg  ~(poke pass:io /msg)
     ?+    -.act    `this
+        %sub  `this
+        
+      ::
+        %onboarded  `this(onboarded toggle.act)
+      ::
         %index-as-curator
       :_  this(indexed-as-curator toggle.act)
       [(poke-msg [portal-indexer %portal-manager] portal-message+!>([%index-as-curator src.bowl toggle.act]))]~
@@ -184,6 +180,29 @@
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
   ?+    wire    (on-agent:default wire sign)
+    ::  TODO get created-at and updated-at right here, and everywhere else
+  :: ++  fill-temp
+  ::   |=  [our=ship act=$%([%fill-temp-group =key =data:group-preview] [%fill-temp-app =key =treaty])]
+  ::   ^-  card
+  ::   =/  bespoke
+  ::     ?-  -.act
+  ::       %fill-temp-group  [[%group ~] [%temp ~] data.act]
+  ::       %fill-temp-app    [[%app ~] [%temp ~] *@t *signature treaty.act]
+  ::     ==
+  ::   =/  meta
+  ::     :*  created-at='~2000.1.1'
+  ::         updated-at='~2000.1.1'
+  ::         permissions=~[our]
+  ::         reach=[%public blacklist=~]
+  ::     ==
+  ::   (~(act cards our %portal-store) [%put-temp key.act [key.act bespoke meta *signature]])
+  ::  edit vs create on temps?
+  ::  temp behavior?
+  ::  on-sub -> create empty
+  ::  on-agent -> replace/edit
+  ::  keeps created-at and updated-at logically
+  ::  no updating till the next purge tho?
+  ::  what if we dont leave but keep the wire open?
       [%treaty @ @ @ @ ~]
     ?+    -.sign    (on-agent:default wire sign)
         %watch-ack  `this
