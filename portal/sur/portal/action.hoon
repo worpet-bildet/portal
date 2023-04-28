@@ -3,7 +3,7 @@
 ::
 ::  units are optional args
 +$  action
-  $%  $:  %create  ::  "if exists, overwrite" OR "if exists, doesnt do anything?"
+  $%  $:  %create  ::  "if exists, overwrite" OR "if exists, doesnt do anything"?
          ship=(unit ship)
          cord=(unit cord)
          time=(unit cord)
@@ -38,13 +38,7 @@
       ::
       [%sub =key]  ::  TODO for temp items
       ::
-      ::  key defines item which will be filled with treaty data
-      [%get-docket =key =ship =desk]
       [%edit-docket =key =treaty]  ::put treaty into /enditem/app
-      ::  key defines item which will be filled with group data
-      [%get-group-preview =key flag=[=ship =term]]
-      ::  TODO get-docket and get-group-preview should probably be messages
-      ::  or be defined somewhere else?
       ::
       :: [%purge =default-curators =portal-curator]
       ::

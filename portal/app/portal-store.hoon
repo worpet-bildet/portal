@@ -106,7 +106,7 @@
   |=  =path
   ^-  (quip card _this)
   ?:  =(path /updates)  `this
-  =/  item  (~(gut by items) (path-key-to-key:conv path) ~)
+  =/  item  (~(gut by items) (path-to-key:conv path) ~)
   :_  this
   ?~  item  ~
   [%give %fact ~ %portal-update !>(item)]~
@@ -118,22 +118,9 @@
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
   ?+    -.sign  (on-agent:default wire sign)
-      %watch-ack
-    ?~  p.sign
-      ~&  "%portal-store: subscribe to {(spud wire)} succeeded"
-      `this
-    ~&  "%portal-store: subscribe to {(spud wire)} failed"
-    `this
-    ::
-      %kick
-    =/  key  (path-key-to-key:conv wire)
-    ~&  "%portal-store: got kick from {(spud wire)}, resubscribing..."
-    :_  this
-    [%pass wire %agent [ship.key %portal-store] %watch wire]~
-    ::
       %fact
     =/  store  ~(. store [bowl items ~])
-    =/  key  (path-key-to-key:conv wire)
+    =/  key  (path-to-key:conv wire)
     =/  upd  !<(update:item q.cage.sign)
     ~&  "%portal-store: received update from {(spud wire)}"
     =^  cards  items  (put:on-agent:store upd)
@@ -154,21 +141,21 @@
       [%keys ~]  keys+~(key by items)
     ::
     ::  TODO maybe s+'"/a/'/a/b'/c"' would work?
-      [%item *]  item+(~(gut by items) (path-key-to-key:conv t.path) ~)
+      [%item *]  item+(~(gut by items) (path-to-key:conv t.path) ~)
     ::
     ::  /item-exists/[ship]/'[type]'/'[cord]'
-      [%item-exists *]  (~(has by items) (path-key-to-key:conv t.path))
+      [%item-exists *]  (~(has by items) (path-to-key:conv t.path))
     ::
     ::  /in-list/[list-ship]/'[list-type]'/'[list-cord]/'[ship]/'[type]'/'[cord]'
     ::   [%in-list @ @ @ @ @ @ ~]
-    :: =/  item-key  (path-key-to-key:conv t.t.t.t.path)
+    :: =/  item-key  (path-to-key:conv t.t.t.t.path)
     :: =/  list  =-  (~(gut by items) - ~)
-    ::   (path-key-to-key:conv [i.t.path i.t.t.path i.t.t.t.path ~])
+    ::   (path-to-key:conv [i.t.path i.t.t.path i.t.t.t.path ~])
     :: ?~(list %.n (key-in-collection:loob item-key list))
     ::
     ::  /item-valid/[ship]/'[type]'/'[cord]'
       [%item-valid *]
-    valid+(get-latest:validator our.bowl now.bowl (path-key-to-key:conv t.path))
+    valid+(get-latest:validator our.bowl now.bowl (path-to-key:conv t.path))
   ==
   ::
 ++  on-fail   on-fail:default

@@ -6,7 +6,7 @@
 ++  conv
   |%
   ::
-  ++  key-to-path-key
+  ++  key-to-path
     |=  [=key]
     ^-  path
     ;:  weld
@@ -16,7 +16,7 @@
       ~[time.key]
     ==
   ::
-  ++  path-key-to-key
+  ++  path-to-key
     |=  [=path]
     ;;  key
     :^  ;;  struc  (scag (sub (lent path) 3) `(list @tas)`path)
@@ -36,7 +36,7 @@
     .^  store-result  %gx
       ;:  weld
         /(scot %p our)/portal-store/(scot %da now)/item
-        (key-to-path-key:conv key)
+        (key-to-path:conv key)
         /noun
     ==  ==
   ::
@@ -70,7 +70,7 @@
       %gx
       ;:  weld
         /(scot %p our)/portal-store/(scot %da now)/item-valid
-        (key-to-path-key:conv key)
+        (key-to-path:conv key)
         /noun
       ==
     ==
@@ -189,51 +189,82 @@
 ::  'macros' of commands happen on portal-manager level
 ::  TODO fundamental commands (actions) and composite commands
 ++  manager
-  |%
-  :: ++  on-poke
-  ::   |%
-  ::   OVDJE
-  ::   ++  on-act  ::  all arms here should output cards
-  ::               ::  TODO cleanup PM state and maybe output that then
-  ::     |%
-  ::     ::  s
-  ::     ++  sub
-  ::       |=  [act=action]
-  ::       ^-  (list card)
-  ::       ?.  ?=([%sub *] act)  !!
-  ::       ::branch on if temp or no
-  ::       ::  don't subscribe to our item
-  ::       ::  THINK should I put validations like this downstream or upstream?
-  ::       ::  -> depending on where's the bottleneck -> put it in the bottleneck
-  ::       :: ?:  &(=(ship.key.act our.bowl) =(cord.key.act ''))         `items
-  ::       =/  wire  (key-to-path-key:conv key.act)
-  ::       ::  don't subscribe to what you are already subbed to
-  ::       ?:  (~(has by wex.bowl) [wire ship.key.act %portal-store])  `items
-  ::       :: ?+  cord.key.act
-  ::         ::  default
-  ::         :_  items
-  ::         [%pass wire %agent [ship.key.act %portal-store] %watch wire]~
-  ::         ::
-  ::         ::  TODO all actions from PM,
-  ::         ::  TODO sub from PM, sub branch on temp
-  ::         :: ::  if temp
-  ::         ::   ''
-  ::         :: ::  should it sub from portal store or portal manager?
-  ::         :: ::  data flow, thru PM or no?
-  ::         :: =-  [%pass [- path-key] %agent [ship.key.item -] %watch ~]~
-  ::         :: ?+    struc.key.act    !!
-  ::         ::   [%app ~]    %treaty
-  ::         ::   [%group ~]  %get-group-preview
-  ::         :: ==
+  |_  [=bowl:gall cards=_*(list card)]
+  ++  on-poke
+    |%
+    ::   ++  put-empty-temp
+    :: |=  [our=ship =key]
+    :: ^-  (list card)
+    :: =/  meta
+    ::   :*  created-at=''
+    ::       updated-at=''
+    ::       permissions=~[our]
+    ::       reach=[%public blacklist=~]
+    ::   ==
+    :: ?+    struc.key    !!
+    ::     [%group ~]
+    ::   =/  bespoke  [[%group ~] [%temp ~] *data:group-preview]
+    ::   :~  (~(act cards [our %portal-store]) [%put-temp key [key bespoke meta *signature]])
+    ::       (~(act cards [our %portal-manager]) [%get-group-preview key ship.key time.key])
+    ::   ==
+    ::     [%ship ~]
+    ::   =/  bespoke  [[%ship ~] [%temp ~] ~]
+    ::   ~[(~(act cards [our %portal-store]) [%put-temp key [key bespoke meta *signature]])]
+    ::     [%app ~]
+    ::   =/  bespoke  [[[%app ~] [%temp ~] *@t *signature *treaty]]
+    ::   :~  (~(act cards [our %portal-store]) [%put-temp key [key bespoke meta *signature]])
+    ::       (~(act cards [our %portal-manager]) [%get-docket key ship.key time.key])
+    ::   ==
+    :: ==
+    ++  on-act  ::  all arms here should output cards
+                ::  TODO cleanup PM state and maybe output that then
+      |%
+      ++  sub
+      ::  - do nothing if sub already exists for temp items (DO NOT CREATE ANOTHER)
+      ::  (also create should not overwrite, but do nothing if item already exists)
+      ::  - purge: remove all temp items (and unsub, automatically via delete), and them subscribe to them again
 
-  ::         :: :_  items
 
-  ::       :: ==
-
-  ::       :: ?:  =(time.key.act '')        `items  :: infers that it's %temp
-
-  ::     --
-  ::   --
+        |=  [act=action]
+        ^-  (list card)
+        ?.  ?=([%sub *] act)  !!
+        ?.  =(time.key.act '')   ::  branch on whether is %temp (empty time.key)  
+          :: if not temp
+          ~[(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(act))]
+        ::  if temp
+        ::  not sub -> not perfectly updated, either too much or too little
+        ?+    struc.key.act    !!          ::  TODO wires state transition
+        ::TODO 
+        :: check if temp exists -> create empty one first (or dont touch) -> send sub -> on -agent should edit/replace
+        ::                                                                  if temp exists sub again and overwrite, or dont touch?
+        ::  also what with ship?
+            [%group ~]
+          =/  path  /groups/(scot %p ship.key.act)/[`@tas`cord.key.act]/preview
+          =/  wire  [%get-group-preview (key-to-path:conv key.act)]
+          =/  sub-status  (~(gut by wex.bowl) [wire ship.key.act %groups] ~)
+          ?~  sub-status
+            ~&  >  "not subbed, subbing"
+            [%pass wire %agent [ship.key.act %groups] %watch path]~
+          ~&  >>  "subbed, not subbing"
+          ~
+          ::
+            [%app ~]
+          =/  path  /treaty/(scot %p ship.key.act)/[`@tas`cord.key.act]
+          ~&  path
+          =/  wire  [%treaty (key-to-path:conv key.act)]
+          =/  sub-status  (~(gut by wex.bowl) [wire ship.key.act %treaty] ~)
+          ~&  sub-status
+          ?~  sub-status
+            ~&  >  "not subbed, subbing"
+            [%pass wire %agent [ship.key.act %treaty] %watch path]~
+          ~&  >>  "subbed, not subbing"
+          ~
+          :: :~  [%pass wire %agent [ship.key.act %treaty] %leave ~]
+          ::     [%pass wire %agent [ship.key.act %treaty] %watch path]
+          :: ==
+        ==
+      --
+    --
 
   ++  on-update
     |%
@@ -310,7 +341,7 @@
         ::  all changes in items that are ours
         ?.  &(=(our.bowl ship.key.item) ?!(=(lens.item [%temp ~])))
           ~
-        [%give %fact [(key-to-path-key:conv key.item)]~ %portal-update !>(item)]~
+        [%give %fact [(key-to-path:conv key.item)]~ %portal-update !>(item)]~
       ==
       ::    fe-update
       ::    PM update
@@ -320,14 +351,14 @@
     ++  del
       |=  [=item]
       ^-  (list card)
-      =/  path-key  (key-to-path-key:conv key.item)
+      =/  path-key  (key-to-path:conv key.item)
       ;:  welp
         cards
         [%give %fact [path-key]~ [%portal-update !>(item)]]~  ::  general updates
         ?+    lens.item    ::  sub path handle
         ::  default
           ?:  =(our.bowl ship.key.item)
-            [%give %fact [(key-to-path-key:conv key.item)]~ %portal-update !>(item)]~
+            [%give %fact [(key-to-path:conv key.item)]~ %portal-update !>(item)]~
           [%pass path-key %agent [ship.key.item %portal-store] %leave ~]~
         ::  if temp
           [%temp ~]
@@ -418,6 +449,8 @@
                     updated-at=''
                     permissions=~[our.bowl]
                     reach=[%public ~]
+      ?:  =(lens [%temp ~])
+        [key lens bespoke meta *signature]  ::  return item
       =/  sig  %^  sign:sig  our.bowl  now.bowl
         [%item key lens bespoke meta]
       [key lens bespoke meta sig]  ::  return item
@@ -543,42 +576,7 @@
     ::     (put-item our src items upd)
     ::   ==
     ::
-  ::  whatever temp you are adding, use this
-  :: ++  put-empty-temp
-  ::   |=  [our=ship =key]
-  ::   ^-  (list card)
-  ::   =/  meta
-  ::     :*  created-at=''
-  ::         updated-at=''
-  ::         permissions=~[our]
-  ::         reach=[%public blacklist=~]
-  ::     ==
-  ::   ?+    struc.key    !!
-  ::       [%group ~]
-  ::     =/  bespoke  [[%group ~] [%temp ~] *data:group-preview]
-  ::     :~  (~(act cards [our %portal-store]) [%put-temp key [key bespoke meta *signature]])
-  ::         (~(act cards [our %portal-manager]) [%get-group-preview key ship.key time.key])
-  ::     ==
-  ::       [%ship ~]
-  ::     =/  bespoke  [[%ship ~] [%temp ~] ~]
-  ::     ~[(~(act cards [our %portal-store]) [%put-temp key [key bespoke meta *signature]])]
-  ::       [%app ~]
-  ::     =/  bespoke  [[[%app ~] [%temp ~] *@t *signature *treaty]]
-  ::     :~  (~(act cards [our %portal-store]) [%put-temp key [key bespoke meta *signature]])
-  ::         (~(act cards [our %portal-manager]) [%get-docket key ship.key time.key])
-  ::     ==
-  ::   ==
   ::
-      :: sub ->  if cord nonempty  ->  create empty temp -> on-agent -> edit/replace temp
-      ::                             :*  %create
-      ::                               `ship.key
-      ::                               `cord.key
-      ::                               `''
-      ::                               `[%temp ~]
-      ::                               `[[%app ~] '' *signature treaty] or %group
-      ::                               `[[%collection ~] our.bowl '' '~2000.1.1']
-      ::                             ==
-      ::
       ::
       ++  sub  ::  TODO modify just for PS
         |=  [act=action]
@@ -586,7 +584,7 @@
         ?.  ?=([%sub *] act)  !!
         ::  don't subscribe to our item
         ?:  &(=(ship.key.act our.bowl) =(cord.key.act ''))         `items
-        =/  wire  (key-to-path-key:conv key.act)
+        =/  wire  (key-to-path:conv key.act)
         ::  don't subscribe to what you are already subbed to
         ?:  (~(has by wex.bowl) [wire ship.key.act %portal-store])  `items
         :: ?+  cord.key.act
@@ -594,23 +592,8 @@
           :_  items
           [%pass wire %agent [ship.key.act %portal-store] %watch wire]~
           ::
-          ::  TODO all actions from PM,
-          ::  TODO sub from PM, sub branch on temp
-          :: ::  if temp
-          ::   ''
-          :: ::  should it sub from portal store or portal manager?
-          :: ::  data flow, thru PM or no?
-          :: =-  [%pass [- path-key] %agent [ship.key.item -] %watch ~]~
-          :: ?+    struc.key.act    !!
-          ::   [%app ~]    %treaty
-          ::   [%group ~]  %get-group-preview
-          :: ==
-
-          :: :_  items
-
         :: ==
 
-        :: ?:  =(time.key.act '')        `items  :: infers that it's %temp
       ::
       ++  edit
         |=  [act=action]

@@ -82,6 +82,7 @@
   |=  [=mark =vase]
   ^-  (quip card _this)
   ?.  =(our.bowl src.bowl)  `this
+  =/  manager  ~(. manager [bowl ~])
   ?+    mark    (on-poke:default mark vase)
       %portal-action
     =/  act  !<(action vase)
@@ -94,7 +95,8 @@
     ::
     =/  poke-msg  ~(poke pass:io /msg)
     ?+    -.act    `this
-        %sub  `this
+        %sub  
+      :_  this  (sub:on-act:on-poke:manager act)
         
       ::
         %onboarded  `this(onboarded toggle.act)
@@ -103,29 +105,6 @@
       :_  this(indexed-as-curator toggle.act)
       [(poke-msg [portal-indexer %portal-manager] portal-message+!>([%index-as-curator src.bowl toggle.act]))]~
       ::
-      ::  TODO state transition wires
-        %get-group-preview
-      ::  not sub -> not perfectly updated, either too much or too little
-      =/  path  /groups/(scot %p ship.flag.act)/[term.flag.act]/preview
-      =/  wire  [%get-group-preview (key-to-path-key:conv key.act)]
-      =/  sub-status  (~(gut by wex.bowl) [wire ship.flag.act %groups] ~)
-      :_  this
-      ?~  sub-status
-        [%pass wire %agent [ship.flag.act %groups] %watch path]~
-      ~
-      ::
-      ::  TODO state transition wires
-        %get-docket
-      ::  not sub -> not perfectly updated, either too much or too little
-      =/  path  /treaty/(scot %p ship.act)/[desk.act]
-      =/  wire  [%treaty (key-to-path-key:conv key.act)]
-      =/  sub-status  (~(gut by wex.bowl) [wire ship.act %treaty] ~)
-      :_  this
-      ?~  sub-status
-        [%pass wire %agent [ship.act %treaty] %watch path]~
-      :~  [%pass wire %agent [ship.act %treaty] %leave ~]
-          [%pass wire %agent [ship.act %treaty] %watch path]
-      ==
     ==
     ::
       %portal-message
@@ -203,13 +182,12 @@
   ::  keeps created-at and updated-at logically
   ::  no updating till the next purge tho?
   ::  what if we dont leave but keep the wire open?
+   :: TODO these should be edits, not creates
       [%treaty @ @ @ @ ~]
     ?+    -.sign    (on-agent:default wire sign)
-        %watch-ack  `this
-        %kick       `this
         %fact
       =/  treaty  !<(treaty:treaty q.cage.sign)
-      =/  key  (path-key-to-key:conv +.wire)
+      =/  key  (path-to-key:conv +.wire)
       =/  act
         :*  %create
           `ship.key
@@ -226,8 +204,6 @@
     ==
       [%get-group-preview @ @ @ @ ~]
     ?+    -.sign    (on-agent:default wire sign)
-        %watch-ack  `this
-        %kick       `this
         %fact
       =/  preview  !<(preview:groups q.cage.sign)
       =/  act  
