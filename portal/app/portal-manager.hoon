@@ -159,62 +159,25 @@
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
   ?+    wire    (on-agent:default wire sign)
-    ::  TODO get created-at and updated-at right here, and everywhere else
-  :: ++  fill-temp
-  ::   |=  [our=ship act=$%([%fill-temp-group =key =data:group-preview] [%fill-temp-app =key =treaty])]
-  ::   ^-  card
-  ::   =/  bespoke
-  ::     ?-  -.act
-  ::       %fill-temp-group  [[%group ~] [%temp ~] data.act]
-  ::       %fill-temp-app    [[%app ~] [%temp ~] *@t *signature treaty.act]
-  ::     ==
-  ::   =/  meta
-  ::     :*  created-at='~2000.1.1'
-  ::         updated-at='~2000.1.1'
-  ::         permissions=~[our]
-  ::         reach=[%public blacklist=~]
-  ::     ==
-  ::   (~(act cards our %portal-store) [%put-temp key.act [key.act bespoke meta *signature]])
-  ::  edit vs create on temps?
-  ::  temp behavior?
-  ::  on-sub -> create empty
-  ::  on-agent -> replace/edit
-  ::  keeps created-at and updated-at logically
-  ::  no updating till the next purge tho?
-  ::  what if we dont leave but keep the wire open?
-   :: TODO these should be edits, not creates
+    ::
       [%treaty @ @ @ @ ~]
     ?+    -.sign    (on-agent:default wire sign)
         %fact
       =/  treaty  !<(treaty:treaty q.cage.sign)
       =/  key  (path-to-key:conv +.wire)
-      =/  act
-        :*  %create
-          `ship.key
-          `cord.key
-          `time.key
-          `[%temp ~]
-          `[[%app ~] '' *signature treaty]
-          `[[%collection ~] our.bowl '' '~2000.1.1']
-        ==
+      =/  act  [%replace key [%temp ~] [[%app ~] '' *signature treaty]]
       :_  this
       :~  [(~(act cards [our.bowl %portal-store]) act)]
           [%pass wire %agent [ship.key %treaty] %leave ~]
       ==
     ==
+    ::
       [%get-group-preview @ @ @ @ ~]
     ?+    -.sign    (on-agent:default wire sign)
         %fact
       =/  preview  !<(preview:groups q.cage.sign)
-      =/  act  
-        :*  %create
-          `p.flag.preview
-          `q.flag.preview
-          `''
-          `[%temp ~]
-          `[[%group ~] meta.preview]
-          `[[%collection ~] our.bowl '' '~2000.1.1']
-        ==
+      =/  key  (path-to-key:conv +.wire)
+      =/  act  [%replace key [%temp ~] [[%group ~] meta.preview]]
       :_  this
       :~  [(~(act cards [our.bowl %portal-store]) act)]
           [%pass wire %agent [p.flag.preview %groups] %leave ~]

@@ -29,6 +29,16 @@
 ++  scry
   |_  [our=ship now=time]
   ::  gets item, and if doesn't exist returns ~
+  ++  item-exists
+    |=  [=key]
+    ;;  ?
+    .^  store-result  %gx
+      ;:  weld
+        /(scot %p our)/portal-store/(scot %da now)/item-exists
+        (key-to-path:conv key)
+        /noun
+    ==  ==
+  ::
   ++  get-item
     |=  [=key]
     ;;  item
@@ -192,39 +202,12 @@
   |_  [=bowl:gall cards=_*(list card)]
   ++  on-poke
     |%
-    ::   ++  put-empty-temp
-    :: |=  [our=ship =key]
-    :: ^-  (list card)
-    :: =/  meta
-    ::   :*  created-at=''
-    ::       updated-at=''
-    ::       permissions=~[our]
-    ::       reach=[%public blacklist=~]
-    ::   ==
-    :: ?+    struc.key    !!
-    ::     [%group ~]
-    ::   =/  bespoke  [[%group ~] [%temp ~] *data:group-preview]
-    ::   :~  (~(act cards [our %portal-store]) [%put-temp key [key bespoke meta *signature]])
-    ::       (~(act cards [our %portal-manager]) [%get-group-preview key ship.key time.key])
-    ::   ==
-    ::     [%ship ~]
-    ::   =/  bespoke  [[%ship ~] [%temp ~] ~]
-    ::   ~[(~(act cards [our %portal-store]) [%put-temp key [key bespoke meta *signature]])]
-    ::     [%app ~]
-    ::   =/  bespoke  [[[%app ~] [%temp ~] *@t *signature *treaty]]
-    ::   :~  (~(act cards [our %portal-store]) [%put-temp key [key bespoke meta *signature]])
-    ::       (~(act cards [our %portal-manager]) [%get-docket key ship.key time.key])
-    ::   ==
-    :: ==
     ++  on-act  ::  all arms here should output cards
                 ::  TODO cleanup PM state and maybe output that then
       |%
       ++  sub
-      ::  - do nothing if sub already exists for temp items (DO NOT CREATE ANOTHER)
-      ::  (also create should not overwrite, but do nothing if item already exists)
+      ::  - do nothing if sub already exists for temp items (DO NOT RESUB)
       ::  - purge: remove all temp items (and unsub, automatically via delete), and them subscribe to them again
-
-
         |=  [act=action]
         ^-  (list card)
         ?.  ?=([%sub *] act)  !!
@@ -232,36 +215,42 @@
           :: if not temp
           ~[(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(act))]
         ::  if temp
+        ?:  (~(item-exists scry our.bowl now.bowl) key.act)  !!
+        =|  bespoke=bespoke
+        =*  create-empty-temp  ^-  action  :*  %create
+                                   `ship.key.act
+                                   `cord.key.act
+                                   `''
+                                   `[%temp ~]
+                                   `bespoke
+                                   `[[%collection ~] our.bowl '' '~2000.1.1']
+                               ==
         ::  not sub -> not perfectly updated, either too much or too little
-        ?+    struc.key.act    !!          ::  TODO wires state transition
-        ::TODO 
-        :: check if temp exists -> create empty one first (or dont touch) -> send sub -> on -agent should edit/replace
-        ::                                                                  if temp exists sub again and overwrite, or dont touch?
-        ::  also what with ship?
+        ::  TODO wires state transition
+        ?+    struc.key.act    !!  
+          ::        
+            [%ship ~]
+          =.  bespoke  [[%ship ~] ~]
+          ~[(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(create-empty-temp))]
+          ::
             [%group ~]
+          =.  bespoke  [[%group ~] *data:group-preview]
           =/  path  /groups/(scot %p ship.key.act)/[`@tas`cord.key.act]/preview
           =/  wire  [%get-group-preview (key-to-path:conv key.act)]
           =/  sub-status  (~(gut by wex.bowl) [wire ship.key.act %groups] ~)
-          ?~  sub-status
-            ~&  >  "not subbed, subbing"
-            [%pass wire %agent [ship.key.act %groups] %watch path]~
-          ~&  >>  "subbed, not subbing"
-          ~
+          :~  [(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(create-empty-temp))]
+              [%pass wire %agent [ship.key.act %groups] %watch path]
+          ==
           ::
             [%app ~]
+          =.  bespoke  [[%app ~] '' *signature *treaty]
           =/  path  /treaty/(scot %p ship.key.act)/[`@tas`cord.key.act]
           ~&  path
           =/  wire  [%treaty (key-to-path:conv key.act)]
           =/  sub-status  (~(gut by wex.bowl) [wire ship.key.act %treaty] ~)
-          ~&  sub-status
-          ?~  sub-status
-            ~&  >  "not subbed, subbing"
-            [%pass wire %agent [ship.key.act %treaty] %watch path]~
-          ~&  >>  "subbed, not subbing"
-          ~
-          :: :~  [%pass wire %agent [ship.key.act %treaty] %leave ~]
-          ::     [%pass wire %agent [ship.key.act %treaty] %watch path]
-          :: ==
+          :~  [(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(create-empty-temp))]
+              [%pass wire %agent [ship.key.act %treaty] %watch path]
+          ==
         ==
       --
     --
@@ -305,6 +294,11 @@
 ::  - sve rascistit tak da mogu reasonat o tim stvarima
 ++  store
   |_  [=bowl:gall =items cards=_*(list card)]
+  ::
+  ++  has-item
+    |=  =key
+    ^-  ?
+    (~(has by items) key)
   ::
   ++  get-item
     |=  =key
@@ -416,6 +410,8 @@
             ==
           ==
         ==
+      ?:  =(lens.item [%temp ~])
+        item(sig *signature)
       =/  sig  %^  sign:sig  our.bowl  now.bowl
         [%item key.act lens.item bespoke.item meta.item]
       item(sig sig)
@@ -431,6 +427,8 @@
           bespoke          bespoke.act
           updated-at.meta  `@t`(scot %da now.bowl)
         ==
+      ?:  =(lens.act [%temp ~])
+        item(sig *signature)
       =/  sig  %^  sign:sig  our.bowl  now.bowl
         [%item key.act lens.act bespoke.act meta.item]
       item(sig sig)
@@ -450,7 +448,7 @@
                     permissions=~[our.bowl]
                     reach=[%public ~]
       ?:  =(lens [%temp ~])
-        [key lens bespoke meta *signature]  ::  return item
+        [key lens bespoke meta *signature]
       =/  sig  %^  sign:sig  our.bowl  now.bowl
         [%item key lens bespoke meta]
       [key lens bespoke meta sig]  ::  return item
@@ -512,71 +510,6 @@
     |%
     ++  on-act
       |%
-
-        ::
-  ::  based on nested data structure
-  ::  subs should be done from the frontend when needed, not automatically
-  :: ++  sub-to-col-keys ::  + get-list-temp-items
-  ::   |=  [our=ship now=time =item]
-  ::   ^-  (list card)
-  ::   ?+    -.bespoke.item    ~
-  ::       [%list %list ~]
-  ::     =/  key-list  (skip-ships:keys list-key-list.bespoke.item ~[our])
-  ::     =/  filtered-set  (~(dif in (silt key-list)) (~(get-all-keys scry our now)))
-  ::     =/  filtered-list  ~(tap in filtered-set)
-  ::     (turn filtered-list |=(=key (~(act cards [our %portal-store]) sub+key)))
-  ::
-  ::   ::
-  ::       [%list ~]
-  ::     ::  temp items
-  ::     :: if you do set-difference you keep old data, if you don't do set difference you constantly overwrite fine data
-  ::     :: after purge new temp items are taken daily
-  ::     =/  temp-key-list   (skim-temp:keys key-list.bespoke.item)
-  ::     =/  filtered-set  (~(dif in (silt temp-key-list)) (~(get-all-keys scry our now)))
-  ::     =/  filtered-list  ~(tap in filtered-set)
-  ::     =/  temp-cards  ^-  (list card)
-  ::        %-  zing
-  ::       (turn filtered-list |=(=key (put-empty-temp:manager our key)))
-  ::     ::  inners
-  ::     =/  key-list  (skip-temp:keys key-list.bespoke.item)
-  ::     =/  key-list  (skip-ships:keys key-list ~[our])
-  ::     =/  filtered-set  (~(dif in (silt key-list)) (~(get-all-keys scry our now)))
-  ::     =/  filtered-list  ~(tap in filtered-set)
-  ::     =/  inner-cards  (turn filtered-list |=(=key (~(act cards [our %portal-store]) sub+key)))
-  ::     (weld inner-cards temp-cards)
-  ::   ==
-  ::
-
-          ::  for now just overwrites
-    ::  long term temp items should be able to sync with their source
-    ::  and not be overwritten every time
-    ::  TODO use create/replace/edit
-    ::  clarify where to conceptually put methods like this
-    :: ++  put-temp
-    ::   |=  [=items our=ship src=ship act=[%put-temp =key =item]]
-    ::   ^-  [(list card) ^items]
-    ::   :-  (put:on-poke:add-cards our src [%put key.act item.act])
-    ::   (put-item our src items [%put key.act item.act])
-    :: ::
-    :: ++  edit-docket
-    ::   |=  [=items our=ship src=ship now=time act=[%edit-docket =key =treaty]]
-    ::   ^-  [(list card) ^items]
-    ::   =/  item  (~(gut by items) key.act ~)
-    ::   ?~  item  ~&  "%portal-store: item doesn't exist"  [~ items]
-    ::   ?+    -.bespoke.item    !!
-    ::       [%app ~]
-    ::     =/  item
-    ::       %=  item
-    ::         updated-at.meta         `@t`(scot %da now)
-    ::         treaty.bespoke     treaty.act
-    ::       ==
-    ::     =/  item-sig  (sign:sig our now (sig-input [%item key.act item meta.item]))
-    ::     =/  upd  [%put key.act item(sig item-sig)]
-    ::     :-  (put:on-poke:add-cards our src upd)
-    ::     (put-item our src items upd)
-    ::   ==
-    ::
-  ::
       ::
       ++  sub  ::  TODO modify just for PS
         |=  [act=action]
@@ -587,13 +520,8 @@
         =/  wire  (key-to-path:conv key.act)
         ::  don't subscribe to what you are already subbed to
         ?:  (~(has by wex.bowl) [wire ship.key.act %portal-store])  `items
-        :: ?+  cord.key.act
-          ::  default
-          :_  items
-          [%pass wire %agent [ship.key.act %portal-store] %watch wire]~
-          ::
-        :: ==
-
+        :_  items
+        [%pass wire %agent [ship.key.act %portal-store] %watch wire]~
       ::
       ++  edit
         |=  [act=action]
@@ -614,11 +542,11 @@
         ^-  [(list card) ^items]
         ?.  ?=([%create *] act)  !!
         =/  item  (create:item-methods act)
+        ?:  (has-item key.item)  !!  :: should other actions have these checks?
         =.  cards  (put:cards-methods item)
         =.  items  (put-item item)
         ?~  append-to.act  [cards items]
-        ::  TODO check if already in list (if doing put with temp)
-        ::  or a mechanism for always removing before adding
+        ::  TODO check if already in list/items (if doing put with temp)
         (append [%append key.item (need append-to.act)])
         ::  also -> main collection deduplication
         ::  (preventing duplication in the first place)
