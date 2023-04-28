@@ -327,6 +327,7 @@
                       bespoke+dejs-soft-bespoke
                       append-to+dejs-soft-key
                   ==
+      ~&  >  create+(pole-to-cell raw)
       create+(pole-to-cell raw)
         %edit
       =/  raw  %.  ;;((map @t json) +>:jn)

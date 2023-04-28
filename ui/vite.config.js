@@ -1,31 +1,32 @@
-import path from "path";
-import { fileURLToPath, URL } from "url";
-import { urbitPlugin } from "@urbit/vite-plugin-urbit";
-import reactRefresh from "@vitejs/plugin-react-refresh";
-import { defineConfig, loadEnv } from "vite";
+import path from 'path';
+import { loadEnv, defineConfig } from 'vite';
+import { urbitPlugin } from '@urbit/vite-plugin-urbit';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
 
 // https://vitejs.dev/config/
 export default ({ mode }) => {
   Object.assign(process.env, loadEnv(mode, process.cwd()));
-  const SHIP_URL = process.env.SHIP_URL || process.env.VITE_SHIP_URL || "";
-  console.log(SHIP_URL);
+  const SHIP_URL =
+    process.env.SHIP_URL || process.env.VITE_SHIP_URL || 'http://localhost:80';
+  console.log({ SHIP_URL });
 
   return defineConfig({
     plugins: [
-      urbitPlugin({ base: "portal", target: SHIP_URL, secure: false }),
-      reactRefresh(),
+      svelte(),
+      urbitPlugin({
+        base: 'portal-dev',
+        target: SHIP_URL,
+        changeOrigin: true,
+        secure: false,
+      }),
     ],
     resolve: {
       alias: {
-        "@mui/material": path.resolve("./node_modules/@mui/material"),
-        // "@mui/styled-engine": path.resolve("./node_modules/@mui/styled-engine"),
-        // "styled-components": path.resolve("./node_modules/styled-components"),
-        // "@/": fileURLToPath(new URL("./src", import.meta.url)),
+        '@root': path.resolve('./src'),
+        '@pages': path.resolve('./pages'),
+        '@components': path.resolve('./src/components'),
+        '@fragments': path.resolve('./src/fragments'),
       },
-    },
-    build: {
-      sourcemap: false,
-      manifest: true,
     },
   });
 };
