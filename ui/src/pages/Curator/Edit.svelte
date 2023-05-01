@@ -7,15 +7,7 @@
   let curator;
   state.subscribe(() => {
     curator = getCurator(params.patp);
-    if (!curator) return;
-    const {
-      item: {
-        data: {
-          general,
-          bespoke: { keyObj, payload },
-        },
-      },
-    } = curator;
+    console.log({ curator });
   });
 
   let activeTab = 'integrations';

@@ -4,7 +4,7 @@
 
   import { CuratorIndex, Feed, Item } from './pages';
   import { Curator, EditCurator } from './pages/Curator';
-  import { Navbar } from '@components';
+  import { Navbar, Onboard } from '@components';
 
   const routes = {
     '/': Feed,
@@ -17,6 +17,7 @@
 
   state.subscribe((s) => {
     console.log({ state: s });
+    // TODO: get the onboarding status of the user here
   });
 </script>
 
@@ -25,4 +26,5 @@
   <div class="p-10">
     <Router {routes} />
   </div>
+  <Onboard />
 </main>

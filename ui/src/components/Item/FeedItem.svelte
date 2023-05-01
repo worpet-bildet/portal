@@ -13,7 +13,7 @@
 
   export let item;
   $: console.log({ item });
-  let { title, description, ship, keyStr } = getMeta(item);
+  let { title, blurb, ship, keyStr } = getMeta(item);
 </script>
 
 <!-- <Sigil config={{ point: ship }} /> -->
@@ -25,7 +25,7 @@
     <a class="text-sm" href={`/${ship}`} use:link>{ship}</a>
     <a use:link href={`/item/${encodeURIComponent(keyStr)}`}>
       <p class="line-clamp-3 cursor-pointer">
-        {description}
+        {blurb}
       </p>
     </a>
     <div class="pt-3">

@@ -1,5 +1,14 @@
 import { derived, get, writable } from 'svelte/store';
-import { getItems, getFeed, getPals, scry } from '@root/api';
+import {
+  getPortalItems,
+  getContacts,
+  getJoinedGroups,
+  getInstalledApps,
+  getFeed,
+  getPals,
+  scry,
+  poke,
+} from '@root/api';
 
 export const INDEX_KEY = '/~worpet-bildet/list/nonitem/ship/index';
 
@@ -7,32 +16,55 @@ export let isLoaded = false;
 export const state = writable({});
 export const feed = writable({});
 
-getItems().then((items) => {
-  console.log({ items });
+getPortalItems().then(({ items }) => {
+  let s = {};
+  items.forEach((i) => {
+    s[i.keyStr] = i;
+  });
+  state.set(s);
+  isLoaded = true;
+
+  // TODO: group everything by a single curator maybe?
+  // or add some filtering methods to get everything by a single curator
 });
 
-// When we load the app we want to get the feed, this probably isn't the right
-// place to do that though
-// getFeed().then((feedList) => {
-//   feedList.forEach((feedKey) => {
-//     scry({
-//       app: 'portal-store',
-//       path: `/item${feedKey.keyStr}`,
-//     }).then((res) => {
-//       feed.update((items) => {
-//         items[feedKey.keyStr] = { ...feedKey, ...res };
-//         return items;
-//       });
-//     });
-//   });
-// });
+getContacts().then((contacts) => {
+  state.update((s) => {
+    s.profiles = contacts;
+    return s;
+  });
+});
 
-// getPals().then((pals) => {
-//   state.update((s) => {
-//     s['pals'] = pals.outgoing;
-//     return s;
-//   });
-// });
+getJoinedGroups().then((groups) => {
+  // for some reasons it's possible to get groups that don't have a title
+  // so we filter them here to avoid showing useless info
+  state.update((s) => {
+    s.groups = Object.entries(groups || {}).filter(
+      ([
+        _,
+        {
+          meta: { title },
+        },
+      ]) => !!title
+    );
+    return s;
+  });
+});
+
+getInstalledApps().then((apps) => {
+  console.log({ apps });
+  state.update((s) => {
+    s.apps = apps;
+    return s;
+  });
+});
+
+getPals().then((pals) => {
+  state.update((s) => {
+    s.pals = pals.outgoing;
+    return s;
+  });
+});
 
 export const curatorNames = derived(
   state,
@@ -45,69 +77,49 @@ export const curatorNames = derived(
 );
 
 export const getCurator = (patp) => {
-  return get(state)[patp];
+  return { ...mainCollection(patp), ...get(state)?.profiles?.[patp] };
+};
+
+// some janky keys here innit
+export const getCuratorFeed = (patp) => {
+  return getCuratorItemsByStruc(patp, '/other');
+};
+
+export const getCuratorCollections = (patp) => {
+  return getCuratorItemsByStruc(patp, '/collection');
+};
+
+export const getCuratorItemsByStruc = (patp, struc) => {
+  return mainCollection(patp)
+    ?.bespoke?.['key-list']?.filter((k) => k.struc === struc)
+    ?.map((k) => get(state)[keyStrFromObj(k)]);
 };
 
 export const getItem = (listKey) => {
-  return get(state)[listKey].item;
+  return get(state)[listKey];
 };
 
 export const handleSubscriptionEvent = (event, type) => {
   console.log({ event, type });
-  // switch (type) {
-  //   case 'portal-nested-all-items':
-  //     // we're going to flatten this to make our life easier
-  //     state.set({ ...get(state), ...flattenMaps(event) });
-  //     isLoaded = true;
-  //     break;
-  //   case 'portal-front-end-update':
-  //     state.set({
-  //       ...get(state),
-  //       [event.keyStr]: { item: event.item, map: event.map },
-  //     });
-  //     if (event.keyStr.includes('list/list')) {
-  //       state.set({
-  //         ...get(state),
-  //         [event.keyObj.ship]: { item: event.item, map: event.map },
-  //       });
-  //     }
-  //     break;
-  // }
-  // console.log({ event });
+  switch (type) {
+    case 'portal-update':
+      state.update((s) => {
+        s[event.keyStr] = event;
+        return s;
+      });
+    case 'contact-news':
+      state.update((s) => {
+        s[event.who] = event.con;
+        return s;
+      });
+    default:
+      break;
+  }
 };
 
-const flattenMaps = (all) => {
-  const new_all = {};
-  /*
-  The structure we have looks like this
-  {
-    [list_list]: {
-      map: {
-        [list_item]: {
-          map: {
-            [item]
-          }
-        }
-      }
-    }
-  }
-  And we want to flatten everything so that it looks like
-  {
-    [patp]: {...list_list},
-    [list_item]: {},
-    [item]: {}
-  }
-
-  We could probably do this recursively but it's not really necessary
-  */
-  for (let list_list in all) {
-    new_all[all[list_list].item.keyObj.ship] = all[list_list];
-    for (let list_item in all[list_list].map) {
-      new_all[list_item] = all[list_list].map[list_item];
-      for (let item in all[list_list].map[list_item].map) {
-        new_all[item] = { item: all[list_list].map[list_item].map[item] };
-      }
-    }
-  }
-  return new_all;
+const keyStrFromObj = ({ struc, ship, cord, time }) => {
+  return `${struc}/${ship}/${cord}/${time}`;
 };
+
+const mainCollection = (patp) => get(state)[mainCollectionKey(patp)];
+const mainCollectionKey = (patp) => `/collection/${patp}//~2000.1.1`;

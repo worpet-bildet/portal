@@ -1,13 +1,24 @@
 <script>
-  // import '@urbit/sigil-js';
-  export let config = {
-    point: '~zod',
-    size: 128,
-    background: '#000',
-    foreground: '#fff',
-    detail: 'default',
-    space: 'default',
+  import { sigil, stringRenderer } from '@tlon/sigil-js';
+  import { invertHex } from '@root/util';
+  export let patp, size, color;
+
+  const formatColor = (c) => {
+    if (!c || c === '0x0') return 'ffffff';
+    return c.replace('.', '').replace('0x', '');
   };
+
+  let primaryColor;
+  $: primaryColor = formatColor(color);
+  $: secondaryColor = invertHex(formatColor(color));
+
+  $: console.log({ primaryColor, patp, secondaryColor });
+  if (patp.length > 14) patp = '~zod';
 </script>
 
-<urbit-sigil {...config} />
+{@html sigil({
+  patp,
+  renderer: stringRenderer,
+  size: 50,
+  colors: [`#${primaryColor}`, `#${secondaryColor}`],
+})}

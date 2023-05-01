@@ -1,9 +1,9 @@
 export { default as ItemImage } from './ItemImage.svelte';
 export { default as TextArea } from './TextArea.svelte';
 export { default as Tabs } from './Tabs.svelte';
-export { default as SidebarPal } from './Sidebar/Pal.svelte';
-export { default as SidebarItem } from './Sidebar/Item.svelte';
-// export { default as Sigil } from './Sigil.svelte';
+export { default as Sigil } from './Sigil.svelte';
+export { default as Modal } from './Modal.svelte';
+export { default as StepForm } from './StepForm.svelte';
 export { default as CollectIcon } from './Icons/Collect.svelte';
 export { default as CommentIcon } from './Icons/Comment.svelte';
 export { default as LikeIcon } from './Icons/Like.svelte';

@@ -1,5 +1,5 @@
 <script>
-  import { getTitle, getDescription, getPayload } from '@root/util';
+  import { getTitle, getBlurb, getPayload } from '@root/util';
   import Item from './Item.svelte';
 
   export let list;
@@ -9,7 +9,7 @@
   <div class="flex flex-col text-left">
     <div>
       <div>{getTitle(list.item)}</div>
-      <div>{getDescription(list.item)}</div>
+      <div>{getBlurb(list.item)}</div>
     </div>
     <div class="flex flex-row overflow-x-scroll">
       {#each getPayload(list.item) as { keyStr }}

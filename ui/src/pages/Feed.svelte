@@ -1,9 +1,8 @@
 <script>
-  import { poke, me } from '@root/api';
+  import { poke, scry, me } from '@root/api';
   import { feed } from '@root/state';
   import { FeedItem } from '@components';
   import { FeedPostForm } from '@components/Form';
-  import { toUrbitTime, defaultGeneral } from '@root/util';
 
   // TODO: would be nice to put this in teh FeedPostForm component, but we
   // would need to be able to handle saving comments if we did that, and i'm
@@ -12,42 +11,36 @@
     poke({
       app: 'portal-manager',
       mark: 'portal-action',
-
-      // ship=(unit ship)
-      // cord=(unit cord)
-      // time=(unit cord)
-      // lens=(unit lens)
-      // bespoke=(unit bespoke)
-      // append-to=(unit [struc=[%collection ~] =ship =cord time=_'~2000.1.1'])
       json: {
         create: {
+          'append-to': {
+            ship: me,
+            struc: '/collection',
+            time: '~2000.1.1',
+            cord: '',
+          },
           bespoke: {
-            other: {
+            '/other': {
               title: '',
-              blurb: 'content',
+              blurb: content,
               link: '',
               image: '',
             },
           },
         },
       },
-
-      // json: {
-      //   'add-item-to-list': {
-      //     'list-key': {
-      //       ship: me,
-      //       type: '/list/enditem/other',
-      //       cord: '~2000.1.2', // the default list key
-      //     },
-      //     ship: me,
-      //     type: '/enditem/other',
-      //     text: toUrbitTime(Date.now()),
-      //     general: { ...defaultGeneral, description: content },
-      //     'bespoke-input': { 'enditem-other': '' },
-      //   },
-      // },
     });
   };
+
+  // poke({
+  //   app: 'contacts',
+  //   mark: 'contact-action',
+  //   json: {
+  //     heed: ['~rovnys-ricfer', '~rilfun-lidlen', '~ravmel-ropdyl'],
+  //   },
+  // }).then((result) => {
+  //   console.log({ result });
+  // });
 </script>
 
 <div class="grid grid-cols-6">

@@ -4,9 +4,14 @@
   import { ItemImage, LikeIcon, CommentIcon } from '@fragments';
 
   export let collection;
-  const item = getItem(collection?.keyStr);
-  const { title } = getMeta(item);
-  const payload = item?.data?.bespoke?.payload.slice(0, 4);
+
+  console.log({ collection });
+
+  let payload = [];
+  let title;
+  // const item = getItem(collection?.keyStr);
+  // const { title } = getMeta(item);
+  // const payload = item?.data?.bespoke?.payload.slice(0, 4);
 
   // how do we display these items in a conditionally laid-out grid?
   // eg if we only have two items, we want them both to span two rows, but if we

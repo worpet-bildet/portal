@@ -1,7 +1,7 @@
 export const getMeta = (item) => {
   return {
     title: getTitle(item),
-    description: getDescription(item),
+    blurb: getBlurb(item),
     image: getImage(item),
     ship: getShip(item),
     keyStr: item?.keyStr,
@@ -18,28 +18,15 @@ export const getType = (item) => {
 };
 
 export const getTitle = (item) => {
-  switch (getType(item)) {
-    case 'app':
-      return item?.data?.bespoke?.payload?.title;
-    case 'ship':
-      return item?.keyObj?.ship;
-    default:
-      return item?.data?.general?.title;
-  }
+  return item?.bespoke?.title;
 };
 
-export const getDescription = (item) => {
-  if (getType(item) === 'app') {
-    return item?.data?.bespoke?.payload?.info;
-  }
-  return item?.data?.general?.description;
+export const getBlurb = (item) => {
+  return item?.bespoke?.blurb;
 };
 
 export const getImage = (item) => {
-  if (getType(item) === 'app') {
-    return item?.data?.bespoke?.payload?.image;
-  }
-  return item?.data?.general?.image;
+  return item?.bespoke?.image;
 };
 
 export const getShip = (item) => {
@@ -48,68 +35,66 @@ export const getShip = (item) => {
 
 export const getLink = (item) => {};
 
-export const getColor = (item) => {
-  if (getType(item) === 'app') {
-    return item?.data?.bespoke?.payload?.color
-      ?.split('.')
-      .join('')
-      .substring(2);
-  }
-};
-
 export const getPayload = (item) => item?.data?.bespoke?.payload;
 
-// don't like that i have to pass in state here
-export const getCuratorFeed = (curator, state) => {
-  if (!state[`/${curator?.item?.keyObj?.ship}/list/enditem/other/~2000.1.2`])
-    return [];
-  return state[
-    `/${curator?.item?.keyObj?.ship}/list/enditem/other/~2000.1.2`
-  ].item?.data?.bespoke?.payload?.map((i) => state[i?.keyStr].item);
+export const isUrl = (s) => {
+  if (
+    /^(http(s):\/\/.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/g.test(
+      s
+    )
+  ) {
+    return true;
+  } else {
+    return false;
+  }
 };
 
-export const unsanitiseRecursive = (objectOrText) => {
-  let cloned;
-  if (typeof objectOrText === 'object' && !Array.isArray(objectOrText)) {
-    cloned = { ...objectOrText };
-    for (let key in cloned) {
-      cloned[key] = unsanitiseTextFieldsRecursive(cloned[key]);
-    }
-  }
-  if (Array.isArray(objectOrText)) {
-    cloned = objectOrText.map((el) => el);
-    for (let [index] in cloned) {
-      cloned[index] = unsanitiseTextFieldsRecursive(cloned[index]);
-    }
-  }
-  if (typeof objectOrText === 'string') {
-    cloned = objectOrText.substring(0);
-    cloned = cloned.replace(/\\'/g, "'");
-  }
-  return cloned;
+export const invertHex = (hex) => {
+  return (Number(`0x1${hex}`) ^ 0xffffff).toString(16).slice(1).toUpperCase();
 };
 
-export const sanitiseRecursive = (objectOrText) => {
-  // if object is an object, loop through the keys
-  let cloned;
-  if (typeof objectOrText === 'object' && !Array.isArray(objectOrText)) {
-    cloned = { ...objectOrText };
-    for (let key in cloned) {
-      cloned[key] = sanitiseTextFieldsRecursive(cloned[key]);
-    }
-  }
-  if (Array.isArray(objectOrText)) {
-    cloned = objectOrText.map((el) => el);
-    for (let [index] in cloned) {
-      cloned[index] = sanitiseTextFieldsRecursive(cloned[index]);
-    }
-  }
-  if (typeof objectOrText === 'string') {
-    cloned = objectOrText.substring(0);
-    cloned = cloned.replace(/'/g, "\\'");
-  }
-  return cloned;
-};
+// export const unsanitiseRecursive = (objectOrText) => {
+//   let cloned;
+//   if (typeof objectOrText === 'object' && !Array.isArray(objectOrText)) {
+//     cloned = { ...objectOrText };
+//     for (let key in cloned) {
+//       cloned[key] = unsanitiseTextFieldsRecursive(cloned[key]);
+//     }
+//   }
+//   if (Array.isArray(objectOrText)) {
+//     cloned = objectOrText.map((el) => el);
+//     for (let [index] in cloned) {
+//       cloned[index] = unsanitiseTextFieldsRecursive(cloned[index]);
+//     }
+//   }
+//   if (typeof objectOrText === 'string') {
+//     cloned = objectOrText.substring(0);
+//     cloned = cloned.replace(/\\'/g, "'");
+//   }
+//   return cloned;
+// };
+
+// export const sanitiseRecursive = (objectOrText) => {
+//   // if object is an object, loop through the keys
+//   let cloned;
+//   if (typeof objectOrText === 'object' && !Array.isArray(objectOrText)) {
+//     cloned = { ...objectOrText };
+//     for (let key in cloned) {
+//       cloned[key] = sanitiseTextFieldsRecursive(cloned[key]);
+//     }
+//   }
+//   if (Array.isArray(objectOrText)) {
+//     cloned = objectOrText.map((el) => el);
+//     for (let [index] in cloned) {
+//       cloned[index] = sanitiseTextFieldsRecursive(cloned[index]);
+//     }
+//   }
+//   if (typeof objectOrText === 'string') {
+//     cloned = objectOrText.substring(0);
+//     cloned = cloned.replace(/'/g, "\\'");
+//   }
+//   return cloned;
+// };
 
 export const toUrbitTime = (timestamp) => {
   // turn this into a date object
@@ -141,15 +126,4 @@ export const fromUrbitTime = (timestring) => {
     parts[6]
   );
   return date.getTime() - msOffset;
-};
-
-export const defaultGeneral = {
-  title: '',
-  description: '',
-  image: '',
-  link: '',
-  color: '',
-  pictures: [],
-  tags: [],
-  properties: {},
 };
