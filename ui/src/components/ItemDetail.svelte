@@ -1,6 +1,6 @@
 <script>
   import { link } from 'svelte-spa-router';
-  import { state } from '@root/state';
+  import { state, refreshPals } from '@root/state';
   import { addPal, removePal, me } from '@root/api';
   import { isUrl } from '@root/util';
   import { Sigil, AddPalIcon, RemovePalIcon } from '@fragments';
@@ -8,11 +8,14 @@
   const DEFAULT_COVER_IMAGE =
     'https://images.unsplash.com/photo-1579380231498-e45d45213373?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2370&q=80';
 
+  // TODO
+  // Don't really like this being here but not really sure how to factor this
+  // out - might make sense to go back to using a modal for the items
   let isMyPal = false;
   export const togglePal = () => {
-    // TODO: add or remove pal
-    if (isMyPal) return removePal();
-    addPal();
+    let ship = patp.slice(1);
+    if (isMyPal) return removePal(ship).then(refreshPals);
+    addPal(ship).then(refreshPals);
   };
 
   state.subscribe((s) => {

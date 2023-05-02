@@ -1,17 +1,20 @@
 <script>
+  import { state, getItem } from '@root/state';
   import { subscribeToGroup } from '@root/api';
-  import { getItem } from '@root/state';
   import { ItemImage } from '@fragments';
   import { link } from 'svelte-spa-router';
   export let key;
-  const group = getItem(`/group/${key}/`);
+  let group = getItem(`/group/${key}/`);
   if (!group) {
     subscribeToGroup(key);
   }
   let image, title;
-  if (group && group.bespoke) {
-    ({ image, title } = group.bespoke);
-  }
+  state.subscribe(() => {
+    group = getItem(`/group/${key}/`);
+    if (group && group.bespoke) {
+      ({ image, title } = group.bespoke);
+    }
+  });
 </script>
 
 {#if group}

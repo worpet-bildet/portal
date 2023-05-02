@@ -50,8 +50,20 @@ export const getPals = () => {
   });
 };
 
-export const addPal = () => {};
-export const removePal = () => {};
+export const addPal = (patp) => {
+  return poke({
+    app: 'pals',
+    mark: 'pals-command',
+    json: { meet: { ship: patp, in: [] } },
+  });
+};
+export const removePal = (patp) => {
+  return poke({
+    app: 'pals',
+    mark: 'pals-command',
+    json: { part: { ship: patp, in: [] } },
+  });
+};
 
 export const subscribeToGroup = (key) => {
   let parts = key.split('/');
@@ -107,4 +119,18 @@ export const useContactsSubscription = (onEvent) => {
   });
 
   return () => api?.unsubscribe(contactsSub);
+};
+
+export const usePalsSubscription = (onEvent) => {
+  const palsSub = api.subscribe({
+    app: 'pals',
+    path: '/targets',
+    ship: api.ship,
+    verbose: true,
+    event: onEvent,
+    err: console.error,
+    quit: console.error,
+  });
+
+  return () => api?.unsubscribe(palsSub);
 };

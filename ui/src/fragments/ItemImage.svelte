@@ -13,10 +13,12 @@
     )};"
   >
     {title
-      .toLowerCase()
-      .split(' ')
-      .map((n) => n.slice(0, 1))
-      .filter((n) => /^[a-z0-9]+$/i.test(n))
-      .join('')}
+      ? title
+          .toLowerCase()
+          .split(' ')
+          .map((n) => n.slice(0, 1))
+          .filter((n) => /^[a-z0-9]+$/i.test(n))
+          .join('')
+      : ''}
   </div>
 {/if}

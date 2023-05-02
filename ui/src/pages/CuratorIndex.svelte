@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
   import { link } from 'svelte-spa-router';
   import { curatorNames } from '@root/state';
   curatorNames.subscribe((c) => console.log({ c }));
@@ -13,4 +13,4 @@
       </a>
     </div>
   {/each}
-</div>
+</div> -->

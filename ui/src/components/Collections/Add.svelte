@@ -71,7 +71,11 @@
         {#each groups as [path, { meta: { title, image } }]}
           <div class="flex justify-between">
             <div>{title}</div>
-            <input type="checkbox" bind:group={items} value={path} />
+            <input
+              type="checkbox"
+              bind:group={items}
+              value={`/group/${path}/`}
+            />
           </div>
         {/each}
       {/if}

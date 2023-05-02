@@ -10,70 +10,68 @@ import {
   poke,
 } from '@root/api';
 
-export const INDEX_KEY = '/~worpet-bildet/list/nonitem/ship/index';
-
 export let isLoaded = false;
 export const state = writable({});
 export const feed = writable({});
 
-getPortalItems().then(({ items }) => {
-  let s = {};
-  items.forEach((i) => {
-    s[i.keyStr] = i;
+export const refreshPortalItems = () => {
+  getPortalItems().then(({ items }) => {
+    let s = {};
+    items.forEach((i) => {
+      s[i.keyStr] = i;
+    });
+    state.set(s);
+    isLoaded = true;
+
+    // TODO: group everything by a single curator maybe?
+    // or add some filtering methods to get everything by a single curator
   });
-  state.set(s);
-  isLoaded = true;
+};
 
-  // TODO: group everything by a single curator maybe?
-  // or add some filtering methods to get everything by a single curator
-});
-
-getContacts().then((contacts) => {
-  state.update((s) => {
-    s.profiles = contacts;
-    return s;
+export const refreshContacts = () => {
+  getContacts().then((contacts) => {
+    state.update((s) => {
+      s.profiles = contacts;
+      return s;
+    });
   });
-});
+};
 
-getJoinedGroups().then((groups) => {
-  // for some reasons it's possible to get groups that don't have a title
-  // so we filter them here to avoid showing useless info
-  state.update((s) => {
-    s.groups = Object.entries(groups || {}).filter(
-      ([
-        _,
-        {
-          meta: { title },
-        },
-      ]) => !!title
-    );
-    return s;
+export const refreshGroups = () => {
+  getJoinedGroups().then((groups) => {
+    // for some reasons it's possible to get groups that don't have a title
+    // so we filter them here to avoid showing useless info
+    state.update((s) => {
+      s.groups = Object.entries(groups || {}).filter(
+        ([
+          _,
+          {
+            meta: { title },
+          },
+        ]) => !!title
+      );
+      return s;
+    });
   });
-});
+};
 
-getInstalledApps().then((apps) => {
-  state.update((s) => {
-    s.apps = apps;
-    return s;
+export const refreshApps = () => {
+  getInstalledApps().then((apps) => {
+    state.update((s) => {
+      s.apps = apps;
+      return s;
+    });
   });
-});
+};
 
-getPals().then((pals) => {
-  state.update((s) => {
-    s.pals = pals.outgoing;
-    return s;
+export const refreshPals = () => {
+  getPals().then((pals) => {
+    state.update((s) => {
+      s.pals = pals.outgoing;
+      return s;
+    });
   });
-});
-
-export const curatorNames = derived(
-  state,
-  (s, set) =>
-    set(
-      s[INDEX_KEY]?.item?.data?.bespoke?.payload?.map((p) => p?.keyObj?.ship) ||
-        []
-    ),
-  []
-);
+};
 
 export const getCurator = (patp) => {
   return { ...mainCollection(patp), ...get(state)?.profiles?.[patp] };
@@ -127,3 +125,12 @@ const keyStrFromObj = ({ struc, ship, cord, time }) => {
 
 const mainCollection = (patp) => get(state)[mainCollectionKey(patp)];
 const mainCollectionKey = (patp) => `/collection/${patp}//~2000.1.1`;
+
+export const refreshAll = () => {
+  refreshPortalItems();
+  refreshContacts();
+  refreshApps();
+  refreshGroups();
+  refreshPals();
+};
+refreshAll();
