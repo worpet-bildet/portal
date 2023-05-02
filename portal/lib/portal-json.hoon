@@ -368,7 +368,7 @@
       %-  ot-raw  :~  title+so
                       blurb+so
                       image+so
-                      key-list+dejs-soft-key-list
+                      key-list+dejs-soft-path-key-list
                   ==
       other+(pole-to-cell raw)
         %'/app'  !!
@@ -382,7 +382,7 @@
     %.  jon
     %-  of
     :~  [%'/ship' so]
-        [%'/collection' (ot ~[title+so blurb+so image+so key-list+dejs-soft-key-list])]
+        [%'/collection' (ot ~[title+so blurb+so image+so key-list+dejs-soft-path-key-list])]
         [%'/other' (ot ~[title+so blurb+so link+so image+so])]
     ==
     (biff b |=(b=[@t *] (some b(- (stab -.b)))))
