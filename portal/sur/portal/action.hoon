@@ -23,7 +23,7 @@
         ==
       ==
       ::
-      [%replace =key =lens =bespoke]
+      [%replace =key =lens =bespoke]  ::  should it act like put or edit?
       ::
       [%append item-key=key col-key=[struc=[%collection ~] =ship =cord time=cord]]
       [%prepend item-key=key col-key=[struc=[%collection ~] =ship =cord time=cord]]
@@ -32,13 +32,7 @@
       ::
       [%delete =key]  ::  adds [%deleted ~] lens
       ::
-      ::  subscribing should check whether item exists
-      ::  somewhere in the logic it should be accounted for
-      ::: that the item was deleted
-      ::
       [%sub =key]  ::  TODO for temp items
-      ::
-      [%edit-docket =key =treaty]  ::put treaty into /enditem/app
       ::
       :: [%purge =default-curators =portal-curator]
       ::

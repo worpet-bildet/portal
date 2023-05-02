@@ -82,11 +82,6 @@
       ::
       %delete  =^(cards items (delete:on-act:on-poke:store act) [cards this])
       ::
-      %edit-docket  `this
-      :: =^  cards  items
-      ::   (edit-docket:on-action:store items our.bowl src.bowl now.bowl act)
-      :: [cards this]
-      ::
       ::   %purge
       :: =^  cards  items
       ::   (purge:store [items our.bowl src.bowl now.bowl act])

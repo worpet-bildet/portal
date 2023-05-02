@@ -20,7 +20,7 @@
   ::     =/  transform
   ::       |=  [=key acked=?]
   ::       ^-  [@t json]
-  ::       [(spat (key-to-path-key:conv key)) b+acked]
+  ::       [(spat (key-to-path:conv key)) b+acked]
   ::     =/  l  (turn ~(tap by mapp) transform)
   ::     [%o `(map @t json)`(malt l)]
   ::   --
@@ -265,7 +265,7 @@
   ++  enjs-jam-key
     |=  =key
     ^-  json
-    (path:enjs:format (key-to-path-key:conv key))
+    (path:enjs:format (key-to-path:conv key))
     ::  %-  crip
     ::  ;:  weld
     ::    (spud struc.key)
