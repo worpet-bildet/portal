@@ -194,10 +194,6 @@
       ==
   --
 ::
-::
-
-::  'macros' of commands happen on portal-manager level
-::  TODO fundamental commands (actions) and composite commands
 ++  manager
   |_  [=bowl:gall cards=_*(list card)]
   ++  on-poke
@@ -206,8 +202,6 @@
                 ::  TODO cleanup PM state and maybe output that then
       |%
       ++  sub
-      ::  - do nothing if sub already exists for temp items (DO NOT RESUB)
-      ::  - purge: remove all temp items (and unsub, automatically via delete), and them subscribe to them again
         |=  [act=action]
         ^-  (list card)
         ?.  ?=([%sub *] act)  !!
@@ -225,7 +219,6 @@
                                    `bespoke
                                    `[[%collection ~] our.bowl '' '~2000.1.1']
                                ==
-        ::  not sub -> not perfectly updated, either too much or too little
         ::  TODO wires state transition
         ?+    struc.key.act    !!  
           ::        
@@ -287,11 +280,6 @@
   ::
   --
 ::
-::  TODO where to put validators? --->  upstream rather than downstream?
-::  - permissions (vjv izvuc tako da se ne ponavlja stalno ?> =(src our)
-::  - actions validators su takoder boilerplate
-::  -  ?> =(key act) i ovo isto
-::  - sve rascistit tak da mogu reasonat o tim stvarima
 ++  store
   |_  [=bowl:gall =items cards=_*(list card)]
   ::
@@ -460,6 +448,7 @@
       ^-  ^item
       ?.  ?=([%append *] act)  !!
       ?.  ?=([%collection ~] -.bespoke.col)  !!
+      ?>  =(col-key.act key.col)
       =/  new-key-list  (snoc key-list.bespoke.col item-key.act)
       %+  edit  col
         [%edit col-key.act ~ `[[%collection ~] ~ ~ ~ `new-key-list]]
@@ -469,6 +458,7 @@
       ^-  ^item
       ?.  ?=([%prepend *] act)  !!
       ?.  ?=([%collection ~] -.bespoke.col)  !!
+      ?>  =(col-key.act key.col)
       =/  new-key-list  [item-key.act key-list.bespoke.col]
       %+  edit  col
         [%edit col-key.act ~ `[[%collection ~] ~ ~ ~ `new-key-list]]
@@ -478,6 +468,7 @@
       ^-  ^item
       ?.  ?=([%remove *] act)  !!
       ?.  ?=([%collection ~] -.bespoke.col)  !!
+      ?>  =(col-key.act key.col)
       =/  new-key-list  (skip key-list.bespoke.col |=(=key =(key item-key.act)))
       %+  edit  col
         [%edit col-key.act ~ `[[%collection ~] ~ ~ ~ `new-key-list]]
@@ -510,8 +501,68 @@
     |%
     ++  on-act
       |%
+      :: OLD note block
+        ::  TODO purge
+        ::  purge all cols which are not our or worpet-bildet
+        ::  keep: all our items, all items in our col, all items in worpet-bildets cols
+
+      ::  purges all 
+      ::   - %deleted (+unsub)
+      ::   - %temp
+      ::   - not our, not portal curators, not default curators (+unsub)
+      :: ++  purge
+      ::   |=  [=items our=ship src=ship now=time act=[%purge =default-curators =portal-curator]]
+      ::   ^-  [(list card) ^items]
+      ::   =/  items-key-set  ~(key by items)
+      ::   =/  key-list  ~(tap in items-key-set)
+      ::   ::make list/set of items
+      ::   ::diff from items
+      ::   =/  ships  (silt (limo ~[our ship.portal-curator.act]))  ::TODO also default curators in here
+      ::   =/  our-keys  (skim-ships:keys key-list ~(tap in ships))  ::  LISTLIST KEY LIST
+      ::   =/  our-list-lists-keys  (skim-types:keys our-keys ~[[%list %list ~]])  :: LISTLIST KEYLIST
+      ::   =/  our-list-lists-items  ::list items
+      ::     %-  (list item)  %+  skip
+      ::       ~(val by (get-items:misc items our-list-lists-keys))
+      ::       |=(item=?(~ item) ?~(item %.y %.n))
+      ::   =/  our-lists-keys  `(list key)`(zing (turn our-list-lists-items |=(=item (list-item-to-key-list:misc item))))  :: LIST KEYLIST
+      ::   =/  our-lists-items
+      ::     %-  (list item)  %+  skip
+      ::       (turn our-lists-keys |=(=key (~(gut by items) key ~)))  :: LIST ITEMLIST
+      ::       |=(item=?(~ item) ?~(item %.y %.n))
+      ::   =/  our-items-keys  `(list key)`(zing (turn our-lists-items |=(=item (list-item-to-key-list:misc item))))  :: ITEM KEYLIST
+      ::   =/  keys-to-keep  (~(uni in (silt our-keys)) (silt our-lists-keys))
+      ::   =.  keys-to-keep  (~(uni in keys-to-keep) (silt our-items-keys))
+      ::   :: our-list-lists-keys is redundant
+      ::   =/  keys-to-purge  (~(dif in items-key-set) keys-to-keep)
+      ::   =/  keys  ~(tap in keys-to-purge)
+      ::   =/  len  (lent keys)
+      ::   =/  n  0
+      ::   =/  return  [*(list card) items=items]
+      ::   :: ~&  "items-key-set"
+      ::   :: ~&  >  ~(wyt in items-key-set)
+      ::   :: ~&  "item number to keep"
+      ::   :: ~&  >  ~(wyt in keys-to-keep)
+      ::   :: ~&  "item number to purge"
+      ::   :: ~&  >  len
+      ::   =.  return
+      ::     |-  ?:  =(n len)  return
+      ::     :: ~&  "items kept"
+      ::     :: ~&  >  ~(wyt by `^items`+.return)
+      ::     =/  new  (del:on-action items.return our src now [%del (snag n keys)])
+      ::     %=  $
+      ::       -.return  (weld -.return -.new)
+      ::       +.return  +.new
+      ::       n  +(n)
+      ::     ==
+      ::   =/  key-set  ~(key by items.return)
+      ::   =/  key-list  ~(tap in key-set)
+      ::   ~&  "%portal: purge done"
+      ::   :: refreshes temp items kept after purge
+      ::   [(weld (get-temp-items:manager our key-list) -.return) +.return]
+      :: ::
+
       ::
-      ++  sub  ::  TODO modify just for PS
+      ++  sub
         |=  [act=action]
         ^-  [(list card) ^items]
         ?.  ?=([%sub *] act)  !!
@@ -583,66 +634,7 @@
         [(del:cards-methods item) (put-item item)]
       --
     --
-
-      ::
   --
-      ::  TODO entire purge is based upon nested data structure
-      ::  needs to be rebuilt
-      ::  purges all foreign items except those from default-curators and portal-curator
-      :: ++  purge
-      ::   |=  [=items our=ship src=ship now=time act=[%purge =default-curators =portal-curator]]
-      ::   ^-  [(list card) ^items]
-      ::   =/  items-key-set  ~(key by items)
-      ::   =/  key-list  ~(tap in items-key-set)
-      ::   ::make list/set of items
-      ::   ::diff from items
-      ::   =/  ships  (silt (limo ~[our ship.portal-curator.act]))  ::TODO also default curators in here
-      ::   =/  our-keys  (skim-ships:keys key-list ~(tap in ships))  ::  LISTLIST KEY LIST
-      ::   =/  our-list-lists-keys  (skim-types:keys our-keys ~[[%list %list ~]])  :: LISTLIST KEYLIST
-      ::   =/  our-list-lists-items  ::list items
-      ::     %-  (list item)  %+  skip
-      ::       ~(val by (get-items:misc items our-list-lists-keys))
-      ::       |=(item=?(~ item) ?~(item %.y %.n))
-      ::   =/  our-lists-keys  `(list key)`(zing (turn our-list-lists-items |=(=item (list-item-to-key-list:misc item))))  :: LIST KEYLIST
-      ::   =/  our-lists-items
-      ::     %-  (list item)  %+  skip
-      ::       (turn our-lists-keys |=(=key (~(gut by items) key ~)))  :: LIST ITEMLIST
-      ::       |=(item=?(~ item) ?~(item %.y %.n))
-      ::   =/  our-items-keys  `(list key)`(zing (turn our-lists-items |=(=item (list-item-to-key-list:misc item))))  :: ITEM KEYLIST
-      ::   =/  keys-to-keep  (~(uni in (silt our-keys)) (silt our-lists-keys))
-      ::   =.  keys-to-keep  (~(uni in keys-to-keep) (silt our-items-keys))
-      ::   :: our-list-lists-keys is redundant
-      ::   =/  keys-to-purge  (~(dif in items-key-set) keys-to-keep)
-      ::   =/  keys  ~(tap in keys-to-purge)
-      ::   =/  len  (lent keys)
-      ::   =/  n  0
-      ::   =/  return  [*(list card) items=items]
-      ::   :: ~&  "items-key-set"
-      ::   :: ~&  >  ~(wyt in items-key-set)
-      ::   :: ~&  "item number to keep"
-      ::   :: ~&  >  ~(wyt in keys-to-keep)
-      ::   :: ~&  "item number to purge"
-      ::   :: ~&  >  len
-      ::   =.  return
-      ::     |-  ?:  =(n len)  return
-      ::     :: ~&  "items kept"
-      ::     :: ~&  >  ~(wyt by `^items`+.return)
-      ::     =/  new  (del:on-action items.return our src now [%del (snag n keys)])
-      ::     %=  $
-      ::       -.return  (weld -.return -.new)
-      ::       +.return  +.new
-      ::       n  +(n)
-      ::     ==
-      ::   =/  key-set  ~(key by items.return)
-      ::   =/  key-list  ~(tap in key-set)
-      ::   ~&  "%portal: purge done"
-      ::   :: refreshes temp items kept after purge
-      ::   [(weld (get-temp-items:manager our key-list) -.return) +.return]
-      ::
-
-    ::
-
-  ::
   :: ++  on-message
   ::   |%
   ::   ++  index-as-curator  ::idempotent toggle

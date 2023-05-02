@@ -3,13 +3,14 @@
 ::
 ::  units are optional args
 +$  action
-  $%  $:  %create  ::  "if exists, overwrite" OR "if exists, doesnt do anything"?
+  $%  $:  %create
          ship=(unit ship)
          cord=(unit cord)
          time=(unit cord)
          lens=(unit lens)
          bespoke=(unit bespoke)
          append-to=(unit [struc=[%collection ~] =ship =cord time=_'~2000.1.1'])
+         :: TODO add to multiple collections
       ==
       ::
       $:  %edit
@@ -32,15 +33,13 @@
       ::
       [%delete =key]  ::  adds [%deleted ~] lens
       ::
-      [%sub =key]  ::  TODO for temp items
+      [%sub =key]
       ::
-      :: [%purge =default-curators =portal-curator]
       ::
       [%index-as-curator toggle=?]
       [%onboarded toggle=?]
       ::
-      ::  command sequences/macros necessary?
-      :: maybe action should be action==message
-
+      ::  ? purge needs to be defined as action?
+      [%purge portal-curator=@p]
     ==
 --

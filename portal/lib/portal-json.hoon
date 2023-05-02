@@ -405,6 +405,11 @@
     ^-  (unit key-list)
     %.  jon
     (ar:dejs-soft dejs-soft-key)
+  ++  dejs-soft-path-key-list
+    |=  jon=json
+    ^-  (unit key-list)
+    %.  jon
+    (ar:dejs-soft dejs-soft-path-to-key)
   ++  dejs-key
     |=  jon=json
     ;;  key
@@ -425,6 +430,10 @@
         cord+so:dejs-soft
         time+so:dejs-soft
     ==
+  ++  dejs-soft-path-to-key
+      |=  jon=json
+      ;;  (unit key)
+      (some (path-to-key:conv (path (stab (so:dejs jon)))))
   ++  dejs-path
     |=  jon=json
     ^-  path
