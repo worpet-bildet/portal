@@ -42,6 +42,12 @@
   ::   :_  this
   ::   (zing ~[cards-1 cards-2 cards-3])
 ::
+::
+::  SCRY TO GET TEMP APPS
+::  .^((map desk [ship desk]) %gx /=hood=/kiln/sources/noun)
+::  triggered on poke from the front end
+::  scries (maybe subs) and makes a collection with our installed apps
+::
 ++  on-save  !>(state)
 ++  on-load
   |=  old=vase

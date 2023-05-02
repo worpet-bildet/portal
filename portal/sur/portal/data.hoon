@@ -2,47 +2,6 @@
 |%
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
-::  TODO define networking scheme? (sub updates), put/del updates
-::  TODO json coversions such that FE doesnt have to input an optional arg
-::  if they dont want to
-
-::  OLD
-::  /list/list
-::     /list
-::         /item
-::
-::  NEW  ->
-::  TODO DISCUSS the items which are in lists should also be in main list/collection?
-:: /maincol
-::    /col1
-      ::     /item1
-      ::     /item2
-      :: /col2
-      :: /item1
-      :: [all our items]
-      :: [temp?]
-      :: [~zods item]
-
-
-
-:: Should we store everything in main collection?
-:: E.g. do we store %validity-store there?
-:: validity store is used for storing the validity of items
-:: another example, do we store the feed or index there?
-:: do we store only our items, or also stuff we sub to?
-:: worth discussing over a call, we can do tmrw if you want
-
-::
-::  TODO define state transition with $&
-::  TODO define state transition of existing items
-  :: /list/nonitem/group ~2000.1.1
-  :: /list/nonitem/app   ~2000.1.1
-  :: /list/enditem/other ~2000.1.1    ->   /collection
-  :: /list/nonitem/ship  ~2000.1.1    ->   /collection [the time of state transtion] (will this work?)
-  :: /list/list          ~2000.1.1    ->   /collection ~2000.1.1
-::  TODO purge
-  ::  purge all cols which are not our or worpet-bildet
-  ::  keep: all our items, all items in our col, all items in worpet-bildets cols
 ::
 ::  --  after everything works--
 ::  TODO-->  feed SSS?  YES, feed item? MAYBE
@@ -58,7 +17,19 @@
 ::  soc graph networking?  NO
 ::  optimistic rendering   NO
 ::
+::  TODO define state transition (PM and PS) with $&
+::  - its fine if I dont make a state trans and lose the state of PM. (except maybe feed?)
+::  TODO define state transition of existing items
+  :: /list/nonitem/group ~2000.1.1
+  :: /list/nonitem/app   ~2000.1.1
+  :: /list/enditem/other ~2000.1.1    ->   /collection
+  :: /list/nonitem/ship  ~2000.1.1    ->   /collection [the time of state transtion] (will this work?)
+  :: /list/list          ~2000.1.1    ->   /collection ~2000.1.1
+::
 ::  Basic Outline
+::
+::
+::  TODO FEED type 
 ::
 ::
 +$  key  [=struc =ship =cord time=cord]

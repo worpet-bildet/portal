@@ -6,22 +6,6 @@
   $%  state-0
       state-1
   ==
-+$  state-0
-  $:  %0
-      =default-curators
-      =portal-curator
-  ==
-::  TODO clean up portal manager state
-+$  state-1
-  $:  %1
-      =default-curators
-      =portal-curator
-      =purge-timer
-      =purge-time
-      =portal-indexer
-      =indexed-as-curator
-      =onboarded
-  ==
 +$  card  card:agent:gall
 --
 %-  agent:dbug
@@ -140,7 +124,7 @@
   ?>  ?=([%purge-timer ~] wire)
   ?>  ?=([%khan %arow *] sign)
   :_  this
-  :~  [(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>([%purge default-curators portal-curator]))]
+  :~  [(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>([%purge portal-curator]))]
       [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]
   ==
 ::
@@ -150,10 +134,8 @@
   |=  =path
   ^-  (unit (unit cage))
   ?+    path    (on-peek:default path)
-      [%x %indexed-as-curator ~]
-    ``bool+!>(indexed-as-curator)
-      [%x %onboarded ~]
-    ``bool+!>(onboarded)
+    [%x %indexed-as-curator ~]  ``manager-result+!>(indexed-as-curator)
+    [%x %onboarded ~]           ``manager-result+!>(onboarded)
   ==
 ++  on-agent
   |=  [=wire =sign:agent:gall]
