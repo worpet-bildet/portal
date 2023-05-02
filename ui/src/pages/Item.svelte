@@ -1,6 +1,6 @@
 <script>
   import { getItem, state } from '@root/state';
-  import { FeedItem } from '@components';
+  import { FeedPost } from '@components';
   import { FeedPostForm } from '@components/Form';
 
   export let params;
@@ -13,6 +13,7 @@
     item = getItem(itemkey);
   });
 
+  // TODO: Save as a comment to the original post
   const post = (detail) => {
     console.log({ detail });
   };
@@ -23,7 +24,7 @@
 
 {#if item}
   <div class="grid gap-y-5">
-    <FeedItem {item} />
+    <FeedPost {item} />
     <FeedPostForm on:post={({ detail }) => post(detail)} />
   </div>
 {:else}

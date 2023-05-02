@@ -4,7 +4,7 @@
 </script>
 
 {#if isUrl(image)}
-  <img {image} class="w-full h-full object-cover" alt={title} />
+  <img src={image} class="w-full h-full object-cover" alt={title} />
 {:else}
   <div
     class="flex items-center justify-center text-2xl text-clip w-full h-full"

@@ -1,5 +1,5 @@
 <script>
-  import { link } from 'svelte-spa-router';
+  import { link, location } from 'svelte-spa-router';
   import { me } from '@root/api';
 
   const nav = [
@@ -15,7 +15,11 @@
 </script>
 
 <div class="flex justify-between items-center border-b px-10 py-2">
-  <a use:link href="/" class="flex items-center text-xl font-bold gap-2">
+  <a
+    use:link
+    href="/"
+    class="flex items-center text-xl font-bold gap-2 text-white"
+  >
     <img
       class="w-16"
       src="https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/logo2.svg"
@@ -25,7 +29,12 @@
   </a>
   <div class="flex gap-4">
     {#each nav as n}
-      <a use:link href={n.link}>{n.title}</a>
+      <a
+        use:link
+        href={n.link}
+        class="text-white"
+        class:underline={$location === n.link}>{n.title}</a
+      >
     {/each}
   </div>
 </div>

@@ -1,7 +1,7 @@
 <script>
   import { poke, scry, me } from '@root/api';
   import { feed } from '@root/state';
-  import { FeedItem } from '@components';
+  import { FeedPost } from '@components';
   import { FeedPostForm } from '@components/Form';
 
   // TODO: would be nice to put this in teh FeedPostForm component, but we
@@ -49,7 +49,7 @@
     <FeedPostForm on:post={({ detail }) => post(detail)} />
     {#if Object.values($feed).length > 0}
       {#each Object.values($feed) as item}
-        <FeedItem {item} />
+        <FeedPost {item} />
       {/each}
     {:else}
       <div>Loading...</div>

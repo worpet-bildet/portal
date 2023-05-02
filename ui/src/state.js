@@ -52,7 +52,6 @@ getJoinedGroups().then((groups) => {
 });
 
 getInstalledApps().then((apps) => {
-  console.log({ apps });
   state.update((s) => {
     s.apps = apps;
     return s;
@@ -95,6 +94,10 @@ export const getCuratorItemsByStruc = (patp, struc) => {
     ?.map((k) => get(state)[keyStrFromObj(k)]);
 };
 
+export const getGroup = (groupkey) => {
+  return get(state)[`/group/${groupkey}/`];
+};
+
 export const getItem = (listKey) => {
   return get(state)[listKey];
 };
@@ -109,7 +112,8 @@ export const handleSubscriptionEvent = (event, type) => {
       });
     case 'contact-news':
       state.update((s) => {
-        s[event.who] = event.con;
+        if (!s.profiles) s.profiles = {};
+        s.profiles[event.who] = event.con;
         return s;
       });
     default:

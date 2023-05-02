@@ -1,23 +1,30 @@
 <script>
-  import { subscribeToItem } from '@root/api';
+  import { subscribeToGroup } from '@root/api';
   import { getItem } from '@root/state';
   import { ItemImage } from '@fragments';
+  import { link } from 'svelte-spa-router';
   export let key;
   const group = getItem(`/group/${key}/`);
   if (!group) {
-    subscribeToItem(key);
+    subscribeToGroup(key);
   }
   let image, title;
-  if (group) ({ image, title } = group);
+  if (group && group.bespoke) {
+    ({ image, title } = group.bespoke);
+  }
 </script>
 
 {#if group}
-  <div class="flex gap-4 items-center">
-    <div class="rounded-full h-16 w-16">
+  <a
+    use:link
+    href={`/group/${key}`}
+    class="p-1 flex gap-4 items-center hover:bg-gray-500 cursor-pointer"
+  >
+    <div class="rounded-md overflow-hidden h-16 w-16">
       <ItemImage {image} {title} color="" />
     </div>
     <div>
       <div>{title}</div>
     </div>
-  </div>
+  </a>
 {/if}

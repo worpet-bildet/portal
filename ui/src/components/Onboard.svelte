@@ -15,8 +15,6 @@
     groups: [],
     apps: [],
   };
-
-  $: console.log({ groups, apps });
 </script>
 
 <Modal open={true}>

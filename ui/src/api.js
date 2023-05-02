@@ -50,7 +50,10 @@ export const getPals = () => {
   });
 };
 
-export const subscribeToItem = (key) => {
+export const addPal = () => {};
+export const removePal = () => {};
+
+export const subscribeToGroup = (key) => {
   let parts = key.split('/');
   poke({
     app: 'portal-manager',
@@ -68,7 +71,7 @@ export const subscribeToItem = (key) => {
   });
 };
 
-export const subscribeToCurator = (patp) => {
+export const subscribeToContactProfile = (patp) => {
   poke({
     app: 'contacts',
     mark: 'contact-action',
@@ -76,19 +79,6 @@ export const subscribeToCurator = (patp) => {
       heed: [patp],
     },
   });
-  // return poke({
-  //   app: 'portal-manager',
-  //   mark: 'portal-action',
-  //   json: {
-  //     sub: {
-  //       key: {
-  //         ship: patp,
-  //         type: '/list/list',
-  //         cord: '~2000.1.1',
-  //       },
-  //     },
-  //   },
-  // });
 };
 
 export const usePortalSubscription = (onEvent) => {

@@ -1,41 +1,24 @@
 export const getMeta = (item) => {
   return {
     title: getTitle(item),
+    description: getDescription(item),
     blurb: getBlurb(item),
     image: getImage(item),
+    cover: getCover(item),
     ship: getShip(item),
+    createdAt: getCreatedAt(item),
     keyStr: item?.keyStr,
   };
 };
 
-export const getType = (item) => {
-  const key = item?.keyStr;
-  if (key?.includes('nonitem/app')) return 'app';
-  if (key?.includes('nonitem/group')) return 'group';
-  if (key?.includes('nonitem/ship')) return 'ship';
-  if (key?.includes('enditem/other')) return 'other';
-  if (key?.includes('list')) return 'list';
-};
-
-export const getTitle = (item) => {
-  return item?.bespoke?.title;
-};
-
-export const getBlurb = (item) => {
-  return item?.bespoke?.blurb;
-};
-
-export const getImage = (item) => {
-  return item?.bespoke?.image;
-};
-
-export const getShip = (item) => {
-  return item?.keyObj?.ship;
-};
-
-export const getLink = (item) => {};
-
-export const getPayload = (item) => item?.data?.bespoke?.payload;
+export const getTitle = (item) => item?.bespoke?.title;
+export const getDescription = (item) => item?.bespoke?.description;
+export const getBlurb = (item) => item?.bespoke?.blurb;
+export const getImage = (item) => item?.bespoke?.image;
+export const getCover = (item) => item?.bespoke?.cover;
+export const getShip = (item) => item?.keyObj?.ship;
+export const getCreatedAt = (item) => fromUrbitTime(item?.meta?.createdAt);
+export const getLink = (item) => item?.bespoke?.link;
 
 export const isUrl = (s) => {
   if (
@@ -52,49 +35,6 @@ export const isUrl = (s) => {
 export const invertHex = (hex) => {
   return (Number(`0x1${hex}`) ^ 0xffffff).toString(16).slice(1).toUpperCase();
 };
-
-// export const unsanitiseRecursive = (objectOrText) => {
-//   let cloned;
-//   if (typeof objectOrText === 'object' && !Array.isArray(objectOrText)) {
-//     cloned = { ...objectOrText };
-//     for (let key in cloned) {
-//       cloned[key] = unsanitiseTextFieldsRecursive(cloned[key]);
-//     }
-//   }
-//   if (Array.isArray(objectOrText)) {
-//     cloned = objectOrText.map((el) => el);
-//     for (let [index] in cloned) {
-//       cloned[index] = unsanitiseTextFieldsRecursive(cloned[index]);
-//     }
-//   }
-//   if (typeof objectOrText === 'string') {
-//     cloned = objectOrText.substring(0);
-//     cloned = cloned.replace(/\\'/g, "'");
-//   }
-//   return cloned;
-// };
-
-// export const sanitiseRecursive = (objectOrText) => {
-//   // if object is an object, loop through the keys
-//   let cloned;
-//   if (typeof objectOrText === 'object' && !Array.isArray(objectOrText)) {
-//     cloned = { ...objectOrText };
-//     for (let key in cloned) {
-//       cloned[key] = sanitiseTextFieldsRecursive(cloned[key]);
-//     }
-//   }
-//   if (Array.isArray(objectOrText)) {
-//     cloned = objectOrText.map((el) => el);
-//     for (let [index] in cloned) {
-//       cloned[index] = sanitiseTextFieldsRecursive(cloned[index]);
-//     }
-//   }
-//   if (typeof objectOrText === 'string') {
-//     cloned = objectOrText.substring(0);
-//     cloned = cloned.replace(/'/g, "\\'");
-//   }
-//   return cloned;
-// };
 
 export const toUrbitTime = (timestamp) => {
   // turn this into a date object
@@ -115,6 +55,7 @@ export const toUrbitTime = (timestamp) => {
 };
 
 export const fromUrbitTime = (timestring) => {
+  if (!timestring) return;
   const msOffset = new Date().getTimezoneOffset() * 60 * 1000;
   let parts = timestring.split('.');
   const date = new Date(

@@ -1,13 +1,14 @@
 <script>
   import { createEventDispatcher } from 'svelte';
-  import { ProfileIcon, TextArea } from '@fragments';
+  import { me } from '@root/api';
+  import { TextArea, Sigil } from '@fragments';
   const dispatch = createEventDispatcher();
   let postContent;
 </script>
 
 <div class="grid grid-cols-12 gap-y-3 border p-3">
-  <div class="col-span-1 w-10 h-10">
-    <ProfileIcon />
+  <div class="col-span-1 w-10 h-10 rounded-md overflow-hidden">
+    <Sigil patp={me} />
   </div>
   <div class="col-span-11">
     <TextArea

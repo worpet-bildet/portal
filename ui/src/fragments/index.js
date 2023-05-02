@@ -8,6 +8,5 @@ export { default as CollectIcon } from './Icons/Collect.svelte';
 export { default as CommentIcon } from './Icons/Comment.svelte';
 export { default as LikeIcon } from './Icons/Like.svelte';
 export { default as ShareIcon } from './Icons/Share.svelte';
-export { default as ProfileIcon } from './Icons/Profile.svelte';
 export { default as AddPalIcon } from './Icons/AddPal.svelte';
 export { default as RemovePalIcon } from './Icons/RemovePal.svelte';

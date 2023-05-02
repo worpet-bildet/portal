@@ -1,5 +1,6 @@
 <script>
   import { state } from '@root/state';
+  import { poke, me } from '@root/api';
   import { Modal, StepForm, TextArea } from '@fragments';
 
   let groups;
@@ -14,7 +15,7 @@
   let description = '';
   let items = [];
 
-  let formstep = 'items';
+  let formstep = 'meta';
   let formsteps = ['meta', 'items'];
 
   const save = () => {
@@ -22,6 +23,28 @@
     // collection with the new items. i am not sure exactly how this should
     // be structured but it can't be too difficult to figure out
     console.log({ name, description, items });
+    poke({
+      app: 'portal-manager',
+      mark: 'portal-action',
+      json: {
+        create: {
+          'append-to': {
+            ship: me,
+            struc: '/collection',
+            time: '~2000.1.1',
+            cord: '',
+          },
+          bespoke: {
+            '/collection': {
+              title: name,
+              blurb: description,
+              image: '',
+              'key-list': items,
+            },
+          },
+        },
+      },
+    }).then((result) => console.log({ result }));
   };
 
   $: console.log({ items });

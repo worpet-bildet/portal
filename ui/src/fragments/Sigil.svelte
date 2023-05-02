@@ -12,13 +12,12 @@
   $: primaryColor = formatColor(color);
   $: secondaryColor = invertHex(formatColor(color));
 
-  $: console.log({ primaryColor, patp, secondaryColor });
   if (patp.length > 14) patp = '~zod';
 </script>
 
 {@html sigil({
   patp,
   renderer: stringRenderer,
-  size: 50,
+  size: size || 50,
   colors: [`#${primaryColor}`, `#${secondaryColor}`],
 })}
