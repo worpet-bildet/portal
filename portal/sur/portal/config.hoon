@@ -4,7 +4,7 @@
 ::  add defaults, either with $_(? e.g. _~zod) or $~
 +$  default-curators  (set key)
 +$  portal-curator  key
-+$  purge-timer  _%.y
++$  purge-timer  ?  
 +$  purge-time  @dr
 +$  portal-indexer  @p
 +$  indexed-as-curator  ?

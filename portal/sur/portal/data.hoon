@@ -4,7 +4,6 @@
 ::
 ::
 ::  --  after everything works--
-::  TODO-->  feed SSS?  YES, feed item? MAYBE
 ::  TODO - each bespoke has its own diffs? (SSS)
 ::  TODO decide how bespoke should look
 ::  (for now, with new modifications to existing functionality)
@@ -28,8 +27,12 @@
 ::
 ::  Basic Outline
 ::
+::  TODO fix portal manager nuking  ->  recreate??
+::  TODO fix collection creation  ->  key object
+::  TODO append to multiple lists   DONE
 ::
-::  TODO FEED type 
+::  TODO FEED type
+::  TODO portal-indexer, separate agent
 ::
 ::
 +$  key  [=struc =ship =cord time=cord]
@@ -40,6 +43,7 @@
       [%ship ~]
       [%app ~]
       [%collection ~]
+      [%feed ~]
       [%validity-store ~]
       [%other ~]
       ::  TODO  profile
@@ -120,6 +124,11 @@
   $%  [struc=[%ship ~] ~]
       [struc=[%group ~] =data:group-preview]
       [struc=[%app ~] dist-desk=@t sig=signature =treaty]
+     
+      
+      [struc=[%feed ~] =feed]
+
+
       [struc=[%collection ~] title=@t blurb=@t image=@t =key-list]  ::does it need link?
       ::  TODO /list/list becomes these 2 things:
       ::  1. to profile type?
@@ -129,6 +138,10 @@
       [struc=[%other ~] title=@t blurb=@t link=@t image=@t]
   ==
 ::
+
++$  feed  (list [time=cord =ship =key])
++$  feed-items  (list item)
+
 ::
 +$  key-list  (list key)
 +$  key-set  (set key)

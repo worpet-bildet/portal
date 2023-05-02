@@ -9,7 +9,7 @@
          time=(unit cord)
          lens=(unit lens)
          bespoke=(unit bespoke)
-         append-to=(unit [struc=[%collection ~] =ship =cord time=_'~2000.1.1'])
+         append-to=(list [struc=[%collection ~] =ship =cord time=cord])
          :: TODO add to multiple collections
       ==
       ::

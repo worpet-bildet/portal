@@ -217,7 +217,7 @@
                                    `''
                                    `[%temp ~]
                                    `bespoke
-                                   `[[%collection ~] our.bowl '' '~2000.1.1']
+                                   [[%collection ~] our.bowl '' '~2000.1.1']~
                                ==
         ::  TODO wires state transition
         ?+    struc.key.act    !!  
@@ -596,9 +596,11 @@
         ?:  (has-item key.item)  !!  :: should other actions have these checks?
         =.  cards  (put:cards-methods item)
         =.  items  (put-item item)
-        ?~  append-to.act  [cards items]
         ::  TODO check if already in list/items (if doing put with temp)
-        (append [%append key.item (need append-to.act)])
+        ?~  append-to.act  [cards items]
+        %-  tail  %^  spin  `key-list`append-to.act  [cards items] 
+          |=  [col-key=key q=[(list card) ^items]] 
+          [col-key (append [%append key.item col-key(struc [%collection ~])])]
         ::  also -> main collection deduplication
         ::  (preventing duplication in the first place)
       ::

@@ -325,7 +325,7 @@
                       time+so
                       lens+dejs-soft-path
                       bespoke+dejs-soft-bespoke
-                      append-to+dejs-soft-key
+                      append-to+dejs-soft-key-list
                   ==
       create+(pole-to-cell raw)
         %edit
@@ -368,7 +368,7 @@
       %-  ot-raw  :~  title+so
                       blurb+so
                       image+so
-                      key-list+dejs-soft-path-key-list
+                      key-list+dejs-soft-key-list
                   ==
       other+(pole-to-cell raw)
         %'/app'  !!
@@ -382,7 +382,7 @@
     %.  jon
     %-  of
     :~  [%'/ship' so]
-        [%'/collection' (ot ~[title+so blurb+so image+so key-list+dejs-soft-path-key-list])]
+        [%'/collection' (ot ~[title+so blurb+so image+so key-list+dejs-soft-key-list])]
         [%'/other' (ot ~[title+so blurb+so link+so image+so])]
     ==
     (biff b |=(b=[@t *] (some b(- (stab -.b)))))
@@ -405,11 +405,6 @@
     ^-  (unit key-list)
     %.  jon
     (ar:dejs-soft dejs-soft-key)
-  ++  dejs-soft-path-key-list
-    |=  jon=json
-    ^-  (unit key-list)
-    %.  jon
-    (ar:dejs-soft dejs-soft-path-to-key)
   ++  dejs-key
     |=  jon=json
     ;;  key
@@ -430,10 +425,6 @@
         cord+so:dejs-soft
         time+so:dejs-soft
     ==
-  ++  dejs-soft-path-to-key
-      |=  jon=json
-      ;;  (unit key)
-      (some (path-to-key:conv (path (stab (so:dejs jon)))))
   ++  dejs-path
     |=  jon=json
     ^-  path

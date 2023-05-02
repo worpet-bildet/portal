@@ -39,6 +39,8 @@
       [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]
   ==
 ::
+::
+::  TODO portal-indexer, separate agent
 ++  on-save  !>(state)
 ++  on-load
   |=  old=vase

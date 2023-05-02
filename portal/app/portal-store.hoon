@@ -26,10 +26,10 @@
   =*  store-core  ~(. store [bowl items ~])
   =/  col-create  :*  %create  ~  ~  `'~2000.1.1'  `[%def ~]
     `[[%collection ~] 'Main Collection' 'Your first collection.' '' ~]  
-    `[[%collection ~] our.bowl '' '~2000.1.1']  ==
+    [[%collection ~] our.bowl '' '~2000.1.1']~  ==
   =/  val-create  :*  %create  ~  ~  `'~2000.1.1'  `[%def ~]
     `[[%validity-store ~] *validity-records]
-    `[[%collection ~] our.bowl '' '~2000.1.1']  ==
+    [[%collection ~] our.bowl '' '~2000.1.1']~  ==
   =^  cards-1  items  (create:on-act:on-poke:store-core col-create)
   =^  cards-2  items  (create:on-act:on-poke:store-core val-create)
   :_  this  
