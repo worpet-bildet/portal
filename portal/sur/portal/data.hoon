@@ -43,7 +43,7 @@
       [%ship ~]
       [%app ~]
       [%collection ~]
-      [%feed ~]
+      :: [%feed ~]
       [%validity-store ~]
       [%other ~]
       ::  TODO  profile
@@ -126,7 +126,7 @@
       [struc=[%app ~] dist-desk=@t sig=signature =treaty]
      
       
-      [struc=[%feed ~] =feed]
+      :: [struc=[%feed ~] =feed]
 
 
       [struc=[%collection ~] title=@t blurb=@t image=@t =key-list]  ::does it need link?

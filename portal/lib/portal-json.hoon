@@ -325,7 +325,7 @@
                       time+so
                       lens+dejs-soft-path
                       bespoke+dejs-soft-bespoke
-                      append-to+dejs-soft-key-list
+                      append-to+dejs-key-list
                   ==
       create+(pole-to-cell raw)
         %edit
