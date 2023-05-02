@@ -57,6 +57,7 @@ export const addPal = (patp) => {
     json: { meet: { ship: patp, in: [] } },
   });
 };
+
 export const removePal = (patp) => {
   return poke({
     app: 'pals',
@@ -64,6 +65,13 @@ export const removePal = (patp) => {
     json: { part: { ship: patp, in: [] } },
   });
 };
+
+// export const subscribeToCurator = (patp) => {
+//   return poke({
+//     app: 'portal-manager',
+//     mark: ''
+//   })
+// }
 
 export const subscribeToGroup = (key) => {
   let parts = key.split('/');

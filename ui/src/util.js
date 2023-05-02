@@ -20,6 +20,17 @@ export const getShip = (item) => item?.keyObj?.ship;
 export const getCreatedAt = (item) => fromUrbitTime(item?.meta?.createdAt);
 export const getLink = (item) => item?.bespoke?.link;
 
+export const keyStringToObject = (str) => {
+  const parts = str.split('/');
+  console.log({ parts });
+  return {
+    ship: parts[1],
+    struc: `/${parts[0]}`,
+    time: '',
+    cord: parts[2],
+  };
+};
+
 export const isUrl = (s) => {
   if (
     /^(http(s):\/\/.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/g.test(

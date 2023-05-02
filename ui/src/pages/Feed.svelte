@@ -13,12 +13,14 @@
       mark: 'portal-action',
       json: {
         create: {
-          'append-to': {
-            ship: me,
-            struc: '/collection',
-            time: '~2000.1.1',
-            cord: '',
-          },
+          'append-to': [
+            {
+              ship: me,
+              struc: '/collection',
+              time: '~2000.1.1',
+              cord: '',
+            },
+          ],
           bespoke: {
             '/other': {
               title: '',

@@ -2,6 +2,7 @@
   import { state } from '@root/state';
   import { poke, me } from '@root/api';
   import { Modal, StepForm, TextArea } from '@fragments';
+  import { keyStringToObject } from '@root/util';
 
   let groups;
   state.subscribe((s) => (groups = s.groups));
@@ -15,7 +16,7 @@
   let description = '';
   let items = [];
 
-  let formstep = 'meta';
+  let formstep = 'items';
   let formsteps = ['meta', 'items'];
 
   const save = () => {
@@ -23,23 +24,49 @@
     // collection with the new items. i am not sure exactly how this should
     // be structured but it can't be too difficult to figure out
     console.log({ name, description, items });
-    poke({
+    console.log({
       app: 'portal-manager',
       mark: 'portal-action',
       json: {
         create: {
-          'append-to': {
-            ship: me,
-            struc: '/collection',
-            time: '~2000.1.1',
-            cord: '',
-          },
+          'append-to': [
+            {
+              ship: me,
+              struc: '/collection',
+              time: '~2000.1.1',
+              cord: '',
+            },
+          ],
           bespoke: {
             '/collection': {
               title: name,
               blurb: description,
               image: '',
-              'key-list': items,
+              'key-list': items.map((i) => keyStringToObject(i)),
+            },
+          },
+        },
+      },
+    });
+    poke({
+      app: 'portal-manager',
+      mark: 'portal-action',
+      json: {
+        create: {
+          'append-to': [
+            {
+              ship: me,
+              struc: '/collection',
+              time: '~2000.1.1',
+              cord: '',
+            },
+          ],
+          bespoke: {
+            '/collection': {
+              title: name,
+              blurb: description,
+              image: '',
+              'key-list': items.map((i) => keyStringToObject(i)),
             },
           },
         },
@@ -71,11 +98,7 @@
         {#each groups as [path, { meta: { title, image } }]}
           <div class="flex justify-between">
             <div>{title}</div>
-            <input
-              type="checkbox"
-              bind:group={items}
-              value={`/group/${path}/`}
-            />
+            <input type="checkbox" bind:group={items} value={`group/${path}`} />
           </div>
         {/each}
       {/if}
