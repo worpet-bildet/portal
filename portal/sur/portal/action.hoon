@@ -9,7 +9,7 @@
          time=(unit cord)
          lens=(unit lens)
          bespoke=(unit bespoke)
-         append-to=(list [struc=[%collection ~] =ship =cord time=cord])
+         append-to=(list [struc=%collection =ship =cord time=cord])
          :: TODO add to multiple collections
       ==
       ::
@@ -17,29 +17,34 @@
         $:  =key
             lens=(unit lens)
             $=  bespoke  %-  unit
-              $%  [[%other ~] title=(unit @t) blurb=(unit @t) link=(unit @t) image=(unit @t)]
-                  [[%app ~] dist-desk=(unit @t) sig=(unit signature) treaty=(unit treaty)]
-                  [[%collection ~] title=(unit @t) blurb=(unit @t) image=(unit @t) key-list=(unit key-list)]  ::does it need link?
+              $%  [%other title=(unit @t) blurb=(unit @t) link=(unit @t) image=(unit @t)]
+                  [%app dist-desk=(unit @t) sig=(unit signature) treaty=(unit treaty)]
+                  [%collection title=(unit @t) blurb=(unit @t) image=(unit @t) key-list=(unit key-list)]  ::does it need link?
+                  [%feed feed=(unit feed)]
               ==
         ==
       ==
       ::
-      [%replace =key =lens =bespoke]  ::  should it act like put or edit?
+      [%replace =key =lens =bespoke]  ::  TODO should it act like put or edit?, i.e. can it create a nonexisting item. NO!
       ::
-      [%append item-key=key col-key=[struc=[%collection ~] =ship =cord time=cord]]
-      [%prepend item-key=key col-key=[struc=[%collection ~] =ship =cord time=cord]]
+      [%append =key-list col-key=[struc=%collection =ship =cord time=cord]]
+      [%prepend =key-list col-key=[struc=%collection =ship =cord time=cord]]
       ::  removes all instances of key from collection
-      [%remove item-key=key col-key=[struc=[%collection ~] =ship =cord time=cord]]
+      [%remove =key-list col-key=[struc=%collection =ship =cord time=cord]]
       ::
       [%delete =key]  ::  adds [%deleted ~] lens
       ::
       [%sub =key]
+      [%sub-to-feed ~]
       ::
       ::
+      [%prepend-to-feed =key =feed]  ::  TODO rename?
       [%index-as-curator toggle=?]
       [%onboarded toggle=?]
       ::
       ::  ? purge needs to be defined as action?
-      [%purge portal-curator=@p]
+      :: TODO make purge have only 'items-to-keep' arg
+      ::[%purge portal-curator=@p]
+      [%purge keep=key-list]
     ==
 --

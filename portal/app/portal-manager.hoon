@@ -5,129 +5,107 @@
 +$  versioned-state
   $%  state-0
       state-1
+      state-2
   ==
 +$  card  card:agent:gall
 --
 %-  agent:dbug
-=|  state-1
+=|  state-2
 =*  state  -
 ^-  agent:gall
 |_  =bowl:gall
-+*  this      .
-    default   ~(. (default-agent this %|) bowl)
++*  this        .
+    default     ~(. (default-agent this %|) bowl)
+    timer-card  :*  %pass  /purge-timer  %arvo  %k  %fard  q.byk.bowl
+                 %purge-timer  noun+!>(`purge-time)  ==
 ++  on-init
   ^-  (quip card _this)
-  =/  new-user-event      [%join now.bowl (get-ship-type:misc our.bowl) `@ux`(shax our.bowl)]
-  =/  default-curators    *^default-curators :: (silt (limo ~[[[[%collection ~] [%def ~]] ~worpet-bildet '~2000.1.1']]))
-  =/  portal-curator      *^portal-curator  :: [[[%collection ~] [%def ~]] ~tactyl-darlup-dilryd-mopreg '~2000.1.1']  ::  TODO change to worpet-bildet
-  =/  purge-timer         %.y
-  =/  purge-time          ~d1
-  =/  portal-indexer      ~worpet-bildet
-  =/  indexed-as-curator  %.n
-  =/  onboarded           %.n
-  :_  %=  this
-        default-curators    default-curators
-        portal-curator      portal-curator
-        purge-timer         purge-timer
-        purge-time          purge-time
-        portal-indexer      portal-indexer
-        indexed-as-curator  indexed-as-curator
-        onboarded           onboarded
-      ==
-  :~  (~(poke pass:io /act) [our.bowl %portal-store] %portal-action !>([%sub portal-curator]))
-      (~(poke pass:io /new-user) [+<.portal-curator %portal-logs] %portal-new-user-event !>(new-user-event))
-      [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]
+  =/  join  [%join now.bowl (get-ship-type:misc our.bowl) `@ux`(shax our.bowl)]
+  =/  sub-init  [%sub [%collection portal-indexer '' '~2000.1.1']]
+  :_  this
+  :~  ::  log new user
+      :*  %pass  /new-user  %agent  [portal-curator %portal-logs]  %poke
+          portal-new-user-event+!>(join)  ==
+      ::
+      ::  initialize purge timer
+      timer-card
+      ::
+      ::  sub to home page
+      (~(act cards [[our.bowl %portal-store]]) sub-init)
+      ::
+      ::  sub to updates from %portal-store
+      [%pass /updates %agent [our.bowl %portal-store] %watch /updates]
   ==
 ::
-::
-::  TODO portal-indexer, separate agent
 ++  on-save  !>(state)
 ++  on-load
   |=  old=vase
   ^-  (quip card _this)
-  ::  later:
-  ::  upon update, new default curators can be added by us
-  ::  and added to portal-curators
-  ::  if user unsubs from a curator, then they are not added
   =/  old  !<(versioned-state old)
-  =/  purge-time  ~d1
-  ?-    -.old
-      %0
-    :_  this(state [%1 default-curators.old portal-curator.old %.y purge-time ~worpet-bildet %.n %.n])
-    [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]~
-      %1
-    ?:  =(purge-timer %.y)  `this(state old)
-      ::  TODO
-      ::  cancel old timer
-      ::  add new one with new purge-time
-    :_  this(purge-timer %.y)
-    [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]~
-  ==
+  ?>  ?=(%2 -.old)
+  `this(state old)
 ::
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
-  ?.  =(our.bowl src.bowl)  `this
-  =/  manager  ~(. manager [bowl ~])
+  =/  manager  ~(. manager [bowl state ~])
   ?+    mark    (on-poke:default mark vase)
       %portal-action
+    ?>  =(our.bowl src.bowl)
     =/  act  !<(action vase)
-    ::
-    =+  %-  silt  ^-  (list term)
-      ~[%create %edit %replace %delete %append %prepend %remove]
-    ?:  (~(has in -) -.act)
-      :_  this
-      ~[(~(poke pass:io /act) [our.bowl %portal-store] portal-action+vase)]
-    ::
-    =/  poke-msg  ~(poke pass:io /msg)
-    ?+    -.act    `this
-        %sub  
-      :_  this  (sub:on-act:on-poke:manager act)
-        
+    ?+    -.act
+      ::  default:  forward to %portal-store
+      :_  this  [(~(act cards [our.bowl %portal-store]) act)]~
       ::
-        %onboarded  `this(onboarded toggle.act)
+        %sub
+      =^  cards  state  (sub:on-poke:manager act)  [cards this]
+      ::
+        %prepend-to-feed
+      =^  cards  state  (prepend-to-feed:on-poke:manager act)  [cards this]
+      ::
+        %onboarded
+      `this(onboarded toggle.act)
       ::
         %index-as-curator
+      =/  msg  [%index-as-curator src.bowl toggle.act]
       :_  this(indexed-as-curator toggle.act)
-      [(poke-msg [portal-indexer %portal-manager] portal-message+!>([%index-as-curator src.bowl toggle.act]))]~
+      [(~(msg cards [portal-indexer.state %portal-manager]) msg)]~
       ::
+        %purge
+      `this
     ==
     ::
       %portal-message
-    =/  msg  !<(message vase)
     ::  TODO src.bowl src.msg problem kad store misli da je src our
-    ::   a ne vanjski jer dolazi od portal-managera
-      ?>  =(src.bowl src.msg)
-      ?>  =(-.msg %index-as-curator)
-      :_  this
-      ~[(~(poke pass:io /msg) [our.bowl %portal-store] portal-message+vase)]
-    ::
-    ::  when %portal-store makes/receives an update, it notifies %portal-manager
-    ::  then %portal-manager decides what it needs to do with it
-      %portal-update
-    ::  TODO PM should sub to PS and receive updates on-agent
-    ?.  =(our.bowl src.bowl)  `this
-    `this
-  ::   =/  upd  !<(update vase)
-  ::   ?+    -.upd    (on-poke:default mark vase)
-  ::       %put
-  ::     :_  this
-  ::     (put:on-update:manager our.bowl now.bowl upd)
-  ::     ::
-  ::       %del
-  ::     :_  this
-  ::     (del:on-update:manager upd)
-  ::   ==
+    ::  a ne vanjski jer dolazi od portal-managera
+    =/  msg  !<(message vase)
+    ?>  =(our.bowl ~ronwex-naltyp-dilryd-mopreg)
+    ?>  =(src.bowl src.msg)
+    ?-    -.msg
+        %index-as-curator
+      =/  act  ~(act cards [our.bowl %portal-store])
+      =/  index-key  [%collection our.bowl '' 'index']
+      =/  ship-key   [%ship src.msg '' '']
+      =/  cards  `(list card)`~[(act [%remove ~[ship-key] index-key])]
+      =?  cards  toggle.msg  (snoc cards (act [%prepend ~[ship-key] index-key]))
+      [cards this]
+      ::
+        %feed-update
+      =/  act  [%prepend-to-feed [%feed our.bowl '' 'global'] feed.msg]
+      =^  cards  state  (prepend-to-feed:on-poke:manager act)
+      [cards this]
+    ==
   ==
 ::
 ++  on-arvo
   |=  [=wire sign=sign-arvo]
-  ^-  (quip card:agent:gall _this)
+  ^-  (quip card _this)
   ?>  ?=([%purge-timer ~] wire)
   ?>  ?=([%khan %arow *] sign)
+  ::=/  items-to-keep  (feed-to-key-list:conv rock:(~(got by read:da-feed) [portal-indexer %portal-manager [%feed ~]]))
   :_  this
-  :~  [(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>([%purge portal-curator]))]
-      [%pass /purge-timer %arvo %k %fard q.byk.bowl %purge-timer %noun !>((some purge-time))]
+  :~  ::(~(act cards [our.bowl %portal-store]) [%purge portal-curator])
+      timer-card
   ==
 ::
 ++  on-watch  on-watch:default
@@ -149,7 +127,7 @@
         %fact
       =/  treaty  !<(treaty:treaty q.cage.sign)
       =/  key  (path-to-key:conv +.wire)
-      =/  act  [%replace key [%temp ~] [[%app ~] '' *signature treaty]]
+      =/  act  [%replace key %temp [%app '' *signature treaty]]
       :_  this
       :~  [(~(act cards [our.bowl %portal-store]) act)]
           [%pass wire %agent [ship.key %treaty] %leave ~]
@@ -161,7 +139,7 @@
         %fact
       =/  preview  !<(preview:groups q.cage.sign)
       =/  key  (path-to-key:conv +.wire)
-      =/  act  [%replace key [%temp ~] [[%group ~] meta.preview]]
+      =/  act  [%replace key %temp [%group meta.preview]]
       :_  this
       :~  [(~(act cards [our.bowl %portal-store]) act)]
           [%pass wire %agent [p.flag.preview %groups] %leave ~]

@@ -54,7 +54,7 @@
     %-  pairs
     :~  ['keyStr' (enjs-jam-key key.item)]
         ['keyObj' (enjs-key key.item)]
-        ['lens' (path lens.item)]
+        ['lens' s+`@t`lens.item]
         ['bespoke' (enjs-bespoke bespoke.item)]
         ['meta' (enjs-meta meta.item)]
         ['sig' (enjs-sig sig.item)]
@@ -65,7 +65,7 @@
     %-  pairs
     :~  ['keyStr' (enjs-jam-key key.item)]
         ['keyObj' (enjs-key key.item)]
-        ['lens' (path lens.item)]
+        ['lens' s+`@t`lens.item]
         ['bespoke' (enjs-bespoke bespoke.item)]
         ['meta' (enjs-meta meta.item)]
         ['sig' (enjs-sig sig.item)]
@@ -131,31 +131,32 @@
     |=  [=bespoke]
     ^-  json
     ?-    -.bespoke
-      [%ship ~]          s+''
-      [%group ~]         %-  pairs
+      %ship        s+''
+      %group       %-  pairs
                          :~  ['title' s+title.data.bespoke]
                              ['description' s+description.data.bespoke]
                              ['image' s+image.data.bespoke]
                              ['cover' s+cover.data.bespoke]
                          ==
-      [%app ~]           %-  pairs
+      %app          %-  pairs
                          :~  ['distDesk' s+dist-desk.bespoke]
                              ['signature' (enjs-sig sig.bespoke)]
                              ['treaty' (treaty:enjs:treaty treaty.bespoke)]
                          ==
-      [%other ~]         %-  pairs
+      %other         %-  pairs
                          :~  ['title' s+title.bespoke]
                              ['blurb' s+blurb.bespoke]
                              ['link' s+link.bespoke]
                              ['image' s+image.bespoke]
                          ==
-      [%collection ~]    %-  pairs
+      %collection   %-  pairs
                          :~  ['title' s+title.bespoke]
                              ['blurb' s+blurb.bespoke]
                              ['image' s+image.bespoke]
                              ['key-list' (enjs-key-list key-list.bespoke)]
                          ==
-      [%validity-store ~]  s+''
+      %feed          s+''
+      %validity-store  s+''
     ==
   ::   --
   :: ++  enjs-social
@@ -281,7 +282,7 @@
     |=  =key
     ^-  json
     %-  pairs
-    :~  ['struc' s+(spat struc.key)]
+    :~  ['struc' s+`@t`struc.key]
         ['ship' (enjs-ship ship.key)]
         ['cord' s+cord.key]
         ['time' s+time.key]

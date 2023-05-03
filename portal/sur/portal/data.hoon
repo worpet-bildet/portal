@@ -27,35 +27,42 @@
 ::
 ::  Basic Outline
 ::
-::  TODO fix portal manager nuking  ->  recreate??
-::  TODO fix collection creation  ->  key object
-::  TODO append to multiple lists   DONE
-::
 ::  TODO FEED type
 ::  TODO portal-indexer, separate agent
+::  TODO switch from '~2000.1.1' as >>efault? or no?
 ::
+::  default collection for feed posts
+::
+::  Tom wants to determine what goes to the feed of one person
+::  whatever goes to my-feed, goes to global feed
+::
+::  TODO I feel like struc and lens should only be terms instead of paths?
+::  everything would be much simpler
+::  
 ::
 +$  key  [=struc =ship =cord time=cord]
 ::  struc is the structure of the data
 ::  lens is how we see it and how we treat it
 +$  struc
-  $%  [%group ~]
-      [%ship ~]
-      [%app ~]
-      [%collection ~]
-      :: [%feed ~]
-      [%validity-store ~]
-      [%other ~]
+  $?  %group
+      %ship
+      %app
+      %collection
+      %feed
+      %validity-store
+      %other
       ::  TODO  profile
   ==
 ::
 +$  lens
-  $%  [%deleted ~]   ::  should not put this over temp? or should you?
-      [%temp ~]   ::  TODO metadata on temp? instead of overwriting use updated-at
+  $?  %deleted   ::  should not put this over temp? or should you?
+      %temp  ::  TODO metadata on temp? instead of overwriting use updated-at
                   ::  does this create a mess with subbing or no? it does destroy
                   ::  the globally unique namespace, i.e. it does not apply to temp items
-      [%index ~]
-      [%def ~]
+      %index
+      %def
+      %global
+      %personal
   ==
 ::
 ::  TODO struc-lens validator
@@ -121,27 +128,22 @@
 ::
 ::  data specific to the item type
 +$  bespoke
-  $%  [struc=[%ship ~] ~]
-      [struc=[%group ~] =data:group-preview]
-      [struc=[%app ~] dist-desk=@t sig=signature =treaty]
-     
-      
-      :: [struc=[%feed ~] =feed]
-
-
-      [struc=[%collection ~] title=@t blurb=@t image=@t =key-list]  ::does it need link?
+  $%  [struc=%ship ~]
+      [struc=%group =data:group-preview]
+      [struc=%app dist-desk=@t sig=signature =treaty]
+      [struc=%feed =feed]
+      [struc=%collection title=@t blurb=@t image=@t =key-list]  ::does it need link?
       ::  TODO /list/list becomes these 2 things:
       ::  1. to profile type?
       ::  2. default colletion to store all your collections
-      [struc=[%validity-store ~] =validity-records]
+      [struc=%validity-store =validity-records]
       ::  TODO probably rename other to post?
-      [struc=[%other ~] title=@t blurb=@t link=@t image=@t]
+      [struc=%other title=@t blurb=@t link=@t image=@t]
   ==
 ::
-
+::
 +$  feed  (list [time=cord =ship =key])
-+$  feed-items  (list item)
-
+::
 ::
 +$  key-list  (list key)
 +$  key-set  (set key)
