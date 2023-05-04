@@ -351,12 +351,12 @@
     =,  dejs-soft
     =/  jn  %.  jon
             %-  of:dejs
-            :~  [%'/other' json]
-                [%'/app' json]
-                [%'/collection' json]
+            :~  [%other json]
+                [%app json]
+                [%collection json]
             ==
     ?-    -.jn
-        %'/other'
+        %other
       =/  raw  %.  ;;((map @t json) +>:jn)
       %-  ot-raw  :~  title+so
                       blurb+so
@@ -364,7 +364,7 @@
                       image+so
                   ==
       other+(pole-to-cell raw)
-        %'/collection'
+        %collection
       =/  raw  %.  ;;((map @t json) +>:jn)
       %-  ot-raw  :~  title+so
                       blurb+so
@@ -372,7 +372,7 @@
                       key-list+dejs-soft-key-list
                   ==
       other+(pole-to-cell raw)
-        %'/app'  !!
+        %app  !!
     ==
   ::
   ++  dejs-soft-bespoke
@@ -382,9 +382,9 @@
     =/  b
     %.  jon
     %-  of
-    :~  [%'/ship' so]
-        [%'/collection' (ot ~[title+so blurb+so image+so key-list+dejs-soft-key-list])]
-        [%'/other' (ot ~[title+so blurb+so link+so image+so])]
+    :~  [%ship so]
+        [%collection (ot ~[title+so blurb+so image+so key-list+dejs-soft-key-list])]
+        [%other (ot ~[title+so blurb+so link+so image+so])]
     ==
     (biff b |=(b=[@t *] (some b(- (stab -.b)))))
   ::

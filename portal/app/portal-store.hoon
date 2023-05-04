@@ -124,10 +124,7 @@
       ::
       %delete  =^(cards items (delete:on-poke:store act) [cards this])
       ::
-      ::   %purge
-      :: =^  cards  items
-      ::   (purge:store [items our.bowl src.bowl now.bowl act])
-      :: [cards this]
+      %purge   =^(cards items (purge:on-poke:store act) [cards this])
     ==
     ::  no need for %portal-message
     ::

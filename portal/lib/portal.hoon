@@ -25,7 +25,6 @@
         `cord`+>+<:path
   --
 ::
-::  add ++store and ++manager or put into ++store and ++manager?
 ++  scry
   |_  [our=ship now=time]
   ::  gets item, and if doesn't exist returns ~
@@ -55,14 +54,12 @@
     ^-  (map key ?(~ item))
     (get-items:misc `items`(get-all-items) key-list)
   ::
-  ::  gets all items
   ++  get-all-items
     |.
     ;;  items
     %-  tail
     .^(store-result %gx /(scot %p our)/portal-store/(scot %da now)/items/noun)
   ::
-  ::  gets all keys in local items
   ++  get-all-keys
     |.
     ;;  key-set
@@ -82,10 +79,10 @@
         /(scot %p our)/portal-store/(scot %da now)/item-valid
         (key-to-path:conv key)
         /noun
-      ==
-    ==
+    ==  ==
   ::
   --
+::
 ++  keys
   |%
   ::
@@ -507,70 +504,18 @@
   ::
   ++  on-poke  ::  all arms here should output [cards items]
     |%
-    :: OLD note block
-      ::  TODO purge
-      ::  purge all cols which are not our or worpet-bildet
-      ::  keep: all our items, all items in our col, all items in worpet-bildets cols
-    ::  purges all 
-      ::   - %deleted (+unsub)
-      ::   - %temp
-      ::   - not our, not portal curators, not default curators (+unsub)
-    :: ++  purge
-        :: |=  [=items our=ship src=ship now=time act=[%purge =default-curators =portal-curator]]
-        :: ^-  [(list card) ^items]
-        :: =/  items-key-set  ~(key by items)
-        :: =/  key-list  ~(tap in items-key-set)
-        :: ::make list/set of items
-        :: ::diff from items
-        :: =/  ships  (silt (limo ~[our ship.portal-curator.act]))  ::TODO also default curators in here
-        :: =/  our-keys  (skim-ships:keys key-list ~(tap in ships))  ::  LISTLIST KEY LIST
-        :: =/  our-list-lists-keys  (skim-types:keys our-keys ~[[%list %list ~]])  :: LISTLIST KEYLIST
-        :: =/  our-list-lists-items  ::list items
-        ::   %-  (list item)  %+  skip
-        ::     ~(val by (get-items:misc items our-list-lists-keys))
-        ::     |=(item=?(~ item) ?~(item %.y %.n))
-        :: =/  our-lists-keys  `(list key)`(zing (turn our-list-lists-items |=(=item (list-item-to-key-list:misc item))))  :: LIST KEYLIST
-        :: =/  our-lists-items
-        ::   %-  (list item)  %+  skip
-        ::     (turn our-lists-keys |=(=key (~(gut by items) key ~)))  :: LIST ITEMLIST
-        ::     |=(item=?(~ item) ?~(item %.y %.n))
-        :: =/  our-items-keys  `(list key)`(zing (turn our-lists-items |=(=item (list-item-to-key-list:misc item))))  :: ITEM KEYLIST
-        :: =/  keys-to-keep  (~(uni in (silt our-keys)) (silt our-lists-keys))
-        :: =.  keys-to-keep  (~(uni in keys-to-keep) (silt our-items-keys))
-        :: :: our-list-lists-keys is redundant
-        :: =/  keys-to-purge  (~(dif in items-key-set) keys-to-keep)
-        :: =/  keys  ~(tap in keys-to-purge)
-        :: =/  len  (lent keys)
-        :: =/  n  0
-        :: =/  return  [*(list card) items=items]
-        :: :: ~&  "items-key-set"
-        :: :: ~&  >  ~(wyt in items-key-set)
-        :: :: ~&  "item number to keep"
-        :: :: ~&  >  ~(wyt in keys-to-keep)
-        :: :: ~&  "item number to purge"
-        :: :: ~&  >  len
-        :: =.  return
-        ::   |-  ?:  =(n len)  return
-        ::   :: ~&  "items kept"
-        ::   :: ~&  >  ~(wyt by `^items`+.return)
-        ::   =/  new  (del:on-action items.return our src now [%del (snag n keys)])
-        ::   %=  $
-        ::     -.return  (weld -.return -.new)
-        ::     +.return  +.new
-        ::     n  +(n)
-        ::   ==
-        :: =/  key-set  ~(key by items.return)
-        :: =/  key-list  ~(tap in key-set)
-        :: ~&  "%portal: purge done"
-        :: :: refreshes temp items kept after purge
-        :: [(weld (get-temp-items:manager our key-list) -.return) +.return]
-      :: ::
-
+    ::  TODO test purge edge cases
     ++  purge
       |=  [act=action]
       ^-  [(list card) ^items]
       ?>  ?=([%purge *] act)
-      `(del-items keep.act)
+      =/  items  `(list [key item])`~(tap by items)
+      =.  items  %+  skip  items 
+                 |=([=key =item] ?=(?(%deleted %temp) lens.item))
+      =.  items  %+  skim  items  
+                 |=  [=key =item]
+                 |(=(our.bowl ship.key) =(portal-curator.act ship.key))
+      `(malt items)
     ::
     ++  sub
       |=  [act=action]
@@ -622,11 +567,6 @@
         (get-item key.act)  act
       [(put:cards-methods feed) (put-item feed)]
     ::
-    ::  should the main feed also be an item?   %global and %personal lenses to the feed
-    ::                                            'global' instead of '~2000.1.1'
-    ::                                            'global' into cord or time?
-    ::                                           no personal feed for worpet-bildet?
-    ::
     ++  append
       |=  [act=action]
       ^-  [(list card) ^items]
@@ -660,7 +600,6 @@
     --
   --
   ::
-
 ::
 ::  includes arms which are used to validate data
 ++  validator

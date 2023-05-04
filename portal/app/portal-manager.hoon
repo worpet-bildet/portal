@@ -23,18 +23,14 @@
   =/  join  [%join now.bowl (get-ship-type:misc our.bowl) `@ux`(shax our.bowl)]
   =/  sub-init  [%sub [%collection portal-indexer '' '~2000.1.1']]
   :_  this
-  :~  ::  log new user
-      :*  %pass  /new-user  %agent  [portal-curator %portal-logs]  %poke
-          portal-new-user-event+!>(join)  ==
-      ::
-      ::  initialize purge timer
+  :~  ::  initialize purge timer
       timer-card
-      ::
       ::  sub to home page
       (~(act cards [[our.bowl %portal-store]]) sub-init)
-      ::
-      ::  sub to updates from %portal-store
-      [%pass /updates %agent [our.bowl %portal-store] %watch /updates]
+      ::  log new user
+      :*  %pass  /new-user  %agent  [portal-curator %portal-logs]  %poke
+          portal-new-user-event+!>(join)
+      ==
   ==
 ::
 ++  on-save  !>(state)
@@ -70,9 +66,6 @@
       =/  msg  [%index-as-curator src.bowl toggle.act]
       :_  this(indexed-as-curator toggle.act)
       [(~(msg cards [portal-indexer.state %portal-manager]) msg)]~
-      ::
-        %purge
-      `this
     ==
     ::
       %portal-message
@@ -102,9 +95,8 @@
   ^-  (quip card _this)
   ?>  ?=([%purge-timer ~] wire)
   ?>  ?=([%khan %arow *] sign)
-  ::=/  items-to-keep  (feed-to-key-list:conv rock:(~(got by read:da-feed) [portal-indexer %portal-manager [%feed ~]]))
   :_  this
-  :~  ::(~(act cards [our.bowl %portal-store]) [%purge portal-curator])
+  :~  (~(act cards [our.bowl %portal-store]) [%purge portal-curator])
       timer-card
   ==
 ::
