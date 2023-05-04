@@ -85,7 +85,7 @@
     =^  cards-1  items 
       (prepend-to-feed:on-poke:store act)
     ?:  =(time.key.act 'global')
-      =^  cards-2  pub-item  (give:du-item [%item key.act] [%prepend-to-feed feed.act])
+      =^  cards-2  pub-item  (give:du-item [%item ;;([@ @ @ @ ~] (key-to-path:conv key.act))] [%prepend-to-feed feed.act])
       :_  this  (zing ~[cards-1 cards-2])
     [cards-1 this]
       ::
