@@ -1,29 +1,48 @@
 <script>
-  import { getItem } from '@root/state';
+  import { subscribeToItem } from '@root/api';
+  import { getItem, keyStrFromObj } from '@root/state';
   import { getMeta } from '@root/util';
   import { ItemImage, LikeIcon, CommentIcon } from '@fragments';
 
   export let collection;
 
-  console.log({ collection });
+  let item, title, previewItems;
 
-  let payload = [];
-  let title;
-  // const item = getItem(collection?.keyStr);
-  // const { title } = getMeta(item);
-  // const payload = item?.data?.bespoke?.payload.slice(0, 4);
+  $: {
+    item = getItem(collection?.keyStr);
+    ({ title } = getMeta(item));
+    // we only want at most four items here
+    previewItems = (item?.bespoke?.['key-list']?.slice(0, 4) || [])
+      .map((keyObj) => {
+        let i = getItem(keyStrFromObj(keyObj));
+        // TODO: figure out whether this is going to rerender properly
+        if (!i) subscribeToItem(keyObj);
+        return i;
+      })
+      .filter((i) => !!i);
+  }
 
-  // how do we display these items in a conditionally laid-out grid?
-  // eg if we only have two items, we want them both to span two rows, but if we
-  // have three items, we want the first two to span a row together, and the
-  // last one to span two columns (or something similar)
+  /*
+    if previewItems.length === 1
+      colspan = 2 = length x 2
+      rowspan = 2 = length x 2
+
+    if previewItems.length === 2
+      colspan = 2 = length x 2
+      rowspan = 1 = length / 2
+
+    if previewItems.length === 3
+      colspan = i < 2 ? 1 : 2
+      rowspan = 1
+
+  */
 </script>
 
-{#if payload.length > 0}
-  <div class="grid grid-cols-2">
-    {#each payload as p}
-      <div class="border col-span-1 h-16 sm:h-24 lg:h-36 xl:h-44">
-        <ItemImage item={getItem(p?.keyStr)} />
+{#if previewItems.length > 0}
+  <div class="grid grid-cols-2 grid-rows-2">
+    {#each previewItems as { bespoke: { image, title, color } }, i}
+      <div class="border row-span-1 col-span-1">
+        <ItemImage {image} {title} {color} />
       </div>
     {/each}
   </div>
@@ -40,6 +59,4 @@
       </div>
     </div>
   </div>
-{:else}
-  <div />
 {/if}

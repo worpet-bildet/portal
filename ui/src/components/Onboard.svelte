@@ -17,7 +17,7 @@
   };
 </script>
 
-<Modal open={true}>
+<Modal open={false}>
   <StepForm bind:formstep {formsteps}>
     <div class="flex flex-col gap-4">
       {#if formstep === 'welcome'}

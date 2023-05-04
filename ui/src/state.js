@@ -10,18 +10,18 @@ import {
   poke,
 } from '@root/api';
 
-export let isLoaded = false;
 export const state = writable({});
 export const feed = writable({});
 
 export const refreshPortalItems = () => {
   getPortalItems().then(({ items }) => {
-    let s = {};
-    items.forEach((i) => {
-      s[i.keyStr] = i;
+    state.update((s) => {
+      items.forEach((i) => {
+        s[i.keyStr] = i;
+      });
+      s.isLoaded = true;
+      return s;
     });
-    state.set(s);
-    isLoaded = true;
 
     // TODO: group everything by a single curator maybe?
     // or add some filtering methods to get everything by a single curator
@@ -39,25 +39,51 @@ export const refreshContacts = () => {
 
 export const refreshGroups = () => {
   getJoinedGroups().then((groups) => {
+    console.log({ groups });
     // for some reasons it's possible to get groups that don't have a title
     // so we filter them here to avoid showing useless info
+    let _groups = {};
     state.update((s) => {
-      s.groups = Object.entries(groups || {}).filter(
-        ([
-          _,
-          {
-            meta: { title },
-          },
-        ]) => !!title
-      );
+      Object.entries(groups || {})
+        .map((g) => {
+          let [
+            key,
+            {
+              meta: { title },
+            },
+          ] = g;
+          if (!title) {
+            g[1].joining = true;
+          }
+          return g;
+        })
+        .forEach(([key, data]) => (_groups[key] = data));
+      s.groups = _groups;
       return s;
     });
   });
 };
 
 export const refreshApps = () => {
-  getInstalledApps().then((apps) => {
+  const EXCLUDE_APPS = [
+    'base',
+    'garden',
+    'groups',
+    'kids',
+    'landscape',
+    'webterm',
+  ];
+  getInstalledApps().then(([{ initial }, kiln]) => {
+    // so here we have an
+    console.log({ initial, kiln });
+    let apps = {};
     state.update((s) => {
+      Object.entries(initial).forEach(([key, data]) => {
+        if (EXCLUDE_APPS.includes(key)) return;
+        data.ship = kiln[key]?.sync?.ship;
+        if (!data.ship) return;
+        apps[key] = data;
+      });
       s.apps = apps;
       return s;
     });
@@ -79,25 +105,37 @@ export const getCurator = (patp) => {
 
 // some janky keys here innit
 export const getCuratorFeed = (patp) => {
-  return getCuratorItemsByStruc(patp, '/other');
+  return getCuratorItemsByStruc(patp, 'other');
 };
 
 export const getCuratorCollections = (patp) => {
-  return getCuratorItemsByStruc(patp, '/collection');
+  return getCuratorItemsByStruc(patp, 'collection').filter(
+    (c) => !c.keyStr.includes('~2000.1.1')
+  );
 };
 
 export const getCuratorItemsByStruc = (patp, struc) => {
-  return mainCollection(patp)
-    ?.bespoke?.['key-list']?.filter((k) => k.struc === struc)
-    ?.map((k) => get(state)[keyStrFromObj(k)]);
+  return Object.keys(get(state))
+    .filter((k) => k.includes(`${struc}/${patp}`))
+    .map((k) => get(state)[k]);
 };
 
-export const getGroup = (groupkey) => {
-  return get(state)[`/group/${groupkey}/`];
+export const getGroup = (groupKey) => {
+  return get(state)[`/group/${groupKey}/`];
 };
 
 export const getItem = (listKey) => {
   return get(state)[listKey];
+};
+
+export const getCollectionItems = (collectionKey) => {
+  return get(state)[collectionKey]?.bespoke?.['key-list'].map((k) => {
+    return get(state)[keyStrFromObj(k)];
+  });
+};
+
+export const getJoinedGroupDetails = (groupKey) => {
+  return get(state).groups?.[groupKey];
 };
 
 export const handleSubscriptionEvent = (event, type) => {
@@ -114,13 +152,25 @@ export const handleSubscriptionEvent = (event, type) => {
         s.profiles[event.who] = event.con;
         return s;
       });
+    case 'group-action-0' || 'group-leave':
+      refreshGroups();
     default:
       break;
   }
 };
 
-const keyStrFromObj = ({ struc, ship, cord, time }) => {
+export const keyStrFromObj = ({ struc, ship, cord, time }) => {
   return `${struc}/${ship}/${cord}/${time}`;
+};
+
+export const keyStrToObj = (str) => {
+  const parts = str.split('/');
+  return {
+    ship: parts[1],
+    struc: parts[0],
+    time: '',
+    cord: parts[2],
+  };
 };
 
 const mainCollection = (patp) => get(state)[mainCollectionKey(patp)];

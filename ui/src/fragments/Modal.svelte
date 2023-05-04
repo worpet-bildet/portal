@@ -4,7 +4,7 @@
 
 {#if open}
   <div
-    class="fixed top-0 left-0 h-full w-full z-1 bg-black flex justify-center items-center"
+    class="fixed top-0 left-0 h-full w-full z-50 bg-black flex justify-center items-center"
     on:click={() => (open = false)}
   >
     <div

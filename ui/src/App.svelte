@@ -4,6 +4,7 @@
 
   import { CuratorIndex, Feed, Item, Group } from './pages';
   import { Curator, EditCurator } from './pages/Curator';
+  import { Collection, EditCollection } from './pages/Collection';
   import { Navbar, Onboard } from '@components';
 
   const routes = {
@@ -12,6 +13,8 @@
     '/feed': Feed,
     '/item/:itemkey': Item,
     '/group/:host/:cord': Group,
+    '/collection/*': Collection,
+    '/collection-edit/*': EditCollection,
     '/:patp': Curator,
     '/:patp/edit': EditCurator,
   };
@@ -25,8 +28,10 @@
 </script>
 
 <main>
-  <Navbar />
-  <div class="p-10 relative">
+  <div class="relative z-10">
+    <Navbar />
+  </div>
+  <div class="p-10 z-0">
     <Router {routes} />
   </div>
   <Onboard />

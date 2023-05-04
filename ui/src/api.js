@@ -22,16 +22,22 @@ export const getContacts = () => {
 };
 
 export const getInstalledApps = () => {
-  return scry({
-    app: 'docket',
-    path: '/charges',
-  });
+  return Promise.all([
+    scry({
+      app: 'docket',
+      path: '/charges',
+    }),
+    scry({
+      app: 'hood',
+      path: '/kiln/pikes',
+    }),
+  ]);
 };
 
 export const getJoinedGroups = () => {
   return scry({
     app: 'groups',
-    path: '/groups/light',
+    path: '/groups',
   });
 };
 
@@ -66,12 +72,39 @@ export const removePal = (patp) => {
   });
 };
 
-// export const subscribeToCurator = (patp) => {
-//   return poke({
-//     app: 'portal-manager',
-//     mark: ''
-//   })
-// }
+export const joinGroup = (group) => {
+  return poke({
+    app: 'groups',
+    mark: 'group-join',
+    json: { flag: group, 'join-all': true },
+  });
+};
+
+export const leaveGroup = (group) => {
+  return poke({
+    app: 'groups',
+    mark: 'group-leave',
+    json: group,
+  });
+};
+
+export const subscribeToCurator = (patp) => {
+  console.log('SUBSCRIBING TO ', patp);
+  return poke({
+    app: 'portal-manager',
+    mark: 'portal-action',
+    json: {
+      sub: {
+        key: {
+          struc: 'collection',
+          ship: patp,
+          cord: '~2000.1.1',
+          time: '',
+        },
+      },
+    },
+  });
+};
 
 export const subscribeToGroup = (key) => {
   let parts = key.split('/');
@@ -81,11 +114,23 @@ export const subscribeToGroup = (key) => {
     json: {
       sub: {
         key: {
-          struc: '/group',
+          struc: 'group',
           ship: parts[0],
           cord: parts[1],
           time: '',
         },
+      },
+    },
+  });
+};
+
+export const subscribeToItem = (keyObj) => {
+  poke({
+    app: 'portal-manager',
+    mark: 'portal-action',
+    json: {
+      sub: {
+        key: keyObj,
       },
     },
   });
@@ -129,10 +174,10 @@ export const useContactsSubscription = (onEvent) => {
   return () => api?.unsubscribe(contactsSub);
 };
 
-export const usePalsSubscription = (onEvent) => {
-  const palsSub = api.subscribe({
-    app: 'pals',
-    path: '/targets',
+export const useGroupsSubscription = (onEvent) => {
+  const groupsSub = api.subscribe({
+    app: 'groups',
+    path: '/groups',
     ship: api.ship,
     verbose: true,
     event: onEvent,
@@ -140,5 +185,5 @@ export const usePalsSubscription = (onEvent) => {
     quit: console.error,
   });
 
-  return () => api?.unsubscribe(palsSub);
+  return () => api?.unsubscribe(groupsSub);
 };

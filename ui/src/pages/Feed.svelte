@@ -16,7 +16,7 @@
           'append-to': [
             {
               ship: me,
-              struc: '/collection',
+              struc: 'collection',
               time: '~2000.1.1',
               cord: '',
             },

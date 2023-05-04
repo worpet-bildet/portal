@@ -1,11 +1,25 @@
 <script>
-  import { state } from '@root/state';
+  import { state, keyStrToObj } from '@root/state';
   import { poke, me } from '@root/api';
-  import { Modal, StepForm, TextArea } from '@fragments';
-  import { keyStringToObject } from '@root/util';
+  import { Modal, StepForm, TextArea, PlusIcon } from '@fragments';
 
-  let groups;
-  state.subscribe((s) => (groups = s.groups));
+  let groups = {};
+  let apps;
+  state.subscribe((s) => {
+    // We filter the groups here based on which ones have a title or not - we
+    // don't filter them on retrieval from the api like we do with apps because
+    // an empty meta object for a group indicates that we're in the process of
+    // joining it, which is good for keeping some state on the group page
+    if (s.groups) {
+      Object.entries(s.groups).forEach(([key, data]) => {
+        if (!data?.meta?.title) return;
+        groups[key] = data;
+      });
+    }
+    apps = s.apps;
+  });
+
+  $: console.log({ groups, apps });
 
   let showModal = false;
   const addCollection = () => {
@@ -14,74 +28,43 @@
 
   let name = '';
   let description = '';
-  let items = [];
+  let groupKeys = [];
+  let appKeys = [];
 
-  let formstep = 'items';
-  let formsteps = ['meta', 'items'];
+  $: console.log({ groupKeys, appKeys });
+
+  let formstep = 'meta';
+  let formsteps = ['meta', 'groups', 'apps'];
 
   const save = () => {
-    // so i think here we just make the poke, and it should create the
-    // collection with the new items. i am not sure exactly how this should
-    // be structured but it can't be too difficult to figure out
-    console.log({ name, description, items });
-    console.log({
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        create: {
-          'append-to': [
-            {
-              ship: me,
-              struc: '/collection',
-              time: '~2000.1.1',
-              cord: '',
-            },
-          ],
-          bespoke: {
-            '/collection': {
-              title: name,
-              blurb: description,
-              image: '',
-              'key-list': items.map((i) => keyStringToObject(i)),
-            },
-          },
-        },
-      },
-    });
     poke({
       app: 'portal-manager',
       mark: 'portal-action',
       json: {
         create: {
-          'append-to': [
-            {
-              ship: me,
-              struc: '/collection',
-              time: '~2000.1.1',
-              cord: '',
-            },
-          ],
           bespoke: {
-            '/collection': {
+            collection: {
               title: name,
               blurb: description,
               image: '',
-              'key-list': items.map((i) => keyStringToObject(i)),
+              'key-list': [
+                ...groupKeys.map((i) => keyStrToObj(i)),
+                ...appKeys.map((i) => keyStrToObj(i)),
+              ],
             },
           },
         },
       },
-    }).then((result) => console.log({ result }));
+    });
   };
-
-  $: console.log({ items });
 </script>
 
 <button
-  class="col-span-4 border flex items-center justify-center"
+  class="border px-2 py-1 flex items-center gap-4"
   on:click={addCollection}
 >
-  + New Collection
+  <span class="w-5"><PlusIcon /></span>
+  <span>New Collection</span>
 </button>
 <Modal bind:open={showModal}>
   <StepForm bind:formstep {formsteps} on:save={save}>
@@ -93,12 +76,28 @@
           Briefly describe the collection (optional)
         </div>
         <TextArea minRows={3} bind:value={description} />
-      {:else if formstep === 'items'}
+      {:else if formstep === 'groups'}
         <div>Add these groups?</div>
-        {#each groups as [path, { meta: { title, image } }]}
+        {#each Object.entries(groups) as [path, { meta: { title, image } }]}
           <div class="flex justify-between">
             <div>{title}</div>
-            <input type="checkbox" bind:group={items} value={`group/${path}`} />
+            <input
+              type="checkbox"
+              bind:group={groupKeys}
+              value={`group/${path}`}
+            />
+          </div>
+        {/each}
+      {:else if formstep === 'apps'}
+        <div>Add these apps?</div>
+        {#each Object.entries(apps) as [path, { title, image, ship, info }]}
+          <div class="flex justify-between">
+            <div>{title}</div>
+            <input
+              type="checkbox"
+              bind:group={appKeys}
+              value={`app/${ship}/${path}`}
+            />
           </div>
         {/each}
       {/if}

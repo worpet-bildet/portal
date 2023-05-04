@@ -14,7 +14,9 @@
   ];
 </script>
 
-<div class="flex justify-between items-center border-b px-10 py-2">
+<div
+  class="relative flex justify-between items-center border-b px-10 bg-black bg-opacity-30 backdrop-blur-sm"
+>
   <a
     use:link
     href="/"
@@ -32,7 +34,7 @@
       <a
         use:link
         href={n.link}
-        class="text-white"
+        class="text-white px-2 py-1 backdrop-blur-lg rounded-md bg-white bg-opacity-30 hover:bg-opacity-0"
         class:underline={$location === n.link}>{n.title}</a
       >
     {/each}

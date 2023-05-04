@@ -22,6 +22,7 @@ export default ({ mode }) => {
     ],
     resolve: {
       alias: {
+        '@assets': path.resolve('./src/assets'),
         '@root': path.resolve('./src'),
         '@pages': path.resolve('./pages'),
         '@components': path.resolve('./src/components'),

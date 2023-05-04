@@ -1,4 +1,7 @@
 <script>
+  // TODO: this should probably be dynamic and take the full item instead of
+  // requiring the caller to already have an image - this would allow us to
+  // display the image grid for a full collection as well
   import { isUrl, invertHex } from '@root/util';
   export let image, title, color;
 </script>
