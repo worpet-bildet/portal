@@ -324,7 +324,7 @@
       %-  ot-raw  :~  ship+dejs-soft-ship
                       cord+so
                       time+so
-                      lens+dejs-soft-path
+                      lens+so
                       bespoke+dejs-soft-bespoke
                       append-to+dejs-key-list
                   ==
@@ -332,7 +332,7 @@
         %edit
       =/  raw  %.  ;;((map @t json) +>:jn)
       %-  ot-raw  :~  key+dejs-soft-key
-                      lens+dejs-soft-path
+                      lens+so
                       bespoke+dejs-soft-bespoke-edit
                   ==
       =/  edit  (pole-to-cell raw)
