@@ -1,4 +1,4 @@
-/-  *portal-data, *portal-message, portal-feed
+/-  *portal-data, *portal-message, portal-item
 /+  default-agent, dbug, *portal, sss
 |%
 +$  versioned-state
@@ -11,24 +11,24 @@
 +$  card  card:agent:gall
 --
 %-  agent:dbug
-=/  sub-feed  (mk-subs:sss portal-feed ,[%feed ~])
-=/  pub-feed  (mk-pubs:sss portal-feed ,[%feed ~])
+=/  sub-item  (mk-subs:sss portal-item ,[%item @ @ @ @ ~])
+=/  pub-item  (mk-pubs:sss portal-item ,[%item @ @ @ @ ~])
 =|  state-0
 =*  state  -
 ^-  agent:gall
 |_  =bowl:gall
 +*  this      .
     default   ~(. (default-agent this %|) bowl)
-    du-feed  =/  du  (du:sss portal-feed ,[%feed ~])
-      (du pub-feed bowl -:!>(*result:du))
-    da-feed  =/  da  (da:sss portal-feed ,[%feed ~])
-      (da sub-feed bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
+    du-item  =/  du  (du:sss portal-item ,[%item @ @ @ @ ~])
+      (du pub-item bowl -:!>(*result:du))
+    da-item  =/  da  (da:sss portal-item ,[%item @ @ @ @ ~])
+      (da sub-item bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
 ++  on-init
   ^-  (quip card _this)
   =.  state  *state-0
   =*  store-core  ~(. store [bowl items ~])
-  =^  cards  sub-feed
-    (surf:da-feed ~ronwex-naltyp-dilryd-mopreg %portal-store [%feed ~])
+  =^  cards  sub-item
+    (surf:da-item ~ronwex-naltyp-dilryd-mopreg %portal-store [%item %feed ~ronwex-naltyp-dilryd-mopreg '' 'global' ~])
   =/  col-create  :*  %create  ~  ~  `'~2000.1.1'  `%def
     `[%collection 'Main Collection' 'Your first collection.' '' ~]  
     [%collection our.bowl '' '~2000.1.1']~  ==
@@ -45,18 +45,19 @@
     =/  global-feed-create  [%create ~ ~ `'global' `%global `[%feed ~] ~]
     =/  index-create  [%create ~ ~ `'index' `%def `[%collection '' '' '' ~] ~]
     =^  cards-4  items  (create:on-poke:store-core global-feed-create)
-    =^  cards-5  items  (create:on-poke:store-core index-create)
+    =^  cards-5  pub-item  (give:du-item [%item %feed our.bowl '' 'global' ~] [%init (~(got by items) [%feed our.bowl '' 'global'])])
+    =^  cards-6  items  (create:on-poke:store-core index-create)
     :_  this
-    (zing ~[cards cards-1 cards-2 cards-3 cards-4 cards-5])
+    (zing ~[cards cards-1 cards-2 cards-3 cards-4 cards-5 cards-6])
   :_  this  
   (zing ~[cards cards-1 cards-2 cards-3])
 ::
-++  on-save  !>([state pub-feed sub-feed])
+++  on-save  !>([state pub-item sub-item])
 ++  on-load
   |=  old=vase
   ^-  (quip card _this)
-  =/  old  !<([=state-0 =_pub-feed =_sub-feed] old)
-  `this(state state-0.old, pub-feed pub-feed.old, sub-feed sub-feed.old)
+  =/  old  !<([=state-0 =_pub-item =_sub-item] old)
+  `this(state state-0.old, pub-item pub-item.old, sub-item sub-item.old)
 ::
 ++  on-poke
   |=  [=mark =vase]
@@ -75,16 +76,16 @@
       ::
       %sub  =^(cards items (sub:on-poke:store act) [cards this])
       ::
-      %sub-to-feed
-    =^  cards  sub-feed
-      (surf:da-feed ~ronwex-naltyp-dilryd-mopreg %portal-store [%feed ~])
+      %sub-to-item
+    =^  cards  sub-item
+      (surf:da-item ~ronwex-naltyp-dilryd-mopreg %portal-store [%item ;;([@ @ @ @ ~] (key-to-path:conv key.act))])
     [cards this]
       ::
       %prepend-to-feed  
     =^  cards-1  items 
       (prepend-to-feed:on-poke:store act)
     ?:  =(time.key.act 'global')
-      =^  cards-2  pub-feed  (give:du-feed [%feed ~] [%prepend-to-feed feed.act])
+      =^  cards-2  pub-item  (give:du-item [%item key.act] [%prepend-to-feed feed.act])
       :_  this  (zing ~[cards-1 cards-2])
     [cards-1 this]
       ::
@@ -101,16 +102,16 @@
     ::  no need for %portal-message
     ::
       %sss-to-pub
-    =/  msg  !<(into:du-feed (fled:sss vase))
-    =^  cards  pub-feed  (apply:du-feed msg)
+    =/  msg  !<(into:du-item (fled:sss vase))
+    =^  cards  pub-item  (apply:du-item msg)
     [cards this]
     ::
-      %sss-feed
-    =^  cards  sub-feed  (apply:da-feed !<(into:da-feed (fled:sss vase)))
+      %sss-item
+    =^  cards  sub-item  (apply:da-item !<(into:da-item (fled:sss vase)))
     [cards this]
     ::
       %sss-on-rock
-    =/  msg  !<(from:da-feed (fled:sss vase))
+    =/  msg  !<(from:da-item (fled:sss vase))
     :: ~?  ?=(^ rock.msg)
     ::   "last message from {<from.msg>} on {<src.msg>} is {<,.-.rock.msg>}"
     ?<  ?=([%crash *] rock.msg)
@@ -123,7 +124,7 @@
   |=  [=wire sign=sign-arvo]
   ^-  (quip card:agent:gall _this)
   ?+  wire  `this
-    [~ %sss %behn @ @ @ %feed ~]  [(behn:da-feed |3:wire) this]
+    [~ %sss %behn @ @ @ %item @ @ @ @ ~]  [(behn:da-item |3:wire) this]
   ==
 ::
 ++  on-watch  ::  should it return items on initial sub?
@@ -147,11 +148,11 @@
     ?~  p.sign  `this
     %-  (slog u.p.sign)
     ?+    wire   `this
-        [~ %sss %on-rock @ @ @ %feed ~]
-      =.  sub-feed  (chit:da-feed |3:wire sign)
+        [~ %sss %on-rock @ @ @ %item @ @ @ @ ~]
+      =.  sub-item  (chit:da-item |3:wire sign)
       `this
-        [~ %sss %scry-request @ @ @ %feed ~]
-      =^  cards  sub-feed  (tell:da-feed |3:wire sign)
+        [~ %sss %scry-request @ @ @ %item @ @ @ @ ~]
+      =^  cards  sub-item  (tell:da-item |3:wire sign)
       [cards this]
     ==
     ::

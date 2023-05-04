@@ -35,7 +35,7 @@
       [%delete =key]  ::  adds [%deleted ~] lens
       ::
       [%sub =key]
-      [%sub-to-feed ~]
+      [%sub-to-item =key]
       ::
       ::
       [%prepend-to-feed =key =feed]  ::  TODO rename?

@@ -379,14 +379,12 @@
     |=  jon=json
     ;;  (unit bespoke)
     =,  dejs-soft
-    =/  b
     %.  jon
     %-  of
     :~  [%ship so]
         [%collection (ot ~[title+so blurb+so image+so key-list+dejs-soft-key-list])]
         [%other (ot ~[title+so blurb+so link+so image+so])]
     ==
-    (biff b |=(b=[@t *] (some b(- (stab -.b)))))
   ::
   ++  dejs-key-text
     |=  jon=json

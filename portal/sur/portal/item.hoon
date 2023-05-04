@@ -1,14 +1,17 @@
 /-  *portal-data
-::  SSS feed
+::  SSS item
 |%
-++  name  %feed
+++  name  %item
 +$  rock  item
 +$  wave
-  $%  [%prepend-to-feed =feed]
+  $%  [%init =item]
+      [%prepend-to-feed =feed]
   ==
 ++  wash
   |=  [=rock =wave]
   ?-    -.wave
+      %init
+    item.wave
       %prepend-to-feed
     ?>  ?=([%feed *] bespoke.rock)
     %=  rock
