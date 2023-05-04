@@ -421,7 +421,7 @@
     ;;  (unit key)
     %.  jon
     %-  ot:dejs-soft
-    :~  struc+dejs-soft-path
+    :~  struc+so:dejs-soft
         ship+dejs-soft-ship
         cord+so:dejs-soft
         time+so:dejs-soft
