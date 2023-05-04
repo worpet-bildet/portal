@@ -8,9 +8,6 @@
   $:  %0
       =items
   ==
-::  TODO state-transition
-::  how to do it if variable name is same (items) but state is diff?
-::  probably should have old items still defined
 +$  card  card:agent:gall
 --
 %-  agent:dbug
@@ -32,9 +29,6 @@
   =*  store-core  ~(. store [bowl items ~])
   =^  cards  sub-feed
     (surf:da-feed ~ronwex-naltyp-dilryd-mopreg %portal-store [%feed ~])
-  ::  don't worry about putting everything in main collection?
-  ::  we dont need a MAIN COLLECTION at all?
-  ::  the ONLY(?) point of it is being able to share it with others easily
   =/  col-create  :*  %create  ~  ~  `'~2000.1.1'  `%def
     `[%collection 'Main Collection' 'Your first collection.' '' ~]  
     [%collection our.bowl '' '~2000.1.1']~  ==
@@ -45,14 +39,6 @@
   =^  cards-1  items  (create:on-poke:store-core col-create)
   =^  cards-2  items  (create:on-poke:store-core val-create)
   =^  cards-3  items  (create:on-poke:store-core feed-create)
-  ::  TODO list of all items examples keys to see if there is a better way
-  ::  to organize the naming structure
-  ::  'global' and 'index' in time=cord feel weird
-    ::  [%feed ~zod '' 'global']
-    ::  [%collection ~zod '' 'index']
-    ::  [%collection ~zod '' '~2000.1.1']
-    ::  maybe switch convetion from '~2000.1.1' to e.g. 'default'
-    ::  but then the time=cord label doesn't make sense
   ::  TODO get it right in state transition  
   ::  (maybe not a problem if %create crashes on existing items)
   ?:  =(our.bowl ~ronwex-naltyp-dilryd-mopreg)  
@@ -65,25 +51,12 @@
   :_  this  
   (zing ~[cards cards-1 cards-2 cards-3])
 ::
-::  SCRY TO GET TEMP APPS
-::  .^((map desk [ship desk]) %gx /=hood=/kiln/sources/noun)
-::  triggered on poke from the front end
-::  scries (maybe subs) and makes a collection with our installed apps
-::
 ++  on-save  !>([state pub-feed sub-feed])
 ++  on-load
   |=  old=vase
   ^-  (quip card _this)
   =/  old  !<([=state-0 =_pub-feed =_sub-feed] old)
   `this(state state-0.old, pub-feed pub-feed.old, sub-feed sub-feed.old)
-  :: =/  items  items.old
-  :: =/  index-key  [[[%collection ~] [%def ~]] our.bowl 'index']
-  :: ?:  &(=(our.bowl ~ronwex-naltyp-dilryd-mopreg) !(~(has by items) index-key))
-  ::   =/  act  [%add-with-time index-key [[%collection ~] '' '' '' ~]]
-  ::   ::  rename add-with-time to add-with-cord?
-  ::   =^  cards  items
-  ::     (add-with-time:on-action:store [items our.bowl src.bowl now.bowl act])
-  ::   [cards this(items items)]
 ::
 ++  on-poke
   |=  [=mark =vase]
@@ -103,14 +76,13 @@
       %sub  =^(cards items (sub:on-poke:store act) [cards this])
       ::
       %sub-to-feed
-        =^  cards  sub-feed
-         (surf:da-feed ~ronwex-naltyp-dilryd-mopreg %portal-store [%feed ~])
-      [cards this]
+    =^  cards  sub-feed
+      (surf:da-feed ~ronwex-naltyp-dilryd-mopreg %portal-store [%feed ~])
+    [cards this]
       ::
       %prepend-to-feed  
     =^  cards-1  items 
       (prepend-to-feed:on-poke:store act)
-    ::  TODO clarify 'global' nomenclature
     ?:  =(time.key.act 'global')
       =^  cards-2  pub-feed  (give:du-feed [%feed ~] [%prepend-to-feed feed.act])
       :_  this  (zing ~[cards-1 cards-2])
@@ -208,20 +180,11 @@
     ::
       [%keys ~]  keys+~(key by items)
     ::
-    ::  TODO @ @ @
-      [%item *]  item+(~(gut by items) (path-to-key:conv t.path) ~)
-    ::  TODO @ @ @
-      [%item-exists *]  (~(has by items) (path-to-key:conv t.path))
+      [%item @ @ @ @ ~]  item+(~(gut by items) (path-to-key:conv t.path) ~)
     ::
-    ::  /in-list/[list-ship]/'[list-type]'/'[list-cord]/'[ship]/'[type]'/'[cord]'
-    ::   [%in-list @ @ @ @ @ @ ~]
-    :: =/  item-key  (path-to-key:conv t.t.t.t.path)
-    :: =/  list  =-  (~(gut by items) - ~)
-    ::   (path-to-key:conv [i.t.path i.t.t.path i.t.t.t.path ~])
-    :: ?~(list %.n (key-in-collection:loob item-key list))
+      [%item-exists @ @ @ @ ~]  (~(has by items) (path-to-key:conv t.path))
     ::
-    ::  /item-valid/[ship]/'[type]'/'[cord]'
-      [%item-valid *]
+      [%item-valid @ @ @ @]
     valid+(get-latest:validator our.bowl now.bowl (path-to-key:conv t.path))
   ==
   ::

@@ -39,6 +39,17 @@
 ::  TODO I feel like struc and lens should only be terms instead of paths?
 ::  everything would be much simpler
 ::  
+::  we dont need a MAIN COLLECTION at all?
+::  the ONLY(?) point of it is being able to share it with others easily
+::  TODO list of all items examples keys to see if there is a better way
+::  to organize the naming structure
+::  'global' and 'index' in time=cord feel weird
+  ::  [%feed ~zod '' 'global']
+  ::  [%collection ~zod '' 'index']
+  ::  [%collection ~zod '' '~2000.1.1']
+  ::  maybe switch convetion from '~2000.1.1' to e.g. 'default'
+  ::  but then the time=cord label doesn't make sense
+
 ::
 +$  key  [=struc =ship =cord time=cord]
 ::  struc is the structure of the data

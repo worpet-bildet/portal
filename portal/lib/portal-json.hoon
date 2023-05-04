@@ -411,7 +411,7 @@
     ;;  key
     %.  jon
     %-  ot:dejs
-    :~  struc+dejs-path
+    :~  struc+so:dejs
         ship+dejs-ship
         cord+so:dejs
         time+so:dejs
