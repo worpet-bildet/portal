@@ -363,7 +363,7 @@
                       link+so
                       image+so
                   ==
-      other+(pole-to-cell raw)
+      (some other+(pole-to-cell raw))
         %collection
       =/  raw  %.  ;;((map @t json) +>:jn)
       %-  ot-raw  :~  title+so
@@ -371,7 +371,7 @@
                       image+so
                       key-list+dejs-soft-key-list
                   ==
-      other+(pole-to-cell raw)
+      (some collection+(pole-to-cell raw))
         %app  !!
     ==
   ::
