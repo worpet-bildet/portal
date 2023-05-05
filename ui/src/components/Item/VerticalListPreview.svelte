@@ -3,6 +3,7 @@
   import { getMeta } from '@root/util';
   import { ItemImage } from '@fragments';
   export let item;
+  export let clickable = true;
   let {
     keyObj: { struc },
     keyStr,
@@ -13,6 +14,7 @@
 <a
   use:link
   href={`${keyStr}`}
+  class:pointer-events-none={!clickable}
   class="grid grid-cols-12 items-center gap-4 p-1 hover:bg-gray-500 cursor-pointer"
 >
   <div

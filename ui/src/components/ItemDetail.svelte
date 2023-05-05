@@ -40,11 +40,14 @@
       <div bind:this={avatarPad} />
       <div class="absolute -top-6 w-full" bind:this={avatarContainer}>
         {#if avatar}
-          <img
+          <!-- <img
             src={avatar}
-            class="rounded-md border w-full h-full"
+            class="rounded-md border w-full h-full object-cover"
             alt="Group"
-          />
+          /> -->
+          <div class="border rounded-md overflow-hidden w-full">
+            <ItemImage {title} {color} image={avatar} on:load={redrawAvatar} />
+          </div>
         {:else if type === 'app'}
           <div class="border rounded-md overflow-hidden w-full">
             <ItemImage {title} {color} on:load={redrawAvatar} />

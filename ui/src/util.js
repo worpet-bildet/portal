@@ -18,73 +18,59 @@ export const getMeta = (item) => {
 
 export const getTitle = (item) => {
   switch (item?.keyObj?.struc) {
-    case 'group':
-      return item?.bespoke?.title;
     case 'app':
       return item?.bespoke?.treaty?.title;
     default:
-      return '';
+      return item?.bespoke?.title;
   }
 };
 export const getDescription = (item) => {
   switch (item?.keyObj?.struc) {
-    case 'group':
-      return item?.bespoke?.description;
     case 'app':
       return item?.bespoke?.treaty?.info;
     default:
-      return '';
+      return item?.bespoke?.description;
   }
 };
 export const getBlurb = (item) => {
   switch (item?.keyObj?.struc) {
-    case 'group':
-      return item?.bespoke?.blurb;
     case 'app':
       return item?.bespoke?.treaty?.info;
     default:
-      return '';
+      return item?.bespoke?.blurb;
   }
 };
 export const getImage = (item) => {
   switch (item?.keyObj?.struc) {
-    case 'group':
-      return item?.bespoke?.image;
     case 'app':
       return item?.bespoke?.treaty?.image;
     default:
-      return '';
+      return item?.bespoke?.image;
   }
 };
 export const getCover = (item) => {
   switch (item?.keyObj?.struc) {
-    case 'group':
-      return item?.bespoke?.cover;
     case 'app':
       // return item?.bespoke?.treaty?.title;
       return '';
     default:
-      return '';
+      return item?.bespoke?.cover;
   }
 };
 export const getLink = (item) => {
   switch (item?.keyObj?.struc) {
-    case 'group':
-      return item?.bespoke?.link;
     case 'app':
       return item?.bespoke?.treaty?.website;
     default:
-      return '';
+      return item?.bespoke?.link;
   }
 };
 export const getShip = (item) => {
   switch (item?.keyObj?.struc) {
-    case 'group':
-      return item?.keyObj?.ship;
     case 'app':
       return item?.bespoke?.treaty?.ship;
     default:
-      return '';
+      return item?.keyObj?.ship;
   }
 };
 export const getWebsite = (item) => {
@@ -97,12 +83,10 @@ export const getWebsite = (item) => {
 };
 export const getColor = (item) => {
   switch (item?.keyObj?.struc) {
-    case 'group':
-      return item?.bespoke?.color;
     case 'app':
       return item?.bespoke?.treaty?.color;
     default:
-      return '';
+      return item?.bespoke?.color;
   }
 };
 export const getVersion = (item) => {

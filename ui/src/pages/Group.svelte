@@ -36,9 +36,9 @@
     ({ cover, image, description, title } = getMeta(group));
     joinedDetails = getJoinedGroupDetails(groupKey);
 
-    getHeapItems('~ravmel-ropdyl/fall-images-7837').then((items) => {
-      console.log({ items });
-    });
+    // getHeapItems('~ravmel-ropdyl/fall-images-7837').then((items) => {
+    //   console.log({ items });
+    // });
   });
 
   const join = () => {

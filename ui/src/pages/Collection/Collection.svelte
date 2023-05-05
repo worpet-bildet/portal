@@ -2,6 +2,7 @@
   import { link } from 'svelte-spa-router';
   import { me } from '@root/api';
   import { state, getItem, getCollectionItems, getCurator } from '@root/state';
+  import { getMeta } from '@root/util';
   import { ItemDetail, ItemVerticalListPreview } from '@components';
   import { EditIcon, RightSidebar } from '@fragments';
   export let params;
@@ -10,12 +11,12 @@
   let { wild } = params;
   let collectionKey = `/collection/${wild}`;
 
-  let collection, ship, blurb, title, items, cover, avatar, curator;
+  let collection, ship, blurb, title, image, items, cover, avatar, curator;
   state.subscribe(() => {
     collection = getItem(collectionKey);
     if (!collection) return;
+    ({ title, ship, blurb, image } = getMeta(collection));
     ({
-      bespoke: { title },
       keyObj: { ship },
     } = collection);
 
@@ -34,7 +35,7 @@
       {cover}
       {title}
       description={blurb}
-      {avatar}
+      avatar={image}
       type="collection"
     >
       <div class="grid gap-y-4">

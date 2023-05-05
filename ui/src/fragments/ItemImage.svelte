@@ -12,16 +12,15 @@
   }
 </script>
 
-{#if isUrl(image)}
-  <img src={image} class="w-full h-full object-cover" alt={title} />
-{:else}
-  <div class="relative">
+<div class="relative h-full">
+  <img alt="n/a" src={placeholder} class="w-full h-full object-cover" on:load />
+  {#if isUrl(image)}
     <img
-      alt="n/a"
-      src={placeholder}
-      class="w-full h-full object-cover"
-      on:load
+      src={image}
+      class="w-full h-full object-cover absolute top-0 left-0"
+      alt={title}
     />
+  {:else}
     <div
       class="absolute top-0 left-0 flex items-center justify-center text-2xl text-clip w-full h-full"
       style="background-color: #{primaryColor ||
@@ -36,5 +35,5 @@
             .join('')
         : ''}
     </div>
-  </div>
-{/if}
+  {/if}
+</div>
