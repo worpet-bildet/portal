@@ -6,7 +6,12 @@
     getJoinedGroupDetails,
     refreshGroups,
   } from '@root/state';
-  import { joinGroup, leaveGroup, subscribeToGroup } from '@root/api';
+  import {
+    joinGroup,
+    leaveGroup,
+    subscribeToGroup,
+    getHeapItems,
+  } from '@root/api';
   import { getMeta } from '@root/util';
   import { ItemDetail } from '@components';
   import {
@@ -30,6 +35,10 @@
     group = getGroup(groupKey);
     ({ cover, image, description, title } = getMeta(group));
     joinedDetails = getJoinedGroupDetails(groupKey);
+
+    getHeapItems('~ravmel-ropdyl/fall-images-7837').then((items) => {
+      console.log({ items });
+    });
   });
 
   const join = () => {
@@ -42,8 +51,6 @@
   const channelLink = (channelKey) => {
     return `${window.location.origin}/apps/groups/groups/${groupKey}/channels/${channelKey}`;
   };
-
-  $: console.log({ joinedDetails });
 
   // http://localhost:5173/apps/groups/groups/~worpet-bildet/portal/channels/diary/~worpet-bildet/announcements
 </script>

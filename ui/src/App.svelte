@@ -2,7 +2,7 @@
   import Router, { location } from 'svelte-spa-router';
   import { state } from '@root/state';
 
-  import { CuratorIndex, Feed, Item, Group } from './pages';
+  import { CuratorIndex, Feed, Item, Group, App } from './pages';
   import { Curator, EditCurator } from './pages/Curator';
   import { Collection, EditCollection } from './pages/Collection';
   import { Navbar, Onboard } from '@components';
@@ -13,6 +13,7 @@
     '/feed': Feed,
     '/item/:itemkey': Item,
     '/group/:host/:cord': Group,
+    '/app/:host/:cord': App,
     '/collection/*': Collection,
     '/collection-edit/*': EditCollection,
     '/:patp': Curator,

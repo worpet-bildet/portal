@@ -160,16 +160,16 @@ export const handleSubscriptionEvent = (event, type) => {
 };
 
 export const keyStrFromObj = ({ struc, ship, cord, time }) => {
-  return `${struc}/${ship}/${cord}/${time}`;
+  return `/${struc}/${ship}/${cord}/${time}`;
 };
 
 export const keyStrToObj = (str) => {
   const parts = str.split('/');
   return {
-    ship: parts[1],
-    struc: parts[0],
-    time: '',
-    cord: parts[2],
+    struc: parts[1],
+    ship: parts[2],
+    cord: parts[3],
+    time: parts[4],
   };
 };
 

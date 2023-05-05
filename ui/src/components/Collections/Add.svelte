@@ -84,7 +84,7 @@
             <input
               type="checkbox"
               bind:group={groupKeys}
-              value={`group/${path}`}
+              value={`/group/${path}//`}
             />
           </div>
         {/each}
@@ -96,7 +96,7 @@
             <input
               type="checkbox"
               bind:group={appKeys}
-              value={`app/${ship}/${path}`}
+              value={`/app/${ship}/${path}//`}
             />
           </div>
         {/each}

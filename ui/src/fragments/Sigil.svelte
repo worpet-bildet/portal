@@ -1,12 +1,8 @@
 <script>
   import { sigil, stringRenderer } from '@tlon/sigil-js';
-  import { invertHex } from '@root/util';
+  import { invertHex, formatColor } from '@root/util';
   export let patp, size, color;
-
-  const formatColor = (c) => {
-    if (!c || c === '0x0') return 'ffffff';
-    return c.replace('.', '').replace('0x', '');
-  };
+  console.log({ patp });
 
   let primaryColor;
   $: primaryColor = formatColor(color);

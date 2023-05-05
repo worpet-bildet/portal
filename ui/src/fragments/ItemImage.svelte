@@ -2,26 +2,39 @@
   // TODO: this should probably be dynamic and take the full item instead of
   // requiring the caller to already have an image - this would allow us to
   // display the image grid for a full collection as well
-  import { isUrl, invertHex } from '@root/util';
+  import { isUrl, invertHex, formatColor } from '@root/util';
+  import placeholder from '@assets/placeholder.png';
   export let image, title, color;
+  let primaryColor, secondaryColor;
+  $: {
+    primaryColor = formatColor(color);
+    secondaryColor = invertHex(primaryColor);
+  }
 </script>
 
 {#if isUrl(image)}
   <img src={image} class="w-full h-full object-cover" alt={title} />
 {:else}
-  <div
-    class="flex items-center justify-center text-2xl text-clip w-full h-full"
-    style="background-color: #{color || '000000'}; color: #{invertHex(
-      color || '000000'
-    )};"
-  >
-    {title
-      ? title
-          .toLowerCase()
-          .split(' ')
-          .map((n) => n.slice(0, 1))
-          .filter((n) => /^[a-z0-9]+$/i.test(n))
-          .join('')
-      : ''}
+  <div class="relative">
+    <img
+      alt="n/a"
+      src={placeholder}
+      class="w-full h-full object-cover"
+      on:load
+    />
+    <div
+      class="absolute top-0 left-0 flex items-center justify-center text-2xl text-clip w-full h-full"
+      style="background-color: #{primaryColor ||
+        '000000'}; color: #{secondaryColor || '000000'};"
+    >
+      {title
+        ? title
+            .toLowerCase()
+            .split(' ')
+            .map((n) => n.slice(0, 1))
+            .filter((n) => /^[a-z0-9]+$/i.test(n))
+            .join('')
+        : ''}
+    </div>
   </div>
 {/if}

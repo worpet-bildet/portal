@@ -6,21 +6,134 @@ export const getMeta = (item) => {
     image: getImage(item),
     cover: getCover(item),
     ship: getShip(item),
+    website: getWebsite(item),
+    color: getColor(item),
+    version: getVersion(item),
+    hash: getHash(item),
+    servedFrom: getServedFrom(item),
     createdAt: getCreatedAt(item),
     keyStr: item?.keyStr,
   };
 };
 
-export const getTitle = (item) => item?.bespoke?.title;
-export const getDescription = (item) => item?.bespoke?.description;
-export const getBlurb = (item) => item?.bespoke?.blurb;
-export const getImage = (item) => item?.bespoke?.image;
-export const getCover = (item) => item?.bespoke?.cover;
-export const getShip = (item) => item?.keyObj?.ship;
+export const getTitle = (item) => {
+  switch (item?.keyObj?.struc) {
+    case 'group':
+      return item?.bespoke?.title;
+    case 'app':
+      return item?.bespoke?.treaty?.title;
+    default:
+      return '';
+  }
+};
+export const getDescription = (item) => {
+  switch (item?.keyObj?.struc) {
+    case 'group':
+      return item?.bespoke?.description;
+    case 'app':
+      return item?.bespoke?.treaty?.info;
+    default:
+      return '';
+  }
+};
+export const getBlurb = (item) => {
+  switch (item?.keyObj?.struc) {
+    case 'group':
+      return item?.bespoke?.blurb;
+    case 'app':
+      return item?.bespoke?.treaty?.info;
+    default:
+      return '';
+  }
+};
+export const getImage = (item) => {
+  switch (item?.keyObj?.struc) {
+    case 'group':
+      return item?.bespoke?.image;
+    case 'app':
+      return item?.bespoke?.treaty?.image;
+    default:
+      return '';
+  }
+};
+export const getCover = (item) => {
+  switch (item?.keyObj?.struc) {
+    case 'group':
+      return item?.bespoke?.cover;
+    case 'app':
+      // return item?.bespoke?.treaty?.title;
+      return '';
+    default:
+      return '';
+  }
+};
+export const getLink = (item) => {
+  switch (item?.keyObj?.struc) {
+    case 'group':
+      return item?.bespoke?.link;
+    case 'app':
+      return item?.bespoke?.treaty?.website;
+    default:
+      return '';
+  }
+};
+export const getShip = (item) => {
+  switch (item?.keyObj?.struc) {
+    case 'group':
+      return item?.keyObj?.ship;
+    case 'app':
+      return item?.bespoke?.treaty?.ship;
+    default:
+      return '';
+  }
+};
+export const getWebsite = (item) => {
+  switch (item?.keyObj?.struc) {
+    case 'app':
+      return item?.bespoke?.treaty?.website;
+    default:
+      return '';
+  }
+};
+export const getColor = (item) => {
+  switch (item?.keyObj?.struc) {
+    case 'group':
+      return item?.bespoke?.color;
+    case 'app':
+      return item?.bespoke?.treaty?.color;
+    default:
+      return '';
+  }
+};
+export const getVersion = (item) => {
+  switch (item?.keyObj?.struc) {
+    case 'app':
+      return item?.bespoke?.treaty?.version;
+    default:
+      return '';
+  }
+};
+export const getHash = (item) => {
+  switch (item?.keyObj?.struc) {
+    case 'app':
+      return item?.bespoke?.treaty?.hash;
+    default:
+      return '';
+  }
+};
+export const getServedFrom = (item) => {
+  switch (item?.keyObj?.struc) {
+    case 'app':
+      // pretty sure that this should cover everything but we will find out!!
+      return (
+        item?.bespoke?.treaty?.href?.site ||
+        `apps/${item?.bespoke?.treaty?.href?.glob?.base}`
+      );
+    default:
+      return '';
+  }
+};
 export const getCreatedAt = (item) => fromUrbitTime(item?.meta?.createdAt);
-export const getLink = (item) => item?.bespoke?.link;
-
-export const formatStruc = (struc) => struc.replace('/', '');
 
 export const isUrl = (s) => {
   if (
@@ -69,4 +182,9 @@ export const fromUrbitTime = (timestring) => {
     parts[6]
   );
   return date.getTime() - msOffset;
+};
+
+export const formatColor = (c) => {
+  if (!c || c === '0x0') return 'ffffff';
+  return c.replace('.', '').replace('0x', '');
 };

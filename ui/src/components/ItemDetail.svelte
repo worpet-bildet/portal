@@ -1,6 +1,6 @@
 <script>
   import { isUrl } from '@root/util';
-  import { Sigil } from '@fragments';
+  import { Sigil, ItemImage } from '@fragments';
   export let cover, avatar, title, description, patp, color, type;
 
   // Make sure that the avatar does not cover any elements which are supposed to
@@ -11,9 +11,12 @@
   let avatarPad, avatarContainer;
   $: {
     if (avatarPad && avatarContainer) {
-      avatarPad.style.height = `${avatarContainer.clientHeight}px`;
+      redrawAvatar();
     }
   }
+  const redrawAvatar = () => {
+    avatarPad.style.height = `${avatarContainer.clientHeight}px`;
+  };
 </script>
 
 <div class="col-span-12 w-full h-48">
@@ -42,6 +45,10 @@
             class="rounded-md border w-full h-full"
             alt="Group"
           />
+        {:else if type === 'app'}
+          <div class="border rounded-md overflow-hidden w-full">
+            <ItemImage {title} {color} on:load={redrawAvatar} />
+          </div>
         {:else}
           <div class="border rounded-md overflow-hidden w-full">
             <Sigil {patp} {color} />
@@ -58,7 +65,7 @@
       <div class="gap-4 text-xs">
         <!-- TODO: get any links in here to print nicely -->
         {#if description}<div>{description}</div>{/if}
-        {#if type === 'collection'}<div>by {patp}</div>{/if}
+        {#if type === 'collection' || type === 'app'}<div>by {patp}</div>{/if}
       </div>
     </div>
   </div>

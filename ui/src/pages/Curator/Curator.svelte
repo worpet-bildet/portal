@@ -36,7 +36,7 @@
   let activeTab = 'home';
   let tabs = ['home', 'collections'];
 
-  let cover, avatar, nickname, bio, color, isLoaded, isMyPal;
+  let cover, avatar, nickname, bio, color, isLoaded, isMyPal, pals;
   state.subscribe((s) => {
     curator = getCurator(patp);
     isLoaded = s.isLoaded;

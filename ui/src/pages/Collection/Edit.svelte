@@ -26,6 +26,22 @@
   });
 
   const save = () => {
+    console.log({
+      app: 'portal-manager',
+      mark: 'portal-action',
+      json: {
+        edit: {
+          key: keyStrToObj(collectionKey),
+          bespoke: {
+            collection: {
+              title,
+              blurb,
+              image,
+            },
+          },
+        },
+      },
+    });
     poke({
       app: 'portal-manager',
       mark: 'portal-action',
@@ -37,6 +53,7 @@
               title,
               blurb,
               image,
+              'key-list': [],
             },
           },
         },
