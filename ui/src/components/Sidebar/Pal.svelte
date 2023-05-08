@@ -7,7 +7,12 @@
 
   let subbing = false;
   state.subscribe((s) => {
-    if (s.profiles && !Object.keys(s.profiles).includes(pal) && !subbing) {
+    if (
+      pal &&
+      s.profiles &&
+      !Object.keys(s.profiles).includes(pal) &&
+      !subbing
+    ) {
       subscribeToContactProfile(pal);
       subbing = true; // only do this once per load
     }

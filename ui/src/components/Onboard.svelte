@@ -4,16 +4,18 @@
   // Here we are going to display a modal which onboards the user
 
   let formstep = 'welcome';
-  let formsteps = ['welcome', 'groups', 'apps', 'share'];
+  let formsteps = ['welcome', 'groups', 'apps', 'pals', 'share'];
 
-  let groups, apps;
+  let groups, apps, pals;
   state.subscribe((s) => {
-    ({ groups, apps } = s);
+    ({ groups, apps, pals } = s);
+    console.log({ groups, apps, pals });
   });
 
   let collection = {
     groups: [],
     apps: [],
+    pals: [],
   };
 </script>
 
@@ -28,7 +30,7 @@
         </p>
       {:else if formstep === 'groups'}
         <div class="text-2xl">Recommend your Favourite Groups</div>
-        {#each groups as [path, { meta: { title, image } }]}
+        {#each Object.entries(groups) as [path, { meta: { title, image } }]}
           <div class="flex justify-between">
             <div>{title}</div>
             <input
@@ -40,7 +42,7 @@
         {/each}
       {:else if formstep === 'apps'}
         <div class="text-2xl">Your Favourite Apps</div>
-        <!-- {#each apps as [path, { meta: { title, image } }]}
+        {#each Object.entries(apps) as [path, { title, image }]}
           <div class="flex justify-between">
             <div>{title}</div>
             <input
@@ -49,7 +51,12 @@
               value={path}
             />
           </div>
-        {/each} -->
+        {/each}
+      {:else if formstep === 'pals'}
+        {#if !pals}
+          <div>Portal is better with Pals!</div>
+          <div>Install the app</div>
+        {/if}
       {:else if formstep === 'share'}
         <div class="text-2xl">Share with the World</div>
       {/if}

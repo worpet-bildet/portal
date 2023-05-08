@@ -169,6 +169,6 @@ export const fromUrbitTime = (timestring) => {
 };
 
 export const formatColor = (c) => {
-  if (!c || c === '0x0') return 'ffffff';
+  if (!c || c === '0x0') return '000000';
   return c.replace('.', '').replace('0x', '');
 };

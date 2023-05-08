@@ -25,7 +25,9 @@
     // TODO: get the onboarding status of the user here
   });
 
-  console.log({ $location });
+  location.subscribe(() => {
+    window.scrollTo(0, 0);
+  });
 </script>
 
 <main>

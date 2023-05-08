@@ -63,15 +63,5 @@
   </div>
   <div class="bg-gray-500 p-2">
     <div>{title}</div>
-    <div class="flex gap-4">
-      <div class="flex items-center gap-2">
-        <div class="h-5 w-5"><LikeIcon /></div>
-        6
-      </div>
-      <div class="flex items-center gap-2">
-        <div class="h-5 w-5"><CommentIcon /></div>
-        6
-      </div>
-    </div>
   </div>
 {/if}

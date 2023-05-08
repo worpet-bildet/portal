@@ -144,6 +144,13 @@ export const subscribeToItem = (keyObj) => {
 };
 
 export const subscribeToContactProfile = (patp) => {
+  console.log({
+    app: 'contacts',
+    mark: 'contact-action',
+    json: {
+      heed: [patp],
+    },
+  });
   poke({
     app: 'contacts',
     mark: 'contact-action',
