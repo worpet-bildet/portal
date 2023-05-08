@@ -6,7 +6,9 @@
 
   let collections;
   state.subscribe((s) => {
-    collections = getCuratorCollections(patp) || [];
+    collections = (getCuratorCollections(patp) || []).filter(
+      (c) => c.bespoke?.['key-list']?.length > 0
+    );
   });
 
   // we need to find out here whether the collection is empty because if it
@@ -17,9 +19,15 @@
 </script>
 
 <div class="grid grid-cols-12 gap-4 items-start">
-  {#each collections as collection}
-    <a use:link href={`${collection.keyStr}`} class="col-span-4">
-      <SquarePreview {collection} />
-    </a>
-  {/each}
+  {#if collections.length === 0}
+    <div class="col-span-12">
+      {patp} hasn't created any collections on Portal yet.
+    </div>
+  {:else}
+    {#each collections as collection}
+      <a use:link href={`${collection.keyStr}`} class="col-span-4">
+        <SquarePreview {collection} />
+      </a>
+    {/each}
+  {/if}
 </div>

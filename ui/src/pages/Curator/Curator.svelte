@@ -33,8 +33,8 @@
   let feed = [];
 
   // svelte is so nice episode #167
-  let activeTab = 'home';
-  let tabs = ['home', 'collections'];
+  let activeTab = 'collections';
+  let tabs = ['feed', 'collections'];
 
   let cover, avatar, nickname, bio, color, isLoaded, isMyPal, pals;
   state.subscribe((s) => {
@@ -87,12 +87,18 @@
       <div class="col-span-12 lg:col-span-9">
         <Tabs {tabs} bind:activeTab />
         <div class="pt-4">
-          {#if activeTab === 'home'}
-            <div class="grid gap-y-4">
-              {#each feed as f}
-                <FeedPost item={f} />
-              {/each}
-            </div>
+          {#if activeTab === 'feed'}
+            {#if feed.length === 0}
+              <div class="col-span-12">
+                {patp} hasn't made any posts on Portal yet.
+              </div>
+            {:else}
+              <div class="grid gap-y-4">
+                {#each feed as f}
+                  <FeedPost item={f} />
+                {/each}
+              </div>
+            {/if}
           {:else if activeTab === 'collections'}
             <CollectionsGrid {patp} />
           {/if}

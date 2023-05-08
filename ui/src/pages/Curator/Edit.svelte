@@ -1,19 +1,28 @@
 <script>
   import { poke } from '@root/api';
-  import { state, getCurator } from '@root/state';
-  import { Tabs, TextArea } from '@fragments';
+  import {
+    state,
+    getCurator,
+    getCuratorCollections,
+    keyStrToObj,
+  } from '@root/state';
+  import { CollectionsSquarePreview } from '@components';
+  import { Tabs, TextArea, SortableList } from '@fragments';
 
   export let params;
 
+  const { patp } = params;
+
   let curator;
-  let nickname, cover, avatar, bio;
+  let nickname, cover, avatar, bio, collections;
   state.subscribe(() => {
-    curator = getCurator(params.patp);
+    curator = getCurator(patp);
     ({ nickname, cover, avatar, bio } = curator);
+    collections = getCuratorCollections(patp);
   });
 
-  let activeTab = 'home';
-  let tabs = ['home', 'integrations'];
+  let activeTab = 'collections';
+  let tabs = ['profile', 'collections', 'integrations'];
 
   let publishBlog = true;
   let publishRadio = false;
@@ -25,11 +34,32 @@
   };
 
   // this info is saved in tlon's contact store, not portal
-  const save = () => {
+  const saveProfile = () => {
     poke({
       app: 'contacts',
       mark: 'contact-action',
       json: { edit: [{ nickname }, { cover }, { avatar }, { bio }] },
+    });
+  };
+  const saveCollections = () => {
+    poke({
+      app: 'portal-manager',
+      mark: 'portal-action',
+      json: {
+        edit: {
+          key: {
+            struc: 'collection',
+            ship: patp,
+            cord: '',
+            time: '~2000.1.1',
+          },
+          bespoke: {
+            collection: {
+              'key-list': collections.map((i) => keyStrToObj(i.keyStr)),
+            },
+          },
+        },
+      },
     });
   };
 </script>
@@ -37,7 +67,7 @@
 <div class="grid gap-y-4">
   <div>Editing Curator</div>
   <Tabs {tabs} bind:activeTab />
-  {#if activeTab === 'home'}
+  {#if activeTab === 'profile'}
     <div>
       <div>Display Name</div>
       <input type="text" bind:value={nickname} class="p-2" />
@@ -55,7 +85,19 @@
       <input type="text" bind:value={cover} class="p-2" />
     </div>
     <div>
-      <button class="border px-2" on:click={save}>Save</button>
+      <button class="border px-2" on:click={saveProfile}>Save</button>
+    </div>
+  {:else if activeTab === 'collections'}
+    <div class="grid gap-8 grid-cols-4">
+      <div class="text-2xl font-bold col-span-4">
+        Collections (drag to reorder)
+      </div>
+      <SortableList bind:list={collections} key="keyStr" let:item>
+        <CollectionsSquarePreview collection={item} />
+      </SortableList>
+      <div>
+        <button class="border px-2" on:click={saveCollections}>Save</button>
+      </div>
     </div>
   {:else if activeTab === 'integrations'}
     <div class="grid gap-y-4">

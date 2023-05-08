@@ -30,18 +30,16 @@
   };
 </script>
 
-<div>
-  {#each list as item, index (item[key])}
-    <div
-      animate:flip={{ duration: 400 }}
-      draggable={true}
-      on:dragstart={(event) => dragstart(event, index)}
-      on:drop|preventDefault={(event) => drop(event, index)}
-      ondragover="return false"
-      on:dragenter={() => (hovering = index)}
-      class:bg-gray-500={hovering === index}
-    >
-      <slot {item} />
-    </div>
-  {/each}
-</div>
+{#each list as item, index (item[key])}
+  <div
+    animate:flip={{ duration: 400 }}
+    draggable={true}
+    on:dragstart={(event) => dragstart(event, index)}
+    on:drop|preventDefault={(event) => drop(event, index)}
+    ondragover="return false"
+    on:dragenter={() => (hovering = index)}
+    class:bg-gray-500={hovering === index}
+  >
+    <slot {item} />
+  </div>
+{/each}

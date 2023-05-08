@@ -1,4 +1,4 @@
-import { derived, get, writable } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 import {
   getPortalItems,
   getContacts,
@@ -6,8 +6,6 @@ import {
   getInstalledApps,
   getFeed,
   getPals,
-  scry,
-  poke,
 } from '@root/api';
 
 export const state = writable({});
@@ -109,8 +107,8 @@ export const getCuratorFeed = (patp) => {
 };
 
 export const getCuratorCollections = (patp) => {
-  return getCuratorItemsByStruc(patp, 'collection').filter(
-    (c) => !c.keyStr.includes('~2000.1.1')
+  return (getCurator(patp)?.bespoke?.['key-list'] || []).map((k) =>
+    getItem(keyStrFromObj(k))
   );
 };
 
@@ -128,10 +126,16 @@ export const getItem = (listKey) => {
   return get(state)[listKey];
 };
 
+export const getProfile = (ship) => {
+  return get(state).profiles?.[ship];
+};
+
 export const getCollectionItems = (collectionKey) => {
-  return get(state)[collectionKey]?.bespoke?.['key-list'].map((k) => {
-    return get(state)[keyStrFromObj(k)];
-  });
+  return get(state)
+    [collectionKey]?.bespoke?.['key-list'].map((k) => {
+      return get(state)[keyStrFromObj(k)];
+    })
+    .filter((i) => !!i);
 };
 
 export const getJoinedGroupDetails = (groupKey) => {

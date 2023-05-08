@@ -27,23 +27,6 @@
   });
 
   const save = () => {
-    console.log({
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        edit: {
-          key: keyStrToObj(collectionKey),
-          bespoke: {
-            collection: {
-              title,
-              blurb,
-              image,
-              'key-list': items,
-            },
-          },
-        },
-      },
-    });
     poke({
       app: 'portal-manager',
       mark: 'portal-action',
@@ -55,7 +38,7 @@
               title,
               blurb,
               image,
-              'key-list': items,
+              'key-list': items.map((i) => keyStrToObj(i.keyStr)),
             },
           },
         },
@@ -66,21 +49,25 @@
 
 {#if collection}
   <div class="grid gap-8">
-    <div class="flex flex-col gap-4">
-      <div>Collection title</div>
-      <input type="text" bind:value={title} />
+    <div class="text-2xl font-bold">Editing {title}</div>
+    <div>
+      <div>Title</div>
+      <input class="p-2" type="text" bind:value={title} />
     </div>
-    <div class="flex flex-col gap-4">
-      <div>Collection description</div>
+    <div>
+      <div>Description</div>
       <TextArea bind:value={blurb} minRows={3} maxRows={10} />
     </div>
-    <div class="flex flex-col gap-4">
-      <div>Collection image</div>
-      <input type="text" bind:value={image} />
+    <div>
+      <div>Image</div>
+      <input class="p-2" type="text" bind:value={image} />
     </div>
-    <SortableList bind:list={items} key="keyStr" let:item>
-      <ItemVerticalListPreview {item} clickable={false} />
-    </SortableList>
+    <div>
+      <div>Items (drag to reorder)</div>
+      <SortableList bind:list={items} key="keyStr" let:item>
+        <ItemVerticalListPreview {item} clickable={false} />
+      </SortableList>
+    </div>
     <div>
       <button class="border px-2 py-1" on:click={save}>Save</button>
     </div>

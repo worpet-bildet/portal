@@ -6,16 +6,15 @@
 
   export let collection;
 
-  let item, title, previewItems;
+  let item, title, image, previewItems;
 
   $: {
     item = getItem(collection?.keyStr);
-    ({ title } = getMeta(item));
+    ({ title, image } = getMeta(item));
+
     // we only want at most four items here
-    previewItems = (item?.bespoke?.['key-list']?.slice(0, 4) || [])
-      .map((keyObj) => {
-        console.log({ keyObj });
-        // probably here we want to ensure that we get the meta of the item
+    previewItems = item?.bespoke?.['key-list']
+      ?.map((keyObj) => {
         let i = getItem(keyStrFromObj(keyObj));
         if (!i) {
           subscribeToItem(keyObj);
@@ -23,32 +22,44 @@
         }
         return getMeta(i);
       })
-      .filter((i) => !!i);
+      .filter((i) => !!i)
+      .slice(0, 4);
   }
 
-  /*
-    if previewItems.length === 1
-      colspan = 2 = length x 2
-      rowspan = 2 = length x 2
-
-    if previewItems.length === 2
-      colspan = 2 = length x 2
-      rowspan = 1 = length / 2
-
-    if previewItems.length === 3
-      colspan = i < 2 ? 1 : 2
-      rowspan = 1
-
-  */
+  // this is quite janky, but i am happy enough with it for now
+  let container, containerHeight, reset;
+  const resetHeight = () => {
+    containerHeight = container && container.clientHeight;
+    if (
+      (previewItems.length === 3 || previewItems.length === 2) &&
+      !image &&
+      !reset
+    ) {
+      container.style.height = `${containerHeight / 2}px`;
+      reset = true;
+    }
+  };
 </script>
 
 {#if previewItems.length > 0}
-  <div class="grid grid-cols-2 grid-rows-2">
-    {#each previewItems as { image, title, color }, i}
-      <div class="border row-span-1 col-span-1">
-        <ItemImage {image} {title} {color} />
+  <div class="grid grid-cols-2 grid-rows-2" bind:this={container}>
+    {#if image}
+      <div class="border row-span-2 col-span-2">
+        <ItemImage {image} {title} on:load={resetHeight} />
       </div>
-    {/each}
+    {:else}
+      {#each previewItems as { image, title, color }, i}
+        <div
+          class="border"
+          class:col-span-2={previewItems.length === 1 ||
+            (previewItems.length === 3 && i === 2) ||
+            previewItems.length === 2}
+          class:row-span-2={previewItems.length === 1}
+        >
+          <ItemImage {image} {title} {color} on:load={resetHeight} />
+        </div>
+      {/each}
+    {/if}
   </div>
   <div class="bg-gray-500 p-2">
     <div>{title}</div>
