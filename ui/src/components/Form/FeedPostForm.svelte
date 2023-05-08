@@ -19,8 +19,9 @@
       maxRows={40}
     />
   </div>
-  <button
-    class="col-span-12 justify-self-end border px-3 py-1"
-    on:click={dispatch('post', postContent)}>Post</button
-  >
+  <div class="col-span-12 justify-self-end self-end">
+    <button class="border px-3 py-1" on:click={dispatch('post', postContent)}
+      >Post</button
+    >
+  </div>
 </div>

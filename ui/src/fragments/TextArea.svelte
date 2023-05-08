@@ -9,11 +9,13 @@
 
 <div class="relative">
   <!-- <pre> element here is used to ensure uniformity in char size -->
-  <pre
+  <div
     aria-hidden="true"
     class="p-2 leading-tight box-border"
-    style="min-height: {minHeight}; max-height: {maxHeight}">{value +
-      '\n'}</pre>
+    style="min-height: {minHeight}; max-height: {maxHeight}"
+  >
+    {value + '\n'}
+  </div>
 
   <textarea
     bind:value

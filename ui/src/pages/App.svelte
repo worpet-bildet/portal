@@ -39,16 +39,16 @@
   const open = () => {};
   const uninstall = () => {
     poke({
-      app: 'hood',
-      mark: 'kiln-uninstall',
+      app: 'docket',
+      mark: 'docket-uninstall',
       json: cord,
     }).then(refreshApps);
   };
   const install = () => {
     poke({
-      app: 'hood',
-      mark: 'kiln-install',
-      json: { local: cord, ship, desk: cord },
+      app: 'docket',
+      mark: 'docket-install',
+      json: `${ship}/${cord}`,
     }).then(refreshApps);
   };
 </script>
