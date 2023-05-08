@@ -18,7 +18,6 @@
 +*  this      .
     default   ~(. (default-agent this %|) bowl)
 ++  on-init
-  ~&  >  "hereHERE"
   ^-  (quip card _this)
   =.  state  *state-0
   =^  cards-1  all-items
@@ -45,15 +44,12 @@
       (add-with-time:on-action:portal-store [all-items our.bowl src.bowl now.bowl act])
     :_  this
     (zing ~[cards-1 cards-2 cards-3 cards-4 cards-5 cards-6 cards-7 cards-8])
-  ~&  >  "aqaan her"
-  ~&  all-items
   :_  this
   (zing ~[cards-1 cards-2 cards-3 cards-4 cards-5 cards-6 cards-7])
 ::
 ++  on-save  !>(state)
 ++  on-load
   |=  old=vase
-  ~&  >>  "here?"
   ^-  (quip card _this)
   =/  old  !<(state-0 old)
   =/  all-items  all-items.old
