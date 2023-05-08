@@ -31,6 +31,7 @@
   const resetHeight = () => {
     containerHeight = container && container.clientHeight;
     if (
+      previewItems &&
       (previewItems.length === 3 || previewItems.length === 2) &&
       !image &&
       !reset
@@ -41,7 +42,7 @@
   };
 </script>
 
-{#if previewItems.length > 0}
+{#if previewItems && previewItems.length > 0}
   <div class="grid grid-cols-2 grid-rows-2" bind:this={container}>
     {#if image}
       <div class="border row-span-2 col-span-2">
