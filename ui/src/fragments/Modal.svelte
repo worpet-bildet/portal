@@ -11,7 +11,7 @@
       class="flex justify-center items-center w-2/3 h-2/3 z-2"
       on:click|stopPropagation
     >
-      <div class="border w-full h-full p-4">
+      <div class="border w-full h-full p-4 overflow-y-scroll">
         <slot />
       </div>
     </div>

@@ -8,10 +8,9 @@
 </script>
 
 <div class="relative">
-  <!-- <pre> element here is used to ensure uniformity in char size -->
   <div
     aria-hidden="true"
-    class="p-2 leading-tight box-border"
+    class="p-2 invisible leading-tight box-border break-words"
     style="min-height: {minHeight}; max-height: {maxHeight}"
   >
     {value + '\n'}
@@ -20,6 +19,6 @@
   <textarea
     bind:value
     {...$$props}
-    class="p-2 overflow-hidden absolute w-full h-full top-0 resize-none leading-tight box-border"
+    class="p-2 overflow-hidden absolute w-full h-full top-0 resize-none leading-tight box-border break-words"
   />
 </div>

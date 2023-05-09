@@ -6,6 +6,7 @@ import {
   getInstalledApps,
   getFeed,
   getPals,
+  subscribeToGroup,
 } from '@root/api';
 
 export const state = writable({});
@@ -37,7 +38,6 @@ export const refreshContacts = () => {
 
 export const refreshGroups = () => {
   getJoinedGroups().then((groups) => {
-    console.log({ groups });
     // for some reasons it's possible to get groups that don't have a title
     // so we filter them here to avoid showing useless info
     let _groups = {};
@@ -55,7 +55,11 @@ export const refreshGroups = () => {
           }
           return g;
         })
-        .forEach(([key, data]) => (_groups[key] = data));
+        .forEach(([key, data]) => {
+          // we should subscribe to the group here
+          if (!s[`/group/${key}/`]) subscribeToGroup(key);
+          _groups[key] = data;
+        });
       s.groups = _groups;
       return s;
     });

@@ -2,7 +2,7 @@
   import { createEventDispatcher } from 'svelte';
   import { state } from '@root/state';
   import { poke } from '@root/api';
-  import { StepForm, OtherItemForm } from '@fragments';
+  import { StepForm, OtherItemForm, ItemImage } from '@fragments';
 
   export let collection;
 
@@ -40,22 +40,9 @@
     dispatch('add', path);
   };
   const saveOtherItem = () => {
-    console.log({ newOtherItem });
     // should we do the saving of the item here?? it's a bit messy because we
     // don't save the app / group up above we delegate back to the parent but i
     // think this is probably the "cleanest" way to do it, if not the prettiest
-    console.log({
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        create: {
-          'append-to': [collection.keyObj],
-          bespoke: {
-            other: { ...newOtherItem },
-          },
-        },
-      },
-    });
     poke({
       app: 'portal-manager',
       mark: 'portal-action',
@@ -63,7 +50,7 @@
         create: {
           'append-to': [collection.keyObj],
           bespoke: {
-            other: { ...newOtherItem },
+            other: newOtherItem,
           },
         },
       },
@@ -75,12 +62,18 @@
 <StepForm {formsteps} bind:formstep navbuttons={false}>
   <div class="grid gap-4">
     {#if formstep === 'type'}
-      <div>Item Type</div>
-      <button on:click={() => (formstep = 'app')} class="border">App</button>
-      <button on:click={() => (formstep = 'group')} class="border">Group</button
+      <div class="text-2xl">What kind of item?</div>
+      <button
+        on:click={() => (formstep = 'app')}
+        class="border text-2xl font-bold py-3">App</button
       >
-      <button on:click={() => (formstep = 'other')} class="border"
-        >Other (link etc.)</button
+      <button
+        on:click={() => (formstep = 'group')}
+        class="border text-2xl font-bold py-3">Group</button
+      >
+      <button
+        on:click={() => (formstep = 'other')}
+        class="border text-2xl font-bold py-3">Other (link etc.)</button
       >
     {:else if formstep === 'app'}
       {#if Object.keys(apps).length === 0}
@@ -89,11 +82,15 @@
         >
       {/if}
       {#each Object.entries(apps) as [path, { title, image, ship, info }]}
-        <div class="flex justify-between">
-          <button class="border" on:click={() => add(`/app/${path}/`)}
-            >{title}</button
-          >
-        </div>
+        <button
+          class="grid grid-cols-12 border items-center gap-4 p-1"
+          on:click={() => add(`/app/${path}/`)}
+        >
+          <div class="col-span-1">
+            <ItemImage {image} {title} />
+          </div>
+          <div class="col-span-11 justify-self-start font-bold">{title}</div>
+        </button>
       {/each}
     {:else if formstep === 'group'}
       {#if Object.keys(groups).length === 0}
@@ -102,9 +99,15 @@
         >
       {/if}
       {#each Object.entries(groups) as [path, { meta: { title, image } }]}
-        <button class="border" on:click={() => add(`/group/${path}/`)}
-          >{title}</button
+        <button
+          class="grid grid-cols-12 border items-center gap-4 p-1"
+          on:click={() => add(`/group/${path}/`)}
         >
+          <div class="col-span-1">
+            <ItemImage {image} {title} />
+          </div>
+          <div class="col-span-11 justify-self-start font-bold">{title}</div>
+        </button>
       {/each}
     {:else if formstep === 'other'}
       <OtherItemForm bind:item={newOtherItem} />

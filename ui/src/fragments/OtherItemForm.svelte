@@ -1,7 +1,12 @@
 <script>
   import { TextArea } from '@fragments';
 
-  export let item = {};
+  export let item = {
+    title: '',
+    blurb: '',
+    image: '',
+    link: '',
+  };
 </script>
 
 <div>

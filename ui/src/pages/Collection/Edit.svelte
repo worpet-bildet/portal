@@ -6,7 +6,7 @@
     getCollectionItems,
     keyStrToObj,
   } from '@root/state';
-  import { poke } from '@root/api';
+  import { poke, subscribeToGroup } from '@root/api';
   import { ItemVerticalListPreview, CollectionsAddItemForm } from '@components';
   import { TextArea, SortableList, RightSidebar, Modal } from '@fragments';
   export let params;
@@ -58,6 +58,11 @@
   };
 
   const addItem = (key) => {
+    if (!getItem(key)) {
+      console.log(`Subscribing to group ${key}`);
+      // We should sub to the item here and also create it at the same time
+      subscribeToGroup(key);
+    }
     items.push(getItem(key));
     items = items;
     addModalOpen = false;
@@ -72,8 +77,8 @@
 </script>
 
 {#if collection}
-  <div class="grid gap-8 grid-cols-12">
-    <div class="col-span-9">
+  <div class="grid grid-cols-12">
+    <div class="grid gap-4 col-span-9">
       <div class="text-2xl font-bold">Editing {title}</div>
       <div>
         <div>Title</div>

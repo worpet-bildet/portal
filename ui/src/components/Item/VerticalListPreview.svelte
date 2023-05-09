@@ -19,7 +19,7 @@
     keyObj: { struc },
     keyStr,
   } = item}
-  {@const { title, description, image, color } = getMeta(item)}
+  {@const { title, blurb, description, image, color } = getMeta(item)}
   <div
     on:click={() => (clickable ? navigate() : null)}
     class="grid grid-cols-12 items-center gap-4 p-1 hover:bg-gray-500 cursor-pointer"
@@ -35,7 +35,7 @@
         <div>·</div>
         <div>{struc}</div>
       </div>
-      <div class="line-clamp-2">{description}</div>
+      <div class="line-clamp-2">{blurb || description}</div>
     </div>
     {#if removable}
       <div class="col-span-1 flex justify-center items-center">
