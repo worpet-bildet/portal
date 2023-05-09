@@ -11,7 +11,7 @@
   let { wild } = params;
   let collectionKey = `/collection/${wild}`;
 
-  let collection, ship, blurb, title, image, items, cover, avatar, curator;
+  let collection, ship, blurb, title, image, items, cover;
   state.subscribe(() => {
     collection = getItem(collectionKey);
     if (!collection) return;
@@ -20,12 +20,10 @@
       keyObj: { ship },
     } = collection);
 
-    curator = getCurator(ship);
-    ({ cover, avatar } = curator);
+    ({ cover } = getMeta(`/ship/${ship}//`));
 
     items = getCollectionItems(collection.keyStr);
   });
-  $: console.log({ collection, items, collectionKey });
 </script>
 
 {#if collection}

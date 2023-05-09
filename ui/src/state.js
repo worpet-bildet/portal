@@ -21,9 +21,6 @@ export const refreshPortalItems = () => {
       s.isLoaded = true;
       return s;
     });
-
-    // TODO: group everything by a single curator maybe?
-    // or add some filtering methods to get everything by a single curator
   });
 };
 
@@ -31,6 +28,16 @@ export const refreshContacts = () => {
   getContacts().then((contacts) => {
     state.update((s) => {
       s.profiles = contacts;
+      // also mush this into the state because it's easier when dealing with
+      // multiple struc types at other places in the app
+      Object.entries(contacts).forEach(([key, data]) => {
+        const keyStr = `/ship/${key}//`;
+        s[keyStr] = {
+          ...s[keyStr],
+          bespoke: { ...data },
+          keyObj: keyStrToObj(keyStr),
+        };
+      });
       return s;
     });
   });
@@ -102,7 +109,7 @@ export const refreshPals = () => {
 };
 
 export const getCurator = (patp) => {
-  return { ...mainCollection(patp), ...get(state)?.profiles?.[patp] };
+  return { ...mainCollection(patp), ...get(state)?.[`/ship/${patp}//`] };
 };
 
 // some janky keys here innit
@@ -155,11 +162,7 @@ export const handleSubscriptionEvent = (event, type) => {
         return s;
       });
     case 'contact-news':
-      state.update((s) => {
-        if (!s.profiles) s.profiles = {};
-        s.profiles[event.who] = event.con;
-        return s;
-      });
+      refreshContacts();
     case 'charge-update':
       refreshApps();
     case 'group-action-0' || 'group-leave':

@@ -1,6 +1,6 @@
 <script>
   import { createEventDispatcher } from 'svelte';
-  import { state } from '@root/state';
+  import { state, keyStrFromObj, getItem } from '@root/state';
   import { poke } from '@root/api';
   import { StepForm, OtherItemForm, ItemImage } from '@fragments';
 
@@ -58,27 +58,31 @@
     });
     dispatch('saved');
   };
-  const saveShip = () => {
-    console.log({ newShip });
+  const saveShip = async () => {
+    const key = {
+      struc: 'ship',
+      ship: newShip,
+      time: '',
+      cord: '',
+    };
     // this is kinda tricky because we have to subscribe to the new ship and
     // then when the subscription is finished we have to add it to the
     // collection - this is not trivial because this component does not know
     // when the ship has been subscribed to - the poke being responded to does
     // not mean that the action has finished... or does it?
-    poke({
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        sub: {
-          key: {
-            struc: 'ship',
-            ship: newShip,
-            time: '',
-            cord: '',
+    if (!getItem(keyStrFromObj(key))) {
+      await poke({
+        app: 'portal-manager',
+        mark: 'portal-action',
+        json: {
+          sub: {
+            key: { ...key },
           },
         },
-      },
-    });
+      });
+    }
+    console.log('WE DID IT');
+    add(keyStrFromObj(key));
   };
 </script>
 

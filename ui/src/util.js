@@ -20,6 +20,10 @@ export const getTitle = (item) => {
   switch (item?.keyObj?.struc) {
     case 'app':
       return item?.bespoke?.treaty?.title;
+    case 'ship':
+      return item?.bespoke?.nickname
+        ? `${item?.bespoke?.nickname} (${item?.keyObj?.ship})`
+        : item?.keyObj?.ship;
     default:
       return item?.bespoke?.title;
   }
@@ -28,6 +32,8 @@ export const getDescription = (item) => {
   switch (item?.keyObj?.struc) {
     case 'app':
       return item?.bespoke?.treaty?.info;
+    case 'ship':
+      return item?.bespoke?.bio;
     default:
       return item?.bespoke?.description;
   }
@@ -36,6 +42,8 @@ export const getBlurb = (item) => {
   switch (item?.keyObj?.struc) {
     case 'app':
       return item?.bespoke?.treaty?.info;
+    case 'ship':
+      return item?.bespoke?.bio;
     default:
       return item?.bespoke?.blurb;
   }
@@ -44,6 +52,8 @@ export const getImage = (item) => {
   switch (item?.keyObj?.struc) {
     case 'app':
       return item?.bespoke?.treaty?.image;
+    case 'ship':
+      return item?.bespoke?.avatar;
     default:
       return item?.bespoke?.image;
   }

@@ -58,7 +58,6 @@ export const getPals = () => {
 export const getHeapItems = (heap) => {
   return scry({
     app: 'heap',
-    // path: `/curio/id/${heap}`,
     path: `/heap/${heap}/curios/newest/10`,
   });
 };

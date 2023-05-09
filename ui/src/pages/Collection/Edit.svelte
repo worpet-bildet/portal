@@ -44,7 +44,7 @@
               title,
               blurb,
               image,
-              'key-list': items.map((i) => keyStrToObj(i.keyStr)),
+              'key-list': items.map((i) => i.keyObj),
             },
           },
         },
@@ -86,6 +86,7 @@
   };
 
   const addItem = (key) => {
+    console.log(key);
     items.push(getItem(key));
     items = items;
     addModalOpen = false;

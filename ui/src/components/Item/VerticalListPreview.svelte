@@ -2,21 +2,30 @@
   import { createEventDispatcher } from 'svelte';
   import { push } from 'svelte-spa-router';
   import { getMeta } from '@root/util';
-  import { ItemImage, TrashIcon, EditIcon } from '@fragments';
+  import { ItemImage, Sigil, TrashIcon, EditIcon } from '@fragments';
   export let item;
   export let clickable = true;
   export let removable = false;
   export let editable = false;
 
+  console.log(item);
+
   const dispatch = createEventDispatcher();
   const remove = () => dispatch('remove', item.keyStr);
   const edit = () => dispatch('edit', item.keyStr);
-  const navigate = () => push(item.keyStr);
+  const navigate = () => {
+    if (item.keyObj.struc === 'ship') {
+      console.log(item.keyObj.ship);
+      push(`/${item.keyObj.ship}`);
+    } else {
+      push(item.keyStr);
+    }
+  };
 </script>
 
 {#if item}
   {@const {
-    keyObj: { struc },
+    keyObj: { struc, ship },
     keyStr,
   } = item}
   {@const { title, blurb, description, image, color } = getMeta(item)}
@@ -27,7 +36,11 @@
     <div
       class="border rounded-md overflow-hidden col-span-3 md:col-span-3 h-full"
     >
-      <ItemImage {image} {title} {color} />
+      {#if struc === 'ship' && !image}
+        <Sigil patp={ship} {color} />
+      {:else}
+        <ItemImage {image} {title} {color} />
+      {/if}
     </div>
     <div class="col-span-8 flex flex-col gap-2">
       <div class="flex items-center gap-2">
@@ -35,7 +48,7 @@
         <div>·</div>
         <div>{struc}</div>
       </div>
-      <div class="line-clamp-2">{blurb || description}</div>
+      <div class="line-clamp-2">{blurb || description || ''}</div>
     </div>
     <div class="col-span-1 flex gap-2 justify-center items-center">
       {#if editable}

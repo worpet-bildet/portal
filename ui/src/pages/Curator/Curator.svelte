@@ -1,6 +1,12 @@
 <script>
   import { link } from 'svelte-spa-router';
-  import { state, getCurator, getCuratorFeed, refreshPals } from '@root/state';
+  import {
+    state,
+    getItem,
+    getCurator,
+    getCuratorFeed,
+    refreshPals,
+  } from '@root/state';
   import {
     subscribeToCurator,
     subscribeToContactProfile,
@@ -8,7 +14,7 @@
     removePal,
     me,
   } from '@root/api';
-  import { fromUrbitTime } from '@root/util';
+  import { fromUrbitTime, getMeta } from '@root/util';
   import {
     CollectionsGrid,
     FeedPost,
@@ -36,11 +42,14 @@
   let activeTab = 'collections';
   let tabs = ['feed', 'collections'];
 
-  let cover, avatar, nickname, bio, color, isLoaded, isMyPal, pals;
+  let title, cover, image, description, color, isLoaded, isMyPal, pals;
   state.subscribe((s) => {
     curator = getCurator(patp);
     isLoaded = s.isLoaded;
-    ({ cover, avatar, nickname, bio, color } = curator);
+    console.log(getItem(curator.keyStr));
+    ({ title, cover, image, description, color } = getMeta(
+      getItem(curator.keyStr)
+    ));
     feed = (getCuratorFeed(patp) || []).sort((a, b) => {
       return fromUrbitTime(b.meta.createdAt) - fromUrbitTime(a.meta.createdAt);
     });
@@ -77,9 +86,9 @@
   <div class="grid grid-cols-12 gap-8">
     <ItemDetail
       {cover}
-      {avatar}
-      title={nickname ? `${nickname} (${patp})` : patp}
-      description={bio}
+      avatar={image}
+      {title}
+      {description}
       {color}
       {patp}
       type="ship"

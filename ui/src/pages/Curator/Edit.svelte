@@ -17,7 +17,7 @@
   let nickname, cover, avatar, bio, collections;
   state.subscribe(() => {
     curator = getCurator(patp);
-    ({ nickname, cover, avatar, bio } = curator);
+    ({ nickname, cover, avatar, bio } = curator.bespoke || {});
     collections = getCuratorCollections(patp);
   });
 
