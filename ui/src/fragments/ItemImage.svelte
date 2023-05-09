@@ -10,6 +10,7 @@
     primaryColor = formatColor(color);
     secondaryColor = invertHex(primaryColor);
   }
+  console.log({ image: isUrl(image) });
 </script>
 
 <div class="relative h-full">

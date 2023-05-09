@@ -2,15 +2,15 @@
   import { createEventDispatcher } from 'svelte';
   import { push } from 'svelte-spa-router';
   import { getMeta } from '@root/util';
-  import { ItemImage, TrashIcon } from '@fragments';
+  import { ItemImage, TrashIcon, EditIcon } from '@fragments';
   export let item;
   export let clickable = true;
   export let removable = false;
-
-  console.log(item);
+  export let editable = false;
 
   const dispatch = createEventDispatcher();
   const remove = () => dispatch('remove', item.keyStr);
+  const edit = () => dispatch('edit', item.keyStr);
   const navigate = () => push(item.keyStr);
 </script>
 
@@ -37,8 +37,17 @@
       </div>
       <div class="line-clamp-2">{blurb || description}</div>
     </div>
-    {#if removable}
-      <div class="col-span-1 flex justify-center items-center">
+    <div class="col-span-1 flex gap-2 justify-center items-center">
+      {#if editable}
+        <div
+          class="w-8 h-8 hover:text-blue-500 cursor-pointer"
+          on:click|stopPropagation
+          on:click={() => edit(keyStr)}
+        >
+          <EditIcon />
+        </div>
+      {/if}
+      {#if removable}
         <div
           class="w-8 h-8 hover:text-red-500 cursor-pointer"
           on:click|stopPropagation
@@ -46,7 +55,7 @@
         >
           <TrashIcon />
         </div>
-      </div>
-    {/if}
+      {/if}
+    </div>
   </div>
 {/if}

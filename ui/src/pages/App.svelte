@@ -49,7 +49,13 @@
       app: 'docket',
       mark: 'docket-install',
       json: `${ship}/${cord}`,
-    }).then(refreshApps);
+    }).then(() => {
+      poke({
+        app: 'hood',
+        mark: 'kiln-revive',
+        json: cord,
+      }).then(refreshApps);
+    });
   };
 </script>
 

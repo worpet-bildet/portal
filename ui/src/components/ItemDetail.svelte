@@ -3,6 +3,8 @@
   import { Sigil, ItemImage } from '@fragments';
   export let cover, avatar, title, description, patp, color, type;
 
+  console.log({ cover, avatar, title, description, patp, color, type });
+
   // Make sure that the avatar does not cover any elements which are supposed to
   // be below it by ensuring that the height of the row is at least equal to the
   // height of the avatar image - this does add a tiny bit of padding to the

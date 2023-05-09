@@ -201,3 +201,17 @@ export const useGroupsSubscription = (onEvent) => {
 
   return () => api?.unsubscribe(groupsSub);
 };
+
+export const useDocketSubscription = (onEvent) => {
+  const docketSub = api.subscribe({
+    app: 'docket',
+    path: '/charges',
+    ship: api.ship,
+    verbose: true,
+    event: onEvent,
+    err: console.error,
+    quit: console.error,
+  });
+
+  return () => api?.unsubscribe(docketSub);
+};

@@ -7,10 +7,11 @@
   export let collection;
 
   let formstep = 'type';
-  let formsteps = ['type', 'app', 'group', 'other'];
+  let formsteps = ['type', 'app', 'group', 'ship', 'other'];
 
   let groups = {};
   let apps = {};
+  let newShip;
   let newOtherItem;
 
   const collectionContains = (key) => {
@@ -57,6 +58,23 @@
     });
     dispatch('saved');
   };
+  const saveShip = () => {
+    console.log({ newShip });
+    poke({
+      app: 'portal-manager',
+      mark: 'portal-action',
+      json: {
+        sub: {
+          key: {
+            struc: 'ship',
+            ship: newShip,
+            time: '',
+            cord: '',
+          },
+        },
+      },
+    });
+  };
 </script>
 
 <StepForm {formsteps} bind:formstep navbuttons={false}>
@@ -70,6 +88,10 @@
       <button
         on:click={() => (formstep = 'group')}
         class="border text-2xl font-bold py-3">Group</button
+      >
+      <button
+        on:click={() => (formstep = 'ship')}
+        class="border text-2xl font-bold py-3">Ship</button
       >
       <button
         on:click={() => (formstep = 'other')}
@@ -109,6 +131,10 @@
           <div class="col-span-11 justify-self-start font-bold">{title}</div>
         </button>
       {/each}
+    {:else if formstep === 'ship'}
+      <div>Ship naem</div>
+      <input type="text" class="p-2" bind:value={newShip} />
+      <button on:click={saveShip}>Save</button>
     {:else if formstep === 'other'}
       <OtherItemForm bind:item={newOtherItem} />
       <button class="border" on:click={() => saveOtherItem()}>Save</button>

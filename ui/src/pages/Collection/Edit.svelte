@@ -8,7 +8,13 @@
   } from '@root/state';
   import { poke, subscribeToGroup } from '@root/api';
   import { ItemVerticalListPreview, CollectionsAddItemForm } from '@components';
-  import { TextArea, SortableList, RightSidebar, Modal } from '@fragments';
+  import {
+    TextArea,
+    SortableList,
+    RightSidebar,
+    Modal,
+    OtherItemForm,
+  } from '@fragments';
   export let params;
   let { wild } = params;
   let collectionKey = `/collection/${wild}`;
@@ -49,7 +55,6 @@
   let addModalOpen = false;
   const add = () => {
     addModalOpen = true;
-    console.log({ addModalOpen });
   };
 
   const remove = (key) => {
@@ -57,12 +62,30 @@
     save();
   };
 
+  let editModalOpen = false;
+  let item;
+  const edit = (key) => {
+    item = items.find((i) => i.keyStr === key);
+    editModalOpen = true;
+  };
+
+  const saveEdits = () => {
+    poke({
+      app: 'portal-manager',
+      mark: 'portal-action',
+      json: {
+        edit: {
+          key: item.keyObj,
+          bespoke: {
+            other: { ...item.bespoke },
+          },
+        },
+      },
+    });
+    editModalOpen = false;
+  };
+
   const addItem = (key) => {
-    if (!getItem(key)) {
-      console.log(`Subscribing to group ${key}`);
-      // We should sub to the item here and also create it at the same time
-      subscribeToGroup(key);
-    }
     items.push(getItem(key));
     items = items;
     addModalOpen = false;
@@ -70,9 +93,7 @@
   };
 
   const onSaved = () => {
-    console.log('SAVEDDDD');
     addModalOpen = false;
-    console.log({ addModalOpen });
   };
 </script>
 
@@ -99,7 +120,9 @@
             {item}
             clickable={false}
             removable={true}
+            editable={item.keyObj.struc === 'other'}
             on:remove={({ detail }) => remove(detail)}
+            on:edit={({ detail }) => edit(detail)}
           />
         </SortableList>
       </div>
@@ -117,5 +140,11 @@
       on:add={({ detail }) => addItem(detail)}
       on:saved={onSaved}
     />
+  </Modal>
+  <Modal bind:open={editModalOpen}>
+    <div class="grid gap-4">
+      <OtherItemForm bind:item={item.bespoke} />
+      <button class="border" on:click={saveEdits}>Save</button>
+    </div>
   </Modal>
 {/if}
