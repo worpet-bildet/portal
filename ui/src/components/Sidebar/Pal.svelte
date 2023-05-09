@@ -1,11 +1,13 @@
 <script>
   import { link } from 'svelte-spa-router';
-  import { state, getProfile } from '@root/state';
+  import { state, getItem } from '@root/state';
   import { subscribeToContactProfile } from '@root/api';
+  import { getMeta } from '@root/util';
   import { Sigil } from '@fragments';
   export let pal;
 
   let subbing = false;
+  let image, title, color;
   state.subscribe((s) => {
     if (
       pal &&
@@ -16,27 +18,27 @@
       subscribeToContactProfile(pal);
       subbing = true; // only do this once per load
     }
+    ({ image, title, color } = getMeta(getItem(`/ship/${pal}//`)) || {});
   });
 </script>
 
 {#if pal}
-  {@const { avatar, nickname } = getProfile(pal) || {}}
   <a
     use:link
     href={`/${pal}`}
     class="flex gap-4 items-center hover:bg-gray-500 p-1"
   >
     <div>
-      {#if avatar}
-        <img alt={pal} src={avatar} class="rounded-md w-10 h-10" />
+      {#if image}
+        <img alt={pal} src={image} class="rounded-md w-10 h-10" />
       {:else}
         <div class="rounded-md w-10 h-10 overflow-hidden">
-          <Sigil patp={pal} />
+          <Sigil patp={pal} {color} />
         </div>
       {/if}
     </div>
     <div>
-      <div>{pal}</div>
+      <div>{title}</div>
     </div>
   </a>
 {/if}

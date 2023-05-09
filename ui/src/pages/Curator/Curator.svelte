@@ -1,12 +1,6 @@
 <script>
   import { link } from 'svelte-spa-router';
-  import {
-    state,
-    getItem,
-    getCurator,
-    getCuratorFeed,
-    refreshPals,
-  } from '@root/state';
+  import { state, getCurator, getCuratorFeed, refreshPals } from '@root/state';
   import {
     subscribeToCurator,
     subscribeToContactProfile,
@@ -46,10 +40,7 @@
   state.subscribe((s) => {
     curator = getCurator(patp);
     isLoaded = s.isLoaded;
-    console.log(getItem(curator.keyStr));
-    ({ title, cover, image, description, color } = getMeta(
-      getItem(curator.keyStr)
-    ));
+    ({ title, cover, image, description, color } = getMeta(curator));
     feed = (getCuratorFeed(patp) || []).sort((a, b) => {
       return fromUrbitTime(b.meta.createdAt) - fromUrbitTime(a.meta.createdAt);
     });
