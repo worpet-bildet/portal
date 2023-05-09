@@ -325,7 +325,7 @@
                       cord+so
                       time+so
                       lens+so
-                      bespoke+dejs-soft-bespoke
+                      bespoke+dejs-soft-bespoke-create
                       append-to+dejs-key-list
                   ==
       create+(pole-to-cell raw)
@@ -345,6 +345,39 @@
     ?~  +.pol
       -.pol
     [-.pol (pole-to-cell +.pol)]
+  ::
+  ::  optional args in create 
+  ::  only work in conversions
+  ++  dejs-soft-bespoke-create  
+    |=  jon=json
+    ;;  (unit bespoke)
+    =,  dejs-soft
+    =/  jn  %.  jon
+        %-  of:dejs
+        :~  [%other json]
+            [%app json]
+            [%collection json]
+        ==   
+    ?-    -.jn
+        %other
+      =/  raw  %.  ;;((map @t json) +>:jn)
+      %-  ot-raw  :~  title+so
+                      blurb+so
+                      link+so
+                      image+so
+                  ==
+      (some other+(pole-to-cell (turn raw |=(a=(unit) (fall a ~)))))
+        %collection
+      =/  raw  %.  ;;((map @t json) +>:jn)
+      %-  ot-raw  :~  title+so
+                      blurb+so
+                      image+so
+                      key-list+dejs-soft-key-list
+                  ==
+      =+  (turn `(list (unit))`raw |=(a=(unit *) (fall a ~)))
+      (some collection+(pole-to-cell -))
+        %app  !!
+    ==
   ::
   ++  dejs-soft-bespoke-edit  ::use ot-raw
     |=  jon=json
