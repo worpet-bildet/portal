@@ -9,6 +9,7 @@
     collections = (getCuratorCollections(patp) || []).filter(
       (c) => c?.bespoke?.['key-list']?.length > 0
     );
+    console.log(collections)
   });
 
   // we need to find out here whether the collection is empty because if it

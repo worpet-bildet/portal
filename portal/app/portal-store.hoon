@@ -44,20 +44,19 @@
     `[%validity-store *validity-records]  ~  ==
   =/  feed-create  [%create ~ ~ `'~2000.1.1' `%personal `[%feed ~] ~]
   =^  cards-1  state  (create:handle-poke:stor col-create)
-  :: =^  cards-2  [items item-pub item-sub]  (create:handle-poke:stor val-create)
-  :: =^  cards-3  [items item-pub item-sub]  (create:handle-poke:stor feed-create)
+  =^  cards-2  state  (create:handle-poke:stor val-create)
+  =^  cards-3  state  (create:handle-poke:stor feed-create)
   :: ::  TODO get it right in state transition  
   :: ::  (maybe not a problem if %create crashes on existing items)
-  :: ?:  =(our.bowl ~ronwex-naltyp-dilryd-mopreg)  
-  ::   =/  global-feed-create  [%create ~ ~ `'global' `%global `[%feed ~] ~]
-  ::   =/  index-create  [%create ~ ~ `'index' `%def `[%collection '' '' '' ~] ~]
-  ::   =^  cards-4  items  (create:handle-poke:stor global-feed-create)
-  ::   =^  cards-5  item-pub  (give:du-item [%item %feed our.bowl '' 'global' ~] [%whole (~(got by items) [%feed our.bowl '' 'global'])])
-  ::   =^  cards-6  items  (create:handle-poke:stor index-create)
-  ::   :_  this
-  ::   (zing ~[cards cards-1 cards-2 cards-3 cards-4 cards-5 cards-6])
+  ?:  =(our.bowl ~ronwex-naltyp-dilryd-mopreg)  
+    =/  global-feed-create  [%create ~ ~ `'global' `%global `[%feed ~] ~]
+    =/  index-create  [%create ~ ~ `'index' `%def `[%collection '' '' '' ~] ~]
+    =^  cards-4  state  (create:handle-poke:stor global-feed-create)
+    =^  cards-5  state  (create:handle-poke:stor index-create)
+    :_  this
+    (zing ~[cards cards-1 cards-2 cards-3 cards-4 cards-5 cards-5])
   :_  this  
-  (zing ~[cards cards-1]):: cards-2 cards-3])
+  (zing ~[cards cards-1 cards-2 cards-3]):: cards-2 cards-3])
 ::
 ++  on-save  !>(state)
 ++  on-load
@@ -151,7 +150,6 @@
   ?+    path    ~|("unexpected scry into {<dap.bowl>} on path {<path>}" !!)
     ::
       [%items ~]
-    ^-  [%items ^items]
     =+  ~(tap by read:da-item)
     =+  %-  malt  %+  turn  -
       |=  [k=[=ship =dude:gall p=^^path] v=[? ? =rock:portal-item]]
@@ -197,10 +195,11 @@
 ++  get-item
   |=  =key
   ^-  item
-  ?:  |(=(our.bowl ship.key) =(lens.item %temp))
-    (~(got by items) key)
-  =/  path  (key-to-path:conv key)
-  rock:(~(got by read:da-item) [ship.key %portal-store [%item path]])
+  =+  (~(gut by items) key ~)
+  ?~  -  
+    =/  path  (key-to-path:conv key)
+    rock:(~(got by read:da-item) [ship.key %portal-store [%item path]])
+  -
 ::
 ++  put-item
   |=  =item
@@ -274,12 +273,12 @@
       ?>  ?=([%replace *] act)
       =/  item  (replace:itm (get-item key.act) act)
       =/  path  [%item (key-to-path:conv key.item)]
+      ?:  =(lens.item %temp)
+        :-  (upd:cards-methods item)
+        state(items (put-item item))
       =^  cards  item-pub  (give:du-item path [%whole item])
       :-  (welp cards (upd:cards-methods item))
-      %=  state  
-        items     (put-item item)
-        item-pub  item-pub
-      ==
+      state(items (put-item item))
     ::
     ++  create
       |=  [act=action]
@@ -289,13 +288,13 @@
       =/  path  [%item (key-to-path:conv key.item)]
       ?<  (has-item key.item)  :: should other actions have these checks?      
       =.  items  (put-item item)
-      =^  cards  item-pub  (give:du-item path [%whole item])
       ::  TODO check if already in list/items (if doing put with temp)
-      =+  :-  (welp cards (upd:cards-methods item))
-          %=  state
-            items   items
-            item-pub  item-pub
-          ==
+      =+  ?:  =(lens.item %temp)
+            :-  (upd:cards-methods item)
+            state
+          =^  cards  item-pub  (give:du-item path [%whole item])
+          :-  (welp cards (upd:cards-methods item))
+          state
       ?~  append-to.act  -
       %-  tail  %^  spin  `key-list`append-to.act  -
         |=  [col-key=key q=[(list card) state-1]] 
@@ -312,6 +311,9 @@
       ?>  ?=([%edit *] act)
       =/  path  [%item (key-to-path:conv key.act)]
       =/  item  (edit:itm (get-item key.act) act)
+      ?:  =(lens.item %temp)
+        :-  (upd:cards-methods item)
+        state(items (put-item item))
       =^  cards  item-pub  (give:du-item path [%whole item])
       :_  state(items (put-item item))
       (welp cards (upd:cards-methods item))
@@ -327,7 +329,7 @@
       ?.  =(time.key.act 'global')  [cards state]
       =^  cards-1  item-pub  (give:du-item path [%prepend-to-feed feed.act])
       :-  (welp cards cards-1)
-      state(item-pub item-pub)
+      state
     ::
     ++  append
       |=  [act=action]
