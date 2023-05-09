@@ -107,9 +107,9 @@ export const getCuratorFeed = (patp) => {
 };
 
 export const getCuratorCollections = (patp) => {
-  return (getCurator(patp)?.bespoke?.['key-list'] || []).map((k) =>
-    getItem(keyStrFromObj(k))
-  );
+  return (getCurator(patp)?.bespoke?.['key-list'] || [])
+    .filter((k) => k.struc === 'collection')
+    .map((k) => getItem(keyStrFromObj(k)));
 };
 
 export const getCuratorItemsByStruc = (patp, struc) => {

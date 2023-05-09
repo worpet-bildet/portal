@@ -7,7 +7,7 @@
   let collections;
   state.subscribe((s) => {
     collections = (getCuratorCollections(patp) || []).filter(
-      (c) => c.bespoke?.['key-list']?.length > 0
+      (c) => c?.bespoke?.['key-list']?.length > 0
     );
   });
 

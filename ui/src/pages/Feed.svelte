@@ -28,7 +28,7 @@
             },
           ],
           bespoke: {
-            '/other': {
+            other: {
               title: '',
               blurb: content,
               link: '',

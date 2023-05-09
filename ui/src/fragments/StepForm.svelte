@@ -4,6 +4,7 @@
 
   export let formstep;
   export let formsteps;
+  export let navbuttons = true;
 
   let isLastStep, isFirstStep;
 
@@ -25,16 +26,18 @@
   <div>
     <slot />
   </div>
-  <div class="flex justify-between w-full">
-    {#if !isFirstStep}
-      <button class="border px-2 py-1" on:click={back}>Back</button>
-    {:else}
-      <div />
-    {/if}
-    {#if !isLastStep}
-      <button class="border px-2 py-1" on:click={next}>Next</button>
-    {:else}
-      <button class="border px-2 py-1" on:click={save}>Save</button>
-    {/if}
-  </div>
+  {#if navbuttons}
+    <div class="flex justify-between w-full">
+      {#if !isFirstStep}
+        <button class="border px-2 py-1" on:click={back}>Back</button>
+      {:else}
+        <div />
+      {/if}
+      {#if !isLastStep}
+        <button class="border px-2 py-1" on:click={next}>Next</button>
+      {:else}
+        <button class="border px-2 py-1" on:click={save}>Save</button>
+      {/if}
+    </div>
+  {/if}
 </div>

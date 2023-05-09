@@ -5,6 +5,7 @@ export { default as FeedPost } from './FeedPost.svelte';
 export { default as CollectionsGrid } from './Collections/Grid.svelte';
 export { default as CollectionsAdd } from './Collections/Add.svelte';
 export { default as CollectionsSquarePreview } from './Collections/SquarePreview.svelte';
+export { default as CollectionsAddItemForm } from './Collections/AddItemForm.svelte';
 export { default as SidebarPal } from './Sidebar/Pal.svelte';
 export { default as SidebarGroup } from './Sidebar/Group.svelte';
 export { default as ItemVerticalListPreview } from './Item/VerticalListPreview.svelte';
