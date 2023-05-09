@@ -160,6 +160,8 @@ export const handleSubscriptionEvent = (event, type) => {
         s.profiles[event.who] = event.con;
         return s;
       });
+    case 'charge-update':
+      refreshApps();
     case 'group-action-0' || 'group-leave':
       refreshGroups();
     default:

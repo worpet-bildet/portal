@@ -17,6 +17,7 @@
     color,
     version,
     hash,
+    isInstalling,
     isInstalled,
     servedFrom;
   state.subscribe((s) => {
@@ -33,8 +34,11 @@
       hash,
       servedFrom,
     } = getMeta(item));
-    isInstalled = s.apps && !!s.apps[cord];
+    isInstalling = s.apps?.[cord]?.chad?.hasOwnProperty('install');
+    isInstalled = !isInstalling && !!s.apps?.[cord];
   });
+
+  $: console.log({ isInstalling });
 
   const open = () => {};
   const uninstall = () => {
@@ -45,6 +49,7 @@
     }).then(refreshApps);
   };
   const install = () => {
+    isInstalling = true;
     poke({
       app: 'docket',
       mark: 'docket-install',
@@ -96,6 +101,10 @@
             href={`${window.location.origin}/${servedFrom}/`}
             class="py-1 border text-center"
             on:click={open}>Open {title}</a
+          >
+        {:else if isInstalling}
+          <AsyncButton loading={true} class="py-1 border"
+            >Installing...</AsyncButton
           >
         {:else}
           <AsyncButton class="py-1 border" on:click={install}

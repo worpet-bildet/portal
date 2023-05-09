@@ -60,6 +60,11 @@
   };
   const saveShip = () => {
     console.log({ newShip });
+    // this is kinda tricky because we have to subscribe to the new ship and
+    // then when the subscription is finished we have to add it to the
+    // collection - this is not trivial because this component does not know
+    // when the ship has been subscribed to - the poke being responded to does
+    // not mean that the action has finished... or does it?
     poke({
       app: 'portal-manager',
       mark: 'portal-action',
@@ -117,7 +122,8 @@
     {:else if formstep === 'group'}
       {#if Object.keys(groups).length === 0}
         <div>You have already added all your groups to this collection</div>
-        <button class="border" on:click={() => (formstep = 'type')}>Back</button
+        <button class="border py-1" on:click={() => (formstep = 'type')}
+          >Back</button
         >
       {/if}
       {#each Object.entries(groups) as [path, { meta: { title, image } }]}
@@ -132,12 +138,17 @@
         </button>
       {/each}
     {:else if formstep === 'ship'}
-      <div>Ship naem</div>
-      <input type="text" class="p-2" bind:value={newShip} />
-      <button on:click={saveShip}>Save</button>
+      <div>Ship</div>
+      <input
+        type="text"
+        class="p-2"
+        bind:value={newShip}
+        placeholder="~worpet-bildet"
+      />
+      <button class="border py-1" on:click={saveShip}>Save</button>
     {:else if formstep === 'other'}
       <OtherItemForm bind:item={newOtherItem} />
-      <button class="border" on:click={() => saveOtherItem()}>Save</button>
+      <button class="border py-1" on:click={() => saveOtherItem()}>Save</button>
     {/if}
   </div>
 </StepForm>

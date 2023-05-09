@@ -105,8 +105,8 @@ export const subscribeToCurator = (patp) => {
         key: {
           struc: 'collection',
           ship: patp,
-          cord: '~2000.1.1',
-          time: '',
+          time: '~2000.1.1',
+          cord: '',
         },
       },
     },
