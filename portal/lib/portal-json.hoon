@@ -317,6 +317,7 @@
                 [%remove (ot:dejs ~[item-key+dejs-key col-key+dejs-key])]
                 [%delete (ot:dejs ~[key+dejs-key])]
                 [%sub (ot:dejs ~[key+dejs-key])]
+                [%prepend-to-feed (ot:dejs ~[key+dejs-key feed+dejs-feed])]
             ==
     ?+    -.jn    jn
         %create
@@ -427,6 +428,17 @@
     :~  key+dejs-key
         text+so:dejs
     ==
+  ++  dejs-feed
+    |=  jon=json
+    ^-  feed
+    %.  jon
+    %-  ar:dejs
+    %-  ot:dejs
+    :~  time+so:dejs
+        ship+dejs-ship
+        key+dejs-key
+    ==
+  ::
   ++  dejs-key-list
     |=  jon=json
     ^-  key-list
