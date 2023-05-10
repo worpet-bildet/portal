@@ -5,16 +5,12 @@
 ::
 ::  --  after everything works--
 ::  TODO - each bespoke has its own diffs? (SSS)
-::  TODO decide how bespoke should look
-::  (for now, with new modifications to existing functionality)
-::  tags?                  NO
+::  TODO decide how bespoke should look  ->  e.g. remove image from %collection
 ::  comments?              NO
 ::    ->  comments inside the item but with ID, so they can be added to soc gr
 ::    ->  the owner of the items will then also be the owner of the comment
 ::    ->  also think thru retweet(amp)/quote tweet/reply
-::  items SSS?             NO
 ::  soc graph networking?  NO
-::  optimistic rendering   NO
 ::
 ::  TODO define state transition (PM and PS) with $&
 ::  - its fine if I dont make a state trans and lose the state of PM. (except maybe feed?)
@@ -27,18 +23,13 @@
 ::
 ::  Basic Outline
 ::
-::  TODO FEED type
-::  TODO portal-indexer, separate agent
-::  TODO switch from '~2000.1.1' as >>efault? or no?
+::  TODO switch from '~2000.1.1' as default? or no?
 ::
 ::  default collection for feed posts
 ::
 ::  Tom wants to determine what goes to the feed of one person
 ::  whatever goes to my-feed, goes to global feed
-::
-::  TODO I feel like struc and lens should only be terms instead of paths?
-::  everything would be much simpler
-::  
+::::  
 ::  we dont need a MAIN COLLECTION at all?
 ::  the ONLY(?) point of it is being able to share it with others easily
 ::  TODO list of all items examples keys to see if there is a better way
@@ -49,7 +40,9 @@
   ::  [%collection ~zod '' '~2000.1.1']
   ::  maybe switch convetion from '~2000.1.1' to e.g. 'default'
   ::  but then the time=cord label doesn't make sense
-
+::
+::  nectar!
+::
 ::
 +$  key  [=struc =ship =cord time=cord]
 ::  struc is the structure of the data

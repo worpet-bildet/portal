@@ -1,5 +1,5 @@
 /-  *portal-data, *portal-config, *portal-action, *portal-message
-/+  sig, io=agentio, mip
+/+  sig, io=agentio, mip, sss
 |%
 +$  card  card:agent:gall
 ::
@@ -8,7 +8,7 @@
   ::
   ++  key-to-path
     |=  [=key]
-    ^-  path
+    ;;  [@ @ @ @ ~]
     ;:  weld
       ~[struc.key]
       ~[(scot %p ship.key)]
@@ -135,6 +135,11 @@
     |=  =message
     ^-  card
     [(~(poke pass:io /msg) dock [%portal-message !>(message)])]
+  ::
+  ++  upd
+    |=  =item
+    ^-  card
+    [%give %fact [/updates]~ %portal-update !>(item)]
   --
 ::
 ::
@@ -263,343 +268,159 @@
     --
   --
 ::
-++  store
-  |_  [=bowl:gall =items cards=_*(list card)]
-  ::
-  ++  has-item
-    |=  =key
-    ^-  ?
-    (~(has by items) key)
-  ::
-  ++  get-item
-    |=  =key
-    ^-  item
-    (~(got by items) key)
-  ::
-  ++  put-item
-    |=  =item
-    ^-  ^items
-    (~(put by items) key.item item)
-  ::
-  ++  del-item  ::  only used in %purge, %delete just labels item as deleted
-                ::  and it's actually removed during purge
-    |=  =key
-    ^-  ^items
-    (~(del by items) key)
-  ::
-  ++  del-items
-    |=  =key-list
-    ^-  ^items
-    =+  `(map key item)`(malt (turn key-list |=(=key [key *item])))
-    (~(del by items) -)
-  ::
-  ::
-  ::  helper methods
-  ++  cards-methods  ::  all arms here should append to the list of cards
-    ::  TODO
-    :: - on-action sub
-    |%
-    ::  whether its on-agent or on-poke
-    ++  put  ::  for on action, on message
-      ::  TODO eventually specify diffs for SSS
-      |=  [=item]
-      ^-  (list card)
-      ;:  welp
-        cards
-        ::  all changes in local state
-        [%give %fact [/updates]~ %portal-update !>(item)]~
-        ::  all changes in items that are ours
-        ?.  &(=(our.bowl ship.key.item) ?!(=(lens.item %temp)))
-          ~
-        [%give %fact [(key-to-path:conv key.item)]~ %portal-update !>(item)]~
-      ==
-      ::    fe-update
-      ::    PM update
-      ::    subs update
-      ::  previous card making exception:  validity store -> no cards
-    ::
-    ++  del
-      |=  [=item]
-      ^-  (list card)
-      =/  path-key  (key-to-path:conv key.item)
-      ;:  welp
-        cards
-        [%give %fact [path-key]~ [%portal-update !>(item)]]~  ::  general updates
-        ?+    lens.item    ::  sub path handle
-        ::  default
-          ?:  =(our.bowl ship.key.item)
-            [%give %fact [(key-to-path:conv key.item)]~ %portal-update !>(item)]~
-          [%pass path-key %agent [ship.key.item %portal-store] %leave ~]~
-        ::  if temp
-          %temp
-        =-  [%pass [- path-key] %agent [ship.key.item -] %leave ~]~
-          ?+    struc.key.item    !!
-            %app    %treaty
-            %group  %get-group-preview
+++  item-methods  ::  all arms here should output item
+  |_  =bowl:gall
+  ++  edit
+    |=  [=item act=action]
+    ::  should output item
+    ^-  ^item
+    ?>  ?=([%edit *] act)
+    ?>  =(key.item key.act)
+    =.  item
+      %=  item
+          updated-at.meta
+        `@t`(scot %da now.bowl)
+        ::
+          lens
+        (fall lens.act lens.item)
+        ::
+          bespoke
+        ?~  bespoke.act  bespoke.item
+        ?-  -.u.bespoke.act
+            %other
+          ?>  ?=(%other -.bespoke.item)
+          :*  %other
+              (fall title.u.bespoke.act title.bespoke.item)
+              (fall blurb.u.bespoke.act blurb.bespoke.item)
+              (fall link.u.bespoke.act link.bespoke.item)
+              (fall image.u.bespoke.act image.bespoke.item)
           ==
-        ==
-      ==
-    --
-  ::  helper methods
-  ++  item-methods  ::  all arms here should output item
-    |%
-    ++  edit
-      |=  [=item act=action]
-      ^-  ^item
-      ?>  ?=([%edit *] act)
-      ?>  =(key.item key.act)
-      =.  item
-        %=  item
-            updated-at.meta
-          `@t`(scot %da now.bowl)
           ::
-            lens
-          (fall lens.act lens.item)
+            %app
+          ?>  ?=(%app -.bespoke.item)
+          :*  %app
+              (fall dist-desk.u.bespoke.act dist-desk.bespoke.item)
+              (fall sig.u.bespoke.act sig.bespoke.item)
+              (fall treaty.u.bespoke.act treaty.bespoke.item)
+          ==
           ::
-            bespoke
-          ?~  bespoke.act  bespoke.item
-          ?-  -.u.bespoke.act
-              %other
-            ?>  ?=(%other -.bespoke.item)
-            :*  %other
-                (fall title.u.bespoke.act title.bespoke.item)
-                (fall blurb.u.bespoke.act blurb.bespoke.item)
-                (fall link.u.bespoke.act link.bespoke.item)
-                (fall image.u.bespoke.act image.bespoke.item)
-            ==
-            ::
-              %app
-            ?>  ?=(%app -.bespoke.item)
-            :*  %app
-                (fall dist-desk.u.bespoke.act dist-desk.bespoke.item)
-                (fall sig.u.bespoke.act sig.bespoke.item)
-                (fall treaty.u.bespoke.act treaty.bespoke.item)
-            ==
-            ::
-              %collection
-            ?>  ?=(%collection -.bespoke.item)
-            :*  %collection
-                (fall title.u.bespoke.act title.bespoke.item)
-                (fall blurb.u.bespoke.act blurb.bespoke.item)
-                (fall image.u.bespoke.act image.bespoke.item)
-                (fall key-list.u.bespoke.act key-list.bespoke.item)
-            ==
-            ::
-              %feed
-            ?>  ?=(%feed -.bespoke.item)
-            :*  %feed
-                (fall feed.u.bespoke.act feed.bespoke.item)
-            ==
+            %collection
+          ?>  ?=(%collection -.bespoke.item)
+          :*  %collection
+              (fall title.u.bespoke.act title.bespoke.item)
+              (fall blurb.u.bespoke.act blurb.bespoke.item)
+              (fall image.u.bespoke.act image.bespoke.item)
+              (fall key-list.u.bespoke.act key-list.bespoke.item)
+          ==
+          ::
+            %feed
+          ?>  ?=(%feed -.bespoke.item)
+          :*  %feed
+              (fall feed.u.bespoke.act feed.bespoke.item)
+          ==
 
-          ==
         ==
-      ?:  =(lens.item %temp)
-        item(sig *signature)
-      =/  sig  %^  sign:sig  our.bowl  now.bowl
-        [%item key.act lens.item bespoke.item meta.item]
-      item(sig sig)
-    ::
-    ++  replace
-      |=  [=item act=action]
-      ^-  ^item
-      ?>  ?=([%replace *] act)
-      ?>  =(key.item key.act)
-      =.  item
-        %=  item
-          lens             lens.act
-          bespoke          bespoke.act
-          updated-at.meta  `@t`(scot %da now.bowl)
-        ==
-      ?:  =(lens.act %temp)
-        item(sig *signature)
-      =/  sig  %^  sign:sig  our.bowl  now.bowl
-        [%item key.act lens.act bespoke.act meta.item]
-      item(sig sig)
-    ::
-    ++  create
-      |=  [act=action]
-      ^-  item
-      ?>  ?=([%create *] act)     ::  assert that action is %create
-      =/  lens      (fall lens.act *lens)
-      =/  bespoke   (fall bespoke.act *bespoke)
-      =/  key  :^   -.bespoke
-                    (fall ship.act our.bowl)
-                    (fall cord.act '')
-                    (fall time.act `@t`(scot %da now.bowl))
-      =/  meta  :^  created-at=`@t`(scot %da now.bowl)
-                    updated-at=''
-                    permissions=~[our.bowl]
-                    reach=[%public ~]
-      ?:  =(lens %temp)
-        [key lens bespoke meta *signature]
-      =/  sig  %^  sign:sig  our.bowl  now.bowl
-        [%item key lens bespoke meta]
-      [key lens bespoke meta sig]  ::  return item
-    ::
-    ++  prepend-to-feed
-      |=  [feed=item act=action]
-      ^-  item
-      ?>  ?=([%prepend-to-feed *] act)
-      ?>  ?=(%feed -.bespoke.feed)
-      ?>  =(key.feed key.act)
-      =/  new-feed  %+  oust  [1.000 (lent feed.act)] 
-        (weld feed.act feed.bespoke.feed)
-      (edit feed [%edit key.feed ~ `[%feed `new-feed]])
-    ::
-    ::  TODO abstract collection methods?
-    ::  such that it takes in a gate that arbitrarily modifies the key list
-    ++  append-to-col
-      |=  [col=item act=action]
-      ^-  item
-      ?>  ?=([%append *] act)
-      ?>  ?=(%collection -.bespoke.col)
-      ?>  =(col-key.act key.col)
-      =/  new-key-list  (weld key-list.bespoke.col key-list.act)
-      %+  edit  col
-        [%edit col-key.act ~ `[%collection ~ ~ ~ `new-key-list]]
-    ::
-    ++  prepend-to-col
-      |=  [col=item act=action]
-      ^-  item
-      ?>  ?=([%prepend *] act)
-      ?>  ?=(%collection -.bespoke.col)
-      ?>  =(col-key.act key.col)
-      =/  new-key-list  (weld key-list.act key-list.bespoke.col)
-      %+  edit  col
-        [%edit col-key.act ~ `[%collection ~ ~ ~ `new-key-list]]
-    ::
-    ++  remove-from-col
-      |=  [col=item act=action]
-      ^-  item
-      ?>  ?=([%remove *] act)
-      ?>  ?=(%collection -.bespoke.col)
-      ?>  =(col-key.act key.col)
-      =/  new-key-list  %+  skip  key-list.bespoke.col 
-        |=(=key ?~((find [key]~ key-list.act) %.n %.y))
-      %+  edit  col
-        [%edit col-key.act ~ `[%collection ~ ~ ~ `new-key-list]]
-    ::
-    ++  delete
-      |=  [=item act=action]
-      ^-  ^item
-      ?>  ?=([%delete *] act)
-      ?>  =(key.item key.act)
-      =.  item
-        %=  item
-          lens             %deleted
-          updated-at.meta  `@t`(scot %da now.bowl)
-        ==
-      =/  sig  %^  sign:sig  our.bowl  now.bowl
-        [%item key.act lens.item bespoke.item meta.item]
-      item(sig sig)
-    --
+      ==
+    ?:  =(lens.item %temp)
+      item(sig *signature)
+    =/  sig  %^  sign:sig  our.bowl  now.bowl
+      [%item key.act lens.item bespoke.item meta.item]
+    item(sig sig)
   ::
-  ++  on-agent
-    |%
-    ++  put  ::  delete is also here, it adds %deleted lens
-      |=  [item=update:item]
-      ^-  [(list card) ^items]
-      [(put:cards-methods item) (put-item item)]
-    --
+  ++  replace
+    |=  [=item act=action]
+    ^-  ^item
+    ?>  ?=([%replace *] act)
+    ?>  =(key.item key.act)
+    =.  item
+      %=  item
+        lens             lens.act
+        bespoke          bespoke.act
+        updated-at.meta  `@t`(scot %da now.bowl)
+      ==
+    ?:  =(lens.act %temp)
+      item(sig *signature)
+    =/  sig  %^  sign:sig  our.bowl  now.bowl
+      [%item key.act lens.act bespoke.act meta.item]
+    item(sig sig)
   ::
-  ++  on-poke  ::  all arms here should output [cards items]
-    |%
-    ::  TODO test purge edge cases
-    ++  purge
-      |=  [act=action]
-      ^-  [(list card) ^items]
-      ?>  ?=([%purge *] act)
-      =/  items  `(list [key item])`~(tap by items)
-      =.  items  %+  skip  items 
-                 |=([=key =item] ?=(?(%deleted %temp) lens.item))
-      =.  items  %+  skim  items  
-                 |=  [=key =item]
-                 |(=(our.bowl ship.key) =(portal-curator.act ship.key))
-      `(malt items)
-    ::
-    ++  sub
-      |=  [act=action]
-      ^-  [(list card) ^items]
-      ?>  ?=([%sub *] act)
-      ::  don't subscribe to our item
-      ?:  &(=(ship.key.act our.bowl) =(cord.key.act ''))         `items
-      =/  wire  (key-to-path:conv key.act)
-      ::  don't subscribe to what you are already subbed to
-      ?:  (~(has by wex.bowl) [wire ship.key.act %portal-store])  `items
-      :_  items
-      [%pass wire %agent [ship.key.act %portal-store] %watch wire]~
-    ::
-    ++  edit
-      |=  [act=action]
-      ^-  [(list card) ^items]
-      ?>  ?=([%edit *] act)
-      =/  item  (edit:item-methods (get-item key.act) act)
-      [(put:cards-methods item) (put-item item)]
-    ::
-    ++  replace
-      |=  [act=action]
-      ^-  [(list card) ^items]
-      ?>  ?=([%replace *] act)
-      =/  item  (replace:item-methods (get-item key.act) act)
-      [(put:cards-methods item) (put-item item)]
-    ::
-    ++  create
-      |=  [act=action]
-      ^-  [(list card) ^items]
-      ?>  ?=([%create *] act)
-      =/  item  (create:item-methods act)
-      ?<  (has-item key.item)  :: should other actions have these checks?
-      =.  cards  (put:cards-methods item)
-      =.  items  (put-item item)
-      ::  TODO check if already in list/items (if doing put with temp)
-      ?~  append-to.act  [cards items]
-      %-  tail  %^  spin  `key-list`append-to.act  [cards items] 
-        |=  [col-key=key q=[(list card) ^items]] 
-        [col-key (append [%append [key.item]~ col-key(struc %collection)])]
-      ::  also -> main collection deduplication
-      ::  (preventing duplication in the first place)
-    ::
-    ++  prepend-to-feed
-      |=  [act=action]
-      ^-  [(list card) ^items]
-      ?>  ?=([%prepend-to-feed *] act)
-      =/  feed  %+  prepend-to-feed:item-methods 
-        (get-item key.act)  act
-      [(put:cards-methods feed) (put-item feed)]
-    ::
-    ++  append
-      |=  [act=action]
-      ^-  [(list card) ^items]
-      ?>  ?=([%append *] act)
-      =/  col  (append-to-col:item-methods (get-item col-key.act) act)
-      [(put:cards-methods col) (put-item col)]
-    ::
-    ++  prepend
-      |=  [act=action]
-      ^-  [(list card) ^items]
-      ?>  ?=([%prepend *] act)
-      =/  col  (prepend-to-col:item-methods (get-item col-key.act) act)
-      [(put:cards-methods col) (put-item col)]
-    ::
-    ++  remove
-      |=  [act=action]
-      ^-  [(list card) ^items]
-      ?>  ?=([%remove *] act)
-      =/  col  (remove-from-col:item-methods (get-item col-key.act) act)
-      [(put:cards-methods col) (put-item col)]
-    ::
-    ::  purge should remove from main collection, not delete
-    ++  delete
-      |=  [act=action]
-      ^-  [(list card) ^items]
-      ?>  ?=([%delete *] act)
-      ?:  &(=(time.key.act '~2000.1.1') =(ship.key.act our.bowl))
-        ~&  "%portal: item is default, not allowed to delete"  `items
-      =/  item  (delete:item-methods (get-item key.act) act)
-      [(del:cards-methods item) (put-item item)]
-    --
+  ++  create
+    |=  [act=action]
+    ^-  item
+    ?>  ?=([%create *] act)     ::  assert that action is %create
+    =/  lens      (fall lens.act *lens)
+    =/  bespoke   (fall bespoke.act *bespoke)
+    =/  key  :^   -.bespoke
+                  (fall ship.act our.bowl)
+                  (fall cord.act '')
+                  (fall time.act `@t`(scot %da now.bowl))
+    =/  meta  :^  created-at=`@t`(scot %da now.bowl)
+                  updated-at=''
+                  permissions=~[our.bowl]
+                  reach=[%public ~]
+    ?:  =(lens %temp)
+      [key lens bespoke meta *signature]
+    =/  sig  %^  sign:sig  our.bowl  now.bowl
+      [%item key lens bespoke meta]
+    [key lens bespoke meta sig]  ::  return item
+  ::
+  ++  prepend-to-feed
+    |=  [feed=item act=action]
+    ^-  item
+    ?>  ?=([%prepend-to-feed *] act)
+    ?>  ?=(%feed -.bespoke.feed)
+    ?>  =(key.feed key.act)
+    =/  new-feed  %+  oust  [1.000 (lent feed.act)] 
+      (weld feed.act feed.bespoke.feed)
+    (edit feed [%edit key.feed ~ `[%feed `new-feed]])
+  ::
+  ::  TODO abstract collection methods?
+  ::  such that it takes in a gate that arbitrarily modifies the key list
+  ++  append-to-col
+    |=  [col=item act=action]
+    ^-  item
+    ?>  ?=([%append *] act)
+    ?>  ?=(%collection -.bespoke.col)
+    ?>  =(col-key.act key.col)
+    =/  new-key-list  (weld key-list.bespoke.col key-list.act)
+    %+  edit  col
+      [%edit col-key.act ~ `[%collection ~ ~ ~ `new-key-list]]
+  ::
+  ++  prepend-to-col
+    |=  [col=item act=action]
+    ^-  item
+    ?>  ?=([%prepend *] act)
+    ?>  ?=(%collection -.bespoke.col)
+    ?>  =(col-key.act key.col)
+    =/  new-key-list  (weld key-list.act key-list.bespoke.col)
+    %+  edit  col
+      [%edit col-key.act ~ `[%collection ~ ~ ~ `new-key-list]]
+  ::
+  ++  remove-from-col
+    |=  [col=item act=action]
+    ^-  item
+    ?>  ?=([%remove *] act)
+    ?>  ?=(%collection -.bespoke.col)
+    ?>  =(col-key.act key.col)
+    =/  new-key-list  %+  skip  key-list.bespoke.col 
+      |=(=key ?~((find [key]~ key-list.act) %.n %.y))
+    %+  edit  col
+      [%edit col-key.act ~ `[%collection ~ ~ ~ `new-key-list]]
+  ::
+  ++  delete
+    |=  [=item act=action]
+    ^-  ^item
+    ?>  ?=([%delete *] act)
+    ?>  =(key.item key.act)
+    =.  item
+      %=  item
+        lens             %deleted
+        updated-at.meta  `@t`(scot %da now.bowl)
+      ==
+    =/  sig  %^  sign:sig  our.bowl  now.bowl
+      [%item key.act lens.item bespoke.item meta.item]
+    item(sig sig)
   --
-  ::
 ::
 ::  includes arms which are used to validate data
 ++  validator
