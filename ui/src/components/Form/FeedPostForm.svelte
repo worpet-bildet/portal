@@ -1,9 +1,37 @@
 <script>
   import { createEventDispatcher } from 'svelte';
-  import { me } from '@root/api';
+  import { me, poke } from '@root/api';
   import { TextArea, Sigil } from '@fragments';
-  const dispatch = createEventDispatcher();
-  let postContent;
+  let dispatch = createEventDispatcher();
+  let content;
+  const post = () => {
+    poke({
+      app: 'portal-manager',
+      mark: 'portal-action',
+      json: {
+        create: {
+          'prepend-to-feed': [
+            {
+              ship: me,
+              struc: 'feed',
+              time: '~2000.1.1',
+              cord: '',
+            },
+          ],
+          bespoke: {
+            other: {
+              title: '',
+              blurb: content,
+              link: '',
+              image: '',
+            },
+          },
+        },
+      },
+    });
+    content = '';
+    dispatch('post');
+  };
 </script>
 
 <div class="grid grid-cols-12 gap-y-3 border p-3">
@@ -14,14 +42,12 @@
     <TextArea
       class="bg-transparent"
       placeholder="You can share urbit-native content here by pasting its link"
-      bind:value={postContent}
+      bind:value={content}
       minRows={2}
       maxRows={40}
     />
   </div>
   <div class="col-span-12 justify-self-end self-end">
-    <button class="border px-3 py-1" on:click={dispatch('post', postContent)}
-      >Post</button
-    >
+    <button class="border px-3 py-1" on:click={post}>Post</button>
   </div>
 </div>

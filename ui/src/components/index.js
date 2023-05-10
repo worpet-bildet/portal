@@ -1,7 +1,9 @@
 export { default as ItemDetail } from './ItemDetail.svelte';
 export { default as Navbar } from './Navbar.svelte';
 export { default as Onboard } from './Onboard.svelte';
+export { default as Feed } from './Feed.svelte';
 export { default as FeedPost } from './FeedPost.svelte';
+export { default as FeedPostForm } from './Form/FeedPostForm.svelte';
 export { default as CollectionsGrid } from './Collections/Grid.svelte';
 export { default as CollectionsAdd } from './Collections/Add.svelte';
 export { default as CollectionsSquarePreview } from './Collections/SquarePreview.svelte';

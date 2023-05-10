@@ -1,6 +1,12 @@
 <script>
   import { link } from 'svelte-spa-router';
-  import { state, getCurator, getCuratorFeed, refreshPals } from '@root/state';
+  import {
+    state,
+    getCurator,
+    getCuratorFeed,
+    refreshPals,
+    getCuratorFeaturedCollection,
+  } from '@root/state';
   import {
     subscribeToCurator,
     subscribeToContactProfile,
@@ -11,11 +17,12 @@
   import { fromUrbitTime, getMeta } from '@root/util';
   import {
     CollectionsGrid,
-    FeedPost,
+    Feed,
     SidebarGroup,
     SidebarPal,
     ItemDetail,
     CollectionsAdd,
+    FeedPostForm,
   } from '@components';
   import {
     Tabs,
@@ -35,11 +42,11 @@
     loadCurator($state);
   }
 
-  let curator;
+  let curator, featuredCollection;
   let feed = [];
 
   // svelte is so nice episode #167
-  let activeTab = 'Collections';
+  let activeTab = 'Activity';
   let tabs = ['Activity', 'Collections'];
 
   let title, cover, image, description, color, isLoaded, isMyPal, pals;
@@ -47,6 +54,7 @@
     curator = getCurator(patp);
     isLoaded = s.isLoaded;
     ({ title, cover, image, description, color } = getMeta(curator));
+    featuredCollection = getCuratorFeaturedCollection(patp);
     feed = (getCuratorFeed(patp) || []).sort((a, b) => {
       return fromUrbitTime(b.meta.createdAt) - fromUrbitTime(a.meta.createdAt);
     });
@@ -58,7 +66,14 @@
     loadCurator(s);
   });
 
-  $: console.log({ title, cover, image, description, color });
+  $: console.log({
+    title,
+    cover,
+    image,
+    description,
+    color,
+    featuredCollection,
+  });
 
   // TODO
   // Don't really like this being here but not really sure how to factor this
@@ -105,9 +120,10 @@
               </div>
             {:else}
               <div class="grid gap-y-4">
-                {#each feed as f}
-                  <FeedPost item={f} />
-                {/each}
+                {#if me === patp}
+                  <FeedPostForm />
+                {/if}
+                <Feed {feed} />
               </div>
             {/if}
           {:else if activeTab === 'Collections'}

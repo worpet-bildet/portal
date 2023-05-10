@@ -8,6 +8,7 @@ import {
   getPals,
   subscribeToGroup,
 } from '@root/api';
+import config from '@root/config';
 
 export const state = writable({});
 export const feed = writable({});
@@ -83,8 +84,6 @@ export const refreshApps = () => {
     'webterm',
   ];
   getInstalledApps().then(([{ initial }, kiln]) => {
-    // so here we have an
-    console.log({ initial, kiln });
     let apps = {};
     state.update((s) => {
       Object.entries(initial).forEach(([key, data]) => {
@@ -113,8 +112,18 @@ export const getCurator = (patp) => {
 };
 
 export const getCuratorFeed = (patp) => {
-  return get(state)[feedKey(patp)]?.bespoke?.feed?.map((f) =>
-    getItem(keyStrFromObj(f))
+  return get(state)[feedKey(patp)]?.bespoke?.feed?.map(({ key }) => {
+    return getItem(keyStrFromObj(key));
+  });
+};
+
+// TODO: Make indexer dynamic
+// TODO: Change indexer before going live
+export const getGlobalFeed = () => {
+  return get(state)[globalFeedKey(config.indexer)]?.bespoke?.feed?.map(
+    ({ key }) => {
+      return getItem(keyStrFromObj(key));
+    }
   );
 };
 
@@ -122,6 +131,10 @@ export const getCuratorCollections = (patp) => {
   return (getCuratorItemsByStruc(patp, 'collection') || [])
     .filter((k) => k.keyObj.time !== '~2000.1.1')
     .filter((k) => k.keyObj.time !== 'index');
+};
+
+export const getCuratorFeaturedCollection = (patp) => {
+  return getCuratorCollections(patp).slice(0, 1);
 };
 
 export const getCuratorItemsByStruc = (patp, struc) => {
@@ -190,6 +203,7 @@ export const keyStrToObj = (str) => {
 const mainCollection = (patp) => get(state)[mainCollectionKey(patp)];
 const mainCollectionKey = (patp) => `/collection/${patp}//~2000.1.1`;
 const feedKey = (patp) => `/feed/${patp}//~2000.1.1`;
+const globalFeedKey = (indexer) => `/feed/${indexer}//global`;
 
 export const refreshAll = () => {
   refreshPortalItems();

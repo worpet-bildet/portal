@@ -1,7 +1,7 @@
 <script>
   import { getItem, state } from '@root/state';
   import { FeedPost } from '@components';
-  import { FeedPostForm } from '@components/Form';
+  import { FeedPostForm } from '@components';
 
   export let params;
   const { itemkey } = params;

@@ -2,53 +2,24 @@
   import { link } from 'svelte-spa-router';
   import { poke, me } from '@root/api';
   import { feed, state, getItem } from '@root/state';
-  import { FeedPost, ItemVerticalListPreview, SidebarPal } from '@components';
-  import { FeedPostForm } from '@components/Form';
+  import {
+    Feed,
+    ItemVerticalListPreview,
+    SidebarPal,
+    FeedPostForm,
+  } from '@components';
   import { RightSidebar } from '@fragments';
 
   let pals;
   state.subscribe((s) => {
     ({ pals } = s);
   });
-
-  const post = (content) => {
-    poke({
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        create: {
-          'prepend-to-feed': [
-            {
-              ship: me,
-              struc: 'feed',
-              time: '~2000.1.1',
-              cord: '',
-            },
-          ],
-          bespoke: {
-            other: {
-              title: '',
-              blurb: content,
-              link: '',
-              image: '',
-            },
-          },
-        },
-      },
-    });
-  };
 </script>
 
 <div class="grid grid-cols-9 gap-8">
   <div class="grid gap-4 col-span-12 md:col-span-6">
-    <FeedPostForm on:post={({ detail }) => post(detail)} />
-    {#if Object.values($feed).length > 0}
-      {#each Object.values($feed) as item}
-        <FeedPost {item} />
-      {/each}
-    {:else}
-      <div>Loading...</div>
-    {/if}
+    <FeedPostForm />
+    <Feed feed={$feed} />
   </div>
   <RightSidebar>
     {#if !pals}
