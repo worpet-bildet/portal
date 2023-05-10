@@ -328,6 +328,7 @@
                       lens+so
                       bespoke+dejs-soft-bespoke-create
                       append-to+dejs-key-list
+                      prepend-to-feed+dejs-key-list
                   ==
       create+(pole-to-cell raw)
         %edit
@@ -377,6 +378,12 @@
                   ==
       =+  (turn `(list (unit))`raw |=(a=(unit *) (fall a ~)))
       (some collection+(pole-to-cell -))
+        %retweet
+      =/  raw  %.  ;;((map @t json) +>:jn)
+      %-  ot-raw  :~  blurb+so
+                      ref+dejs-soft-key
+                  ==
+      (some retweet+(pole-to-cell (turn raw |=(a=(unit) (fall a ~)))))
         %app  !!
     ==
   ::
@@ -406,18 +413,13 @@
                       key-list+dejs-soft-key-list
                   ==
       (some collection+(pole-to-cell raw))
+        %retweet
+      =/  raw  %.  ;;((map @t json) +>:jn)
+      %-  ot-raw  :~  blurb+so
+                      ref+dejs-soft-key
+                  ==
+      (some retweet+(pole-to-cell raw))
         %app  !!
-    ==
-  ::
-  ++  dejs-soft-bespoke
-    |=  jon=json
-    ;;  (unit bespoke)
-    =,  dejs-soft
-    %.  jon
-    %-  of
-    :~  [%ship so]
-        [%collection (ot ~[title+so blurb+so image+so key-list+dejs-soft-key-list])]
-        [%other (ot ~[title+so blurb+so link+so image+so])]
     ==
   ::
   ++  dejs-key-text

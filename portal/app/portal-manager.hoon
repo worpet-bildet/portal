@@ -84,7 +84,7 @@
       [cards this]
       ::
         %feed-update
-      =/  act  [%prepend-to-feed [%feed our.bowl '' 'global'] feed.msg]
+      =/  act  [%prepend-to-feed feed.msg [%feed our.bowl '' 'global']]
       =^  cards  state  (prepend-to-feed:on-poke:manager act)
       [cards this]
     ==

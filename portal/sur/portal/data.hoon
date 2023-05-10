@@ -55,6 +55,7 @@
       %feed
       %validity-store
       %other
+      %retweet
       ::  TODO  profile
   ==
 ::
@@ -135,6 +136,7 @@
   $%  [struc=%ship ~]
       [struc=%group =data:group-preview]
       [struc=%app dist-desk=@t sig=signature =treaty]
+      [struc=%retweet blurb=@t ref=key]
       [struc=%feed =feed]
       [struc=%collection title=@t blurb=@t image=@t =key-list]  ::does it need link?
       ::  TODO /list/list becomes these 2 things:

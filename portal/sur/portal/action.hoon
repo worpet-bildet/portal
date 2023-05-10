@@ -10,7 +10,7 @@
          lens=(unit lens)
          bespoke=(unit bespoke)
          append-to=(list [struc=%collection =ship =cord time=cord])
-         :: TODO add to multiple collections
+         prepend-to-feed=(list [struc=%feed =ship =cord time=cord])
       ==
       ::
       $:  %edit
@@ -21,6 +21,7 @@
                   [%app dist-desk=(unit @t) sig=(unit signature) treaty=(unit treaty)]
                   [%collection title=(unit @t) blurb=(unit @t) image=(unit @t) key-list=(unit key-list)]  ::does it need link?
                   [%feed feed=(unit feed)]
+                  [%retweet blurb=(unit @t) ref=(unit key)]
               ==
         ==
       ==
@@ -38,7 +39,7 @@
       [%sub-to-item =key]
       ::
       ::
-      [%prepend-to-feed =key =feed]  ::  TODO rename?
+      [%prepend-to-feed =feed feed-key=[struc=%feed =ship =cord time=cord]]  ::  TODO rename?
       [%index-as-curator toggle=?]
       [%onboarded toggle=?]
       ::

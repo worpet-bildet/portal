@@ -215,7 +215,7 @@
       :_  state
       %+  welp
       [(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(act))]~
-      ?.  =(time.key.act 'global')  :: do this cleaner, e.g. maybe branch based on portal indexer?
+      ?.  =(time.feed-key.act 'global')  :: do this cleaner, e.g. maybe branch based on portal indexer?
                                     ::  or a separate command, or separate cards creation
       [(~(poke pass:io /msg) [portal-indexer.state %portal-manager] portal-message+!>(msg))]~
       ~
@@ -238,6 +238,7 @@
                                   `%temp
                                   `bespoke
                                   [%collection our.bowl '' '~2000.1.1']~
+                                  ~
                               ==
       ::  TODO wires state transition
       ?+    struc.key.act    !!  
@@ -318,7 +319,13 @@
           :*  %feed
               (fall feed.u.bespoke.act feed.bespoke.item)
           ==
-
+          ::
+            %retweet
+          ?>  ?=(%retweet -.bespoke.item)
+          :*  %retweet
+              (fall blurb.u.bespoke.act blurb.bespoke.item)
+              (fall ref.u.bespoke.act ref.bespoke.item)
+          ==
         ==
       ==
     ?:  =(lens.item %temp)
@@ -369,7 +376,7 @@
     ^-  item
     ?>  ?=([%prepend-to-feed *] act)
     ?>  ?=(%feed -.bespoke.feed)
-    ?>  =(key.feed key.act)
+    ?>  =(key.feed feed-key.act)
     =/  new-feed  %+  oust  [1.000 (lent feed.act)] 
       (weld feed.act feed.bespoke.feed)
     (edit feed [%edit key.feed ~ `[%feed `new-feed]])
