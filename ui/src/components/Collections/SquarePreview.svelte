@@ -17,6 +17,7 @@
       ?.map((keyObj) => {
         let i = getItem(keyStrFromObj(keyObj));
         if (!i) {
+          console.log('SUBSCRIBING TO');
           subscribeToItem(keyObj);
           return;
         }

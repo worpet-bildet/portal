@@ -86,8 +86,8 @@
 
   let subbing = false;
   $: if (
-    !subbing &&
     isLoaded &&
+    !subbing &&
     (!curator || Object.values(curator).length === 0)
   ) {
     // TODO: this doesn't really work - it should be smarter than this about
@@ -99,8 +99,8 @@
   }
 </script>
 
-{#if isLoaded && curator}
-  <div class="grid grid-cols-12 gap-8">
+{#if curator}
+  <div class="grid grid-cols-12 gap-x-8">
     <ItemDetail
       {cover}
       avatar={image}
