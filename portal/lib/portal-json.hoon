@@ -155,6 +155,11 @@
                              ['image' s+image.bespoke]
                              ['key-list' (enjs-key-list key-list.bespoke)]
                          ==
+      %retweet      %-  pairs
+                        :~  ['blurb' s+blurb.bespoke]
+                            ['ref' (enjs-key ref.bespoke)]
+                        ==
+
       %feed          s+''
       %validity-store  s+''
     ==
@@ -359,6 +364,7 @@
         :~  [%other json]
             [%app json]
             [%collection json]
+            [%retweet json]
         ==   
     ?-    -.jn
         %other
@@ -383,7 +389,8 @@
       %-  ot-raw  :~  blurb+so
                       ref+dejs-soft-key
                   ==
-      (some retweet+(pole-to-cell (turn raw |=(a=(unit) (fall a ~)))))
+      =+  (turn `(list (unit))`raw |=(a=(unit *) (fall a ~)))
+      (some retweet+(pole-to-cell -))
         %app  !!
     ==
   ::
@@ -395,6 +402,7 @@
             :~  [%other json]
                 [%app json]
                 [%collection json]
+                [%retweet json]
             ==
     ?-    -.jn
         %other
