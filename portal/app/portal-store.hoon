@@ -62,11 +62,18 @@
 ++  on-load
   |=  =vase
   ^-  (quip card _this)
-  =+  !<(versioned-state vase)
-  ?-  -.-
-    %0  ~&  >  "0"  on-init
-    %1  ~&  >  "1"  on-init
-  ==
+  =/  old  !<(versioned-state vase)
+  ?>  ?=(%1 -.old)
+  `this(state old)
+  :: ?:  =(%0 -.q.vase)
+  ::   on-init
+  ::   ::=/  old  !<(state-0 vase)
+  :: =/  old  !<(state-1 vase)
+  :: `this(state-1 state-1.old)
+  :: ?-  -.-
+  ::   %0  ~&  >  "0"  on-init
+  ::   %1  ~&  >  "1"  on-init
+  :: ==
 ::
 ++  on-poke
   |=  [=mark =vase]
