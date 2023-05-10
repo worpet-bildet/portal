@@ -1,4 +1,4 @@
-/-  *portal-data, *portal-message, portal-item
+/-  *portal-data, *portal-message, portal-item, portal-data-0
 /+  default-agent, dbug, *portal, sss
 =/  item-sub  (mk-subs:sss portal-item ,[%item @ @ @ @ ~])
 =/  item-pub  (mk-pubs:sss portal-item ,[%item @ @ @ @ ~])
@@ -9,7 +9,7 @@
   ==
 +$  state-0
   $:  %0
-      =all-items
+      =all-items:portal-data-0
   ==
 +$  state-1
   $:  %1
@@ -60,26 +60,37 @@
 ::
 ++  on-save  !>(state)
 ++  on-load
+  :: =-
   |=  =vase
   ^-  (quip card _this)
   =/  old  !<(versioned-state vase)
-  ?>  ?=(%1 -.old)
-  `this(state old)
-  :: ?:  =(%0 -.q.vase)
-  ::   on-init
-  ::   ::=/  old  !<(state-0 vase)
-  :: =/  old  !<(state-1 vase)
-  :: `this(state-1 state-1.old)
-  :: ?-  -.-
-  ::   %0  ~&  >  "0"  on-init
-  ::   %1  ~&  >  "1"  on-init
-  :: ==
+  ?:  ?=(%1 -.old)
+    `this(state old)
+  ?:  ?=(%0 -.old)
+    ~&  >  "gere"
+    on-init
+  !!
+  :: |%
+  :: ++  state-0-to-1
+  ::   |=  =state-0
+  ::   ^-  state-1
+  ::   =+  ~(tap by all-items.state-0)
+  ::   ::  turn which can skip some slots?
+  ::   ::  e.g skip all not our
+  ::   =+  %+  turn  -
+  ::     |=  [key-0=key:portal-data-0 item-0:portal-data-0]
+  ::     (key-item-0-to-1)
+  ::   *state-1(items -)
+  :: ::
+  :: ++  key-item-0-to-1
+  ::   |=  [key-0=key:portal-data-0 item-0=item:portal-data-0]
+  ::   ^-  [key item]
+  ::   if not our crash, or empty unit?
+  :: --
 ::
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
-  ~&  mark
-  ~&  -:!>(vase)
   ?+    mark    (on-poke:default mark vase)
       %portal-action
     ?.  =(our.bowl src.bowl)  `this
@@ -98,13 +109,11 @@
     ==
     ::
       %portal-message
-    ~&  >>  "ogt msg"
     =/  msg  !<(message vase)
     ?>  =(our.bowl ~nec)
     ?>  =(src.bowl src.msg)
     ?+    -.msg  !!
         %feed-update
-      ~&  >  "got msg"
       =/  act  [%prepend-to-feed feed.msg [%feed our.bowl '' 'global']]
       =^(cards state (prepend-to-feed:handle-poke:stor act) [cards this])
     ==
@@ -314,25 +323,32 @@
       ?<  (has-item key.item)  :: should other actions have these checks?      
       =.  items  (put-item item)
       ::  TODO check if already in list/items (if doing put with temp)
-      =+  ?:  =(lens.item %temp)
-            :-  (upd:cards-methods item)
-            state
-          =^  cards  item-pub  (give:du-item path [%whole item])
-          :-  (welp cards (upd:cards-methods item))
+      =^  cards  state  
+        ?:  =(lens.item %temp)
+          :-  (upd:cards-methods item)
           state
-      =+  %-  tail  %^  spin  `key-list`append-to.act  -
-        |=  [col-key=key q=[(list card) state-1]] 
+        =^  cards  item-pub  (give:du-item path [%whole item])
+        :-  (welp cards (upd:cards-methods item))
+        state
+      ::  add to collections
+      =^  cards  state
+        %-  tail  %^  spin  `key-list`append-to.act  [cards state]
+        |=  [col-key=key q=[cards=(list card) state=state-1]] 
         :-  col-key
         ?>  ?=(%collection struc.col-key)
-        =^  cards  state  (append [%append [key.item]~ col-key])
-        [(welp -.q cards) state]
-      %-  tail  %^  spin  `key-list`prepend-to-feed.act  -
-        |=  [feed-key=key q=[(list card) state-1]] 
+        =.  state  state.q  ::  append takes state from subj, so it is modified
+        =^  cards  state.q  (append [%append [key.item]~ col-key])
+        [(welp cards.q cards) state.q]
+      ::  add to feeds
+      %-  tail  %^  spin  `key-list`prepend-to-feed.act  [cards state]
+        |=  [feed-key=key q=[cards=(list card) state=state-1]] 
         :-  feed-key
         ?>  ?=(%feed struc.feed-key)
+        =.  state  state.q
         =/  feed  ~[[(scot %da now.bowl) our.bowl key.item]]
-        =^  cards  state  (prepend-to-feed [%prepend-to-feed feed feed-key])
-        [(welp -.q cards) state]
+        =^  cards  state.q  (prepend-to-feed [%prepend-to-feed feed feed-key])
+        [(welp cards.q cards) state.q]
+
     ::  also -> main collection deduplication
     ::  (preventing duplication in the first place)
     ::
@@ -357,16 +373,11 @@
       =/  feed  (prepend-to-feed:itm (get-item feed-key.act) act)
       =/  cards  (upd:cards-methods feed)
       =.  items  (put-item feed)
-      ~&  >  "feed"
       ?.  =(time.feed-key.act 'global')  
-        ~&  >  "sending msg"
         =/  msg  [%feed-update our.bowl feed.act]
-        ~&  (~(poke pass:io /msg) [~nec %portal-store] portal-message+!>(msg))
-
         :_  state
         %+  snoc  cards
         (~(poke pass:io /msg) [~nec %portal-store] portal-message+!>(msg))
-      ~&  >  "global baby!"
       =^  cards-1  item-pub  (give:du-item path [%prepend-to-feed feed.act])
       :-  (welp cards cards-1)
       state
@@ -377,8 +388,9 @@
       ?>  ?=([%append *] act)
       =/  path  [%item (key-to-path:conv col-key.act)]
       =/  col  (append-to-col:itm (get-item col-key.act) act)
+      =.  items  (put-item col)
       =^  cards  item-pub  (give:du-item path [%whole col])
-      :_  state(items (put-item col))
+      :_  state
       (welp cards (upd:cards-methods col))
     ::
     ++  prepend
