@@ -56,6 +56,7 @@
         },
       },
     });
+    showModal = false;
   };
 </script>
 
@@ -71,7 +72,7 @@
     <div class="flex flex-col gap-4">
       {#if formstep === 'meta'}
         <div class="text-2xl font-bold">Give your collection a name</div>
-        <input type="text" bind:value={name} />
+        <input type="text" class="p-2" bind:value={name} />
         <div class="text-2xl font-bold">
           Briefly describe the collection (optional)
         </div>

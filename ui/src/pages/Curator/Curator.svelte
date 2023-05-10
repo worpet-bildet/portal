@@ -28,17 +28,22 @@
   } from '@fragments';
 
   export let params;
-  const { patp } = params;
+  let { patp } = params;
+
+  $: {
+    ({ patp } = params);
+    loadCurator($state);
+  }
 
   let curator;
   let feed = [];
 
   // svelte is so nice episode #167
-  let activeTab = 'collections';
-  let tabs = ['feed', 'collections'];
+  let activeTab = 'Collections';
+  let tabs = ['Activity', 'Collections'];
 
   let title, cover, image, description, color, isLoaded, isMyPal, pals;
-  state.subscribe((s) => {
+  const loadCurator = (s) => {
     curator = getCurator(patp);
     isLoaded = s.isLoaded;
     ({ title, cover, image, description, color } = getMeta(curator));
@@ -46,6 +51,11 @@
       return fromUrbitTime(b.meta.createdAt) - fromUrbitTime(a.meta.createdAt);
     });
     isMyPal = !!s.pals?.[patp.slice(1)];
+  };
+
+  state.subscribe((s) => {
+    if (!s) return;
+    loadCurator(s);
   });
 
   $: console.log({ title, cover, image, description, color });
@@ -88,7 +98,7 @@
       <div class="col-span-12 lg:col-span-9">
         <Tabs {tabs} bind:activeTab />
         <div class="pt-4">
-          {#if activeTab === 'feed'}
+          {#if activeTab === 'Activity'}
             {#if feed.length === 0}
               <div class="col-span-12">
                 {patp} hasn't made any posts on Portal yet.
@@ -100,14 +110,14 @@
                 {/each}
               </div>
             {/if}
-          {:else if activeTab === 'collections'}
+          {:else if activeTab === 'Collections'}
             <CollectionsGrid {patp} />
           {/if}
         </div>
       </div>
     </ItemDetail>
     <RightSidebar>
-      <div class="flex flex-col gap-4">
+      <div class="flex flex-col gap-4 rounded-lg p-4 shadow-md shadow-gray-500">
         {#if me === patp}
           <div class="flex flex-col gap-4">
             <a use:link href={`/${patp}/edit`} class="border px-2 py-1">
@@ -156,14 +166,6 @@
           {/each}
         </div>
       {/if}
-      <div class="grid gap-y-4">
-        <div class="text-xl">{patp}'s top 5</div>
-        <SidebarPal />
-        <SidebarPal />
-        <SidebarPal />
-        <SidebarPal />
-        <SidebarPal />
-      </div>
     </RightSidebar>
   </div>
 {:else}

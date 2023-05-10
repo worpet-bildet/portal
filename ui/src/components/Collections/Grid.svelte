@@ -5,17 +5,17 @@
   export let patp;
 
   let collections;
-  state.subscribe((s) => {
+  const loadCollections = (patp) => {
     collections = (getCuratorCollections(patp) || []).filter(
       (c) => c?.bespoke?.['key-list']?.length > 0
     );
+  };
+
+  state.subscribe((s) => {
+    loadCollections(patp);
   });
 
-  // we need to find out here whether the collection is empty because if it
-  // is then we don't want to do the col-span-4 down there
-  // collections = collections?.filter((c) => {
-  //   return getItem(c?.keyStr).data?.bespoke?.payload?.length > 0;
-  // });
+  $: loadCollections(patp);
 </script>
 
 <div class="grid grid-cols-12 gap-4 items-start">

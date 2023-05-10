@@ -1,14 +1,19 @@
 <script>
   import { link, location } from 'svelte-spa-router';
   import { me } from '@root/api';
+  import { Sigil } from '@fragments';
 
   const nav = [
     {
-      title: 'Feed',
+      title: 'Post',
       link: '/',
     },
     {
-      title: 'My Collection',
+      title: 'Explore',
+      link: '/~worpet-bildet',
+    },
+    {
+      title: 'Feedback', // we want this link to not use:link because it'g going out to groups
       link: `/${me}`,
     },
   ];
@@ -34,9 +39,19 @@
       <a
         use:link
         href={n.link}
-        class="text-white px-2 py-1 backdrop-blur-lg rounded-md bg-white bg-opacity-30 hover:bg-opacity-0"
-        class:underline={$location === n.link}>{n.title}</a
+        class="text-white backdrop-blur-lg rounded-lg bg-white bg-opacity-30 hover:bg-opacity-0 flex items-center font-bold px-4"
+        class:active={$location === n.link}>{n.title}</a
       >
     {/each}
+    <a use:link href={`/${me}`} class="w-10 h-10 rounded-md overflow-hidden">
+      <Sigil patp={me} />
+    </a>
   </div>
 </div>
+
+<style>
+  .active {
+    color: black;
+    background-color: white;
+  }
+</style>

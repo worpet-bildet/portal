@@ -112,15 +112,14 @@ export const getCurator = (patp) => {
   return { ...mainCollection(patp), ...get(state)?.[`/ship/${patp}//`] };
 };
 
-// some janky keys here innit
 export const getCuratorFeed = (patp) => {
-  return getCuratorItemsByStruc(patp, 'other');
+  return getCollectionItems(feedKey(patp));
 };
 
 export const getCuratorCollections = (patp) => {
-  return (getCuratorItemsByStruc(patp, 'collection') || []).filter(
-    (k) => k.keyObj.time !== '~2000.1.1'
-  );
+  return (getCuratorItemsByStruc(patp, 'collection') || [])
+    .filter((k) => k.keyObj.time !== '~2000.1.1')
+    .filter((k) => k.keyObj.time !== 'index');
 };
 
 export const getCuratorItemsByStruc = (patp, struc) => {
@@ -143,7 +142,7 @@ export const getProfile = (ship) => {
 
 export const getCollectionItems = (collectionKey) => {
   return get(state)
-    [collectionKey]?.bespoke?.['key-list'].map((k) => {
+    [collectionKey]?.bespoke?.['key-list']?.map((k) => {
       return get(state)[keyStrFromObj(k)];
     })
     .filter((i) => !!i);
@@ -188,6 +187,7 @@ export const keyStrToObj = (str) => {
 
 const mainCollection = (patp) => get(state)[mainCollectionKey(patp)];
 const mainCollectionKey = (patp) => `/collection/${patp}//~2000.1.1`;
+const feedKey = (patp) => `/feed/${patp}//~2000.1.1`;
 
 export const refreshAll = () => {
   refreshPortalItems();
