@@ -44,7 +44,6 @@
 ::  nectar!
 ::
 ::
-+$  key  [=struc =ship =cord time=cord]
 ::  struc is the structure of the data
 ::  lens is how we see it and how we treat it
 +$  struc
@@ -73,8 +72,39 @@
 ::  TODO struc-lens validator
 ::
 ::
+++  key  
+  =<  key-1
+  |%
+  +$  key-1  [=struc =ship =cord time=cord]
+  +$  key-0  [=ship =type =cord]
+  +$  type   $%  path
+      [%nonitem ~]
+        [%nonitem %group ~]
+        [%nonitem %ship ~]
+    ::
+      [%enditem ~]
+        [%enditem %app ~]
+        [%enditem %other ~]
+    ::
+      [%list ~]
+        [%list %nonitem ~]
+          [%list %nonitem %group ~]
+          [%list %nonitem %ship ~]
+          [%list %nonitem %app ~]
+        [%list %enditem ~]
+          [%list %enditem %other ~]
+          [%list %enditem %app ~]
+        [%list %app ~]
+        [%list %list ~]
+    ::
+      [%validity-store ~]
+  ==
+
+  --
 ::
 +$  items  (map key item)
++$  all-items  (map key-0:key item-0:item)
+::
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
@@ -84,16 +114,99 @@
 ::  TODO a separate validation function for if lens is compatible with struc ?
 ::
 ++  item
-  =<  item
+  =<  item-1
   |%
-  +$  item
+  +$  item-1
     $:  =key
         =lens
         =bespoke
         =meta
         =sig
     ==
-  +$  update  item ::  rename to diff? or add +$  diff?
+  +$  update  item-1 ::  rename to diff? or add +$  diff?
+  ++  item-0
+    =<  
+      $:  =data
+          =meta
+          =social
+          =sig
+      ==
+    |%
+    +$  data
+      $:  =bespoke
+          =general
+      ==
+    +$  meta
+      $:  =updated-at                      ::  when '~2000.1.1' means it has not been updated
+          permissions=(list @p)            ::  not used yet. auto- ~[our.bowl].
+          =reach                           ::  not used yet
+          outside-sigs=(list signature)    ::  not used yet
+      ==
+    +$  social
+      $:  =comments
+          =ratings
+          =reviews
+      ==
+    +$  general
+      $:  title=@t
+          link=@t
+          description=@t
+          =tags
+          =properties
+          =pictures
+          image=@t
+          color=@t
+      ==
+    +$  tags  (list @t)
+    +$  properties  (map @t @t)
+    +$  pictures  (list @t)
+    +$  bespoke
+      $%  [%nonitem-ship key=[=ship type=[%nonitem %ship ~] =cord] ~]
+          [%nonitem-group key=[=ship type=[%nonitem %group ~] =cord] ~]
+          [%nonitem-app key=[=ship type=[%nonitem %app ~] =cord] =treaty]
+          [%enditem-other key=[=ship type=[%enditem %other ~] =cord] ~]
+          [%enditem-app key=[=ship type=[%enditem %app ~] =cord] dist-desk=@t sig=signature =treaty]
+          [%list-enditem-other key=[=ship type=[%list %enditem %other ~] =cord] =other-key-list]
+          [%list-enditem-app key=[=ship type=[%list %enditem %app ~] =cord] =enditem-app-key-list]
+          [%list-nonitem-app key=[=ship type=[%list %nonitem %app ~] =cord] =nonitem-app-key-list]
+          [%list-nonitem-group key=[=ship type=[%list %nonitem %group ~] =cord] =group-key-list]
+          [%list-nonitem-ship key=[=ship type=[%list %nonitem %ship ~] =cord] =ship-key-list]
+          [%list-app key=[=ship type=[%list %app ~] =cord] =app-key-list]
+          [%list-list key=[=ship type=[%list %list ~] =cord] =list-key-list]
+          [%validity-store key=[=ship type=[%validity-store ~] =cord] =validity-records]
+      ==
+    +$  list-key-list         (list [key=[=ship type=[%list type] =cord] text=cord])
+    +$  other-key-list        (list [key=[=ship type=[%enditem %other ~] =cord] text=cord])
+    +$  enditem-app-key-list  (list [key=[=ship type=[%enditem %app ~] =cord] text=cord])
+    +$  nonitem-app-key-list  (list [key=[=ship type=[%nonitem %app ~] =cord] text=cord])
+    +$  app-key-list          (list [key=[=ship type=$%([%enditem %app ~] [%nonitem %app ~]) =cord] text=cord])
+    +$  group-key-list        (list [key=[=ship type=[%nonitem %group ~] =cord] text=cord])
+    +$  ship-key-list         (list [key=[=ship type=[%nonitem %ship ~] =cord] text=cord])
+    +$  ratings  (map @p rating)
+    +$  rating
+      $:  rating-num=@ud
+          =updated-at
+          =created-at
+      ==
+    +$  comments  (map com-key comment)
+    +$  comment
+      $:  text=@t
+          =updated-at
+      ==
+    +$  com-key  [=ship =created-at]
+    +$  reviews  (map ship review)
+    +$  review
+      $:  text=@t
+          hash=@uv
+          is-current=?                    ::  used only for apps
+          is-safe=?                       ::  used only for apps
+          =updated-at
+          =created-at
+          =signature                      ::  not used yet
+      ==
+    +$  created-at  @t
+    +$  updated-at  @t
+    --
   --
 
 

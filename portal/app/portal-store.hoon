@@ -9,7 +9,7 @@
   ==
 +$  state-0
   $:  %0
-      =items
+      =all-items
   ==
 +$  state-1
   $:  %1
@@ -62,7 +62,11 @@
 ++  on-load
   |=  =vase
   ^-  (quip card _this)
-  on-init
+  =+  !<(versioned-state vase)
+  ?-  -.-
+    %0  ~&  >  "0"  on-init
+    %1  ~&  >  "1"  on-init
+  ==
 ::
 ++  on-poke
   |=  [=mark =vase]
