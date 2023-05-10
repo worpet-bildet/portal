@@ -3,11 +3,16 @@
   import { invertHex, formatColor } from '@root/util';
   export let patp, size, color;
 
-  let primaryColor;
   $: primaryColor = formatColor(color);
   $: secondaryColor = invertHex(formatColor(color));
+  $: {
+    if (primaryColor.length < 6) {
+      primaryColor = '000000';
+      secondaryColor = 'ffffff';
+    }
+  }
 
-  if (!patp || patp.length > 14) patp = '~zod';
+  $: if (!patp || patp.length > 14) patp = '~zod';
 </script>
 
 {@html sigil({

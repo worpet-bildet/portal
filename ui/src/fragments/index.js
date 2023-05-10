@@ -21,3 +21,4 @@ export { default as PersonIcon } from './Icons/Person.svelte';
 export { default as EditIcon } from './Icons/Edit.svelte';
 export { default as PlusIcon } from './Icons/Plus.svelte';
 export { default as TrashIcon } from './Icons/Trash.svelte';
+export { default as UpRightArrowIcon } from './Icons/UpRightArrow.svelte';

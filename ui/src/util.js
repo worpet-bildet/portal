@@ -6,7 +6,7 @@ export const getMeta = (item) => {
     image: getImage(item),
     cover: getCover(item),
     ship: getShip(item),
-    website: getWebsite(item),
+    link: getLink(item),
     color: getColor(item),
     version: getVersion(item),
     hash: getHash(item),
@@ -81,14 +81,6 @@ export const getShip = (item) => {
       return item?.bespoke?.treaty?.ship;
     default:
       return item?.keyObj?.ship;
-  }
-};
-export const getWebsite = (item) => {
-  switch (item?.keyObj?.struc) {
-    case 'app':
-      return item?.bespoke?.treaty?.website;
-    default:
-      return '';
   }
 };
 export const getColor = (item) => {

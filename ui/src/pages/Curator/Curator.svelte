@@ -22,6 +22,7 @@
     AddPalIcon,
     RemovePalIcon,
     EditIcon,
+    ChatIcon,
     AsyncButton,
     RightSidebar,
   } from '@fragments';
@@ -47,7 +48,7 @@
     isMyPal = !!s.pals?.[patp.slice(1)];
   });
 
-  $: console.log({ isMyPal });
+  $: console.log({ title, cover, image, description, color });
 
   // TODO
   // Don't really like this being here but not really sure how to factor this
@@ -106,35 +107,47 @@
       </div>
     </ItemDetail>
     <RightSidebar>
-      {#if me === patp}
-        <div class="flex flex-col gap-4">
-          <a use:link href={`/${patp}/edit`} class="border px-2 py-1">
+      <div class="flex flex-col gap-4">
+        {#if me === patp}
+          <div class="flex flex-col gap-4">
+            <a use:link href={`/${patp}/edit`} class="border px-2 py-1">
+              <div class="w-full flex gap-4 items-center">
+                <span class="w-5">
+                  <EditIcon />
+                </span>
+                <span>Edit Profile</span>
+              </div>
+            </a>
+            <CollectionsAdd />
+          </div>
+        {:else if isMyPal}
+          <AsyncButton on:click={togglePal}>
             <div class="w-full flex gap-4 items-center">
               <span class="w-5">
-                <EditIcon />
+                <RemovePalIcon />
               </span>
-              <span>Edit Profile</span>
+              <span>Remove Pal</span>
             </div>
-          </a>
-          <CollectionsAdd />
-        </div>
-      {:else if isMyPal}
-        <AsyncButton on:click={togglePal}>
-          <div class="w-full flex gap-4 items-center">
-            <span class="w-5">
-              <RemovePalIcon />
-            </span>
-            <span>Remove Pal</span>
+          </AsyncButton>
+        {:else}
+          <AsyncButton on:click={togglePal}>
+            <div class="w-full flex gap-4 items-center">
+              <span class="w-5"> <AddPalIcon /></span>
+              <span>Add Pal</span>
+            </div>
+          </AsyncButton>
+        {/if}
+        <a
+          target="_blank"
+          class="border py-1 px-2"
+          href={`${window.location.origin}/apps/talk/dm/${patp}`}
+        >
+          <div class="w-full flex gap-4 items-center justify-start">
+            <span class="w-5"> <ChatIcon /></span>
+            <span>Message</span>
           </div>
-        </AsyncButton>
-      {:else}
-        <AsyncButton on:click={togglePal}>
-          <div class="w-full flex gap-4 items-center">
-            <span class="w-5"> <AddPalIcon /></span>
-            <span>Add Pal</span>
-          </div>
-        </AsyncButton>
-      {/if}
+        </a>
+      </div>
       {#if curator && curator.groups && curator.groups.length > 0}
         <div class="grid gap-y-4">
           <div class="text-xl">{patp} recommends</div>
