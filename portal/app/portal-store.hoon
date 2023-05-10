@@ -39,18 +39,18 @@
     (surf:da-item ~ronwex-naltyp-dilryd-mopreg %portal-store [%item %feed '~ronwex-naltyp-dilryd-mopreg' '' 'global' ~])
   =/  col-create  :*  %create  ~  ~  `'~2000.1.1'  `%def
     `[%collection 'Main Collection' 'Your first collection.' '' ~]  
-    [%collection our.bowl '' '~2000.1.1']~  ==
+    [%collection our.bowl '' '~2000.1.1']~  ~  ==
   =/  val-create  :*  %create  ~  ~  `'~2000.1.1'  `%def
-    `[%validity-store *validity-records]  ~  ==
-  =/  feed-create  [%create ~ ~ `'~2000.1.1' `%personal `[%feed ~] ~]
+    `[%validity-store *validity-records]  ~  ~  ==
+  =/  feed-create  [%create ~ ~ `'~2000.1.1' `%personal `[%feed ~] ~ ~]
   =^  cards-1  state  (create:handle-poke:stor col-create)
   =^  cards-2  state  (create:handle-poke:stor val-create)
   =^  cards-3  state  (create:handle-poke:stor feed-create)
   :: ::  TODO get it right in state transition  
   :: ::  (maybe not a problem if %create crashes on existing items)
   ?:  =(our.bowl ~ronwex-naltyp-dilryd-mopreg)  
-    =/  global-feed-create  [%create ~ ~ `'global' `%global `[%feed ~] ~]
-    =/  index-create  [%create ~ ~ `'index' `%def `[%collection '' '' '' ~] ~]
+    =/  global-feed-create  [%create ~ ~ `'global' `%global `[%feed ~] ~ ~]
+    =/  index-create  [%create ~ ~ `'index' `%def `[%collection '' '' '' ~] ~ ~]
     =^  cards-4  state  (create:handle-poke:stor global-feed-create)
     =^  cards-5  state  (create:handle-poke:stor index-create)
     :_  this
@@ -296,13 +296,20 @@
           =^  cards  item-pub  (give:du-item path [%whole item])
           :-  (welp cards (upd:cards-methods item))
           state
-      ?~  append-to.act  -
-      %-  tail  %^  spin  `key-list`append-to.act  -
+      =+  %-  tail  %^  spin  `key-list`append-to.act  -
         |=  [col-key=key q=[(list card) state-1]] 
         :-  col-key
         ?>  ?=(%collection struc.col-key)
         =^  cards  state  (append [%append [key.item]~ col-key])
         [(welp -.q cards) state]
+      %-  tail  %^  spin  `key-list`prepend-to-feed.act  -
+        |=  [feed-key=key q=[(list card) state-1]] 
+        :-  feed-key
+        ?>  ?=(%feed struc.feed-key)
+        =/  feed  ~[[(scot %da now.bowl) our.bowl key.item]]
+        =^  cards  state  (prepend-to-feed [%prepend-to-feed feed feed-key])
+        [(welp -.q cards) state]
+
     ::  also -> main collection deduplication
     ::  (preventing duplication in the first place)
     ::
@@ -323,11 +330,11 @@
       |=  [act=action]
       ^+  [*(list card) state]
       ?>  ?=([%prepend-to-feed *] act)
-      =/  path  [%item (key-to-path:conv key.act)]
-      =/  feed  (prepend-to-feed:itm (get-item key.act) act)
+      =/  path  [%item (key-to-path:conv feed-key.act)]
+      =/  feed  (prepend-to-feed:itm (get-item feed-key.act) act)
       =/  cards  (upd:cards-methods feed)
-      =.  state  state(items (put-item feed))
-      ?.  =(time.key.act 'global')  [cards state]
+      =.  items  (put-item feed)
+      ?.  =(time.feed-key.act 'global')  [cards state]
       =^  cards-1  item-pub  (give:du-item path [%prepend-to-feed feed.act])
       :-  (welp cards cards-1)
       state
