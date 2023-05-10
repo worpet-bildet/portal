@@ -113,7 +113,9 @@ export const getCurator = (patp) => {
 };
 
 export const getCuratorFeed = (patp) => {
-  return getCollectionItems(feedKey(patp));
+  return get(state)[feedKey(patp)]?.bespoke?.feed?.map((f) =>
+    getItem(keyStrFromObj(f))
+  );
 };
 
 export const getCuratorCollections = (patp) => {

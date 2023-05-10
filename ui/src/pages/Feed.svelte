@@ -11,15 +11,13 @@
     ({ pals } = s);
   });
 
-  // TODO: this should not go in the main collection, it should go in the feed
-  // collection that jurij is going to make
   const post = (content) => {
     poke({
       app: 'portal-manager',
       mark: 'portal-action',
       json: {
         create: {
-          'append-to': [
+          'prepend-to-feed': [
             {
               ship: me,
               struc: 'feed',
