@@ -36,7 +36,7 @@
   ^-  (quip card _this)
   =.  state  *state-1
   =^  cards  item-sub
-    (surf:da-item ~ronwex-naltyp-dilryd-mopreg %portal-store [%item %feed '~ronwex-naltyp-dilryd-mopreg' '' 'global' ~])
+    (surf:da-item ~nec %portal-store [%item %feed '~nec' '' 'global' ~])
   =/  col-create  :*  %create  ~  ~  `'~2000.1.1'  `%def
     `[%collection 'Main Collection' 'Your first collection.' '' ~]  
     [%collection our.bowl '' '~2000.1.1']~  ~  ==
@@ -48,7 +48,7 @@
   =^  cards-3  state  (create:handle-poke:stor feed-create)
   :: ::  TODO get it right in state transition  
   :: ::  (maybe not a problem if %create crashes on existing items)
-  ?:  =(our.bowl ~ronwex-naltyp-dilryd-mopreg)  
+  ?:  =(our.bowl ~nec)  
     =/  global-feed-create  [%create ~ ~ `'global' `%global `[%feed ~] ~ ~]
     =/  index-create  [%create ~ ~ `'index' `%def `[%collection '' '' '' ~] ~ ~]
     =^  cards-4  state  (create:handle-poke:stor global-feed-create)
@@ -78,6 +78,8 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
+  ~&  mark
+  ~&  -:!>(vase)
   ?+    mark    (on-poke:default mark vase)
       %portal-action
     ?.  =(our.bowl src.bowl)  `this
@@ -94,7 +96,18 @@
       %delete  =^(cards state (delete:handle-poke:stor act) [cards this])
       %purge   =^(cards state (purge:handle-poke:stor act) [cards this])
     ==
-    ::  no need for %portal-message
+    ::
+      %portal-message
+    ~&  >>  "ogt msg"
+    =/  msg  !<(message vase)
+    ?>  =(our.bowl ~nec)
+    ?>  =(src.bowl src.msg)
+    ?+    -.msg  !!
+        %feed-update
+      ~&  >  "got msg"
+      =/  act  [%prepend-to-feed feed.msg [%feed our.bowl '' 'global']]
+      =^(cards state (prepend-to-feed:handle-poke:stor act) [cards this])
+    ==
     ::
       %sss-to-pub
     =/  msg  !<(into:du-item (fled:sss vase))
@@ -320,7 +333,6 @@
         =/  feed  ~[[(scot %da now.bowl) our.bowl key.item]]
         =^  cards  state  (prepend-to-feed [%prepend-to-feed feed feed-key])
         [(welp -.q cards) state]
-
     ::  also -> main collection deduplication
     ::  (preventing duplication in the first place)
     ::
@@ -345,7 +357,16 @@
       =/  feed  (prepend-to-feed:itm (get-item feed-key.act) act)
       =/  cards  (upd:cards-methods feed)
       =.  items  (put-item feed)
-      ?.  =(time.feed-key.act 'global')  [cards state]
+      ~&  >  "feed"
+      ?.  =(time.feed-key.act 'global')  
+        ~&  >  "sending msg"
+        =/  msg  [%feed-update our.bowl feed.act]
+        ~&  (~(poke pass:io /msg) [~nec %portal-store] portal-message+!>(msg))
+
+        :_  state
+        %+  snoc  cards
+        (~(poke pass:io /msg) [~nec %portal-store] portal-message+!>(msg))
+      ~&  >  "global baby!"
       =^  cards-1  item-pub  (give:du-item path [%prepend-to-feed feed.act])
       :-  (welp cards cards-1)
       state

@@ -3,10 +3,10 @@
 ::
 ::  add defaults, either with $_(? e.g. _~zod) or $~
 +$  default-curators  (set key)
-+$  portal-curator  _~ronwex-naltyp-dilryd-mopreg
++$  portal-curator  _~nec
 +$  purge-timer  $~(%.y ?) 
 +$  purge-time  _~d1
-+$  portal-indexer  _~ronwex-naltyp-dilryd-mopreg
++$  portal-indexer  _~nec
 +$  indexed-as-curator  $~(%.n ?)
 +$  onboarded  $~(%.n ?)
 ::

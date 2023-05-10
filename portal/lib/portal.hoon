@@ -207,18 +207,6 @@
     ::  all arms here should output cards
     ::  TODO cleanup PM state and maybe output that then
     |%
-    ++  prepend-to-feed
-      |=  [act=action]
-      ^-  [(list card) state-2]
-      ?>  ?=([%prepend-to-feed *] act)
-      =/  msg  [%feed-update our.bowl feed.act]
-      :_  state
-      %+  welp
-      [(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(act))]~
-      ?.  =(time.feed-key.act 'global')  :: do this cleaner, e.g. maybe branch based on portal indexer?
-                                    ::  or a separate command, or separate cards creation
-      [(~(poke pass:io /msg) [portal-indexer.state %portal-manager] portal-message+!>(msg))]~
-      ~
     ::
     ++  sub
       |=  [act=action]

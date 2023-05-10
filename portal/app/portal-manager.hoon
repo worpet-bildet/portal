@@ -56,9 +56,6 @@
         %sub
       =^  cards  state  (sub:on-poke:manager act)  [cards this]
       ::
-        %prepend-to-feed
-      =^  cards  state  (prepend-to-feed:on-poke:manager act)  [cards this]
-      ::
         %onboarded
       `this(onboarded toggle.act)
       ::
@@ -72,20 +69,15 @@
     ::  TODO src.bowl src.msg problem kad store misli da je src our
     ::  a ne vanjski jer dolazi od portal-managera
     =/  msg  !<(message vase)
-    ?>  =(our.bowl ~ronwex-naltyp-dilryd-mopreg)
+    ?>  =(our.bowl ~nec)
     ?>  =(src.bowl src.msg)
-    ?-    -.msg
+    ?+    -.msg  !!
         %index-as-curator
       =/  act  ~(act cards [our.bowl %portal-store])
       =/  index-key  [%collection our.bowl '' 'index']
       =/  ship-key   [%ship src.msg '' '']
       =/  cards  `(list card)`~[(act [%remove ~[ship-key] index-key])]
       =?  cards  toggle.msg  (snoc cards (act [%prepend ~[ship-key] index-key]))
-      [cards this]
-      ::
-        %feed-update
-      =/  act  [%prepend-to-feed feed.msg [%feed our.bowl '' 'global']]
-      =^  cards  state  (prepend-to-feed:on-poke:manager act)
       [cards this]
     ==
   ==
