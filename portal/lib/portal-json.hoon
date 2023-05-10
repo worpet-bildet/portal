@@ -160,7 +160,8 @@
                             ['ref' (enjs-key ref.bespoke)]
                         ==
 
-      %feed          s+''
+      %feed         %-  frond
+                        ['feed' (enjs-feed feed.bespoke)]
       %validity-store  s+''
     ==
   ::   --
@@ -246,6 +247,18 @@
   ::   :-  %a
   ::   %+  turn  key-list
   ::   |=(=key (enjs-jam-key key))
+    ++  enjs-feed
+    |=  =feed
+    ^-  json
+    :-  %a
+    %+  turn  feed
+    |=  [time=cord =^ship =key] 
+    %-  pairs
+    :~  ['time' s+time]
+        ['ship' (enjs-ship ship)]
+        ['key' (enjs-key key)]
+    ==
+
   ++  enjs-key-list
     |=  =key-list
     ^-  json
