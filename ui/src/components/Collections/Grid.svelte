@@ -1,14 +1,26 @@
 <script>
-  import { getCuratorCollections, state } from '@root/state';
+  import {
+    getCuratorCollections,
+    state,
+    keyStrFromObj,
+    getItem,
+  } from '@root/state';
+  import { subscribeToItem } from '@root/api';
   import SquarePreview from './SquarePreview.svelte';
   import { link } from 'svelte-spa-router';
   export let patp;
 
   let collections;
   const loadCollections = (patp) => {
-    collections = (getCuratorCollections(patp) || []).filter(
-      (c) => c?.bespoke?.['key-list']?.length > 0
-    );
+    (getCuratorCollections(patp) || []).forEach((c) => {
+      if (!getItem(keyStrFromObj(c))) {
+        subscribeToItem(c);
+      }
+    });
+    collections = (getCuratorCollections(patp) || [])
+      .map((c) => getItem(keyStrFromObj(c)))
+      .filter((c) => !!c);
+    console.log({ collections });
   };
 
   state.subscribe((s) => {

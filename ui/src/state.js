@@ -128,9 +128,12 @@ export const getGlobalFeed = () => {
 };
 
 export const getCuratorCollections = (patp) => {
-  return (getCuratorItemsByStruc(patp, 'collection') || [])
-    .filter((k) => k.keyObj.time !== '~2000.1.1')
-    .filter((k) => k.keyObj.time !== 'index');
+  return get(state)
+    [mainCollectionKey(patp)]?.bespoke?.['key-list']?.filter((k) => {
+      return k.struc === 'collection';
+    })
+    ?.filter((k) => k.time !== '~2000.1.1')
+    ?.filter((k) => k.time !== 'index');
 };
 
 export const getCuratorFeaturedCollection = (patp) => {

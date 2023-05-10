@@ -54,7 +54,7 @@
     curator = getCurator(patp);
     isLoaded = s.isLoaded;
     ({ title, cover, image, description, color } = getMeta(curator));
-    featuredCollection = getCuratorFeaturedCollection(patp);
+    // featuredCollection = getCuratorFeaturedCollection(patp);
     feed = (getCuratorFeed(patp) || []).sort((a, b) => {
       return fromUrbitTime(b.meta.createdAt) - fromUrbitTime(a.meta.createdAt);
     });

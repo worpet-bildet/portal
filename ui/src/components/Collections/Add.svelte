@@ -42,6 +42,14 @@
       mark: 'portal-action',
       json: {
         create: {
+          'append-to': [
+            {
+              ship: me,
+              time: '~2000.1.1',
+              struc: 'collection',
+              cord: '',
+            },
+          ],
           bespoke: {
             collection: {
               title: name,

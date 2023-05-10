@@ -131,6 +131,7 @@ export const subscribeToGroup = (key) => {
 };
 
 export const subscribeToItem = (keyObj) => {
+  console.log({ keyObj });
   poke({
     app: 'portal-manager',
     mark: 'portal-action',
@@ -143,13 +144,6 @@ export const subscribeToItem = (keyObj) => {
 };
 
 export const subscribeToContactProfile = (patp) => {
-  console.log({
-    app: 'contacts',
-    mark: 'contact-action',
-    json: {
-      heed: [patp],
-    },
-  });
   poke({
     app: 'contacts',
     mark: 'contact-action',
