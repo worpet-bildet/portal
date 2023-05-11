@@ -1,10 +1,10 @@
 <script>
-  import { link } from 'svelte-spa-router';
+  import { link, pop } from 'svelte-spa-router';
   import { me } from '@root/api';
-  import { state, getItem, getCollectionItems, getCurator } from '@root/state';
+  import { state, getItem, getCollectionItems } from '@root/state';
   import { getMeta } from '@root/util';
   import { ItemDetail, ItemVerticalListPreview } from '@components';
-  import { EditIcon, RightSidebar } from '@fragments';
+  import { EditIcon, RightSidebar, LeftArrowIcon } from '@fragments';
   export let params;
 
   // wild here is the collectionkey
@@ -27,7 +27,7 @@
 </script>
 
 {#if collection}
-  <div class="grid grid-cols-12 gap-8">
+  <div class="grid grid-cols-12 gap-x-8">
     <ItemDetail
       patp={ship}
       {cover}
@@ -43,7 +43,11 @@
       </div>
     </ItemDetail>
     <RightSidebar>
-      <div class="flex flex-col border rounded-lg p-4">
+      <div class="flex flex-col border rounded-lg p-4 gap-4">
+        <button class="border px-2 py-1 flex gap-4" on:click={pop}>
+          <span class="w-5"><LeftArrowIcon /></span>
+          Back
+        </button>
         {#if me === ship}
           <a
             use:link

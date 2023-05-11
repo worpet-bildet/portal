@@ -1,14 +1,16 @@
 <script>
   import { pop } from 'svelte-spa-router';
   import { poke } from '@root/api';
-  import {
-    state,
-    getCurator,
-    getCuratorCollections,
-    keyStrToObj,
-  } from '@root/state';
+  import { state, getCurator, getCuratorCollections } from '@root/state';
   import { CollectionsSquarePreview } from '@components';
-  import { Tabs, TextArea, SortableList, RightSidebar } from '@fragments';
+  import {
+    Tabs,
+    TextArea,
+    SortableList,
+    RightSidebar,
+    LeftArrowIcon,
+    CheckIcon,
+  } from '@fragments';
 
   export let params;
 
@@ -134,20 +136,25 @@
     {/if}
   </div>
   <RightSidebar>
-    <button
-      class="border px-2"
-      on:click={() => {
-        switch (activeTab) {
-          case 'profile':
-            saveProfile();
-            pop();
-          case 'collections':
-            saveCollections();
-            pop();
-          default:
-            return;
-        }
-      }}>Save</button
-    >
+    <div class="flex flex-col gap-4 p-4 border rounded-lg">
+      <button
+        class="border px-2 flex gap-4 py-1 items-center"
+        on:click={() => {
+          switch (activeTab) {
+            case 'profile':
+              saveProfile();
+              pop();
+            case 'collections':
+              saveCollections();
+              pop();
+            default:
+              return;
+          }
+        }}><span class="w-5"><CheckIcon /></span>Save</button
+      >
+      <button class="border px-2 flex gap-4 py-1 items-center" on:click={pop}
+        ><span class="w-5"><LeftArrowIcon /></span>Back</button
+      >
+    </div>
   </RightSidebar>
 </div>

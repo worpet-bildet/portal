@@ -92,8 +92,7 @@
   };
 
   const addItem = (key) => {
-    console.log(key);
-    items.push(getItem(key));
+    items.push(keyStrToObj(key));
     items = items;
     addModalOpen = false;
     save();
@@ -105,7 +104,7 @@
 </script>
 
 {#if collection}
-  <div class="grid grid-cols-12">
+  <div class="grid grid-cols-12 gap-x-8">
     <div class="grid gap-4 col-span-9">
       <div class="text-2xl font-bold">Editing {title}</div>
       <div>
@@ -135,7 +134,7 @@
       </div>
     </div>
     <RightSidebar>
-      <div class="grid gap-4">
+      <div class="flex flex-col gap-4 border rounded-lg p-4">
         <button class="border px-2 py-1" on:click={add}>Add Item</button>
         <button class="border px-2 py-1" on:click={save}>Save</button>
       </div>
