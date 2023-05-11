@@ -9,6 +9,7 @@ import {
   subscribeToGroup,
 } from '@root/api';
 import config from '@root/config';
+import { fromUrbitTime } from '@root/util';
 
 export const state = writable({});
 export const feed = writable({});
@@ -91,6 +92,7 @@ export const refreshApps = () => {
         data.ship = kiln[key]?.sync?.ship;
         if (!data.ship) return;
         apps[key] = data;
+        // TODO: subscribe to the app here
       });
       s.apps = apps;
       return s;
@@ -108,22 +110,18 @@ export const refreshPals = () => {
 };
 
 export const getCurator = (patp) => {
-  return { ...mainCollection(patp), ...get(state)?.[`/ship/${patp}//`] };
+  return { ...get(state)?.[`/ship/${patp}//`] };
 };
 
 export const getCuratorFeed = (patp) => {
-  return get(state)[feedKey(patp)]?.bespoke?.feed?.map(({ key }) => {
-    return getItem(keyStrFromObj(key));
-  });
+  return get(state)[feedKey(patp)]?.bespoke?.feed?.sort(
+    (a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time)
+  );
 };
 
-// TODO: Make indexer dynamic
-// TODO: Change indexer before going live
 export const getGlobalFeed = () => {
-  return get(state)[globalFeedKey(config.indexer)]?.bespoke?.feed?.map(
-    ({ key }) => {
-      return getItem(keyStrFromObj(key));
-    }
+  return get(state)[globalFeedKey(config.indexer)]?.bespoke?.feed?.sort(
+    (a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time)
   );
 };
 
@@ -159,11 +157,7 @@ export const getProfile = (ship) => {
 };
 
 export const getCollectionItems = (collectionKey) => {
-  return get(state)
-    [collectionKey]?.bespoke?.['key-list']?.map((k) => {
-      return get(state)[keyStrFromObj(k)];
-    })
-    .filter((i) => !!i);
+  return get(state)[collectionKey]?.bespoke?.['key-list'];
 };
 
 export const getJoinedGroupDetails = (groupKey) => {

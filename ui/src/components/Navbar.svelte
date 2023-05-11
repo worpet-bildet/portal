@@ -2,6 +2,7 @@
   import { link, location } from 'svelte-spa-router';
   import { me } from '@root/api';
   import { Sigil } from '@fragments';
+  import MySigil from './MySigil.svelte';
 
   const nav = [
     {
@@ -44,7 +45,7 @@
       >
     {/each}
     <a use:link href={`/${me}`} class="w-10 h-10 rounded-md overflow-hidden">
-      <Sigil patp={me} />
+      <MySigil />
     </a>
   </div>
 </div>

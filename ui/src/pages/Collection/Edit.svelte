@@ -5,8 +5,9 @@
     getCurator,
     getCollectionItems,
     keyStrToObj,
+    keyStrFromObj,
   } from '@root/state';
-  import { poke, subscribeToGroup } from '@root/api';
+  import { poke } from '@root/api';
   import { ItemVerticalListPreview, CollectionsAddItemForm } from '@components';
   import {
     TextArea,
@@ -29,7 +30,12 @@
     } = collection);
 
     curator = getCurator(ship);
-    items = getCollectionItems(collection.keyStr);
+    // We have to do this because the sortable list down there won't be able to
+    // sort our things if we don't have a unique prop, and we can't rely on time
+    items = getCollectionItems(collection.keyStr).map((i) => ({
+      ...i,
+      keyStr: keyStrFromObj(i),
+    }));
   });
 
   const save = () => {
@@ -44,7 +50,7 @@
               title,
               blurb,
               image,
-              'key-list': items.map((i) => i.keyObj),
+              'key-list': items,
             },
           },
         },
@@ -118,10 +124,10 @@
         <div>Items (drag to reorder)</div>
         <SortableList bind:list={items} key="keyStr" let:item>
           <ItemVerticalListPreview
-            {item}
+            key={item}
             clickable={false}
             removable={true}
-            editable={item.keyObj.struc === 'other'}
+            editable={item.struc === 'other'}
             on:remove={({ detail }) => remove(detail)}
             on:edit={({ detail }) => edit(detail)}
           />

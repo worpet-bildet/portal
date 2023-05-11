@@ -12,6 +12,8 @@ export const getMeta = (item) => {
     hash: getHash(item),
     servedFrom: getServedFrom(item),
     createdAt: getCreatedAt(item),
+    struc: getStruc(item),
+    ref: getRef(item),
     keyStr: item?.keyStr,
   };
 };
@@ -120,6 +122,8 @@ export const getServedFrom = (item) => {
   }
 };
 export const getCreatedAt = (item) => fromUrbitTime(item?.meta?.createdAt);
+export const getStruc = (item) => item?.keyObj?.struc;
+export const getRef = (item) => item?.bespoke?.ref;
 
 export const isUrl = (s) => {
   if (

@@ -4,9 +4,9 @@
   export let feed;
 </script>
 
-{#if Object.values(feed).length > 0}
-  {#each Object.values(feed) as item (item.keyStr)}
-    <FeedPost {item} />
+{#if feed && feed.length > 0}
+  {#each feed as item (item.time)}
+    <FeedPost key={item.key} />
   {/each}
 {:else}
   <div>Loading...</div>

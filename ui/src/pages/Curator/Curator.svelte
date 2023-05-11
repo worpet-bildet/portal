@@ -52,12 +52,11 @@
   let title, cover, image, description, color, isLoaded, isMyPal, pals;
   const loadCurator = (s) => {
     curator = getCurator(patp);
+    console.log({ curator });
     isLoaded = s.isLoaded;
     ({ title, cover, image, description, color } = getMeta(curator));
     // featuredCollection = getCuratorFeaturedCollection(patp);
-    feed = (getCuratorFeed(patp) || []).sort((a, b) => {
-      return fromUrbitTime(b.meta.createdAt) - fromUrbitTime(a.meta.createdAt);
-    });
+    feed = getCuratorFeed(patp) || [];
     isMyPal = !!s.pals?.[patp.slice(1)];
   };
 
@@ -112,17 +111,17 @@
     >
       <div class="col-span-12 lg:col-span-9">
         <Tabs {tabs} bind:activeTab />
-        <div class="pt-4">
+        <div class="pt-4 flex flex-col gap-4">
           {#if activeTab === 'Activity'}
+            {#if me === patp}
+              <FeedPostForm />
+            {/if}
             {#if feed.length === 0}
               <div class="col-span-12">
                 {patp} hasn't made any posts on Portal yet.
               </div>
             {:else}
               <div class="grid gap-y-4">
-                {#if me === patp}
-                  <FeedPostForm />
-                {/if}
                 <Feed {feed} />
               </div>
             {/if}
@@ -133,7 +132,7 @@
       </div>
     </ItemDetail>
     <RightSidebar>
-      <div class="flex flex-col gap-4 rounded-lg p-4 shadow-md shadow-gray-500">
+      <div class="flex flex-col gap-4 rounded-lg p-4 border">
         {#if me === patp}
           <div class="flex flex-col gap-4">
             <a use:link href={`/${patp}/edit`} class="border px-2 py-1">
@@ -163,21 +162,23 @@
             </div>
           </AsyncButton>
         {/if}
-        <a
-          target="_blank"
-          class="border py-1 px-2"
-          href={`${window.location.origin}/apps/talk/dm/${patp}`}
-        >
-          <div class="w-full flex gap-4 items-center justify-start">
-            <span class="w-5"> <ChatIcon /></span>
-            <span>Message</span>
-          </div>
-        </a>
+        {#if me !== patp}
+          <a
+            target="_blank"
+            class="border py-1 px-2"
+            href={`${window.location.origin}/apps/talk/dm/${patp}`}
+          >
+            <div class="w-full flex gap-4 items-center justify-start">
+              <span class="w-5"> <ChatIcon /></span>
+              <span>Message</span>
+            </div>
+          </a>
+        {/if}
       </div>
-      {#if curator && curator.groups && curator.groups.length > 0}
+      {#if curator?.bespoke?.groups?.length > 0}
         <div class="grid gap-y-4">
           <div class="text-xl">{patp} recommends</div>
-          {#each curator.groups as key}
+          {#each curator.bespoke.groups as key}
             <SidebarGroup {key} />
           {/each}
         </div>

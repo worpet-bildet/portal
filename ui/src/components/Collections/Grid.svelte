@@ -8,6 +8,7 @@
   import { subscribeToItem } from '@root/api';
   import SquarePreview from './SquarePreview.svelte';
   import { link } from 'svelte-spa-router';
+  import { fade } from 'svelte/transition';
   export let patp;
 
   let collections;
@@ -37,8 +38,8 @@
     </div>
   {:else}
     {#each collections as collection}
-      <a use:link href={`${collection.keyStr}`} class="col-span-4">
-        <SquarePreview {collection} />
+      <a use:link href={`${collection.keyStr}`} class="col-span-4" in:fade>
+        <SquarePreview key={collection.keyObj} />
       </a>
     {/each}
   {/if}

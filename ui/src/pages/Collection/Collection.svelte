@@ -37,22 +37,28 @@
       type="collection"
     >
       <div class="grid gap-y-4">
-        {#each items as item}
-          <ItemVerticalListPreview {item} />
+        {#each items as key}
+          <ItemVerticalListPreview {key} />
         {/each}
       </div>
     </ItemDetail>
     <RightSidebar>
-      {#if me === ship}
-        <a use:link href={`/collection-edit/${wild}`} class="border px-2 py-1">
-          <div class="w-full flex gap-4 items-center">
-            <span class="w-5">
-              <EditIcon />
-            </span>
-            <span>Edit Collection</span>
-          </div>
-        </a>
-      {/if}
+      <div class="flex flex-col border rounded-lg p-4">
+        {#if me === ship}
+          <a
+            use:link
+            href={`/collection-edit/${wild}`}
+            class="border px-2 py-1"
+          >
+            <div class="w-full flex gap-4 items-center">
+              <span class="w-5">
+                <EditIcon />
+              </span>
+              <span>Edit Collection</span>
+            </div>
+          </a>
+        {/if}
+      </div>
     </RightSidebar>
   </div>
 {/if}

@@ -1,19 +1,14 @@
 <script>
-  import { link } from 'svelte-spa-router';
   import {
     state,
     getGroup,
     getJoinedGroupDetails,
     refreshGroups,
+    keyStrToObj,
   } from '@root/state';
-  import {
-    joinGroup,
-    leaveGroup,
-    subscribeToGroup,
-    getHeapItems,
-  } from '@root/api';
+  import { joinGroup, leaveGroup } from '@root/api';
   import { getMeta } from '@root/util';
-  import { ItemDetail } from '@components';
+  import { ItemDetail, RecommendModal } from '@components';
   import {
     ChatIcon,
     DiaryIcon,
@@ -52,11 +47,11 @@
     return `${window.location.origin}/apps/groups/groups/${groupKey}/channels/${channelKey}`;
   };
 
-  // http://localhost:5173/apps/groups/groups/~worpet-bildet/portal/channels/diary/~worpet-bildet/announcements
+  let recommendModalOpen;
 </script>
 
 {#if group}
-  <div class="grid grid-cols-12 gap-8">
+  <div class="grid grid-cols-12 gap-x-8">
     <ItemDetail {cover} avatar={image} {title} {description} type="group">
       <div class="col-span-12 md:col-span-9">
         {#if !joinedDetails}
@@ -111,22 +106,28 @@
       </div>
     </ItemDetail>
     <RightSidebar>
-      {#if !joinedDetails}
-        <AsyncButton on:click={join}>Join Group</AsyncButton>
-      {:else if joinedDetails.joining}
-        <AsyncButton on:click={join} loading={true} />
-      {:else}
-        <div class="flex flex-col gap-1">
-          <div class="font-bold">Members</div>
-          <div class="flex items-center gap-2">
-            <div class="w-5 h-5">
-              <PersonIcon />
+      <div class="flex flex-col gap-4 p-4 rounded-lg border">
+        {#if !joinedDetails}
+          <AsyncButton on:click={join}>Join Group</AsyncButton>
+        {:else if joinedDetails.joining}
+          <AsyncButton on:click={join} loading={true} />
+        {:else}
+          <div class="flex flex-col gap-1">
+            <div class="font-bold">Members</div>
+            <div class="flex items-center gap-2">
+              <div class="w-5 h-5">
+                <PersonIcon />
+              </div>
+              {Object.keys(joinedDetails.fleet).length}
             </div>
-            {Object.keys(joinedDetails.fleet).length}
           </div>
-        </div>
-        <AsyncButton on:click={leave}>Leave Group</AsyncButton>
-      {/if}
+          <AsyncButton on:click={leave}>Leave Group</AsyncButton>
+        {/if}
+        <button
+          class="border py-1 text-center"
+          on:click={() => (recommendModalOpen = true)}>Recommend {title}</button
+        >
+      </div>
     </RightSidebar>
     <!-- <div class="hidden lg:flex lg:col-span-3 flex-col gap-8">
       {#if curator && curator.groups && curator.groups.length > 0}
@@ -147,6 +148,7 @@
       </div>
     </div> -->
   </div>
+  <RecommendModal bind:open={recommendModalOpen} key={group.keyObj} {title} />
 {:else}
   Loading...
 {/if}

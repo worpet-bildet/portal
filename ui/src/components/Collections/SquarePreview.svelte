@@ -4,16 +4,16 @@
   import { getMeta } from '@root/util';
   import { ItemImage, LikeIcon, CommentIcon } from '@fragments';
 
-  export let collection;
+  export let key;
 
-  let item, title, image, previewItems;
+  let collection, item, title, image, previewItems;
 
   $: {
-    item = getItem(collection?.keyStr);
-    ({ title, image } = getMeta(item));
+    collection = getItem(keyStrFromObj(key));
+    ({ title, image } = getMeta(collection));
 
     // we only want at most four items here
-    previewItems = item?.bespoke?.['key-list']
+    previewItems = collection?.bespoke?.['key-list']
       ?.map((keyObj) => {
         let i = getItem(keyStrFromObj(keyObj));
         if (!i) {

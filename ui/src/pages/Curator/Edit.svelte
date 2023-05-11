@@ -1,4 +1,5 @@
 <script>
+  import { pop } from 'svelte-spa-router';
   import { poke } from '@root/api';
   import {
     state,
@@ -18,11 +19,12 @@
   state.subscribe(() => {
     curator = getCurator(patp);
     ({ nickname, cover, avatar, bio } = curator.bespoke || {});
-    collections = getCuratorCollections(patp);
+    collections = getCuratorCollections(patp) || [];
+    console.log({ collections });
   });
 
   let activeTab = 'collections';
-  let tabs = ['profile', 'collections', 'integrations'];
+  let tabs = ['profile', 'collections'];
 
   let publishBlog = true;
   let publishRadio = false;
@@ -62,7 +64,7 @@
           },
           bespoke: {
             collection: {
-              'key-list': collections.map((i) => keyStrToObj(i.keyStr)),
+              'key-list': collections,
             },
           },
         },
@@ -71,9 +73,8 @@
   };
 </script>
 
-<div class="grid grid-cols-12">
+<div class="grid grid-cols-12 gap-x-8">
   <div class="grid gap-y-4 col-span-9">
-    <div>Editing Curator</div>
     <Tabs {tabs} bind:activeTab />
     {#if activeTab === 'profile'}
       <div>
@@ -97,8 +98,8 @@
         <div class="text-2xl font-bold col-span-4">
           Collections (drag to reorder)
         </div>
-        <SortableList bind:list={collections} key="keyStr" let:item>
-          <CollectionsSquarePreview collection={item} />
+        <SortableList bind:list={collections} key="time" let:item>
+          <CollectionsSquarePreview key={item} />
         </SortableList>
       </div>
     {:else if activeTab === 'integrations'}
@@ -139,8 +140,10 @@
         switch (activeTab) {
           case 'profile':
             saveProfile();
+            pop();
           case 'collections':
             saveCollections();
+            pop();
           default:
             return;
         }

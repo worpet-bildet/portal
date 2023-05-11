@@ -1,6 +1,7 @@
 <script>
-  import { state, keyStrToObj } from '@root/state';
+  import { state, keyStrToObj, keyStrFromObj } from '@root/state';
   import { poke, me } from '@root/api';
+  import { ItemVerticalListPreview } from '@components';
   import { Modal, StepForm, TextArea, PlusIcon } from '@fragments';
 
   let groups = {};
@@ -19,8 +20,6 @@
     apps = s.apps;
   });
 
-  $: console.log({ groups, apps });
-
   let showModal = false;
   const addCollection = () => {
     showModal = true;
@@ -31,7 +30,27 @@
   let groupKeys = [];
   let appKeys = [];
 
-  $: console.log({ groupKeys, appKeys });
+  const groupSelected = ({ detail: { key } }) => {
+    let keyStr = keyStrFromObj(key);
+    if (groupKeys.includes(keyStr)) {
+      groupKeys = groupKeys
+        .slice(0, groupKeys.indexOf(keyStr))
+        .concat(groupKeys.slice(groupKeys.indexOf(keyStr)) + 1);
+    } else {
+      groupKeys.push(keyStr);
+    }
+  };
+
+  const appSelected = ({ detail: { key } }) => {
+    let keyStr = keyStrFromObj(key);
+    if (appKeys.includes(keyStr)) {
+      appKeys = appKeys
+        .slice(0, appKeys.indexOf(keyStr))
+        .concat(appKeys.slice(appKeys.indexOf(keyStr)) + 1);
+    } else {
+      appKeys.push(keyStr);
+    }
+  };
 
   let formstep = 'meta';
   let formsteps = ['meta', 'groups', 'apps'];
@@ -77,7 +96,7 @@
 </button>
 <Modal bind:open={showModal}>
   <StepForm bind:formstep {formsteps} on:save={save}>
-    <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-4 pb-4">
       {#if formstep === 'meta'}
         <div class="text-2xl font-bold">Give your collection a name</div>
         <input type="text" class="p-2" bind:value={name} />
@@ -88,24 +107,31 @@
       {:else if formstep === 'groups'}
         <div>Add these groups?</div>
         {#each Object.entries(groups) as [path, { meta: { title, image } }]}
+          {@const key = {
+            struc: 'group',
+            ship: path.split('/')[0],
+            cord: path.split('/')[1],
+            time: '',
+          }}
           <div class="flex justify-between">
-            <div>{title}</div>
-            <input
-              type="checkbox"
-              bind:group={groupKeys}
-              value={`/group/${path}//`}
+            <ItemVerticalListPreview
+              {key}
+              clickable={false}
+              selectable
+              on:selected={groupSelected}
             />
           </div>
         {/each}
       {:else if formstep === 'apps'}
         <div>Add these apps?</div>
         {#each Object.entries(apps) as [path, { title, image, ship, info }]}
+          {@const key = { struc: 'app', ship, cord: path, time: '' }}
           <div class="flex justify-between">
-            <div>{title}</div>
-            <input
-              type="checkbox"
-              bind:group={appKeys}
-              value={`/app/${ship}/${path}//`}
+            <ItemVerticalListPreview
+              {key}
+              clickable={false}
+              selectable
+              on:selected={appSelected}
             />
           </div>
         {/each}

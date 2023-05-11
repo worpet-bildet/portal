@@ -1,21 +1,32 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import { push } from 'svelte-spa-router';
+  import { state, keyStrFromObj, getItem } from '@root/state';
+  import { subscribeToItem } from '@root/api';
   import { getMeta } from '@root/util';
   import { ItemImage, Sigil, TrashIcon, EditIcon } from '@fragments';
-  export let item;
+  export let key;
   export let clickable = true;
   export let removable = false;
   export let editable = false;
+  export let selectable = false;
+  export let selected = false;
 
-  console.log(item);
+  let item, isSubscribing;
+
+  state.subscribe(() => {
+    item = getItem(keyStrFromObj(key));
+    if (!item && !isSubscribing) {
+      isSubscribing = true;
+      return subscribeToItem(key);
+    }
+  });
 
   const dispatch = createEventDispatcher();
   const remove = () => dispatch('remove', item.keyStr);
   const edit = () => dispatch('edit', item.keyStr);
   const navigate = () => {
     if (item.keyObj.struc === 'ship') {
-      console.log(item.keyObj.ship);
       push(`/${item.keyObj.ship}`);
     } else {
       push(item.keyStr);
@@ -30,11 +41,19 @@
   } = item}
   {@const { title, blurb, description, image, color } = getMeta(item)}
   <div
-    on:click={() => (clickable ? navigate() : null)}
+    on:click={() => {
+      if (clickable) {
+        navigate();
+      } else if (selectable) {
+        selected = !selected;
+        dispatch('selected', { key, selected });
+      }
+    }}
     class="grid grid-cols-12 items-center gap-4 p-1 hover:bg-gray-500 cursor-pointer"
+    class:bg-gray-500={selected}
   >
     <div
-      class="border rounded-md overflow-hidden col-span-3 md:col-span-3 h-full"
+      class="border rounded-md overflow-hidden col-span-2 md:col-span-2 h-full"
     >
       {#if struc === 'ship' && !image}
         <Sigil patp={ship} {color} />
@@ -71,4 +90,6 @@
       {/if}
     </div>
   </div>
+{:else}
+  <div>Loading...</div>
 {/if}

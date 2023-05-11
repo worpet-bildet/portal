@@ -22,7 +22,7 @@
   };
 </script>
 
-<div class="flex flex-col h-full justify-between">
+<div class="flex flex-col h-full justify-between gap-4">
   <div>
     <slot />
   </div>

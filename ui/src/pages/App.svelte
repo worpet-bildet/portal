@@ -1,8 +1,8 @@
 <script>
   import { poke } from '@root/api';
-  import { state, getItem, refreshApps } from '@root/state';
+  import { state, getItem, refreshApps, keyStrToObj } from '@root/state';
   import { getMeta } from '@root/util';
-  import { ItemDetail } from '@components';
+  import { ItemDetail, RecommendModal } from '@components';
   import { RightSidebar, AsyncButton } from '@fragments';
   export let params;
   let { host, cord } = params;
@@ -48,20 +48,23 @@
       json: cord,
     }).then(refreshApps);
   };
-  const install = () => {
+  const install = async () => {
     isInstalling = true;
-    poke({
+    console.log({ ship, cord });
+    await poke({
       app: 'docket',
       mark: 'docket-install',
       json: `${ship}/${cord}`,
-    }).then(() => {
-      poke({
-        app: 'hood',
-        mark: 'kiln-revive',
-        json: cord,
-      }).then(refreshApps);
     });
+    await poke({
+      app: 'hood',
+      mark: 'kiln-revive',
+      json: cord,
+    });
+    refreshApps();
   };
+
+  let recommendModalOpen;
 </script>
 
 {#if item}
@@ -119,10 +122,19 @@
             on:click={open}>View website</a
           >
         {/if}
+        <button
+          class="border py-1 text-center"
+          on:click={() => (recommendModalOpen = true)}>Recommend {title}</button
+        >
         {#if isInstalled}
           <AsyncButton on:click={uninstall}>Uninstall {title}</AsyncButton>
         {/if}
       </div>
     </RightSidebar>
   </div>
+  <RecommendModal
+    bind:open={recommendModalOpen}
+    key={keyStrToObj(itemKey)}
+    {title}
+  />
 {/if}
