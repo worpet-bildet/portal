@@ -14,8 +14,10 @@
     DiaryIcon,
     HeapIcon,
     PersonIcon,
-    AsyncButton,
+    ShareIcon,
     RightSidebar,
+    CrossIcon,
+    IconButton,
   } from '@fragments';
 
   export let params;
@@ -108,9 +110,11 @@
     <RightSidebar>
       <div class="flex flex-col gap-4 p-4 rounded-lg border">
         {#if !joinedDetails}
-          <AsyncButton on:click={join}>Join Group</AsyncButton>
+          <IconButton icon={ChatIcon} on:click={join} async
+            >Join Group</IconButton
+          >
         {:else if joinedDetails.joining}
-          <AsyncButton on:click={join} loading={true} />
+          <IconButton loading async />
         {:else}
           <div class="flex flex-col gap-1">
             <div class="font-bold">Members</div>
@@ -121,11 +125,12 @@
               {Object.keys(joinedDetails.fleet).length}
             </div>
           </div>
-          <AsyncButton on:click={leave}>Leave Group</AsyncButton>
+          <IconButton icon={CrossIcon} on:click={leave}>Leave Group</IconButton>
         {/if}
-        <button
-          class="border py-1 text-center"
-          on:click={() => (recommendModalOpen = true)}>Recommend {title}</button
+        <IconButton
+          icon={ShareIcon}
+          on:click={() => (recommendModalOpen = true)}
+          >Recommend {title}</IconButton
         >
       </div>
     </RightSidebar>
