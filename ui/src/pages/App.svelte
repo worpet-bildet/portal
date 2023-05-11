@@ -3,7 +3,15 @@
   import { state, getItem, refreshApps, keyStrToObj } from '@root/state';
   import { getMeta } from '@root/util';
   import { ItemDetail, RecommendModal } from '@components';
-  import { RightSidebar, AsyncButton } from '@fragments';
+  import {
+    RightSidebar,
+    IconButton,
+    ShareIcon,
+    CrossIcon,
+    InstallIcon,
+    GlobeIcon,
+    AppIcon,
+  } from '@fragments';
   export let params;
   let { host, cord } = params;
   const itemKey = `/app/${host}/${cord}/`;
@@ -99,35 +107,33 @@
     <RightSidebar>
       <div class="grid gap-4">
         {#if isInstalled}
-          <a
-            target="_blank"
-            href={`${window.location.origin}/${servedFrom}/`}
-            class="py-1 border text-center"
-            on:click={open}>Open {title}</a
+          <IconButton
+            icon={AppIcon}
+            on:click={() =>
+              window.open(`${window.location.origin}/${servedFrom}/`)}
+            >Open {title}</IconButton
           >
         {:else if isInstalling}
-          <AsyncButton loading={true} class="py-1 border"
-            >Installing...</AsyncButton
-          >
+          <IconButton loading>Installing...</IconButton>
         {:else}
-          <AsyncButton class="py-1 border" on:click={install}
-            >Install {title}</AsyncButton
+          <IconButton icon={InstallIcon} on:click={install} async
+            >Install {title}</IconButton
           >
         {/if}
         {#if website}
-          <a
-            target="_blank"
-            href={website}
-            class="py-1 border text-center"
-            on:click={open}>View website</a
+          <IconButton icon={GlobeIcon} on:click={() => window.open(website)}
+            >View Website</IconButton
           >
         {/if}
-        <button
-          class="border py-1 text-center"
-          on:click={() => (recommendModalOpen = true)}>Recommend {title}</button
+        <IconButton
+          icon={ShareIcon}
+          on:click={() => (recommendModalOpen = true)}
+          >Recommend {title}</IconButton
         >
         {#if isInstalled}
-          <AsyncButton on:click={uninstall}>Uninstall {title}</AsyncButton>
+          <IconButton icon={CrossIcon} on:click={uninstall} async
+            >Uninstall {title}</IconButton
+          >
         {/if}
       </div>
     </RightSidebar>

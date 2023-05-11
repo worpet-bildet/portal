@@ -15,6 +15,9 @@
     RightSidebar,
     Modal,
     OtherItemForm,
+    IconButton,
+    PlusIcon,
+    CheckIcon,
   } from '@fragments';
   export let params;
   let { wild } = params;
@@ -135,8 +138,8 @@
     </div>
     <RightSidebar>
       <div class="flex flex-col gap-4 border rounded-lg p-4">
-        <button class="border px-2 py-1" on:click={add}>Add Item</button>
-        <button class="border px-2 py-1" on:click={save}>Save</button>
+        <IconButton icon={PlusIcon} on:click={add}>Add Item</IconButton>
+        <IconButton icon={CheckIcon} on:click={save}>Save</IconButton>
       </div>
     </RightSidebar>
   </div>

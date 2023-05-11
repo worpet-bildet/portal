@@ -10,6 +10,7 @@
     RightSidebar,
     LeftArrowIcon,
     CheckIcon,
+    IconButton,
   } from '@fragments';
 
   export let params;
@@ -137,8 +138,8 @@
   </div>
   <RightSidebar>
     <div class="flex flex-col gap-4 p-4 border rounded-lg">
-      <button
-        class="border px-2 flex gap-4 py-1 items-center"
+      <IconButton
+        icon={CheckIcon}
         on:click={() => {
           switch (activeTab) {
             case 'profile':
@@ -150,11 +151,11 @@
             default:
               return;
           }
-        }}><span class="w-5"><CheckIcon /></span>Save</button
+        }}
       >
-      <button class="border px-2 flex gap-4 py-1 items-center" on:click={pop}
-        ><span class="w-5"><LeftArrowIcon /></span>Back</button
+        Save</IconButton
       >
+      <IconButton icon={LeftArrowIcon} on:click={pop}>Back</IconButton>
     </div>
   </RightSidebar>
 </div>

@@ -1,10 +1,15 @@
 <script>
-  import { link, pop } from 'svelte-spa-router';
+  import { push, pop } from 'svelte-spa-router';
   import { me } from '@root/api';
   import { state, getItem, getCollectionItems } from '@root/state';
   import { getMeta } from '@root/util';
   import { ItemDetail, ItemVerticalListPreview } from '@components';
-  import { EditIcon, RightSidebar, LeftArrowIcon } from '@fragments';
+  import {
+    EditIcon,
+    RightSidebar,
+    IconButton,
+    LeftArrowIcon,
+  } from '@fragments';
   export let params;
 
   // wild here is the collectionkey
@@ -44,23 +49,13 @@
     </ItemDetail>
     <RightSidebar>
       <div class="flex flex-col border rounded-lg p-4 gap-4">
-        <button class="border px-2 py-1 flex gap-4" on:click={pop}>
-          <span class="w-5"><LeftArrowIcon /></span>
-          Back
-        </button>
+        <IconButton icon={LeftArrowIcon} on:click={pop}>Back</IconButton>
         {#if me === ship}
-          <a
-            use:link
-            href={`/collection-edit/${wild}`}
-            class="border px-2 py-1"
+          <IconButton
+            icon={EditIcon}
+            on:click={() => push(`/collection-edit/${wild}`)}
+            >Edit Collection</IconButton
           >
-            <div class="w-full flex gap-4 items-center">
-              <span class="w-5">
-                <EditIcon />
-              </span>
-              <span>Edit Collection</span>
-            </div>
-          </a>
         {/if}
       </div>
     </RightSidebar>

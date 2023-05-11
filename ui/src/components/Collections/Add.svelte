@@ -2,7 +2,7 @@
   import { state, keyStrToObj, keyStrFromObj } from '@root/state';
   import { poke, me } from '@root/api';
   import { ItemVerticalListPreview } from '@components';
-  import { Modal, StepForm, TextArea, PlusIcon } from '@fragments';
+  import { Modal, StepForm, TextArea, PlusIcon, IconButton } from '@fragments';
 
   let groups = {};
   let apps;
@@ -87,13 +87,7 @@
   };
 </script>
 
-<button
-  class="border px-2 py-1 flex items-center gap-4"
-  on:click={addCollection}
->
-  <span class="w-5"><PlusIcon /></span>
-  <span>New Collection</span>
-</button>
+<IconButton icon={PlusIcon} on:click={addCollection}>New Collection</IconButton>
 <Modal bind:open={showModal}>
   <StepForm bind:formstep {formsteps} on:save={save}>
     <div class="flex flex-col gap-4 pb-4">

@@ -1,5 +1,5 @@
 <script>
-  import { link } from 'svelte-spa-router';
+  import { push } from 'svelte-spa-router';
   import {
     state,
     getCurator,
@@ -32,6 +32,7 @@
     ChatIcon,
     AsyncButton,
     RightSidebar,
+    IconButton,
   } from '@fragments';
 
   export let params;
@@ -135,44 +136,27 @@
       <div class="flex flex-col gap-4 rounded-lg p-4 border">
         {#if me === patp}
           <div class="flex flex-col gap-4">
-            <a use:link href={`/${patp}/edit`} class="border px-2 py-1">
-              <div class="w-full flex gap-4 items-center">
-                <span class="w-5">
-                  <EditIcon />
-                </span>
-                <span>Edit Profile</span>
-              </div>
-            </a>
+            <IconButton icon={EditIcon} on:click={() => push(`/${patp}/edit`)}
+              >Edit Profile</IconButton
+            >
             <CollectionsAdd />
           </div>
         {:else if isMyPal}
-          <AsyncButton on:click={togglePal}>
-            <div class="w-full flex gap-4 items-center">
-              <span class="w-5">
-                <RemovePalIcon />
-              </span>
-              <span>Remove Pal</span>
-            </div>
-          </AsyncButton>
+          <IconButton icon={RemovePalIcon} on:click={togglePal} async
+            >Remove Pal</IconButton
+          >
         {:else}
-          <AsyncButton on:click={togglePal}>
-            <div class="w-full flex gap-4 items-center">
-              <span class="w-5"> <AddPalIcon /></span>
-              <span>Add Pal</span>
-            </div>
-          </AsyncButton>
+          <IconButton icon={AddPalIcon} on:click={togglePal} async
+            >Add Pal</IconButton
+          >
         {/if}
         {#if me !== patp}
-          <a
-            target="_blank"
-            class="border py-1 px-2"
-            href={`${window.location.origin}/apps/talk/dm/${patp}`}
+          <IconButton
+            icon={ChatIcon}
+            on:click={() =>
+              window.open(`${window.location.origin}/apps/talk/dm/${patp}`)}
+            >Message</IconButton
           >
-            <div class="w-full flex gap-4 items-center justify-start">
-              <span class="w-5"> <ChatIcon /></span>
-              <span>Message</span>
-            </div>
-          </a>
         {/if}
       </div>
       {#if curator?.bespoke?.groups?.length > 0}
