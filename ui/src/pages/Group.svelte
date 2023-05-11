@@ -114,7 +114,7 @@
             >Join Group</IconButton
           >
         {:else if joinedDetails.joining}
-          <IconButton loading async />
+          <IconButton loading async>Joining...</IconButton>
         {:else}
           <div class="flex flex-col gap-1">
             <div class="font-bold">Members</div>
@@ -125,7 +125,9 @@
               {Object.keys(joinedDetails.fleet).length}
             </div>
           </div>
-          <IconButton icon={CrossIcon} on:click={leave}>Leave Group</IconButton>
+          <IconButton icon={CrossIcon} on:click={leave} async
+            >Leave Group</IconButton
+          >
         {/if}
         <IconButton
           icon={ShareIcon}
