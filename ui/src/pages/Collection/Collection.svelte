@@ -9,6 +9,7 @@
     RightSidebar,
     IconButton,
     LeftArrowIcon,
+    SidebarGroup,
   } from '@fragments';
   export let params;
 
@@ -43,12 +44,14 @@
     >
       <div class="grid gap-y-4">
         {#each items as key}
-          <ItemVerticalListPreview {key} />
+          <div class="border shadow">
+            <ItemVerticalListPreview {key} />
+          </div>
         {/each}
       </div>
     </ItemDetail>
     <RightSidebar>
-      <div class="flex flex-col border rounded-lg p-4 gap-4">
+      <SidebarGroup>
         <IconButton icon={LeftArrowIcon} on:click={pop}>Back</IconButton>
         {#if me === ship}
           <IconButton
@@ -57,7 +60,7 @@
             >Edit Collection</IconButton
           >
         {/if}
-      </div>
+      </SidebarGroup>
     </RightSidebar>
   </div>
 {/if}

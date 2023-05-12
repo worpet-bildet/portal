@@ -1,5 +1,11 @@
 <script>
   import { createEventDispatcher } from 'svelte';
+  import {
+    IconButton,
+    LeftArrowIcon,
+    RightArrowIcon,
+    CheckIcon,
+  } from '@fragments';
   const dispatch = createEventDispatcher();
 
   export let formstep;
@@ -27,14 +33,14 @@
   {#if navbuttons}
     <div class="flex justify-between w-full">
       {#if !isFirstStep}
-        <button class="border px-2 py-1" on:click={back}>Back</button>
+        <IconButton icon={LeftArrowIcon} on:click={back}>Back</IconButton>
       {:else}
         <div />
       {/if}
       {#if !isLastStep}
-        <button class="border px-2 py-1" on:click={next}>Next</button>
+        <IconButton icon={RightArrowIcon} on:click={next}>Next</IconButton>
       {:else}
-        <button class="border px-2 py-1" on:click={save}>Save</button>
+        <IconButton icon={CheckIcon} on:click={save}>Save</IconButton>
       {/if}
     </div>
   {/if}

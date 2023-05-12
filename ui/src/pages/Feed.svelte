@@ -6,7 +6,7 @@
     SidebarPal,
     FeedPostForm,
   } from '@components';
-  import { RightSidebar } from '@fragments';
+  import { RightSidebar, SidebarGroup } from '@fragments';
 
   let pals, feed;
   state.subscribe((s) => {
@@ -21,11 +21,12 @@
     <Feed {feed} />
   </div>
   <RightSidebar>
-    <div class="flex flex-col border rounded-lg p-4">
+    <SidebarGroup>
       {#if !pals}
         <div>
-          <div>Portal is better with Pals!</div>
+          <div class="font-bold">Portal is better with Pals!</div>
           <ItemVerticalListPreview
+            small
             key={{ struc: 'app', ship: '~paldev', cord: 'pals', time: '' }}
           />
         </div>
@@ -39,6 +40,6 @@
           </div>
         </div>
       {/if}
-    </div>
+    </SidebarGroup>
   </RightSidebar>
 </div>

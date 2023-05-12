@@ -16,8 +16,10 @@
     Modal,
     OtherItemForm,
     IconButton,
+    LeftArrowIcon,
     PlusIcon,
     CheckIcon,
+    SidebarGroup,
   } from '@fragments';
   export let params;
   let { wild } = params;
@@ -74,7 +76,8 @@
   let editModalOpen = false;
   let item;
   const edit = (key) => {
-    item = items.find((i) => i.keyStr === key);
+    item = getItem(items.find((i) => i.keyStr === key).keyStr);
+
     editModalOpen = true;
   };
 
@@ -110,19 +113,19 @@
   <div class="grid grid-cols-12 gap-x-8">
     <div class="grid gap-4 col-span-9">
       <div class="text-2xl font-bold">Editing {title}</div>
-      <div>
+      <div class="flex flex-col gap-2">
         <div>Title</div>
-        <input class="p-2 w-full" type="text" bind:value={title} />
+        <input class="p-2 border-b" type="text" bind:value={title} />
       </div>
-      <div>
+      <div class="flex flex-col gap-2">
         <div>Description</div>
-        <TextArea bind:value={blurb} minRows={3} maxRows={10} />
+        <TextArea bind:value={blurb} minRows={1} maxRows={10} />
       </div>
-      <div>
+      <div class="flex flex-col gap-2">
         <div>Image</div>
-        <input class="p-2 w-full" type="text" bind:value={image} />
+        <input class="p-2 border-b" type="text" bind:value={image} />
       </div>
-      <div>
+      <div class="flex flex-col gap-2">
         <div>Items (drag to reorder)</div>
         <SortableList bind:list={items} key="keyStr" let:item>
           <ItemVerticalListPreview
@@ -137,10 +140,10 @@
       </div>
     </div>
     <RightSidebar>
-      <div class="flex flex-col gap-4 border rounded-lg p-4">
+      <SidebarGroup>
         <IconButton icon={PlusIcon} on:click={add}>Add Item</IconButton>
         <IconButton icon={CheckIcon} on:click={save}>Save</IconButton>
-      </div>
+      </SidebarGroup>
     </RightSidebar>
   </div>
   <Modal bind:open={addModalOpen}>
@@ -151,9 +154,17 @@
     />
   </Modal>
   <Modal bind:open={editModalOpen}>
-    <div class="grid gap-4">
-      <OtherItemForm bind:item={item.bespoke} />
-      <button class="border" on:click={saveEdits}>Save</button>
+    <div class="flex flex-col h-full justify-between">
+      <div>
+        <OtherItemForm bind:item={item.bespoke} />
+      </div>
+      <div class="flex justify-between">
+        <IconButton
+          icon={LeftArrowIcon}
+          on:click={() => (editModalOpen = false)}>Back</IconButton
+        >
+        <IconButton icon={CheckIcon} on:click={saveEdits}>Save</IconButton>
+      </div>
     </div>
   </Modal>
 {/if}

@@ -11,6 +11,7 @@
     LeftArrowIcon,
     CheckIcon,
     IconButton,
+    SidebarGroup,
   } from '@fragments';
 
   export let params;
@@ -23,11 +24,10 @@
     curator = getCurator(patp);
     ({ nickname, cover, avatar, bio } = curator.bespoke || {});
     collections = getCuratorCollections(patp) || [];
-    console.log({ collections });
   });
 
-  let activeTab = 'collections';
-  let tabs = ['profile', 'collections'];
+  let activeTab = 'Profile';
+  let tabs = ['Profile', 'Collections'];
 
   let publishBlog = true;
   let publishRadio = false;
@@ -77,26 +77,26 @@
 </script>
 
 <div class="grid grid-cols-12 gap-x-8">
-  <div class="grid gap-y-4 col-span-9">
+  <div class="grid gap-y-4 col-span-9 border shadow p-4 rounded-lg">
     <Tabs {tabs} bind:activeTab />
-    {#if activeTab === 'profile'}
-      <div>
+    {#if activeTab === 'Profile'}
+      <div class="flex flex-col gap-2">
         <div>Display Name</div>
-        <input type="text" bind:value={nickname} class="p-2" />
+        <input type="text" bind:value={nickname} class="p-2 border-b" />
       </div>
-      <div>
+      <div class="flex flex-col gap-2">
         <div>Bio</div>
-        <TextArea bind:value={bio} minRows={3} maxRows={5} />
+        <TextArea bind:value={bio} minRows={1} maxRows={5} />
       </div>
-      <div>
+      <div class="flex flex-col gap-2">
         <div>Avatar</div>
-        <input type="text" bind:value={avatar} class="p-2" />
+        <input type="text" bind:value={avatar} class="p-2 border-b" />
       </div>
-      <div>
+      <div class="flex flex-col gap-2">
         <div>Cover Image</div>
-        <input type="text" bind:value={cover} class="p-2" />
+        <input type="text" bind:value={cover} class="p-2 border-b" />
       </div>
-    {:else if activeTab === 'collections'}
+    {:else if activeTab === 'Collections'}
       <div class="grid gap-8 grid-cols-4">
         <div class="text-2xl font-bold col-span-4">
           Collections (drag to reorder)
@@ -137,15 +137,15 @@
     {/if}
   </div>
   <RightSidebar>
-    <div class="flex flex-col gap-4 p-4 border rounded-lg">
+    <SidebarGroup>
       <IconButton
         icon={CheckIcon}
         on:click={() => {
           switch (activeTab) {
-            case 'profile':
+            case 'Profile':
               saveProfile();
               pop();
-            case 'collections':
+            case 'Collections':
               saveCollections();
               pop();
             default:
@@ -156,6 +156,6 @@
         Save</IconButton
       >
       <IconButton icon={LeftArrowIcon} on:click={pop}>Back</IconButton>
-    </div>
+    </SidebarGroup>
   </RightSidebar>
 </div>

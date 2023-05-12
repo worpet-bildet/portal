@@ -1,8 +1,10 @@
 <script>
+  import { createEventDispatcher } from 'svelte';
   import { state, keyStrToObj, keyStrFromObj } from '@root/state';
   import { poke, me } from '@root/api';
   import { ItemVerticalListPreview } from '@components';
   import { Modal, StepForm, TextArea, PlusIcon, IconButton } from '@fragments';
+  let dispatch = createEventDispatcher();
 
   let groups = {};
   let apps;
@@ -84,18 +86,20 @@
       },
     });
     showModal = false;
+    // TODO: also navigate to the collections tab when we do this
+    dispatch('add');
   };
 </script>
 
 <IconButton icon={PlusIcon} on:click={addCollection}>New Collection</IconButton>
 <Modal bind:open={showModal}>
   <StepForm bind:formstep {formsteps} on:save={save}>
-    <div class="flex flex-col gap-4 pb-4">
+    <div class="flex flex-col gap-4">
       {#if formstep === 'meta'}
         <div class="text-2xl font-bold">Give your collection a name</div>
         <input
           type="text"
-          class="p-2"
+          class="p-2 border-b"
           bind:value={name}
           placeholder="A collection of useful items"
         />
@@ -103,7 +107,7 @@
           Briefly describe the collection (optional)
         </div>
         <TextArea
-          minRows={3}
+          minRows={1}
           bind:value={description}
           placeholder="Things to help you navigate Urbit for the first time"
         />

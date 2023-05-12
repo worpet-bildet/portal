@@ -34,20 +34,24 @@
   };
 </script>
 
-<div class="grid grid-cols-12 gap-y-3 border p-3">
+<div
+  class="grid grid-cols-12 gap-y-3 p-3 rounded-lg shadow border border-black"
+>
   <div class="col-span-1 w-10 h-10 rounded-md overflow-hidden">
     <Sigil patp={me} />
   </div>
   <div class="col-span-11">
     <TextArea
-      class="bg-transparent"
       placeholder="You can share urbit-native content here by pasting its link"
       bind:value={content}
-      minRows={2}
+      minRows={1}
       maxRows={40}
     />
   </div>
   <div class="col-span-12 justify-self-end self-end">
-    <button class="border px-3 py-1" on:click={post}>Post</button>
+    <button
+      class="border bg-black text-white rounded-lg px-3 py-1 font-bold"
+      on:click={post}>Post</button
+    >
   </div>
 </div>

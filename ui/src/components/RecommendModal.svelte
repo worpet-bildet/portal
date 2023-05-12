@@ -48,7 +48,9 @@
       <div class="col-span-11 col-start-2 border">
         <ItemVerticalListPreview {key} clickable={false} />
       </div>
-      <button class="border py-1 col-start-12" on:click={recommend}>Post</button
+      <button
+        class="rounded-lg bg-black text-white font-bold py-2 col-start-12"
+        on:click={recommend}>Post</button
       >
     </div>
   </div>

@@ -7,7 +7,7 @@
   $: maxHeight = maxRows ? `${1 + maxRows * 1.2}em` : `auto`;
 </script>
 
-<div class="relative">
+<div class="relative border-b">
   <div
     aria-hidden="true"
     class="p-2 invisible leading-tight box-border break-words"
@@ -19,6 +19,12 @@
   <textarea
     bind:value
     {...$$props}
-    class="p-2 overflow-hidden absolute w-full h-full top-0 resize-none leading-tight box-border break-words"
+    class="p-2 overflow-hidden absolute w-full h-full top-0 resize-none leading-tight box-border break-words border-b-black"
   />
 </div>
+
+<style>
+  textarea {
+    background-color: transparent;
+  }
+</style>

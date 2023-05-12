@@ -1,5 +1,5 @@
 <script>
-  import { poke } from '@root/api';
+  import { poke, subscribeToItem } from '@root/api';
   import { state, getItem, refreshApps, keyStrToObj } from '@root/state';
   import { getMeta } from '@root/util';
   import { ItemDetail, RecommendModal } from '@components';
@@ -11,12 +11,13 @@
     InstallIcon,
     GlobeIcon,
     AppIcon,
+    SidebarGroup,
   } from '@fragments';
-  export let params;
-  let { host, cord } = params;
-  const itemKey = `/app/${host}/${cord}/`;
 
-  let item,
+  let host,
+    cord,
+    itemKey,
+    item,
     image,
     title,
     description,
@@ -27,10 +28,19 @@
     hash,
     isInstalling,
     isInstalled,
-    servedFrom;
-  state.subscribe((s) => {
+    servedFrom,
+    recommendModalOpen;
+
+  export let params;
+  $: {
+    ({ host, cord } = params);
+    itemKey = `/app/${host}/${cord}/`;
+    loadApp($state);
+  }
+  const loadApp = (s) => {
+    if (!itemKey) return;
     item = getItem(itemKey);
-    if (!item) return;
+    if (!item) return subscribeToItem(keyStrToObj(itemKey));
     ({
       image,
       title,
@@ -42,13 +52,16 @@
       hash,
       servedFrom,
     } = getMeta(item));
-    isInstalling = s.apps?.[cord]?.chad?.hasOwnProperty('install');
+    isInstalling =
+      s.apps?.[cord]?.chad?.hasOwnProperty('install') || isInstalling;
     isInstalled = !isInstalling && !!s.apps?.[cord];
+  };
+
+  state.subscribe((s) => {
+    if (!s.isLoaded) return;
+    loadApp(s);
   });
 
-  $: console.log({ isInstalling });
-
-  const open = () => {};
   const uninstall = () => {
     poke({
       app: 'docket',
@@ -58,7 +71,6 @@
   };
   const install = async () => {
     isInstalling = true;
-    console.log({ ship, cord });
     await poke({
       app: 'docket',
       mark: 'docket-install',
@@ -71,12 +83,10 @@
     });
     refreshApps();
   };
-
-  let recommendModalOpen;
 </script>
 
 {#if item}
-  <div class="grid grid-cols-12 gap-8">
+  <div class="grid grid-cols-12 gap-x-8">
     <ItemDetail
       {title}
       {description}
@@ -105,12 +115,12 @@
       </div>
     </ItemDetail>
     <RightSidebar>
-      <div class="grid gap-4">
+      <SidebarGroup>
         {#if isInstalled}
           <IconButton
             icon={AppIcon}
             on:click={() =>
-              window.open(`${window.location.origin}/${servedFrom}/`)}
+              window.open(`${window.location.origin}${servedFrom}`)}
             >Open {title}</IconButton
           >
         {:else if isInstalling}
@@ -135,7 +145,7 @@
             >Uninstall {title}</IconButton
           >
         {/if}
-      </div>
+      </SidebarGroup>
     </RightSidebar>
   </div>
   <RecommendModal

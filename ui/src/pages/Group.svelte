@@ -6,7 +6,7 @@
     refreshGroups,
     keyStrToObj,
   } from '@root/state';
-  import { joinGroup, leaveGroup } from '@root/api';
+  import { joinGroup, leaveGroup, subscribeToItem } from '@root/api';
   import { getMeta } from '@root/util';
   import { ItemDetail, RecommendModal } from '@components';
   import {
@@ -22,21 +22,30 @@
   } from '@fragments';
 
   export let params;
-  const { host, cord } = params;
-  const groupKey = `${host}/${cord}`;
+
+  const loadGroup = () => {
+    if (!groupKey) return;
+    group = getGroup(groupKey);
+    if (!group) return subscribeToItem(keyStrToObj(`/group/${groupKey}/`));
+    ({ cover, image, description, title } = getMeta(group));
+    joinedDetails = getJoinedGroupDetails(groupKey);
+  };
+
+  let host, cord, groupKey;
+  $: {
+    ({ host, cord } = params);
+    groupKey = `${host}/${cord}`;
+    loadGroup();
+  }
 
   let group, joinedDetails;
   // let feed = [];
 
   let cover, image, description, title;
-  state.subscribe(() => {
-    group = getGroup(groupKey);
-    ({ cover, image, description, title } = getMeta(group));
-    joinedDetails = getJoinedGroupDetails(groupKey);
 
-    // getHeapItems('~ravmel-ropdyl/fall-images-7837').then((items) => {
-    //   console.log({ items });
-    // });
+  state.subscribe((s) => {
+    if (!s.isLoaded) return;
+    loadGroup();
   });
 
   const join = () => {
@@ -73,7 +82,7 @@
                 <div class="grid gap-2">
                   {#if idx.length > 0}
                     {#if Object.keys(joinedDetails.zones).length > 1}
-                      <div class="text-2xl font-bold">{title}</div>
+                      <div class="text-xl font-bold">{title}</div>
                     {/if}
                     {#each idx as channelKey}
                       {@const type = channelKey.split('/')[0]}

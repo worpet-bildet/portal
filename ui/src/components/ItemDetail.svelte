@@ -25,12 +25,12 @@
   {#if isUrl(cover)}
     <img
       src={cover}
-      class="absolute top-0 left-0 object-cover h-80 w-full z-0"
+      class="absolute top-0 left-0 object-cover h-80 w-full z-0 shadow"
       alt="Profile banner"
     />
   {:else}
     <div
-      class="absolute top-0 left-0 h-80 w-full z-0 bg-black flex items-center justify-center text-8xl font-bold overflow-hidden"
+      class="absolute top-0 left-0 h-80 w-full z-0 bg-black flex items-center justify-center text-8xl font-bold overflow-hidden text-white shadow"
     >
       {title || ''}
     </div>
@@ -47,15 +47,15 @@
             class="rounded-md border w-full h-full object-cover"
             alt="Group"
           /> -->
-          <div class="border rounded-md overflow-hidden w-full">
+          <div class="border rounded-md overflow-hidden w-full shadow">
             <ItemImage {title} {color} image={avatar} on:load={redrawAvatar} />
           </div>
         {:else if type === 'app'}
-          <div class="border rounded-md overflow-hidden w-full">
+          <div class="border rounded-md overflow-hidden w-full shadow">
             <ItemImage {title} {color} on:load={redrawAvatar} />
           </div>
         {:else}
-          <div class="border rounded-md overflow-hidden w-full">
+          <div class="border rounded-md overflow-hidden w-full shadow">
             <Sigil {patp} {color} />
           </div>
         {/if}

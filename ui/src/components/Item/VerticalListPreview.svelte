@@ -11,6 +11,7 @@
   export let editable = false;
   export let selectable = false;
   export let selected = false;
+  export let small = false;
 
   let item, isSubscribing;
 
@@ -20,6 +21,7 @@
       isSubscribing = true;
       return subscribeToItem(key);
     }
+    console.log({ item, key });
   });
 
   const dispatch = createEventDispatcher();
@@ -49,11 +51,14 @@
         dispatch('selected', { key, selected });
       }
     }}
-    class="grid grid-cols-12 items-center gap-4 p-1 hover:bg-gray-500 cursor-pointer"
-    class:bg-gray-500={selected}
+    class="grid grid-cols-12 items-center gap-4 p-1 hover:bg-black hover:text-white cursor-pointer rounded-lg text-xs"
+    class:bg-black={selected}
+    class:text-white={selected}
   >
     <div
-      class="border rounded-md overflow-hidden col-span-2 md:col-span-2 h-full"
+      class="border rounded-md overflow-hidden h-full"
+      class:col-span-2={!small}
+      class:col-span-4={small}
     >
       {#if struc === 'ship' && !image}
         <Sigil patp={ship} {color} />
@@ -62,33 +67,39 @@
       {/if}
     </div>
     <div class="col-span-8 flex flex-col gap-2">
-      <div class="flex items-center gap-2">
-        <div class="text-xl font-bold">{title}</div>
+      <div class="flex items-center gap-2 overflow-hidden">
+        <div class="font-bold" class:text-sm={small} class:text-xl={!small}>
+          {title}
+        </div>
         <div>·</div>
         <div>{struc}</div>
       </div>
       <div class="line-clamp-2">{blurb || description || ''}</div>
     </div>
-    <div class="col-span-1 flex gap-2 justify-center items-center">
-      {#if editable}
-        <div
-          class="w-8 h-8 hover:text-blue-500 cursor-pointer"
-          on:click|stopPropagation
-          on:click={() => edit(keyStr)}
-        >
-          <EditIcon />
-        </div>
-      {/if}
-      {#if removable}
-        <div
-          class="w-8 h-8 hover:text-red-500 cursor-pointer"
-          on:click|stopPropagation
-          on:click={() => remove(keyStr)}
-        >
-          <TrashIcon />
-        </div>
-      {/if}
-    </div>
+    {#if editable || removable}
+      <div
+        class="col-span-1 col-start-12 flex gap-2 justify-center items-center"
+      >
+        {#if editable}
+          <div
+            class="w-8 h-8 hover:text-blue-500 cursor-pointer"
+            on:click|stopPropagation
+            on:click={() => edit(keyStr)}
+          >
+            <EditIcon />
+          </div>
+        {/if}
+        {#if removable}
+          <div
+            class="w-8 h-8 hover:text-red-500 cursor-pointer"
+            on:click|stopPropagation
+            on:click={() => remove(keyStr)}
+          >
+            <TrashIcon />
+          </div>
+        {/if}
+      </div>
+    {/if}
   </div>
 {:else}
   <div>Loading...</div>

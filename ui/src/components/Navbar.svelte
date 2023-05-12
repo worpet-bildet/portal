@@ -1,7 +1,7 @@
 <script>
-  import { link, location } from 'svelte-spa-router';
+  import { push, link, location } from 'svelte-spa-router';
+  import logo from '@assets/logo3.svg';
   import { me } from '@root/api';
-  import { Sigil } from '@fragments';
   import MySigil from './MySigil.svelte';
 
   const nav = [
@@ -21,9 +21,9 @@
 </script>
 
 <div
-  class="relative flex justify-between items-center border-b px-10 bg-black bg-opacity-30 backdrop-blur-sm"
+  class="relative flex justify-between items-center border-b px-10 py-2 bg-nav bg-opacity-80 backdrop-blur-sm"
 >
-  <a
+  <!-- <a
     use:link
     href="/"
     class="flex items-center text-xl font-bold gap-2 text-white"
@@ -33,15 +33,22 @@
       src="https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/logo2.svg"
       alt="logo"
     />
-    Portal
+    <div class="font-logo text-black font-bold text-2xl">Portal</div> -->
+  <a
+    use:link
+    href="/"
+    class="flex items-center text-xl font-bold gap-2 text-white"
+  >
+    <img class="w-48" src={logo} alt="logo" />
   </a>
   <div class="flex gap-4">
     {#each nav as n}
-      <a
-        use:link
-        href={n.link}
-        class="text-white backdrop-blur-lg rounded-lg bg-white bg-opacity-30 hover:bg-opacity-0 flex items-center font-bold px-4"
-        class:active={$location === n.link}>{n.title}</a
+      <button
+        on:click={() => push(n.link)}
+        class="backdrop-blur-lg rounded-lg bg-transparent flex items-center font-bold px-4 hover:text-white hover:bg-black"
+        class:text-black={$location !== n.link}
+        class:text-white={$location === n.link}
+        class:bg-black={$location === n.link}>{n.title}</button
       >
     {/each}
     <a use:link href={`/${me}`} class="w-10 h-10 rounded-md overflow-hidden">
@@ -49,10 +56,3 @@
     </a>
   </div>
 </div>
-
-<style>
-  .active {
-    color: black;
-    background-color: white;
-  }
-</style>

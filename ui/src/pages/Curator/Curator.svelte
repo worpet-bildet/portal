@@ -139,7 +139,7 @@
             <IconButton icon={EditIcon} on:click={() => push(`/${patp}/edit`)}
               >Edit Profile</IconButton
             >
-            <CollectionsAdd />
+            <CollectionsAdd on:add={() => (activeTab = 'Collections')} />
           </div>
         {:else if isMyPal}
           <IconButton icon={RemovePalIcon} on:click={togglePal} async
@@ -163,7 +163,17 @@
         <div class="grid gap-y-4">
           <div class="text-xl">{patp} recommends</div>
           {#each curator.bespoke.groups as key}
-            <ItemVerticalListPreview key={`/group/${key}/`} />
+            <div class="border shadow rounded-lg">
+              <ItemVerticalListPreview
+                small
+                key={{
+                  struc: 'group',
+                  ship: key.split('/')[0],
+                  cord: key.split('/')[1],
+                  time: '',
+                }}
+              />
+            </div>
           {/each}
         </div>
       {/if}

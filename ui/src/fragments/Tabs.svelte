@@ -6,7 +6,8 @@
   {#each tabs as tab}
     <button
       class="cursor-pointer text-lg opacity-70"
-      class:active={activeTab === tab}
+      class:border-b-black={activeTab === tab}
+      class:border-b-2={activeTab === tab}
       class:font-bold={activeTab === tab}
       class:opacity-100={activeTab === tab}
       on:click={() => (activeTab = tab)}
@@ -15,12 +16,3 @@
     </button>
   {/each}
 </div>
-
-<style>
-  .active {
-    border-bottom: 2px solid #fff;
-  }
-  .border-b {
-    border-color: #808080;
-  }
-</style>

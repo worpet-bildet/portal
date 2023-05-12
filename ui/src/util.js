@@ -1,6 +1,6 @@
 export const getMeta = (item) => {
   return {
-    title: getTitle(item),
+    title: getTitle(item) || item?.keyObj?.cord,
     description: getDescription(item),
     blurb: getBlurb(item),
     image: getImage(item),

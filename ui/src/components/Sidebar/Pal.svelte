@@ -26,7 +26,7 @@
   <a
     use:link
     href={`/${pal}`}
-    class="flex gap-4 items-center hover:bg-gray-500 p-1"
+    class="flex gap-4 items-center p-1 hover:bg-black hover:text-white rounded-lg shadow border"
   >
     <div>
       {#if image}

@@ -3,7 +3,7 @@
   // requiring the caller to already have an image - this would allow us to
   // display the image grid for a full collection as well
   import { isUrl, invertHex, formatColor } from '@root/util';
-  import placeholder from '@assets/placeholder.png';
+  import placeholder from '@assets/placeholder.svg';
   export let image, title, color;
   let primaryColor, secondaryColor;
   $: {
