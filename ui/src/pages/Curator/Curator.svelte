@@ -18,9 +18,9 @@
   import {
     CollectionsGrid,
     Feed,
-    SidebarGroup,
     SidebarPal,
     ItemDetail,
+    ItemVerticalListPreview,
     CollectionsAdd,
     FeedPostForm,
   } from '@components';
@@ -30,8 +30,8 @@
     RemovePalIcon,
     EditIcon,
     ChatIcon,
-    AsyncButton,
     RightSidebar,
+    SidebarGroup,
     IconButton,
   } from '@fragments';
 
@@ -133,7 +133,7 @@
       </div>
     </ItemDetail>
     <RightSidebar>
-      <div class="flex flex-col gap-4 rounded-lg p-4 border">
+      <SidebarGroup>
         {#if me === patp}
           <div class="flex flex-col gap-4">
             <IconButton icon={EditIcon} on:click={() => push(`/${patp}/edit`)}
@@ -158,12 +158,12 @@
             >Message</IconButton
           >
         {/if}
-      </div>
+      </SidebarGroup>
       {#if curator?.bespoke?.groups?.length > 0}
         <div class="grid gap-y-4">
           <div class="text-xl">{patp} recommends</div>
           {#each curator.bespoke.groups as key}
-            <SidebarGroup {key} />
+            <ItemVerticalListPreview key={`/group/${key}/`} />
           {/each}
         </div>
       {/if}

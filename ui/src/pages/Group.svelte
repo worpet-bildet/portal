@@ -16,6 +16,7 @@
     PersonIcon,
     ShareIcon,
     RightSidebar,
+    SidebarGroup,
     CrossIcon,
     IconButton,
   } from '@fragments';
@@ -108,7 +109,7 @@
       </div>
     </ItemDetail>
     <RightSidebar>
-      <div class="flex flex-col gap-4 p-4 rounded-lg border">
+      <SidebarGroup>
         {#if !joinedDetails}
           <IconButton icon={ChatIcon} on:click={join} async
             >Join Group</IconButton
@@ -134,7 +135,7 @@
           on:click={() => (recommendModalOpen = true)}
           >Recommend {title}</IconButton
         >
-      </div>
+      </SidebarGroup>
     </RightSidebar>
     <!-- <div class="hidden lg:flex lg:col-span-3 flex-col gap-8">
       {#if curator && curator.groups && curator.groups.length > 0}

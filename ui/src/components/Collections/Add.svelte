@@ -93,29 +93,45 @@
     <div class="flex flex-col gap-4 pb-4">
       {#if formstep === 'meta'}
         <div class="text-2xl font-bold">Give your collection a name</div>
-        <input type="text" class="p-2" bind:value={name} />
+        <input
+          type="text"
+          class="p-2"
+          bind:value={name}
+          placeholder="A collection of useful items"
+        />
         <div class="text-2xl font-bold">
           Briefly describe the collection (optional)
         </div>
-        <TextArea minRows={3} bind:value={description} />
+        <TextArea
+          minRows={3}
+          bind:value={description}
+          placeholder="Things to help you navigate Urbit for the first time"
+        />
       {:else if formstep === 'groups'}
-        <div>Add these groups?</div>
-        {#each Object.entries(groups) as [path, { meta: { title, image } }]}
-          {@const key = {
-            struc: 'group',
-            ship: path.split('/')[0],
-            cord: path.split('/')[1],
-            time: '',
-          }}
-          <div class="flex justify-between">
-            <ItemVerticalListPreview
-              {key}
-              clickable={false}
-              selectable
-              on:selected={groupSelected}
-            />
+        {#if Object.entries(groups).length > 0}
+          <div>Add these groups?</div>
+          {#each Object.entries(groups) as [path, { meta: { title, image } }]}
+            {@const key = {
+              struc: 'group',
+              ship: path.split('/')[0],
+              cord: path.split('/')[1],
+              time: '',
+            }}
+            <div class="flex justify-between">
+              <ItemVerticalListPreview
+                {key}
+                clickable={false}
+                selectable
+                on:selected={groupSelected}
+              />
+            </div>
+          {/each}
+        {:else}
+          <div>
+            It looks like you are not a member of any groups yet, groups you
+            join will appear here.
           </div>
-        {/each}
+        {/if}
       {:else if formstep === 'apps'}
         <div>Add these apps?</div>
         {#each Object.entries(apps) as [path, { title, image, ship, info }]}

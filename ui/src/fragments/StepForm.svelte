@@ -23,9 +23,7 @@
 </script>
 
 <div class="flex flex-col h-full justify-between gap-4">
-  <div>
-    <slot />
-  </div>
+  <slot />
   {#if navbuttons}
     <div class="flex justify-between w-full">
       {#if !isFirstStep}

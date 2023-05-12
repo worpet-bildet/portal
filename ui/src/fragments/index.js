@@ -8,6 +8,7 @@ export { default as StepForm } from './StepForm.svelte';
 export { default as OtherItemForm } from './OtherItemForm.svelte';
 export { default as RightSidebar } from './RightSidebar.svelte';
 export { default as SortableList } from './SortableList.svelte';
+export { default as SidebarGroup } from './SidebarGroup.svelte';
 export { default as IconButton } from './IconButton.svelte';
 export { default as CollectIcon } from './Icons/Collect.svelte';
 export { default as CommentIcon } from './Icons/Comment.svelte';

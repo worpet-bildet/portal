@@ -112,7 +112,7 @@
       <div class="text-2xl font-bold">Editing {title}</div>
       <div>
         <div>Title</div>
-        <input class="p-2" type="text" bind:value={title} />
+        <input class="p-2 w-full" type="text" bind:value={title} />
       </div>
       <div>
         <div>Description</div>
@@ -120,7 +120,7 @@
       </div>
       <div>
         <div>Image</div>
-        <input class="p-2" type="text" bind:value={image} />
+        <input class="p-2 w-full" type="text" bind:value={image} />
       </div>
       <div>
         <div>Items (drag to reorder)</div>
