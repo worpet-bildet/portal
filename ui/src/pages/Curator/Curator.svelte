@@ -160,22 +160,24 @@
         {/if}
       </SidebarGroup>
       {#if curator?.bespoke?.groups?.length > 0}
-        <div class="grid gap-y-4">
-          <div class="text-xl">{patp} recommends</div>
-          {#each curator.bespoke.groups as key}
-            <div class="border shadow rounded-lg">
-              <ItemVerticalListPreview
-                small
-                key={{
-                  struc: 'group',
-                  ship: key.split('/')[0],
-                  cord: key.split('/')[1],
-                  time: '',
-                }}
-              />
-            </div>
-          {/each}
-        </div>
+        <SidebarGroup>
+          <div class="grid gap-y-4">
+            <div>{patp} recommends</div>
+            {#each curator.bespoke.groups as key}
+              <div class="border shadow rounded-lg">
+                <ItemVerticalListPreview
+                  small
+                  key={{
+                    struc: 'group',
+                    ship: key.split('/')[0],
+                    cord: key.split('/')[1],
+                    time: '',
+                  }}
+                />
+              </div>
+            {/each}
+          </div>
+        </SidebarGroup>
       {/if}
     </RightSidebar>
   </div>
