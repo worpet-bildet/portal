@@ -51,7 +51,7 @@
         dispatch('selected', { key, selected });
       }
     }}
-    class="grid grid-cols-12 items-center gap-4 p-1 hover:bg-black hover:text-white cursor-pointer rounded-lg text-xs"
+    class="grid grid-cols-12 w-full items-center gap-4 p-1 hover:bg-black hover:text-white cursor-pointer rounded-lg text-xs"
     class:bg-black={selected}
     class:text-white={selected}
   >
