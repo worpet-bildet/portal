@@ -111,19 +111,20 @@
           <div class="text-2xl">What kind of item?</div>
           <button
             on:click={() => (formstep = 'app')}
-            class="border text-2xl font-bold py-3">App</button
+            class="border shadow text-2xl font-bold py-3">App</button
           >
           <button
             on:click={() => (formstep = 'group')}
-            class="border text-2xl font-bold py-3">Group</button
+            class="border shadow text-2xl font-bold py-3">Group</button
           >
           <button
             on:click={() => (formstep = 'ship')}
-            class="border text-2xl font-bold py-3">Ship</button
+            class="border shadow text-2xl font-bold py-3">Ship</button
           >
           <button
             on:click={() => (formstep = 'other')}
-            class="border text-2xl font-bold py-3">Other (link etc.)</button
+            class="border shadow text-2xl font-bold py-3"
+            >Other (link etc.)</button
           >
         </div>
       {:else if formstep === 'app'}
@@ -136,18 +137,23 @@
             >
             <div />
           </div>
+        {:else}
+          <div class="flex flex-col gap-4">
+            {#each Object.entries(apps) as [path, { title, image, ship, info }]}
+              <button
+                class="grid grid-cols-12 border shadow items-center gap-4 p-1"
+                on:click={() => add(`/app/${path}/`)}
+              >
+                <div class="col-span-1">
+                  <ItemImage {image} title={title || path} />
+                </div>
+                <div class="col-span-11 justify-self-start font-bold">
+                  {title || path}
+                </div>
+              </button>
+            {/each}
+          </div>
         {/if}
-        {#each Object.entries(apps) as [path, { title, image, ship, info }]}
-          <button
-            class="grid grid-cols-12 border items-center gap-4 p-1"
-            on:click={() => add(`/app/${path}/`)}
-          >
-            <div class="col-span-1">
-              <ItemImage {image} {title} />
-            </div>
-            <div class="col-span-11 justify-self-start font-bold">{title}</div>
-          </button>
-        {/each}
       {:else if formstep === 'group'}
         {#if Object.keys(groups).length === 0}
           <div>You have already added all your groups to this collection</div>

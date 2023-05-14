@@ -1,4 +1,5 @@
 <script>
+  import { pop } from 'svelte-spa-router';
   import {
     state,
     getItem,
@@ -61,6 +62,7 @@
         },
       },
     });
+    pop();
   };
 
   let addModalOpen = false;

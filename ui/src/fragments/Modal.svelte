@@ -11,7 +11,7 @@
     on:click={() => (open = false)}
   >
     <div
-      class="flex justify-center items-center w-4/5 h-4/5 opacity-100 bg-gradient-top rounded-2xl border"
+      class="flex justify-center items-center w-4/5 h-4/5 opacity-100 bg-gradient-top rounded-2xl border shadow-2xl"
       on:click|stopPropagation
     >
       <div class="w-full h-full p-4 overflow-y-scroll relative">
