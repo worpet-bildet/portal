@@ -1,12 +1,6 @@
 <script>
   import { push } from 'svelte-spa-router';
-  import {
-    state,
-    getCurator,
-    getCuratorFeed,
-    refreshPals,
-    getCuratorFeaturedCollection,
-  } from '@root/state';
+  import { state, getCurator, getCuratorFeed, refreshPals } from '@root/state';
   import {
     subscribeToCurator,
     subscribeToContactProfile,
@@ -14,11 +8,10 @@
     removePal,
     me,
   } from '@root/api';
-  import { fromUrbitTime, getMeta } from '@root/util';
+  import { getMeta } from '@root/util';
   import {
     CollectionsGrid,
     Feed,
-    SidebarPal,
     ItemDetail,
     ItemVerticalListPreview,
     CollectionsAdd,
@@ -53,7 +46,6 @@
   let title, cover, image, description, color, isLoaded, isMyPal, pals;
   const loadCurator = (s) => {
     curator = getCurator(patp);
-    console.log({ curator });
     isLoaded = s.isLoaded;
     ({ title, cover, image, description, color } = getMeta(curator));
     // featuredCollection = getCuratorFeaturedCollection(patp);
@@ -64,15 +56,6 @@
   state.subscribe((s) => {
     if (!s) return;
     loadCurator(s);
-  });
-
-  $: console.log({
-    title,
-    cover,
-    image,
-    description,
-    color,
-    featuredCollection,
   });
 
   // TODO

@@ -115,7 +115,7 @@ export const getServedFrom = (item) => {
       // pretty sure that this should cover everything but we will find out!!
       return (
         item?.bespoke?.treaty?.href?.site ||
-        `apps/${item?.bespoke?.treaty?.href?.glob?.base}`
+        `/apps/${item?.bespoke?.treaty?.href?.glob?.base}`
       );
     default:
       return '';

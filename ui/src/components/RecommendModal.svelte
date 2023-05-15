@@ -2,6 +2,7 @@
   import { poke, me } from '@root/api';
   import { MySigil, ItemVerticalListPreview } from '@components';
   import { Modal, TextArea } from '@fragments';
+  import SquarePreview from './Collections/SquarePreview.svelte';
   export let open;
   export let key;
   export let title;

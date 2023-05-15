@@ -1,7 +1,6 @@
 <script>
   import { state } from '@root/state';
   import { Modal, StepForm } from '@fragments';
-  // Here we are going to display a modal which onboards the user
 
   let formstep = 'welcome';
   let formsteps = ['welcome', 'groups', 'apps', 'pals', 'share'];
@@ -9,7 +8,6 @@
   let groups, apps, pals;
   state.subscribe((s) => {
     ({ groups, apps, pals } = s);
-    console.log({ groups, apps, pals });
   });
 
   let collection = {

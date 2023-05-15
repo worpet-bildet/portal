@@ -1,6 +1,6 @@
 <script>
   import { push, link, location } from 'svelte-spa-router';
-  import logo from '@assets/logo3.svg';
+  import logo from '@assets/logo.svg';
   import { me } from '@root/api';
   import MySigil from './MySigil.svelte';
 
@@ -14,14 +14,15 @@
       link: '/~worpet-bildet',
     },
     {
-      title: 'Feedback', // we want this link to not use:link because it'g going out to groups
-      link: `/${me}`,
+      title: 'Feedback',
+      action: () =>
+        window.open(`${window.location.origin}/apps/talk/dm/~foddur-hodler`),
     },
   ];
 </script>
 
 <div
-  class="relative flex justify-between items-center border-b px-10 py-2 bg-nav bg-opacity-80 backdrop-blur-sm"
+  class="relative flex justify-between items-center border-b px-10 bg-nav bg-opacity-80 backdrop-blur-sm"
 >
   <!-- <a
     use:link
@@ -34,17 +35,14 @@
       alt="logo"
     />
     <div class="font-logo text-black font-bold text-2xl">Portal</div> -->
-  <a
-    use:link
-    href="/"
-    class="flex items-center text-xl font-bold gap-2 text-white"
-  >
-    <img class="w-48" src={logo} alt="logo" />
+  <a use:link href="/" class="flex items-center text-xl font-bold gap-2">
+    <img class="w-16" src={logo} alt="logo" />
+    PORTAL
   </a>
   <div class="flex gap-4">
     {#each nav as n}
       <button
-        on:click={() => push(n.link)}
+        on:click={() => (n.action ? n.action() : push(n.link))}
         class="backdrop-blur-lg rounded-lg bg-transparent flex items-center font-bold px-4 hover:text-white hover:bg-black"
         class:text-black={$location !== n.link}
         class:text-white={$location === n.link}

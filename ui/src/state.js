@@ -4,7 +4,6 @@ import {
   getContacts,
   getJoinedGroups,
   getInstalledApps,
-  getFeed,
   getPals,
   subscribeToGroup,
 } from '@root/api';
@@ -100,13 +99,20 @@ export const refreshApps = () => {
   });
 };
 
-export const refreshPals = () => {
-  getPals().then((pals) => {
+export const refreshPals = async () => {
+  try {
+    const pals = await getPals();
     state.update((s) => {
       s.pals = pals.outgoing;
+      s.palsLoaded = true;
       return s;
     });
-  });
+  } catch (e) {
+    state.update((s) => {
+      s.palsLoaded = true;
+      return s;
+    });
+  }
 };
 
 export const getCurator = (patp) => {

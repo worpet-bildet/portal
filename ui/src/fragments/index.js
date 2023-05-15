@@ -32,3 +32,4 @@ export { default as AppIcon } from './Icons/App.svelte';
 export { default as CrossIcon } from './Icons/Cross.svelte';
 export { default as InstallIcon } from './Icons/Install.svelte';
 export { default as LoadingIcon } from './Icons/Loading.svelte';
+export { default as SearchIcon } from './Icons/Search.svelte';

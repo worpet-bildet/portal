@@ -1,4 +1,5 @@
 <script>
+  import { push } from 'svelte-spa-router';
   import { me } from '@root/api';
   import { state, getGlobalFeed, getCuratorFeed } from '@root/state';
   import {
@@ -7,10 +8,10 @@
     SidebarPal,
     FeedPostForm,
   } from '@components';
-  import { RightSidebar, SidebarGroup } from '@fragments';
-  import { fromUrbitTime } from '@root/util';
+  import { RightSidebar, SidebarGroup, SearchIcon, Sigil } from '@fragments';
+  import { fromUrbitTime, isValidPatp } from '@root/util';
 
-  let pals, feed, myFeed;
+  let pals, feed;
   state.subscribe((s) => {
     ({ pals } = s);
     if (!getGlobalFeed()) return;
@@ -20,8 +21,18 @@
         (a, idx) => mergedFeed.findIndex((b) => b.time === a.time) === idx
       )
       .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
-    console.log({ feed });
   });
+
+  let searchShip;
+  let lastValidShip = searchShip;
+  $: {
+    if (isValidPatp(searchShip)) {
+      lastValidShip = searchShip;
+    }
+  }
+  const search = () => {
+    push(`/${lastValidShip}`);
+  };
 </script>
 
 <div class="grid grid-cols-9 gap-8">
@@ -31,7 +42,27 @@
   </div>
   <RightSidebar>
     <SidebarGroup>
-      {#if !pals}
+      <div class="flex flex-col gap-4">
+        <div class="text-xl font-bold">Find a curator</div>
+        <div
+          class="flex w-full gap-4 items-center border shadow rounded-lg p-4 justify-between"
+        >
+          <div class="flex gap-4">
+            <div class="w-6"><Sigil patp={lastValidShip || '~zod'} /></div>
+            <input
+              type="text"
+              class="bg-transparent border-b"
+              placeholder="~worpet-bildet"
+              bind:value={searchShip}
+              on:keydown={(e) => (e.key === 'Enter' ? search() : null)}
+            />
+          </div>
+          <button class="w-5" on:click={search}><SearchIcon /></button>
+        </div>
+      </div>
+    </SidebarGroup>
+    <SidebarGroup>
+      {#if $state.palsLoaded && !pals}
         <div>
           <div class="font-bold">Portal is better with Pals!</div>
           <ItemVerticalListPreview
@@ -39,7 +70,7 @@
             key={{ struc: 'app', ship: '~paldev', cord: 'pals', time: '' }}
           />
         </div>
-      {:else}
+      {:else if pals}
         <div class="flex flex-col gap-4">
           <div class="text-xl font-bold">Your pals</div>
           <div class="flex flex-col gap-2">
@@ -48,6 +79,8 @@
             {/each}
           </div>
         </div>
+      {:else}
+        Loading...
       {/if}
     </SidebarGroup>
   </RightSidebar>

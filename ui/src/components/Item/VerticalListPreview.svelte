@@ -4,6 +4,7 @@
   import { state, keyStrFromObj, getItem } from '@root/state';
   import { subscribeToItem } from '@root/api';
   import { getMeta } from '@root/util';
+  import { CollectionsSquarePreview } from '@components';
   import { ItemImage, Sigil, TrashIcon, EditIcon } from '@fragments';
   export let key;
   export let clickable = true;
@@ -21,7 +22,6 @@
       isSubscribing = true;
       return subscribeToItem(key);
     }
-    console.log({ item, key });
   });
 
   const dispatch = createEventDispatcher();
@@ -62,6 +62,8 @@
     >
       {#if struc === 'ship' && !image}
         <Sigil patp={ship} {color} />
+      {:else if struc === 'collection' && !image}
+        <CollectionsSquarePreview {key} withTitle={false} />
       {:else}
         <ItemImage {image} {title} {color} />
       {/if}
@@ -102,5 +104,5 @@
     {/if}
   </div>
 {:else}
-  <div>Loading...</div>
+  <div class="p-4">Loading...</div>
 {/if}

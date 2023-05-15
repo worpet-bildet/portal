@@ -5,6 +5,7 @@
   import { ItemImage } from '@fragments';
 
   export let key;
+  export let withTitle = true;
 
   let collection, title, image, previewItems;
 
@@ -63,8 +64,10 @@
         {/each}
       {/if}
     </div>
-    <div class="bg-gray-500 p-2">
-      <div>{title}</div>
-    </div>
+    {#if withTitle}
+      <div class="bg-gray-500 p-2">
+        <div>{title}</div>
+      </div>
+    {/if}
   </div>
 {/if}

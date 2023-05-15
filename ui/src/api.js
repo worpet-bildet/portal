@@ -95,7 +95,6 @@ export const leaveGroup = (group) => {
 };
 
 export const subscribeToCurator = (patp) => {
-  console.log('SUBSCRIBING TO ', patp);
   poke({
     app: 'portal-manager',
     mark: 'portal-action',
