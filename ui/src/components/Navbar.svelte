@@ -22,7 +22,7 @@
 </script>
 
 <div
-  class="relative flex justify-between items-center border-b px-10 bg-nav bg-opacity-80 backdrop-blur-sm lg:px-32 xl:px-56"
+  class="relative flex justify-between items-center border-b px-10 bg-nav bg-opacity-80 backdrop-blur-sm lg:px-16 2xl:px-56"
 >
   <!-- <a
     use:link
