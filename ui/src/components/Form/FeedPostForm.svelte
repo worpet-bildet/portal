@@ -4,6 +4,10 @@
   import { TextArea, Sigil } from '@fragments';
   let dispatch = createEventDispatcher();
   let content;
+
+  // Here we want to show a notification during the time where the post is "in
+  // the ether" and not yet in the global feed object that we're using to render
+  // our own feed. OR could we merge both the global feed and our own feed?
   const post = () => {
     poke({
       app: 'portal-manager',

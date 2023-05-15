@@ -12,9 +12,9 @@
 
   // try to get the item, and if we don't have it, subscribe to it
   let item;
-  state.subscribe(() => {
+  state.subscribe((s) => {
     item = getItem(keyStrFromObj(key));
-    if (!item) {
+    if (s.isLoaded && !item) {
       return subscribeToItem(key);
     }
   });

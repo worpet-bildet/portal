@@ -1,5 +1,6 @@
 <script>
-  import { state, getItem, getGlobalFeed } from '@root/state';
+  import { me } from '@root/api';
+  import { state, getGlobalFeed, getCuratorFeed } from '@root/state';
   import {
     Feed,
     ItemVerticalListPreview,
@@ -7,11 +8,19 @@
     FeedPostForm,
   } from '@components';
   import { RightSidebar, SidebarGroup } from '@fragments';
+  import { fromUrbitTime } from '@root/util';
 
-  let pals, feed;
+  let pals, feed, myFeed;
   state.subscribe((s) => {
     ({ pals } = s);
-    feed = getGlobalFeed();
+    if (!getGlobalFeed()) return;
+    let mergedFeed = getGlobalFeed().concat(getCuratorFeed(me));
+    feed = mergedFeed
+      .filter(
+        (a, idx) => mergedFeed.findIndex((b) => b.time === a.time) === idx
+      )
+      .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
+    console.log({ feed });
   });
 </script>
 

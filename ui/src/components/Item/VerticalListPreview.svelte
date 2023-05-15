@@ -15,9 +15,9 @@
 
   let item, isSubscribing;
 
-  state.subscribe(() => {
+  state.subscribe((s) => {
     item = getItem(keyStrFromObj(key));
-    if (!item && !isSubscribing) {
+    if (s.isLoaded && !item && !isSubscribing) {
       isSubscribing = true;
       return subscribeToItem(key);
     }

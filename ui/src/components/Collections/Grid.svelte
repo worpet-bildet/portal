@@ -14,7 +14,7 @@
   let collections;
   const loadCollections = (patp) => {
     (getCuratorCollections(patp) || []).forEach((c) => {
-      if (!getItem(keyStrFromObj(c))) {
+      if ($state.isLoaded && !getItem(keyStrFromObj(c))) {
         subscribeToItem(c);
       }
     });
@@ -24,7 +24,7 @@
     console.log({ collections });
   };
 
-  state.subscribe((s) => {
+  state.subscribe(() => {
     loadCollections(patp);
   });
 

@@ -1,12 +1,12 @@
 <script>
   import { subscribeToItem } from '@root/api';
-  import { getItem, keyStrFromObj } from '@root/state';
+  import { state, getItem, keyStrFromObj } from '@root/state';
   import { getMeta } from '@root/util';
-  import { ItemImage, LikeIcon, CommentIcon } from '@fragments';
+  import { ItemImage } from '@fragments';
 
   export let key;
 
-  let collection, item, title, image, previewItems;
+  let collection, title, image, previewItems;
 
   $: {
     collection = getItem(keyStrFromObj(key));
@@ -16,8 +16,7 @@
     previewItems = collection?.bespoke?.['key-list']
       ?.map((keyObj) => {
         let i = getItem(keyStrFromObj(keyObj));
-        if (!i) {
-          console.log('SUBSCRIBING TO');
+        if ($state.isLoaded && !i) {
           subscribeToItem(keyObj);
           return;
         }
@@ -44,7 +43,7 @@
 </script>
 
 {#if previewItems && previewItems.length > 0}
-  <div class="border shadow">
+  <div class="border shadow rounded-lg overflow-hidden">
     <div class="grid grid-cols-2 grid-rows-2" bind:this={container}>
       {#if image}
         <div class="border row-span-2 col-span-2">

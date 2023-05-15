@@ -26,7 +26,8 @@
   const loadGroup = () => {
     if (!groupKey) return;
     group = getGroup(groupKey);
-    if (!group) return subscribeToItem(keyStrToObj(`/group/${groupKey}/`));
+    if ($state.isLoaded && !group)
+      return subscribeToItem(keyStrToObj(`/group/${groupKey}/`));
     ({ cover, image, description, title } = getMeta(group));
     joinedDetails = getJoinedGroupDetails(groupKey);
   };

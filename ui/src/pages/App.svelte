@@ -40,7 +40,7 @@
   const loadApp = (s) => {
     if (!itemKey) return;
     item = getItem(itemKey);
-    if (!item) return subscribeToItem(keyStrToObj(itemKey));
+    if (s.isLoaded && !item) return subscribeToItem(keyStrToObj(itemKey));
     ({
       image,
       title,
