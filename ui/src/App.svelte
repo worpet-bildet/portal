@@ -35,7 +35,7 @@
   <div class="relative z-10">
     <Navbar />
   </div>
-  <div class="p-10 z-0">
+  <div class="p-10 z-0 lg:px-16 2xl:px-56">
     <Router {routes} />
   </div>
   <Onboard />

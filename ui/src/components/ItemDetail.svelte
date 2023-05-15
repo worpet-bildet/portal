@@ -1,13 +1,9 @@
 <script>
+  import { link } from 'svelte-spa-router';
   import { isUrl } from '@root/util';
   import { Sigil, ItemImage } from '@fragments';
   export let cover, avatar, title, description, patp, color, type;
 
-  // Make sure that the avatar does not cover any elements which are supposed to
-  // be below it by ensuring that the height of the row is at least equal to the
-  // height of the avatar image - this does add a tiny bit of padding to the
-  // bottom of the element (equal to whatever the -top is set to) but it is
-  // workable
   let avatarPad, avatarContainer;
   $: {
     if (avatarPad && avatarContainer) {
@@ -68,9 +64,13 @@
       <div class="gap-4">
         <!-- TODO: get any links in here to print nicely -->
         {#if description}<div class="text-lg">{description}</div>{/if}
-        {#if type === 'collection' || type === 'app'}<div class="text-xs">
+        {#if type === 'collection' || type === 'app'}<a
+            use:link
+            class="text-xs"
+            href={`/${patp}`}
+          >
             by {patp}
-          </div>{/if}
+          </a>{/if}
       </div>
     </div>
   </div>
