@@ -7,13 +7,10 @@
   export let open;
   export let key;
 
-  let title;
-  $: {
-    if (key) {
-      let item = getItem(keyStrFromObj(key));
-      ({ title } = getMeta(item));
-    }
-  }
+  let title = '';
+  let item;
+  $: item = getItem(keyStrFromObj(key || {}));
+  $: ({ title } = getMeta(item));
 
   let blurb;
 
@@ -47,7 +44,7 @@
 
 <Modal bind:open>
   <div class="flex flex-col justify-center gap-4">
-    <div class="text-xl">Say something about {title}</div>
+    <div class="text-xl">Say something about {title || 'this'}</div>
     <div class="grid grid-cols-12 gap-4">
       <div class="col-span-1">
         <MySigil />

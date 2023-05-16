@@ -101,6 +101,12 @@
   <Modal bind:open={appModalOpen}>
     <div class="flex flex-col gap-4">
       <div class="text-2xl font-bold">Recommend an app</div>
+      {#if Object.values(apps).length === 0}
+        <div>
+          You have not installed any apps yet. Install some to recommend them on
+          Portal.
+        </div>
+      {/if}
       {#each Object.entries(apps) as [path, { title, image, color }]}
         <button
           class="grid grid-cols-12 border shadow items-center gap-4 p-1"
@@ -123,6 +129,12 @@
   <Modal bind:open={groupModalOpen}>
     <div class="flex flex-col gap-4">
       <div class="text-2xl font-bold">Recommend a group</div>
+      {#if Object.values(groups).length === 0}
+        <div>
+          You are not a member of any groups yet, join some in order to
+          recommend them on Portal.
+        </div>
+      {/if}
       {#each Object.entries(groups) as [path, { meta: { title, image } }]}
         <button
           class="grid grid-cols-12 border items-center gap-4 p-1"
