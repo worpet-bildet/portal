@@ -3,10 +3,10 @@
 ::
 ::  add defaults, either with $_(? e.g. _~zod) or $~
 +$  default-curators  (set key)
-+$  portal-curator  _~winpex-widtev-foddur-hodler
++$  portal-curator  _~worpet-bildet
 +$  purge-timer  $~(%.y ?)
 +$  purge-time  _~d1
-+$  portal-indexer  _~winpex-widtev-foddur-hodler
++$  portal-indexer  _~worpet-bildet
 +$  indexed-as-curator  $~(%.n ?)
 +$  onboarded  $~(%.n ?)
 ::

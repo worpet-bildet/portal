@@ -1,5 +1,6 @@
 <script>
   import { push } from 'svelte-spa-router';
+  import config from '@root/config';
   import { me, subscribeToItem } from '@root/api';
   import { state, getGlobalFeed, getCuratorFeed } from '@root/state';
   import {
@@ -18,7 +19,7 @@
     if (s.isLoaded && !getGlobalFeed()) {
       return subscribeToItem({
         struc: 'feed',
-        ship: '~winpex-widtev-foddur-hodler',
+        ship: config.indexer,
         cord: '',
         time: 'global',
       });

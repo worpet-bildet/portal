@@ -36,7 +36,7 @@
   ^-  (quip card _this)
   =.  state  *state-1
   =^  cards  item-sub
-    (surf:da-item ~winpex-widtev-foddur-hodler %portal-store [%item %feed '~winpex-widtev-foddur-hodler' '' 'global' ~])
+    (surf:da-item ~worpet-bildet %portal-store [%item %feed '~worpet-bildet' '' 'global' ~])
   =/  col-create  :*  %create  ~  ~  `'~2000.1.1'  `%def
     `[%collection 'Main Collection' 'Your first collection.' '' ~]
     [%collection our.bowl '' '~2000.1.1']~  ~  ==
@@ -48,7 +48,7 @@
   =^  cards-3  state  (create:handle-poke:stor feed-create)
   :: ::  TODO get it right in state transition
   :: ::  (maybe not a problem if %create crashes on existing items)
-  ?:  =(our.bowl ~winpex-widtev-foddur-hodler)
+  ?:  =(our.bowl ~worpet-bildet)
     =/  global-feed-create  [%create ~ ~ `'global' `%global `[%feed ~] ~ ~]
     =/  index-create  [%create ~ ~ `'index' `%def `[%collection '' '' '' ~] ~ ~]
     =^  cards-4  state  (create:handle-poke:stor global-feed-create)
@@ -70,8 +70,8 @@
   =/  feed-create  [%create ~ ~ `'~2000.1.1' `%personal `[%feed ~] ~ ~]
   =^  cards  state  (create:handle-poke:stor feed-create)
   =^  cards-1  item-sub
-    (surf:da-item ~winpex-widtev-foddur-hodler %portal-store [%item %feed '~winpex-widtev-foddur-hodler' '' 'global' ~])
-  ?:  =(our.bowl ~winpex-widtev-foddur-hodler)
+    (surf:da-item ~worpet-bildet %portal-store [%item %feed '~worpet-bildet' '' 'global' ~])
+  ?:  =(our.bowl ~worpet-bildet)
     =/  global-feed-create  [%create ~ ~ `'global' `%global `[%feed ~] ~ ~]
     =^  cards-2  state  (create:handle-poke:stor global-feed-create)
     [;:(welp cards cards-1 cards-2) this]
@@ -195,7 +195,7 @@
     ::
       %portal-message
     =/  msg  !<(message vase)
-    ?>  =(our.bowl ~winpex-widtev-foddur-hodler)
+    ?>  =(our.bowl ~worpet-bildet)
     ?>  =(src.bowl src.msg)
     ?+    -.msg  !!
         %feed-update
@@ -476,7 +476,7 @@
         =/  msg  [%feed-update our.bowl feed.act]
         :_  state
         %+  snoc  (welp cards cards-1)
-        (~(poke pass:io /msg) [~winpex-widtev-foddur-hodler %portal-store] portal-message+!>(msg))
+        (~(poke pass:io /msg) [~worpet-bildet %portal-store] portal-message+!>(msg))
       :-  (welp cards cards-1)
       state
     ::

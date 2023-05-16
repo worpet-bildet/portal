@@ -1,5 +1,6 @@
 <script>
   import { push, link, location } from 'svelte-spa-router';
+  import config from '@root/config';
   import logo from '@assets/logo.svg';
   import { me } from '@root/api';
   import MySigil from './MySigil.svelte';
@@ -11,7 +12,7 @@
     },
     {
       title: 'Explore',
-      link: '/~winpex-widtev-foddur-hodler',
+      link: `/${config.indexer}`,
     },
     {
       title: 'Feedback',
