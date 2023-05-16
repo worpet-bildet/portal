@@ -1,6 +1,6 @@
 <script>
   import { push } from 'svelte-spa-router';
-  import { me } from '@root/api';
+  import { me, subscribeToItem } from '@root/api';
   import { state, getGlobalFeed, getCuratorFeed } from '@root/state';
   import {
     Feed,
@@ -14,12 +14,21 @@
   let pals, feed;
   state.subscribe((s) => {
     ({ pals } = s);
-    if (!getGlobalFeed()) return;
+    if (!s.isLoaded) return;
+    if (s.isLoaded && !getGlobalFeed()) {
+      return subscribeToItem({
+        struc: 'feed',
+        ship: '~winpex-widtev-foddur-hodler',
+        cord: '',
+        time: 'global',
+      });
+    }
     let mergedFeed = getGlobalFeed().concat(getCuratorFeed(me));
     feed = mergedFeed
-      .filter(
-        (a, idx) => mergedFeed.findIndex((b) => b.time === a.time) === idx
-      )
+      .filter((a) => !!a)
+      .filter((a, idx) => {
+        return mergedFeed.findIndex((b) => b.time === a.time) === idx;
+      })
       .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
   });
 
