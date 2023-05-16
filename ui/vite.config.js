@@ -7,14 +7,18 @@ import { svelte } from '@sveltejs/vite-plugin-svelte';
 export default ({ mode }) => {
   Object.assign(process.env, loadEnv(mode, process.cwd()));
   const SHIP_URL =
-    process.env.SHIP_URL || process.env.VITE_SHIP_URL || 'http://localhost:80';
-  console.log({ SHIP_URL });
+    mode === 'production'
+      ? ''
+      : process.env.SHIP_URL ||
+        process.env.VITE_SHIP_URL ||
+        'http://localhost:80';
+  console.log(`Building for ${mode} at URL: ${SHIP_URL}`);
 
   return defineConfig({
     plugins: [
       svelte(),
       urbitPlugin({
-        base: 'portal-dev',
+        base: 'portal',
         target: SHIP_URL,
         changeOrigin: true,
         secure: false,

@@ -1,4 +1,3 @@
-export { default as AsyncButton } from './AsyncButton.svelte';
 export { default as ItemImage } from './ItemImage.svelte';
 export { default as TextArea } from './TextArea.svelte';
 export { default as Tabs } from './Tabs.svelte';
