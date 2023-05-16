@@ -90,25 +90,29 @@
                       {@const {
                         meta: { title, description },
                       } = joinedDetails.channels[channelKey]}
-                      <a
-                        href={channelLink(channelKey)}
-                        target="_blank"
-                        class="grid grid-cols-12 gap-4 items-center hover:bg-gray-500"
+                      <div
+                        class="border shadow rounded-lg p-2 hover:bg-black hover:text-white"
                       >
-                        <div class="col-span-1">
-                          {#if type === 'chat'}
-                            <ChatIcon />
-                          {:else if type === 'diary'}
-                            <DiaryIcon />
-                          {:else if type === 'heap'}
-                            <HeapIcon />
-                          {/if}
-                        </div>
-                        <div class="col-span-11">
-                          <div>{title}</div>
-                          <p>{description}</p>
-                        </div>
-                      </a>
+                        <a
+                          href={channelLink(channelKey)}
+                          target="_blank"
+                          class="grid grid-cols-12 gap-4 items-center"
+                        >
+                          <div class="col-span-1">
+                            {#if type === 'chat'}
+                              <ChatIcon />
+                            {:else if type === 'diary'}
+                              <DiaryIcon />
+                            {:else if type === 'heap'}
+                              <HeapIcon />
+                            {/if}
+                          </div>
+                          <div class="col-span-11">
+                            <div>{title}</div>
+                            <div class="text-sm">{description}</div>
+                          </div>
+                        </a>
+                      </div>
                     {/each}
                   {/if}
                 </div>
@@ -136,14 +140,11 @@
               {Object.keys(joinedDetails.fleet).length}
             </div>
           </div>
-          <IconButton icon={CrossIcon} on:click={leave} async
-            >Leave Group</IconButton
-          >
+          <IconButton icon={CrossIcon} on:click={leave} async>Leave</IconButton>
         {/if}
         <IconButton
           icon={ShareIcon}
-          on:click={() => (recommendModalOpen = true)}
-          >Recommend {title}</IconButton
+          on:click={() => (recommendModalOpen = true)}>Recommend</IconButton
         >
       </SidebarGroup>
     </RightSidebar>
@@ -166,7 +167,7 @@
       </div>
     </div> -->
   </div>
-  <RecommendModal bind:open={recommendModalOpen} key={group.keyObj} {title} />
+  <RecommendModal bind:open={recommendModalOpen} key={group.keyObj} />
 {:else}
   Loading...
 {/if}

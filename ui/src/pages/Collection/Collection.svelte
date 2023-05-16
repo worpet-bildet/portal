@@ -99,11 +99,7 @@
       </SidebarGroup>
     </RightSidebar>
   </div>
-  <RecommendModal
-    bind:open={recommendModalOpen}
-    key={collection.keyObj}
-    {title}
-  />
+  <RecommendModal bind:open={recommendModalOpen} key={collection.keyObj} />
   <!-- <Modal bind:open={deleteModalOpen}>
     <div class="flex flex-col justify-between h-full">
       <div class="text-2xl">Delete Collection</div>

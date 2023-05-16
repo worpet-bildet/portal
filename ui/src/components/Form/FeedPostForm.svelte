@@ -1,13 +1,20 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import { me, poke } from '@root/api';
-  import { TextArea, Sigil } from '@fragments';
+  import { state, keyStrToObj } from '@root/state';
+  import { RecommendModal } from '@components';
+  import {
+    TextArea,
+    Sigil,
+    IconButton,
+    AppIcon,
+    GroupIcon,
+    Modal,
+    ItemImage,
+  } from '@fragments';
   let dispatch = createEventDispatcher();
   let content;
 
-  // Here we want to show a notification during the time where the post is "in
-  // the ether" and not yet in the global feed object that we're using to render
-  // our own feed. OR could we merge both the global feed and our own feed?
   const post = () => {
     poke({
       app: 'portal-manager',
@@ -36,6 +43,25 @@
     content = '';
     dispatch('post');
   };
+
+  // TODO: Factor out the selection of groups/apps into its own component
+  let groupModalOpen, appModalOpen, recommendModalOpen, selectedKey;
+  let groups = {};
+  let apps = {};
+  state.subscribe((s) => {
+    if (s.groups) {
+      Object.entries(s.groups).forEach(([key, data]) => {
+        if (!data?.meta?.title) return;
+        groups[key] = data;
+      });
+    }
+    if (s.apps) {
+      Object.entries(s.apps).forEach(([key, data]) => {
+        const appkey = `${data.ship}/${key}`;
+        apps[appkey] = data;
+      });
+    }
+  });
 </script>
 
 <div
@@ -46,16 +72,73 @@
   </div>
   <div class="col-span-11">
     <TextArea
-      placeholder="You can share urbit-native content here by pasting its link"
+      placeholder="Share a limerick, maybe"
       bind:value={content}
       minRows={1}
-      maxRows={40}
+      maxRows={10}
     />
   </div>
-  <div class="col-span-12 justify-self-end self-end">
+  <div class="col-span-12 col-start-2 flex justify-between">
+    <div class="flex gap-4">
+      <IconButton
+        icon={AppIcon}
+        on:click={() => {
+          appModalOpen = true;
+        }}
+      />
+      <IconButton
+        icon={GroupIcon}
+        on:click={() => {
+          groupModalOpen = true;
+        }}
+      />
+    </div>
     <button
       class="border bg-black text-white rounded-lg px-3 py-1 font-bold"
       on:click={post}>Post</button
     >
   </div>
+  <Modal bind:open={appModalOpen}>
+    <div class="flex flex-col gap-4">
+      <div class="text-2xl font-bold">Recommend an app</div>
+      {#each Object.entries(apps) as [path, { title, image, color }]}
+        <button
+          class="grid grid-cols-12 border shadow items-center gap-4 p-1"
+          on:click={() => {
+            appModalOpen = false;
+            recommendModalOpen = true;
+            selectedKey = keyStrToObj(`/app/${path}/`);
+          }}
+        >
+          <div class="col-span-1">
+            <ItemImage {image} title={title || path} {color} />
+          </div>
+          <div class="col-span-11 justify-self-start font-bold">
+            {title || path}
+          </div>
+        </button>
+      {/each}
+    </div>
+  </Modal>
+  <Modal bind:open={groupModalOpen}>
+    <div class="flex flex-col gap-4">
+      <div class="text-2xl font-bold">Recommend a group</div>
+      {#each Object.entries(groups) as [path, { meta: { title, image } }]}
+        <button
+          class="grid grid-cols-12 border items-center gap-4 p-1"
+          on:click={() => {
+            groupModalOpen = false;
+            recommendModalOpen = true;
+            selectedKey = keyStrToObj(`/group/${path}/`);
+          }}
+        >
+          <div class="col-span-1">
+            <ItemImage {image} {title} />
+          </div>
+          <div class="col-span-11 justify-self-start font-bold">{title}</div>
+        </button>
+      {/each}
+    </div>
+  </Modal>
+  <RecommendModal bind:open={recommendModalOpen} key={selectedKey} />
 </div>

@@ -1,11 +1,19 @@
 <script>
   import { poke, me } from '@root/api';
+  import { getItem, keyStrFromObj } from '@root/state';
+  import { getMeta } from '@root/util';
   import { MySigil, ItemVerticalListPreview } from '@components';
   import { Modal, TextArea } from '@fragments';
-  import SquarePreview from './Collections/SquarePreview.svelte';
   export let open;
   export let key;
-  export let title;
+
+  let title;
+  $: {
+    if (key) {
+      let item = getItem(keyStrFromObj(key));
+      ({ title } = getMeta(item));
+    }
+  }
 
   let blurb;
 
@@ -33,6 +41,7 @@
       },
     });
     open = false;
+    blurb = '';
   };
 </script>
 

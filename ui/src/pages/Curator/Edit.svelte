@@ -1,7 +1,13 @@
 <script>
   import { pop } from 'svelte-spa-router';
   import { poke } from '@root/api';
-  import { state, getCurator, getCuratorCollections } from '@root/state';
+  import {
+    state,
+    getCurator,
+    getCuratorCollections,
+    getItem,
+    keyStrFromObj,
+  } from '@root/state';
   import { CollectionsSquarePreview } from '@components';
   import {
     Tabs,
@@ -23,7 +29,10 @@
   state.subscribe(() => {
     curator = getCurator(patp);
     ({ nickname, cover, avatar, bio } = curator.bespoke || {});
-    collections = getCuratorCollections(patp) || [];
+    // TODO: extremely dumb and convoluted
+    collections = (getCuratorCollections(patp) || []).filter(
+      (c) => getItem(keyStrFromObj(c))?.bespoke?.title
+    );
   });
 
   let activeTab = 'Profile';

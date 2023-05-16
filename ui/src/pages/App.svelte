@@ -121,13 +121,13 @@
             icon={AppIcon}
             on:click={() =>
               window.open(`${window.location.origin}${servedFrom}`)}
-            >Open {title}</IconButton
+            >Open</IconButton
           >
         {:else if isInstalling}
           <IconButton loading>Installing...</IconButton>
         {:else}
           <IconButton icon={InstallIcon} on:click={install} async
-            >Install {title}</IconButton
+            >Install</IconButton
           >
         {/if}
         {#if website}
@@ -137,20 +137,15 @@
         {/if}
         <IconButton
           icon={ShareIcon}
-          on:click={() => (recommendModalOpen = true)}
-          >Recommend {title}</IconButton
+          on:click={() => (recommendModalOpen = true)}>Recommend</IconButton
         >
         {#if isInstalled}
           <IconButton icon={CrossIcon} on:click={uninstall} async
-            >Uninstall {title}</IconButton
+            >Uninstall</IconButton
           >
         {/if}
       </SidebarGroup>
     </RightSidebar>
   </div>
-  <RecommendModal
-    bind:open={recommendModalOpen}
-    key={keyStrToObj(itemKey)}
-    {title}
-  />
+  <RecommendModal bind:open={recommendModalOpen} key={keyStrToObj(itemKey)} />
 {/if}

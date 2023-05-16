@@ -31,6 +31,7 @@
     }
   }
   const search = () => {
+    if (!lastValidShip) return;
     push(`/${lastValidShip}`);
   };
 </script>

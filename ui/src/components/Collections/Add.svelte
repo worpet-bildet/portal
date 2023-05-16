@@ -108,12 +108,13 @@
         </div>
         <TextArea
           minRows={1}
+          maxRows={10}
           bind:value={description}
           placeholder="Things to help you navigate Urbit for the first time"
         />
       {:else if formstep === 'groups'}
         {#if Object.entries(groups).length > 0}
-          <div>Add these groups?</div>
+          <div class="text-2xl font-bold">Add these groups?</div>
           {#each Object.entries(groups) as [path, { meta: { title, image } }]}
             {@const key = {
               struc: 'group',
@@ -122,12 +123,14 @@
               time: '',
             }}
             <div class="flex justify-between">
-              <ItemVerticalListPreview
-                {key}
-                clickable={false}
-                selectable
-                on:selected={groupSelected}
-              />
+              <div class="border shadow rounded-lg w-full">
+                <ItemVerticalListPreview
+                  {key}
+                  clickable={false}
+                  selectable
+                  on:selected={groupSelected}
+                />
+              </div>
             </div>
           {/each}
         {:else}
@@ -137,16 +140,18 @@
           </div>
         {/if}
       {:else if formstep === 'apps'}
-        <div>Add these apps?</div>
+        <div class="text-2xl font-bold">Add these apps?</div>
         {#each Object.entries(apps) as [path, { title, image, ship, info }]}
           {@const key = { struc: 'app', ship, cord: path, time: '' }}
           <div class="flex justify-between">
-            <ItemVerticalListPreview
-              {key}
-              clickable={false}
-              selectable
-              on:selected={appSelected}
-            />
+            <div class="border shadow rounded-lg w-full">
+              <ItemVerticalListPreview
+                {key}
+                clickable={false}
+                selectable
+                on:selected={appSelected}
+              />
+            </div>
           </div>
         {/each}
       {/if}

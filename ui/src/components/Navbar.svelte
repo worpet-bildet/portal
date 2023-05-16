@@ -35,9 +35,9 @@
       alt="logo"
     />
     <div class="font-logo text-black font-bold text-2xl">Portal</div> -->
-  <a use:link href="/" class="flex items-center text-xl font-bold gap-2">
+  <a use:link href="/" class="flex items-center text-2xl font-bold gap-2">
     <img class="w-16" src={logo} alt="logo" />
-    PORTAL
+    <div class="font-logo flex items-center">PORTAL</div>
   </a>
   <div class="flex gap-4">
     {#each nav as n}

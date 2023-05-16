@@ -139,7 +139,7 @@
           </div>
         {:else}
           <div class="flex flex-col gap-4">
-            {#each Object.entries(apps) as [path, { title, image, ship, info }]}
+            {#each Object.entries(apps) as [path, { title, image }]}
               <button
                 class="grid grid-cols-12 border shadow items-center gap-4 p-1"
                 on:click={() => add(`/app/${path}/`)}
