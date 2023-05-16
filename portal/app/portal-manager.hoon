@@ -79,16 +79,7 @@
     ==
   ==
 ::
-++  on-arvo
-  |=  [=wire sign=sign-arvo]
-  ^-  (quip card _this)
-  ?>  ?=([%purge-timer ~] wire)
-  ?>  ?=([%khan %arow *] sign)
-  :_  this
-  :~  (~(act cards [our.bowl %portal-store]) [%purge portal-curator])
-      timer-card
-  ==
-::
+++  on-arvo  on-arvo:default
 ++  on-watch  on-watch:default
 ++  on-leave  on-leave:default
 ++  on-peek
