@@ -2,7 +2,7 @@ module.exports = {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx,svelte}'],
   theme: {
     fontFamily: {
-      logo: ['Aeonik', 'Courier'],
+      logo: ['Arkhip'],
     },
     colors: {
       nav: '#CFCACACC',
