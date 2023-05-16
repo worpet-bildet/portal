@@ -36,7 +36,7 @@
   ^-  (quip card _this)
   =.  state  *state-1
   =^  cards  item-sub
-    (surf:da-item ~nec %portal-store [%item %feed '~nec' '' 'global' ~])
+    (surf:da-item ~winpex-widtev-foddur-hodler %portal-store [%item %feed '~winpex-widtev-foddur-hodler' '' 'global' ~])
   =/  col-create  :*  %create  ~  ~  `'~2000.1.1'  `%def
     `[%collection 'Main Collection' 'Your first collection.' '' ~]  
     [%collection our.bowl '' '~2000.1.1']~  ~  ==
@@ -48,7 +48,7 @@
   =^  cards-3  state  (create:handle-poke:stor feed-create)
   :: ::  TODO get it right in state transition  
   :: ::  (maybe not a problem if %create crashes on existing items)
-  ?:  =(our.bowl ~nec)  
+  ?:  =(our.bowl ~winpex-widtev-foddur-hodler)  
     =/  global-feed-create  [%create ~ ~ `'global' `%global `[%feed ~] ~ ~]
     =/  index-create  [%create ~ ~ `'index' `%def `[%collection '' '' '' ~] ~ ~]
     =^  cards-4  state  (create:handle-poke:stor global-feed-create)
@@ -189,7 +189,7 @@
     ::
       %portal-message
     =/  msg  !<(message vase)
-    ?>  =(our.bowl ~nec)
+    ?>  =(our.bowl ~winpex-widtev-foddur-hodler)
     ?>  =(src.bowl src.msg)
     ?+    -.msg  !!
         %feed-update
@@ -376,6 +376,7 @@
       =+  ~(tap by items)
       =.  items  %-  malt  %+  skip  - 
                  |=([=key =item] ?=(?(%deleted) lens.item))
+      ~&  >  "%portal-store: purge done"
       [cards state]
     ::
     ++  sub
@@ -467,7 +468,7 @@
         =/  msg  [%feed-update our.bowl feed.act]
         :_  state
         %+  snoc  cards
-        (~(poke pass:io /msg) [~nec %portal-store] portal-message+!>(msg))
+        (~(poke pass:io /msg) [~winpex-widtev-foddur-hodler %portal-store] portal-message+!>(msg))
       =^  cards-1  item-pub  (give:du-item path [%prepend-to-feed feed.act])
       :-  (welp cards cards-1)
       state

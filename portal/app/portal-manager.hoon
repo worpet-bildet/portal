@@ -72,7 +72,7 @@
     ::  TODO src.bowl src.msg problem kad store misli da je src our
     ::  a ne vanjski jer dolazi od portal-managera
     =/  msg  !<(message vase)
-    ?>  =(our.bowl ~nec)
+    ?>  =(our.bowl ~winpex-widtev-foddur-hodler)
     ?>  =(src.bowl src.msg)
     ?+    -.msg  !!
         %index-as-curator
