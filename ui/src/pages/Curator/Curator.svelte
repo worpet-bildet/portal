@@ -44,12 +44,17 @@
   let tabs = ['Activity', 'Collections'];
 
   let title, cover, image, description, color, isLoaded, isMyPal, pals;
+  let subscribingToCuratorFeed;
   const loadCurator = (s) => {
     curator = getCurator(patp);
     isLoaded = s.isLoaded;
     ({ title, cover, image, description, color } = getMeta(curator));
     // featuredCollection = getCuratorFeaturedCollection(patp);
-    feed = getCuratorFeed(patp) || [];
+    feed = getCuratorFeed(patp);
+    if (!feed && s.isLoaded && !subscribingToCuratorFeed) {
+      subscribingToCuratorFeed = true;
+      return subscribeToCurator(patp);
+    }
     isMyPal = !!s.pals?.[patp.slice(1)];
   };
 
@@ -67,15 +72,15 @@
     addPal(ship).then(refreshPals);
   };
 
-  let subbing = false;
+  let subscribingToCurator = false;
   $: if (
     isLoaded &&
-    !subbing &&
+    !subscribingToCurator &&
     (!curator || Object.values(curator).length === 0)
   ) {
     // TODO: this doesn't really work - it should be smarter than this about
     // when it subscribes to the user
-    subbing = true;
+    subscribingToCurator = true;
     // TODO we should be checking the conditions here individually
     subscribeToCurator(patp);
     subscribeToContactProfile(patp);
@@ -100,13 +105,13 @@
             {#if me === patp}
               <FeedPostForm />
             {/if}
-            {#if feed.length === 0}
+            {#if !feed || feed.length === 0}
               <div class="col-span-12">
                 {patp} hasn't made any posts on Portal yet.
               </div>
             {:else}
               <div class="grid gap-y-4">
-                <Feed {feed} />
+                <Feed feed={feed || []} />
               </div>
             {/if}
           {:else if activeTab === 'Collections'}

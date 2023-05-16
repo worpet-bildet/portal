@@ -471,12 +471,12 @@
       =/  feed  (prepend-to-feed:itm (get-item feed-key.act) act)
       =/  cards  (upd:cards-methods feed)
       =.  items  (put-item feed)
-      ?:  =(time.feed-key.act 'global')
+      =^  cards-1  item-pub  (give:du-item path [%prepend-to-feed feed.act])
+      ?.  =(time.feed-key.act 'global')
         =/  msg  [%feed-update our.bowl feed.act]
         :_  state
-        %+  snoc  cards
+        %+  snoc  (welp cards cards-1)
         (~(poke pass:io /msg) [~winpex-widtev-foddur-hodler %portal-store] portal-message+!>(msg))
-      =^  cards-1  item-pub  (give:du-item path [%prepend-to-feed feed.act])
       :-  (welp cards cards-1)
       state
     ::

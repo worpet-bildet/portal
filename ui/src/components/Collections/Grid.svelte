@@ -22,7 +22,6 @@
       .map((c) => getItem(keyStrFromObj(c)))
       .filter((c) => !!c)
       .filter((c) => c?.bespoke?.['key-list']?.length > 0);
-    console.log({ collections });
   };
 
   state.subscribe(() => {
