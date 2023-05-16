@@ -27,7 +27,7 @@
   let lastValidShip = searchShip;
   $: {
     if (isValidPatp(searchShip)) {
-      lastValidShip = searchShip;
+      lastValidShip = isValidPatp(searchShip);
     }
   }
   const search = () => {
@@ -37,7 +37,7 @@
 </script>
 
 <div class="grid grid-cols-9 gap-8">
-  <div class="grid gap-4 col-span-12 md:col-span-6">
+  <div class="flex flex-col gap-4 col-span-12 md:col-span-6">
     <FeedPostForm />
     <Feed {feed} />
   </div>

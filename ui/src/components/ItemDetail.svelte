@@ -57,13 +57,13 @@
         {/if}
       </div>
     </div>
-    <div class="flex flex-col justify-start gap-4 col-span-9">
+    <div class="flex flex-col justify-start gap-2 col-span-9">
       <div class="text-lg md:text-2xl font-bold">
         {title || ''}
       </div>
       <div class="gap-4">
         <!-- TODO: get any links in here to print nicely -->
-        {#if description}<div class="text-lg">{description}</div>{/if}
+        {#if description}<div>{description}</div>{/if}
         {#if type === 'collection' || type === 'app'}<a
             use:link
             class="text-xs"

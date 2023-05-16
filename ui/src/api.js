@@ -109,6 +109,20 @@ export const subscribeToCurator = (patp) => {
       },
     },
   });
+  poke({
+    app: 'portal-manager',
+    mark: 'portal-action',
+    json: {
+      sub: {
+        key: {
+          struc: 'feed',
+          ship: patp,
+          time: '~2000.1.1',
+          cord: '',
+        },
+      },
+    },
+  });
   return poke({
     app: 'portal-manager',
     mark: 'portal-action',
@@ -144,7 +158,6 @@ export const subscribeToGroup = (key) => {
 };
 
 export const subscribeToItem = (keyObj) => {
-  console.log({ keyObj });
   poke({
     app: 'portal-manager',
     mark: 'portal-action',
