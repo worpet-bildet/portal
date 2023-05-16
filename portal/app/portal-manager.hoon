@@ -1,4 +1,4 @@
-/-  *portal-data, *portal-action, *portal-message, *portal-logs, portal-config,
+/-  *portal-data, *portal-action, *portal-message, portal-config,
     groups, treaty
 /+  default-agent, dbug, *portal, io=agentio, sig
 |%
@@ -21,17 +21,12 @@
                  %purge-timer  noun+!>(`purge-time)  ==
 ++  on-init
   ^-  (quip card _this)
-  =/  join  [%join now.bowl (get-ship-type:misc our.bowl) `@ux`(shax our.bowl)]
   =/  sub-init  [%sub [%collection portal-indexer '' '~2000.1.1']]
   :_  this
   :~  ::  initialize purge timer
       timer-card
       ::  sub to home page
       (~(act cards [[our.bowl %portal-store]]) sub-init)
-      ::  log new user
-      :*  %pass  /new-user  %agent  [portal-curator %portal-logs]  %poke
-          portal-new-user-event+!>(join)
-      ==
   ==
 ::
 ++  on-save  !>(state)
