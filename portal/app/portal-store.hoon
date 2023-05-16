@@ -60,33 +60,112 @@
 ::
 ++  on-save  !>(state)
 ++  on-load
-  :: =-
   |=  =vase
   ^-  (quip card _this)
   =/  old  !<(versioned-state vase)
   ?:  ?=(%1 -.old)
     `this(state old)
-  ?:  ?=(%0 -.old)
-    ~&  >  "gere"
-    on-init
-  !!
-  :: |%
-  :: ++  state-0-to-1
-  ::   |=  =state-0
-  ::   ^-  state-1
-  ::   =+  ~(tap by all-items.state-0)
-  ::   ::  turn which can skip some slots?
-  ::   ::  e.g skip all not our
-  ::   =+  %+  turn  -
-  ::     |=  [key-0=key:portal-data-0 item-0:portal-data-0]
-  ::     (key-item-0-to-1)
-  ::   *state-1(items -)
-  :: ::
-  :: ++  key-item-0-to-1
-  ::   |=  [key-0=key:portal-data-0 item-0=item:portal-data-0]
-  ::   ^-  [key item]
-  ::   if not our crash, or empty unit?
-  :: --
+  ?>  ?=(%0 -.old)
+  :-  ~
+  =-  %=  this
+        state  (state-0-to-1.- old)
+      ==
+  |%
+  ++  state-0-to-1
+    |=  =state-0
+    ^-  state-1
+    =+  ~(tap by all-items.state-0)
+    =/  new-items  ^-  ^items  %-  malt  %+  murn  -
+      |=  [key-0=key:portal-data-0 item-0=item:portal-data-0]
+      (key-item-0-to-1 key-0 item-0)
+    =/  s1  *state-1
+    s1(items new-items)
+  ::
+  ++  key-item-0-to-1
+    |=  [key-0=key:portal-data-0 item-0=item:portal-data-0]
+    ^-  (unit [key item])
+    ?:  !=(our.bowl ship.key-0)
+      ~
+    ?:  ?=(%nonitem -.type.key-0)
+      ~
+    ?:  ?=([%enditem %other ~] type.key-0)
+      =/  key  [%other our.bowl '' cord.key-0]
+      =/  lens  %def
+      =/  bespoke  :*  %other  
+                       title.general.data.item-0  
+                       description.general.data.item-0
+                       link.general.data.item-0
+                       image.general.data.item-0
+                   ==
+      =/  meta  [cord.key-0 (scot %da now.bowl) ~ [%public ~]]                                   
+      =/  sig  (sign:sig our.bowl now.bowl [%item key lens bespoke meta])
+      (some [key [key lens bespoke meta sig]])
+    ?:  ?=([%validity-store *] bespoke.data.item-0)
+      =/  key  [%validity-store our.bowl '' cord.key-0]
+      =/  lens  %def
+      =/  bespoke  [%validity-store *validity-records]
+      =/  meta  [cord.key-0 (scot %da now.bowl) ~ [%public ~]]                                   
+      =/  sig  (sign:sig our.bowl now.bowl [%item key lens bespoke meta])
+      (some [key [key lens bespoke meta sig]])
+    ?:  =(key-0 [our.bowl [%list %enditem %other ~] '~2000.1.2'])
+      ~
+    ?:  ?=([%list *] type.key-0)
+      =/  list-key-conv
+        |=  key-0=[=ship type=[%list *] =cord]
+        ?.  =(cord.key-0 '~2000.1.1')
+          [%collection our.bowl '' cord.key-0]
+        ?+    type.key-0    !!  :: what to do as default?
+            [%list %app ~]              
+          [%collection our.bowl '' (scot %da now.bowl)]
+            [%list %nonitem %group ~]
+          [%collection our.bowl '' (crip (weld (scow %da now.bowl) ".0001"))]
+            [%list %nonitem %ship ~]
+          [%collection our.bowl '' (crip (weld (scow %da now.bowl) ".0002"))]
+            [%list %enditem %other ~]
+          [%collection our.bowl '' (crip (weld (scow %da now.bowl) ".0003"))]
+            [%list %list ~]
+          [%collection our.bowl '' '~2000.1.1']
+        ==
+      =/  key  (list-key-conv key-0)
+      =/  meta  [cord.key-0 (scot %da now.bowl) ~ [%public ~]]  ::  CORD? if ~2000.1.1                                  
+      =/  lens  %def
+      =/  bespoke
+        :*  %collection  
+            title.general.data.item-0  
+            description.general.data.item-0
+            image.general.data.item-0
+            ?+    -.bespoke.data.item-0    !!
+                %list-nonitem-group
+              %+  turn  group-key-list.bespoke.data.item-0
+              |=  [key=[=ship type=[%nonitem %group ~] time=cord] text=cord]
+              [%group ship.key time.key '']
+              ::
+                %list-nonitem-ship
+              %+  turn  ship-key-list.bespoke.data.item-0
+              |=  [key=[=ship type=[%nonitem %ship ~] time=cord] text=cord]
+              [%ship ship.key '' '']
+              ::
+                %list-app
+              %+  turn  app-key-list.bespoke.data.item-0
+              |=  [key=[=ship type=[?(%enditem %nonitem) %app ~] time=cord] text=cord]
+              [%app ship.key time.key '']
+              ::
+                %list-enditem-other
+              %+  turn  other-key-list.bespoke.data.item-0
+              |=  [key=[=ship type=[%enditem %other ~] time=cord] text=cord]
+              [%other ship.key '' time.key]
+              ::
+                %list-list
+              ::  TODO apply the same conversions here
+              %+  turn  list-key-list.bespoke.data.item-0
+              |=  [key=[=ship type=[%list *] time=cord] text=cord]
+              (list-key-conv key)
+            ==
+        ==
+      =/  sig  (sign:sig our.bowl now.bowl [%item key lens bespoke meta])
+      (some [key [key lens bespoke meta sig]])
+    ~
+  --
 ::
 ++  on-poke
   |=  [=mark =vase]
@@ -132,8 +211,8 @@
     ?<  ?=([%crash *] rock.msg)
     ?~  wave.msg  `this
     ?-  -.u.wave.msg
-        %whole  :_  this  (upd:cards-methods:stor item.u.wave.msg)
-        %prepend-to-feed  `this
+        %whole            :_  this  (upd:cards-methods:stor item.u.wave.msg)
+        %prepend-to-feed  :_  this  (upd:cards-methods:stor rock.msg)
     ==
   ==
 ::
@@ -273,20 +352,31 @@
 ::
 ++  handle-poke  ::  all arms here should output [cards items]
     |%
-    ::  TODO test purge edge cases
     ::  TODO unsubs
-    ::  how do you stop publishing an item via SSS?
+    ::  kill  -  publisher side
+    ::  quit  -  subscriber side
+    ::
+    ::  MVP - purges temp and deleted
     ++  purge
       |=  [act=action]
       ^+  [*(list card) state]
       ?>  ?=([%purge *] act)
-      =/  items  `(list [key item])`~(tap by items)
-      =.  items  %+  skip  items 
-                 |=([=key =item] ?=(?(%deleted %temp) lens.item))
-      =.  items  %+  skim  items  
-                 |=  [=key =item]
-                 |(=(our.bowl ship.key) =(portal-curator.act ship.key))
-      `state(items (malt items))
+      =+  ~(tap in ~(key by items))
+      =^  cards  state
+        %-  tail  %^  spin  -  [*(list card) state]
+        |=  [=key q=[cards=(list card) state=state-1]] 
+        :-  key
+        =.  state  state.q
+        ?:  ?|  =(lens.item %temp)
+                ::not our, onda unsub (dleet)
+            ==
+          =^  cards  state.q  (delete [%delete key])
+          [(welp cards.q cards) state.q]
+        q
+      =+  ~(tap by items)
+      =.  items  %-  malt  %+  skip  - 
+                 |=([=key =item] ?=(?(%deleted) lens.item))
+      [cards state]
     ::
     ++  sub
       |=  [act=action]
@@ -419,6 +509,7 @@
       |=  [act=action]
       ^+  [*(list card) state]
       ?>  ?=([%delete *] act)
+      ?:  =(lens.item %deleted)  `state
       ?:  &(=(time.key.act '~2000.1.1') =(ship.key.act our.bowl))
         ~&  "%portal: item is default, not allowed to delete"  `state
       =/  path  [%item (key-to-path:conv key.act)]

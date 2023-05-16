@@ -217,7 +217,7 @@
         :: if not temp
         ~[(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(act))]
       ::  if temp
-      ?:  (~(item-exists scry our.bowl now.bowl) key.act)  !!
+      ?:  (~(item-exists scry our.bowl now.bowl) key.act)  ~
       =|  bespoke=bespoke
       =*  create-empty-temp  ^-  action  :*  %create
                                   `ship.key.act
