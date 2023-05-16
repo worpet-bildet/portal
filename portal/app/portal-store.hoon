@@ -69,11 +69,13 @@
   =-  =.  state  (state-0-to-1.- old)
   =/  feed-create  [%create ~ ~ `'~2000.1.1' `%personal `[%feed ~] ~ ~]
   =^  cards  state  (create:handle-poke:stor feed-create)
+  =^  cards-1  item-sub
+    (surf:da-item ~winpex-widtev-foddur-hodler %portal-store [%item %feed '~winpex-widtev-foddur-hodler' '' 'global' ~])
   ?:  =(our.bowl ~winpex-widtev-foddur-hodler)
     =/  global-feed-create  [%create ~ ~ `'global' `%global `[%feed ~] ~ ~]
-    =^  cards-1  state  (create:handle-poke:stor global-feed-create)
-    [(welp cards cards-1) this]
-  [cards this]
+    =^  cards-2  state  (create:handle-poke:stor global-feed-create)
+    [;:(welp cards cards-1 cards-2) this]
+  [(welp cards cards-1) this]
   |%
   ++  state-0-to-1
     |=  =state-0
@@ -435,7 +437,8 @@
         =^  cards  state.q  (append [%append [key.item]~ col-key])
         [(welp cards.q cards) state.q]
       ::  add to feeds
-      %-  tail  %^  spin  `key-list`prepend-to-feed.act  [cards state]
+      =^  cards  state
+        %-  tail  %^  spin  `key-list`prepend-to-feed.act  [cards state]
         |=  [feed-key=key q=[cards=(list card) state=state-1]]
         :-  feed-key
         ?>  ?=(%feed struc.feed-key)
@@ -443,7 +446,7 @@
         =/  feed  ~[[(scot %da now.bowl) our.bowl key.item]]
         =^  cards  state.q  (prepend-to-feed [%prepend-to-feed feed feed-key])
         [(welp cards.q cards) state.q]
-
+      [cards state]
     ::  also -> main collection deduplication
     ::  (preventing duplication in the first place)
     ::
@@ -468,7 +471,7 @@
       =/  feed  (prepend-to-feed:itm (get-item feed-key.act) act)
       =/  cards  (upd:cards-methods feed)
       =.  items  (put-item feed)
-      ?.  =(time.feed-key.act 'global')
+      ?:  =(time.feed-key.act 'global')
         =/  msg  [%feed-update our.bowl feed.act]
         :_  state
         %+  snoc  cards
