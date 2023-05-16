@@ -56,7 +56,7 @@
         <ItemVerticalListPreview {key} clickable={false} />
       </div>
       <button
-        class="rounded-lg bg-black text-white font-bold py-2 col-start-12"
+        class="rounded-lg bg-black text-white font-bold py-2 px-4 col-start-12"
         on:click={recommend}>Post</button
       >
     </div>

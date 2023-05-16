@@ -28,7 +28,6 @@
     <div
       class="absolute top-0 left-0 h-80 w-full z-0 bg-black flex items-center justify-center text-8xl font-bold overflow-hidden text-white shadow"
     >
-      {title || ''}
     </div>
   {/if}
 </div>
