@@ -1,4 +1,4 @@
-/-  *portal-data, *portal-config, *portal-action, *portal-message
+/-  *portal-data, portal-config, *portal-action, *portal-message
 /+  sig, io=agentio, mip, sss
 |%
 +$  card  card:agent:gall
@@ -202,7 +202,7 @@
   --
 ::
 ++  manager
-  |_  [=bowl:gall state=state-2 cards=_*(list card)]
+  |_  [=bowl:gall state=state-3:portal-config cards=_*(list card)]
   ++  on-poke
     ::  all arms here should output cards
     ::  TODO cleanup PM state and maybe output that then
@@ -210,10 +210,10 @@
     ::
     ++  sub
       |=  [act=action]
-      ^-  [(list card) state-2]
+      ^-  [(list card) state-3:portal-config]
       ?>  ?=([%sub *] act)
       :_  state
-      ?.  =(time.key.act '')   ::  branch on whether is %temp (empty time.key)  
+      ?.  =(time.key.act '')   ::  branch on whether is %temp (empty time.key)
         :: if not temp
         ~[(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(act))]
       ::  if temp
@@ -229,8 +229,8 @@
                                   ~
                               ==
       ::  TODO wires state transition
-      ?+    struc.key.act    !!  
-        ::        
+      ?+    struc.key.act    !!
+        ::
           %ship
         =.  bespoke  [%ship ~]
         ~[(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(create-empty-temp))]
@@ -365,7 +365,7 @@
     ?>  ?=([%prepend-to-feed *] act)
     ?>  ?=(%feed -.bespoke.feed)
     ?>  =(key.feed feed-key.act)
-    =/  new-feed  %+  oust  [1.000 (lent feed.act)] 
+    =/  new-feed  %+  oust  [1.000 (lent feed.act)]
       (weld feed.act feed.bespoke.feed)
     (edit feed [%edit key.feed ~ `[%feed `new-feed]])
   ::
@@ -397,7 +397,7 @@
     ?>  ?=([%remove *] act)
     ?>  ?=(%collection -.bespoke.col)
     ?>  =(col-key.act key.col)
-    =/  new-key-list  %+  skip  key-list.bespoke.col 
+    =/  new-key-list  %+  skip  key-list.bespoke.col
       |=(=key ?~((find [key]~ key-list.act) %.n %.y))
     %+  edit  col
       [%edit col-key.act ~ `[%collection ~ ~ ~ `new-key-list]]

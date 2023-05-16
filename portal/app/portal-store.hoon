@@ -38,7 +38,7 @@
   =^  cards  item-sub
     (surf:da-item ~winpex-widtev-foddur-hodler %portal-store [%item %feed '~winpex-widtev-foddur-hodler' '' 'global' ~])
   =/  col-create  :*  %create  ~  ~  `'~2000.1.1'  `%def
-    `[%collection 'Main Collection' 'Your first collection.' '' ~]  
+    `[%collection 'Main Collection' 'Your first collection.' '' ~]
     [%collection our.bowl '' '~2000.1.1']~  ~  ==
   =/  val-create  :*  %create  ~  ~  `'~2000.1.1'  `%def
     `[%validity-store *validity-records]  ~  ~  ==
@@ -46,16 +46,16 @@
   =^  cards-1  state  (create:handle-poke:stor col-create)
   =^  cards-2  state  (create:handle-poke:stor val-create)
   =^  cards-3  state  (create:handle-poke:stor feed-create)
-  :: ::  TODO get it right in state transition  
+  :: ::  TODO get it right in state transition
   :: ::  (maybe not a problem if %create crashes on existing items)
-  ?:  =(our.bowl ~winpex-widtev-foddur-hodler)  
+  ?:  =(our.bowl ~winpex-widtev-foddur-hodler)
     =/  global-feed-create  [%create ~ ~ `'global' `%global `[%feed ~] ~ ~]
     =/  index-create  [%create ~ ~ `'index' `%def `[%collection '' '' '' ~] ~ ~]
     =^  cards-4  state  (create:handle-poke:stor global-feed-create)
     =^  cards-5  state  (create:handle-poke:stor index-create)
     :_  this
     (zing ~[cards cards-1 cards-2 cards-3 cards-4 cards-5 cards-5])
-  :_  this  
+  :_  this
   (zing ~[cards cards-1 cards-2 cards-3]):: cards-2 cards-3])
 ::
 ++  on-save  !>(state)
@@ -66,10 +66,14 @@
   ?:  ?=(%1 -.old)
     `this(state old)
   ?>  ?=(%0 -.old)
-  :-  ~
-  =-  %=  this
-        state  (state-0-to-1.- old)
-      ==
+  =-  =.  state  (state-0-to-1.- old)
+  =/  feed-create  [%create ~ ~ `'~2000.1.1' `%personal `[%feed ~] ~ ~]
+  =^  cards  state  (create:handle-poke:stor feed-create)
+  ?:  =(our.bowl ~winpex-widtev-foddur-hodler)
+    =/  global-feed-create  [%create ~ ~ `'global' `%global `[%feed ~] ~ ~]
+    =^  cards-1  state  (create:handle-poke:stor global-feed-create)
+    [(welp cards cards-1) this]
+  [cards this]
   |%
   ++  state-0-to-1
     |=  =state-0
@@ -91,20 +95,20 @@
     ?:  ?=([%enditem %other ~] type.key-0)
       =/  key  [%other our.bowl '' cord.key-0]
       =/  lens  %def
-      =/  bespoke  :*  %other  
-                       title.general.data.item-0  
+      =/  bespoke  :*  %other
+                       title.general.data.item-0
                        description.general.data.item-0
                        link.general.data.item-0
                        image.general.data.item-0
                    ==
-      =/  meta  [cord.key-0 (scot %da now.bowl) ~ [%public ~]]                                   
+      =/  meta  [cord.key-0 (scot %da now.bowl) ~ [%public ~]]
       =/  sig  (sign:sig our.bowl now.bowl [%item key lens bespoke meta])
       (some [key [key lens bespoke meta sig]])
     ?:  ?=([%validity-store *] bespoke.data.item-0)
       =/  key  [%validity-store our.bowl '' cord.key-0]
       =/  lens  %def
       =/  bespoke  [%validity-store *validity-records]
-      =/  meta  [cord.key-0 (scot %da now.bowl) ~ [%public ~]]                                   
+      =/  meta  [cord.key-0 (scot %da now.bowl) ~ [%public ~]]
       =/  sig  (sign:sig our.bowl now.bowl [%item key lens bespoke meta])
       (some [key [key lens bespoke meta sig]])
     ?:  =(key-0 [our.bowl [%list %enditem %other ~] '~2000.1.2'])
@@ -115,7 +119,7 @@
         ?.  =(cord.key-0 '~2000.1.1')
           [%collection our.bowl '' cord.key-0]
         ?+    type.key-0    !!  :: what to do as default?
-            [%list %app ~]              
+            [%list %app ~]
           [%collection our.bowl '' (scot %da now.bowl)]
             [%list %nonitem %group ~]
           [%collection our.bowl '' (crip (weld (scow %da now.bowl) ".0001"))]
@@ -127,11 +131,11 @@
           [%collection our.bowl '' '~2000.1.1']
         ==
       =/  key  (list-key-conv key-0)
-      =/  meta  [cord.key-0 (scot %da now.bowl) ~ [%public ~]]  ::  CORD? if ~2000.1.1                                  
+      =/  meta  [cord.key-0 (scot %da now.bowl) ~ [%public ~]]  ::  CORD? if ~2000.1.1
       =/  lens  %def
       =/  bespoke
-        :*  %collection  
-            title.general.data.item-0  
+        :*  %collection
+            title.general.data.item-0
             description.general.data.item-0
             image.general.data.item-0
             ?+    -.bespoke.data.item-0    !!
@@ -216,7 +220,7 @@
     ==
   ==
 ::
-++  on-arvo 
+++  on-arvo
   |=  [=wire sign=sign-arvo]
   ^-  (quip card:agent:gall _this)
   ?+  wire  `this
@@ -308,7 +312,7 @@
   |=  =key
   ^-  item
   =+  (~(gut by items) key ~)
-  ?~  -  
+  ?~  -
     =/  path  (key-to-path:conv key)
     rock:(~(got by read:da-item) [ship.key %portal-store [%item path]])
   -
@@ -364,7 +368,7 @@
       =+  ~(tap in ~(key by items))
       =^  cards  state
         %-  tail  %^  spin  -  [*(list card) state]
-        |=  [=key q=[cards=(list card) state=state-1]] 
+        |=  [=key q=[cards=(list card) state=state-1]]
         :-  key
         =.  state  state.q
         ?:  ?|  =(lens.item %temp)
@@ -374,7 +378,7 @@
           [(welp cards.q cards) state.q]
         q
       =+  ~(tap by items)
-      =.  items  %-  malt  %+  skip  - 
+      =.  items  %-  malt  %+  skip  -
                  |=([=key =item] ?=(?(%deleted) lens.item))
       ~&  >  "%portal-store: purge done"
       [cards state]
@@ -411,10 +415,10 @@
       ?>  ?=([%create *] act)
       =/  item  (create:itm act)
       =/  path  [%item (key-to-path:conv key.item)]
-      ?<  (has-item key.item)  :: should other actions have these checks?      
+      ?<  (has-item key.item)  :: should other actions have these checks?
       =.  items  (put-item item)
       ::  TODO check if already in list/items (if doing put with temp)
-      =^  cards  state  
+      =^  cards  state
         ?:  =(lens.item %temp)
           :-  (upd:cards-methods item)
           state
@@ -424,7 +428,7 @@
       ::  add to collections
       =^  cards  state
         %-  tail  %^  spin  `key-list`append-to.act  [cards state]
-        |=  [col-key=key q=[cards=(list card) state=state-1]] 
+        |=  [col-key=key q=[cards=(list card) state=state-1]]
         :-  col-key
         ?>  ?=(%collection struc.col-key)
         =.  state  state.q  ::  append takes state from subj, so it is modified
@@ -432,7 +436,7 @@
         [(welp cards.q cards) state.q]
       ::  add to feeds
       %-  tail  %^  spin  `key-list`prepend-to-feed.act  [cards state]
-        |=  [feed-key=key q=[cards=(list card) state=state-1]] 
+        |=  [feed-key=key q=[cards=(list card) state=state-1]]
         :-  feed-key
         ?>  ?=(%feed struc.feed-key)
         =.  state  state.q
@@ -464,7 +468,7 @@
       =/  feed  (prepend-to-feed:itm (get-item feed-key.act) act)
       =/  cards  (upd:cards-methods feed)
       =.  items  (put-item feed)
-      ?.  =(time.feed-key.act 'global')  
+      ?.  =(time.feed-key.act 'global')
         =/  msg  [%feed-update our.bowl feed.act]
         :_  state
         %+  snoc  cards

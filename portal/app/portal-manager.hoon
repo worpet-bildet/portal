@@ -1,16 +1,17 @@
-/-  *portal-data, *portal-action, *portal-message, *portal-logs, *portal-config,
+/-  *portal-data, *portal-action, *portal-message, *portal-logs, portal-config,
     groups, treaty
 /+  default-agent, dbug, *portal, io=agentio, sig
 |%
 +$  versioned-state
-  $%  state-0
-      state-1
-      state-2
+  $%  state-0:portal-config
+      state-1:portal-config
+      state-2:portal-config
+      state-3:portal-config
   ==
 +$  card  card:agent:gall
 --
 %-  agent:dbug
-=|  state-2
+=|  state-3:portal-config
 =*  state  -
 ^-  agent:gall
 |_  =bowl:gall
@@ -37,12 +38,10 @@
 ++  on-load
   |=  =vase
   ^-  (quip card _this)
-  =/  old  !<(versioned-state vase)
-  ?-    -.old
-    %0  `this(state *state-2)
-    %1  `this(state *state-2)
-    %2  `this(state old)
-  ==
+  ?:  =(%1 -.q.vase)    `this(state *state-3:portal-config)
+  ?:  =(%2 -.-.q.vase)  `this(state *state-3:portal-config)
+  =/  old  !<(state-3 vase)
+  `this(state old)
 ::
 ++  on-poke
   |=  [=mark =vase]

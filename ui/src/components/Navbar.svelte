@@ -11,7 +11,7 @@
     },
     {
       title: 'Explore',
-      link: '/~worpet-bildet',
+      link: '/~winpex-widtev-foddur-hodler',
     },
     {
       title: 'Feedback',
