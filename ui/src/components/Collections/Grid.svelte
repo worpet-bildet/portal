@@ -22,6 +22,7 @@
         !subscribingTo[keyStrFromObj(c)]
       ) {
         subscribingTo[keyStrFromObj(c)] = true;
+        console.log('SUBSCRIBING TO ', c);
         subscribeToItem(c);
       }
     });

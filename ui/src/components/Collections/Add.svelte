@@ -37,7 +37,7 @@
     if (groupKeys.includes(keyStr)) {
       groupKeys = groupKeys
         .slice(0, groupKeys.indexOf(keyStr))
-        .concat(groupKeys.slice(groupKeys.indexOf(keyStr)) + 1);
+        .concat(groupKeys.slice(groupKeys.indexOf(keyStr) + 1));
     } else {
       groupKeys.push(keyStr);
     }
@@ -48,7 +48,7 @@
     if (appKeys.includes(keyStr)) {
       appKeys = appKeys
         .slice(0, appKeys.indexOf(keyStr))
-        .concat(appKeys.slice(appKeys.indexOf(keyStr)) + 1);
+        .concat(appKeys.slice(appKeys.indexOf(keyStr) + 1));
     } else {
       appKeys.push(keyStr);
     }
