@@ -7,6 +7,7 @@ import {
   getInstalledApps,
   getPals,
   subscribeToGroup,
+  me,
 } from '@root/api';
 import config from '@root/config';
 import { fromUrbitTime } from '@root/util';
@@ -42,6 +43,17 @@ export const refreshContacts = () => {
       });
       return s;
     });
+  });
+};
+
+export const refreshMyProfile = () => {
+  getContact(me).then((profile) => {
+    const keyStr = `/ship/${me}//`;
+    s[keyStr] = {
+      ...s[keyStr],
+      bespoke: profile,
+      keyObj: keyStrToObj(keyStr),
+    };
   });
 };
 
@@ -105,7 +117,6 @@ export const refreshPals = async () => {
     const pals = await getPals();
     Object.keys(pals.outgoing).forEach((p) => {
       const shipKey = `/ship/~${p}//`;
-      if (get(state[shipKey])?.bespoke) return; // don't bother if we already know you
       getContact(`~${p}`)
         .then((profile) => {
           state.update((s) => {
@@ -235,6 +246,7 @@ const globalFeedKey = (indexer) => `/feed/${indexer}//global`;
 export const refreshAll = () => {
   refreshPortalItems();
   // refreshContacts();
+  refreshMyProfile();
   refreshApps();
   refreshGroups();
   refreshPals();

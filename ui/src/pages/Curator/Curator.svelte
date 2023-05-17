@@ -34,6 +34,9 @@
 
   $: {
     ({ patp } = params);
+    gettingProfile = false;
+    subscribingToCurator = false;
+    subscribingToCuratorFeed = false;
     loadCurator($state);
   }
 
@@ -61,6 +64,7 @@
     gettingProfile;
   let subscribingToCuratorFeed;
   const loadCurator = async (s) => {
+    profile = {};
     try {
       if (!noProfile && !gettingProfile) {
         gettingProfile = true;
@@ -69,7 +73,11 @@
     } catch (e) {
       noProfile = true;
     }
-    curator = { ...getCurator(patp), bespoke: profile || {} };
+    curator = {
+      ...getCurator(patp),
+      bespoke: profile,
+      keyObj: { struc: 'ship', ship: patp },
+    };
     ({ title, cover, image, description, color } = getMeta(curator));
     // featuredCollection = getCuratorFeaturedCollection(patp);
     feed = getCuratorFeed(patp);

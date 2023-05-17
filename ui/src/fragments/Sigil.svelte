@@ -1,7 +1,8 @@
 <script>
   import { sigil, stringRenderer } from '@tlon/sigil-js';
   import { formatColor, isLightColor } from '@root/util';
-  export let patp, size, color;
+  export let patp, size;
+  export let color = '0x0';
 
   $: primaryColor = formatColor(color);
   $: secondaryColor = isLightColor(primaryColor) ? '000000' : 'ffffff';

@@ -2,7 +2,7 @@
   import { link } from 'svelte-spa-router';
   import { fade } from 'svelte/transition';
   import { format } from 'timeago.js';
-  import { subscribeToItem } from '@root/api';
+  import { subscribeToItem, getContact } from '@root/api';
   import { state, getItem, keyStrFromObj } from '@root/state';
   import { getMeta } from '@root/util';
   import { Sigil } from '@fragments';
@@ -11,12 +11,18 @@
   export let key;
 
   // try to get the item, and if we don't have it, subscribe to it
-  let item;
+  let item, color;
   state.subscribe((s) => {
     item = getItem(keyStrFromObj(key));
     if (s.isLoaded && !item) {
       return subscribeToItem(key);
     }
+    // in theory this should be cheaper but the state is abit fkd rn
+    getContact(getMeta(item).ship)
+      .then((profile) => ({ color } = profile))
+      .catch((e) => {
+        /*ignore*/
+      });
   });
 </script>
 
@@ -26,7 +32,7 @@
   <div class="grid grid-cols-12 rounded-lg shadow p-5 border gap-2" in:fade>
     <div class="col-span-1 w-10 h-10 rounded-sm overflow-hidden">
       <a href={`/${ship}`} use:link>
-        <Sigil patp={ship} />
+        <Sigil patp={ship} {color} />
       </a>
     </div>
     <div class="col-span-11 flex flex-col gap-2">
