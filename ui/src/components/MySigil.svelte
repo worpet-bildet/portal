@@ -9,4 +9,4 @@
   });
 </script>
 
-<Sigil {color} />
+<Sigil patp={me} {color} />

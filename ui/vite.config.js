@@ -12,7 +12,9 @@ export default ({ mode }) => {
       : process.env.SHIP_URL ||
         process.env.VITE_SHIP_URL ||
         'http://localhost:80';
-  console.log(`Building for ${mode} at URL: ${SHIP_URL}`);
+  console.log(
+    `Building for ${mode} at URL: ${SHIP_URL} with indexer: ${process.env.VITE_INDEXER}`
+  );
 
   return defineConfig({
     plugins: [
