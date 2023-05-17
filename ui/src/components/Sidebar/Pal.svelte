@@ -18,7 +18,9 @@
       subscribeToContactProfile(pal);
       subbing = true; // only do this once per load
     }
-    ({ image, title, color } = getMeta(getItem(`/ship/${pal}//`)) || {});
+    ({ image, title, color } = getMeta(getItem(`/ship/${pal}//`)) || {
+      title: pal,
+    });
   });
 </script>
 
@@ -38,7 +40,7 @@
       {/if}
     </div>
     <div>
-      <div>{title}</div>
+      <div>{title || pal}</div>
     </div>
   </a>
 {/if}

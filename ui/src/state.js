@@ -2,6 +2,7 @@ import { get, writable } from 'svelte/store';
 import {
   getPortalItems,
   getContacts,
+  getContact,
   getJoinedGroups,
   getInstalledApps,
   getPals,
@@ -102,6 +103,18 @@ export const refreshApps = () => {
 export const refreshPals = async () => {
   try {
     const pals = await getPals();
+    Object.keys(pals.outgoing).map((p) => {
+      getContact(`~${p}`)
+        .then((profile) => {
+          state.update((s) => {
+            s[`/ship/~${p}//`] = { ...s[`/ship/~${p}//`], bespoke: profile };
+            return s;
+          });
+        })
+        .catch((e) => {
+          // we can safely ignore it;
+        });
+    });
     state.update((s) => {
       s.pals = pals.outgoing;
       s.palsLoaded = true;
@@ -158,9 +171,9 @@ export const getItem = (listKey) => {
   return get(state)[listKey];
 };
 
-export const getProfile = (ship) => {
-  return get(state).profiles?.[ship];
-};
+// export const getProfile = (ship) => {
+//   return get(state).profiles?.[ship];
+// };
 
 export const getCollectionItems = (collectionKey) => {
   return get(state)[collectionKey]?.bespoke?.['key-list'];
@@ -179,7 +192,7 @@ export const handleSubscriptionEvent = (event, type) => {
         return s;
       });
     case 'contact-news':
-      refreshContacts();
+    // refreshContacts();
     case 'charge-update':
       refreshApps();
     case 'group-action-0' || 'group-leave':
@@ -210,7 +223,7 @@ const globalFeedKey = (indexer) => `/feed/${indexer}//global`;
 
 export const refreshAll = () => {
   refreshPortalItems();
-  refreshContacts();
+  // refreshContacts();
   refreshApps();
   refreshGroups();
   refreshPals();

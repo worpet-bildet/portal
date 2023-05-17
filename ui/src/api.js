@@ -21,6 +21,13 @@ export const getContacts = () => {
   });
 };
 
+export const getContact = (patp) => {
+  return scry({
+    app: 'contacts',
+    path: `/contact/${patp}`,
+  });
+};
+
 export const getInstalledApps = () => {
   return Promise.all([
     scry({

@@ -1,3 +1,3 @@
 export default {
-  indexer: `~worpet-bildet`,
+  indexer: import.meta.env.VITE_INDEXER,
 };

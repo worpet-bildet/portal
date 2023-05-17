@@ -5,6 +5,7 @@
     subscribeToCurator,
     subscribeToContactProfile,
     addPal,
+    getContact,
     removePal,
     me,
   } from '@root/api';
@@ -27,6 +28,7 @@
     SidebarGroup,
     IconButton,
   } from '@fragments';
+  import Pal from '../../components/Sidebar/Pal.svelte';
 
   export let params;
   let { patp } = params;
@@ -43,19 +45,28 @@
   let activeTab = 'Activity';
   let tabs = ['Activity', 'Collections'];
 
-  let title, cover, image, description, color, isLoaded, isMyPal, pals;
+  const subscribeTo = (patp) => {
+    subscribeToCurator(patp);
+    subscribeToContactProfile(patp);
+  };
+
+  let title, cover, image, description, color, isMyPal, pals, profile;
   let subscribingToCuratorFeed;
-  const loadCurator = (s) => {
-    curator = getCurator(patp);
-    isLoaded = s.isLoaded;
+  const loadCurator = async (s) => {
+    try {
+      profile = await getContact(patp);
+    } catch (e) {
+      // ignore tbh
+    }
+    curator = { ...getCurator(patp), bespoke: profile || {} };
     ({ title, cover, image, description, color } = getMeta(curator));
     // featuredCollection = getCuratorFeaturedCollection(patp);
     feed = getCuratorFeed(patp);
+    isMyPal = !!s.pals?.[patp.slice(1)];
     if (!feed && s.isLoaded && !subscribingToCuratorFeed) {
       subscribingToCuratorFeed = true;
-      return subscribeToCurator(patp);
+      return subscribeTo(patp);
     }
-    isMyPal = !!s.pals?.[patp.slice(1)];
   };
 
   state.subscribe((s) => {
@@ -74,16 +85,12 @@
 
   let subscribingToCurator = false;
   $: if (
-    isLoaded &&
+    $state.isLoaded &&
     !subscribingToCurator &&
     (!curator || Object.values(curator).length === 0)
   ) {
-    // TODO: this doesn't really work - it should be smarter than this about
-    // when it subscribes to the user
     subscribingToCurator = true;
-    // TODO we should be checking the conditions here individually
-    subscribeToCurator(patp);
-    subscribeToContactProfile(patp);
+    subscribeTo(patp);
   }
 </script>
 
