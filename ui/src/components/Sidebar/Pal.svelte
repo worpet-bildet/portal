@@ -35,7 +35,7 @@
         <img alt={pal} src={image} class="rounded-md w-10 h-10" />
       {:else}
         <div class="rounded-md w-10 h-10 overflow-hidden">
-          <Sigil patp={pal} {color} />
+          <Sigil patp={pal} />
         </div>
       {/if}
     </div>

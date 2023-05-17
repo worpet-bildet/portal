@@ -61,7 +61,7 @@
       class:col-span-4={small}
     >
       {#if struc === 'ship' && !image}
-        <Sigil patp={ship} {color} />
+        <Sigil patp={ship} />
       {:else if struc === 'collection' && !image}
         <CollectionsSquarePreview {key} withTitle={false} />
       {:else}

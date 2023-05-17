@@ -31,7 +31,7 @@
   <div class="grid grid-cols-12 rounded-lg shadow p-5 border gap-2" in:fade>
     <div class="col-span-1 w-10 h-10 rounded-md overflow-hidden">
       <a href={`/${ship}`} use:link>
-        <Sigil patp={ship} {color} />
+        <Sigil patp={ship} />
       </a>
     </div>
     <div class="col-span-11 flex flex-col gap-2">

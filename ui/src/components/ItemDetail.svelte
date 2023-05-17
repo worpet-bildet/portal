@@ -51,7 +51,7 @@
           </div>
         {:else}
           <div class="border rounded-md overflow-hidden w-full shadow">
-            <Sigil {patp} {color} />
+            <Sigil {patp} />
           </div>
         {/if}
       </div>

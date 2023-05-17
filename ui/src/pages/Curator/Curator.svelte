@@ -1,11 +1,16 @@
 <script>
   import { push } from 'svelte-spa-router';
-  import { state, getCurator, getCuratorFeed, refreshPals } from '@root/state';
+  import {
+    state,
+    getCurator,
+    getCuratorFeed,
+    refreshPals,
+    refreshProfile,
+  } from '@root/state';
   import {
     subscribeToCurator,
     subscribeToContactProfile,
     addPal,
-    getContact,
     removePal,
     me,
   } from '@root/api';
@@ -37,7 +42,7 @@
     gettingProfile = false;
     subscribingToCurator = false;
     subscribingToCuratorFeed = false;
-    loadCurator($state);
+    loadCurator();
   }
 
   let curator, featuredCollection;
@@ -58,31 +63,24 @@
     description,
     color,
     isMyPal,
-    pals,
-    profile,
     noProfile,
     gettingProfile;
   let subscribingToCuratorFeed;
-  const loadCurator = async (s) => {
-    profile = {};
+  const loadCurator = async () => {
     try {
       if (!noProfile && !gettingProfile) {
         gettingProfile = true;
-        profile = await getContact(patp);
+        return refreshProfile(patp);
       }
     } catch (e) {
       noProfile = true;
     }
-    curator = {
-      ...getCurator(patp),
-      bespoke: profile,
-      keyObj: { struc: 'ship', ship: patp },
-    };
+    curator = { ...getCurator(patp) };
     ({ title, cover, image, description, color } = getMeta(curator));
     // featuredCollection = getCuratorFeaturedCollection(patp);
     feed = getCuratorFeed(patp);
-    isMyPal = !!s.pals?.[patp.slice(1)];
-    if (!feed && s.isLoaded && !subscribingToCuratorFeed) {
+    isMyPal = !!$state.pals?.[patp.slice(1)];
+    if (!feed && $state.isLoaded && !subscribingToCuratorFeed) {
       subscribingToCuratorFeed = true;
       return subscribeTo(patp);
     }
@@ -90,7 +88,7 @@
 
   state.subscribe((s) => {
     if (!s) return;
-    loadCurator(s);
+    loadCurator();
   });
 
   // TODO

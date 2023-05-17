@@ -46,9 +46,9 @@ export const refreshContacts = () => {
   });
 };
 
-export const refreshMyProfile = () => {
-  getContact(me).then((profile) => {
-    const keyStr = `/ship/${me}//`;
+export const refreshProfile = (patp) => {
+  getContact(patp).then((profile) => {
+    const keyStr = `/ship/${patp}//`;
     state.update((s) => {
       s[keyStr] = {
         ...s[keyStr],
@@ -249,7 +249,7 @@ const globalFeedKey = (indexer) => `/feed/${indexer}//global`;
 export const refreshAll = () => {
   refreshPortalItems();
   // refreshContacts();
-  refreshMyProfile();
+  refreshProfile(me);
   refreshApps();
   refreshGroups();
   refreshPals();

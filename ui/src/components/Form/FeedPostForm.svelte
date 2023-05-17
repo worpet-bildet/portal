@@ -68,7 +68,7 @@
   class="grid grid-cols-12 gap-y-3 p-3 rounded-lg shadow border border-black"
 >
   <div class="col-span-1 w-10 h-10 rounded-md overflow-hidden">
-    <Sigil patp={me} {color} />
+    <Sigil patp={me} />
   </div>
   <div class="col-span-11">
     <TextArea
