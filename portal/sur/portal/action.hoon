@@ -10,6 +10,7 @@
          lens=(unit lens)
          bespoke=(unit bespoke)
          append-to=(list [struc=%collection =ship =cord time=cord])
+         ::  TODO try $>(%collection key), probably wont work tho
          prepend-to-feed=(list [struc=%feed =ship =cord time=cord])
       ==
       ::

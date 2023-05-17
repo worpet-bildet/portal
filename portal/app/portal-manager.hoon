@@ -34,7 +34,7 @@
   |=  =vase
   ^-  (quip card _this)
   ?:  =(%1 -.q.vase)    `this(state *state-3:portal-config)
-  ?:  =(%2 -.-.q.vase)  `this(state *state-3:portal-config)
+  ?:  =(%2 -.q.vase)    `this(state *state-3:portal-config)
   =/  old  !<(state-3 vase)
   `this(state old)
 ::
