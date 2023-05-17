@@ -17,7 +17,6 @@
     ({ pals } = s);
     if (!s.isLoaded) return;
     if (s.isLoaded && !getGlobalFeed()) {
-      console.log('why');
       return subscribeToItem({
         struc: 'feed',
         ship: config.indexer,
@@ -32,7 +31,6 @@
         return mergedFeed.findIndex((b) => b.time === a.time) === idx;
       })
       .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
-    console.log({ feed });
   });
 
   let searchShip;
