@@ -1,7 +1,7 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import { me, poke } from '@root/api';
-  import { state, keyStrToObj } from '@root/state';
+  import { state, keyStrToObj, getCurator } from '@root/state';
   import { RecommendModal } from '@components';
   import {
     TextArea,
@@ -45,7 +45,7 @@
   };
 
   // TODO: Factor out the selection of groups/apps into its own component
-  let groupModalOpen, appModalOpen, recommendModalOpen, selectedKey;
+  let groupModalOpen, appModalOpen, recommendModalOpen, selectedKey, color;
   let groups = {};
   let apps = {};
   state.subscribe((s) => {
@@ -61,6 +61,7 @@
         apps[appkey] = data;
       });
     }
+    ({ color } = getCurator(me).bespoke || {});
   });
 </script>
 
@@ -68,7 +69,7 @@
   class="grid grid-cols-12 gap-y-3 p-3 rounded-lg shadow border border-black"
 >
   <div class="col-span-1 w-10 h-10 rounded-md overflow-hidden">
-    <Sigil patp={me} />
+    <Sigil patp={me} {color} />
   </div>
   <div class="col-span-11">
     <TextArea

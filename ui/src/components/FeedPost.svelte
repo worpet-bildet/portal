@@ -30,7 +30,7 @@
 {#if item}
   {@const { blurb, ship, createdAt, ref } = getMeta(item)}
   <div class="grid grid-cols-12 rounded-lg shadow p-5 border gap-2" in:fade>
-    <div class="col-span-1 w-10 h-10 rounded-sm overflow-hidden">
+    <div class="col-span-1 w-10 h-10 rounded-md overflow-hidden">
       <a href={`/${ship}`} use:link>
         <Sigil patp={ship} {color} />
       </a>

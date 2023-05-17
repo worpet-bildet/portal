@@ -49,11 +49,14 @@ export const refreshContacts = () => {
 export const refreshMyProfile = () => {
   getContact(me).then((profile) => {
     const keyStr = `/ship/${me}//`;
-    s[keyStr] = {
-      ...s[keyStr],
-      bespoke: profile,
-      keyObj: keyStrToObj(keyStr),
-    };
+    state.update((s) => {
+      s[keyStr] = {
+        ...s[keyStr],
+        bespoke: profile,
+        keyObj: keyStrToObj(keyStr),
+      };
+      return s;
+    });
   });
 };
 
