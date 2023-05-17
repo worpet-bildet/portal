@@ -1,10 +1,10 @@
 <script>
   import { sigil, stringRenderer } from '@tlon/sigil-js';
-  import { invertHex, formatColor } from '@root/util';
+  import { formatColor, isLightColor } from '@root/util';
   export let patp, size, color;
 
   $: primaryColor = formatColor(color);
-  $: secondaryColor = invertHex(formatColor(color));
+  $: secondaryColor = isLightColor(primaryColor) ? '000000' : 'ffffff';
   $: {
     if (primaryColor.length < 6) {
       primaryColor = '000000';

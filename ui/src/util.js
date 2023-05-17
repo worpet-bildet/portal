@@ -179,6 +179,20 @@ export const formatColor = (c) => {
   return c.replace('.', '').replace('0x', '');
 };
 
+export const isLightColor = (hex) => {
+  let rgb = parseInt(hex, 16); // convert rrggbb to decimal
+  let r = (rgb >> 16) & 0xff; // extract red
+  let g = (rgb >> 8) & 0xff; // extract green
+  let b = (rgb >> 0) & 0xff; // extract blue
+
+  let luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
+
+  if (luma > 128) {
+    return true;
+  }
+  return false;
+};
+
 // Reference: https://github.com/mirtyl-wacdec/urbit_ex/blob/master/lib/api/utils.ex#LL260C14-L260C14
 export const isValidPatp = (patp) => {
   if (!patp) return false;

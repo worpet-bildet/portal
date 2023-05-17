@@ -194,7 +194,11 @@ export const handleSubscriptionEvent = (event, type) => {
         return s;
       });
     case 'contact-news':
-    // refreshContacts();
+      state.update((s) => {
+        const shipKey = `/ship/${event.who}//`;
+        if (!s[shipKey]) s[shipKey] = {};
+        s[shipKey].bespoke = event.con;
+      });
     case 'charge-update':
       refreshApps();
     case 'group-action-0' || 'group-leave':
