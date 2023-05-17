@@ -64,7 +64,18 @@
   ^-  (quip card _this)
   =/  old  !<(versioned-state vase)
   ?:  ?=(%1 -.old)
-    `this(state old)
+    ::state empty, old full
+    =.  state  old
+    =+  ~(val by items.state)
+    =^  cards  state
+      %-  tail  %^  spin  -  [*(list card) state]
+      |=  [=item q=[cards=(list card) state=state-1]]
+      :-  item
+      =.  state  state.q
+      =^  cards  item-pub.state.q  
+        (give:du-item [%item (key-to-path:conv key.item)] [%whole item])
+      [(welp cards.q cards) state.q]
+    [cards this]
   ?>  ?=(%0 -.old)
   =-  =.  state  (state-0-to-1.- old)
   =/  feed-create  [%create ~ ~ `'~2000.1.1' `%personal `[%feed ~] ~ ~]
