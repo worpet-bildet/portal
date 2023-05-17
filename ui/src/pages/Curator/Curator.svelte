@@ -110,7 +110,7 @@
     <ItemDetail
       {cover}
       avatar={image}
-      {title}
+      title={title || patp}
       {description}
       {color}
       {patp}
