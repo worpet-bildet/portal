@@ -193,16 +193,21 @@ export const handleSubscriptionEvent = (event, type) => {
         s[event.keyStr] = event;
         return s;
       });
+      break;
     case 'contact-news':
       state.update((s) => {
         const shipKey = `/ship/${event.who}//`;
         if (!s[shipKey]) s[shipKey] = {};
         s[shipKey].bespoke = event.con;
+        return s;
       });
+      break;
     case 'charge-update':
       refreshApps();
+      break;
     case 'group-action-0' || 'group-leave':
       refreshGroups();
+      break;
     default:
       break;
   }
