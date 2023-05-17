@@ -5,8 +5,7 @@
   import { subscribeToItem, getContact } from '@root/api';
   import { state, getItem, keyStrFromObj } from '@root/state';
   import { getMeta } from '@root/util';
-  import { Sigil } from '@fragments';
-  import { ItemVerticalListPreview } from '@components';
+  import { ItemVerticalListPreview, Sigil } from '@components';
 
   export let key;
 
@@ -45,7 +44,7 @@
         {blurb}
       </p>
       {#if ref}
-        <div class="rounded-lg border shadow">
+        <div class="rounded-lg">
           <ItemVerticalListPreview key={ref} />
         </div>
       {/if}

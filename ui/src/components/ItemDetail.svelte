@@ -1,7 +1,8 @@
 <script>
   import { link } from 'svelte-spa-router';
   import { isUrl } from '@root/util';
-  import { Sigil, ItemImage } from '@fragments';
+  import { Sigil } from '@components';
+  import { ItemImage } from '@fragments';
   export let cover, avatar, title, description, patp, color, type;
 
   let avatarPad, avatarContainer;
@@ -27,8 +28,7 @@
   {:else}
     <div
       class="absolute top-0 left-0 h-80 w-full z-0 bg-black flex items-center justify-center text-8xl font-bold overflow-hidden text-white shadow"
-    >
-    </div>
+    />
   {/if}
 </div>
 <div class="col-span-12 md:col-span-9 flex flex-col gap-4">

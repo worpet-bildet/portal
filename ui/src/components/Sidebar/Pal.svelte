@@ -3,7 +3,7 @@
   import { state, getItem } from '@root/state';
   import { subscribeToContactProfile } from '@root/api';
   import { getMeta } from '@root/util';
-  import { Sigil } from '@fragments';
+  import { Sigil } from '@components';
   export let pal;
 
   let subbing = false;

@@ -1,7 +1,7 @@
 <script>
   import { me } from '@root/api';
   import { state, getCurator } from '@root/state';
-  import { Sigil } from '@fragments';
+  import { Sigil } from '@components';
 
   let color;
   state.subscribe(() => {

@@ -72,9 +72,7 @@
     >
       <div class="grid gap-y-4">
         {#each items as key}
-          <div class="border shadow rounded-lg">
-            <ItemVerticalListPreview {key} />
-          </div>
+          <ItemVerticalListPreview {key} />
         {/each}
       </div>
     </ItemDetail>

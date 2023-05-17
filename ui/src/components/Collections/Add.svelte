@@ -123,7 +123,7 @@
               time: '',
             }}
             <div class="flex justify-between">
-              <div class="border shadow rounded-lg w-full">
+              <div class="w-full">
                 <ItemVerticalListPreview
                   {key}
                   clickable={false}
@@ -144,7 +144,7 @@
         {#each Object.entries(apps) as [path, { title, image, ship, info }]}
           {@const key = { struc: 'app', ship, cord: path, time: '' }}
           <div class="flex justify-between">
-            <div class="border shadow rounded-lg w-full">
+            <div class="w-full">
               <ItemVerticalListPreview
                 {key}
                 clickable={false}

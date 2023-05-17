@@ -2,10 +2,9 @@
   import { createEventDispatcher } from 'svelte';
   import { me, poke } from '@root/api';
   import { state, keyStrToObj, getCurator } from '@root/state';
-  import { RecommendModal } from '@components';
+  import { RecommendModal, Sigil } from '@components';
   import {
     TextArea,
-    Sigil,
     IconButton,
     AppIcon,
     GroupIcon,

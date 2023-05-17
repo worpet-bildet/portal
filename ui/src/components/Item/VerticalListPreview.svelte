@@ -4,8 +4,8 @@
   import { state, keyStrFromObj, getItem } from '@root/state';
   import { subscribeToItem } from '@root/api';
   import { getMeta } from '@root/util';
-  import { CollectionsSquarePreview } from '@components';
-  import { ItemImage, Sigil, TrashIcon, EditIcon } from '@fragments';
+  import { CollectionsSquarePreview, Sigil } from '@components';
+  import { ItemImage, TrashIcon, EditIcon } from '@fragments';
   export let key;
   export let clickable = true;
   export let removable = false;
@@ -51,7 +51,7 @@
         dispatch('selected', { key, selected });
       }
     }}
-    class="grid grid-cols-12 w-full items-center gap-4 p-1 hover:bg-black hover:text-white cursor-pointer rounded-lg text-xs"
+    class="grid grid-cols-12 w-full items-center gap-4 p-1 hover:bg-black hover:text-white cursor-pointer border shadow rounded-lg text-xs"
     class:bg-black={selected}
     class:text-white={selected}
   >
@@ -109,5 +109,5 @@
     {/if}
   </div>
 {:else}
-  <div class="p-4">Loading...</div>
+  <div class="p-4 border shadow rounded-lg">Loading...</div>
 {/if}

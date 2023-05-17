@@ -8,8 +8,9 @@
     ItemVerticalListPreview,
     SidebarPal,
     FeedPostForm,
+    Sigil,
   } from '@components';
-  import { RightSidebar, SidebarGroup, SearchIcon, Sigil } from '@fragments';
+  import { RightSidebar, SidebarGroup, SearchIcon } from '@fragments';
   import { fromUrbitTime, isValidPatp } from '@root/util';
 
   let pals, feed;

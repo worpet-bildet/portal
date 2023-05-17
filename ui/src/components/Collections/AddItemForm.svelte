@@ -2,6 +2,7 @@
   import { createEventDispatcher } from 'svelte';
   import { state, keyStrFromObj, getItem } from '@root/state';
   import { poke } from '@root/api';
+  import { Sigil } from '@components';
   import {
     StepForm,
     OtherItemForm,
@@ -9,7 +10,6 @@
     IconButton,
     LeftArrowIcon,
     CheckIcon,
-    Sigil,
   } from '@fragments';
   import { isValidPatp } from '@root/util';
 
