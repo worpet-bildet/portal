@@ -103,16 +103,18 @@ export const refreshApps = () => {
 export const refreshPals = async () => {
   try {
     const pals = await getPals();
-    Object.keys(pals.outgoing).map((p) => {
+    Object.keys(pals.outgoing).forEach((p) => {
+      const shipKey = `/ship/~${p}//`;
+      if (get(state[shipKey])?.bespoke) return; // don't bother if we already know you
       getContact(`~${p}`)
         .then((profile) => {
           state.update((s) => {
-            s[`/ship/~${p}//`] = { ...s[`/ship/~${p}//`], bespoke: profile };
+            s[shipKey] = { ...s[shipKey], bespoke: profile };
             return s;
           });
         })
         .catch((e) => {
-          // we can safely ignore it;
+          // we can safely ignore this error, they are likely to just be offline
         });
     });
     state.update((s) => {

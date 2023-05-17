@@ -11,10 +11,17 @@
   import { fade } from 'svelte/transition';
   export let patp;
 
-  let collections;
+  let collections, curatorCollections;
+  let subscribingTo = {};
   const loadCollections = (patp) => {
-    (getCuratorCollections(patp) || []).forEach((c) => {
-      if ($state.isLoaded && !getItem(keyStrFromObj(c))) {
+    curatorCollections = getCuratorCollections(patp) || [];
+    curatorCollections.forEach((c) => {
+      if (
+        $state.isLoaded &&
+        !getItem(keyStrFromObj(c)) &&
+        !subscribingTo[keyStrFromObj(c)]
+      ) {
+        subscribingTo[keyStrFromObj(c)] = true;
         subscribeToItem(c);
       }
     });
@@ -32,10 +39,12 @@
 </script>
 
 <div class="grid grid-cols-12 gap-4 items-start">
-  {#if collections.length === 0}
+  {#if curatorCollections.length === 0}
     <div class="col-span-12">
       {patp} hasn't created any collections on Portal yet.
     </div>
+  {:else if collections.length === 0}
+    <div class="col-span-12">Loading...</div>
   {:else}
     {#each collections as collection}
       <a use:link href={`${collection.keyStr}`} class="col-span-4" in:fade>

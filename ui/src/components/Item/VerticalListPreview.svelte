@@ -70,7 +70,12 @@
     </div>
     <div class="col-span-8 flex flex-col gap-2">
       <div class="flex items-center gap-2 overflow-hidden">
-        <div class="font-bold" class:text-sm={small} class:text-xl={!small}>
+        <div
+          class="font-bold"
+          class:text-sm={small}
+          class:line-clamp-1={small}
+          class:text-xl={!small}
+        >
           {title}
         </div>
         <div>·</div>

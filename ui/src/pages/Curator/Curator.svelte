@@ -28,7 +28,6 @@
     SidebarGroup,
     IconButton,
   } from '@fragments';
-  import Pal from '../../components/Sidebar/Pal.svelte';
 
   export let params;
   let { patp } = params;
@@ -50,13 +49,25 @@
     subscribeToContactProfile(patp);
   };
 
-  let title, cover, image, description, color, isMyPal, pals, profile;
+  let title,
+    cover,
+    image,
+    description,
+    color,
+    isMyPal,
+    pals,
+    profile,
+    noProfile,
+    gettingProfile;
   let subscribingToCuratorFeed;
   const loadCurator = async (s) => {
     try {
-      profile = await getContact(patp);
+      if (!noProfile && !gettingProfile) {
+        gettingProfile = true;
+        profile = await getContact(patp);
+      }
     } catch (e) {
-      // ignore tbh
+      noProfile = true;
     }
     curator = { ...getCurator(patp), bespoke: profile || {} };
     ({ title, cover, image, description, color } = getMeta(curator));
