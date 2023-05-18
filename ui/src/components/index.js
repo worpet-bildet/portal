@@ -12,3 +12,4 @@ export { default as CollectionsSquarePreview } from './Collections/SquarePreview
 export { default as CollectionsAddItemForm } from './Collections/AddItemForm.svelte';
 export { default as SidebarPal } from './Sidebar/Pal.svelte';
 export { default as ItemVerticalListPreview } from './Item/VerticalListPreview.svelte';
+export { default as Sigil } from './Sigil.svelte';

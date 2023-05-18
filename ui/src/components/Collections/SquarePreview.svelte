@@ -2,7 +2,7 @@
   import { subscribeToItem } from '@root/api';
   import { state, getItem, keyStrFromObj } from '@root/state';
   import { getMeta } from '@root/util';
-  import { ItemImage } from '@fragments';
+  import { ItemImage, LoadingIcon } from '@fragments';
 
   export let key;
   export let withTitle = true;
@@ -69,5 +69,9 @@
         <div>{title}</div>
       </div>
     {/if}
+  </div>
+{:else}
+  <div class="flex justify-center items-center p-10 w-full h-full">
+    <LoadingIcon class="w-16 h-16" />
   </div>
 {/if}

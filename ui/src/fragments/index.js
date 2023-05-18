@@ -1,7 +1,6 @@
 export { default as ItemImage } from './ItemImage.svelte';
 export { default as TextArea } from './TextArea.svelte';
 export { default as Tabs } from './Tabs.svelte';
-export { default as Sigil } from './Sigil.svelte';
 export { default as Modal } from './Modal.svelte';
 export { default as StepForm } from './StepForm.svelte';
 export { default as OtherItemForm } from './OtherItemForm.svelte';
@@ -33,3 +32,4 @@ export { default as InstallIcon } from './Icons/Install.svelte';
 export { default as LoadingIcon } from './Icons/Loading.svelte';
 export { default as SearchIcon } from './Icons/Search.svelte';
 export { default as GroupIcon } from './Icons/Group.svelte';
+export { default as HamburgerIcon } from './Icons/Hamburger.svelte';

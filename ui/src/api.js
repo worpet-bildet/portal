@@ -101,66 +101,37 @@ export const leaveGroup = (group) => {
   });
 };
 
+export const subscribeToFeed = (patp) => {
+  return subscribeToItem({
+    struc: 'feed',
+    ship: patp,
+    time: '~2000.1.1',
+    cord: '',
+  });
+};
+
+export const subscribeToMainCollection = (patp) => {
+  return subscribeToItem({
+    struc: 'collection',
+    ship: patp,
+    time: '~2000.1.1',
+    cord: '',
+  });
+};
+
 export const subscribeToCurator = (patp) => {
-  poke({
-    app: 'portal-manager',
-    mark: 'portal-action',
-    json: {
-      sub: {
-        key: {
-          struc: 'ship',
-          ship: patp,
-          time: '',
-          cord: '',
-        },
-      },
-    },
-  });
-  poke({
-    app: 'portal-manager',
-    mark: 'portal-action',
-    json: {
-      sub: {
-        key: {
-          struc: 'feed',
-          ship: patp,
-          time: '~2000.1.1',
-          cord: '',
-        },
-      },
-    },
-  });
-  return poke({
-    app: 'portal-manager',
-    mark: 'portal-action',
-    json: {
-      sub: {
-        key: {
-          struc: 'collection',
-          ship: patp,
-          time: '~2000.1.1',
-          cord: '',
-        },
-      },
-    },
-  });
+  subscribeToContactProfile(patp);
+  subscribeToFeed(patp);
+  subscribeToMainCollection(patp);
 };
 
 export const subscribeToGroup = (key) => {
   let parts = key.split('/');
-  poke({
-    app: 'portal-manager',
-    mark: 'portal-action',
-    json: {
-      sub: {
-        key: {
-          struc: 'group',
-          ship: parts[0],
-          cord: parts[1],
-          time: '',
-        },
-      },
-    },
+  return subscribeToItem({
+    struc: 'group',
+    ship: parts[0],
+    cord: parts[1],
+    time: '',
   });
 };
 

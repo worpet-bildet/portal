@@ -72,7 +72,6 @@
 
   const remove = (key) => {
     items = items.filter((i) => i.keyStr !== key);
-    save();
   };
 
   let editModalOpen = false;
@@ -121,7 +120,7 @@
       </div>
       <div class="flex flex-col gap-2">
         <div>Description</div>
-        <TextArea bind:value={blurb} minRows={1} maxRows={10} />
+        <TextArea bind:value={blurb} />
       </div>
       <div class="flex flex-col gap-2">
         <div>Image</div>

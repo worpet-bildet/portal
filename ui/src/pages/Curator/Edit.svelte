@@ -30,9 +30,10 @@
     curator = getCurator(patp);
     ({ nickname, cover, avatar, bio } = curator.bespoke || {});
     // TODO: extremely dumb and convoluted
-    collections = (getCuratorCollections(patp) || []).filter(
-      (c) => getItem(keyStrFromObj(c))?.bespoke?.title
-    );
+    collections = (getCuratorCollections(patp) || []).filter((c) => {
+      let _col = getItem(keyStrFromObj(c));
+      return _col?.bespoke?.title && _col?.bespoke?.['key-list']?.length > 0;
+    });
   });
 
   let activeTab = 'Profile';
@@ -95,7 +96,7 @@
       </div>
       <div class="flex flex-col gap-2">
         <div>Bio</div>
-        <TextArea bind:value={bio} minRows={1} maxRows={5} />
+        <TextArea bind:value={bio} />
       </div>
       <div class="flex flex-col gap-2">
         <div>Avatar</div>

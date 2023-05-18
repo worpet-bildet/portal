@@ -1,34 +1,36 @@
 <script>
   import { link } from 'svelte-spa-router';
   import { isUrl } from '@root/util';
-  import { Sigil, ItemImage } from '@fragments';
+  import { Sigil } from '@components';
+  import { ItemImage } from '@fragments';
   export let cover, avatar, title, description, patp, color, type;
 
   let avatarPad, avatarContainer;
-  $: {
-    if (avatarPad && avatarContainer) {
-      redrawAvatar();
-    }
+  $: if (avatarPad && avatarContainer) {
+    redrawAvatar();
   }
   const redrawAvatar = () => {
     if (avatarPad && avatarContainer) {
       avatarPad.style.height = `${avatarContainer.clientHeight}px`;
     }
   };
+  $: if (!cover || !isUrl(cover)) {
+    cover =
+      'https://images.unsplash.com/photo-1554921027-b91f0beeb07d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80';
+  }
 </script>
 
 <div class="col-span-12 w-full h-56">
   {#if isUrl(cover)}
     <img
       src={cover}
-      class="absolute top-0 left-0 object-cover h-80 w-full z-0 shadow"
+      class="absolute top-0 left-0 object-cover cover h-80 w-full z-0 shadow"
       alt="Profile banner"
     />
   {:else}
     <div
-      class="absolute top-0 left-0 h-80 w-full z-0 bg-black flex items-center justify-center text-8xl font-bold overflow-hidden text-white shadow"
-    >
-    </div>
+      class="absolute cover top-0 left-0 h-80 w-full z-0 bg-black flex items-center justify-center text-8xl font-bold overflow-hidden text-white shadow"
+    />
   {/if}
 </div>
 <div class="col-span-12 md:col-span-9 flex flex-col gap-4">
@@ -37,11 +39,6 @@
       <div bind:this={avatarPad} />
       <div class="absolute -top-8 w-full" bind:this={avatarContainer}>
         {#if avatar}
-          <!-- <img
-            src={avatar}
-            class="rounded-md border w-full h-full object-cover"
-            alt="Group"
-          /> -->
           <div class="border rounded-md overflow-hidden w-full shadow">
             <ItemImage {title} {color} image={avatar} on:load={redrawAvatar} />
           </div>
@@ -51,7 +48,7 @@
           </div>
         {:else}
           <div class="border rounded-md overflow-hidden w-full shadow">
-            <Sigil {patp} {color} />
+            <Sigil {patp} />
           </div>
         {/if}
       </div>
@@ -75,3 +72,9 @@
   </div>
   <slot />
 </div>
+
+<style>
+  .cover {
+    /* mask-image: linear-gradient(to top, transparent 2%, black 30%); */
+  }
+</style>

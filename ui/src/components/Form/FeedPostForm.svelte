@@ -2,10 +2,9 @@
   import { createEventDispatcher } from 'svelte';
   import { me, poke } from '@root/api';
   import { state, keyStrToObj, getCurator } from '@root/state';
-  import { RecommendModal } from '@components';
+  import { RecommendModal, Sigil } from '@components';
   import {
     TextArea,
-    Sigil,
     IconButton,
     AppIcon,
     GroupIcon,
@@ -66,18 +65,15 @@
 </script>
 
 <div
-  class="grid grid-cols-12 gap-y-3 p-3 rounded-lg shadow border border-black"
+  class="grid grid-cols-12 gap-2 lg:gap-4 p-3 rounded-lg shadow border border-black"
 >
-  <div class="col-span-1 w-10 h-10 rounded-md overflow-hidden">
-    <Sigil patp={me} {color} />
+  <div class="col-span-1">
+    <div class="rounded-md overflow-hidden">
+      <Sigil patp={me} />
+    </div>
   </div>
   <div class="col-span-11">
-    <TextArea
-      placeholder="Share a limerick, maybe"
-      bind:value={content}
-      minRows={1}
-      maxRows={10}
-    />
+    <TextArea placeholder="Share a limerick, maybe" bind:value={content} />
   </div>
   <div class="col-span-12 col-start-2 flex justify-between">
     <div class="flex gap-4">

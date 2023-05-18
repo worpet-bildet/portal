@@ -40,7 +40,6 @@
     on:dragenter={() => (hovering = index)}
     class:bg-black={hovering === index}
     class:text-white={hovering === index}
-    class="border rounded-lg"
   >
     <slot {item} />
   </div>

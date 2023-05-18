@@ -5,35 +5,33 @@
   import { subscribeToItem, getContact } from '@root/api';
   import { state, getItem, keyStrFromObj } from '@root/state';
   import { getMeta } from '@root/util';
-  import { Sigil } from '@fragments';
-  import { ItemVerticalListPreview } from '@components';
+  import { ItemVerticalListPreview, Sigil } from '@components';
 
   export let key;
 
   // try to get the item, and if we don't have it, subscribe to it
-  let item, color;
+  let item;
   state.subscribe((s) => {
     item = getItem(keyStrFromObj(key));
     if (s.isLoaded && !item) {
       return subscribeToItem(key);
     }
-    // in theory this should be cheaper but the state is abit fkd rn
-    getContact(getMeta(item).ship)
-      .then((profile) => ({ color } = profile))
-      .catch((e) => {
-        /*ignore*/
-      });
   });
 </script>
 
 <!-- <Sigil config={{ point: ship }} /> -->
 {#if item}
   {@const { blurb, ship, createdAt, ref } = getMeta(item)}
-  <div class="grid grid-cols-12 rounded-lg shadow p-5 border gap-2" in:fade>
-    <div class="col-span-1 w-10 h-10 rounded-md overflow-hidden">
-      <a href={`/${ship}`} use:link>
-        <Sigil patp={ship} {color} />
-      </a>
+  <div
+    class="grid grid-cols-12 rounded-lg shadow p-5 border gap-2 lg:gap-4"
+    in:fade
+  >
+    <div class="col-span-1">
+      <div class="rounded-md overflow-hidden">
+        <a href={`/${ship}`} use:link>
+          <Sigil patp={ship} />
+        </a>
+      </div>
     </div>
     <div class="col-span-11 flex flex-col gap-2">
       <div class="flex gap-2 text-sm">
@@ -41,11 +39,11 @@
         <span>·</span>
         <span>{format(createdAt)}</span>
       </div>
-      <p>
+      <div class="whitespace-pre-wrap line-clamp-50">
         {blurb}
-      </p>
+      </div>
       {#if ref}
-        <div class="rounded-lg border shadow">
+        <div class="rounded-lg">
           <ItemVerticalListPreview key={ref} />
         </div>
       {/if}

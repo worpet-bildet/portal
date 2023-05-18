@@ -47,7 +47,12 @@
     <div class="col-span-12">Loading...</div>
   {:else}
     {#each collections as collection}
-      <a use:link href={`${collection.keyStr}`} class="col-span-4" in:fade>
+      <a
+        use:link
+        href={`${collection.keyStr}`}
+        class="col-span-4 h-full"
+        in:fade
+      >
         <SquarePreview key={collection.keyObj} />
       </a>
     {/each}

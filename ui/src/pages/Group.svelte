@@ -26,9 +26,9 @@
   const loadGroup = () => {
     if (!groupKey) return;
     group = getGroup(groupKey);
-    if ($state.isLoaded && !group)
+    if ($state.isLoaded && !group) {
       return subscribeToItem(keyStrToObj(`/group/${groupKey}/`));
-    ({ cover, image, description, title } = getMeta(group));
+    }
     joinedDetails = getJoinedGroupDetails(groupKey);
   };
 
@@ -40,21 +40,13 @@
   }
 
   let group, joinedDetails;
-  // let feed = [];
-
-  let cover, image, description, title;
-
   state.subscribe((s) => {
     if (!s.isLoaded) return;
     loadGroup();
   });
 
-  const join = () => {
-    joinGroup(groupKey).then(refreshGroups);
-  };
-  const leave = () => {
-    leaveGroup(groupKey).then(refreshGroups);
-  };
+  const join = () => joinGroup(groupKey).then(refreshGroups);
+  const leave = () => leaveGroup(groupKey).then(refreshGroups);
 
   const channelLink = (channelKey) => {
     return `${window.location.origin}/apps/groups/groups/${groupKey}/channels/${channelKey}`;
@@ -64,6 +56,7 @@
 </script>
 
 {#if group}
+  {@const { cover, image, description, title } = getMeta(group)}
   <div class="grid grid-cols-12 gap-x-8">
     <ItemDetail {cover} avatar={image} {title} {description} type="group">
       <div class="col-span-12 md:col-span-9">

@@ -4,8 +4,9 @@
   import { state, keyStrFromObj, getItem } from '@root/state';
   import { subscribeToItem } from '@root/api';
   import { getMeta } from '@root/util';
-  import { CollectionsSquarePreview } from '@components';
-  import { ItemImage, Sigil, TrashIcon, EditIcon } from '@fragments';
+  import { CollectionsSquarePreview, Sigil } from '@components';
+  import { ItemImage, TrashIcon, EditIcon } from '@fragments';
+
   export let key;
   export let clickable = true;
   export let removable = false;
@@ -16,12 +17,18 @@
 
   let item, isSubscribing;
 
-  state.subscribe((s) => {
+  $: loadItem(key);
+
+  const loadItem = (key) => {
     item = getItem(keyStrFromObj(key));
-    if (s.isLoaded && !item && !isSubscribing) {
+    if ($state.isLoaded && !item && !isSubscribing) {
       isSubscribing = true;
       return subscribeToItem(key);
     }
+  };
+
+  state.subscribe(() => {
+    loadItem(key);
   });
 
   const dispatch = createEventDispatcher();
@@ -42,7 +49,7 @@
     keyStr,
   } = item}
   {@const { title, blurb, description, image, color } = getMeta(item)}
-  <div
+  <button
     on:click={() => {
       if (clickable) {
         navigate();
@@ -51,7 +58,7 @@
         dispatch('selected', { key, selected });
       }
     }}
-    class="grid grid-cols-12 w-full items-center gap-4 p-1 hover:bg-black hover:text-white cursor-pointer rounded-lg text-xs"
+    class="grid grid-cols-12 w-full items-center gap-4 p-1 hover:bg-black hover:text-white cursor-pointer border shadow rounded-lg text-xs text-left"
     class:bg-black={selected}
     class:text-white={selected}
   >
@@ -61,19 +68,18 @@
       class:col-span-4={small}
     >
       {#if struc === 'ship' && !image}
-        <Sigil patp={ship} {color} />
+        <Sigil patp={ship} />
       {:else if struc === 'collection' && !image}
         <CollectionsSquarePreview {key} withTitle={false} />
       {:else}
         <ItemImage {image} {title} {color} />
       {/if}
     </div>
-    <div class="col-span-8 flex flex-col gap-2">
-      <div class="flex items-center gap-2 overflow-hidden">
+    <div class="col-span-8 flex flex-col items-start gap-2 overflow-hidden">
+      <div class="flex items-center gap-2">
         <div
-          class="font-bold"
+          class="font-bold line-clamp-1"
           class:text-sm={small}
-          class:line-clamp-1={small}
           class:text-xl={!small}
         >
           {title}
@@ -81,33 +87,35 @@
         <div>·</div>
         <div>{struc}</div>
       </div>
-      <div class="line-clamp-2">{blurb || description || ''}</div>
+      <div class="line-clamp-2" class:line-clamp-1={small}>
+        {blurb || description || ''}
+      </div>
     </div>
     {#if editable || removable}
       <div
         class="col-span-1 col-start-12 flex gap-2 justify-center items-center"
       >
         {#if editable}
-          <div
+          <button
             class="w-8 h-8 hover:text-blue-500 cursor-pointer"
             on:click|stopPropagation
             on:click={() => edit(keyStr)}
           >
             <EditIcon />
-          </div>
+          </button>
         {/if}
         {#if removable}
-          <div
-            class="w-8 h-8 hover:text-red-500 cursor-pointer"
+          <button
+            class="w-8 h-8 hover:bg-red-500 cursor-pointer"
             on:click|stopPropagation
             on:click={() => remove(keyStr)}
           >
             <TrashIcon />
-          </div>
+          </button>
         {/if}
       </div>
     {/if}
-  </div>
+  </button>
 {:else}
-  <div class="p-4">Loading...</div>
+  <div class="p-4 border shadow rounded-lg">Loading...</div>
 {/if}

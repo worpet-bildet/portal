@@ -107,8 +107,6 @@
           Briefly describe the collection (optional)
         </div>
         <TextArea
-          minRows={1}
-          maxRows={10}
           bind:value={description}
           placeholder="Things to help you navigate Urbit for the first time"
         />
@@ -123,7 +121,7 @@
               time: '',
             }}
             <div class="flex justify-between">
-              <div class="border shadow rounded-lg w-full">
+              <div class="w-full">
                 <ItemVerticalListPreview
                   {key}
                   clickable={false}
@@ -144,7 +142,7 @@
         {#each Object.entries(apps) as [path, { title, image, ship, info }]}
           {@const key = { struc: 'app', ship, cord: path, time: '' }}
           <div class="flex justify-between">
-            <div class="border shadow rounded-lg w-full">
+            <div class="w-full">
               <ItemVerticalListPreview
                 {key}
                 clickable={false}

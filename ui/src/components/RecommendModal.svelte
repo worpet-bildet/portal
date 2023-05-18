@@ -50,9 +50,9 @@
         <MySigil />
       </div>
       <div class="col-span-11">
-        <TextArea minRows={3} maxRows={10} bind:value={blurb} />
+        <TextArea bind:value={blurb} />
       </div>
-      <div class="col-span-11 col-start-2 border">
+      <div class="col-span-11 col-start-2">
         <ItemVerticalListPreview {key} clickable={false} />
       </div>
       <button

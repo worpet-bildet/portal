@@ -1,14 +1,7 @@
 <script>
   import { push } from 'svelte-spa-router';
   import { state, getCurator, getCuratorFeed, refreshPals } from '@root/state';
-  import {
-    subscribeToCurator,
-    subscribeToContactProfile,
-    addPal,
-    getContact,
-    removePal,
-    me,
-  } from '@root/api';
+  import { subscribeToCurator, addPal, removePal, me } from '@root/api';
   import { getMeta } from '@root/util';
   import {
     CollectionsGrid,
@@ -32,88 +25,42 @@
   export let params;
   let { patp } = params;
 
-  $: {
-    ({ patp } = params);
-    gettingProfile = false;
-    subscribingToCurator = false;
-    subscribingToCuratorFeed = false;
-    loadCurator($state);
-  }
-
-  let curator, featuredCollection;
   let feed = [];
-
-  // svelte is so nice episode #167
-  let activeTab = 'Activity';
-  let tabs = ['Activity', 'Collections'];
-
-  const subscribeTo = (patp) => {
-    subscribeToCurator(patp);
-    subscribeToContactProfile(patp);
-  };
-
-  let title,
-    cover,
-    image,
-    description,
-    color,
-    isMyPal,
-    pals,
-    profile,
-    noProfile,
-    gettingProfile;
-  let subscribingToCuratorFeed;
-  const loadCurator = async (s) => {
-    profile = {};
-    try {
-      if (!noProfile && !gettingProfile) {
-        gettingProfile = true;
-        profile = await getContact(patp);
-      }
-    } catch (e) {
-      noProfile = true;
-    }
-    curator = {
-      ...getCurator(patp),
-      bespoke: profile,
-      keyObj: { struc: 'ship', ship: patp },
-    };
-    ({ title, cover, image, description, color } = getMeta(curator));
+  let curator, isMyPal, subscribingToCurator;
+  const loadCurator = async () => {
+    curator = getCurator(patp);
     // featuredCollection = getCuratorFeaturedCollection(patp);
     feed = getCuratorFeed(patp);
-    isMyPal = !!s.pals?.[patp.slice(1)];
-    if (!feed && s.isLoaded && !subscribingToCuratorFeed) {
-      subscribingToCuratorFeed = true;
-      return subscribeTo(patp);
+    isMyPal = !!$state.pals?.[patp.slice(1)];
+    if (!feed && $state.isLoaded && !subscribingToCurator) {
+      subscribingToCurator = true;
+      return subscribeToCurator(patp);
     }
   };
+
+  $: {
+    ({ patp } = params);
+    subscribingToCurator = false;
+    loadCurator();
+  }
 
   state.subscribe((s) => {
     if (!s) return;
-    loadCurator(s);
+    loadCurator();
   });
 
-  // TODO
-  // Don't really like this being here but not really sure how to factor this
-  // out - might make sense to go back to using a modal for the items
-  export const togglePal = () => {
+  const togglePal = () => {
     let ship = patp.slice(1);
     if (isMyPal) return removePal(ship).then(refreshPals);
     addPal(ship).then(refreshPals);
   };
 
-  let subscribingToCurator = false;
-  $: if (
-    $state.isLoaded &&
-    !subscribingToCurator &&
-    (!curator || Object.values(curator).length === 0)
-  ) {
-    subscribingToCurator = true;
-    subscribeTo(patp);
-  }
+  let activeTab = 'Collections';
+  let tabs = ['Collections', 'Activity'];
 </script>
 
 {#if curator}
+  {@const { title, cover, image, description, color } = getMeta(curator)}
   <div class="grid grid-cols-12 gap-x-8">
     <ItemDetail
       {cover}
@@ -178,17 +125,15 @@
           <div class="grid gap-y-4">
             <div>{patp} recommends</div>
             {#each curator.bespoke.groups as key}
-              <div class="border shadow rounded-lg">
-                <ItemVerticalListPreview
-                  small
-                  key={{
-                    struc: 'group',
-                    ship: key.split('/')[0],
-                    cord: key.split('/')[1],
-                    time: '',
-                  }}
-                />
-              </div>
+              <ItemVerticalListPreview
+                small
+                key={{
+                  struc: 'group',
+                  ship: key.split('/')[0],
+                  cord: key.split('/')[1],
+                  time: '',
+                }}
+              />
             {/each}
           </div>
         </SidebarGroup>
