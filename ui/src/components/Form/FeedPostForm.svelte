@@ -44,7 +44,7 @@
   };
 
   // TODO: Factor out the selection of groups/apps into its own component
-  let groupModalOpen, appModalOpen, recommendModalOpen, selectedKey;
+  let groupModalOpen, appModalOpen, recommendModalOpen, selectedKey, color;
   let groups = {};
   let apps = {};
   state.subscribe((s) => {
