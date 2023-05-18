@@ -1,4 +1,5 @@
-/-  *portal-data, portal-config, *portal-action, *portal-message
+/-  *portal-data, portal-config, *portal-action, *portal-message,
+    portal-data-0
 /+  sig, io=agentio, mip, sss
 |%
 +$  card  card:agent:gall
@@ -225,7 +226,7 @@
                                   `''
                                   `%temp
                                   `bespoke
-                                  [%collection our.bowl '' '~2000.1.1']~
+                                  [%collection our.bowl '' 'all']~
                                   ~
                               ==
       ::  TODO wires state transition

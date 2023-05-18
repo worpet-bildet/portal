@@ -1,7 +1,6 @@
-/-   *treaty, group-preview=meta
+/-   *treaty, group-preview=meta, portal-data-0
 |%
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::
 ::
 ::  --  after everything works--
 ::  TODO - each bespoke has its own diffs? (SSS)
@@ -96,24 +95,6 @@
     ==
   +$  update  item ::  rename to diff? or add +$  diff?
   --
-
-
-  :: just =item, also for del
-
-  ::  delete -> removes from main collection
-  ::         -> adds %deleted lens
-
-  :: %create
-  ::   - new-item -> update
-  ::   - edit-col -> update
-  :: %append
-  :: %prepend
-  ::
-  :: - simply get item
-  :: %replace
-  :: %edit
-  :: %delete
-
 ::
 ::
 +$  meta
