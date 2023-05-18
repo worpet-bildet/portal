@@ -5,7 +5,7 @@
   import { Sigil } from '@components';
   import { ItemImage } from '@fragments';
 
-  export let pal;
+  export let pal, score;
 
   let image, title;
   state.subscribe(() => {
@@ -31,7 +31,10 @@
       {/if}
     </div>
     <div>
-      <div>{title || pal}</div>
+      <div class="line-clamp-1">{title || pal}</div>
+      {#if score}
+        <div class="text-xs">Portal score: {score}</div>
+      {/if}
     </div>
   </a>
 {/if}
