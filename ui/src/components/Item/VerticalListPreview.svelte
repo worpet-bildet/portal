@@ -78,9 +78,8 @@
     <div class="col-span-8 flex flex-col items-start gap-2 overflow-hidden">
       <div class="flex items-center gap-2">
         <div
-          class="font-bold"
+          class="font-bold line-clamp-1"
           class:text-sm={small}
-          class:line-clamp-1={small}
           class:text-xl={!small}
         >
           {title}
@@ -88,7 +87,9 @@
         <div>·</div>
         <div>{struc}</div>
       </div>
-      <div class="line-clamp-2">{blurb || description || ''}</div>
+      <div class="line-clamp-2" class:line-clamp-1={small}>
+        {blurb || description || ''}
+      </div>
     </div>
     {#if editable || removable}
       <div
