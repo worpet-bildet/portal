@@ -17,26 +17,24 @@
 |_  =bowl:gall
 +*  this        .
     default     ~(. (default-agent this %|) bowl)
-    timer-card  :*  %pass  /purge-timer  %arvo  %k  %fard  q.byk.bowl
-                 %purge-timer  noun+!>(`purge-time)  ==
 ++  on-init
   ^-  (quip card _this)
   =/  sub-init  [%sub [%collection portal-indexer '' '~2000.1.1']]
   :_  this
-  :~  ::  initialize purge timer
-      timer-card
-      ::  sub to home page
-      (~(act cards [[our.bowl %portal-store]]) sub-init)
-  ==
+  ::  sub to home page
+  [(~(act cards [[our.bowl %portal-store]]) sub-init)]~
 ::
 ++  on-save  !>(state)
 ++  on-load
   |=  =vase
   ^-  (quip card _this)
-  ?:  =(%1 -.q.vase)    `this(state *state-3:portal-config)
-  ?:  =(%2 -.q.vase)    `this(state *state-3:portal-config)
-  =/  old  !<(state-3 vase)
-  `this(state old)
+  =/  old  !<(versioned-state vase)
+  ?-  -.old
+    %0      `this(state *state-3:portal-config)
+    %1      `this(state *state-3:portal-config)
+    [%2 *]  `this(state *state-3:portal-config)
+    %3      `this(state old)
+  ==
 ::
 ++  on-poke
   |=  [=mark =vase]
