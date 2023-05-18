@@ -2,12 +2,10 @@ import { get, writable } from 'svelte/store';
 import {
   getPortalItems,
   getContacts,
-  getContact,
   getJoinedGroups,
   getInstalledApps,
   getPals,
   subscribeToGroup,
-  me,
 } from '@root/api';
 import config from '@root/config';
 import { fromUrbitTime } from '@root/util';
@@ -31,30 +29,6 @@ export const refreshContacts = () => {
   getContacts().then((contacts) => {
     state.update((s) => {
       s.profiles = contacts;
-      // also mush this into the state because it's easier when dealing with
-      // multiple struc types at other places in the app
-      Object.entries(contacts).forEach(([key, data]) => {
-        const keyStr = `/ship/${key}//`;
-        s[keyStr] = {
-          ...s[keyStr],
-          bespoke: { ...data },
-          keyObj: keyStrToObj(keyStr),
-        };
-      });
-      return s;
-    });
-  });
-};
-
-export const refreshProfile = (patp) => {
-  getContact(patp).then((profile) => {
-    const keyStr = `/ship/${patp}//`;
-    state.update((s) => {
-      s[keyStr] = {
-        ...s[keyStr],
-        bespoke: profile,
-        keyObj: keyStrToObj(keyStr),
-      };
       return s;
     });
   });
@@ -66,24 +40,17 @@ export const refreshGroups = () => {
     // so we filter them here to avoid showing useless info
     let _groups = {};
     state.update((s) => {
-      Object.entries(groups || {})
-        .map((g) => {
-          let [
-            key,
-            {
-              meta: { title },
-            },
-          ] = g;
-          if (!title) {
-            g[1].joining = true;
-          }
-          return g;
-        })
-        .forEach(([key, data]) => {
-          // we should subscribe to the group here
-          if (!s[`/group/${key}/`]) subscribeToGroup(key);
-          _groups[key] = data;
-        });
+      Object.entries(groups || {}).forEach((g) => {
+        let [key, data] = g;
+        let {
+          meta: { title },
+        } = data;
+        if (!title) {
+          g[1].joining = true;
+        }
+        if (!s[`/group/${key}/`]) subscribeToGroup(key);
+        _groups[key] = data;
+      });
       s.groups = _groups;
       return s;
     });
@@ -118,19 +85,6 @@ export const refreshApps = () => {
 export const refreshPals = async () => {
   try {
     const pals = await getPals();
-    Object.keys(pals.outgoing).forEach((p) => {
-      const shipKey = `/ship/~${p}//`;
-      getContact(`~${p}`)
-        .then((profile) => {
-          state.update((s) => {
-            s[shipKey] = { ...s[shipKey], bespoke: profile };
-            return s;
-          });
-        })
-        .catch((e) => {
-          // we can safely ignore this error, they are likely to just be offline
-        });
-    });
     state.update((s) => {
       s.pals = pals.outgoing;
       s.palsLoaded = true;
@@ -145,7 +99,14 @@ export const refreshPals = async () => {
 };
 
 export const getCurator = (patp) => {
-  return { ...get(state)?.[`/ship/${patp}//`] };
+  return {
+    keyObj: { ship: patp, struc: 'ship', cord: '', time: '' },
+    bespoke: { ...get(state)?.profiles?.[patp] },
+  };
+};
+
+export const getProfile = (patp) => {
+  return get(state)?.profiles?.[patp];
 };
 
 export const getCuratorFeed = (patp) => {
@@ -210,9 +171,7 @@ export const handleSubscriptionEvent = (event, type) => {
       break;
     case 'contact-news':
       state.update((s) => {
-        const shipKey = `/ship/${event.who}//`;
-        if (!s[shipKey]) s[shipKey] = {};
-        s[shipKey].bespoke = event.con;
+        s.profiles[event.who] = event.con;
         return s;
       });
       break;
@@ -248,8 +207,8 @@ const globalFeedKey = (indexer) => `/feed/${indexer}//global`;
 
 export const refreshAll = () => {
   refreshPortalItems();
-  // refreshContacts();
-  refreshProfile(me);
+  refreshContacts();
+  // refreshProfile(me);
   refreshApps();
   refreshGroups();
   refreshPals();

@@ -25,17 +25,6 @@
 <div
   class="relative flex justify-between items-center shadow border-b px-10 bg-nav bg-opacity-80 backdrop-blur-sm lg:px-16 2xl:px-56"
 >
-  <!-- <a
-    use:link
-    href="/"
-    class="flex items-center text-xl font-bold gap-2 text-white"
-  >
-    <img
-      class="w-16"
-      src="https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/logo2.svg"
-      alt="logo"
-    />
-    <div class="font-logo text-black font-bold text-2xl">Portal</div> -->
   <a use:link href="/" class="flex items-center text-2xl font-bold gap-2">
     <img class="w-16" src={logo} alt="logo" />
     <div class="font-logo flex items-center pt-1">PORTAL</div>

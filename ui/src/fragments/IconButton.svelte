@@ -16,11 +16,7 @@
 >
   <span class="w-6">
     {#if loading}
-      <svelte:component
-        this={LoadingIcon}
-        class="text-black w-6"
-        stroke="#000"
-      />
+      <svelte:component this={LoadingIcon} class="w-6" />
     {:else}
       <svelte:component this={icon} />
     {/if}

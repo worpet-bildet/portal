@@ -107,8 +107,6 @@
           Briefly describe the collection (optional)
         </div>
         <TextArea
-          minRows={1}
-          maxRows={10}
           bind:value={description}
           placeholder="Things to help you navigate Urbit for the first time"
         />

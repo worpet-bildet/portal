@@ -1,7 +1,7 @@
 <script>
   import { push, pop } from 'svelte-spa-router';
-  import { me, poke } from '@root/api';
-  import { state, getItem, getCollectionItems } from '@root/state';
+  import { me } from '@root/api';
+  import { state, getItem, getCollectionItems, getCurator } from '@root/state';
   import { getMeta } from '@root/util';
   import {
     ItemDetail,
@@ -13,10 +13,8 @@
     RightSidebar,
     IconButton,
     LeftArrowIcon,
-    TrashIcon,
     ShareIcon,
     SidebarGroup,
-    Modal,
   } from '@fragments';
   export let params;
 
@@ -24,43 +22,18 @@
   let { wild } = params;
   let collectionKey = `/collection/${wild}`;
 
-  let collection,
-    ship,
-    blurb,
-    title,
-    image,
-    items,
-    cover,
-    recommendModalOpen,
-    deleteModalOpen;
+  let collection, items, recommendModalOpen;
+
   state.subscribe(() => {
     collection = getItem(collectionKey);
     if (!collection) return;
-    ({ title, ship, blurb, image } = getMeta(collection));
-    ({
-      keyObj: { ship },
-    } = collection);
-
-    ({ cover } = getMeta(`/ship/${ship}//`));
-
     items = getCollectionItems(collection.keyStr);
   });
-
-  // const deleteCollection = () => {
-  //   poke({
-  //     app: 'portal-manager',
-  //     mark: 'portal-action',
-  //     json: {
-  //       delete: {
-  //         key: collection.keyObj,
-  //       },
-  //     },
-  //   });
-  //   pop();
-  // };
 </script>
 
 {#if collection}
+  {@const { title, ship, blurb, image } = getMeta(collection)}
+  {@const { cover } = getCurator(collection?.keyObj?.ship)}
   <div class="grid grid-cols-12 gap-x-8">
     <ItemDetail
       patp={ship}
@@ -88,31 +61,9 @@
             icon={EditIcon}
             on:click={() => push(`/collection-edit/${wild}`)}>Edit</IconButton
           >
-          <!-- <IconButton
-            class="hover:bg-red-500"
-            icon={TrashIcon}
-            on:click={() => (deleteModalOpen = true)}>Delete</IconButton
-          > -->
         {/if}
       </SidebarGroup>
     </RightSidebar>
   </div>
   <RecommendModal bind:open={recommendModalOpen} key={collection.keyObj} />
-  <!-- <Modal bind:open={deleteModalOpen}>
-    <div class="flex flex-col justify-between h-full">
-      <div class="text-2xl">Delete Collection</div>
-      <div>
-        Are you sure you want to delete {title}?
-      </div>
-      <div class="flex justify-between">
-        <IconButton
-          icon={LeftArrowIcon}
-          on:click={() => (deleteModalOpen = false)}>Back</IconButton
-        >
-        <IconButton icon={TrashIcon} on:click={deleteCollection}
-          >Delete</IconButton
-        >
-      </div>
-    </div>
-  </Modal> -->
 {/if}

@@ -10,18 +10,12 @@
   export let key;
 
   // try to get the item, and if we don't have it, subscribe to it
-  let item, color;
+  let item;
   state.subscribe((s) => {
     item = getItem(keyStrFromObj(key));
     if (s.isLoaded && !item) {
       return subscribeToItem(key);
     }
-    // in theory this should be cheaper but the state is abit fkd rn
-    getContact(getMeta(item).ship)
-      .then((profile) => ({ color } = profile))
-      .catch((e) => {
-        /*ignore*/
-      });
   });
 </script>
 
@@ -40,9 +34,9 @@
         <span>·</span>
         <span>{format(createdAt)}</span>
       </div>
-      <p>
+      <div class="whitespace-pre-wrap line-clamp-50">
         {blurb}
-      </p>
+      </div>
       {#if ref}
         <div class="rounded-lg">
           <ItemVerticalListPreview key={ref} />

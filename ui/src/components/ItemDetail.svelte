@@ -6,10 +6,8 @@
   export let cover, avatar, title, description, patp, color, type;
 
   let avatarPad, avatarContainer;
-  $: {
-    if (avatarPad && avatarContainer) {
-      redrawAvatar();
-    }
+  $: if (avatarPad && avatarContainer) {
+    redrawAvatar();
   }
   const redrawAvatar = () => {
     if (avatarPad && avatarContainer) {
@@ -37,11 +35,6 @@
       <div bind:this={avatarPad} />
       <div class="absolute -top-8 w-full" bind:this={avatarContainer}>
         {#if avatar}
-          <!-- <img
-            src={avatar}
-            class="rounded-md border w-full h-full object-cover"
-            alt="Group"
-          /> -->
           <div class="border rounded-md overflow-hidden w-full shadow">
             <ItemImage {title} {color} image={avatar} on:load={redrawAvatar} />
           </div>

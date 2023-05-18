@@ -44,7 +44,7 @@
   };
 
   // TODO: Factor out the selection of groups/apps into its own component
-  let groupModalOpen, appModalOpen, recommendModalOpen, selectedKey, color;
+  let groupModalOpen, appModalOpen, recommendModalOpen, selectedKey;
   let groups = {};
   let apps = {};
   state.subscribe((s) => {
@@ -71,12 +71,7 @@
     <Sigil patp={me} />
   </div>
   <div class="col-span-11">
-    <TextArea
-      placeholder="Share a limerick, maybe"
-      bind:value={content}
-      minRows={1}
-      maxRows={10}
-    />
+    <TextArea placeholder="Share a limerick, maybe" bind:value={content} />
   </div>
   <div class="col-span-12 col-start-2 flex justify-between">
     <div class="flex gap-4">

@@ -6,6 +6,7 @@
   import { getMeta } from '@root/util';
   import { CollectionsSquarePreview, Sigil } from '@components';
   import { ItemImage, TrashIcon, EditIcon } from '@fragments';
+
   export let key;
   export let clickable = true;
   export let removable = false;
@@ -16,12 +17,18 @@
 
   let item, isSubscribing;
 
-  state.subscribe((s) => {
+  $: loadItem(key);
+
+  const loadItem = (key) => {
     item = getItem(keyStrFromObj(key));
-    if (s.isLoaded && !item && !isSubscribing) {
+    if ($state.isLoaded && !item && !isSubscribing) {
       isSubscribing = true;
       return subscribeToItem(key);
     }
+  };
+
+  state.subscribe(() => {
+    loadItem(key);
   });
 
   const dispatch = createEventDispatcher();
@@ -42,7 +49,7 @@
     keyStr,
   } = item}
   {@const { title, blurb, description, image, color } = getMeta(item)}
-  <div
+  <button
     on:click={() => {
       if (clickable) {
         navigate();
@@ -68,8 +75,8 @@
         <ItemImage {image} {title} {color} />
       {/if}
     </div>
-    <div class="col-span-8 flex flex-col gap-2">
-      <div class="flex items-center gap-2 overflow-hidden">
+    <div class="col-span-8 flex flex-col items-start gap-2 overflow-hidden">
+      <div class="flex items-center gap-2">
         <div
           class="font-bold"
           class:text-sm={small}
@@ -88,26 +95,26 @@
         class="col-span-1 col-start-12 flex gap-2 justify-center items-center"
       >
         {#if editable}
-          <div
+          <button
             class="w-8 h-8 hover:text-blue-500 cursor-pointer"
             on:click|stopPropagation
             on:click={() => edit(keyStr)}
           >
             <EditIcon />
-          </div>
+          </button>
         {/if}
         {#if removable}
-          <div
-            class="w-8 h-8 hover:text-red-500 cursor-pointer"
+          <button
+            class="w-8 h-8 hover:bg-red-500 cursor-pointer"
             on:click|stopPropagation
             on:click={() => remove(keyStr)}
           >
             <TrashIcon />
-          </div>
+          </button>
         {/if}
       </div>
     {/if}
-  </div>
+  </button>
 {:else}
   <div class="p-4 border shadow rounded-lg">Loading...</div>
 {/if}

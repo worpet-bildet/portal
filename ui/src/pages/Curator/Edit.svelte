@@ -96,7 +96,7 @@
       </div>
       <div class="flex flex-col gap-2">
         <div>Bio</div>
-        <TextArea bind:value={bio} minRows={1} maxRows={5} />
+        <TextArea bind:value={bio} />
       </div>
       <div class="flex flex-col gap-2">
         <div>Avatar</div>

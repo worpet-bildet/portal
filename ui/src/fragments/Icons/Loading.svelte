@@ -1,6 +1,6 @@
 <!-- By Sam Herbert (@sherb), for everyone. More @ http://goo.gl/7AJzbL -->
 <svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg" {...$$props}>
-  <g fill="none" fill-rule="evenodd" stroke-width="2">
+  <g fill="none" fill-rule="evenodd" stroke-width="2" stroke="#000">
     <circle cx="22" cy="22" r="1">
       <animate
         attributeName="r"

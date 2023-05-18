@@ -1,7 +1,7 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import { state, keyStrFromObj, getItem } from '@root/state';
-  import { poke } from '@root/api';
+  import { poke, subscribeToItem } from '@root/api';
   import { Sigil } from '@components';
   import {
     StepForm,
@@ -50,9 +50,6 @@
     dispatch('add', path);
   };
   const saveOtherItem = () => {
-    // should we do the saving of the item here?? it's a bit messy because we
-    // don't save the app / group up above we delegate back to the parent but i
-    // think this is probably the "cleanest" way to do it, if not the prettiest
     poke({
       app: 'portal-manager',
       mark: 'portal-action',
@@ -74,21 +71,8 @@
       time: '',
       cord: '',
     };
-    // this is kinda tricky because we have to subscribe to the new ship and
-    // then when the subscription is finished we have to add it to the
-    // collection - this is not trivial because this component does not know
-    // when the ship has been subscribed to - the poke being responded to does
-    // not mean that the action has finished... or does it?
     if (!getItem(keyStrFromObj(key))) {
-      await poke({
-        app: 'portal-manager',
-        mark: 'portal-action',
-        json: {
-          sub: {
-            key: { ...key },
-          },
-        },
-      });
+      await subscribeToItem(key);
     }
     add(keyStrFromObj(key));
   };
