@@ -68,7 +68,7 @@
   ?>  ?=([%collection *] bespoke.col)
   =/  l  (skim-strucs:keys key-list.bespoke.col ~[%app %group %ship])
   =^  cards-2  state  (remove:handle-poke:stor [%remove l col-key])  ::  be careful, might not work correctly?
-  =.  l  (skip-strucs:keys key-list.bespoke.col ~[%ship])
+  =.  l  (skip-strucs:keys l ~[%ship])
   =^  cards-3  state
     (append:handle-poke:stor [%append l [%collection our.bowl '' 'all']])
   :_  this
