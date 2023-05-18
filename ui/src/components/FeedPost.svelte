@@ -22,11 +22,16 @@
 <!-- <Sigil config={{ point: ship }} /> -->
 {#if item}
   {@const { blurb, ship, createdAt, ref } = getMeta(item)}
-  <div class="grid grid-cols-12 rounded-lg shadow p-5 border gap-2" in:fade>
-    <div class="col-span-1 w-10 h-10 rounded-md overflow-hidden">
-      <a href={`/${ship}`} use:link>
-        <Sigil patp={ship} />
-      </a>
+  <div
+    class="grid grid-cols-12 rounded-lg shadow p-5 border gap-2 lg:gap-4"
+    in:fade
+  >
+    <div class="col-span-1">
+      <div class="rounded-md overflow-hidden">
+        <a href={`/${ship}`} use:link>
+          <Sigil patp={ship} />
+        </a>
+      </div>
     </div>
     <div class="col-span-11 flex flex-col gap-2">
       <div class="flex gap-2 text-sm">

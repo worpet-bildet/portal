@@ -14,18 +14,22 @@
       avatarPad.style.height = `${avatarContainer.clientHeight}px`;
     }
   };
+  $: if (!cover || !isUrl(cover)) {
+    cover =
+      'https://images.unsplash.com/photo-1554921027-b91f0beeb07d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80';
+  }
 </script>
 
 <div class="col-span-12 w-full h-56">
   {#if isUrl(cover)}
     <img
       src={cover}
-      class="absolute top-0 left-0 object-cover h-80 w-full z-0 shadow"
+      class="absolute top-0 left-0 object-cover cover h-80 w-full z-0 shadow"
       alt="Profile banner"
     />
   {:else}
     <div
-      class="absolute top-0 left-0 h-80 w-full z-0 bg-black flex items-center justify-center text-8xl font-bold overflow-hidden text-white shadow"
+      class="absolute cover top-0 left-0 h-80 w-full z-0 bg-black flex items-center justify-center text-8xl font-bold overflow-hidden text-white shadow"
     />
   {/if}
 </div>
@@ -68,3 +72,9 @@
   </div>
   <slot />
 </div>
+
+<style>
+  .cover {
+    /* mask-image: linear-gradient(to top, transparent 2%, black 30%); */
+  }
+</style>

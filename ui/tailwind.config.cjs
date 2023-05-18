@@ -5,7 +5,8 @@ module.exports = {
       logo: ['Arkhip'],
     },
     colors: {
-      nav: '#CFCACACC',
+      // nav: '#CFCACACC',
+      nav: '#CFCACA',
       'gradient-top': '#CECCD0',
       'gradient-bottom': '#A5AAB2',
       black: '#383838',

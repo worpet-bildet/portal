@@ -65,10 +65,12 @@
 </script>
 
 <div
-  class="grid grid-cols-12 gap-y-3 p-3 rounded-lg shadow border border-black"
+  class="grid grid-cols-12 gap-2 lg:gap-4 p-3 rounded-lg shadow border border-black"
 >
-  <div class="col-span-1 w-10 h-10 rounded-md overflow-hidden">
-    <Sigil patp={me} />
+  <div class="col-span-1">
+    <div class="rounded-md overflow-hidden">
+      <Sigil patp={me} />
+    </div>
   </div>
   <div class="col-span-11">
     <TextArea placeholder="Share a limerick, maybe" bind:value={content} />
