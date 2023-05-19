@@ -16,7 +16,7 @@
     },
     {
       title: 'Explore',
-      link: `/${config.indexer}`,
+      link: `/explore`,
     },
     {
       title: 'Feedback',
