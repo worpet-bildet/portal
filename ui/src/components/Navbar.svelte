@@ -80,16 +80,16 @@
           >{n.title}</button
         >
       {/each}
-      <div class="flex items-center gap-4 border w-full justify-end">
+      <a
+        use:link
+        href={`/${me}`}
+        class="flex items-center gap-4 border w-full justify-end"
+      >
         <div class="font-bold">Profile</div>
-        <a
-          use:link
-          href={`/${me}`}
-          class="w-10 h-10 rounded-md overflow-hidden"
-        >
+        <div class="w-10 h-10 rounded-md overflow-hidden">
           <MySigil />
-        </a>
-      </div>
+        </div>
+      </a>
     </div>
   {/if}
 
