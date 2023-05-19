@@ -10,34 +10,9 @@
 +$  indexed-as-curator  $~(%.n ?)
 +$  onboarded  $~(%.n ?)
 ::
-+$  state-0
-  $:  %0
-      default-curators=(set key:portal-data-0)
-      portal-curator=key:portal-data-0
-  ==
-::
-+$  state-1
-  $:  %1
-      default-curators=(set key:portal-data-0)
-      portal-curator=key:portal-data-0
-      purge-timer=?
-      purge-time=@dr
-      portal-indexer=@p
-      indexed-as-curator=?
-      onboarded=?
-  ==
-::
-+$  state-2
-  $:  %2
-      my-feed=feed:portal-data-0
-      default-curators=(set key:portal-data-0)
-      portal-curator=key:portal-data-0
-      purge-timer=?
-      purge-time=@dr
-      portal-indexer=@p
-      indexed-as-curator=?
-      onboarded=?
-  ==
++$  state-0  [%0 *]
++$  state-1  [%1 *]
++$  state-2  [[%2 *] *]  :: state-2 had feed SSS stuff next to it
 ::
 +$  state-3
   $:  %3
