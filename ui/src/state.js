@@ -127,7 +127,12 @@ export const getCuratorCollections = (patp) => {
       return k.struc === 'collection';
     })
     ?.filter((k) => k.time !== '~2000.1.1')
-    ?.filter((k) => k.time !== 'index');
+    ?.filter((k) => k.time !== 'index')
+    ?.filter((k) => k.time !== 'all');
+};
+
+export const getCuratorAllCollectionItems = (patp) => {
+  return getCollectionItems(allCollectionKey(patp));
 };
 
 export const getCuratorFeaturedCollection = (patp) => {
@@ -186,6 +191,11 @@ export const handleSubscriptionEvent = (event, type) => {
   }
 };
 
+export const groupKeyToItemKey = (groupKey) => {
+  const parts = groupKey.split('/');
+  return `/group/${parts[0]}/${parts[1]}/`;
+};
+
 export const keyStrFromObj = ({ struc, ship, cord, time }) => {
   return `/${struc}/${ship}/${cord}/${time}`;
 };
@@ -202,6 +212,7 @@ export const keyStrToObj = (str) => {
 
 const mainCollection = (patp) => get(state)[mainCollectionKey(patp)];
 const mainCollectionKey = (patp) => `/collection/${patp}//~2000.1.1`;
+const allCollectionKey = (patp) => `/collection/${patp}//all`;
 const feedKey = (patp) => `/feed/${patp}//~2000.1.1`;
 const globalFeedKey = (indexer) => `/feed/${indexer}//global`;
 

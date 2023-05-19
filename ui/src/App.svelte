@@ -2,7 +2,15 @@
   import Router, { location } from 'svelte-spa-router';
   import { state } from '@root/state';
 
-  import { CuratorIndex, Feed, Item, Group, App, Other } from './pages';
+  import {
+    CuratorIndex,
+    Feed,
+    Item,
+    Group,
+    App,
+    Other,
+    Explore,
+  } from './pages';
   import { Curator, EditCurator } from './pages/Curator';
   import { Collection, EditCollection } from './pages/Collection';
   import { Navbar, Onboard } from '@components';
@@ -11,6 +19,7 @@
     '/': Feed,
     '/index': CuratorIndex,
     '/feed': Feed,
+    '/explore': Explore,
     '/item/:itemkey': Item,
     '/group/:host/:cord': Group,
     '/app/:host/:cord': App,
@@ -23,7 +32,6 @@
 
   state.subscribe((s) => {
     console.log({ state: s });
-    // TODO: get the onboarding status of the user here
   });
 
   location.subscribe(() => {
