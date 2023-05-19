@@ -130,15 +130,7 @@
     [~ %sss %behn @ @ @ %item @ @ @ @ ~]  [(behn:da-item |3:wire) this]
   ==
 ::
-++  on-watch  ::  should it return items on initial sub?
-  |=  =path
-  ^-  (quip card _this)
-  ?:  =(path /updates)  `this
-  =/  item  (~(gut by items) (path-to-key:conv path) ~)
-  :_  this
-  ?~  item  ~
-  [%give %fact ~ %portal-update !>(item)]~
-::
+++  on-watch  _`this
 ++  on-leave  on-leave:default
 ::
 ++  on-agent
@@ -175,8 +167,12 @@
       `[key item]`[(path-to-key:conv +.p.k) rock.v]
     items+(~(uni by items) -)
     ::
-    ::  TODO
-      [%keys ~]  keys+~(key by items)
+      [%keys ~]  
+    =+  ~(tap by read:da-item)
+    =+  %-  silt  %+  turn  -
+      |=  [k=[=ship =dude:gall p=^^path] v=[? ? =rock:portal-item]]
+      `key`(path-to-key:conv +.p.k)
+    keys+(~(uni in ~(key by items)) -)
     ::
       [%item @ @ @ @ ~]
     :-  %item
@@ -186,9 +182,6 @@
     =/  item  (~(gut by read:da-item) [ship.key %portal-store [%item t.path]] ~)
     ?~  item  item
     rock:item
-    ::
-    ::  TODO
-      [%item-exists @ @ @ @ ~]  (~(has by items) (path-to-key:conv t.path))
     ::
     ::  TODO
       [%item-valid @ @ @ @]
@@ -226,35 +219,13 @@
   ?>  |(=(our.bowl ship.key.item) =(lens.item %temp))
   (~(put by items) key.item item)
 ::
-++  del-item  ::  only used in %purge, %delete just labels item as deleted
-              ::  and it's actually removed during purge
-  |=  =key
-  ^-  ^items
-  (~(del by items) key)
-::
-++  del-items
-  |=  =key-list
-  ^-  ^items
-  =+  `(map key item)`(malt (turn key-list |=(=key [key *item])))
-  (~(del by items) -)
 ::
 ++  cards-methods
-  ::  TODO
-  :: - on-action sub
   |%
-  ::  TODO exception for temp and not our
-  ::  for upd and for cards from sss
-  :: OVO sa give:da/u-read is sss-a
   ++  upd
     |=  =item
     ^-  (list card)
     [%give %fact [/updates]~ %portal-update !>(item)]~
-  ::  whether its on-agent or on-poke
-    ::    fe-update
-    ::    PM update
-    ::    subs update
-    ::  previous card making exception:  validity store -> no cards
-  ::
   --
 ::
 ++  handle-poke  ::  all arms here should output [cards items]

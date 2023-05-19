@@ -17,7 +17,6 @@ SCRY examples from dojo
 =lib -build-file /=portal=/lib/portal/hoon
 
 .^(store-result:data %gx /=portal-store=/keys/noun)
-.^(store-result:data %gx /=portal-store=/item-exists/collection/(scot %p our)//~2000.1.1/noun)
 .^(store-result:data %gx /=portal-store=/item/collection/(scot %p our)//~2000.1.1/noun)
 .^(store-result:data %gx /=portal-store=/item-valid/collection/(scot %p our)//~2000.1.1/noun)
 
