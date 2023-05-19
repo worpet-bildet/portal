@@ -3,7 +3,10 @@
   export let loading = false;
   export let async = false;
   export let disabled = false;
+  export let active;
   export let icon;
+
+  $: console.log({ active });
 </script>
 
 <button
@@ -11,6 +14,8 @@
   class:pointer-events-none={disabled}
   class:opacity-50={disabled}
   class:cursor-not-allowed={disabled}
+  class:bg-black={active}
+  class:text-white={active}
   on:click
   on:click={() => (async ? (loading = true) : null)}
 >

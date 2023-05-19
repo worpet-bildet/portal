@@ -33,3 +33,4 @@ export { default as LoadingIcon } from './Icons/Loading.svelte';
 export { default as SearchIcon } from './Icons/Search.svelte';
 export { default as GroupIcon } from './Icons/Group.svelte';
 export { default as HamburgerIcon } from './Icons/Hamburger.svelte';
+export { default as SparklesIcon } from './Icons/Sparkles.svelte';
