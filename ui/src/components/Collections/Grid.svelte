@@ -19,7 +19,8 @@
       if (
         $state.isLoaded &&
         !getItem(keyStrFromObj(c)) &&
-        !subscribingTo[keyStrFromObj(c)]
+        !subscribingTo[keyStrFromObj(c)] &&
+        c.time !== 'all'
       ) {
         subscribingTo[keyStrFromObj(c)] = true;
         subscribeToItem(c);
@@ -28,7 +29,8 @@
     collections = (getCuratorCollections(patp) || [])
       .map((c) => getItem(keyStrFromObj(c)))
       .filter((c) => !!c)
-      .filter((c) => c?.bespoke?.['key-list']?.length > 0);
+      .filter((c) => c?.bespoke?.['key-list']?.length > 0)
+      .filter((c) => c?.keyObj?.time !== 'all');
   };
 
   state.subscribe(() => {
