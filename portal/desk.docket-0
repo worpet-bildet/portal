@@ -7,5 +7,5 @@
   license+''
   image+'https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/tile2.svg'
   base+'portal'
-  glob-ames+[~master-dilryd-mopreg 0v0]
+  glob-ames+[~zod 0v0]
 ==

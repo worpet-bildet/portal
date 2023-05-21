@@ -1,5 +1,5 @@
 /-  *portal-data, portal-config, *portal-action, *portal-message,
-    portal-data-0
+    portal-data-0, gr=social-graph
 /+  sig, io=agentio, mip, sss
 |%
 +$  card  card:agent:gall
@@ -24,6 +24,18 @@
         `ship`(slav %p +<:path)
         `cord`+>-:path
         `cord`+>+<:path
+  ::
+  ++  key-to-node
+    |=  [=key]
+    ;;  node:gr
+    [%entity %portal-store (spat (key-to-path key))]
+  ::
+  :: doesn't work for temp items, because last path element is ''
+  ++  node-to-key  
+    |=  [=node:gr]
+    ;;  key
+    ?>  ?=([%entity *] node)
+    (path-to-key (stab name.node))
   --
 ::
 ++  scry
@@ -229,6 +241,7 @@
                                   ?:  ?|  =(%app struc.key.act) 
                                           =(%group struc.key.act)  ==
                                     [%collection our.bowl '' 'all']~
+                                  ~
                                   ~
                                   ~
                               ==

@@ -2,10 +2,10 @@
 |%
 ::
 +$  default-curators  (set key)
-+$  portal-curator  _~master-dilryd-mopreg
++$  portal-curator  _~zod
 +$  purge-timer  $~(%.y ?)
 +$  purge-time  _~d1
-+$  portal-indexer  _~master-dilryd-mopreg
++$  portal-indexer  _~zod
 +$  indexed-as-curator  $~(%.n ?)
 +$  onboarded  $~(%.n ?)
 ::

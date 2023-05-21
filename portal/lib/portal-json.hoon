@@ -1,4 +1,4 @@
-/-  *portal-data, *portal-action
+/-  *portal-data, *portal-action, gr=social-graph
 /+  *portal, docket, treaty
 |%
 ++  enjs
@@ -59,7 +59,7 @@
         ['meta' (enjs-meta meta.item)]
         ['sig' (enjs-sig sig.item)]
     ==
-    ++  enjs-update
+  ++  enjs-update
     |=  [=item]
     ^-  json
     %-  pairs
@@ -78,7 +78,7 @@
     ::     [%keys =key-set]  :: TODO change to key-list
     ::     [%valid =valid]
     :: ==
-    ++  enjs-store-result
+  ++  enjs-store-result
     |=  [=store-result]
     ^-  json
     ?@  store-result  b+store-result
@@ -86,8 +86,22 @@
           %items  %+  frond  'items'  (enjs-items items.store-result)
           %item  %+  frond  'item'  (enjs-item-or-null item.store-result)
     ==
-
-
+  ++  enjs-graph-result
+    |=  [=graph-result:gr]
+    ^-  json
+    ?@  graph-result  b+graph-result
+    ?+  -.graph-result  !!
+      %nodes  %+  frond  'nodes'
+                :-  %a
+                %+  turn  ~(tap in +.graph-result)
+                enjs-node-to-key
+    ==
+  ++  enjs-node-to-key  ::  will crash on temp item
+    |=  [=node:gr]
+    ^-  json
+    %-  enjs-key
+    (node-to-key:conv node)
+  ::
   ++  enjs-key-and-item
     |=  [=key =item]
     ^-  json
@@ -347,6 +361,7 @@
                       bespoke+dejs-soft-bespoke-create
                       append-to+dejs-key-list
                       prepend-to-feed+dejs-key-list
+                      tags-to+dejs-tagging-list
                   ==
       create+(pole-to-cell raw)
         %edit
@@ -359,6 +374,21 @@
       edit+edit(- (need -.edit))
     ==
   ::
+  ++  dejs-tagging-list
+    |=  jon=json
+    ^-  (list [=key tag-to=path tag-from=path])
+    %.  jon
+    (ar:dejs dejs-key-tag-tag)
+  ++  dejs-key-tag-tag
+    |=  jon=json
+    ^-  [=key tag-to=path tag-from=path]
+    %.  jon
+    %-  ot:dejs
+    :~  key+dejs-key
+        tag-to+dejs-path
+        tag-from+dejs-path
+    ==
+
   ++  pole-to-cell
     |*  pol=(pole *)
     ?~  pol  !!
