@@ -1,4 +1,5 @@
-/-  *portal-data, *portal-message, portal-item, portal-data-0, gr=social-graph
+/-  *portal-data, *portal-message, portal-item, portal-data-0, portal-data-1,
+    gr=social-graph
 /+  default-agent, dbug, *portal, sss
 =/  item-sub  (mk-subs:sss portal-item ,[%item @ @ @ @ ~])
 =/  item-pub  (mk-pubs:sss portal-item ,[%item @ @ @ @ ~])
@@ -6,6 +7,7 @@
 +$  versioned-state
   $%  state-0
       state-1
+      state-2
   ==
 +$  state-0
   $:  %0
@@ -13,6 +15,12 @@
   ==
 +$  state-1
   $:  %1
+      =items:portal-data-1
+      =_item-sub
+      =_item-pub
+  ==
++$  state-2
+  $:  %2
       =items
       =_item-sub
       =_item-pub
@@ -20,7 +28,7 @@
 +$  card  card:agent:gall
 --
 %-  agent:dbug
-=|  state-1
+=|  state-2
 =*  state  -
 ^-  agent:gall
 =<
@@ -34,7 +42,7 @@
               (da item-sub bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
 ++  on-init
   ^-  (quip card _this)
-  =.  state  *state-1
+  =.  state  *state-2
   =^  cards  state  init-sequence:stor
   [cards this]
 ::
@@ -45,8 +53,12 @@
   =/  old  !<(versioned-state vase)
   ::  1. get state up to date!
   =.  state
-    ?:  ?=(%1 -.old)  old
-    ?>  ?=(%0 -.old)  (state-0-to-1:state-transition:stor old)
+    ?-  -.old
+      %0  %-  state-1-to-2:state-transition:stor
+             (state-0-to-1:state-transition:stor old)
+      %1  (state-1-to-2:state-transition:stor old)
+      %2  old
+    ==
   ::  2. init-sequence to create and sub if sth was missed previously
   =^  cards  state  init-sequence:stor
   ::  3. cleanup past mistakes
@@ -54,7 +66,7 @@
   =+  ~(val by items.state)
   =^  cards-1  state
     %-  tail  %^  spin  -  [*(list card) state]
-    |=  [=item q=[cards=(list card) state=state-1]]
+    |=  [=item q=[cards=(list card) state=state-2]]
     :-  item
     =/  path  [%item (key-to-path:conv key.item)]
     =.  state  state.q
@@ -274,7 +286,7 @@
       =+  ~(tap in ~(key by items))
       =^  cards  state
         %-  tail  %^  spin  -  [*(list card) state]
-        |=  [=key q=[cards=(list card) state=state-1]]
+        |=  [=key q=[cards=(list card) state=state-2]]
         :-  key
         =.  state  state.q
         ?:  ?|  =(lens.item %temp)
@@ -334,7 +346,7 @@
       ::  add to collections
       =^  cards  state
         %-  tail  %^  spin  `key-list`append-to.act  [cards state]
-        |=  [col-key=key q=[cards=(list card) state=state-1]]
+        |=  [col-key=key q=[cards=(list card) state=state-2]]
         :-  col-key
         ?>  ?=(%collection struc.col-key)
         =.  state  state.q  ::  append takes state from subj, so it is modified
@@ -343,7 +355,7 @@
       ::  add to feeds
       =^  cards  state
         %-  tail  %^  spin  `key-list`prepend-to-feed.act  [cards state]
-        |=  [feed-key=key q=[cards=(list card) state=state-1]]
+        |=  [feed-key=key q=[cards=(list card) state=state-2]]
         :-  feed-key
         ?>  ?=(%feed struc.feed-key)
         =.  state  state.q
@@ -355,7 +367,7 @@
       =^  cards  state
         %-  tail  %^  spin  
         `(list [=key tag-to=^path tag-from=^path])`tags-to.act  [cards state]
-        |=  [[=key tag-to=^path tag-from=^path] q=[cards=(list card) state=state-1]]
+        |=  [[=key tag-to=^path tag-from=^path] q=[cards=(list card) state=state-2]]
         :-  [key tag-to tag-from]
         =/  our  (key-to-node:conv key.item)
         =/  their    (key-to-node:conv key)
@@ -506,11 +518,30 @@
 ::
 ++  state-transition
   |%
+  ++  state-1-to-2
+    |=  =state-1
+    ^-  state-2
+    =+  ~(tap by items.state-1)
+    =/  new-items  ^-  ^items  %-  malt  %+  murn  -
+      |=  [key-1=key:portal-data-1 item-1=item:portal-data-1]
+      (key-item-1-to-2 key-1 item-1)
+    =/  s2  *state-2
+    s2(items new-items)
+  ::
+  ++  key-item-1-to-2
+      |=  [key-1=key:portal-data-1 item-1=item:portal-data-1]
+    ^-  (unit [key item])
+    ?:  !=(our.bowl ship.key-1)
+      ~
+    ?:  ?=(%temp lens.item-1)
+      ~
+    `[key-1 item-1]
+  ::
   ++  state-0-to-1
     |=  =state-0
     ^-  state-1
     =+  ~(tap by all-items.state-0)
-    =/  new-items  ^-  ^items  %-  malt  %+  murn  -
+    =/  new-items  ^-  items:portal-data-1  %-  malt  %+  murn  -
       |=  [key-0=key:portal-data-0 item-0=item:portal-data-0]
       (key-item-0-to-1 key-0 item-0)
     =/  s1  *state-1
@@ -518,7 +549,7 @@
   ::
   ++  key-item-0-to-1
     |=  [key-0=key:portal-data-0 item-0=item:portal-data-0]
-    ^-  (unit [key item])
+    ^-  (unit [key:portal-data-1 item:portal-data-1])
     ?:  !=(our.bowl ship.key-0)
       ~
     ?:  ?=(%nonitem -.type.key-0)
