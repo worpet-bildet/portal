@@ -9,21 +9,20 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "@tailwindcss/line-clamp": "^0.4.4",
     "@tlon/sigil-js": "^1.4.5",
-    "@urbit/api": "^2.0.0",
-    "@urbit/http-api": "^2.0.0",
+    "@urbit/api": "^2.3.0",
+    "@urbit/http-api": "^2.3.0",
     "svelte-autosize": "^1.1.0",
     "svelte-spa-router": "^3.3.0",
     "timeago.js": "^4.0.2"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^2.0.4",
-    "@urbit/vite-plugin-urbit": "urbit/vite-plugin-urbit.git",
-    "autoprefixer": "^10.4.12",
-    "postcss": "^8.4.18",
-    "svelte": "^3.52.0",
-    "tailwindcss": "^3.2.1",
-    "vite": "^4.2.0"
+    "@urbit/vite-plugin-urbit": "^1.0.0",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.21",
+    "svelte": "^3.58.0",
+    "tailwindcss": "^3.3.1",
+    "vite": "^4.2.1"
   }
 }
