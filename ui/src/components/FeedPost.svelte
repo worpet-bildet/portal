@@ -33,7 +33,7 @@
         </a>
       </div>
     </div>
-    <div class="col-span-11 flex flex-col gap-2">
+    <div class="col-span-12 md:col-span-11 flex flex-col gap-2">
       <div class="flex gap-2 text-sm">
         <a href={`/${ship}`} use:link>{ship}</a>
         <span>·</span>
