@@ -20,7 +20,7 @@
   }
 </script>
 
-<div class="col-span-12 w-full h-56">
+<div class="col-span-12 w-full h-64">
   {#if isUrl(cover)}
     <img
       src={cover}
