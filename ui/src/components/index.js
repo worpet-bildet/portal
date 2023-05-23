@@ -13,3 +13,4 @@ export { default as CollectionsAddItemForm } from './Collections/AddItemForm.sve
 export { default as SidebarPal } from './Sidebar/Pal.svelte';
 export { default as ItemVerticalListPreview } from './Item/VerticalListPreview.svelte';
 export { default as Sigil } from './Sigil.svelte';
+export { default as ShipForm } from './ShipForm.svelte';

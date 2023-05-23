@@ -173,7 +173,6 @@
               bind:value={newShip}
               placeholder="~worpet-bildet"
             />
-            <!-- <Sigil patp={lastValidShip} /> -->
           </div>
         </div>
         <div class="col-span-12 flex justify-between">
