@@ -2,7 +2,9 @@
   import { subscribeToItem } from '@root/api';
   import { state, getItem, keyStrFromObj } from '@root/state';
   import { getMeta } from '@root/util';
+  import { Sigil } from '@components';
   import { ItemImage, LoadingIcon } from '@fragments';
+  import placeholder from '@assets/placeholder.svg';
 
   export let key;
   export let withTitle = true;
@@ -51,15 +53,21 @@
           <ItemImage {image} {title} on:load={resetHeight} />
         </div>
       {:else}
-        {#each previewItems as { image, title, color }, i}
+        {#each previewItems as { struc, image, title, color }, i}
           <div
-            class="border"
+            class="border overflow-hidden"
             class:col-span-2={previewItems.length === 1 ||
               (previewItems.length === 3 && i === 2) ||
               previewItems.length === 2}
             class:row-span-2={previewItems.length === 1}
           >
-            <ItemImage {image} {title} {color} on:load={resetHeight} />
+            {#if struc === 'ship'}
+              <Sigil patp={title} />
+              <!-- Ok this is super dumb but I'm not 100% sure how else to do it -->
+              <img src={placeholder} class="hidden" on:load={resetHeight} />
+            {:else}
+              <ItemImage {image} {title} {color} on:load={resetHeight} />
+            {/if}
           </div>
         {/each}
       {/if}
