@@ -486,17 +486,23 @@
             %social-graph-edit
             !>(portal-store+[%set-perms /(scot %p our.bowl) %public])
     ==  ==
+  =^  cards-6  state  
+    %-  create:handle-poke
+    :*  %create  ~  ~  `'published-apps'  `%def
+    `[%collection 'My Apps' 'Collection of all apps I have published.' '' ~]
+    [%collection our.bowl '' '~2000.1.1']~  ~  ~  ==
+  ::
   ?:  =(our.bowl ~zod)
-    =^  cards-6  state  
+    =^  cards-7  state  
       %-  create:handle-poke
       [%create ~ ~ `'global' `%global `[%feed ~] ~ ~ ~]
-    =^  cards-7  state  
+    =^  cards-8  state  
       %-  create:handle-poke
       [%create ~ ~ `'index' `%def `[%collection '' '' '' ~] ~ ~ ~]
     :_  state
-    (zing ~[cards cards-1 cards-2 cards-3 cards-4 cards-5 cards-6 cards-7])
+    (zing ~[cards cards-1 cards-2 cards-3 cards-4 cards-5 cards-6 cards-7 cards-8])
   :_  state
-  (zing ~[cards cards-1 cards-2 cards-3 cards-4 cards-5])
+  (zing ~[cards cards-1 cards-2 cards-3 cards-4 cards-5 cards-6])
 ::
 ++  state-transition
   |%

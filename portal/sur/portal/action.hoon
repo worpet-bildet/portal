@@ -29,7 +29,7 @@
         ==
       ==
       ::
-      [%replace =key =lens =bespoke]  ::  TODO should it act like put or edit?, i.e. can it create a nonexisting item. NO!
+      [%replace =key =lens =bespoke]  ::  TODO should it act like put or edit?, i.e. can it create a nonexisting item. NO! (?)
       ::
       [%append =key-list col-key=[struc=%collection =ship =cord time=cord]]
       [%prepend =key-list col-key=[struc=%collection =ship =cord time=cord]]

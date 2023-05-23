@@ -215,7 +215,7 @@
   --
 ::
 ++  manager
-  |_  [=bowl:gall state=state-3:portal-config cards=_*(list card)]
+  |_  [=bowl:gall state=state-4:portal-config cards=_*(list card)]
   ++  on-poke
     ::  all arms here should output cards
     ::  TODO cleanup PM state and maybe output that then
@@ -223,7 +223,7 @@
     ::
     ++  sub
       |=  [act=action]
-      ^-  [(list card) state-3:portal-config]
+      ^-  [(list card) state-4:portal-config]
       ?>  ?=([%sub *] act)
       :_  state
       ?.  =(time.key.act '')   ::  branch on whether is %temp (empty time.key)
@@ -264,7 +264,6 @@
           %app
         =.  bespoke  [%app '' *signature *treaty]
         =/  path  /treaty/(scot %p ship.key.act)/[`@tas`cord.key.act]
-        ~&  path
         =/  wire  [%treaty (key-to-path:conv key.act)]
         =/  sub-status  (~(gut by wex.bowl) [wire ship.key.act %treaty] ~)
         :~  [(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(create-empty-temp))]
