@@ -59,6 +59,19 @@
       %1  (state-1-to-2:state-transition:stor old)
       %2  old
     ==
+  ::  -  delete empty collections, 
+  ::  ~2000.1.2 should have been deleted???
+  ::  are there any collections which are empty but important because they will get filled later????????
+  ::  BE CAREFUL BEFORE PUSHING TO NETWORK
+  =.  items.state
+    =+  ~(tap by items.state)
+    %-  malt  %+  murn  -
+    |=  [=key =item]
+    ?:  ?=([%collection *] bespoke.item)
+      ?~  key-list.bespoke.item
+        ~
+      `[key item]
+    `[key item]
   ::  2. init-sequence to create and sub if sth was missed previously
   =^  cards  state  init-sequence:stor
   ::  3. cleanup past mistakes
@@ -86,7 +99,7 @@
       (append:handle-poke:stor [%append l [%collection our.bowl '' 'all']])
     [(welp c1 c2) state]
   ::  - track all ships whose items we were subbed to before using %portal-graph
-  ::  this will inevitably send a bunch of unnecessary tracks
+  ::  this will inevitably send a bunch of unnecessary tracks(?)
   =/  cards-3
     =+  ~(tap in ~(key by read:da-item))
     %-  head  %-  tail  
@@ -96,6 +109,7 @@
     ?:  (~(has in ships.q) ship.p)  q   ::  if already subbed, no need
     :-  (welp cards.q (track-gr:cards-methods:stor ship.p))
         (~(put in ships.q) ship.p)
+  ::
   :_  this
   ;:(welp cards cards-1 cards-2 cards-3)
 ::
