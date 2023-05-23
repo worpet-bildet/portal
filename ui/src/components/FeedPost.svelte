@@ -2,8 +2,8 @@
   import { link } from 'svelte-spa-router';
   import { fade } from 'svelte/transition';
   import { format } from 'timeago.js';
-  import { subscribeToItem, getContact } from '@root/api';
-  import { state, getItem, keyStrFromObj } from '@root/state';
+  import { subscribeToItem } from '@root/api';
+  import { state, getItem, keyStrFromObj, getCurator } from '@root/state';
   import { getMeta } from '@root/util';
   import { ItemVerticalListPreview, Sigil } from '@components';
 
@@ -22,6 +22,9 @@
 <!-- <Sigil config={{ point: ship }} /> -->
 {#if item}
   {@const { blurb, ship, createdAt, ref } = getMeta(item)}
+  {@const {
+    bespoke: { nickname },
+  } = getCurator(ship)}
   <div
     class="grid grid-cols-12 rounded-lg shadow p-5 border gap-2 lg:gap-4"
     in:fade
@@ -35,7 +38,7 @@
     </div>
     <div class="col-span-11 flex flex-col gap-2">
       <div class="flex gap-2 text-sm">
-        <a href={`/${ship}`} use:link>{ship}</a>
+        <a href={`/${ship}`} use:link>{nickname || ship}</a>
         <span>·</span>
         <span>{format(createdAt)}</span>
       </div>
