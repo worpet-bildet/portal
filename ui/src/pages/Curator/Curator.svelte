@@ -40,7 +40,6 @@
 
   $: {
     ({ patp } = params);
-    subscribingToCurator = false;
     loadCurator();
   }
 
@@ -88,7 +87,7 @@
               </div>
             {/if}
           {:else if activeTab === 'Collections'}
-            <CollectionsGrid {patp} />
+            <CollectionsGrid {patp} bind:loading={subscribingToCurator} />
           {/if}
         </div>
       </div>
