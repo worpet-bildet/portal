@@ -62,7 +62,6 @@
         },
       },
     });
-    pop();
   };
 
   let addModalOpen = false;
@@ -78,7 +77,6 @@
   let item;
   const edit = (key) => {
     item = getItem(items.find((i) => i.keyStr === key).keyStr);
-
     editModalOpen = true;
   };
 
@@ -103,6 +101,7 @@
     items = items;
     addModalOpen = false;
     save();
+    pop();
   };
 
   const onSaved = () => {

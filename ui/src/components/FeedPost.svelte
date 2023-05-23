@@ -9,7 +9,6 @@
 
   export let key;
 
-  // try to get the item, and if we don't have it, subscribe to it
   let item;
   state.subscribe((s) => {
     item = getItem(keyStrFromObj(key));
@@ -17,9 +16,12 @@
       return subscribeToItem(key);
     }
   });
+
+  // TODO: do some parsing of the blurb to figure out whether there are any
+  // links that we should respect, and if those links are images we should work
+  // out how to render them properly
 </script>
 
-<!-- <Sigil config={{ point: ship }} /> -->
 {#if item}
   {@const { blurb, ship, createdAt, ref } = getMeta(item)}
   <div
@@ -27,7 +29,7 @@
     in:fade
   >
     <div class="col-span-1">
-      <div class="rounded-md overflow-hidden">
+      <div class="rounded-md overflow-hidden shadow">
         <a href={`/${ship}`} use:link>
           <Sigil patp={ship} />
         </a>
