@@ -184,7 +184,9 @@
   resetForm();
 </script>
 
-<IconButton icon={PlusIcon} on:click={addCollection}>New Collection</IconButton>
+<IconButton icon={PlusIcon} on:click={addCollection} active
+  >New Collection</IconButton
+>
 <Modal bind:open={showModal}>
   <StepForm
     bind:formstep
