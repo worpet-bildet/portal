@@ -84,7 +84,6 @@
     ?:  (~(has in ships.q) ship.p)  q   ::  if already subbed, no need
     :-  (welp cards.q (track-gr:cards-methods:stor ship.p))
         (~(put in ships.q) ship.p)
-  ~&  cards-3
   :_  this
   ;:(welp cards cards-1 cards-2 cards-3)
 ::
@@ -252,12 +251,7 @@
     ^-  (list card)
     :~  :*  %pass  /gr-tag  %agent  [our.bowl %portal-graph]  %poke 
             %social-graph-edit  !>(edit)
-        ==
-        ::
-        :*  %pass  /gr-perm  %agent  [our.bowl %portal-graph]  %poke 
-            %social-graph-edit  !>([app [%set-perms tag %public]]:edit)
-        ==
-    ==
+    ==  ==
   ::
   ++  upd
     |=  =item
@@ -487,17 +481,22 @@
     :*  %create  ~  ~  `'all'  `%def
     `[%collection 'All' 'Collection of all apps, groups and ships.' '' ~]
     [%collection our.bowl '' '~2000.1.1']~  ~  ~  ==
+  =/  cards-5    ::  - make your tags public
+    :~  :*  %pass  /gr-perm  %agent  [our.bowl %portal-graph]  %poke
+            %social-graph-edit
+            !>(portal-store+[%set-perms /(scot %p our.bowl) %public])
+    ==  ==
   ?:  =(our.bowl ~zod)
-    =^  cards-5  state  
+    =^  cards-6  state  
       %-  create:handle-poke
       [%create ~ ~ `'global' `%global `[%feed ~] ~ ~ ~]
-    =^  cards-6  state  
+    =^  cards-7  state  
       %-  create:handle-poke
       [%create ~ ~ `'index' `%def `[%collection '' '' '' ~] ~ ~ ~]
     :_  state
-    (zing ~[cards cards-1 cards-2 cards-3 cards-4 cards-5 cards-6])
+    (zing ~[cards cards-1 cards-2 cards-3 cards-4 cards-5 cards-6 cards-7])
   :_  state
-  (zing ~[cards cards-1 cards-2 cards-3 cards-4])
+  (zing ~[cards cards-1 cards-2 cards-3 cards-4 cards-5])
 ::
 ++  state-transition
   |%
