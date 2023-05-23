@@ -27,7 +27,7 @@
 </script>
 
 <div
-  class="relative flex justify-between items-center shadow border-b px-10 backdrop-blur-xl md:px-16 lg:px-32 2xl:px-56"
+  class="relative flex justify-between items-center shadow border-b px-2 backdrop-blur-xl md:px-16 lg:px-32 2xl:px-56"
 >
   <a use:link href="/" class="flex items-center text-2xl font-bold gap-2">
     <img class="w-16" src={logo} alt="logo" />
@@ -53,7 +53,7 @@
 
   {#if isMobileNavOpen}
     <div
-      class="absolute top-0 right-0 flex flex-col items-end gap-4 bg-nav py-5 px-5 md:hidden"
+      class="absolute top-0 right-0 flex flex-col items-end gap-4 bg-nav pt-2 pb-5 px-5 md:hidden"
     >
       <button
         class="w-10 h-10"

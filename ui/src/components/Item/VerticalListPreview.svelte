@@ -77,7 +77,11 @@
         <ItemImage {image} {title} {color} />
       {/if}
     </div>
-    <div class="col-span-8 flex flex-col items-start gap-2 overflow-hidden">
+    <div
+      class="flex flex-col items-start gap-2 overflow-hidden"
+      class:col-span-10={!small}
+      class:col-span-8={small}
+    >
       <div class="flex items-center gap-2">
         <div
           class="font-bold line-clamp-1"

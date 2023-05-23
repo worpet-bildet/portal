@@ -4,10 +4,10 @@
 
 {#if open}
   <div
-    class="fixed top-0 left-0 h-full w-full z-20 bg-gradient-bottom flex justify-center items-center opacity-70 backdrop-blur-xl"
+    class="fixed top-0 left-0 h-screen w-screen z-20 bg-gradient-bottom flex justify-center items-center opacity-70 backdrop-blur-xl"
   />
   <div
-    class="fixed top-0 left-0 h-full w-full flex justify-center items-center z-30"
+    class="fixed top-0 left-0 h-screen w-screen flex justify-center items-center z-30"
     on:click={() => (open = false)}
   >
     <div
