@@ -5,9 +5,14 @@
   import { ItemImage } from '@fragments';
   export let cover, avatar, title, description, patp, color, type;
 
-  let avatarPad, avatarContainer;
+  let avatarPad, avatarContainer, innerWidth;
   $: if (avatarPad && avatarContainer) {
     redrawAvatar();
+  }
+  $: {
+    if (innerWidth) {
+      redrawAvatar();
+    }
   }
   const redrawAvatar = () => {
     if (avatarPad && avatarContainer) {
@@ -20,6 +25,7 @@
   }
 </script>
 
+<svelte:window bind:innerWidth />
 <div class="col-span-12 w-full h-64">
   {#if isUrl(cover)}
     <img
