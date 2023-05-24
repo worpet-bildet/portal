@@ -58,7 +58,7 @@
         dispatch('selected', { key, selected });
       }
     }}
-    class="grid grid-cols-12 w-full items-center gap-4 p-1 hover:bg-black hover:text-white cursor-pointer border shadow rounded-lg text-xs text-left"
+    class="grid grid-cols-6 w-full items-center gap-4 p-1 hover:bg-black hover:text-white cursor-pointer border shadow rounded-lg text-xs text-left"
     class:bg-black={selected}
     class:text-white={selected}
   >
@@ -66,8 +66,8 @@
       class="border overflow-hidden h-full"
       class:rounded-2xl={!small}
       class:rounded-md={small}
-      class:col-span-2={!small}
-      class:col-span-4={small}
+      class:col-span-1={!small}
+      class:col-span-2={small}
     >
       {#if struc === 'ship' && !image}
         <Sigil patp={ship} />
@@ -79,8 +79,8 @@
     </div>
     <div
       class="flex flex-col items-start gap-2 overflow-hidden"
-      class:col-span-10={!small}
-      class:col-span-8={small}
+      class:col-span-5={!small}
+      class:col-span-4={small}
     >
       <div class="flex items-center gap-2">
         <div
