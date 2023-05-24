@@ -37,6 +37,7 @@
       [%remove =key-list col-key=[struc=%collection =ship =cord time=cord]]
       ::
       [%delete =key]  ::  adds [%deleted ~] lens
+      [%destroy =key]  :: abolishes the item from the atmosphere
       ::
       [%sub =key]
       [%sub-to-item =key]

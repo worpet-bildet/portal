@@ -43,27 +43,12 @@
   |=  =vase
   ^-  (quip card _this)
   =/  old  !<(versioned-state vase)
-  ::  1. get state up to date!
+  ::  -  get state up to date!
   =.  state
     ?:  ?=(%1 -.old)  old
     ?>  ?=(%0 -.old)  (state-0-to-1:state-transition:stor old)
-  ::  2. init-sequence to create and sub if sth was missed previously
-  =^  cards  state  init-sequence:stor
-  ::  3. cleanup past mistakes
-  ::  - publish all items which are unpublished
-  =+  ~(val by items.state)
-  =^  cards-1  state
-    %-  tail  %^  spin  -  [*(list card) state]
-    |=  [=item q=[cards=(list card) state=state-1]]
-    :-  item
-    =/  path  [%item (key-to-path:conv key.item)]
-    =.  state  state.q
-    ?:  (~(has by read:du-item) path)  q   ::  if already published, no need
-    ?:  =(lens.item %temp)  q              ::  if %temp, no need
-    =^  cards  item-pub.state.q  (give:du-item path [%whole item])
-    [(welp cards.q cards) state.q]
   ::  - remove all ships/groups/apps from main collection and add them to all collection
-  =^  cards-2  state
+  =^  cards  state
     =/  col-key  [%collection our.bowl '' '~2000.1.1']
     =/  col  (get-item col-key)
     ?>  ?=([%collection *] bespoke.col)
@@ -73,9 +58,44 @@
     =^  c2  state
       (append:handle-poke:stor [%append l [%collection our.bowl '' 'all']])
     [(welp c1 c2) state]
+  ::  -  destroy empty collections
+  =/  output
+    =+  ~(tap by items.state)
+    %-  tail  %^  spin  -  [*key-list *(list card) state]
+    |=  [p=[=key =item] q=[to-remove=key-list cards=(list card) state=state-1]]
+    :-  p
+    =.  state  state.q
+    ?:  ?=([%collection *] bespoke.item.p)
+      ?~  key-list.bespoke.item.p
+        ~&  >  "destroying {<key.p>}!"
+        =^  cards  state  (destroy:handle-poke:stor [%destroy key.p])
+        [(snoc to-remove.q key.p) ;:(welp cards cards.q) state]
+      [to-remove.q cards.q state]
+    [to-remove.q cards.q state]
+  =^  cards-1  state  +.output
+  ::  -  remove empty collections + ~2000.1.2 from main collection
+  =^  cards-2  state  
+    %-  remove:handle-poke:stor  :+  %remove
+    (snoc -.output [%collection our.bowl '' '~2000.1.2'])
+    [%collection our.bowl '' '~2000.1.1']
+  ::  - init-sequence to create and sub if sth was missed previously
+  =^  cards-3  state  init-sequence:stor
+  ::  - cleanup past mistakes
+  ::  - publish all items which are unpublished
+  =+  ~(val by items.state)
+  =^  cards-4  state
+    %-  tail  %^  spin  -  [*(list card) state]
+    |=  [=item q=[cards=(list card) state=state-1]]
+    :-  item
+    =/  path  [%item (key-to-path:conv key.item)]
+    =.  state  state.q
+    ?:  (~(has by read:du-item) path)  q   ::  if already published, no need
+    ?:  =(lens.item %temp)  q              ::  if %temp, no need
+    =^  cards  item-pub.state.q  (give:du-item path [%whole item])
+    [(welp cards.q cards) state.q]
   ::  - track all ships whose items we were subbed to before using %portal-graph
   ::  this will inevitably send a bunch of unnecessary tracks
-  =/  cards-3
+  =/  cards-5
     =+  ~(tap in ~(key by read:da-item))
     %-  head  %-  tail  
     %^  spin  -  [*(list card) (silt ~[our.bowl])]
@@ -85,7 +105,7 @@
     :-  (welp cards.q (track-gr:cards-methods:stor ship.p))
         (~(put in ships.q) ship.p)
   :_  this
-  ;:(welp cards cards-1 cards-2 cards-3)
+  ;:(welp cards cards-1 cards-2 cards-3 cards-4 cards-5)
 ::
 ++  on-poke
   |=  [=mark =vase]
@@ -235,7 +255,6 @@
   ^-  ^items
   ?>  |(=(our.bowl ship.key.item) =(lens.item %temp))
   (~(put by items) key.item item)
-::
 ::
 ++  cards-methods
   |%
@@ -457,6 +476,28 @@
         :_  state  (welp cards cards-1)
       =.  item-sub  (quit:da-item ship.key.act %portal-store path)
       [cards state]
+    ::
+    ++  destroy
+      |=  [act=action]
+      ^+  [*(list card) state]
+      ?>  ?=([%destroy *] act)
+      ?:  &(=(time.key.act '~2000.1.1') =(ship.key.act our.bowl))
+        ~&  "%portal: don't destroy default items"  `state
+      =/  path  [%item (key-to-path:conv key.act)]
+      =.  items.state  (~(del by items.state) key.act)
+      ?:  =(time.key.act '')  ::  is temp
+        :_  state
+        =-  [%pass [- +.path] %agent [ship.key.act -] %leave ~]~
+          ?+    struc.key.act    !!
+            %app    %treaty
+            %group  %get-group-preview
+          ==
+      ?:  =(our.bowl ship.key.act)
+        ::  =.  item-pub  (kill:du-item path^~)  No killing paths, 
+        ::  because then I have to live it if I want to publish there again
+        `state
+      =.  item-sub  (quit:da-item ship.key.act %portal-store path)
+      `state
     --
 ::
 ++  init-sequence
