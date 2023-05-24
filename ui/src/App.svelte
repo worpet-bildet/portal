@@ -1,6 +1,8 @@
 <script>
   import Router, { location } from 'svelte-spa-router';
+  import { GoogleAnalytics, ga } from '@beyonk/svelte-google-analytics';
   import { state } from '@root/state';
+  import config from '@root/config';
 
   import {
     CuratorIndex,
@@ -34,12 +36,15 @@
     console.log({ state: s });
   });
 
-  location.subscribe(() => {
+  location.subscribe((loc) => {
     window.scrollTo(0, 0);
+    ga.addEvent('pageview', { location: loc });
+    console.log({ location: loc });
   });
 </script>
 
 <main>
+  <GoogleAnalytics properties={[config.googleAnalyticsId]} />
   <div class="relative z-10">
     <Navbar />
   </div>

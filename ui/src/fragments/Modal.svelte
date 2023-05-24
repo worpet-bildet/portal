@@ -1,5 +1,16 @@
 <script>
   export let open = false;
+
+  // this feels suboptimal but it does the job
+  $: {
+    if (open) {
+      document.body.classList.add('overflow-hidden');
+      document.getElementById('app').classList.add('overflow-hidden');
+    } else {
+      document.body.classList.remove('overflow-hidden');
+      document.getElementById('app').classList.remove('overflow-hidden');
+    }
+  }
 </script>
 
 {#if open}
@@ -11,7 +22,7 @@
     on:click={() => (open = false)}
   >
     <div
-      class="inline justify-center items-center min-w-full md:min-w-[45rem] max-w-screen-lg max-h-[40rem] overflow-y-auto opacity-100 bg-gradient-top rounded-2xl border shadow-2xl"
+      class="inline justify-center items-center min-w-full md:min-w-[45rem] max-w-screen-lg max-h-screen md:max-h-[40rem] overflow-y-auto opacity-100 bg-gradient-top rounded-2xl border shadow-2xl"
       on:click|stopPropagation
     >
       <div class="w-full h-full p-4 relative">
