@@ -2,20 +2,71 @@
   import { link } from 'svelte-spa-router';
   import { fade } from 'svelte/transition';
   import { format } from 'timeago.js';
-  import { subscribeToItem } from '@root/api';
-  import { state, getItem, keyStrFromObj, getCurator } from '@root/state';
+  import { me, subscribeToItem, poke } from '@root/api';
+  import {
+    state,
+    getItem,
+    keyStrFromObj,
+    getCurator,
+    getReplies,
+  } from '@root/state';
   import { getMeta } from '@root/util';
-  import { ItemVerticalListPreview, Sigil } from '@components';
+  import { ItemVerticalListPreview, Sigil, FeedPostForm } from '@components';
+  import { CommentIcon, IconButton } from '@fragments';
 
   export let key;
+  export let allowReplies = true;
 
   let item;
+  let replies = [];
   state.subscribe((s) => {
     item = getItem(keyStrFromObj(key));
     if (s.isLoaded && !item) {
       return subscribeToItem(key);
     }
+    replies = getReplies(key.ship, key) || [];
+    console.log({ replies });
   });
+
+  // const doComment = (key) => {
+  //   // tags-to=(list [=key tag-to=path tag-from=path])
+  //   console.log({ key });
+  //   const { ship } = key;
+  //   return;
+  //   poke({
+  //     app: 'portal-manager',
+  //     mark: 'portal-action',
+  //     json: {
+  //       create: {
+  //         'tags-to': [
+  //           {
+  //             key,
+  //             'tag-to': `/${me}/reply-to`,
+  //             'tag-from': `/${ship}/reply-from`,
+  //           },
+  //         ],
+  //         bespoke: {
+  //           other: {
+  //             title: '',
+  //             blurb: 'i am replying to a comment',
+  //             link: '',
+  //             image: '',
+  //           },
+  //         },
+  //         // 'prepend-to-feed': [
+  //         //   {
+  //         //     ship: me,
+  //         //     struc: 'feed',
+  //         //     time: '~2000.1.1',
+  //         //     cord: '',
+  //         //   },
+  //         // ],
+  //       },
+  //     },
+  //   });
+  // };
+
+  let showCommentForm = false;
 
   // TODO: do some parsing of the blurb to figure out whether there are any
   // links that we should respect, and if those links are images we should work
@@ -53,6 +104,27 @@
         </div>
       {/if}
     </div>
+    {#if allowReplies}
+      <div class="flex">
+        <IconButton
+          icon={CommentIcon}
+          active={showCommentForm}
+          on:click={() => (showCommentForm = !showCommentForm)}
+        >
+          {#if replies.length > 0}
+            {replies.length}
+          {/if}
+        </IconButton>
+      </div>
+    {/if}
+    {#if showCommentForm}
+      <div class="flex flex-col gap-4 col-span-12">
+        <FeedPostForm replyTo={item.keyObj} recommendButtons={false} />
+        {#each replies as replyKey}
+          <svelte:self key={replyKey} allowReplies={false} />
+        {/each}
+      </div>
+    {/if}
   </div>
 {:else}
   <div class="rounded-lg shadow p-5" in:fade>Loading...</div>

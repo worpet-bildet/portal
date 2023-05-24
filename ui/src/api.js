@@ -14,6 +14,13 @@ export const getPortalItems = () => {
   });
 };
 
+export const getSocialItems = () => {
+  return scry({
+    app: 'portal-graph',
+    path: '/app/portal-store',
+  });
+};
+
 export const getContacts = () => {
   return scry({
     app: 'contacts',

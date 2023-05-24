@@ -1,6 +1,7 @@
 import { get, writable } from 'svelte/store';
 import {
   getPortalItems,
+  getSocialItems,
   getContacts,
   getJoinedGroups,
   getInstalledApps,
@@ -20,6 +21,16 @@ export const refreshPortalItems = () => {
         s[i.keyStr] = i;
       });
       s.isLoaded = true;
+      return s;
+    });
+  });
+};
+
+export const refreshSocialItems = () => {
+  getSocialItems().then((items) => {
+    console.log({ social: items.app });
+    state.update((s) => {
+      s.social = items.app;
       return s;
     });
   });
@@ -165,6 +176,10 @@ export const getJoinedGroupDetails = (groupKey) => {
   return get(state).groups?.[groupKey];
 };
 
+export const getReplies = (ship, key) => {
+  return get(state).social?.[`/${ship}/reply-from`]?.[keyStrFromObj(key)];
+};
+
 export const handleSubscriptionEvent = (event, type) => {
   console.log({ event, type });
   switch (type) {
@@ -218,6 +233,7 @@ const globalFeedKey = (indexer) => `/feed/${indexer}//global`;
 
 export const refreshAll = () => {
   refreshPortalItems();
+  refreshSocialItems();
   refreshContacts();
   // refreshProfile(me);
   refreshApps();
