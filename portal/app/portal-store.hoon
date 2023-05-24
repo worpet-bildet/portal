@@ -74,7 +74,7 @@
   =/  output
     =+  ~(tap by items.state)
     %-  tail  %^  spin  -  [*key-list *(list card) state]
-    |=  [p=[=key =item] q=[to-remove=key-list cards=(list card) state=state-1]]
+    |=  [p=[=key =item] q=[to-remove=key-list cards=(list card) state=state-2]]
     :-  p
     =.  state  state.q
     ?:  ?=([%collection *] bespoke.item.p)
