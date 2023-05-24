@@ -16,8 +16,8 @@
 +$  state-1
   $:  %1
       =items:portal-data-1
-      =_item-sub
-      =_item-pub
+      item-sub=*
+      item-pub=*
   ==
 +$  state-2
   $:  %2
@@ -577,7 +577,14 @@
       ~
     ?:  ?=(%temp lens.item-1)
       ~
-    `[key-1 item-1]
+    :+  ~  key-1
+    =>  item-1
+    :^  key
+        lens
+        ?:  ?=([%app *] bespoke)
+          [%app ~ [dist-desk sig treaty]:bespoke]
+        bespoke
+        meta
   ::
   ++  state-0-to-1
     |=  =state-0
@@ -606,15 +613,13 @@
                        image.general.data.item-0
                    ==
       =/  meta  [cord.key-0 (scot %da now.bowl) ~ [%public ~]]
-      =/  sig  (sign:sig our.bowl now.bowl [%item key lens bespoke meta])
-      (some [key [key lens bespoke meta sig]])
+      (some [key [key lens bespoke meta *signature]])
     ?:  ?=([%validity-store *] bespoke.data.item-0)
       =/  key  [%validity-store our.bowl '' cord.key-0]
       =/  lens  %def
-      =/  bespoke  [%validity-store *validity-records]
+      =/  bespoke  [%validity-store *validity-records:portal-data-1]
       =/  meta  [cord.key-0 (scot %da now.bowl) ~ [%public ~]]
-      =/  sig  (sign:sig our.bowl now.bowl [%item key lens bespoke meta])
-      (some [key [key lens bespoke meta sig]])
+      (some [key [key lens bespoke meta sig=*signature]])
     ?:  =(key-0 [our.bowl [%list %enditem %other ~] '~2000.1.2'])
       ~
     ?:  ?=([%list *] type.key-0)
@@ -674,5 +679,4 @@
       (some [key [key lens bespoke meta sig]])
     ~
   --
-
 --

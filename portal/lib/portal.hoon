@@ -262,7 +262,7 @@
         ==
         ::
           %app
-        =.  bespoke  [%app '' *signature *treaty]
+        =.  bespoke  [%app ~ '' *signature *treaty]
         =/  path  /treaty/(scot %p ship.key.act)/[`@tas`cord.key.act]
         =/  wire  [%treaty (key-to-path:conv key.act)]
         =/  sub-status  (~(gut by wex.bowl) [wire ship.key.act %treaty] ~)
@@ -281,99 +281,84 @@
     ^-  ^item
     ?>  ?=([%edit *] act)
     ?>  =(key.item key.act)
-    =.  item
-      %=  item
-          updated-at.meta
-        `@t`(scot %da now.bowl)
+    %=  item
+        updated-at.meta
+      `@t`(scot %da now.bowl)
+      ::
+        lens
+      (fall lens.act lens.item)
+      ::
+        bespoke
+      ?~  bespoke.act  bespoke.item
+      ?-  -.u.bespoke.act
+          %other
+        ?>  ?=(%other -.bespoke.item)
+        :*  %other
+            (fall title.u.bespoke.act title.bespoke.item)
+            (fall blurb.u.bespoke.act blurb.bespoke.item)
+            (fall link.u.bespoke.act link.bespoke.item)
+            (fall image.u.bespoke.act image.bespoke.item)
+        ==
         ::
-          lens
-        (fall lens.act lens.item)
+          %app
+        ?>  ?=(%app -.bespoke.item)
+        :*  %app
+            (fall screenshots.u.bespoke.act screenshots.bespoke.item)
+            (fall dist-desk.u.bespoke.act dist-desk.bespoke.item)
+            (fall sig.u.bespoke.act sig.bespoke.item)
+            (fall treaty.u.bespoke.act treaty.bespoke.item)
+        ==
         ::
-          bespoke
-        ?~  bespoke.act  bespoke.item
-        ?-  -.u.bespoke.act
-            %other
-          ?>  ?=(%other -.bespoke.item)
-          :*  %other
-              (fall title.u.bespoke.act title.bespoke.item)
-              (fall blurb.u.bespoke.act blurb.bespoke.item)
-              (fall link.u.bespoke.act link.bespoke.item)
-              (fall image.u.bespoke.act image.bespoke.item)
-          ==
-          ::
-            %app
-          ?>  ?=(%app -.bespoke.item)
-          :*  %app
-              (fall dist-desk.u.bespoke.act dist-desk.bespoke.item)
-              (fall sig.u.bespoke.act sig.bespoke.item)
-              (fall treaty.u.bespoke.act treaty.bespoke.item)
-          ==
-          ::
-            %collection
-          ?>  ?=(%collection -.bespoke.item)
-          :*  %collection
-              (fall title.u.bespoke.act title.bespoke.item)
-              (fall blurb.u.bespoke.act blurb.bespoke.item)
-              (fall image.u.bespoke.act image.bespoke.item)
-              (fall key-list.u.bespoke.act key-list.bespoke.item)
-          ==
-          ::
-            %feed
-          ?>  ?=(%feed -.bespoke.item)
-          :*  %feed
-              (fall feed.u.bespoke.act feed.bespoke.item)
-          ==
-          ::
-            %retweet
-          ?>  ?=(%retweet -.bespoke.item)
-          :*  %retweet
-              (fall blurb.u.bespoke.act blurb.bespoke.item)
-              (fall ref.u.bespoke.act ref.bespoke.item)
-          ==
+          %collection
+        ?>  ?=(%collection -.bespoke.item)
+        :*  %collection
+            (fall title.u.bespoke.act title.bespoke.item)
+            (fall blurb.u.bespoke.act blurb.bespoke.item)
+            (fall image.u.bespoke.act image.bespoke.item)
+            (fall key-list.u.bespoke.act key-list.bespoke.item)
+        ==
+        ::
+          %feed
+        ?>  ?=(%feed -.bespoke.item)
+        :*  %feed
+            (fall feed.u.bespoke.act feed.bespoke.item)
+        ==
+        ::
+          %retweet
+        ?>  ?=(%retweet -.bespoke.item)
+        :*  %retweet
+            (fall blurb.u.bespoke.act blurb.bespoke.item)
+            (fall ref.u.bespoke.act ref.bespoke.item)
         ==
       ==
-    ?:  =(lens.item %temp)
-      item(sig *signature)
-    =/  sig  %^  sign:sig  our.bowl  now.bowl
-      [%item key.act lens.item bespoke.item meta.item]
-    item(sig sig)
+    ==
   ::
   ++  replace
     |=  [=item act=action]
     ^-  ^item
     ?>  ?=([%replace *] act)
     ?>  =(key.item key.act)
-    =.  item
-      %=  item
-        lens             lens.act
-        bespoke          bespoke.act
-        updated-at.meta  `@t`(scot %da now.bowl)
-      ==
-    ?:  =(lens.act %temp)
-      item(sig *signature)
-    =/  sig  %^  sign:sig  our.bowl  now.bowl
-      [%item key.act lens.act bespoke.act meta.item]
-    item(sig sig)
+    %=  item
+      lens             lens.act
+      bespoke          bespoke.act
+      updated-at.meta  `@t`(scot %da now.bowl)
+    ==
   ::
   ++  create
     |=  [act=action]
     ^-  item
     ?>  ?=([%create *] act)     ::  assert that action is %create
-    =/  lens      (fall lens.act *lens)
-    =/  bespoke   (fall bespoke.act *bespoke)
-    =/  key  :^   -.bespoke
-                  (fall ship.act our.bowl)
-                  (fall cord.act '')
-                  (fall time.act `@t`(scot %da now.bowl))
-    =/  meta  :^  created-at=`@t`(scot %da now.bowl)
-                  updated-at=''
-                  permissions=~[our.bowl]
-                  reach=[%public ~]
-    ?:  =(lens %temp)
-      [key lens bespoke meta *signature]
-    =/  sig  %^  sign:sig  our.bowl  now.bowl
-      [%item key lens bespoke meta]
-    [key lens bespoke meta sig]  ::  return item
+    =/  bespoke  (fall bespoke.act *bespoke)
+    :^  :^  -.bespoke
+            (fall ship.act our.bowl)
+            (fall cord.act '')
+            (fall time.act `@t`(scot %da now.bowl))
+        (fall lens.act *lens)
+        bespoke
+        :^  created-at=`@t`(scot %da now.bowl)
+            updated-at=''
+            permissions=~[our.bowl]
+            reach=[%public ~]
   ::
   ++  prepend-to-feed
     |=  [feed=item act=action]
@@ -423,14 +408,10 @@
     ^-  ^item
     ?>  ?=([%delete *] act)
     ?>  =(key.item key.act)
-    =.  item
-      %=  item
-        lens             %deleted
-        updated-at.meta  `@t`(scot %da now.bowl)
-      ==
-    =/  sig  %^  sign:sig  our.bowl  now.bowl
-      [%item key.act lens.item bespoke.item meta.item]
-    item(sig sig)
+    %=  item
+      lens             %deleted
+      updated-at.meta  `@t`(scot %da now.bowl)
+    ==
   --
 ::
 ::  includes arms which are used to validate data

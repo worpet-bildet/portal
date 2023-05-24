@@ -120,7 +120,7 @@
             ~
             ``@t`i.t.t.wire
             `%def
-            `[%app '' *signature treaty]
+            `[%app ~ '' *signature treaty]
             [%collection our.bowl '' 'published-apps']~
             ~
             ~
@@ -136,7 +136,7 @@
         %fact
       =/  treaty  !<(treaty:treaty q.cage.sign)
       =/  key  (path-to-key:conv +.wire)
-      =/  act  [%replace key %temp [%app '' *signature treaty]]
+      =/  act  [%replace key %temp [%app ~ '' *signature treaty]]
       :_  this
       :~  [(~(act cards [our.bowl %portal-store]) act)]
           [%pass wire %agent [ship.key %treaty] %leave ~]

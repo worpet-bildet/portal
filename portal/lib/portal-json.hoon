@@ -57,7 +57,6 @@
         ['lens' s+`@t`lens.item]
         ['bespoke' (enjs-bespoke bespoke.item)]
         ['meta' (enjs-meta meta.item)]
-        ['sig' (enjs-sig sig.item)]
     ==
   ++  enjs-update
     |=  [=item]
@@ -68,7 +67,6 @@
         ['lens' s+`@t`lens.item]
         ['bespoke' (enjs-bespoke bespoke.item)]
         ['meta' (enjs-meta meta.item)]
-        ['sig' (enjs-sig sig.item)]
     ==
   ::
       :: +$  store-result
@@ -153,7 +151,8 @@
                              ['cover' s+cover.data.bespoke]
                          ==
       %app          %-  pairs
-                         :~  ['distDesk' s+dist-desk.bespoke]
+                         :~  ['screenshots' (enjs-list screenshots.bespoke |=(s=* s+s))]
+                             ['distDesk' s+dist-desk.bespoke]
                              ['signature' (enjs-sig sig.bespoke)]
                              ['treaty' (treaty:enjs:treaty treaty.bespoke)]
                          ==
@@ -173,7 +172,10 @@
                         :~  ['blurb' s+blurb.bespoke]
                             ['ref' (enjs-key ref.bespoke)]
                         ==
-
+      %review       %-  pairs
+                        :~  ['blurb' s+blurb.bespoke]
+                            ['rating' n+(scot %ud rating.bespoke)]
+                        ==
       %feed         %-  frond
                         ['feed' (enjs-feed feed.bespoke)]
       %validity-store  s+''
@@ -272,7 +274,10 @@
         ['ship' (enjs-ship ship)]
         ['key' (enjs-key key)]
     ==
-
+  ++  enjs-list
+    |=  [list=(list *) enjs-func=gate]
+    ;;  json
+    a+(turn list enjs-func)
   ++  enjs-key-list
     |=  =key-list
     ^-  json
@@ -408,6 +413,7 @@
             [%app json]
             [%collection json]
             [%retweet json]
+            [%review json]
         ==   
     ?-    -.jn
         %other
@@ -434,7 +440,22 @@
                   ==
       =+  (turn `(list (unit))`raw |=(a=(unit *) (fall a ~)))
       (some retweet+(pole-to-cell -))
-        %app  !!
+        %app 
+      =/  raw  %.  ;;((map @t json) +>:jn)
+      %-  ot-raw  :~  screenshots+dejs-soft-s-list
+                      dist-desk+so
+                      sig+so     :: should not be editable
+                      treaty+so  :: should not be editable
+                  ==
+      =+  (turn `(list (unit))`raw |=(a=(unit *) (fall a ~)))
+      (some app+(pole-to-cell -))
+        %review
+      =/  raw  %.  ;;((map @t json) +>:jn)
+      %-  ot-raw  :~  blurb+so
+                      rating+ni
+                  ==
+      =+  (turn `(list (unit))`raw |=(a=(unit *) (fall a ~)))
+      (some review+(pole-to-cell raw))
     ==
   ::
   ++  dejs-soft-bespoke-edit  ::use ot-raw
@@ -446,6 +467,7 @@
                 [%app json]
                 [%collection json]
                 [%retweet json]
+                [%review json]
             ==
     ?-    -.jn
         %other
@@ -470,7 +492,20 @@
                       ref+dejs-soft-key
                   ==
       (some retweet+(pole-to-cell raw))
-        %app  !!
+        %app
+      =/  raw  %.  ;;((map @t json) +>:jn)
+      %-  ot-raw  :~  screenshots+dejs-soft-s-list
+                      dist-desk+so
+                      sig+so     :: should not be editable
+                      treaty+so  :: should not be editable
+                  ==
+      (some app+(pole-to-cell raw))
+        %review  
+      =/  raw  %.  ;;((map @t json) +>:jn)
+      %-  ot-raw  :~  blurb+so
+                      rating+ni
+                  ==
+      (some review+(pole-to-cell raw))
     ==
   ::
   ++  dejs-key-text
@@ -492,6 +527,17 @@
         key+dejs-key
     ==
   ::
+  ++  dejs-soft-s-list
+    |=  jon=json
+    ^-  (unit (list @t))
+    %.  jon
+    (ar:dejs-soft so:dejs-soft)
+
+  ++  dejs-s-list
+    |=  jon=json
+    ^-  (list @t)
+    %.  jon
+    (ar:dejs so:dejs)
   ++  dejs-key-list
     |=  jon=json
     ^-  key-list

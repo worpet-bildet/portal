@@ -17,6 +17,7 @@
       %feed
       %validity-store
       %retweet
+      %review
       %other
   ==
 ::
@@ -44,12 +45,11 @@
   =<  item
   |%
   +$  item
-    $:  =key
-        =lens
-        =bespoke
-        =meta
-        =sig
-    ==
+   $:  =key
+       =lens
+       =bespoke
+       =meta
+   ==
   +$  update  item ::  rename to diff? or add +$  diff?
   --
 ::
@@ -72,7 +72,8 @@
 +$  bespoke
   $%  [struc=%ship ~]
       [struc=%group =data:group-preview]
-      [struc=%app dist-desk=@t sig=signature =treaty]
+      [struc=%app screenshots=(list @t) dist-desk=@t sig=signature =treaty]
+      [struc=%review blurb=@t rating=@ud]
       [struc=%retweet blurb=@t ref=key]
       [struc=%feed =feed]
       [struc=%collection title=@t blurb=@t image=@t =key-list]
