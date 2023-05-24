@@ -96,10 +96,10 @@
       <SidebarGroup>
         {#if me === patp}
           <div class="flex flex-col gap-4">
+            <CollectionsAdd on:add={() => (activeTab = 'Collections')} />
             <IconButton icon={EditIcon} on:click={() => push(`/${patp}/edit`)}
               >Edit Profile</IconButton
             >
-            <CollectionsAdd on:add={() => (activeTab = 'Collections')} />
           </div>
         {:else if isMyPal}
           <IconButton icon={RemovePalIcon} on:click={togglePal} async
