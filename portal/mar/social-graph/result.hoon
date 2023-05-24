@@ -1,4 +1,4 @@
-/+  g=social-graph
+/+  g=social-graph, portal-json
 |_  =graph-result:g
 ++  grab
   |%
@@ -7,6 +7,7 @@
 ++  grow
   |%
   ++  noun  graph-result
+  ++  json  (enjs-graph-result:enjs:portal-json graph-result)
   --
 ++  grad  %noun
 --
