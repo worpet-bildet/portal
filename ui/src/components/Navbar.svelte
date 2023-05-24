@@ -38,10 +38,10 @@
     {#each nav as n}
       <button
         on:click={() => (n.action ? n.action() : push(n.link))}
-        class:bg-nav={$location !== n.link}
-        class:text-black={$location !== n.link}
-        class:text-white={$location === n.link}
-        class:bg-black={$location === n.link}
+        class:bg-nav={$location !== n.link && n.title !== 'Post'}
+        class:text-black={$location !== n.link && n.title !== 'Post'}
+        class:text-white={$location === n.link || n.title === 'Post'}
+        class:bg-black={$location === n.link || n.title === 'Post'}
         class="rounded-lg flex items-center font-bold px-4 hover:text-white hover:bg-black py-2 md:py-0"
         >{n.title}</button
       >
