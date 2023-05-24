@@ -1,14 +1,14 @@
 /-  *portal-data, portal-data-0
 |%
 ::
-::  add defaults, either with $_(? e.g. _~zod) or $~
 +$  default-curators  (set key)
-+$  portal-curator  _~worpet-bildet
++$  portal-curator  _~zod
 +$  purge-timer  $~(%.y ?)
 +$  purge-time  _~d1
-+$  portal-indexer  _~worpet-bildet
++$  portal-indexer  _~zod
 +$  indexed-as-curator  $~(%.n ?)
 +$  onboarded  $~(%.n ?)
++$  our-apps  (set [=ship =desk])
 ::
 +$  state-0  [%0 *]
 +$  state-1  [%1 *]
@@ -22,6 +22,17 @@
       =purge-time
       =indexed-as-curator
       =onboarded
+  ==
+::
++$  state-4
+  $:  %4
+      =portal-curator
+      =portal-indexer
+      =purge-timer
+      =purge-time
+      =indexed-as-curator
+      =onboarded
+      =our-apps
   ==
 
 --

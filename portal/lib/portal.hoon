@@ -1,5 +1,5 @@
 /-  *portal-data, portal-config, *portal-action, *portal-message,
-    portal-data-0
+    portal-data-0, gr=social-graph
 /+  sig, io=agentio, mip, sss
 |%
 +$  card  card:agent:gall
@@ -24,6 +24,18 @@
         `ship`(slav %p +<:path)
         `cord`+>-:path
         `cord`+>+<:path
+  ::
+  ++  key-to-node
+    |=  [=key]
+    ;;  node:gr
+    [%entity %portal-store (spat (key-to-path key))]
+  ::
+  :: doesn't work for temp items, because last path element is ''
+  ++  node-to-key  
+    |=  [=node:gr]
+    ;;  key
+    ?>  ?=([%entity *] node)
+    (path-to-key (stab name.node))
   --
 ::
 ++  scry
@@ -203,7 +215,7 @@
   --
 ::
 ++  manager
-  |_  [=bowl:gall state=state-3:portal-config cards=_*(list card)]
+  |_  [=bowl:gall state=state-4:portal-config cards=_*(list card)]
   ++  on-poke
     ::  all arms here should output cards
     ::  TODO cleanup PM state and maybe output that then
@@ -211,7 +223,7 @@
     ::
     ++  sub
       |=  [act=action]
-      ^-  [(list card) state-3:portal-config]
+      ^-  [(list card) state-4:portal-config]
       ?>  ?=([%sub *] act)
       :_  state
       ?.  =(time.key.act '')   ::  branch on whether is %temp (empty time.key)
@@ -229,6 +241,7 @@
                                   ?:  ?|  =(%app struc.key.act) 
                                           =(%group struc.key.act)  ==
                                     [%collection our.bowl '' 'all']~
+                                  ~
                                   ~
                                   ~
                               ==
@@ -251,7 +264,6 @@
           %app
         =.  bespoke  [%app '' *signature *treaty]
         =/  path  /treaty/(scot %p ship.key.act)/[`@tas`cord.key.act]
-        ~&  path
         =/  wire  [%treaty (key-to-path:conv key.act)]
         =/  sub-status  (~(gut by wex.bowl) [wire ship.key.act %treaty] ~)
         :~  [(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(create-empty-temp))]
