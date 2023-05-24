@@ -15,7 +15,12 @@
     FeedPostForm,
     Sigil,
   } from '@components';
-  import { RightSidebar, SidebarGroup, SearchIcon } from '@fragments';
+  import {
+    RightSidebar,
+    SidebarGroup,
+    SearchIcon,
+    PersonIcon,
+  } from '@fragments';
   import { fromUrbitTime, isValidPatp } from '@root/util';
 
   let sortedPals = [];
@@ -69,6 +74,20 @@
     if (!lastValidShip) return;
     push(`/${lastValidShip}`);
   };
+  const sortRadioStations = (stations) => {
+    return stations
+      .sort((a, b) => b.time - a.time)
+      .filter((s) => s.viewers > 0)
+      .filter((s) => !!s.description)
+      .slice(0, 4);
+  };
+  const tuneRadio = (location) => {
+    window.open(
+      `${window.location.origin}/apps/radio?station=${encodeURIComponent(
+        location
+      )}`
+    );
+  };
 </script>
 
 <div class="grid grid-cols-9 gap-8">
@@ -97,6 +116,30 @@
         </div>
       </div>
     </SidebarGroup>
+    {#if $state.radioStations}
+      <SidebarGroup>
+        <div class="text-xl font-bold">Jump in to Radio 📻</div>
+        <div class="flex flex-col gap-4">
+          {#each sortRadioStations($state.radioStations) as { description, viewers, location }}
+            <button
+              class="flex flex-col gap-2 border shadow rounded-md p-2 hover:text-white hover:bg-black text-left"
+              on:click={() => tuneRadio(location)}
+            >
+              <div>{description}</div>
+              <div
+                class="flex items-center w-full justify-between gap-2 text-xs"
+              >
+                <div>by {location}</div>
+                <div class="flex items-center gap-1">
+                  <div class="w-4"><PersonIcon /></div>
+                  <div>{viewers}</div>
+                </div>
+              </div>
+            </button>
+          {/each}
+        </div>
+      </SidebarGroup>
+    {/if}
     <SidebarGroup>
       {#if $state.palsLoaded && !$state.pals}
         <div>

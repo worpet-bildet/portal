@@ -101,6 +101,14 @@ export const leaveGroup = (group) => {
   });
 };
 
+export const requestRadioChannels = () => {
+  return poke({
+    app: 'tower',
+    mark: 'greg-event',
+    json: { request: null },
+  });
+};
+
 export const subscribeToFeed = (patp) => {
   return subscribeToItem({
     struc: 'feed',
@@ -211,4 +219,18 @@ export const useDocketSubscription = (onEvent) => {
   });
 
   return () => api?.unsubscribe(docketSub);
+};
+
+export const useRadioSubscription = (onEvent) => {
+  const radioSub = api.subscribe({
+    app: 'tower',
+    path: '/greg/local',
+    ship: api.ship,
+    verbose: true,
+    event: onEvent,
+    err: console.error,
+    quit: console.error,
+  });
+
+  return () => api?.unsubscribe(radioSub);
 };

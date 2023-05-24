@@ -6,6 +6,7 @@ import {
   getInstalledApps,
   getPals,
   subscribeToGroup,
+  requestRadioChannels,
 } from '@root/api';
 import config from '@root/config';
 import { fromUrbitTime } from '@root/util';
@@ -98,6 +99,11 @@ export const refreshPals = async () => {
   }
 };
 
+export const refreshRadioChannels = () => {
+  // we receive the response to this in teh subscription handler below
+  requestRadioChannels();
+};
+
 export const getCurator = (patp) => {
   return {
     keyObj: { ship: patp, struc: 'ship', cord: '', time: '' },
@@ -186,6 +192,12 @@ export const handleSubscriptionEvent = (event, type) => {
     case 'group-action-0' || 'group-leave':
       refreshGroups();
       break;
+    case 'greg-event':
+      state.update((s) => {
+        s.radioStations = event.response;
+        return s;
+      });
+      break;
     default:
       break;
   }
@@ -223,5 +235,6 @@ export const refreshAll = () => {
   refreshApps();
   refreshGroups();
   refreshPals();
+  refreshRadioChannels();
 };
 refreshAll();
