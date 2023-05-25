@@ -68,7 +68,7 @@
       {/if}
     </div>
     {#if allowReplies}
-      <div class="flex">
+      <div class="pt-4">
         <IconButton
           icon={CommentIcon}
           active={showCommentForm}

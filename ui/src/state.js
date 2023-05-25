@@ -209,7 +209,6 @@ export const handleSubscriptionEvent = (event, type) => {
             ];
           }
         }
-        console.log({ social: s.social });
         return s;
       });
       break;
