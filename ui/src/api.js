@@ -178,6 +178,20 @@ export const usePortalSubscription = (onEvent) => {
   return () => api?.unsubscribe(portalSub);
 };
 
+export const useSocialSubscription = (onEvent) => {
+  const socialSub = api.subscribe({
+    app: 'portal-graph',
+    path: '/updates',
+    ship: api.ship,
+    verbose: true,
+    event: onEvent,
+    err: console.error,
+    quit: console.error,
+  });
+
+  return () => api?.unsubscribe(socialSub);
+};
+
 export const useContactsSubscription = (onEvent) => {
   const contactsSub = api.subscribe({
     app: 'contacts',

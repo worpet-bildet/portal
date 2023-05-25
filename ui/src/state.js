@@ -189,6 +189,23 @@ export const handleSubscriptionEvent = (event, type) => {
         return s;
       });
       break;
+    case 'social-graph-result':
+      state.update((s) => {
+        for (let socialKey in event.app) {
+          for (let socialUpdate in event.app[socialKey]) {
+            if (!s.social[socialKey][socialUpdate]) {
+              s.social[socialKey][socialUpdate] = [];
+            }
+            s.social[socialKey][socialUpdate] = [
+              ...s.social[socialKey][socialUpdate],
+              ...event.app[socialKey][socialUpdate],
+            ];
+          }
+        }
+        console.log({ social: s.social });
+        return s;
+      });
+      break;
     case 'contact-news':
       state.update((s) => {
         s.profiles[event.who] = event.con;

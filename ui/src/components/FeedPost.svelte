@@ -1,8 +1,8 @@
 <script>
   import { link } from 'svelte-spa-router';
-  import { fade } from 'svelte/transition';
+  import { fade, slide } from 'svelte/transition';
   import { format } from 'timeago.js';
-  import { me, subscribeToItem, poke } from '@root/api';
+  import { subscribeToItem } from '@root/api';
   import {
     state,
     getItem,
@@ -10,7 +10,7 @@
     getCurator,
     getReplies,
   } from '@root/state';
-  import { getMeta } from '@root/util';
+  import { getMeta, fromUrbitTime } from '@root/util';
   import { ItemVerticalListPreview, Sigil, FeedPostForm } from '@components';
   import { CommentIcon, IconButton } from '@fragments';
 
@@ -24,47 +24,10 @@
     if (s.isLoaded && !item) {
       return subscribeToItem(key);
     }
-    replies = getReplies(key.ship, key) || [];
-    console.log({ replies });
+    replies = (getReplies(key.ship, key) || []).sort(
+      (a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time)
+    );
   });
-
-  // const doComment = (key) => {
-  //   // tags-to=(list [=key tag-to=path tag-from=path])
-  //   console.log({ key });
-  //   const { ship } = key;
-  //   return;
-  //   poke({
-  //     app: 'portal-manager',
-  //     mark: 'portal-action',
-  //     json: {
-  //       create: {
-  //         'tags-to': [
-  //           {
-  //             key,
-  //             'tag-to': `/${me}/reply-to`,
-  //             'tag-from': `/${ship}/reply-from`,
-  //           },
-  //         ],
-  //         bespoke: {
-  //           other: {
-  //             title: '',
-  //             blurb: 'i am replying to a comment',
-  //             link: '',
-  //             image: '',
-  //           },
-  //         },
-  //         // 'prepend-to-feed': [
-  //         //   {
-  //         //     ship: me,
-  //         //     struc: 'feed',
-  //         //     time: '~2000.1.1',
-  //         //     cord: '',
-  //         //   },
-  //         // ],
-  //       },
-  //     },
-  //   });
-  // };
 
   let showCommentForm = false;
 
@@ -118,9 +81,9 @@
       </div>
     {/if}
     {#if showCommentForm}
-      <div class="flex flex-col gap-4 col-span-12">
+      <div class="flex flex-col gap-4 col-span-12" transition:slide>
         <FeedPostForm replyTo={item.keyObj} recommendButtons={false} />
-        {#each replies as replyKey}
+        {#each replies as replyKey (keyStrFromObj(replyKey))}
           <svelte:self key={replyKey} allowReplies={false} />
         {/each}
       </div>

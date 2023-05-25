@@ -2,6 +2,7 @@ import './app.css';
 import App from './App.svelte';
 import {
   usePortalSubscription,
+  useSocialSubscription,
   useContactsSubscription,
   useGroupsSubscription,
   useDocketSubscription,
@@ -9,6 +10,7 @@ import {
 import { handleSubscriptionEvent } from './state';
 
 usePortalSubscription(handleSubscriptionEvent);
+useSocialSubscription(handleSubscriptionEvent);
 useContactsSubscription(handleSubscriptionEvent);
 useGroupsSubscription(handleSubscriptionEvent);
 useDocketSubscription(handleSubscriptionEvent);
