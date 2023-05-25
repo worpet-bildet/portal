@@ -253,8 +253,8 @@
           </div>
         {/each}
       {:else if formstep === 'ships'}
+        <div class="text-2xl font-bold">Add other users</div>
         <div class="flex flex-col items-center justify-center gap-4">
-          <div class="text-2xl font-bold">Add other users</div>
           <IconButton
             icon={PlusIcon}
             on:click={() => {
@@ -286,8 +286,8 @@
           >
         </div>
       {:else if formstep === 'other'}
+        <div class="text-2xl font-bold">Add links, images, etc.</div>
         <div class="flex flex-col items-center justify-center gap-4">
-          <div class="text-2xl font-bold">Add links, images, etc.</div>
           <IconButton
             icon={PlusIcon}
             on:click={() => {
