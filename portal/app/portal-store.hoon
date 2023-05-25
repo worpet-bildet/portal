@@ -94,7 +94,7 @@
     =^  cards  item-pub.state.q  (give:du-item path [%whole item])
     [(welp cards.q cards) state.q]
   ::  - track all ships whose items we were subbed to before using %portal-graph
-  ::  this will inevitably send a bunch of unnecessary tracks
+  ::  this will inevitably send a bunch of unnecessary tracks(?)
   =/  cards-5
     =+  ~(tap in ~(key by read:da-item))
     %-  head  %-  tail  
