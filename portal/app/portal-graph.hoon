@@ -163,7 +163,7 @@
         ?=([%add-tag *] q.edit)
       %+  snoc  cards
       :*  %give  %fact  [/updates]~  %social-graph-result
-          !>([%app (my [tag [from.q.edit (sy [to.q.edit]~)]]^~)])
+          !>(app+(my [[tag (my [[from.q.edit (sy [to.q.edit]~)]]~)]]~))
       ==
     [cards this]
   ::
@@ -280,7 +280,7 @@
               [from.u.wave.msg to.u.wave.msg app tag.u.wave.msg]
           :~  :*  %give  %fact  [/updates]~  %social-graph-result
               !>  :-  %app  %-  my
-              [tag:u.wave.msg [from:u.wave.msg (sy [to:u.wave.msg]~)]]^~
+              [tag:u.wave.msg (my [[from:u.wave.msg (sy [to:u.wave.msg]~)]]~)]~
           ==  ==
           ::
             %gone-edge
