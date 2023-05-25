@@ -199,6 +199,7 @@ export const handleSubscriptionEvent = (event, type) => {
       state.update((s) => {
         for (let socialKey in event.app) {
           for (let socialUpdate in event.app[socialKey]) {
+            if (!s.social[socialKey]) s.social[socialKey] = {};
             if (!s.social[socialKey][socialUpdate]) {
               s.social[socialKey][socialUpdate] = [];
             }
