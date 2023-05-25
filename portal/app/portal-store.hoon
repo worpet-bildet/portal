@@ -214,11 +214,17 @@
       [%item @ @ @ @ ~]
     :-  %item
     =/  key  (path-to-key:conv t.path)
-    ?:  |(=(our.bowl ship.key) =(lens.item %temp))
+    ?:  |(=(our.bowl ship.key) =(time.key ''))
       (~(gut by items) key ~)
     =/  item  (~(gut by read:da-item) [ship.key %portal-store [%item t.path]] ~)
     ?~  item  item
     rock:item
+    ::
+      [%item-exists @ @ @ @ ~]
+    =/  key  (path-to-key:conv t.path)
+    ?:  |(=(our.bowl ship.key) =(time.key ''))
+      (~(has by items) key)
+    (~(has by read:da-item) [ship.key %portal-store [%item t.path]])
     ::
     ::  TODO
       [%item-valid @ @ @ @]
