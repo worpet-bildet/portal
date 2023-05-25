@@ -351,7 +351,7 @@
         :-  (welp cards (upd:cards-methods item))
         state
       ::  add to collections
-      =^  cards  state
+      =^  cards-1  state
         %-  tail  %^  spin  `key-list`append-to.act  [cards state]
         |=  [col-key=key q=[cards=(list card) state=state-1]]
         :-  col-key
@@ -360,7 +360,7 @@
         =^  cards  state.q  (append [%append [key.item]~ col-key])
         [(welp cards.q cards) state.q]
       ::  add to feeds
-      =^  cards  state
+      =^  cards-2  state
         %-  tail  %^  spin  `key-list`prepend-to-feed.act  [cards state]
         |=  [feed-key=key q=[cards=(list card) state=state-1]]
         :-  feed-key
@@ -371,7 +371,7 @@
         [(welp cards.q cards) state.q]
       ::  add tags to soc-graph (outward pointing),
       ::  and send corresponding messages that backward pointing tags be created
-      =^  cards  state
+      =^  cards-3  state
         %-  tail  %^  spin  
         `(list [=key tag-to=^path tag-from=^path])`tags-to.act  [cards state]
         |=  [[=key tag-to=^path tag-from=^path] q=[cards=(list card) state=state-1]]
@@ -384,7 +384,7 @@
             %portal-message
             !>([%add-tag-request our.bowl tag-from their our])
         ==  
-      [cards state]
+      [;:(welp cards cards-1 cards-2 cards-3) state]
     ::  also -> main collection deduplication
     ::  (preventing duplication in the first place)
     ::
