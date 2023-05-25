@@ -1,5 +1,5 @@
 /-  *portal-data, *portal-action, *portal-message, portal-config,
-    groups, treaty
+    groups, treaty, di=diary
 /+  default-agent, dbug, *portal, io=agentio, sig
 |%
 +$  versioned-state
@@ -64,6 +64,62 @@
       =/  msg  [%index-as-curator src.bowl toggle.act]
       :_  this(indexed-as-curator toggle.act)
       [(~(msg cards [portal-indexer.state %portal-manager]) msg)]~
+      ::
+        %peek-diary
+      =+  .^  shelf:di  %gx
+            /(scot %p our.bowl)/diary/(scot %da now.bowl)/shelf/noun
+          ==
+      =+  ~(tap by -)  :: (list [flag diary])
+      =+  ^-  (list [flag:di =time note:di comment-count=@ud])
+          %-  zing
+          %+  turn  -
+          |=  [=flag:di =diary:di]
+          ^-  (list [flag:di time note:di @ud])
+          %+  turn  (tap:on:notes:di notes.diary)
+          |=  [=time =note:di]
+          :^  flag  time  note
+              (wyt:on:quips:di quips.-.note)  :: comment (quip) count
+      =+  %+  sort  -  ::  sort by most comments
+          |=  [[a=* b=* c=* count-1=@ud] [d=* e=* f=* count-2=@ud]]
+          (gte count-1 count-2)
+      ~&  -
+          
+      
+      :: shelf: (map flag diary)
+      :: net.diary: %sub or %pub  ::  our or their
+      :: notes.diary: (mop time note)
+      :: note: [seal essay]
+      ::   seal: [time quips feels]
+      ::     quips: (mop time quip)
+      ::       quip: [cork memo]
+      ::         memo: [content author time] ::comment data
+      ::   essay: [title image content author time]
+      ::
+      :: noteID = flag + time
+      :: sort notes by number of comments
+      :: since last on portal
+      ::  we can sub to updates
+      ::  all time most commented
+      ::  since you last opened portal most commented
+      ::  map id comment number
+      ::
+      ::TODO NEW BRANCH CHRONICLE
+      ::
+      ::  put all of this into a %feed (or sth like that item)
+      ::  -maybe a good opportunity to generalize the feed data type (e.g. as (list [meta key]))
+      ::  that way we get composable feeds soon?
+      ::  this is a bit tricky with perms tho...
+      ::  but at least having a personal one is great
+      ::  and combine other stuff into it, like best chats or whatever
+      ::
+      ::  we keep our version of the state, (list [flag time comment-count])
+      ::  if we want to publish it on portal, we create a %diary-note item
+      ::    is it okay that we give people the power to publish whatever is in their notes?
+      ::      i.e. publish other people's stuff
+      ::    if readers.channel:groups=~, then anyone in the group is allowed to see it
+      ::    if -.cordon:groups=%open, group is public
+      ::  
+      `this
     ==
     ::
       %portal-message

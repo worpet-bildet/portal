@@ -50,5 +50,7 @@
       ::  ? purge needs to be defined as action?
       :: TODO make purge have only 'items-to-keep' arg
       [%purge portal-curator=@p]
+      ::
+      [%peek-diary ~]
     ==
 --
