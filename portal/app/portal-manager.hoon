@@ -1,5 +1,5 @@
 /-  *portal-data, *portal-action, *portal-message, portal-config,
-    groups, treaty, di=diary
+    groups, treaty, di=diary, ch=chat
 /+  default-agent, dbug, *portal, io=agentio, sig
 |%
 +$  versioned-state
@@ -105,6 +105,8 @@
       ::
       ::TODO NEW BRANCH CHRONICLE
       ::
+      ::  prepend to feed should create feed if doesnt exist?
+      ::
       ::  put all of this into a %feed (or sth like that item)
       ::  -maybe a good opportunity to generalize the feed data type (e.g. as (list [meta key]))
       ::  that way we get composable feeds soon?
@@ -119,6 +121,49 @@
       ::    if readers.channel:groups=~, then anyone in the group is allowed to see it
       ::    if -.cordon:groups=%open, group is public
       ::  
+      `this
+      ::
+        %peek-chat
+      :: gang: view of a group we are not in
+      :: groups: (map flag group)
+      :: group: contains channels
+      :: channels: (map nest channel)
+      :: nest: [dude flag]  :: channel id, e.g. [%chat ~zod %something]
+      :: flag: [ship term]  :: chat channel id  [~zod %something]
+      :: chat: [net remark log perm pact]
+      ::   net: %sub or %pub ::  host or subscriber
+      ::   remark: time last-read, watching=?  :: maybe watching is important for filtering
+      ::   log: (mop time diff)  ::  important diffs -> %create new chat, %writs chat message update
+      ::   perm: writers, group :: group says which group it belongs to
+      ::   pact: writs, index  ::  id -> time -> message
+      ::     writs: (mop time writ)  :: time ordered chat messages
+      ::       index: (map id time)  :: map from msg id to time msg received
+      ::         id: [ship time-sent] 
+      ::       writ: [seal memo]
+      ::         seal: [id feels replied]  
+      ::           id: [ship time]  ::  message id
+      ::           feels: (map ship feel)  :: one reaction(feel) per ship 
+      ::           replied: (set id)  ::  set of replies to a msg
+      ::         memo: [replying author sent=time content]  ::chat msg with metadata
+      ::           replying: (unit id)  :: reply to which msg (if at all)
+      ::           content: story or notice
+      ::             story: [(list block) (list inline)]
+      ::               block: image or cite  :: the thing that pops up above the msg in chat
+      ::               inline: text  ::  with funky recursive data type
+      ::             notice: [pfix=@t sfix=@t]  :: before and after ship name???
+      ::  I can sub to a chat to receive updates
+      ::  its probably better to just scry and sort
+      ::
+
+      ::  everything older than X time without any feels we dont save
+      ::  most popular over last day,
+      :: chat messages by popularity, time
+      :: (list [link time feels-num])
+      :: =/  chats
+      ::   .^  (map flag:ch chat:ch)  %gx  
+      ::       /(scot %p our.bowl)/chat/(scot %da now.bowl)/chats/noun
+      ::   ==
+      
       `this
     ==
     ::

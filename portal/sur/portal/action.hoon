@@ -52,5 +52,6 @@
       [%purge portal-curator=@p]
       ::
       [%peek-diary ~]
+      [%peek-chat ~]
     ==
 --
