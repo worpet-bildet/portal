@@ -63,9 +63,7 @@
     class:text-white={selected}
   >
     <div
-      class="border overflow-hidden h-full"
-      class:rounded-2xl={!small}
-      class:rounded-md={small}
+      class="border overflow-hidden h-full rounded-md"
       class:col-span-1={!small}
       class:col-span-2={small}
     >

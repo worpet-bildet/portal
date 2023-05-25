@@ -45,15 +45,15 @@
       <div bind:this={avatarPad} />
       <div class="absolute -top-8 w-full" bind:this={avatarContainer}>
         {#if avatar}
-          <div class="border rounded-xl overflow-hidden w-full shadow">
+          <div class="border rounded-md overflow-hidden w-full shadow">
             <ItemImage {title} {color} image={avatar} on:load={redrawAvatar} />
           </div>
         {:else if type === 'app'}
-          <div class="border rounded-xl overflow-hidden w-full shadow">
+          <div class="border rounded-md overflow-hidden w-full shadow">
             <ItemImage {title} {color} on:load={redrawAvatar} />
           </div>
         {:else}
-          <div class="border rounded-xl overflow-hidden w-full shadow">
+          <div class="border rounded-md overflow-hidden w-full shadow">
             <Sigil {patp} />
           </div>
         {/if}
