@@ -9,6 +9,8 @@
 ::  - where poke was sent to %social-graph, now its sent to %portal-graph
 ::  - %start tracking, if tag was being tracked already, it's not refreshed,
 ::    but rather it's left as is
+::  - enjs (app tag nodeset), (set node)
+::  - subscription updates for adding tags, on-rock and on-poke
 ::  %social-graph agent state
 ::
 +$  state-2
@@ -157,6 +159,12 @@
     ::  hand out update to subscribers on this app and (top-level) tag
     =^  cards  subgraph-pub
       (give:du-pub [%track app i.tag ~] wave)
+    =?  cards  
+        ?=([%add-tag *] q.edit)
+      %+  snoc  cards
+      :*  %give  %fact  [/updates]~  %social-graph-result
+          !>(app+(my [[tag (my [[from.q.edit (sy [to.q.edit]~)]]~)]]~))
+      ==
     [cards this]
   ::
       %social-graph-track
@@ -255,8 +263,9 @@
         %+  ~(poke pass:io /self)
           [our.bowl %portal-graph]
         social-graph-track+!>(`track:g`[app %stop src.msg tag])
-      =.  graph.state
+      =^  cards  graph.state
         ?~  wave.msg
+          :-  ~
           ::  if no wave, use rock in msg as setpoint
           =/  l=(list [=tag:g =nodeset:g])  ~(tap by rock.msg)
           |-
@@ -267,17 +276,25 @@
         ::  integrate wave into our local graph
         ?-    -.u.wave.msg
             %new-edge
-          %-  ~(add-tag sg:g graph.state)
-          [from.u.wave.msg to.u.wave.msg app tag.u.wave.msg]
+          :_  %-  ~(add-tag sg:g graph.state)
+              [from.u.wave.msg to.u.wave.msg app tag.u.wave.msg]
+          :~  :*  %give  %fact  [/updates]~  %social-graph-result
+              !>  :-  %app  %-  my
+              [tag:u.wave.msg (my [[from:u.wave.msg (sy [to:u.wave.msg]~)]]~)]~
+          ==  ==
+          ::
             %gone-edge
+          :-  ~
           %-  ~(del-tag sg:g graph.state)
           [from.u.wave.msg to.u.wave.msg app tag.u.wave.msg]
             %gone-tag
+          :-  ~
           (~(nuke-tag sg:g graph.state) app tag.u.wave.msg)
             %gone-top-level-tag
+          :-  ~
           (~(nuke-top-level-tag sg:g graph:state) app -.tag)
         ==
-      `this
+      [cards this]
     ==
   ==
 ::
@@ -312,7 +329,7 @@
     [~ %sss %behn @ @ @ %track @ @ ~]  [(behn:da-sub |3:wire) this]
   ==
 ::
-++  on-watch  on-watch:def
+++  on-watch  _`this
 ++  on-leave  on-leave:def
 ++  on-fail   on-fail:def
 --

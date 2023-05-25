@@ -8,7 +8,7 @@
 </script>
 
 <button
-  class="py-1 px-2 border shadow rounded-lg flex items-center gap-4 hover:bg-black hover:text-white"
+  class="py-1 px-2 border shadow rounded-lg flex items-center gap-4 hover:bg-black hover:text-white overflow-hidden"
   class:pointer-events-none={disabled}
   class:opacity-50={disabled}
   class:cursor-not-allowed={disabled}

@@ -106,7 +106,7 @@
     =^  cards  item-pub.state.q  (give:du-item path [%whole item])
     [(welp cards.q cards) state.q]
   ::  - track all ships whose items we were subbed to before using %portal-graph
-  ::  this will inevitably send a bunch of unnecessary tracks
+  ::  this will inevitably send a bunch of unnecessary tracks(?)
   =/  cards-5
     =+  ~(tap in ~(key by read:da-item))
     %-  head  %-  tail  
@@ -149,7 +149,7 @@
       (gra:cards-methods:stor portal-store+[%add-tag [tag from to]:msg])
       ::
         %feed-update
-      ?>  =(our.bowl ~zod)
+      ?>  =(our.bowl ~worpet-bildet)
       =/  act  [%prepend-to-feed feed.msg [%feed our.bowl '' 'global']]
       =^(cards state (prepend-to-feed:handle-poke:stor act) [cards this])
     ==
@@ -364,7 +364,7 @@
         :-  (welp cards (upd:cards-methods item))
         state
       ::  add to collections
-      =^  cards  state
+      =^  cards-1  state
         %-  tail  %^  spin  `key-list`append-to.act  [cards state]
         |=  [col-key=key q=[cards=(list card) state=state-2]]
         :-  col-key
@@ -373,7 +373,7 @@
         =^  cards  state.q  (append [%append [key.item]~ col-key])
         [(welp cards.q cards) state.q]
       ::  add to feeds
-      =^  cards  state
+      =^  cards-2  state
         %-  tail  %^  spin  `key-list`prepend-to-feed.act  [cards state]
         |=  [feed-key=key q=[cards=(list card) state=state-2]]
         :-  feed-key
@@ -384,7 +384,7 @@
         [(welp cards.q cards) state.q]
       ::  add tags to soc-graph (outward pointing),
       ::  and send corresponding messages that backward pointing tags be created
-      =^  cards  state
+      =^  cards-3  state
         %-  tail  %^  spin  
         `(list [=key tag-to=^path tag-from=^path])`tags-to.act  [cards state]
         |=  [[=key tag-to=^path tag-from=^path] q=[cards=(list card) state=state-2]]
@@ -397,7 +397,7 @@
             %portal-message
             !>([%add-tag-request our.bowl tag-from their our])
         ==  
-      [cards state]
+      [;:(welp cards cards-1 cards-2 cards-3) state]
     ::  also -> main collection deduplication
     ::  (preventing duplication in the first place)
     ::
@@ -427,7 +427,7 @@
         =/  msg  [%feed-update our.bowl feed.act]
         :_  state
         %+  snoc  (welp cards cards-1)
-        (~(poke pass:io /msg) [~zod %portal-store] portal-message+!>(msg))
+        (~(poke pass:io /msg) [~worpet-bildet %portal-store] portal-message+!>(msg))
       :-  (welp cards cards-1)
       state
     ::
@@ -515,9 +515,9 @@
 ::
 ++  init-sequence
   ^+  [*(list card) state]
-  =/  feed-path  [%item %feed '~zod' '' 'global' ~]
-  =^  cards  item-sub  (surf:da-item ~zod %portal-store feed-path)
-  =.  cards  (welp cards (track-gr:cards-methods ~zod))
+  =/  feed-path  [%item %feed '~worpet-bildet' '' 'global' ~]
+  =^  cards  item-sub  (surf:da-item ~worpet-bildet %portal-store feed-path)
+  =.  cards  (welp cards (track-gr:cards-methods ~worpet-bildet))
   =^  cards-1  state  
     %-  create:handle-poke  
     :*  %create  ~  ~  `'~2000.1.1'  `%def
@@ -546,7 +546,7 @@
     `[%collection 'My Apps' 'Collection of all apps I have published.' '' ~]
     [%collection our.bowl '' '~2000.1.1']~  ~  ~  ==
   ::
-  ?:  =(our.bowl ~zod)
+  ?:  =(our.bowl ~worpet-bildet)
     =^  cards-7  state  
       %-  create:handle-poke
       [%create ~ ~ `'global' `%global `[%feed ~] ~ ~ ~]

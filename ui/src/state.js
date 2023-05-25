@@ -1,11 +1,13 @@
 import { get, writable } from 'svelte/store';
 import {
   getPortalItems,
+  getSocialItems,
   getContacts,
   getJoinedGroups,
   getInstalledApps,
   getPals,
   subscribeToGroup,
+  requestRadioChannels,
 } from '@root/api';
 import config from '@root/config';
 import { fromUrbitTime } from '@root/util';
@@ -20,6 +22,16 @@ export const refreshPortalItems = () => {
         s[i.keyStr] = i;
       });
       s.isLoaded = true;
+      return s;
+    });
+  });
+};
+
+export const refreshSocialItems = () => {
+  getSocialItems().then((items) => {
+    console.log({ social: items.app });
+    state.update((s) => {
+      s.social = items.app;
       return s;
     });
   });
@@ -98,6 +110,11 @@ export const refreshPals = async () => {
   }
 };
 
+export const refreshRadioChannels = () => {
+  // we receive the response to this in teh subscription handler below
+  requestRadioChannels();
+};
+
 export const getCurator = (patp) => {
   return {
     keyObj: { ship: patp, struc: 'ship', cord: '', time: '' },
@@ -165,12 +182,34 @@ export const getJoinedGroupDetails = (groupKey) => {
   return get(state).groups?.[groupKey];
 };
 
+export const getReplies = (ship, key) => {
+  return get(state).social?.[`/${ship}/reply-from`]?.[keyStrFromObj(key)];
+};
+
 export const handleSubscriptionEvent = (event, type) => {
   console.log({ event, type });
   switch (type) {
     case 'portal-update':
       state.update((s) => {
         s[event.keyStr] = event;
+        return s;
+      });
+      break;
+    case 'social-graph-result':
+      state.update((s) => {
+        for (let socialKey in event.app) {
+          for (let socialUpdate in event.app[socialKey]) {
+            if (!s.social[socialKey]) s.social[socialKey] = {};
+            if (!s.social[socialKey][socialUpdate]) {
+              s.social[socialKey][socialUpdate] = [];
+            }
+            s.social[socialKey][socialUpdate] = [
+              ...s.social[socialKey][socialUpdate],
+              ...event.app[socialKey][socialUpdate],
+            ];
+          }
+        }
+        console.log({ social: s.social });
         return s;
       });
       break;
@@ -185,6 +224,12 @@ export const handleSubscriptionEvent = (event, type) => {
       break;
     case 'group-action-0' || 'group-leave':
       refreshGroups();
+      break;
+    case 'greg-event':
+      state.update((s) => {
+        s.radioStations = event.response;
+        return s;
+      });
       break;
     default:
       break;
@@ -218,10 +263,12 @@ const globalFeedKey = (indexer) => `/feed/${indexer}//global`;
 
 export const refreshAll = () => {
   refreshPortalItems();
+  refreshSocialItems();
   refreshContacts();
   // refreshProfile(me);
   refreshApps();
   refreshGroups();
   refreshPals();
+  refreshRadioChannels();
 };
 refreshAll();

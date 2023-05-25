@@ -93,11 +93,42 @@
                 :-  %a
                 %+  turn  ~(tap in +.graph-result)
                 enjs-node-to-key
+      %app    %+  frond  'app'
+                (enjs-map-tag-nodeset +.graph-result)
     ==
+  ++  enjs-map-tag-nodeset
+    |=  [m=(map tag=^path nodeset=(map node:gr (set node:gr)))]
+    ^-  json
+    :-  %o
+    =+  ~(tap by m)
+    %-  malt  %+  turn  -
+    |=  [tag=^path nodeset=(map node:gr (set node:gr))]
+    ^-  [@t json]
+    [(spat tag) (enjs-nodeset nodeset)]
+  ++  enjs-nodeset
+    |=  [nodeset=(map node:gr (set node:gr))]
+    ^-  json
+    :-  %o
+    =+  ~(tap by nodeset)
+    %-  malt  %+  turn  -
+    |=  [=node:gr nodes=(set node:gr)]
+    ^-  [@t json]
+    [(enjs-node-to-str node) (enjs-nodes nodes)]
+  ++  enjs-nodes
+    |=  [nodes=(set node:gr)]
+    ^-  json
+    :-  %a
+    %+  turn  ~(tap in nodes)  enjs-node-to-key
   ++  enjs-node-to-key  ::  will crash on temp item
     |=  [=node:gr]
     ^-  json
     %-  enjs-key
+    (node-to-key:conv node)
+  ++  enjs-node-to-str
+    |=  [=node:gr]
+    ^-  @t
+    %-  spat
+    %-  key-to-path:conv
     (node-to-key:conv node)
   ::
   ++  enjs-key-and-item

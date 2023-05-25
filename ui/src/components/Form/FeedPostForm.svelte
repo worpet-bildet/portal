@@ -11,23 +11,19 @@
     Modal,
     ItemImage,
   } from '@fragments';
+
+  export let replyTo;
+  export let recommendButtons = true;
+
   let dispatch = createEventDispatcher();
   let content;
 
   const post = () => {
-    poke({
+    let p = {
       app: 'portal-manager',
       mark: 'portal-action',
       json: {
         create: {
-          'prepend-to-feed': [
-            {
-              ship: me,
-              struc: 'feed',
-              time: '~2000.1.1',
-              cord: '',
-            },
-          ],
           bespoke: {
             other: {
               title: '',
@@ -38,7 +34,26 @@
           },
         },
       },
-    });
+    };
+    if (!replyTo) {
+      p.json.create['prepend-to-feed'] = [
+        {
+          ship: me,
+          struc: 'feed',
+          time: '~2000.1.1',
+          cord: '',
+        },
+      ];
+    } else {
+      p.json.create['tags-to'] = [
+        {
+          key: replyTo,
+          'tag-to': `/${me}/reply-to`,
+          'tag-from': `/${replyTo.ship}/reply-from`,
+        },
+      ];
+    }
+    poke(p);
     content = '';
     dispatch('post');
   };
@@ -76,22 +91,26 @@
     <TextArea placeholder="Share a limerick, maybe" bind:value={content} />
   </div>
   <div class="col-span-12 col-start-2 flex justify-between">
-    <div class="flex gap-4">
-      <IconButton
-        icon={AppIcon}
-        on:click={() => {
-          appModalOpen = true;
-        }}
-      />
-      <IconButton
-        icon={GroupIcon}
-        on:click={() => {
-          groupModalOpen = true;
-        }}
-      />
-    </div>
+    {#if recommendButtons}
+      <div class="flex gap-4">
+        <IconButton
+          icon={AppIcon}
+          on:click={() => {
+            appModalOpen = true;
+          }}
+        />
+        <IconButton
+          icon={GroupIcon}
+          on:click={() => {
+            groupModalOpen = true;
+          }}
+        />
+      </div>
+    {:else}
+      <div />
+    {/if}
     <button
-      class="border bg-black text-white rounded-lg px-3 py-1 font-bold"
+      class="border bg-black text-white rounded-lg px-3 py-1 font-bold self-end"
       on:click={post}>Post</button
     >
   </div>

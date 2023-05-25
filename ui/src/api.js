@@ -14,6 +14,13 @@ export const getPortalItems = () => {
   });
 };
 
+export const getSocialItems = () => {
+  return scry({
+    app: 'portal-graph',
+    path: '/app/portal-store',
+  });
+};
+
 export const getContacts = () => {
   return scry({
     app: 'contacts',
@@ -101,6 +108,14 @@ export const leaveGroup = (group) => {
   });
 };
 
+export const requestRadioChannels = () => {
+  return poke({
+    app: 'tower',
+    mark: 'greg-event',
+    json: { request: null },
+  });
+};
+
 export const subscribeToFeed = (patp) => {
   return subscribeToItem({
     struc: 'feed',
@@ -171,6 +186,20 @@ export const usePortalSubscription = (onEvent) => {
   return () => api?.unsubscribe(portalSub);
 };
 
+export const useSocialSubscription = (onEvent) => {
+  const socialSub = api.subscribe({
+    app: 'portal-graph',
+    path: '/updates',
+    ship: api.ship,
+    verbose: true,
+    event: onEvent,
+    err: console.error,
+    quit: console.error,
+  });
+
+  return () => api?.unsubscribe(socialSub);
+};
+
 export const useContactsSubscription = (onEvent) => {
   const contactsSub = api.subscribe({
     app: 'contacts',
@@ -211,4 +240,18 @@ export const useDocketSubscription = (onEvent) => {
   });
 
   return () => api?.unsubscribe(docketSub);
+};
+
+export const useRadioSubscription = (onEvent) => {
+  const radioSub = api.subscribe({
+    app: 'tower',
+    path: '/greg/local',
+    ship: api.ship,
+    verbose: true,
+    event: onEvent,
+    err: console.error,
+    quit: console.error,
+  });
+
+  return () => api?.unsubscribe(radioSub);
 };

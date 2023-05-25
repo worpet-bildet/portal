@@ -2,8 +2,18 @@
   import { createEventDispatcher } from 'svelte';
   import { state, keyStrToObj, keyStrFromObj } from '@root/state';
   import { poke, me } from '@root/api';
-  import { ItemVerticalListPreview } from '@components';
-  import { Modal, StepForm, TextArea, PlusIcon, IconButton } from '@fragments';
+  import { ItemVerticalListPreview, ShipForm } from '@components';
+  import {
+    Modal,
+    StepForm,
+    TextArea,
+    PlusIcon,
+    IconButton,
+    CrossIcon,
+    CheckIcon,
+    OtherItemForm,
+  } from '@fragments';
+  import { toUrbitTime } from '@root/util';
   let dispatch = createEventDispatcher();
 
   let groups = {};
@@ -27,10 +37,15 @@
     showModal = true;
   };
 
-  let name = '';
-  let description = '';
-  let groupKeys = [];
-  let appKeys = [];
+  let name,
+    description,
+    groupKeys,
+    appKeys,
+    shipKeys,
+    otherKeys,
+    newShip,
+    newOtherItem,
+    showFormNav;
 
   const groupSelected = ({ detail: { key } }) => {
     let keyStr = keyStrFromObj(key);
@@ -54,10 +69,39 @@
     }
   };
 
-  let formstep = 'meta';
-  let formsteps = ['meta', 'groups', 'apps'];
+  let formstep = 'other';
+  let formsteps = ['meta', 'groups', 'apps', 'ships', 'other'];
+  // OTHER FORMSTEPS = ['addship', 'addother']
 
   const save = () => {
+    console.log({
+      app: 'portal-manager',
+      mark: 'portal-action',
+      json: {
+        create: {
+          'append-to': [
+            {
+              ship: me,
+              time: '~2000.1.1',
+              struc: 'collection',
+              cord: '',
+            },
+          ],
+          bespoke: {
+            collection: {
+              title: name,
+              blurb: description,
+              image: '',
+              'key-list': [
+                ...groupKeys.map((i) => keyStrToObj(i)),
+                ...appKeys.map((i) => keyStrToObj(i)),
+                otherKeys,
+              ],
+            },
+          },
+        },
+      },
+    });
     poke({
       app: 'portal-manager',
       mark: 'portal-action',
@@ -79,6 +123,8 @@
               'key-list': [
                 ...groupKeys.map((i) => keyStrToObj(i)),
                 ...appKeys.map((i) => keyStrToObj(i)),
+                ...shipKeys,
+                ...otherKeys,
               ],
             },
           },
@@ -89,11 +135,65 @@
     // TODO: also navigate to the collections tab when we do this
     dispatch('add');
   };
+
+  const saveOtherItem = () => {
+    // here we should cretae create a key for the item, and then save it and add
+    // the key to our list of other items so that it will show up in the list
+    let time = toUrbitTime(Date.now());
+    let key = { struc: 'other', ship: me, cord: '', time };
+    poke({
+      app: 'portal-manager',
+      mark: 'portal-action',
+      json: {
+        create: {
+          time,
+          bespoke: {
+            other: newOtherItem,
+          },
+        },
+      },
+    });
+    otherKeys.push(key);
+    newOtherItem = {};
+  };
+
+  const saveShip = async () => {
+    let key = {
+      struc: 'ship',
+      ship: newShip,
+      time: '',
+      cord: '',
+    };
+    shipKeys.push(key);
+    newShip = '';
+  };
+
+  const resetForm = () => {
+    formstep = 'meta';
+    name = '';
+    description = '';
+    groupKeys = [];
+    appKeys = [];
+    shipKeys = [];
+    otherKeys = [];
+    newShip = '';
+    newOtherItem = {};
+    showFormNav = true;
+  };
+
+  resetForm();
 </script>
 
-<IconButton icon={PlusIcon} on:click={addCollection}>New Collection</IconButton>
+<IconButton icon={PlusIcon} on:click={addCollection} active
+  >New Collection</IconButton
+>
 <Modal bind:open={showModal}>
-  <StepForm bind:formstep {formsteps} on:save={save}>
+  <StepForm
+    bind:formstep
+    {formsteps}
+    on:save={save}
+    bind:navbuttons={showFormNav}
+  >
     <div class="flex flex-col gap-4">
       {#if formstep === 'meta'}
         <div class="text-2xl font-bold">Give your collection a name</div>
@@ -112,7 +212,7 @@
         />
       {:else if formstep === 'groups'}
         {#if Object.entries(groups).length > 0}
-          <div class="text-2xl font-bold">Add these groups?</div>
+          <div class="text-2xl font-bold">Add groups</div>
           {#each Object.entries(groups) as [path, { meta: { title, image } }]}
             {@const key = {
               struc: 'group',
@@ -138,7 +238,7 @@
           </div>
         {/if}
       {:else if formstep === 'apps'}
-        <div class="text-2xl font-bold">Add these apps?</div>
+        <div class="text-2xl font-bold">Add apps</div>
         {#each Object.entries(apps) as [path, { title, image, ship, info }]}
           {@const key = { struc: 'app', ship, cord: path, time: '' }}
           <div class="flex justify-between">
@@ -152,6 +252,72 @@
             </div>
           </div>
         {/each}
+      {:else if formstep === 'ships'}
+        <div class="text-2xl font-bold">Add other users</div>
+        <div class="flex flex-col items-center justify-center gap-4">
+          <IconButton
+            icon={PlusIcon}
+            on:click={() => {
+              formstep = 'addship';
+              showFormNav = false;
+            }}>Add</IconButton
+          >
+        </div>
+        {#each shipKeys as key}
+          <ItemVerticalListPreview {key} clickable={false} />
+        {/each}
+      {:else if formstep === 'addship'}
+        <ShipForm bind:ship={newShip} />
+        <div class="flex justify-between">
+          <IconButton
+            icon={CrossIcon}
+            on:click={() => {
+              formstep = 'ships';
+              showFormNav = true;
+            }}>Cancel</IconButton
+          >
+          <IconButton
+            icon={CheckIcon}
+            on:click={() => {
+              saveShip();
+              formstep = 'ships';
+              showFormNav = true;
+            }}>Save</IconButton
+          >
+        </div>
+      {:else if formstep === 'other'}
+        <div class="text-2xl font-bold">Add links, images, etc.</div>
+        <div class="flex flex-col items-center justify-center gap-4">
+          <IconButton
+            icon={PlusIcon}
+            on:click={() => {
+              formstep = 'addother';
+              showFormNav = false;
+            }}>Add</IconButton
+          >
+        </div>
+        {#each otherKeys as key}
+          <ItemVerticalListPreview {key} clickable={false} />
+        {/each}
+      {:else if formstep === 'addother'}
+        <OtherItemForm bind:item={newOtherItem} />
+        <div class="flex justify-between">
+          <IconButton
+            icon={CrossIcon}
+            on:click={() => {
+              formstep = 'other';
+              showFormNav = true;
+            }}>Cancel</IconButton
+          >
+          <IconButton
+            icon={CheckIcon}
+            on:click={() => {
+              saveOtherItem();
+              formstep = 'other';
+              showFormNav = true;
+            }}>Save</IconButton
+          >
+        </div>
       {/if}
     </div>
   </StepForm>
