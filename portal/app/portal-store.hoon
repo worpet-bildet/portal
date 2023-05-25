@@ -1,4 +1,4 @@
-/-  *portal-data, *portal-message, portal-item, portal-data-0
+/-  *portal-data, *portal-message, portal-item, portal-data-0, gr=social-graph
 /+  default-agent, dbug, *portal, sss
 =/  item-sub  (mk-subs:sss portal-item ,[%item @ @ @ @ ~])
 =/  item-pub  (mk-pubs:sss portal-item ,[%item @ @ @ @ ~])
@@ -43,16 +43,47 @@
   |=  =vase
   ^-  (quip card _this)
   =/  old  !<(versioned-state vase)
-  ::  1. get state up to date!
+  ::  -  get state up to date!
   =.  state
     ?:  ?=(%1 -.old)  old
     ?>  ?=(%0 -.old)  (state-0-to-1:state-transition:stor old)
-  ::  2. init-sequence to create and sub if sth was missed previously
-  =^  cards  state  init-sequence:stor
-  ::  3. cleanup past mistakes
+  ::  - remove all ships/groups/apps from main collection and add them to all collection
+  =^  cards  state
+    =/  col-key  [%collection our.bowl '' '~2000.1.1']
+    =/  col  (get-item col-key)
+    ?>  ?=([%collection *] bespoke.col)
+    =/  l  (skim-strucs:keys key-list.bespoke.col ~[%app %group %ship])
+    =^  c1  state  (remove:handle-poke:stor [%remove l col-key])
+    =.  l  (skip-strucs:keys l ~[%ship])
+    =^  c2  state
+      (append:handle-poke:stor [%append l [%collection our.bowl '' 'all']])
+    [(welp c1 c2) state]
+  ::  -  destroy empty collections
+  =/  output
+    =+  ~(tap by items.state)
+    %-  tail  %^  spin  -  [*key-list *(list card) state]
+    |=  [p=[=key =item] q=[to-remove=key-list cards=(list card) state=state-1]]
+    :-  p
+    =.  state  state.q
+    ?:  ?=([%collection *] bespoke.item.p)
+      ?~  key-list.bespoke.item.p
+        ~&  >  "destroying {<key.p>}!"
+        =^  cards  state  (destroy:handle-poke:stor [%destroy key.p])
+        [(snoc to-remove.q key.p) ;:(welp cards cards.q) state]
+      [to-remove.q cards.q state]
+    [to-remove.q cards.q state]
+  =^  cards-1  state  +.output
+  ::  -  remove empty collections + ~2000.1.2 from main collection
+  =^  cards-2  state  
+    %-  remove:handle-poke:stor  :+  %remove
+    (snoc -.output [%collection our.bowl '' '~2000.1.2'])
+    [%collection our.bowl '' '~2000.1.1']
+  ::  - init-sequence to create and sub if sth was missed previously
+  =^  cards-3  state  init-sequence:stor
+  ::  - cleanup past mistakes
   ::  - publish all items which are unpublished
   =+  ~(val by items.state)
-  =^  cards-1  state
+  =^  cards-4  state
     %-  tail  %^  spin  -  [*(list card) state]
     |=  [=item q=[cards=(list card) state=state-1]]
     :-  item
@@ -62,17 +93,19 @@
     ?:  =(lens.item %temp)  q              ::  if %temp, no need
     =^  cards  item-pub.state.q  (give:du-item path [%whole item])
     [(welp cards.q cards) state.q]
-  ::  - remove all ships/groups/apps from main collection and add them to all collection
-  =/  col-key  [%collection our.bowl '' '~2000.1.1']
-  =/  col  (get-item col-key)
-  ?>  ?=([%collection *] bespoke.col)
-  =/  l  (skim-strucs:keys key-list.bespoke.col ~[%app %group %ship])
-  =^  cards-2  state  (remove:handle-poke:stor [%remove l col-key])
-  =.  l  (skip-strucs:keys l ~[%ship])
-  =^  cards-3  state
-    (append:handle-poke:stor [%append l [%collection our.bowl '' 'all']])
+  ::  - track all ships whose items we were subbed to before using %portal-graph
+  ::  this will inevitably send a bunch of unnecessary tracks(?)
+  =/  cards-5
+    =+  ~(tap in ~(key by read:da-item))
+    %-  head  %-  tail  
+    %^  spin  -  [*(list card) (silt ~[our.bowl])]
+    |=  [p=[=ship =dude:gall =path] q=[cards=(list card) ships=(set ship)]]
+    :-  p
+    ?:  (~(has in ships.q) ship.p)  q   ::  if already subbed, no need
+    :-  (welp cards.q (track-gr:cards-methods:stor ship.p))
+        (~(put in ships.q) ship.p)
   :_  this
-  ;:(welp cards cards-1 cards-2 cards-3)
+  ;:(welp cards cards-1 cards-2 cards-3 cards-4 cards-5)
 ::
 ++  on-poke
   |=  [=mark =vase]
@@ -96,10 +129,14 @@
     ::
       %portal-message
     =/  msg  !<(message vase)
-    ?>  =(our.bowl ~worpet-bildet)
     ?>  =(src.bowl src.msg)
-    ?+    -.msg  !!
+    ?+    -.msg    !!
+        %add-tag-request
+      :_  this
+      (gra:cards-methods:stor portal-store+[%add-tag [tag from to]:msg])
+      ::
         %feed-update
+      ?>  =(our.bowl ~worpet-bildet)
       =/  act  [%prepend-to-feed feed.msg [%feed our.bowl '' 'global']]
       =^(cards state (prepend-to-feed:handle-poke:stor act) [cards this])
     ==
@@ -130,15 +167,7 @@
     [~ %sss %behn @ @ @ %item @ @ @ @ ~]  [(behn:da-item |3:wire) this]
   ==
 ::
-++  on-watch  ::  should it return items on initial sub?
-  |=  =path
-  ^-  (quip card _this)
-  ?:  =(path /updates)  `this
-  =/  item  (~(gut by items) (path-to-key:conv path) ~)
-  :_  this
-  ?~  item  ~
-  [%give %fact ~ %portal-update !>(item)]~
-::
+++  on-watch  _`this
 ++  on-leave  on-leave:default
 ::
 ++  on-agent
@@ -175,8 +204,12 @@
       `[key item]`[(path-to-key:conv +.p.k) rock.v]
     items+(~(uni by items) -)
     ::
-    ::  TODO
-      [%keys ~]  keys+~(key by items)
+      [%keys ~]  
+    =+  ~(tap by read:da-item)
+    =+  %-  silt  %+  turn  -
+      |=  [k=[=ship =dude:gall p=^^path] v=[? ? =rock:portal-item]]
+      `key`(path-to-key:conv +.p.k)
+    keys+(~(uni in ~(key by items)) -)
     ::
       [%item @ @ @ @ ~]
     :-  %item
@@ -186,9 +219,6 @@
     =/  item  (~(gut by read:da-item) [ship.key %portal-store [%item t.path]] ~)
     ?~  item  item
     rock:item
-    ::
-    ::  TODO
-      [%item-exists @ @ @ @ ~]  (~(has by items) (path-to-key:conv t.path))
     ::
     ::  TODO
       [%item-valid @ @ @ @]
@@ -226,35 +256,26 @@
   ?>  |(=(our.bowl ship.key.item) =(lens.item %temp))
   (~(put by items) key.item item)
 ::
-++  del-item  ::  only used in %purge, %delete just labels item as deleted
-              ::  and it's actually removed during purge
-  |=  =key
-  ^-  ^items
-  (~(del by items) key)
-::
-++  del-items
-  |=  =key-list
-  ^-  ^items
-  =+  `(map key item)`(malt (turn key-list |=(=key [key *item])))
-  (~(del by items) -)
-::
 ++  cards-methods
-  ::  TODO
-  :: - on-action sub
   |%
-  ::  TODO exception for temp and not our
-  ::  for upd and for cards from sss
-  :: OVO sa give:da/u-read is sss-a
+  ++  track-gr
+    |=  [=ship]
+    :~  :*  %pass  /gr-track  %agent  [our.bowl %portal-graph]  %poke 
+          %social-graph-track  !>(portal-store+[%start ship /(scot %p ship)])
+    ==  ==
+  ::
+  ::  adds tag, and makes it public
+  ++  gra
+    |=  edit=[=app:gr [%add-tag tag=path from=node:gr to=node:gr]]
+    ^-  (list card)
+    :~  :*  %pass  /gr-tag  %agent  [our.bowl %portal-graph]  %poke 
+            %social-graph-edit  !>(edit)
+    ==  ==
+  ::
   ++  upd
     |=  =item
     ^-  (list card)
     [%give %fact [/updates]~ %portal-update !>(item)]~
-  ::  whether its on-agent or on-poke
-    ::    fe-update
-    ::    PM update
-    ::    subs update
-    ::  previous card making exception:  validity store -> no cards
-  ::
   --
 ::
 ++  handle-poke  ::  all arms here should output [cards items]
@@ -297,8 +318,8 @@
       ::  don't subscribe to what you are already subbed to
       ?:  (~(has by read:da-item) [ship.key.act %portal-store path])  `state
       =^  cards  item-sub  (surf:da-item ship.key.act %portal-store path)
-      :-  cards
-      state(item-sub item-sub)
+      :_  state
+      (welp cards (track-gr:cards-methods ship.key.act))
     ::
     ++  replace
       |=  [act=action]
@@ -330,7 +351,7 @@
         :-  (welp cards (upd:cards-methods item))
         state
       ::  add to collections
-      =^  cards  state
+      =^  cards-1  state
         %-  tail  %^  spin  `key-list`append-to.act  [cards state]
         |=  [col-key=key q=[cards=(list card) state=state-1]]
         :-  col-key
@@ -339,7 +360,7 @@
         =^  cards  state.q  (append [%append [key.item]~ col-key])
         [(welp cards.q cards) state.q]
       ::  add to feeds
-      =^  cards  state
+      =^  cards-2  state
         %-  tail  %^  spin  `key-list`prepend-to-feed.act  [cards state]
         |=  [feed-key=key q=[cards=(list card) state=state-1]]
         :-  feed-key
@@ -348,7 +369,22 @@
         =/  feed  ~[[(scot %da now.bowl) our.bowl key.item]]
         =^  cards  state.q  (prepend-to-feed [%prepend-to-feed feed feed-key])
         [(welp cards.q cards) state.q]
-      [cards state]
+      ::  add tags to soc-graph (outward pointing),
+      ::  and send corresponding messages that backward pointing tags be created
+      =^  cards-3  state
+        %-  tail  %^  spin  
+        `(list [=key tag-to=^path tag-from=^path])`tags-to.act  [cards state]
+        |=  [[=key tag-to=^path tag-from=^path] q=[cards=(list card) state=state-1]]
+        :-  [key tag-to tag-from]
+        =/  our  (key-to-node:conv key.item)
+        =/  their    (key-to-node:conv key)
+        :_  state.q
+        %+  snoc  (gra:cards-methods portal-store+[%add-tag tag-to our their])
+        :*  %pass  /tag  %agent  [ship.key %portal-store]  %poke 
+            %portal-message
+            !>([%add-tag-request our.bowl tag-from their our])
+        ==  
+      [;:(welp cards cards-1 cards-2 cards-3) state]
     ::  also -> main collection deduplication
     ::  (preventing duplication in the first place)
     ::
@@ -440,40 +476,74 @@
         :_  state  (welp cards cards-1)
       =.  item-sub  (quit:da-item ship.key.act %portal-store path)
       [cards state]
+    ::
+    ++  destroy
+      |=  [act=action]
+      ^+  [*(list card) state]
+      ?>  ?=([%destroy *] act)
+      ?:  &(=(time.key.act '~2000.1.1') =(ship.key.act our.bowl))
+        ~&  "%portal: don't destroy default items"  `state
+      =/  path  [%item (key-to-path:conv key.act)]
+      =.  items.state  (~(del by items.state) key.act)
+      ?:  =(time.key.act '')  ::  is temp
+        :_  state
+        =-  [%pass [- +.path] %agent [ship.key.act -] %leave ~]~
+          ?+    struc.key.act    !!
+            %app    %treaty
+            %group  %get-group-preview
+          ==
+      ?:  =(our.bowl ship.key.act)
+        ::  =.  item-pub  (kill:du-item path^~)  No killing paths, 
+        ::  because then I have to live it if I want to publish there again
+        `state
+      =.  item-sub  (quit:da-item ship.key.act %portal-store path)
+      `state
     --
 ::
 ++  init-sequence
   ^+  [*(list card) state]
   =/  feed-path  [%item %feed '~worpet-bildet' '' 'global' ~]
   =^  cards  item-sub  (surf:da-item ~worpet-bildet %portal-store feed-path)
+  =.  cards  (welp cards (track-gr:cards-methods ~worpet-bildet))
   =^  cards-1  state  
     %-  create:handle-poke  
     :*  %create  ~  ~  `'~2000.1.1'  `%def
     `[%collection 'Main Collection' 'Your first collection.' '' ~]
-    [%collection our.bowl '' '~2000.1.1']~  ~  ==
+    [%collection our.bowl '' '~2000.1.1']~  ~  ~  ==
   =^  cards-2  state
     %-  create:handle-poke
     :*  %create  ~  ~  `'~2000.1.1'  `%def
-    `[%validity-store *validity-records]  ~  ~  ==
+    `[%validity-store *validity-records]  ~  ~  ~  ==
   =^  cards-3  state
     %-  create:handle-poke
-    [%create ~ ~ `'~2000.1.1' `%personal `[%feed ~] ~ ~]
+    [%create ~ ~ `'~2000.1.1' `%personal `[%feed ~] ~ ~ ~]
   =^  cards-4  state  
     %-  create:handle-poke
     :*  %create  ~  ~  `'all'  `%def
     `[%collection 'All' 'Collection of all apps, groups and ships.' '' ~]
-    [%collection our.bowl '' '~2000.1.1']~  ~  ==
+    [%collection our.bowl '' '~2000.1.1']~  ~  ~  ==
+  =/  cards-5    ::  - make your tags public
+    :~  :*  %pass  /gr-perm  %agent  [our.bowl %portal-graph]  %poke
+            %social-graph-edit
+            !>(portal-store+[%set-perms /(scot %p our.bowl) %public])
+    ==  ==
+  =^  cards-6  state  
+    %-  create:handle-poke
+    :*  %create  ~  ~  `'published-apps'  `%def
+    `[%collection 'My Apps' 'Collection of all apps I have published.' '' ~]
+    [%collection our.bowl '' '~2000.1.1']~  ~  ~  ==
+  ::
   ?:  =(our.bowl ~worpet-bildet)
-    =^  cards-5  state  
+    =^  cards-7  state  
       %-  create:handle-poke
-      [%create ~ ~ `'global' `%global `[%feed ~] ~ ~]
-    =^  cards-6  state  
+      [%create ~ ~ `'global' `%global `[%feed ~] ~ ~ ~]
+    =^  cards-8  state  
       %-  create:handle-poke
-      [%create ~ ~ `'index' `%def `[%collection '' '' '' ~] ~ ~]
+      [%create ~ ~ `'index' `%def `[%collection '' '' '' ~] ~ ~ ~]
     :_  state
-    (zing ~[cards cards-1 cards-2 cards-3 cards-4 cards-5 cards-6])
+    (zing ~[cards cards-1 cards-2 cards-3 cards-4 cards-5 cards-6 cards-7 cards-8])
   :_  state
-  (zing ~[cards cards-1 cards-2 cards-3 cards-4])
+  (zing ~[cards cards-1 cards-2 cards-3 cards-4 cards-5 cards-6])
 ::
 ++  state-transition
   |%

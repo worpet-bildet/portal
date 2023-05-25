@@ -12,6 +12,8 @@
          append-to=(list [struc=%collection =ship =cord time=cord])
          ::  TODO try $>(%collection key), probably wont work tho
          prepend-to-feed=(list [struc=%feed =ship =cord time=cord])
+         ::  in %portal use case, tag should look like /[ship]/whatever
+         tags-to=(list [=key tag-to=path tag-from=path])
       ==
       ::
       $:  %edit
@@ -27,7 +29,7 @@
         ==
       ==
       ::
-      [%replace =key =lens =bespoke]  ::  TODO should it act like put or edit?, i.e. can it create a nonexisting item. NO!
+      [%replace =key =lens =bespoke]  ::  TODO should it act like put or edit?, i.e. can it create a nonexisting item. NO! (?)
       ::
       [%append =key-list col-key=[struc=%collection =ship =cord time=cord]]
       [%prepend =key-list col-key=[struc=%collection =ship =cord time=cord]]
@@ -35,6 +37,7 @@
       [%remove =key-list col-key=[struc=%collection =ship =cord time=cord]]
       ::
       [%delete =key]  ::  adds [%deleted ~] lens
+      [%destroy =key]  :: abolishes the item from the atmosphere
       ::
       [%sub =key]
       [%sub-to-item =key]

@@ -7,34 +7,40 @@
       state-1:portal-config
       state-2:portal-config
       state-3:portal-config
+      state-4:portal-config
   ==
 +$  card  card:agent:gall
 --
 %-  agent:dbug
-=|  state-3:portal-config
+=|  state-4:portal-config
 =*  state  -
 ^-  agent:gall
+=<
 |_  =bowl:gall
 +*  this        .
     default     ~(. (default-agent this %|) bowl)
-++  on-init
-  ^-  (quip card _this)
-  =/  sub-init  [%sub [%collection portal-indexer '' '~2000.1.1']]
-  :_  this
-  ::  sub to home page
-  [(~(act cards [[our.bowl %portal-store]]) sub-init)]~
+    helper      ~(. +> bowl)
+++  on-init 
+  =.  state  *state-4:portal-config
+  =^  cards  state  init-sequence:helper
+  [cards this]
 ::
 ++  on-save  !>(state)
 ++  on-load
   |=  =vase
   ^-  (quip card _this)
   =/  old  !<(versioned-state vase)
-  ?-  -.old
-    %0      `this(state *state-3:portal-config)
-    %1      `this(state *state-3:portal-config)
-    [%2 *]  `this(state *state-3:portal-config)
-    %3      `this(state old)
-  ==
+  =/  new-state  *state-4:portal-config
+  =.  state
+    ?-  -.old
+      %0      new-state
+      %1      new-state
+      [%2 *]  new-state
+      %3      new-state
+      %4      old
+    ==
+  =^  cards  state  init-sequence:helper
+  [cards this]
 ::
 ++  on-poke
   |=  [=mark =vase]
@@ -91,6 +97,39 @@
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
   ?+    wire    (on-agent:default wire sign)
+      [%our-apps ~]
+    ?+    -.sign    (on-agent:default wire sign)
+        %fact
+      =/  upd  !<(update:alliance q.cage.sign)
+      =.  our-apps
+        ?-  -.upd
+          %add  (~(put in our-apps) [ship.upd desk.upd])
+          %del  (~(del in our-apps) [ship.upd desk.upd])
+          %ini  init.upd
+        ==
+      `this
+    ==
+    ::
+      [%our-treaty @ @ ~]
+    ?+    -.sign    (on-agent:default wire sign)
+        %fact
+      =/  treaty  !<(treaty:treaty q.cage.sign)
+      =/  create-app  ^-  action
+        :*  %create 
+            ~
+            ~
+            ``@t`i.t.t.wire
+            `%def
+            `[%app '' *signature treaty]
+            [%collection our.bowl '' 'published-apps']~
+            ~
+            ~
+        ==
+      :_  this
+      :~  (~(act cards [our.bowl %portal-store]) create-app)
+          [%pass wire %agent [our.bowl %treaty] %leave ~]
+      ==
+    ==
     ::
       [%treaty @ @ @ @ ~]
     ?+    -.sign    (on-agent:default wire sign)
@@ -118,4 +157,30 @@
   ==
 ::
 ++  on-fail   on-fail:default
+--
+|_  [=bowl:gall]
++*  this      .
+::
+++  init-sequence
+  ^+  [*(list card) state]
+  =.  our-apps.state  ;;  our-apps:portal-config  
+    %-  tail
+    .^  update:alliance:treaty  %gx
+        /(scot %p our.bowl)/treaty/(scot %da now.bowl)/alliance/noun
+    ==
+  =/  cards-1
+    =+  ~(tap in our-apps.state)
+    %+  turn  -
+    |=  [=ship =desk]
+    :*  %pass  /our-treaty/(scot %p ship)/[desk]  %agent
+        [our.bowl %treaty]  %watch  /treaty/(scot %p ship)/[desk]
+    ==
+  =/  sub-init  [%sub [%collection portal-indexer '' '~2000.1.1']]
+  :_  state
+  %+  welp  cards-1
+  ::  sub to home page
+  :~  [(~(act cards [[our.bowl %portal-store]]) sub-init)]
+  ::  sub to our published apps
+      [%pass /our-apps %agent [our.bowl %treaty] %watch /alliance]
+  ==
 --

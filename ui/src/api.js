@@ -14,6 +14,13 @@ export const getPortalItems = () => {
   });
 };
 
+export const getSocialItems = () => {
+  return scry({
+    app: 'portal-graph',
+    path: '/app/portal-store',
+  });
+};
+
 export const getContacts = () => {
   return scry({
     app: 'contacts',
@@ -177,6 +184,20 @@ export const usePortalSubscription = (onEvent) => {
   });
 
   return () => api?.unsubscribe(portalSub);
+};
+
+export const useSocialSubscription = (onEvent) => {
+  const socialSub = api.subscribe({
+    app: 'portal-graph',
+    path: '/updates',
+    ship: api.ship,
+    verbose: true,
+    event: onEvent,
+    err: console.error,
+    quit: console.error,
+  });
+
+  return () => api?.unsubscribe(socialSub);
 };
 
 export const useContactsSubscription = (onEvent) => {
