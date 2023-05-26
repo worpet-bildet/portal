@@ -1,4 +1,5 @@
 <script>
+  import { LinkPreview } from 'svelte-link-preview';
   import { link } from 'svelte-spa-router';
   import { fade, slide } from 'svelte/transition';
   import { format } from 'timeago.js';
@@ -31,6 +32,15 @@
 
   let showCommentForm = false;
 
+  const customFetcher = async (url) => {
+    const response = await fetch(
+      `https://preview.foddur-hodler.one/v2?url=${url}`
+    );
+    const json = await response.json();
+    console.log({ json });
+    return json.metadata;
+  };
+
   // TODO: do some parsing of the blurb to figure out whether there are any
   // links that we should respect, and if those links are images we should work
   // out how to render them properly
@@ -60,6 +70,7 @@
       </div>
       <div class="whitespace-pre-wrap line-clamp-50">
         {blurb}
+        <LinkPreview url="https://google.com" fetcher={customFetcher} />
       </div>
       {#if ref}
         <div class="rounded-lg">
