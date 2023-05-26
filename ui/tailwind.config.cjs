@@ -2,22 +2,22 @@ module.exports = {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx,svelte}'],
   theme: {
     fontFamily: {
-      logo: ['krona'],
-      sauce: ['sauce'],
+      logo: ['Arkhip'],
     },
     colors: {
-      'grey': '#696969',
-      'black': '#181A1C',
-      'nav': '#181A1Cda',
-      'white': '#ffffff',
-      'offwhite': '#c5c5c5',
+      // nav: '#CFCACACC',
+      nav: '#CFCACA',
+      'gradient-top': '#CECCD0',
+      'gradient-bottom': '#A5AAB2',
+      black: '#383838',
+      white: '#ffffff',
     },
     extend: {},
     borderColor: {
-      DEFAULT: '#80808040',
+      DEFAULT: '#69696940',
     },
     boxShadow: {
-      DEFAULT: '0 0 20px 0 #00000050',
+      DEFAULT: '0 0 20px 0 #69696920',
     },
   },
   screens: {},

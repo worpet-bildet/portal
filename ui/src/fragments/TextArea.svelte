@@ -20,7 +20,7 @@
     bind:this={textarea}
     bind:value
     {...$$props}
-    class="p-2 w-full text-lg h-full resize-none leading-tight box-border break-words border-b focus:outline-none"
+    class="p-2 w-full h-full resize-none leading-tight box-border break-words border-b"
   />
 </div>
 

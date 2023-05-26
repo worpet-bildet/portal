@@ -79,7 +79,7 @@
             {/if}
             {#if !feed || feed.length === 0}
               <div class="col-span-12">
-                {patp} hasn't posted to Portal yet.
+                {patp} hasn't made any posts on Portal yet.
               </div>
             {:else}
               <div class="grid gap-y-4">

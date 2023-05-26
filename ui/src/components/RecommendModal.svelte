@@ -49,14 +49,14 @@
       <div class="col-span-1">
         <MySigil />
       </div>
-      <div class="col-span-11 pt-4">
+      <div class="col-span-11">
         <TextArea bind:value={blurb} />
       </div>
       <div class="col-span-11 col-start-2">
         <ItemVerticalListPreview {key} clickable={false} />
       </div>
       <button
-        class="rounded-lg bg-white text-black font-sauce py-2 px-4 col-start-11 col-span-2 lg:col-start-12 lg:col-span-1"
+        class="rounded-lg bg-black text-white font-bold py-2 px-4 col-start-11 col-span-2 lg:col-start-12 lg:col-span-1"
         on:click={recommend}>Post</button
       >
     </div>

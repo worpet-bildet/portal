@@ -84,7 +84,7 @@
                         meta: { title, description },
                       } = joinedDetails.channels[channelKey]}
                       <div
-                        class="border shadow rounded-lg p-2 hover:bg-white hover:text-black hover:duration-500"
+                        class="border shadow rounded-lg p-2 hover:bg-black hover:text-white"
                       >
                         <a
                           href={channelLink(channelKey)}
