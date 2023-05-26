@@ -58,9 +58,9 @@
         dispatch('selected', { key, selected });
       }
     }}
-    class="grid grid-cols-6 w-full items-center gap-4 p-1 hover:bg-black hover:text-white cursor-pointer border shadow rounded-lg text-xs text-left"
-    class:bg-black={selected}
-    class:text-white={selected}
+    class="grid grid-cols-6 w-full items-center gap-4 p-1 hover:border-[#FFFFFF90] hover:duration-500 cursor-pointer border shadow rounded-lg text-xs text-left"
+    class:bg-white={selected}
+    class:text-black={selected}
   >
     <div
       class="border overflow-hidden h-full rounded-md"
@@ -110,7 +110,7 @@
         {/if}
         {#if removable}
           <button
-            class="w-8 h-8 hover:bg-red-500 cursor-pointer"
+            class="w-8 h-8 hover:bg-red-500 hover:duration-500 cursor-pointer"
             on:click|stopPropagation
             on:click={() => remove(keyStr)}
           >

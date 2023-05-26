@@ -106,7 +106,7 @@
             <div class="w-6"><Sigil patp={lastValidShip || '~zod'} /></div>
             <input
               type="text"
-              class="bg-transparent border-b"
+              class="bg-transparent border-b focus:outline-none"
               placeholder="~worpet-bildet"
               bind:value={searchShip}
               on:keydown={(e) => (e.key === 'Enter' ? search() : null)}
@@ -122,7 +122,7 @@
         <div class="flex flex-col gap-4">
           {#each sortRadioStations($state.radioStations) as { description, viewers, location }}
             <button
-              class="flex flex-col gap-2 border shadow rounded-md p-2 hover:text-white hover:bg-black text-left"
+              class="flex flex-col gap-2 border shadow rounded-md p-2 hover:text-black hover:bg-white hover:duration-500 text-left"
               on:click={() => tuneRadio(location)}
             >
               <div>{description}</div>
@@ -143,7 +143,7 @@
     <SidebarGroup>
       {#if $state.palsLoaded && !$state.pals}
         <div>
-          <div class="text-xl font-bold">Portal is better with Pals!</div>
+          <div class="text-xl font-bold pb-4">Portal is better with Pals</div>
           <ItemVerticalListPreview
             small
             key={{ struc: 'app', ship: '~paldev', cord: 'pals', time: '' }}

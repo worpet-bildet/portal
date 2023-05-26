@@ -80,14 +80,14 @@
 </script>
 
 <div
-  class="grid grid-cols-12 gap-2 lg:gap-4 p-3 rounded-lg shadow border border-black"
+  class="grid grid-cols-12 gap-2 lg:gap-4 py-3 pl-3 rounded-lg shadow border border-black"
 >
   <div class="col-span-1">
     <div class="rounded-md overflow-hidden">
       <Sigil patp={me} />
     </div>
   </div>
-  <div class="col-span-11">
+  <div class="col-span-11 pt-1">
     <TextArea placeholder="Share a limerick, maybe" bind:value={content} />
   </div>
   <div class="col-span-12 col-start-2 flex justify-between">
@@ -110,7 +110,7 @@
       <div />
     {/if}
     <button
-      class="border bg-black text-white rounded-lg px-3 py-1 font-bold self-end"
+      class="border bg-white font-sauce text-black rounded-lg px-3 py-1 mr-4 font-bold self-end"
       on:click={post}>Post</button
     >
   </div>

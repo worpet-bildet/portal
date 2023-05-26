@@ -31,7 +31,7 @@
 <div class="flex flex-col h-full justify-between gap-4">
   <slot />
   {#if navbuttons}
-    <div class="flex justify-between w-full">
+    <div class="flex justify-between w-full pt-4">
       {#if !isFirstStep}
         <IconButton icon={LeftArrowIcon} on:click={back}>Back</IconButton>
       {:else}

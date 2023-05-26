@@ -199,7 +199,7 @@
         <div class="text-2xl font-bold">Give your collection a name</div>
         <input
           type="text"
-          class="p-2 border-b"
+          class="p-2 border-b text-lg focus:outline-none"
           bind:value={name}
           placeholder="A collection of useful items"
         />
@@ -212,7 +212,7 @@
         />
       {:else if formstep === 'groups'}
         {#if Object.entries(groups).length > 0}
-          <div class="text-2xl font-bold">Add groups</div>
+          <div class="text-2xl font-bold pb-4">Add groups</div>
           {#each Object.entries(groups) as [path, { meta: { title, image } }]}
             {@const key = {
               struc: 'group',
@@ -238,7 +238,7 @@
           </div>
         {/if}
       {:else if formstep === 'apps'}
-        <div class="text-2xl font-bold">Add apps</div>
+        <div class="text-2xl font-bold pb-4">Add apps</div>
         {#each Object.entries(apps) as [path, { title, image, ship, info }]}
           {@const key = { struc: 'app', ship, cord: path, time: '' }}
           <div class="flex justify-between">
@@ -253,7 +253,7 @@
           </div>
         {/each}
       {:else if formstep === 'ships'}
-        <div class="text-2xl font-bold">Add other users</div>
+        <div class="text-2xl font-bold pb-4">Add other users</div>
         <div class="flex flex-col items-center justify-center gap-4">
           <IconButton
             icon={PlusIcon}
@@ -286,7 +286,7 @@
           >
         </div>
       {:else if formstep === 'other'}
-        <div class="text-2xl font-bold">Add links, images, etc.</div>
+        <div class="text-2xl font-bold pb-4">Add links, images, etc.</div>
         <div class="flex flex-col items-center justify-center gap-4">
           <IconButton
             icon={PlusIcon}
