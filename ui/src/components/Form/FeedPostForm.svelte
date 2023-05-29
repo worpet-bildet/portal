@@ -80,7 +80,7 @@
 </script>
 
 <div
-  class="grid grid-cols-12 gap-2 lg:gap-4 py-3 pl-3 rounded-lg shadow border border-black"
+  class="grid grid-cols-12 bg-panels gap-2 lg:gap-4 py-3 pl-3 rounded-lg shadow border border-black"
 >
   <div class="col-span-1">
     <div class="rounded-md overflow-hidden">
@@ -110,7 +110,7 @@
       <div />
     {/if}
     <button
-      class="border bg-white font-sauce text-black rounded-lg px-3 py-1 mr-4 font-bold self-end"
+      class="border hover:bg-grey hover:text-white hover:duration-500 font-saucebold text-black border-2 border-grey rounded-lg px-3 py-1 mr-4 font-bold self-end"
       on:click={post}>Post</button
     >
   </div>
@@ -125,7 +125,7 @@
       {/if}
       {#each Object.entries(apps) as [path, { title, image, color }]}
         <button
-          class="grid grid-cols-12 border shadow items-center gap-4 p-1"
+          class="grid grid-cols-12 bg-panels border shadow items-center gap-4 p-1"
           on:click={() => {
             appModalOpen = false;
             recommendModalOpen = true;

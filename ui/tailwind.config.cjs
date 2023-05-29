@@ -3,12 +3,13 @@ module.exports = {
   theme: {
     fontFamily: {
       logo: ['krona'],
-      sauce: ['sauce'],
+      saucebold: ['sauce-bold'],
     },
     colors: {
       'grey': '#696969',
-      'black': '#181A1C',
-      'nav': '#181A1Cda',
+      'black': '#000000',
+      'darkgrey': '#181A1C',
+      'panels': '#D6D3D660',
       'white': '#ffffff',
       'offwhite': '#c5c5c5',
     },
@@ -17,7 +18,7 @@ module.exports = {
       DEFAULT: '#80808040',
     },
     boxShadow: {
-      DEFAULT: '0 0 20px 0 #00000050',
+      DEFAULT: '0 0 20px 0 #69696920',
     },
   },
   screens: {},

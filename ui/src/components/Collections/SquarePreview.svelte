@@ -73,7 +73,7 @@
       {/if}
     </div>
     {#if withTitle}
-      <div class="bg-gray-500 p-2">
+      <div class="bg-panels p-2">
         <div>{title}</div>
       </div>
     {/if}

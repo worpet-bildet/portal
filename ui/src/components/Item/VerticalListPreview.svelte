@@ -58,9 +58,10 @@
         dispatch('selected', { key, selected });
       }
     }}
-    class="grid grid-cols-6 w-full items-center gap-4 p-1 hover:border-[#FFFFFF90] hover:duration-500 cursor-pointer border shadow rounded-lg text-xs text-left"
-    class:bg-white={selected}
-    class:text-black={selected}
+    class="grid grid-cols-6 w-full items-center gap-4 p-1 bg-panels hover:bg-grey hover:text-white hover:duration-500 cursor-pointer border shadow rounded-lg text-xs text-left"
+    class:bg-grey={selected}
+    class:text-white={selected}
+
   >
     <div
       class="border overflow-hidden h-full rounded-md"
