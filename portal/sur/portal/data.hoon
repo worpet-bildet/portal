@@ -18,14 +18,16 @@
       %validity-store
       %retweet
       %review
+      %blog
+      ::  studio
       %other
   ==
 ::
 ::  lens is how we see an item and how we treat it
 ::
 +$  lens
-  $?  %deleted   
-      %temp  
+  $?  %deleted
+      %temp
       %index
       %def
       %global
@@ -78,6 +80,8 @@
       [struc=%feed =feed]
       [struc=%collection title=@t blurb=@t image=@t =key-list]
       [struc=%validity-store =validity-records]
+      [struc=%blog title=@t blurb=@t uri=@t path=@t image=@t]
+      ::  TODO %studio
       [struc=%other title=@t blurb=@t link=@t image=@t]
   ==
 ::

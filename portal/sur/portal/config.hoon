@@ -24,7 +24,7 @@
       =onboarded
   ==
 ::
-+$  state-4
+++  state-4
   $:  %4
       =portal-curator
       =portal-indexer
@@ -34,5 +34,5 @@
       =onboarded
       =our-apps
   ==
-
+::
 --
