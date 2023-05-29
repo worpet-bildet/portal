@@ -87,7 +87,7 @@
       <Sigil patp={me} />
     </div>
   </div>
-  <div class="col-span-11 pt-1">
+  <div class="col-span-11">
     <TextArea placeholder="Share a limerick, maybe" bind:value={content} />
   </div>
   <div class="col-span-12 col-start-2 flex justify-between">

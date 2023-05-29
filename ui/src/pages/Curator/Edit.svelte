@@ -90,9 +90,9 @@
   <div class="grid gap-y-4 col-span-9 bg-panels border shadow p-4 rounded-lg">
     <Tabs {tabs} bind:activeTab />
     {#if activeTab === 'Profile'}
-      <div class="flex flex-col gap-2 pt-4">
+      <div class="flex flex-col gap-2">
         <div>Display Name</div>
-        <input type="text" bind:value={nickname} class="p-2 border-b focus:outline-none" />
+        <input type="text" bind:value={nickname} class="p-2 border-b" />
       </div>
       <div class="flex flex-col gap-2">
         <div>Bio</div>
@@ -100,15 +100,15 @@
       </div>
       <div class="flex flex-col gap-2">
         <div>Avatar</div>
-        <input type="text" bind:value={avatar} class="p-2 border-b focus:outline-none" />
+        <input type="text" bind:value={avatar} class="p-2 border-b" />
       </div>
       <div class="flex flex-col gap-2">
         <div>Cover Image</div>
-        <input type="text" bind:value={cover} class="p-2 border-b focus:outline-none" />
+        <input type="text" bind:value={cover} class="p-2 border-b" />
       </div>
     {:else if activeTab === 'Collections'}
       <div class="grid gap-8 grid-cols-4">
-        <div class="text-2xl font-bold col-span-4 pt-4">
+        <div class="text-2xl font-bold col-span-4">
           Collections (drag to reorder)
         </div>
         <SortableList bind:list={collections} key="time" let:item>

@@ -106,7 +106,7 @@
             <div class="w-6"><Sigil patp={lastValidShip || '~zod'} /></div>
             <input
               type="text"
-              class="bg-transparent border-b focus:outline-none"
+              class="bg-transparent border-b"
               placeholder="~worpet-bildet"
               bind:value={searchShip}
               on:keydown={(e) => (e.key === 'Enter' ? search() : null)}

@@ -61,7 +61,6 @@
     class="grid grid-cols-6 w-full items-center gap-4 p-1 bg-panels hover:bg-grey hover:text-white hover:duration-500 cursor-pointer border shadow rounded-lg text-xs text-left"
     class:bg-grey={selected}
     class:text-white={selected}
-
   >
     <div
       class="border overflow-hidden h-full rounded-md"
@@ -111,7 +110,7 @@
         {/if}
         {#if removable}
           <button
-            class="w-8 h-8 hover:bg-red-500 hover:duration-500 cursor-pointer"
+            class="w-8 h-8 hover:bg-red-500 cursor-pointer"
             on:click|stopPropagation
             on:click={() => remove(keyStr)}
           >
