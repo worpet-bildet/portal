@@ -39,7 +39,6 @@
         );
       })
       .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
-    console.log({ replies });
   });
 
   let showCommentForm = false;
