@@ -47,7 +47,7 @@
     <div class="relative col-span-3 md:col-span-2">
       <div bind:this={avatarPad} />
       <div
-        class="absolute -top-8 w-full rounded-md"
+        class="absolute -top-12 w-full rounded-md"
         bind:this={avatarContainer}
       >
         {#if avatar}
