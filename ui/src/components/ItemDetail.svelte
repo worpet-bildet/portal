@@ -20,12 +20,13 @@
     }
   };
   $: if (!cover || !isUrl(cover)) {
-    cover = 'https://img.freepik.com/free-photo/retro-computer-desk-arrangement_23-2150118622.jpg?w=2000&t=st=1685337130~exp=1685337730~hmac=c5a76439f9ecabb9e7b818ce328ff674b67ad02df471c588c778ba824a028cb7';
+    cover =
+      'https://img.freepik.com/free-photo/retro-computer-desk-arrangement_23-2150118622.jpg?w=2000&t=st=1685337130~exp=1685337730~hmac=c5a76439f9ecabb9e7b818ce328ff674b67ad02df471c588c778ba824a028cb7';
   }
 </script>
 
 <svelte:window bind:innerWidth />
-<div class="col-span-12 w-full h-64">
+<div class="col-span-12 w-full h-56">
   {#if isUrl(cover)}
     <img
       src={cover}
@@ -45,7 +46,10 @@
   <div class="grid grid-cols-12 gap-4 w-full">
     <div class="relative col-span-3 md:col-span-2">
       <div bind:this={avatarPad} />
-      <div class="absolute w-full rounded-md" bind:this={avatarContainer}>
+      <div
+        class="absolute -top-8 w-full rounded-md"
+        bind:this={avatarContainer}
+      >
         {#if avatar}
           <div class="border rounded-md overflow-hidden w-full shadow">
             <ItemImage {title} {color} image={avatar} on:load={redrawAvatar} />
