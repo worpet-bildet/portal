@@ -97,7 +97,7 @@
   </div>
   <RightSidebar>
     <SidebarGroup>
-      <div class="flex flex-col gap-4 overflow-hidden">
+      <div class="flex flex-col gap-4 mx-2 mb-[13px] overflow-hidden">
         <div class="text-xl font-bold">Find a curator</div>
         <div
           class="flex w-full gap-4 items-center border shadow rounded-lg p-4 justify-between"
@@ -118,11 +118,11 @@
     </SidebarGroup>
     {#if $state.radioStations}
       <SidebarGroup>
-        <div class="text-xl font-bold">Jump in to Radio 📻</div>
+        <div class="text-xl font-bold mx-2">Jump in to Radio 📻</div>
         <div class="flex flex-col gap-4">
           {#each sortRadioStations($state.radioStations) as { description, viewers, location }}
             <button
-              class="flex flex-col gap-2 border shadow rounded-md p-2 hover:text-white hover:bg-black text-left"
+              class="flex flex-col gap-2 border shadow rounded-md p-2 hover:text-white hover:bg-grey hover:duration-500 text-left"
               on:click={() => tuneRadio(location)}
             >
               <div>{description}</div>
@@ -143,7 +143,7 @@
     <SidebarGroup>
       {#if $state.palsLoaded && !$state.pals}
         <div>
-          <div class="text-xl font-bold">Portal is better with Pals!</div>
+          <div class="text-xl font-bold pb-4 px-2">Portal is better with Pals</div>
           <ItemVerticalListPreview
             small
             key={{ struc: 'app', ship: '~paldev', cord: 'pals', time: '' }}

@@ -2,15 +2,16 @@ module.exports = {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx,svelte}'],
   theme: {
     fontFamily: {
-      logo: ['Arkhip'],
+      logo: ['krona'],
+      saucebold: ['sauce-bold'],
     },
     colors: {
-      // nav: '#CFCACACC',
-      nav: '#CFCACA',
-      'gradient-top': '#CECCD0',
-      'gradient-bottom': '#A5AAB2',
-      black: '#383838',
-      white: '#ffffff',
+      'grey': '#696969',
+      'black': '#000000',
+      'darkgrey': '#181A1C',
+      'panels': '#D6D3D660',
+      'white': '#ffffff',
+      'offwhite': '#c5c5c5',
     },
     extend: {},
     borderColor: {

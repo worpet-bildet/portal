@@ -58,8 +58,8 @@
         dispatch('selected', { key, selected });
       }
     }}
-    class="grid grid-cols-6 w-full items-center gap-4 p-1 hover:bg-black hover:text-white cursor-pointer border shadow rounded-lg text-xs text-left"
-    class:bg-black={selected}
+    class="grid grid-cols-6 w-full items-center gap-4 p-1 bg-panels hover:bg-grey hover:text-white hover:duration-500 cursor-pointer border shadow rounded-lg text-xs text-left"
+    class:bg-grey={selected}
     class:text-white={selected}
   >
     <div

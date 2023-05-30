@@ -125,7 +125,7 @@
           <div class="flex flex-col gap-4">
             {#each Object.entries(apps) as [path, { title, image }]}
               <button
-                class="grid grid-cols-12 border shadow items-center gap-4 p-1"
+                class="grid grid-cols-12 bg-panels border shadow items-center gap-4 p-1"
                 on:click={() => add(`/app/${path}/`)}
               >
                 <div class="col-span-1">
