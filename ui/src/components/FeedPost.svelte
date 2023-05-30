@@ -2,13 +2,14 @@
   import { link } from 'svelte-spa-router';
   import { fade, slide } from 'svelte/transition';
   import { format } from 'timeago.js';
-  import { subscribeToItem } from '@root/api';
+  import { me, subscribeToItem } from '@root/api';
   import {
     state,
     getItem,
     keyStrFromObj,
     getCurator,
     getReplies,
+    getRepliesByTo,
   } from '@root/state';
   import { getMeta, fromUrbitTime } from '@root/util';
   import { ItemVerticalListPreview, Sigil, FeedPostForm } from '@components';
@@ -24,9 +25,21 @@
     if (s.isLoaded && !item) {
       return subscribeToItem(key);
     }
-    replies = (getReplies(key.ship, key) || []).sort(
-      (a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time)
-    );
+    // This is a little confusing but we're merging the global list of comments
+    // with any comments that we have made ourselves on the post, which should
+    // mean that our comment shows up instantly even if our connection to the
+    // indexer is not good
+    replies = [
+      ...(getReplies(key.ship, key) || []),
+      ...(getRepliesByTo(me, key) || []),
+    ]
+      .filter((a, i, arr) => {
+        return (
+          i === arr.findIndex((i) => keyStrFromObj(i) === keyStrFromObj(a))
+        );
+      })
+      .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
+    console.log({ replies });
   });
 
   let showCommentForm = false;
