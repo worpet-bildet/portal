@@ -21,7 +21,7 @@
   };
   $: if (!cover || !isUrl(cover)) {
     cover =
-      'https://img.freepik.com/free-photo/retro-computer-desk-arrangement_23-2150118622.jpg?w=2000&t=st=1685337130~exp=1685337730~hmac=c5a76439f9ecabb9e7b818ce328ff674b67ad02df471c588c778ba824a028cb7';
+      'https://images.unsplash.com/photo-1554921027-b91f0beeb07d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80';
   }
 </script>
 
