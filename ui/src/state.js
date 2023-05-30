@@ -6,6 +6,7 @@ import {
   getJoinedGroups,
   getInstalledApps,
   getPals,
+  getStorageConfiguration,
   subscribeToGroup,
   requestRadioChannels,
 } from '@root/api';
@@ -113,6 +114,16 @@ export const refreshPals = async () => {
 export const refreshRadioChannels = () => {
   // we receive the response to this in teh subscription handler below
   requestRadioChannels();
+};
+
+export const refreshStorageConfiguration = () => {
+  getStorageConfiguration().then((config) => {
+    state.update((s) => {
+      console.log({ config });
+      // s.s3 = config['s3-update'].configuration;
+      return s;
+    });
+  });
 };
 
 export const getCurator = (patp) => {
@@ -269,5 +280,6 @@ export const refreshAll = () => {
   refreshGroups();
   refreshPals();
   refreshRadioChannels();
+  refreshStorageConfiguration();
 };
 refreshAll();

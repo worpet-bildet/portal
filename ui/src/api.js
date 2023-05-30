@@ -76,6 +76,19 @@ export const getHeapItems = (heap) => {
   });
 };
 
+export const getStorageConfiguration = () => {
+  return Promise.all([
+    scry({
+      app: 'storage',
+      path: '/configuration',
+    }),
+    scry({
+      app: 'storage',
+      path: '/credentials',
+    }),
+  ]);
+};
+
 export const addPal = (patp) => {
   return poke({
     app: 'pals',
@@ -254,4 +267,18 @@ export const useRadioSubscription = (onEvent) => {
   });
 
   return () => api?.unsubscribe(radioSub);
+};
+
+export const useStorageSubscription = (onEvent) => {
+  const storageSub = api.subscribe({
+    app: 's3-store',
+    path: '/all',
+    ship: api.ship,
+    verbose: true,
+    event: onEvent,
+    err: console.error,
+    quit: console.error,
+  });
+
+  return () => api?.unsubscribe(storageSub);
 };

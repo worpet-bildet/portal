@@ -181,7 +181,7 @@
           >
           <IconButton
             icon={CheckIcon}
-            on:click={saveShip}
+            on:click={lastValidShip !== newShip || !newShip ? null : saveShip}
             disabled={lastValidShip !== newShip || !newShip}>Save</IconButton
           >
         </div>

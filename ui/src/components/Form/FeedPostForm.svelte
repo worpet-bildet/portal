@@ -1,13 +1,16 @@
 <script>
   import { createEventDispatcher } from 'svelte';
+  import { S3Client } from '@aws-sdk/client-s3';
   import { me, poke } from '@root/api';
-  import { state, keyStrToObj, getCurator } from '@root/state';
+  import { state, keyStrToObj } from '@root/state';
+  import { toUrbitTime } from '@root/util';
   import { RecommendModal, Sigil } from '@components';
   import {
     TextArea,
     IconButton,
     AppIcon,
     GroupIcon,
+    ImageIcon,
     Modal,
     ItemImage,
   } from '@fragments';
@@ -59,7 +62,7 @@
   };
 
   // TODO: Factor out the selection of groups/apps into its own component
-  let groupModalOpen, appModalOpen, recommendModalOpen, selectedKey, color;
+  let groupModalOpen, appModalOpen, recommendModalOpen, selectedKey, fileInput;
   let groups = {};
   let apps = {};
   state.subscribe((s) => {
@@ -75,8 +78,27 @@
         apps[appkey] = data;
       });
     }
-    ({ color } = getCurator(me).bespoke || {});
   });
+
+  const handleImageSelect = async (e) => {
+    const file = e.target.files[0];
+    const fileParts = file.name.split('.');
+    const fileName = fileParts.slice(0, -1);
+    const fileExtension = fileParts.pop();
+    const timestamp = toUrbitTime(new Date()).slice(1);
+
+    const params = {
+      Bucket: $state.s3.currentBucket,
+      Key: `${me}/${timestamp}-${fileName}.${fileExtension}`,
+      Body: file,
+      ACL: 'public-read',
+      ContentType: file.type,
+    };
+
+    console.log(params);
+    let s3 = new S3Client();
+    // const s3 = new lib()
+  };
 </script>
 
 <div
@@ -103,6 +125,23 @@
           icon={GroupIcon}
           on:click={() => {
             groupModalOpen = true;
+          }}
+        />
+        <input
+          type="file"
+          accept="image/*"
+          class="hidden"
+          bind:this={fileInput}
+          on:change={handleImageSelect}
+        />
+        <IconButton
+          icon={ImageIcon}
+          disabled={!$state.s3 || !$state.s3.currentBucket}
+          tooltip="Configure S3 storage for image support"
+          on:click={() => {
+            if (!$state.s3 || !$state.s3.currentBucket) return;
+            fileInput.click();
+            console.log('pop the image modal for uploading something to s3');
           }}
         />
       </div>
