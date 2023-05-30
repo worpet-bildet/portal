@@ -14,8 +14,7 @@
     SidebarGroup,
   } from '@fragments';
 
-  let host,
-    cord,
+  let cord,
     itemKey,
     item,
     image,
@@ -33,8 +32,8 @@
 
   export let params;
   $: {
-    ({ host, cord } = params);
-    itemKey = `/app/${host}/${cord}/`;
+    let { wild } = params;
+    itemKey = `/app/${wild}`;
     loadApp($state);
   }
   const loadApp = (s) => {
