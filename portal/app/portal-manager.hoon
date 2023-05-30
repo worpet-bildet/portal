@@ -8,11 +8,28 @@
       state-2:portal-config
       state-3:portal-config
       state-4:portal-config
+      state-5
   ==
 +$  card  card:agent:gall
+::  TODO some type of state management
+::  e.g. delete everything begind last 100 msgs without feels or replies
++$  ch-feed  (list [=id:ch group=flag:groups channel=flag:ch replies=@ud feels=@ud])
++$  state-5
+  $:  %5
+      feels-seen=(mip:mip id:ch ship feel:ch)
+      chats-last-heard=(map flag:ch @da)
+      =ch-feed
+      =portal-curator:portal-config
+      =portal-indexer:portal-config
+      =purge-timer:portal-config
+      =purge-time:portal-config
+      =indexed-as-curator:portal-config
+      =onboarded:portal-config
+      =our-apps:portal-config
+  ==
 --
 %-  agent:dbug
-=|  state-4:portal-config
+=|  state-5
 =*  state  -
 ^-  agent:gall
 =<
@@ -21,7 +38,8 @@
     default     ~(. (default-agent this %|) bowl)
     helper      ~(. +> bowl)
 ++  on-init 
-  =.  state  *state-4:portal-config
+  ~&  >  "on-init"
+  =.  state  *state-5
   =^  cards  state  init-sequence:helper
   [cards this]
 ::
@@ -29,15 +47,17 @@
 ++  on-load
   |=  =vase
   ^-  (quip card _this)
+  ~&  >  "on-load"
   =/  old  !<(versioned-state vase)
-  =/  new-state  *state-4:portal-config
+  =/  new-state  *state-5
   =.  state
     ?-  -.old
       %0      new-state
       %1      new-state
       [%2 *]  new-state
       %3      new-state
-      %4      old
+      %4      [%5 *(mip:mip id:ch ship feel:ch) *(map flag:ch @da) *^ch-feed +.old]
+      %5      old
     ==
   =^  cards  state  init-sequence:helper
   [cards this]
@@ -45,7 +65,7 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
-  =/  manager  ~(. manager [bowl state ~])
+  =/  manager  ~(. manager [bowl ~])
   ?+    mark    (on-poke:default mark vase)
       %portal-action
     ?>  =(our.bowl src.bowl)
@@ -55,7 +75,7 @@
       :_  this  [(~(act cards [our.bowl %portal-store]) act)]~
       ::
         %sub
-      =^  cards  state  (sub:on-poke:manager act)  [cards this]
+      [(sub:on-poke:manager act) this]
       ::
         %onboarded
       `this(onboarded toggle.act)
@@ -103,7 +123,6 @@
       ::  since you last opened portal most commented
       ::  map id comment number
       ::
-      ::TODO NEW BRANCH CHRONICLE
       ::
       ::  prepend to feed should create feed if doesnt exist?
       ::
@@ -159,12 +178,35 @@
       ::  most popular over last day,
       :: chat messages by popularity, time
       :: (list [link time feels-num])
-      :: =/  chats
+      :: =/  chat-keys
       ::   .^  (map flag:ch chat:ch)  %gx  
       ::       /(scot %p our.bowl)/chat/(scot %da now.bowl)/chats/noun
       ::   ==
+      :: =/  writs  
+      ::   .^  writs:ch  %gx
+      ::       /(scot %p our.bowl)/chat/(scot %da now.bowl)/chat/~master-dilryd-mopreg/chat/writs/newest/100/noun
+      ::   ==
+      :: ~&  writs
+
+      ::~&  -
+      :: (list [flag chat])
+      :: watching.remark.chat=?
+      :: writs.pact.chat=(mop time writ=[seal=[id feels replied] memo])
+      :: (val:on:writs:ch writs.pact.chat)
+      :: index.pact.chat=(map id=[ship time] time)
+      ::~&  chats
+
+
+
+      ::  chat-feed
+      ::  (list [meta key])
+      ::  
+      ::  feed item
+      ::  feed  (list [time=cord =ship =key])
       
+      ::
       `this
+      ::[%pass /chats %agent [our.bowl %chat] %watch /briefs]~
     ==
     ::
       %portal-message
@@ -198,6 +240,154 @@
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
   ?+    wire    (on-agent:default wire sign)
+      [%groups ~]
+    ?-  -.sign
+      %poke-ack  !!
+    ::
+        %kick
+      :_  this
+      [%pass /groups %agent [our.bowl %groups] %watch /groups]~
+    ::
+        %watch-ack
+      :_  this
+      ?~  p.sign  ~
+      ((slog dap.bowl 'failed to open subscription' >wire< u.p.sign) ~)
+    ::
+        %fact
+      ?.  ?=(%group-action-0 p.cage.sign)
+        `this
+      =/  =diff:groups
+        q.q:!<(action:groups q.cage.sign)
+      ?.  ?=([%channel [%chat *] %add *] diff)
+        `this
+      =^  cards  state  (chat-sub:helper q.p.diff)
+      [cards this]
+    ==
+
+      [%chats ~]
+    ?+    -.sign  `this
+        %kick
+      :_  this
+      :~  [%pass /chats %agent [src.bowl %chat] %watch /briefs]  ==
+      ::
+        %fact
+      ::  mostly copying how %chronicle interfaced with %chat
+      =/  update  !<([=whom:ch =brief:briefs:ch] q.cage.sign)
+      ::~&  >  update
+      ?.  ?=([%flag *] whom.update)  `this
+      ::?.  =(p:p:update our.bowl)  `this outdated?
+      ?~  read-id.brief.update  `this  ::  msg was read, should we use this or no?
+                                       ::  or read-id is empty if its sent by us?
+      =/  post=[=time =writ:ch]
+        %-  head  %~  tap  by
+        .^  (map @da writ:ch)
+          %gx
+          ;:  welp 
+            /(scot %p our.bowl)/chat/(scot %da now.bowl)/chat
+            /(scot %p p.p.whom.update)/[q.p.whom.update]/writs/newest/1/noun
+          == 
+        ==
+      ::~&  post
+      ::  FEELS NO NOTIFS
+      ::  MAYBE BY REPLIES
+      ::  JUST LINKS?
+      :: ::
+      =/  chatmap
+        .^  (map flag:ch chat:ch) 
+            %gx  
+            /(scot %p our.bowl)/chat/(scot %da now.bowl)/chats/noun
+        ==
+      =/  group  group:perm:(~(got by chatmap) p.whom.update)
+      =/  channel  q.p.whom.update
+
+      :: ~&  chatmap
+      :: ~&  group
+      :: =/  feel-num
+      :: =/  reply-num
+      :: ?.  ?=([%story *] content.memo.writ.post)
+      ::   `this
+      :: ?.  ?=  [%story [~ [[%link @ @] [%break ~] ~]]]
+      ::     content.q.post
+      ::   `this
+      :: =/  newurl=@t  p.i.q.p.content.q.post
+      :: ::
+      :: =/  =request:http  [%'GET' newurl ~ ~]
+      :: =/  =task:iris  [%request request *outbound-config:iris]
+      :: =/  iris-card=card:agent:gall  [%pass /http-req/(scot %da now.bowl) %arvo %i task]
+      :: ::
+      :: =/  newlink  :*
+      ::                 url=newurl 
+      ::                 path=`path:spaces-path`group
+      ::                 date=now.bowl 
+      ::                 poster=author.q.post
+      ::                 likes=0 
+      ::                 dislikes=0 
+      ::                 liked=%.n
+      ::                 disliked=%.n
+      ::                 saved=%.n
+      ::                 featured=%.n
+      ::                 title=newurl
+      ::                 image-url=''
+      ::              ==
+      `this
+      :: :_  this(newsfeed :-(newlink newsfeed))
+      :: :~  iris-card
+      ::     :*  %give  %fact  
+      ::         ~[/updates/(scot %p ship:path:newlink)/(scot %tas space:path:newlink)]  
+      ::         %chronicle-update
+      ::         !>(`update:chronicle`new+newlink)
+      ::     ==  
+      :: ==
+    ==
+    ::
+      [%chat @ @ ~]
+    ~&  >  "receiving chat sub"
+    ::~&  >  wire
+    =/  =flag:ch
+      [(slav %p i.t.wire) i.t.t.wire]
+    ?-  -.sign
+      %poke-ack  !!
+      %kick      !! :: =^(cards state (chat-sub:helper flag) [cards this])
+    ::
+        %watch-ack
+      ?~  p.sign  [~ this]
+      %.  [~ this]
+      (slog dap.bowl 'failed to open subscription' >wire< u.p.sign)
+    ::
+        %fact
+      ?.  ?=(?(%chat-logs %chat-update-0) p.cage.sign)
+        [~ this]
+      =/  logs=(list [=time =diff:ch])
+        ?-  p.cage.sign
+          %chat-logs      (tap:log-on:ch !<(logs:ch q.cage.sign))
+          %chat-update-0  [!<(update:ch q.cage.sign)]~
+        ==
+      |-
+      ?~  logs
+        `this
+      =?  state  ?=(%writs -.diff.i.logs)
+        =/  dif  diff.i.logs
+        =*  mid  p.p.dif
+        ?-  -.q.p.dif::  state
+            %add-feel
+          =*  fro  p.q.p.dif
+          =*  new  q.q.p.dif
+          (receive-feel:helper flag time.i.logs mid fro `new)
+            %del-feel
+          =*  fro  p.q.p.dif
+          (receive-feel:helper flag time.i.logs mid fro ~)
+        ::
+        ::  handle if reply
+            %add  state
+          :: =*  mem  p.q.p.dif
+          :: (receive-mem:helper flag time.i.logs mid `mem)
+        ::  handle if reply deleted
+            %del  state
+          :: (receive-mem:helper flag time.i.logs mid ~)
+        ==
+      $(logs t.logs)
+    ==
+    ::
       [%our-apps ~]
     ?+    -.sign    (on-agent:default wire sign)
         %fact
@@ -262,26 +452,205 @@
 |_  [=bowl:gall]
 +*  this      .
 ::
+++  chat-sub
+  |=  =flag:ch
+  ^+  [*(list card) state]
+  =/  =wire  /chat/(scot %p p.flag)/[q.flag]
+  =/  have=?
+    %-  ~(any in ~(key by wex.bowl))
+    |=([w=^wire *] =(w wire))
+  ?:  have  `state
+  =;  =path
+    :_  state
+    [%pass wire %agent [our.bowl %chat] %watch path]~
+  =-  [%chat (scot %p p.flag) q.flag %updates -]
+  =/  last=(unit @da)  (~(get by chats-last-heard) flag)
+  ?~  last  /
+  /(scot %da u.last)
+::
 ++  init-sequence
   ^+  [*(list card) state]
-  =.  our-apps.state  ;;  our-apps:portal-config  
+  =.  our-apps  ;;  our-apps:portal-config  
     %-  tail
     .^  update:alliance:treaty  %gx
         /(scot %p our.bowl)/treaty/(scot %da now.bowl)/alliance/noun
     ==
   =/  cards-1
-    =+  ~(tap in our-apps.state)
+    =+  ~(tap in our-apps)
     %+  turn  -
     |=  [=ship =desk]
     :*  %pass  /our-treaty/(scot %p ship)/[desk]  %agent
         [our.bowl %treaty]  %watch  /treaty/(scot %p ship)/[desk]
     ==
   =/  sub-init  [%sub [%collection portal-indexer '' '~2000.1.1']]
+  =^  cards-2  state
+    ?~  ch-feed  init-chats
+    `state
   :_  state
-  %+  welp  cards-1
+  ;:  welp  cards-1  cards-2
   ::  sub to home page
   :~  [(~(act cards [[our.bowl %portal-store]]) sub-init)]
   ::  sub to our published apps
       [%pass /our-apps %agent [our.bowl %treaty] %watch /alliance]
+  ==  ==
+::
+++  init-chats
+  ^+  [*(list card) state]
+  =/  chats=(list [=flag:ch =chat:ch])
+    %~  tap  by
+    .^  (map flag:ch chat:ch)  %gx
+        [(scot %p our.bowl) %chat (scot %da now.bowl) /chats/chats]
+    ==
+  =|  new-feed=^ch-feed
+  =|  feels-saw=(map [id:ch ship] feel:ch)
+  =|  cards=(list card)
+  =^  cards-1  state
+  |-
+  ?~  chats
+    :-  cards
+    %=  state
+        ch-feed
+      new-feed
+      ::
+        feels-seen  
+      %-  ~(rep by feels-saw)
+      |=  [[[i=id:ch s=ship] f=feel:ch] =_feels-seen]
+      (~(put bi:mip feels-seen) i s f)
+    ==
+  ::
+  =*  flag=flag:ch    flag.i.chats
+  ::  initializes with newest 2000 msgs from a given channel
+  =*  writs=writs:ch
+    .^  writs:ch  %gx
+        ;:  welp 
+          /(scot %p our.bowl)/chat/(scot %da now.bowl)/chat
+          /(scot %p p.flag)/[q.flag]
+          /writs/newest/2.000/noun  
+        == 
+    ==
+  =*  group=flag:groups  group.perm.chat.i.chats
+  ::
+  =/  when=@da
+    =;  upd=(unit update:ch)
+      (fall (bind upd head) *@da)
+    (ram:log-on:ch log.chat.i.chats)
+  =.  chats-last-heard  (~(put by chats-last-heard) flag when)
+  =^  crds  state  (chat-sub flag)
+  ::
+  =;  [[fe=_new-feed sa=_feels-saw] *]
+    $(new-feed (welp new-feed fe), feels-saw sa, chats t.chats, cards crds)
+  %^  %-  dip:on:writs:ch 
+      $:  ^ch-feed 
+          feels-saw=(map [id:ch ship] feel:ch)
+      ==
+      writs
+    [ch-feed feels-saw]
+  |=  [[=_new-feed =_feels-saw] [* =writ:ch]]
+  ^-  [(unit writ:ch) ? [_new-feed _feels-saw]]
+  :+  `writ  |
+      ::  dont count feels and replies to one's own messages
+  :-  =/  replies  
+        =+  ~(tap in replied.writ)
+        (lent (skip - |=(=id:ch =(p.id p.id.writ))))
+      =/  feels
+        =+  ~(wyt by feels.writ)
+        ?:((~(has by feels.writ) p.id.writ) (dec -) -)
+      ::  dont add to feed if no feels or replies
+      ?:  &(=(~ replies) =(~ feels))
+        new-feed
+      %+  snoc  new-feed
+          :*  id.writ
+              group
+              flag
+              replies
+              feels
+          ==
+  %-  ~(rep by feels.writ)
+  |=  [[s=ship f=feel:ch] =_feels-saw]
+  (~(put by feels-saw) [id.writ s] f)
+  ::
+  ~&  >>  ch-feed
+  :_  state
+  ;:  welp  cards-1
+  [%pass /groups %agent [our.bowl %groups] %watch /groups]~
+  [%pass /chats %agent [our.bowl %chat] %watch /briefs]~
   ==
+  ::
+::
+::  (receive-mem:helper flag time.i.logs mid `mem)
+:: ++  receive-mem
+::   |=  [=flag:ch =time =id:ch memo=(unit memo:ch)]
+::   ^+  state
+::   =/  ch-feed-map  (malt ch-feed)
+:: (receive-feel:helper flag time.i.logs mid fro `new)
+++  receive-feel
+  |=  [=flag:ch =time =id:ch from=ship feel=(unit feel:ch)]
+  ^+  state
+  =/  ch-feed-map  (malt ch-feed)
+  =/  =path  :~  (scot %p our.bowl)
+                 %chat
+                 (scot %da now.bowl)
+                 %chat
+                 (scot %p p.flag)
+                 q.flag
+                 %writs
+                 %writ
+                 %id
+                 (scot %p p.id)
+                 (scot %ud q.id)
+                 %writ
+              ==
+  =/  output  .^([^time writ:ch] %gx path)
+  ::
+  =/  for=ship  ;;  @p  author:output  ::author.memo.+.output
+  :: ::  do not count reacts to people's own messages
+  ?:  =(for from)  state
+  ::
+  =/  had=(unit feel:ch)
+    (~(get bi:mip feels-seen) id from)
+  ?:  =(had feel)  state
+  :: ::
+  =?  ch-feed-map  &(?=(^ feel) !(~(has by ch-feed-map) id))
+    ~&  >  "making new"
+    ~&  id
+    =/  groups
+      .^  (map flag:ch chat:ch)  %gx
+          [(scot %p our.bowl) %chat (scot %da now.bowl) /chats/chats]
+      ==
+    %+  ~(put by ch-feed-map)  id
+      :*  group:perm:(~(got by groups) flag)
+          flag
+          replies=0
+          feels=0
+      ==
+  ::  if we had already counted a react from this ship on this msg,
+  ::  subtract it from the tally
+  ::
+  =?  ch-feed-map  ?=(^ had)
+    %+  ~(jab by ch-feed-map)  id 
+    |=  a=[group=flag:groups channel=flag:ch replies=@ud feels=@ud]
+    a(feels (dec feels.a))
+  ::
+  ::  if there is a new react, increment the tally
+  ::
+
+  =?  ch-feed-map  ?=(^ feel)
+    %+  ~(jab by ch-feed-map)  id 
+    |=  a=[=flag:groups flag:ch replies=@ud feels=@ud]
+    a(feels +(feels.a))
+  ~&  >  "SEP"
+  ::  TODO IF FEELS/REPLIES FALL TO ZERO,REMOVE FROM CH-FEED-MAP
+  ~&  ch-feed-map
+  ::
+  ::  always do bookkeeping
+  ::
+  =.  feels-seen
+    ?~  feel  (~(del bi:mip feels-seen) id from)
+    (~(put bi:mip feels-seen) id from u.feel)
+  =.  chats-last-heard
+    (~(put by chats-last-heard) flag time)
+  ::
+  =.  ch-feed  ~(tap by ch-feed-map)
+  state
+::
 --

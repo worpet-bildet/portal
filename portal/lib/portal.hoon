@@ -215,7 +215,7 @@
   --
 ::
 ++  manager
-  |_  [=bowl:gall state=state-4:portal-config cards=_*(list card)]
+  |_  [=bowl:gall cards=_*(list card)]
   ++  on-poke
     ::  all arms here should output cards
     ::  TODO cleanup PM state and maybe output that then
@@ -223,9 +223,8 @@
     ::
     ++  sub
       |=  [act=action]
-      ^-  [(list card) state-4:portal-config]
+      ^-  (list card)
       ?>  ?=([%sub *] act)
-      :_  state
       ?.  =(time.key.act '')   ::  branch on whether is %temp (empty time.key)
         :: if not temp
         ~[(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(act))]
