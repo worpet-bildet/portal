@@ -17,6 +17,7 @@
 +$  state-5
   $:  %5
       feels-seen=(mip:mip id:ch ship feel:ch)
+      replies-seen=(map id:ch (set id:ch))
       chats-last-heard=(map flag:ch @da)
       =ch-feed
       =portal-curator:portal-config
@@ -56,7 +57,7 @@
       %1      new-state
       [%2 *]  new-state
       %3      new-state
-      %4      [%5 *(mip:mip id:ch ship feel:ch) *(map flag:ch @da) *^ch-feed +.old]
+      %4      [%5 *(mip:mip id:ch ship feel:ch) *(map id:ch (set id:ch)) *(map flag:ch @da) *^ch-feed +.old]
       %5      old
     ==
   =^  cards  state  init-sequence:helper
@@ -378,12 +379,12 @@
           (receive-feel:helper flag time.i.logs mid fro ~)
         ::
         ::  handle if reply
-            %add  state
-          :: =*  mem  p.q.p.dif
-          :: (receive-mem:helper flag time.i.logs mid `mem)
+            %add
+          =*  mem  p.q.p.dif
+          (receive-mem:helper flag time.i.logs mid `mem)
         ::  handle if reply deleted
-            %del  state
-          :: (receive-mem:helper flag time.i.logs mid ~)
+            %del
+          (receive-mem:helper flag time.i.logs mid ~)
         ==
       $(logs t.logs)
     ==
@@ -503,6 +504,7 @@
     ==
   =|  new-feed=^ch-feed
   =|  feels-saw=(map [id:ch ship] feel:ch)
+  =|  replies-saw=(map id:ch (set id:ch))
   =|  cards=(list card)
   =^  cards-1  state
   |-
@@ -537,19 +539,20 @@
   =.  chats-last-heard  (~(put by chats-last-heard) flag when)
   =^  crds  state  (chat-sub flag)
   ::
-  =;  [[fe=_new-feed sa=_feels-saw] *]
-    $(new-feed (welp new-feed fe), feels-saw sa, chats t.chats, cards crds)
+  =;  [[fe=_new-feed sa=_feels-saw re=_replies-saw] *]
+    $(new-feed (welp new-feed fe), feels-saw sa, replies-saw re, chats t.chats, cards crds)
   %^  %-  dip:on:writs:ch 
       $:  ^ch-feed 
           feels-saw=(map [id:ch ship] feel:ch)
+          replies-saw=(map id:ch (set id:ch))
       ==
       writs
-    [ch-feed feels-saw]
-  |=  [[=_new-feed =_feels-saw] [* =writ:ch]]
-  ^-  [(unit writ:ch) ? [_new-feed _feels-saw]]
+    [ch-feed feels-saw replies-saw]
+  |=  [[=_new-feed =_feels-saw =_replies-saw] [* =writ:ch]]
+  ^-  [(unit writ:ch) ? [_new-feed _feels-saw _replies-saw]]
   :+  `writ  |
       ::  dont count feels and replies to one's own messages
-  :-  =/  replies  
+  :+  =/  replies  
         =+  ~(tap in replied.writ)
         (lent (skip - |=(=id:ch =(p.id p.id.writ))))
       =/  feels
@@ -565,9 +568,10 @@
               replies
               feels
           ==
-  %-  ~(rep by feels.writ)
-  |=  [[s=ship f=feel:ch] =_feels-saw]
-  (~(put by feels-saw) [id.writ s] f)
+    %-  ~(rep by feels.writ)
+    |=  [[s=ship f=feel:ch] =_feels-saw]
+    (~(put by feels-saw) [id.writ s] f)
+  (~(put by replies-saw) id.writ replied.writ)
   ::
   ~&  >>  ch-feed
   :_  state
@@ -578,41 +582,38 @@
   ::
 ::
 ::  (receive-mem:helper flag time.i.logs mid `mem)
-:: ++  receive-mem
-::   |=  [=flag:ch =time =id:ch memo=(unit memo:ch)]
-::   ^+  state
-::   =/  ch-feed-map  (malt ch-feed)
+++  receive-mem
+  |=  [=flag:ch =time =id:ch memo=(unit memo:ch)]
+  ^+  state
+  =/  ch-feed-map  (malt ch-feed)
+  ::  if msg deleted
+  ?~  memo  
+    ~&  >>>  "msg del"
+    ::  TODO delete from state, check if it was reply to anything and update the tally there    
+    state
+  ?~  replying.u.memo
+    ~&  >>  "msg no reply"
+    state
+  ::  do not count replies to people's own messages
+  ?:  =(p.id p.u.replying.u.memo) 
+    ~&  >>  "msg reply to urself"
+    state
+  ~&  >  "msg reply"
+  state
+
 :: (receive-feel:helper flag time.i.logs mid fro `new)
 ++  receive-feel
   |=  [=flag:ch =time =id:ch from=ship feel=(unit feel:ch)]
   ^+  state
   =/  ch-feed-map  (malt ch-feed)
-  =/  =path  :~  (scot %p our.bowl)
-                 %chat
-                 (scot %da now.bowl)
-                 %chat
-                 (scot %p p.flag)
-                 q.flag
-                 %writs
-                 %writ
-                 %id
-                 (scot %p p.id)
-                 (scot %ud q.id)
-                 %writ
-              ==
-  =/  output  .^([^time writ:ch] %gx path)
-  ::
-  =/  for=ship  ;;  @p  author:output  ::author.memo.+.output
   :: ::  do not count reacts to people's own messages
-  ?:  =(for from)  state
+  ?:  =(p.id from)  state
   ::
   =/  had=(unit feel:ch)
     (~(get bi:mip feels-seen) id from)
   ?:  =(had feel)  state
   :: ::
   =?  ch-feed-map  &(?=(^ feel) !(~(has by ch-feed-map) id))
-    ~&  >  "making new"
-    ~&  id
     =/  groups
       .^  (map flag:ch chat:ch)  %gx
           [(scot %p our.bowl) %chat (scot %da now.bowl) /chats/chats]
@@ -633,14 +634,11 @@
   ::
   ::  if there is a new react, increment the tally
   ::
-
   =?  ch-feed-map  ?=(^ feel)
     %+  ~(jab by ch-feed-map)  id 
     |=  a=[=flag:groups flag:ch replies=@ud feels=@ud]
     a(feels +(feels.a))
-  ~&  >  "SEP"
-  ::  TODO IF FEELS/REPLIES FALL TO ZERO,REMOVE FROM CH-FEED-MAP
-  ~&  ch-feed-map
+  ::
   ::
   ::  always do bookkeeping
   ::
@@ -650,7 +648,13 @@
   =.  chats-last-heard
     (~(put by chats-last-heard) flag time)
   ::
-  =.  ch-feed  ~(tap by ch-feed-map)
+  =+  ~(tap by ch-feed-map)
+  =.  ch-feed
+    %+  murn  -
+    |=  a=[=id:ch =flag:groups flag:ch replies=@ud feels=@ud]
+    ?:  &(=(~ feels.a) =(~ replies.a))
+      ~
+    `a
   state
 ::
 --
