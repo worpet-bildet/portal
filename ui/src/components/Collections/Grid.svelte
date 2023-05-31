@@ -8,7 +8,6 @@
   import { subscribeToItem } from '@root/api';
   import SquarePreview from './SquarePreview.svelte';
   import { link } from 'svelte-spa-router';
-  import { fade } from 'svelte/transition';
   export let patp;
   export let loading;
 
@@ -34,6 +33,7 @@
         delete subscribingTo[keyStrFromObj(c.keyObj)];
         return c;
       })
+      .filter((c) => !!c.keyStr)
       .filter((c) => c?.bespoke?.['key-list']?.length > 0)
       .filter((c) => c?.keyObj?.time !== 'all');
 
@@ -45,6 +45,7 @@
   });
 
   $: loadCollections(patp);
+  $: console.log({ loading, curatorCollections, collections });
 </script>
 
 <div class="grid grid-cols-12 gap-4 items-start">
@@ -55,13 +56,8 @@
       {patp} hasn't created any collections on Portal yet.
     </div>
   {:else}
-    {#each collections as collection}
-      <a
-        use:link
-        href={`${collection.keyStr}`}
-        class="col-span-4 h-full"
-        in:fade
-      >
+    {#each collections as collection (collection.keyStr)}
+      <a use:link href={collection.keyStr} class="col-span-4 h-full">
         <SquarePreview key={collection.keyObj} />
       </a>
     {/each}
