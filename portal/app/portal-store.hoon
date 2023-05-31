@@ -117,12 +117,13 @@
     =+  ~(tap in ~(key by read:da-item))
     %-  tail  
     %^  spin  -  state
-    |=  [p=[=ship =dude:gall =path] state=state-1]
+    |=  [p=[=ship =dude:gall =path] q=[state=state-1]]
     =/  key  (path-to-key:conv +:path.p)
+    =.  state  state.q
     ?.  ?=(?(%feed %collection) struc.key)
-      =.  item-sub.state  (quit:da-item ship.key %portal-store path)
-      [p state]
-    [p state]
+      =.  item-sub.state.q  (quit:da-item ship.key %portal-store path.p)
+      [p state.q]
+    [p state.q]
   :_  this
   ;:(welp cards cards-1 cards-2 cards-3 cards-4 cards-5)
 ::
