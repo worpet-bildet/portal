@@ -110,7 +110,7 @@
         {/if}
         {#if removable}
           <button
-            class="w-8 h-8 hover:bg-red-500 hover:duration-500 cursor-pointer"
+            class="w-8 h-8 hover:bg-red-500 cursor-pointer"
             on:click|stopPropagation
             on:click={() => remove(keyStr)}
           >

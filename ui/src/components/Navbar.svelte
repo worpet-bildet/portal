@@ -13,7 +13,7 @@
 
   const nav = [
     {
-      title: 'Feed',
+      title: 'Post',
       link: '/',
     },
     {
@@ -40,7 +40,7 @@
     >
   </a>
 
-  <div class="hidden flex-col md:flex md:flex-row">
+  <div class="hidden flex-col md:flex gap-4 md:flex-row">
     {#each nav as n}
       <button
         on:click={() => (n.action ? n.action() : push(n.link))}

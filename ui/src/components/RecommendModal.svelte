@@ -49,7 +49,7 @@
       <div class="col-span-1">
         <MySigil />
       </div>
-      <div class="col-span-11 pt-4">
+      <div class="col-span-11">
         <TextArea bind:value={blurb} />
       </div>
       <div class="col-span-11 col-start-2">

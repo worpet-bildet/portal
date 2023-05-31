@@ -23,7 +23,7 @@ module.exports = {
     },
     extend: {},
     borderColor: {
-      DEFAULT: '#80808040',
+      DEFAULT: '#69696940',
     },
     boxShadow: {
       DEFAULT: '0 0 20px 0 #69696920',
