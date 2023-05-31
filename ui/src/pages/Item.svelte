@@ -23,7 +23,7 @@
 </script>
 
 {#if item}
-  <div class="grid gap-y-5">
+  <div class="grid gap-y-5 mb-4">
     <FeedPost {item} />
     <FeedPostForm on:post={({ detail }) => post(detail)} />
   </div>

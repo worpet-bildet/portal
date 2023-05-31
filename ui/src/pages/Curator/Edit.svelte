@@ -87,7 +87,7 @@
 </script>
 
 <div class="grid grid-cols-12 gap-x-8">
-  <div class="grid gap-y-4 col-span-9 border shadow p-4 rounded-lg">
+  <div class="grid gap-y-4 col-span-9 bg-panels p-6 rounded-lg">
     <Tabs {tabs} bind:activeTab />
     {#if activeTab === 'Profile'}
       <div class="flex flex-col gap-2">
@@ -107,9 +107,9 @@
         <input type="text" bind:value={cover} class="p-2 border-b" />
       </div>
     {:else if activeTab === 'Collections'}
-      <div class="grid gap-8 grid-cols-4">
-        <div class="text-2xl font-bold col-span-4">
-          Collections (drag to reorder)
+      <div class="grid gap-8 grid-cols-4 pb-4">
+        <div class="text-lg font-bold col-span-4 pt-4">
+          Drag to reorder
         </div>
         <SortableList bind:list={collections} key="time" let:item>
           <CollectionsSquarePreview key={item} />

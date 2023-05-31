@@ -54,11 +54,11 @@ pnpm dev
 
 App Store is not yet published on Urbit, but it is easy to boot a fake ship and play with it.
 
-install urbit 
+install urbit
 
 `curl -L https://urbit.org/install/linux-x86_64/latest | tar xzk --transform='s/.*/urbit/g' && ./urbit`
 
-boot a comet 
+boot a comet
 
 `./urbit -c mycomet`
 
@@ -87,6 +87,30 @@ on nuke
 ```
 
 > To seed %portal data, see commands in /portal/notes
+
+## How to Glob
+
+### The Proper Way
+
+1. build the dist folder pnpm build-prod
+2. add the dist folder to /your-urbit/portal/app/
+3. `|commit %portal`
+4. If you have any "missing mark files" grab them from the urbit git repo and put them in the /your-urbit/trove/app/mar folder
+5. -garden!make-glob %desk /path/to/dist (e.g. -garden!make-glob %portal /app/dist)
+6. find glob in /your-pier/.urb/put, store on cloud
+7. update desk.docket-0 file glob-http url and hash as below
+
+### The Quick 'n' Dirty Way
+
+1. build the dist folder `npm run build`
+2. Login to https://worpet-bildet.arvo.network/
+3. Navigate to https://worpet-bildet.arvo.network/docket/upload
+4. Select portal from the dropdown
+5. Select the `dist` folder that was just created by `npm run build` on your local machine
+6. Click glob button
+7. Wait for the page to refresh (takes literally a minute or more sometimes)
+8. Wait another minute or two for Urbit to be Urbit
+9. Check that your changes have been deployed by navigating to the app
 
 ## Instructions below are OOD
 

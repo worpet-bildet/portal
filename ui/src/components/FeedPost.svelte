@@ -2,17 +2,18 @@
   import { link } from 'svelte-spa-router';
   import { fade, slide } from 'svelte/transition';
   import { format } from 'timeago.js';
-  import { subscribeToItem } from '@root/api';
+  import { me, subscribeToItem } from '@root/api';
   import {
     state,
     getItem,
     keyStrFromObj,
     getCurator,
     getReplies,
+    getRepliesByTo,
   } from '@root/state';
   import { getMeta, fromUrbitTime } from '@root/util';
   import { ItemVerticalListPreview, Sigil, FeedPostForm } from '@components';
-  import { CommentIcon, IconButton } from '@fragments';
+  import { ChatIcon, IconButton } from '@fragments';
 
   export let key;
   export let allowReplies = true;
@@ -24,9 +25,20 @@
     if (s.isLoaded && !item) {
       return subscribeToItem(key);
     }
-    replies = (getReplies(key.ship, key) || []).sort(
-      (a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time)
-    );
+    // This is a little confusing but we're merging the global list of comments
+    // with any comments that we have made ourselves on the post, which should
+    // mean that our comment shows up instantly even if our connection to the
+    // indexer is not good
+    replies = [
+      ...(getReplies(key.ship, key) || []),
+      ...(getRepliesByTo(me, key) || []),
+    ]
+      .filter((a, i, arr) => {
+        return (
+          i === arr.findIndex((i) => keyStrFromObj(i) === keyStrFromObj(a))
+        );
+      })
+      .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
   });
 
   let showCommentForm = false;
@@ -42,23 +54,23 @@
     bespoke: { nickname },
   } = getCurator(ship)}
   <div
-    class="grid grid-cols-12 rounded-lg shadow p-5 border gap-2 lg:gap-4"
+    class="grid grid-cols-12 bg-panels rounded-lg p-5 gap-2 lg:gap-4"
     in:fade
   >
     <div class="col-span-1">
-      <div class="rounded-md overflow-hidden shadow">
+      <div class="rounded-md overflow-hidden">
         <a href={`/${ship}`} use:link>
           <Sigil patp={ship} />
         </a>
       </div>
     </div>
-    <div class="col-span-12 md:col-span-11 flex flex-col gap-2">
+    <div class="col-span-12 md:col-span-10 flex flex-col gap-2">
       <div class="flex gap-2 text-sm">
         <a href={`/${ship}`} use:link>{nickname || ship}</a>
         <span>·</span>
         <span>{format(createdAt)}</span>
       </div>
-      <div class="whitespace-pre-wrap line-clamp-50">
+      <div class="whitespace-pre-wrap line-clamp-50 break-words">
         {blurb}
       </div>
       {#if image}
@@ -74,19 +86,21 @@
         </div>
       {/if}
     </div>
-    {#if allowReplies}
-      <div class="pt-4">
-        <IconButton
-          icon={CommentIcon}
-          active={showCommentForm}
-          on:click={() => (showCommentForm = !showCommentForm)}
-        >
-          {#if replies.length > 0}
-            {replies.length}
-          {/if}
-        </IconButton>
-      </div>
-    {/if}
+    <div class="col-span-12">
+      {#if allowReplies}
+        <div class="pt-4">
+          <IconButton
+            icon={ChatIcon}
+            active={showCommentForm}
+            on:click={() => (showCommentForm = !showCommentForm)}
+          >
+            {#if replies.length > 0}
+              {replies.length}
+            {/if}
+          </IconButton>
+        </div>
+      {/if}
+    </div>
     {#if showCommentForm}
       <div class="flex flex-col gap-4 col-span-12" transition:slide>
         <FeedPostForm replyTo={item.keyObj} recommendButtons={false} />
@@ -97,5 +111,5 @@
     {/if}
   </div>
 {:else}
-  <div class="rounded-lg shadow p-5" in:fade>Loading...</div>
+  <div class="rounded-lg p-5" in:fade>Loading...</div>
 {/if}
