@@ -70,7 +70,7 @@
         <span>·</span>
         <span>{format(createdAt)}</span>
       </div>
-      <div class="whitespace-pre-wrap line-clamp-50">
+      <div class="whitespace-pre-wrap line-clamp-50 break-words">
         {blurb}
       </div>
       {#if ref}
