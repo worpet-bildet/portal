@@ -83,8 +83,21 @@
     ==
   ==
 ::
-++  on-arvo  on-arvo:default
-++  on-watch  on-watch:default
+++  on-arvo
+  |=  [=wire sign=sign-arvo]
+  ^-  (quip card:agent:gall _this)
+  ?>  ?=([%remotescry ~] wire)
+  ?>  ?=([%ames %tune *] sign)
+  ?~  roar.sign  ::  no response from ames  
+    `this
+  ?~  q.dat.u.roar.sign  ::  empty data at path
+    `this
+  ?>  ?=(%portal-item p.u.q.dat.u.roar.sign)
+  =+  ;;  item  q.u.q.dat.u.roar.sign
+  :_  this
+  [%give %fact [/updates]~ %portal-update !>(-)]~  ::  FE update
+
+++  on-watch  _`this
 ++  on-leave  on-leave:default
 ++  on-peek
   |=  =path
