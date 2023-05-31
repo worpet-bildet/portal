@@ -6,6 +6,9 @@
   export let disabled = false;
   export let active;
   export let icon;
+  $: {
+    console.log(location)
+  }
 </script>
 
 <button

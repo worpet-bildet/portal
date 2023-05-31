@@ -34,7 +34,7 @@
 {#if collection}
   {@const { title, ship, blurb, image } = getMeta(collection)}
   {@const { cover } = getCurator(collection?.keyObj?.ship)}
-  <div class="grid grid-cols-12 gap-x-8">
+  <div class="grid grid-cols-12 gap-x-8 mb-4">
     <ItemDetail
       patp={ship}
       {cover}

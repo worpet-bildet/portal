@@ -115,7 +115,7 @@
     >
   </div>
   <Modal bind:open={appModalOpen}>
-    <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-4 p-4">
       <div class="text-2xl font-bold">Recommend an app</div>
       {#if Object.values(apps).length === 0}
         <div>
@@ -143,7 +143,7 @@
     </div>
   </Modal>
   <Modal bind:open={groupModalOpen}>
-    <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-4 p4">
       <div class="text-2xl font-bold">Recommend a group</div>
       {#if Object.values(groups).length === 0}
         <div>

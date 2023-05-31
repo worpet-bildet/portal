@@ -42,7 +42,7 @@
     bespoke: { nickname },
   } = getCurator(ship)}
   <div
-    class="grid grid-cols-12 rounded-lg p-5 gap-2 lg:gap-4"
+    class="grid grid-cols-12 bg-panels rounded-lg p-5 gap-2 lg:gap-4"
     in:fade
   >
     <div class="col-span-1">

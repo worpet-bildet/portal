@@ -58,7 +58,7 @@
 
 {#if group}
   {@const { cover, image, description, title } = getMeta(group)}
-  <div class="grid grid-cols-12 gap-x-8">
+  <div class="grid grid-cols-12 gap-x-8 mb-4">
     <ItemDetail {cover} avatar={image} {title} {description} type="group">
       <div class="col-span-12 md:col-span-9 bg-panels p-6 rounded-lg">
         {#if !joinedDetails}

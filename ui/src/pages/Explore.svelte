@@ -50,7 +50,7 @@
   });
 </script>
 
-<div class="flex flex-col gap-4">
+<div class="flex flex-col gap-4 mb-4">
   <div class="text-2xl font-bold">Everything you have ever seen on Portal</div>
   <p>
     Items you come across on your travels will accrue here, but it's not yet an

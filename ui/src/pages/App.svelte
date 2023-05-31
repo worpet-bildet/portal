@@ -86,7 +86,7 @@
 </script>
 
 {#if item}
-  <div class="grid grid-cols-12 gap-x-8">
+  <div class="grid grid-cols-12 gap-x-8 mb-4">
     <ItemDetail
       {title}
       {description}
