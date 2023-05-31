@@ -10,7 +10,7 @@
     CrossIcon,
     InstallIcon,
     GlobeIcon,
-    AppIcon,
+    ExternalDestinationIcon,
     SidebarGroup,
   } from '@fragments';
 
@@ -95,7 +95,7 @@
       avatar={image}
       type="app"
     >
-      <div class="grid gap-8">
+      <div class="grid gap-8 bg-panels p-6 rounded-lg">
         <div>
           <div class="text-2xl font-bold">
             Current {title} version
@@ -118,7 +118,7 @@
       <SidebarGroup>
         {#if isInstalled}
           <IconButton
-            icon={AppIcon}
+            icon={ExternalDestinationIcon}
             on:click={() =>
               window.open(`${window.location.origin}${servedFrom}`)}
             >Open</IconButton

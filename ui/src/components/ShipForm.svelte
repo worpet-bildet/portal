@@ -19,7 +19,7 @@
     </div>
     <input
       type="text"
-      class="p-2 col-span-7 col-start-2 md:col-span-3 md:col-start-4 border focus:outline-none"
+      class="p-2 col-span-7 col-start-2 md:col-span-3 md:col-start-4 bg-panels border focus:outline-none placeholder-grey"
       class:border-rose-500={lastValidShip !== ship}
       bind:value={ship}
       placeholder="~worpet-bildet"

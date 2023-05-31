@@ -184,7 +184,7 @@
   resetForm();
 </script>
 
-<IconButton icon={PlusIcon} on:click={addCollection} active
+<IconButton icon={PlusIcon} on:click={addCollection}
   >New Collection</IconButton
 >
 <Modal bind:open={showModal}>
@@ -199,11 +199,11 @@
         <div class="text-2xl font-bold">Give your collection a name</div>
         <input
           type="text"
-          class="p-2 border-b text-lg focus:outline-none"
+          class="p-2 border-b text-lg focus:outline-none placeholder-grey"
           bind:value={name}
           placeholder="A collection of useful items"
         />
-        <div class="text-2xl font-bold">
+        <div class="text-2xl font-bold pt-4">
           Briefly describe the collection (optional)
         </div>
         <TextArea

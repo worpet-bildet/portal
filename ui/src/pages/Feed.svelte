@@ -97,16 +97,16 @@
   </div>
   <RightSidebar>
     <SidebarGroup>
-      <div class="flex flex-col gap-4 mx-2 mb-[13px] overflow-hidden">
+      <div class="flex flex-col gap-4 mx-2 mb-1 overflow-hidden">
         <div class="text-xl font-bold">Find a curator</div>
         <div
-          class="flex w-full gap-4 items-center border shadow rounded-lg p-4 justify-between"
+          class="flex w-full gap-4 items-center rounded-lg p-4 justify-between"
         >
           <div class="flex gap-4">
             <div class="w-6"><Sigil patp={lastValidShip || '~zod'} /></div>
             <input
               type="text"
-              class="bg-transparent border-b focus:outline-none"
+              class="border-b focus:outline-none placeholder-grey"
               placeholder="~worpet-bildet"
               bind:value={searchShip}
               on:keydown={(e) => (e.key === 'Enter' ? search() : null)}
@@ -122,7 +122,7 @@
         <div class="flex flex-col gap-4">
           {#each sortRadioStations($state.radioStations) as { description, viewers, location }}
             <button
-              class="flex flex-col gap-2 border shadow rounded-md p-2 hover:text-white hover:bg-grey hover:duration-500 text-left"
+              class="flex flex-col gap-2 rounded-md p-2 hover:bg-hover hover:duration-500 text-left"
               on:click={() => tuneRadio(location)}
             >
               <div>{description}</div>

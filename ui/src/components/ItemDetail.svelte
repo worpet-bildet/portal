@@ -29,15 +29,15 @@
   {#if isUrl(cover)}
     <img
       src={cover}
-      class="absolute top-0 left-0 object-cover cover h-80 w-full z-0 shadow"
+      class="absolute top-0 left-0 object-cover cover h-80 w-full z-0"
       alt="Profile banner"
     />
     <div
-      class="absolute top-0 left-0 object-cover cover h-80 w-full z-0 shadow bg-gradient-to-t from-[#00000000] to-[#000000aa]"
+      class="absolute top-0 left-0 object-cover cover h-80 w-full z-0 bg-gradient-to-t from-[#00000000] to-[#000000aa]"
     />
   {:else}
     <div
-      class="absolute cover top-0 left-0 h-80 w-full z-0 bg-grey flex items-center justify-center text-8xl font-bold overflow-hidden text-white shadow"
+      class="absolute cover top-0 left-0 h-80 w-full z-0 bg-grey flex items-center justify-center text-8xl font-bold overflow-hidden text-white"
     />
   {/if}
 </div>
@@ -47,21 +47,21 @@
       <div bind:this={avatarPad} />
       <div class="absolute w-full rounded-md" bind:this={avatarContainer}>
         {#if avatar}
-          <div class="border rounded-md overflow-hidden w-full shadow">
+          <div class="rounded-md overflow-hidden w-full">
             <ItemImage {title} {color} image={avatar} on:load={redrawAvatar} />
           </div>
         {:else if type === 'app'}
-          <div class="border rounded-md overflow-hidden w-full shadow">
+          <div class="rounded-md overflow-hidden w-full">
             <ItemImage {title} {color} on:load={redrawAvatar} />
           </div>
         {:else}
-          <div class="border rounded-md overflow-hidden w-full shadow">
+          <div class="rounded-md overflow-hidden w-full">
             <Sigil {patp} />
           </div>
         {/if}
       </div>
     </div>
-    <div class="flex flex-col justify-start gap-2 col-span-9 relative -top-8">
+    <div class="flex flex-col justify-start gap-2 col-span-9 relative -top-8 break-words">
       <div class="text-lg md:text-2xl font-bold">
         {title || ''}
       </div>

@@ -22,7 +22,7 @@
     on:click={() => (open = false)}
   >
     <div
-      class="inline justify-center items-center min-w-full md:min-w-[45rem] max-w-screen-lg max-h-screen md:max-h-[40rem] overflow-y-auto opacity-100 bg-offwhite rounded-2xl border shadow-2xl"
+      class="inline justify-center items-center min-w-full md:min-w-[45rem] max-w-screen-lg max-h-screen md:max-h-[40rem] overflow-y-auto opacity-100 bg-offwhite rounded-2xl"
       on:click|stopPropagation
     >
       <div class="w-full h-full py-6 px-8 relative">
