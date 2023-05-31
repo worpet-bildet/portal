@@ -52,7 +52,7 @@
         {/each}
       {:else if formstep === 'pals'}
         {#if !pals}
-          <div>Portal is better with Pals!</div>
+          <div>Portal is better with %pals!</div>
           <div>Install the app</div>
         {/if}
       {:else if formstep === 'share'}

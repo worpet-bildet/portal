@@ -34,7 +34,7 @@
   <a use:link href="/" class="flex items-center text-2xl font-bold gap-2">
     <img class="w-14 my-2" src={logo} alt="logo" />
     <div class="font-logo flex items-center px-2 rounded-xl"
-      class:text-black={pagesWithTransparentNav.some(v => $location.includes(v)) || $location === '/'}
+      class:text-grey={pagesWithTransparentNav.some(v => $location.includes(v)) || $location === '/'}
       class:text-white={!pagesWithTransparentNav.some(v => $location.includes(v)) && $location !== '/'}
       >PORTAL</div
     >

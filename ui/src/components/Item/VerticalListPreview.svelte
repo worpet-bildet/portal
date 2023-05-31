@@ -58,9 +58,9 @@
         dispatch('selected', { key, selected });
       }
     }}
-    class="grid grid-cols-6 w-full items-center gap-4 p-1 bg-panels hover:bg-grey hover:text-white hover:duration-500 cursor-pointer border shadow rounded-lg text-xs text-left"
-    class:bg-grey={selected}
-    class:text-white={selected}
+    class="grid grid-cols-6 w-full items-center gap-4 p-1 hover:bg-hover hover:duration-500 cursor-pointer rounded-lg text-sm text-left"
+    class:bg-mdark={selected}
+
   >
     <div
       class="border overflow-hidden h-full rounded-md"
@@ -121,5 +121,5 @@
     {/if}
   </button>
 {:else}
-  <div class="p-4 border shadow rounded-lg">Loading...</div>
+  <div class="p-4 hover:bg-hover rounded-lg">Loading...</div>
 {/if}

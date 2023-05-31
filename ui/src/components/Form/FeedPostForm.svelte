@@ -79,11 +79,9 @@
   });
 </script>
 
-<div
-  class="grid grid-cols-12 bg-panels gap-2 lg:gap-4 py-3 pl-3 rounded-lg shadow border border-black"
->
-  <div class="col-span-1">
-    <div class="rounded-md overflow-hidden">
+<div class="grid grid-cols-12 bg-panels py-3 pl-3 rounded-lg pr-3">
+  <div class="col-span-1 pr-2">
+    <div class="rounded-md overflow-hidden align-middle">
       <Sigil patp={me} />
     </div>
   </div>
@@ -92,30 +90,36 @@
   </div>
   <div class="col-span-12 col-start-2 flex justify-between">
     {#if recommendButtons}
-      <div class="flex gap-4">
-        <IconButton
-          icon={AppIcon}
-          on:click={() => {
-            appModalOpen = true;
-          }}
-        />
-        <IconButton
-          icon={GroupIcon}
-          on:click={() => {
-            groupModalOpen = true;
-          }}
-        />
+      <div class="flex gap-1">
+        <div class="rounded-full overflow-hidden">
+          <IconButton
+            icon={AppIcon}
+            on:click={() => {
+              appModalOpen = true;
+            }}
+            transparent
+          />
+        </div>
+        <div class="rounded-full overflow-hidden">
+          <IconButton
+            icon={GroupIcon}
+            on:click={() => {
+              groupModalOpen = true;
+            }}
+            transparent
+          />
+        </div>
       </div>
     {:else}
       <div />
     {/if}
     <button
-      class="border hover:bg-grey hover:text-white hover:duration-500 font-saucebold text-black border-2 border-grey rounded-lg px-3 py-1 mr-4 font-bold self-end"
+      class="bg-hover text-grey hover:bg-mdark hover:duration-500 font-saucebold rounded-lg px-3 py-1 self-end"
       on:click={post}>Post</button
     >
   </div>
   <Modal bind:open={appModalOpen}>
-    <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-4 p-4">
       <div class="text-2xl font-bold">Recommend an app</div>
       {#if Object.values(apps).length === 0}
         <div>
@@ -125,7 +129,7 @@
       {/if}
       {#each Object.entries(apps) as [path, { title, image, color }]}
         <button
-          class="grid grid-cols-12 bg-panels border shadow items-center gap-4 p-1"
+          class="grid grid-cols-12 hover:bg-panels rounded-lg items-center gap-4 p-1"
           on:click={() => {
             appModalOpen = false;
             recommendModalOpen = true;
@@ -143,7 +147,7 @@
     </div>
   </Modal>
   <Modal bind:open={groupModalOpen}>
-    <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-4 p4">
       <div class="text-2xl font-bold">Recommend a group</div>
       {#if Object.values(groups).length === 0}
         <div>
@@ -153,7 +157,7 @@
       {/if}
       {#each Object.entries(groups) as [path, { meta: { title, image } }]}
         <button
-          class="grid grid-cols-12 border items-center gap-4 p-1"
+          class="grid grid-cols-12 hover:bg-panels rounded-lg items-center gap-4 p-1"
           on:click={() => {
             groupModalOpen = false;
             recommendModalOpen = true;

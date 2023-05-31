@@ -17,6 +17,7 @@
     ShareIcon,
     RightSidebar,
     SidebarGroup,
+    PlusIcon,
     CrossIcon,
     IconButton,
   } from '@fragments';
@@ -57,14 +58,14 @@
 
 {#if group}
   {@const { cover, image, description, title } = getMeta(group)}
-  <div class="grid grid-cols-12 gap-x-8">
+  <div class="grid grid-cols-12 gap-x-8 mb-4">
     <ItemDetail {cover} avatar={image} {title} {description} type="group">
-      <div class="col-span-12 md:col-span-9">
+      <div class="col-span-12 md:col-span-9 bg-panels p-6 rounded-lg">
         {#if !joinedDetails}
           <div>Join the group to see more information</div>
         {:else if !joinedDetails.joining}
           <div class="grid gap-4">
-            <div class="text-2xl font-bold">
+            <div class="text-2xl font-bold border-b pb-2">
               Channels in {title}
             </div>
             <div class="grid gap-8">
@@ -84,7 +85,7 @@
                         meta: { title, description },
                       } = joinedDetails.channels[channelKey]}
                       <div
-                        class="border shadow rounded-lg p-2 hover:bg-grey hover:text-white hover:duration-500"
+                        class="rounded-lg p-2 hover:bg-hover hover:duration-500"
                       >
                         <a
                           href={channelLink(channelKey)}
@@ -118,7 +119,7 @@
     <RightSidebar>
       <SidebarGroup>
         {#if !joinedDetails}
-          <IconButton icon={ChatIcon} on:click={join} async
+          <IconButton icon={PlusIcon} on:click={join} async
             >Join Group</IconButton
           >
         {:else if joinedDetails.joining}

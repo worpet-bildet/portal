@@ -13,7 +13,7 @@
   } from '@root/state';
   import { getMeta, fromUrbitTime } from '@root/util';
   import { ItemVerticalListPreview, Sigil, FeedPostForm } from '@components';
-  import { CommentIcon, IconButton } from '@fragments';
+  import { ChatIcon, IconButton } from '@fragments';
 
   export let key;
   export let allowReplies = true;
@@ -54,11 +54,11 @@
     bespoke: { nickname },
   } = getCurator(ship)}
   <div
-    class="grid grid-cols-12 rounded-lg shadow p-5 border gap-2 lg:gap-4"
+    class="grid grid-cols-12 bg-panels rounded-lg p-5 gap-2 lg:gap-4"
     in:fade
   >
     <div class="col-span-1">
-      <div class="rounded-md overflow-hidden shadow">
+      <div class="rounded-md overflow-hidden">
         <a href={`/${ship}`} use:link>
           <Sigil patp={ship} />
         </a>
@@ -82,7 +82,7 @@
     {#if allowReplies}
       <div class="pt-4">
         <IconButton
-          icon={CommentIcon}
+          icon={ChatIcon}
           active={showCommentForm}
           on:click={() => (showCommentForm = !showCommentForm)}
         >
@@ -102,5 +102,5 @@
     {/if}
   </div>
 {:else}
-  <div class="rounded-lg shadow p-5" in:fade>Loading...</div>
+  <div class="rounded-lg p-5" in:fade>Loading...</div>
 {/if}

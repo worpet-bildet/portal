@@ -3,7 +3,7 @@
 </script>
 
 <div
-  class="flex flex-col gap-4 p-4 rounded-lg bg-panels border shadow overflow-hidden"
+  class="flex flex-col gap-4 p-4 rounded-lg bg-panels overflow-hidden"
   in:fade
 >
   <slot />

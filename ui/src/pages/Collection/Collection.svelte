@@ -34,7 +34,7 @@
 {#if collection}
   {@const { title, ship, blurb, image } = getMeta(collection)}
   {@const { cover } = getCurator(collection?.keyObj?.ship)}
-  <div class="grid grid-cols-12 gap-x-8">
+  <div class="grid grid-cols-12 gap-x-8 mb-4">
     <ItemDetail
       patp={ship}
       {cover}
@@ -43,7 +43,7 @@
       avatar={image}
       type="collection"
     >
-      <div class="grid gap-y-4">
+      <div class="grid gap-y-4  bg-panels p-4 rounded-lg">
         {#each items as key}
           <ItemVerticalListPreview {key} />
         {/each}
