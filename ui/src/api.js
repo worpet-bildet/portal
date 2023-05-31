@@ -172,8 +172,8 @@ export const subscribeToContactProfile = (patp) => {
   });
 };
 
-export const usePortalSubscription = (onEvent) => {
-  const portalSub = api.subscribe({
+export const usePortalStoreSubscription = (onEvent) => {
+  const portalStoreSub = api.subscribe({
     app: 'portal-store',
     path: '/updates',
     ship: api.ship,
@@ -183,7 +183,21 @@ export const usePortalSubscription = (onEvent) => {
     quit: console.error,
   });
 
-  return () => api?.unsubscribe(portalSub);
+  return () => api?.unsubscribe(portalStoreSub);
+};
+
+export const usePortalManagerSubscription = (onEvent) => {
+  const portalManagerSub = api.subscribe({
+    app: 'portal-manager',
+    path: '/updates',
+    ship: api.ship,
+    verbose: true,
+    event: onEvent,
+    err: console.error,
+    quit: console.error,
+  });
+
+  return () => api?.unsubscribe(portalManagerSub);
 };
 
 export const useSocialSubscription = (onEvent) => {
