@@ -79,9 +79,7 @@
   });
 </script>
 
-<div
-  class="grid grid-cols-12 bg-panels py-3 pl-3 rounded-lg pr-3"
->
+<div class="grid grid-cols-12 bg-panels py-3 pl-3 rounded-lg pr-3">
   <div class="col-span-1 pr-2">
     <div class="rounded-md overflow-hidden align-middle">
       <Sigil patp={me} />
@@ -93,18 +91,24 @@
   <div class="col-span-12 col-start-2 flex justify-between">
     {#if recommendButtons}
       <div class="flex gap-1">
-        <IconButton
-          icon={AppIcon}
-          on:click={() => {
-            appModalOpen = true;
-          }}
-        />
-        <IconButton
-          icon={GroupIcon}
-          on:click={() => {
-            groupModalOpen = true;
-          }}
-        />
+        <div class="rounded-full overflow-hidden">
+          <IconButton
+            icon={AppIcon}
+            on:click={() => {
+              appModalOpen = true;
+            }}
+            transparent
+          />
+        </div>
+        <div class="rounded-full overflow-hidden">
+          <IconButton
+            icon={GroupIcon}
+            on:click={() => {
+              groupModalOpen = true;
+            }}
+            transparent
+          />
+        </div>
       </div>
     {:else}
       <div />

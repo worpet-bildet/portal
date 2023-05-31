@@ -26,7 +26,7 @@
 </script>
 
 <svelte:window bind:innerWidth />
-<div class="col-span-12 w-full h-64">
+<div class="col-span-12 w-full h-56">
   {#if isUrl(cover)}
     <img
       src={cover}
@@ -47,7 +47,7 @@
     <div class="relative col-span-3 md:col-span-2">
       <div bind:this={avatarPad} />
       <div
-        class="absolute -top-24 w-full rounded-md"
+        class="absolute -top-12 w-full rounded-md"
         bind:this={avatarContainer}
       >
         {#if avatar}
@@ -65,7 +65,9 @@
         {/if}
       </div>
     </div>
-    <div class="flex flex-col justify-start gap-2 col-span-9 relative -top-8 break-words">
+    <div
+      class="flex flex-col justify-start gap-2 col-span-9 relative break-words"
+    >
       <div class="text-lg md:text-2xl font-bold">
         {title || ''}
       </div>
