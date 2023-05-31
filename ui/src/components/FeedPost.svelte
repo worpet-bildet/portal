@@ -37,7 +37,7 @@
 </script>
 
 {#if item}
-  {@const { blurb, ship, createdAt, ref } = getMeta(item)}
+  {@const { blurb, ship, createdAt, ref, image } = getMeta(item)}
   {@const {
     bespoke: { nickname },
   } = getCurator(ship)}
@@ -61,6 +61,13 @@
       <div class="whitespace-pre-wrap line-clamp-50">
         {blurb}
       </div>
+      {#if image}
+        <a href={image} target="_blank">
+          <div class="flex border shadow rounded-lg overflow-hidden">
+            <img src={image} class="object-cover" alt={blurb} />
+          </div>
+        </a>
+      {/if}
       {#if ref}
         <div class="rounded-lg">
           <ItemVerticalListPreview key={ref} />

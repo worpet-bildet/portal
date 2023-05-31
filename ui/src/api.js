@@ -271,7 +271,7 @@ export const useRadioSubscription = (onEvent) => {
 
 export const useStorageSubscription = (onEvent) => {
   const storageSub = api.subscribe({
-    app: 's3-store',
+    app: 'storage',
     path: '/all',
     ship: api.ship,
     verbose: true,

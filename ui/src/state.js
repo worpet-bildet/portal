@@ -116,16 +116,6 @@ export const refreshRadioChannels = () => {
   requestRadioChannels();
 };
 
-export const refreshStorageConfiguration = () => {
-  getStorageConfiguration().then((config) => {
-    state.update((s) => {
-      console.log({ config });
-      // s.s3 = config['s3-update'].configuration;
-      return s;
-    });
-  });
-};
-
 export const getCurator = (patp) => {
   return {
     keyObj: { ship: patp, struc: 'ship', cord: '', time: '' },
@@ -241,6 +231,12 @@ export const handleSubscriptionEvent = (event, type) => {
         return s;
       });
       break;
+    case 'storage-update':
+      state.update((s) => {
+        s.s3 = { ...s.s3, ...event['s3-update'] };
+        return s;
+      });
+      break;
     default:
       break;
   }
@@ -280,6 +276,6 @@ export const refreshAll = () => {
   refreshGroups();
   refreshPals();
   refreshRadioChannels();
-  refreshStorageConfiguration();
+  // refreshStorageConfiguration();
 };
 refreshAll();

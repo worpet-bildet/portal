@@ -1,6 +1,6 @@
 <script>
   import { createEventDispatcher } from 'svelte';
-  import { S3Client } from '@aws-sdk/client-s3';
+  import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
   import { me, poke } from '@root/api';
   import { state, keyStrToObj } from '@root/state';
   import { toUrbitTime } from '@root/util';
@@ -32,7 +32,7 @@
               title: '',
               blurb: content,
               link: '',
-              image: '',
+              image: uploadedImageUrl,
             },
           },
         },
@@ -58,11 +58,17 @@
     }
     poke(p);
     content = '';
+    uploadedImageUrl = '';
     dispatch('post');
   };
 
   // TODO: Factor out the selection of groups/apps into its own component
-  let groupModalOpen, appModalOpen, recommendModalOpen, selectedKey, fileInput;
+  let groupModalOpen,
+    appModalOpen,
+    recommendModalOpen,
+    selectedKey,
+    fileInput,
+    uploadedImageUrl;
   let groups = {};
   let apps = {};
   state.subscribe((s) => {
@@ -88,16 +94,22 @@
     const timestamp = toUrbitTime(new Date()).slice(1);
 
     const params = {
-      Bucket: $state.s3.currentBucket,
+      Bucket: $state.s3.configuration.currentBucket,
       Key: `${me}/${timestamp}-${fileName}.${fileExtension}`,
       Body: file,
       ACL: 'public-read',
       ContentType: file.type,
     };
 
-    console.log(params);
-    let s3 = new S3Client();
-    // const s3 = new lib()
+    let s3 = new S3Client({
+      credentials: $state.s3.credentials,
+      endpoint: $state.s3.credentials.endpoint,
+      region: $state.s3.configuration.region,
+    });
+    const command = new PutObjectCommand(params);
+    await s3.send(command);
+
+    uploadedImageUrl = `${$state.s3.credentials.endpoint}/${params.Bucket}/${params.Key}`;
   };
 </script>
 
@@ -111,6 +123,11 @@
   </div>
   <div class="col-span-11">
     <TextArea placeholder="Share a limerick, maybe" bind:value={content} />
+    {#if uploadedImageUrl}
+      <div class="flex">
+        <img src={uploadedImageUrl} class="object-cover" alt="your image" />
+      </div>
+    {/if}
   </div>
   <div class="col-span-12 col-start-2 flex justify-between">
     {#if recommendButtons}
@@ -136,10 +153,10 @@
         />
         <IconButton
           icon={ImageIcon}
-          disabled={!$state.s3 || !$state.s3.currentBucket}
+          disabled={!$state.s3 || !$state.s3.configuration.currentBucket}
           tooltip="Configure S3 storage for image support"
           on:click={() => {
-            if (!$state.s3 || !$state.s3.currentBucket) return;
+            if (!$state.s3 || !$state.s3.configuration.currentBucket) return;
             fileInput.click();
             console.log('pop the image modal for uploading something to s3');
           }}

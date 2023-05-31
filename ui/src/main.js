@@ -7,7 +7,7 @@ import {
   useGroupsSubscription,
   useDocketSubscription,
   useRadioSubscription,
-  // useStorageSubscription,
+  useStorageSubscription,
 } from './api';
 import { handleSubscriptionEvent } from './state';
 
@@ -17,7 +17,7 @@ useContactsSubscription(handleSubscriptionEvent);
 useGroupsSubscription(handleSubscriptionEvent);
 useDocketSubscription(handleSubscriptionEvent);
 useRadioSubscription(handleSubscriptionEvent);
-// useStorageSubscription(handleSubscriptionEvent);
+useStorageSubscription(handleSubscriptionEvent);
 
 const app = new App({
   target: document.getElementById('app'),
