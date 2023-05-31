@@ -45,7 +45,6 @@
   });
 
   $: loadCollections(patp);
-  $: console.log({ loading, curatorCollections, collections });
 </script>
 
 <div class="grid grid-cols-12 gap-4 items-start">
