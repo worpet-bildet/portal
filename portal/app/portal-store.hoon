@@ -81,7 +81,10 @@
   ::  - init-sequence to create and sub if sth was missed previously
   =^  cards-3  state  init-sequence:stor
   ::  - cleanup past mistakes
-  ::  - publish all items which are unpublished
+  ::  - publish all items which are unpublished 
+  ::    ->  either to rem scry or sss
+  =/  item-paths  
+    .^((list path) %gt /(scot %p our.bowl)/portal-store/(scot %da now.bowl)//item)
   =+  ~(val by items.state)
   =^  cards-4  state
     %-  tail  %^  spin  -  [*(list card) state]
@@ -89,8 +92,13 @@
     :-  item
     =/  path  [%item (key-to-path:conv key.item)]
     =.  state  state.q
+    ?:  =(lens.item %temp)  q                        ::  if %temp, no need
+    ?.  ?=(?(%collection %feed) struc.key.item)      ::  if not %col or %feed
+      ?~  (find [path]~ item-paths)                  ::  pub to rem scry
+        :_  state.q
+        (welp cards.q (gro:cards-methods item))
+      q
     ?:  (~(has by read:du-item) path)  q   ::  if already published, no need
-    ?:  =(lens.item %temp)  q              ::  if %temp, no need
     =^  cards  item-pub.state.q  (give:du-item path [%whole item])
     [(welp cards.q cards) state.q]
   ::  - track all ships whose items we were subbed to before using %portal-graph
@@ -104,6 +112,18 @@
     ?:  (~(has in ships.q) ship.p)  q   ::  if already subbed, no need
     :-  (welp cards.q (track-gr:cards-methods:stor ship.p))
         (~(put in ships.q) ship.p)
+  ::  - unsub from all which are not %feed or %col because of rem scry transition
+  =.  state
+    =+  ~(tap in ~(key by read:da-item))
+    %-  tail  
+    %^  spin  -  state
+    |=  [p=[=ship =dude:gall =path] q=[state=state-1]]
+    =/  key  (path-to-key:conv +:path.p)
+    =.  state  state.q
+    ?.  ?=(?(%feed %collection) struc.key)
+      =.  item-sub.state.q  (quit:da-item ship.key %portal-store path.p)
+      [p state.q]
+    [p state.q]
   :_  this
   ;:(welp cards cards-1 cards-2 cards-3 cards-4 cards-5)
 ::
@@ -281,7 +301,15 @@
   ++  upd
     |=  =item
     ^-  (list card)
-    [%give %fact [/updates]~ %portal-update !>(item)]~
+    :~  [%give %fact [/updates]~ %portal-update !>(item)]  ::  FE update
+    ==
+  ::
+  ::  puts into remote scry namespace
+  ++  gro
+    |=  =item
+    ^-  (list card)
+    :~  [%pass /set-scry %grow [%item (key-to-path:conv key.item)] portal-item+item]
+    ==
   --
 ::
 ++  handle-poke  ::  all arms here should output [cards items]
@@ -354,8 +382,11 @@
           :-  (upd:cards-methods item)
           state
         =^  cards  item-pub  (give:du-item path [%whole item])
-        :-  (welp cards (upd:cards-methods item))
-        state
+        :_  state
+        ;:  welp  cards 
+                  (upd:cards-methods item)
+                  (gro:cards-methods item)  
+        ==
       ::  add to collections
       =^  cards-1  state
         %-  tail  %^  spin  `key-list`append-to.act  [cards state]

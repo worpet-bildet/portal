@@ -1,7 +1,8 @@
 import './app.css';
 import App from './App.svelte';
 import {
-  usePortalSubscription,
+  usePortalStoreSubscription,
+  usePortalManagerSubscription,
   useSocialSubscription,
   useContactsSubscription,
   useGroupsSubscription,
@@ -11,7 +12,8 @@ import {
 } from './api';
 import { handleSubscriptionEvent } from './state';
 
-usePortalSubscription(handleSubscriptionEvent);
+usePortalStoreSubscription(handleSubscriptionEvent);
+usePortalManagerSubscription(handleSubscriptionEvent);
 useSocialSubscription(handleSubscriptionEvent);
 useContactsSubscription(handleSubscriptionEvent);
 useGroupsSubscription(handleSubscriptionEvent);
