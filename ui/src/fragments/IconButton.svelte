@@ -3,6 +3,7 @@
   export let loading = false;
   export let async = false;
   export let disabled = false;
+  export let tooltip = '';
   export let transparent = false;
   export let active;
   export let icon;
@@ -15,8 +16,9 @@
   class:cursor-not-allowed={disabled}
   class:bg-hover={active}
   class:bg-panels={!transparent}
+  title={tooltip}
   on:click
-  on:click={() => (async ? (loading = true) : null)}
+  on:click={() => (async && !disabled ? (loading = true) : null)}
 >
   <span class="w-6">
     {#if loading}

@@ -6,6 +6,7 @@ import {
   getJoinedGroups,
   getInstalledApps,
   getPals,
+  getStorageConfiguration,
   subscribeToGroup,
   requestRadioChannels,
 } from '@root/api';
@@ -238,6 +239,12 @@ export const handleSubscriptionEvent = (event, type) => {
         return s;
       });
       break;
+    case 'storage-update':
+      state.update((s) => {
+        s.s3 = { ...s.s3, ...event['s3-update'] };
+        return s;
+      });
+      break;
     default:
       break;
   }
@@ -277,5 +284,6 @@ export const refreshAll = () => {
   refreshGroups();
   refreshPals();
   refreshRadioChannels();
+  // refreshStorageConfiguration();
 };
 refreshAll();

@@ -49,7 +49,7 @@
 </script>
 
 {#if item}
-  {@const { blurb, ship, createdAt, ref } = getMeta(item)}
+  {@const { blurb, ship, createdAt, ref, image } = getMeta(item)}
   {@const {
     bespoke: { nickname },
   } = getCurator(ship)}
@@ -64,7 +64,7 @@
         </a>
       </div>
     </div>
-    <div class="col-span-12 md:col-span-11 flex flex-col gap-2">
+    <div class="col-span-12 md:col-span-10 flex flex-col gap-2">
       <div class="flex gap-2 text-sm">
         <a href={`/${ship}`} use:link>{nickname || ship}</a>
         <span>·</span>
@@ -73,25 +73,34 @@
       <div class="whitespace-pre-wrap line-clamp-50 break-words">
         {blurb}
       </div>
+      {#if image}
+        <a href={image} target="_blank">
+          <div class="flex border shadow rounded-lg overflow-hidden">
+            <img src={image} class="object-cover" alt={blurb} />
+          </div>
+        </a>
+      {/if}
       {#if ref}
         <div class="rounded-lg">
           <ItemVerticalListPreview key={ref} />
         </div>
       {/if}
     </div>
-    {#if allowReplies}
-      <div class="pt-4">
-        <IconButton
-          icon={ChatIcon}
-          active={showCommentForm}
-          on:click={() => (showCommentForm = !showCommentForm)}
-        >
-          {#if replies.length > 0}
-            {replies.length}
-          {/if}
-        </IconButton>
-      </div>
-    {/if}
+    <div class="col-span-12">
+      {#if allowReplies}
+        <div class="pt-4">
+          <IconButton
+            icon={ChatIcon}
+            active={showCommentForm}
+            on:click={() => (showCommentForm = !showCommentForm)}
+          >
+            {#if replies.length > 0}
+              {replies.length}
+            {/if}
+          </IconButton>
+        </div>
+      {/if}
+    </div>
     {#if showCommentForm}
       <div class="flex flex-col gap-4 col-span-12" transition:slide>
         <FeedPostForm replyTo={item.keyObj} recommendButtons={false} />

@@ -143,7 +143,9 @@
     <SidebarGroup>
       {#if $state.palsLoaded && !$state.pals}
         <div>
-          <div class="text-xl font-bold pb-4 px-2">Portal is better with %pals</div>
+          <div class="text-xl font-bold pb-4 px-2">
+            Portal is better with %pals
+          </div>
           <ItemVerticalListPreview
             small
             key={{ struc: 'app', ship: '~paldev', cord: 'pals', time: '' }}

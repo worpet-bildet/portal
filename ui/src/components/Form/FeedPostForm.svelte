@@ -1,13 +1,16 @@
 <script>
   import { createEventDispatcher } from 'svelte';
+  import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
   import { me, poke } from '@root/api';
-  import { state, keyStrToObj, getCurator } from '@root/state';
+  import { state, keyStrToObj } from '@root/state';
+  import { toUrbitTime } from '@root/util';
   import { RecommendModal, Sigil } from '@components';
   import {
     TextArea,
     IconButton,
     AppIcon,
     GroupIcon,
+    ImageIcon,
     Modal,
     ItemImage,
   } from '@fragments';
@@ -29,7 +32,7 @@
               title: '',
               blurb: content,
               link: '',
-              image: '',
+              image: uploadedImageUrl,
             },
           },
         },
@@ -55,11 +58,17 @@
     }
     poke(p);
     content = '';
+    uploadedImageUrl = '';
     dispatch('post');
   };
 
   // TODO: Factor out the selection of groups/apps into its own component
-  let groupModalOpen, appModalOpen, recommendModalOpen, selectedKey, color;
+  let groupModalOpen,
+    appModalOpen,
+    recommendModalOpen,
+    selectedKey,
+    fileInput,
+    uploadedImageUrl;
   let groups = {};
   let apps = {};
   state.subscribe((s) => {
@@ -75,8 +84,33 @@
         apps[appkey] = data;
       });
     }
-    ({ color } = getCurator(me).bespoke || {});
   });
+
+  const handleImageSelect = async (e) => {
+    const file = e.target.files[0];
+    const fileParts = file.name.split('.');
+    const fileName = fileParts.slice(0, -1);
+    const fileExtension = fileParts.pop();
+    const timestamp = toUrbitTime(new Date()).slice(1);
+
+    const params = {
+      Bucket: $state.s3.configuration.currentBucket,
+      Key: `${me}/${timestamp}-${fileName}.${fileExtension}`,
+      Body: file,
+      ACL: 'public-read',
+      ContentType: file.type,
+    };
+
+    let s3 = new S3Client({
+      credentials: $state.s3.credentials,
+      endpoint: $state.s3.credentials.endpoint,
+      region: $state.s3.configuration.region,
+    });
+    const command = new PutObjectCommand(params);
+    await s3.send(command);
+
+    uploadedImageUrl = `${$state.s3.credentials.endpoint}/${params.Bucket}/${params.Key}`;
+  };
 </script>
 
 <div class="grid grid-cols-12 bg-panels py-3 pl-3 rounded-lg pr-3">
@@ -87,6 +121,11 @@
   </div>
   <div class="col-span-11">
     <TextArea placeholder="Share a limerick, maybe" bind:value={content} />
+    {#if uploadedImageUrl}
+      <div class="flex">
+        <img src={uploadedImageUrl} class="object-cover" alt="your image" />
+      </div>
+    {/if}
   </div>
   <div class="col-span-12 col-start-2 flex justify-between">
     {#if recommendButtons}
@@ -105,6 +144,26 @@
             icon={GroupIcon}
             on:click={() => {
               groupModalOpen = true;
+            }}
+            transparent
+          />
+        </div>
+        <input
+          type="file"
+          accept="image/*"
+          class="hidden"
+          bind:this={fileInput}
+          on:change={handleImageSelect}
+        />
+        <div class="rounded-full overflow-hidden">
+          <IconButton
+            icon={ImageIcon}
+            disabled={!$state.s3 || !$state.s3.configuration.currentBucket}
+            tooltip="Configure S3 storage for image support"
+            on:click={() => {
+              if (!$state.s3 || !$state.s3.configuration.currentBucket) return;
+              fileInput.click();
+              console.log('pop the image modal for uploading something to s3');
             }}
             transparent
           />
