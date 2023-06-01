@@ -83,8 +83,8 @@
   ::  - cleanup past mistakes
   ::  - publish all items which are unpublished 
   ::    ->  either to rem scry or sss
-  :: =/  item-paths  
-  ::   .^((list path) %gt /(scot %p our.bowl)/portal-store/(scot %da now.bowl)//item)
+  =/  item-paths  
+    .^((list path) %gt /(scot %p our.bowl)/portal-store/(scot %da now.bowl)//item)
   =+  ~(val by items.state)
   =^  cards-4  state
     %-  tail  %^  spin  -  [*(list card) state]
@@ -94,10 +94,12 @@
     =.  state  state.q
     ?:  =(lens.item %temp)  q                        ::  if %temp, no need
     ?.  ?=(?(%collection %feed) struc.key.item)      ::  if not %col or %feed
-      :: ?~  (find [path]~ item-paths)                  ::  pub to rem scry
-      ::   :_  state.q
-      ::   (welp cards.q (gro:cards-methods item))
-      q
+      ?~  (find [path]~ item-paths)                  ::  pub to rem scry
+        q
+        :: :_  state.q
+        :: (welp cards.q (gro:cards-methods item))
+      :_  state.q
+      (welp cards.q (cul:cards-methods key.item 0))
     ?:  (~(has by read:du-item) path)  q   ::  if already published, no need
     =^  cards  item-pub.state.q  (give:du-item path [%whole item])
     [(welp cards.q cards) state.q]
@@ -322,6 +324,14 @@
     ^-  (list card)
     :~  [%pass /set-scry %grow [%item (key-to-path:conv key.item)] portal-item+item]
     ==
+  ::
+  ::  removes from remote scry namespace
+  ++  cul
+    |=  [=key n=@ud]
+    ^-  (list card)
+    :~  [%pass /cull-scry %cull ud+n [%item (key-to-path:conv key)]]
+    ==
+
   --
 ::
 ++  handle-poke  ::  all arms here should output [cards items]
@@ -364,6 +374,7 @@
       ::  note SSS only for feeds and collections is also temporary fix
       ::  because it is not scalable as well
       ?.  ?=(?(%feed %collection) struc.key.act)
+        ?:  (~(has by items) key.act)  `state
         :_  state
         %+  snoc  `(list card)`(track-gr:cards-methods ship.key.act)
         `card`(~(msg cards [ship.key.act %portal-store]) [%get-item key.act])
