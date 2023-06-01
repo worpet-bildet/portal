@@ -75,7 +75,9 @@
       </div>
       {#if image}
         <a href={image} target="_blank">
-          <div class="flex border shadow rounded-lg overflow-hidden">
+          <div
+            class="flex justify-center border shadow rounded-lg overflow-hidden"
+          >
             <img src={image} class="object-cover" alt={blurb} />
           </div>
         </a>
