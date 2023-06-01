@@ -83,8 +83,8 @@
   ::  - cleanup past mistakes
   ::  - publish all items which are unpublished 
   ::    ->  either to rem scry or sss
-  =/  item-paths  
-    .^((list path) %gt /(scot %p our.bowl)/portal-store/(scot %da now.bowl)//item)
+  :: =/  item-paths  
+  ::   .^((list path) %gt /(scot %p our.bowl)/portal-store/(scot %da now.bowl)//item)
   =+  ~(val by items.state)
   =^  cards-4  state
     %-  tail  %^  spin  -  [*(list card) state]
@@ -94,24 +94,24 @@
     =.  state  state.q
     ?:  =(lens.item %temp)  q                        ::  if %temp, no need
     ?.  ?=(?(%collection %feed) struc.key.item)      ::  if not %col or %feed
-      ?~  (find [path]~ item-paths)                  ::  pub to rem scry
-        :_  state.q
-        (welp cards.q (gro:cards-methods item))
+      :: ?~  (find [path]~ item-paths)                  ::  pub to rem scry
+      ::   :_  state.q
+      ::   (welp cards.q (gro:cards-methods item))
       q
     ?:  (~(has by read:du-item) path)  q   ::  if already published, no need
     =^  cards  item-pub.state.q  (give:du-item path [%whole item])
     [(welp cards.q cards) state.q]
   ::  - track all ships whose items we were subbed to before using %portal-graph
   ::  this will inevitably send a bunch of unnecessary tracks(?)
-  =/  cards-5
-    =+  ~(tap in ~(key by read:da-item))
-    %-  head  %-  tail  
-    %^  spin  -  [*(list card) (silt ~[our.bowl])]
-    |=  [p=[=ship =dude:gall =path] q=[cards=(list card) ships=(set ship)]]
-    :-  p
-    ?:  (~(has in ships.q) ship.p)  q   ::  if already subbed, no need
-    :-  (welp cards.q (track-gr:cards-methods:stor ship.p))
-        (~(put in ships.q) ship.p)
+  :: =/  cards-5
+  ::   =+  ~(tap in ~(key by read:da-item))
+  ::   %-  head  %-  tail  
+  ::   %^  spin  -  [*(list card) (silt ~[our.bowl])]
+  ::   |=  [p=[=ship =dude:gall =path] q=[cards=(list card) ships=(set ship)]]
+  ::   :-  p
+  ::   ?:  (~(has in ships.q) ship.p)  q   ::  if already subbed, no need
+  ::   :-  (welp cards.q (track-gr:cards-methods:stor ship.p))
+  ::       (~(put in ships.q) ship.p)
   ::  - unsub from all which are not %feed or %col because of rem scry transition
   =.  state
     =+  ~(tap in ~(key by read:da-item))
@@ -125,7 +125,7 @@
       [p state.q]
     [p state.q]
   :_  this
-  ;:(welp cards cards-1 cards-2 cards-3 cards-4 cards-5)
+  ;:(welp cards cards-1 cards-2 cards-3 cards-4)
 ::
 ++  on-poke
   |=  [=mark =vase]
@@ -149,13 +149,25 @@
     ::
       %portal-message
     =/  msg  !<(message vase)
-    ?>  =(src.bowl src.msg)
     ?+    -.msg    !!
+        %get-item
+      :_  this
+      :~  (~(msg cards [src.bowl %portal-store]) [%item (~(get by items) key.msg)])
+      ==
+      ::
+        %item
+      ?~  item.msg  `this
+      =.  items  (~(put by items) key.u.item.msg u.item.msg)
+      :_  this
+      (upd:cards-methods:stor u.item.msg)
+      ::
         %add-tag-request
+      ?>  =(src.bowl src.msg)
       :_  this
       (gra:cards-methods:stor portal-store+[%add-tag [tag from to]:msg])
       ::
         %feed-update
+      ?>  =(src.bowl src.msg)
       ?>  =(our.bowl ~worpet-bildet)
       =/  act  [%prepend-to-feed feed.msg [%feed our.bowl '' 'global']]
       =^(cards state (prepend-to-feed:handle-poke:stor act) [cards this])
@@ -217,14 +229,14 @@
   =/  path  t.path
   ?+    path    ~|("unexpected scry into {<dap.bowl>} on path {<path>}" !!)
     ::
-      [%items ~]
+    [%items ~]
     =+  ~(tap by read:da-item)
     =+  %-  malt  %+  turn  -
       |=  [k=[=ship =dude:gall p=^^path] v=[? ? =rock:portal-item]]
       `[key item]`[(path-to-key:conv +.p.k) rock.v]
     items+(~(uni by items) -)
     ::
-      [%keys ~]  
+    [%keys ~]
     =+  ~(tap by read:da-item)
     =+  %-  silt  %+  turn  -
       |=  [k=[=ship =dude:gall p=^^path] v=[? ? =rock:portal-item]]
@@ -349,6 +361,12 @@
       ::  don't subscribe to our item
       ?:  &(=(ship.key.act our.bowl) =(cord.key.act ''))         `state
       =/  path  [%item (key-to-path:conv key.act)]
+      ::  note SSS only for feeds and collections is also temporary fix
+      ::  because it is not scalable as well
+      ?.  ?=(?(%feed %collection) struc.key.act)
+        :_  state
+        %+  snoc  `(list card)`(track-gr:cards-methods ship.key.act)
+        `card`(~(msg cards [ship.key.act %portal-store]) [%get-item key.act])
       ::  don't subscribe to what you are already subbed to
       ?:  (~(has by read:da-item) [ship.key.act %portal-store path])  `state
       =^  cards  item-sub  (surf:da-item ship.key.act %portal-store path)
@@ -385,7 +403,7 @@
         :_  state
         ;:  welp  cards 
                   (upd:cards-methods item)
-                  (gro:cards-methods item)  
+                  ::(gro:cards-methods item)  
         ==
       ::  add to collections
       =^  cards-1  state

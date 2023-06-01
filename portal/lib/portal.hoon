@@ -228,20 +228,7 @@
       :_  state
       ?.  =(time.key.act '')   ::  branch on whether is %temp (empty time.key)
         :: if not temp
-        ::  hack:  feed and collection can be edited, so we sub to them
-        ::         we remote at default revision everything else
-        ::         because the cannot be edited
-        ?+    struc.key.act
-          ::  default
-          ::  for every other item type use remote scry
-          ::  note: items should not have capital letters in path for this to work
-          :~  :*  %pass  /remotescry  %arvo  %a  %keen  ship.key.act
-                  (welp /g/x/0/portal-store//item (key-to-path:conv key.act))
-          ==  ==
-          ::
-            ?(%feed %collection)
-          ~[(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(act))]
-        ==
+        ~[(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(act))]
       ::  if temp
       ?:  (~(item-exists scry our.bowl now.bowl) key.act)  ~
       =|  bespoke=bespoke
