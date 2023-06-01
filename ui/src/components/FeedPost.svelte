@@ -19,10 +19,12 @@
   export let allowReplies = true;
 
   let item;
+  let subscribingTo = {};
   let replies = [];
   state.subscribe((s) => {
     item = getItem(keyStrFromObj(key));
-    if (s.isLoaded && !item) {
+    if (s.isLoaded && !item && !subscribingTo[keyStrFromObj(key)]) {
+      subscribingTo[keyStrFromObj(key)] = true;
       return subscribeToItem(key);
     }
     // This is a little confusing but we're merging the global list of comments

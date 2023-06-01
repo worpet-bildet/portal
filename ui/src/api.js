@@ -6,6 +6,12 @@ api.ship = window.ship;
 export const poke = (p) => api.poke(p);
 export const scry = (s) => api.scry(s);
 export const me = `~${api.ship}`;
+let subqueue = [];
+setInterval(() => {
+  if (subqueue.length > 0) {
+    poke(subqueue.shift());
+  }
+}, 1000);
 
 export const getPortalItems = () => {
   return scry({
@@ -164,7 +170,7 @@ export const subscribeToGroup = (key) => {
 };
 
 export const subscribeToItem = (keyObj) => {
-  poke({
+  subqueue.push({
     app: 'portal-manager',
     mark: 'portal-action',
     json: {
