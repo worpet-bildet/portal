@@ -9,6 +9,7 @@
     "serve": "vite preview"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.341.0",
     "@tlon/sigil-js": "^1.4.5",
     "@urbit/api": "^2.3.0",
     "@urbit/http-api": "^2.3.0",

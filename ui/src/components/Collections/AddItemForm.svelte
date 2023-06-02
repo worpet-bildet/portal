@@ -92,22 +92,22 @@
     <div class="flex flex-col col-span-12 gap-4 justify-between">
       {#if formstep === 'type'}
         <div class="flex flex-col gap-4">
-          <div class="text-2xl">What kind of item?</div>
+          <div class="text-2xl pb-2">What kind of item?</div>
           <button
             on:click={() => (formstep = 'app')}
-            class="border shadow text-2xl font-bold py-3">App</button
+            class="bg-panels hover:bg-hover text-2xl font-bold py-3">App</button
           >
           <button
             on:click={() => (formstep = 'group')}
-            class="border shadow text-2xl font-bold py-3">Group</button
+            class="bg-panels hover:bg-hover text-2xl font-bold py-3">Group</button
           >
           <button
             on:click={() => (formstep = 'ship')}
-            class="border shadow text-2xl font-bold py-3">Ship</button
+            class="bg-panels hover:bg-hover text-2xl font-bold py-3">Ship</button
           >
           <button
             on:click={() => (formstep = 'other')}
-            class="border shadow text-2xl font-bold py-3"
+            class="bg-panels hover:bg-hover text-2xl font-bold py-3"
             >Other (link etc.)</button
           >
         </div>
@@ -125,7 +125,7 @@
           <div class="flex flex-col gap-4">
             {#each Object.entries(apps) as [path, { title, image }]}
               <button
-                class="grid grid-cols-12 border shadow items-center gap-4 p-1"
+                class="grid grid-cols-12 bg-panels items-center gap-4 p-1"
                 on:click={() => add(`/app/${path}/`)}
               >
                 <div class="col-span-1">
@@ -151,7 +151,7 @@
         {/if}
         {#each Object.entries(groups) as [path, { meta: { title, image } }]}
           <button
-            class="grid grid-cols-12 border items-center gap-4 p-1"
+            class="grid grid-cols-12 items-center gap-4 p-1"
             on:click={() => add(`/group/${path}/`)}
           >
             <div class="col-span-1">
@@ -168,7 +168,7 @@
             </div>
             <input
               type="text"
-              class="p-2 col-span-7 col-start-2 md:col-span-3 md:col-start-4 border"
+              class="p-2 col-span-7 col-start-2 md:col-span-3 md:col-start-4 border placeholder-grey"
               class:border-rose-500={lastValidShip !== newShip}
               bind:value={newShip}
               placeholder="~worpet-bildet"
@@ -181,7 +181,7 @@
           >
           <IconButton
             icon={CheckIcon}
-            on:click={saveShip}
+            on:click={lastValidShip !== newShip || !newShip ? null : saveShip}
             disabled={lastValidShip !== newShip || !newShip}>Save</IconButton
           >
         </div>

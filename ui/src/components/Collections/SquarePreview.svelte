@@ -46,16 +46,16 @@
 </script>
 
 {#if previewItems && previewItems.length > 0}
-  <div class="border shadow rounded-lg overflow-hidden">
+  <div class="rounded-lg overflow-hidden">
     <div class="grid grid-cols-2 grid-rows-2" bind:this={container}>
       {#if image}
-        <div class="border row-span-2 col-span-2">
+        <div class="row-span-2 col-span-2">
           <ItemImage {image} {title} on:load={resetHeight} />
         </div>
       {:else}
         {#each previewItems as { struc, image, title, color }, i}
           <div
-            class="border overflow-hidden"
+            class="overflow-hidden"
             class:col-span-2={previewItems.length === 1 ||
               (previewItems.length === 3 && i === 2) ||
               previewItems.length === 2}
@@ -73,7 +73,7 @@
       {/if}
     </div>
     {#if withTitle}
-      <div class="bg-gray-500 p-2">
+      <div class="bg-panels p-2">
         <div>{title}</div>
       </div>
     {/if}

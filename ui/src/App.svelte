@@ -24,7 +24,7 @@
     '/explore': Explore,
     '/item/:itemkey': Item,
     '/group/:host/:cord': Group,
-    '/app/:host/:cord': App,
+    '/app/*': App,
     '/other/*': Other,
     '/collection/*': Collection,
     '/collection-edit/*': EditCollection,

@@ -10,12 +10,11 @@
     CrossIcon,
     InstallIcon,
     GlobeIcon,
-    AppIcon,
+    ExternalDestinationIcon,
     SidebarGroup,
   } from '@fragments';
 
-  let host,
-    cord,
+  let cord,
     itemKey,
     item,
     image,
@@ -33,8 +32,9 @@
 
   export let params;
   $: {
-    ({ host, cord } = params);
-    itemKey = `/app/${host}/${cord}/`;
+    let { wild } = params;
+    itemKey = `/app/${wild}`;
+    cord = wild.split('/')[1];
     loadApp($state);
   }
   const loadApp = (s) => {
@@ -54,6 +54,7 @@
     } = getMeta(item));
     isInstalling =
       s.apps?.[cord]?.chad?.hasOwnProperty('install') || isInstalling;
+
     isInstalled = !isInstalling && !!s.apps?.[cord];
   };
 
@@ -86,7 +87,7 @@
 </script>
 
 {#if item}
-  <div class="grid grid-cols-12 gap-x-8">
+  <div class="grid grid-cols-12 gap-x-8 mb-4">
     <ItemDetail
       {title}
       {description}
@@ -95,7 +96,7 @@
       avatar={image}
       type="app"
     >
-      <div class="grid gap-8">
+      <div class="grid gap-8 bg-panels p-6 rounded-lg">
         <div>
           <div class="text-2xl font-bold">
             Current {title} version
@@ -104,7 +105,7 @@
             {version}
           </div>
         </div>
-        <div>
+        <div class="overflow-hidden">
           <div class="text-2xl font-bold">
             Current {title} hash
           </div>
@@ -118,7 +119,7 @@
       <SidebarGroup>
         {#if isInstalled}
           <IconButton
-            icon={AppIcon}
+            icon={ExternalDestinationIcon}
             on:click={() =>
               window.open(`${window.location.origin}${servedFrom}`)}
             >Open</IconButton

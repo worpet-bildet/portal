@@ -7,6 +7,13 @@ export const poke = (p) => api.poke(p);
 export const scry = (s) => api.scry(s);
 export const me = `~${api.ship}`;
 
+let subqueue = [];
+setInterval(() => {
+  if (subqueue.length > 0) {
+    poke(subqueue.shift());
+  }
+}, 1000);
+
 export const getPortalItems = () => {
   return scry({
     app: 'portal-store',
@@ -74,6 +81,19 @@ export const getHeapItems = (heap) => {
     app: 'heap',
     path: `/heap/${heap}/curios/newest/10`,
   });
+};
+
+export const getStorageConfiguration = () => {
+  return Promise.all([
+    scry({
+      app: 'storage',
+      path: '/configuration',
+    }),
+    scry({
+      app: 'storage',
+      path: '/credentials',
+    }),
+  ]);
 };
 
 export const addPal = (patp) => {
@@ -151,7 +171,7 @@ export const subscribeToGroup = (key) => {
 };
 
 export const subscribeToItem = (keyObj) => {
-  poke({
+  subqueue.push({
     app: 'portal-manager',
     mark: 'portal-action',
     json: {
@@ -172,8 +192,8 @@ export const subscribeToContactProfile = (patp) => {
   });
 };
 
-export const usePortalSubscription = (onEvent) => {
-  const portalSub = api.subscribe({
+export const usePortalStoreSubscription = (onEvent) => {
+  const portalStoreSub = api.subscribe({
     app: 'portal-store',
     path: '/updates',
     ship: api.ship,
@@ -183,7 +203,21 @@ export const usePortalSubscription = (onEvent) => {
     quit: console.error,
   });
 
-  return () => api?.unsubscribe(portalSub);
+  return () => api?.unsubscribe(portalStoreSub);
+};
+
+export const usePortalManagerSubscription = (onEvent) => {
+  const portalManagerSub = api.subscribe({
+    app: 'portal-manager',
+    path: '/updates',
+    ship: api.ship,
+    verbose: true,
+    event: onEvent,
+    err: console.error,
+    quit: console.error,
+  });
+
+  return () => api?.unsubscribe(portalManagerSub);
 };
 
 export const useSocialSubscription = (onEvent) => {
@@ -254,4 +288,18 @@ export const useRadioSubscription = (onEvent) => {
   });
 
   return () => api?.unsubscribe(radioSub);
+};
+
+export const useStorageSubscription = (onEvent) => {
+  const storageSub = api.subscribe({
+    app: 'storage',
+    path: '/all',
+    ship: api.ship,
+    verbose: true,
+    event: onEvent,
+    err: console.error,
+    quit: console.error,
+  });
+
+  return () => api?.unsubscribe(storageSub);
 };

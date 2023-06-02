@@ -5,7 +5,12 @@
   import { subscribeToItem } from '@root/api';
   import { getMeta } from '@root/util';
   import { CollectionsSquarePreview, Sigil } from '@components';
-  import { ItemImage, TrashIcon, EditIcon } from '@fragments';
+  import {
+    ItemImage,
+    TrashIcon,
+    EditIcon,
+    ExternalDestinationIcon,
+  } from '@fragments';
 
   export let key;
   export let clickable = true;
@@ -37,6 +42,8 @@
   const navigate = () => {
     if (item.keyObj.struc === 'ship') {
       push(`/${item.keyObj.ship}`);
+    } else if (item.keyObj.struc === 'other' && item.bespoke.link) {
+      window.open(item.bespoke.link);
     } else {
       push(item.keyStr);
     }
@@ -48,7 +55,7 @@
     keyObj: { struc, ship },
     keyStr,
   } = item}
-  {@const { title, blurb, description, image, color } = getMeta(item)}
+  {@const { title, blurb, description, image, color, link } = getMeta(item)}
   <button
     on:click={() => {
       if (clickable) {
@@ -58,9 +65,8 @@
         dispatch('selected', { key, selected });
       }
     }}
-    class="grid grid-cols-6 w-full items-center gap-4 p-1 hover:bg-black hover:text-white cursor-pointer border shadow rounded-lg text-xs text-left"
-    class:bg-black={selected}
-    class:text-white={selected}
+    class="grid grid-cols-6 w-full items-center gap-4 p-1 hover:bg-hover hover:duration-500 cursor-pointer rounded-lg text-sm text-left"
+    class:bg-mdark={selected}
   >
     <div
       class="border overflow-hidden h-full rounded-md"
@@ -90,6 +96,11 @@
         </div>
         <div>·</div>
         <div>{struc}</div>
+        {#if struc === 'other' && link}
+          <div class="w-5">
+            <ExternalDestinationIcon />
+          </div>
+        {/if}
       </div>
       <div class="line-clamp-2" class:line-clamp-1={small}>
         {blurb || description || ''}
@@ -121,5 +132,5 @@
     {/if}
   </button>
 {:else}
-  <div class="p-4 border shadow rounded-lg">Loading...</div>
+  <div class="p-4 hover:bg-hover rounded-lg">Loading...</div>
 {/if}

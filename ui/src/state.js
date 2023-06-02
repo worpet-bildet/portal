@@ -6,6 +6,7 @@ import {
   getJoinedGroups,
   getInstalledApps,
   getPals,
+  getStorageConfiguration,
   subscribeToGroup,
   requestRadioChannels,
 } from '@root/api';
@@ -170,6 +171,28 @@ export const getItem = (listKey) => {
   return get(state)[listKey];
 };
 
+export const getCollectedItemLeaderboard = (excludePatp) => {
+  return Object.entries(
+    Object.values(get(state))
+      .filter(
+        (k) =>
+          k?.keyObj?.ship !== excludePatp &&
+          k?.keyObj?.struc === 'collection' &&
+          k?.keyObj?.time !== 'global' &&
+          k?.keyObj?.time !== 'index'
+      )
+      .reduce((a, b) => {
+        b?.bespoke?.['key-list']
+          .filter((k) => k?.struc !== 'collection')
+          .forEach((k) => {
+            if (!a[keyStrFromObj(k)]) return (a[keyStrFromObj(k)] = 1);
+            a[keyStrFromObj(k)]++;
+          });
+        return a;
+      }, {})
+  ).sort((a, b) => b[1] - a[1]);
+};
+
 // export const getProfile = (ship) => {
 //   return get(state).profiles?.[ship];
 // };
@@ -180,6 +203,14 @@ export const getCollectionItems = (collectionKey) => {
 
 export const getJoinedGroupDetails = (groupKey) => {
   return get(state).groups?.[groupKey];
+};
+
+export const getRepliesByTo = (ship, key) => {
+  return Object.entries(get(state).social?.[`/${ship}/reply-to`] || {})
+    .filter(([_, item]) =>
+      item.find((i) => keyStrFromObj(i) === keyStrFromObj(key))
+    )
+    .map(([replyKey, _]) => keyStrToObj(replyKey));
 };
 
 export const getReplies = (ship, key) => {
@@ -230,6 +261,12 @@ export const handleSubscriptionEvent = (event, type) => {
         return s;
       });
       break;
+    case 'storage-update':
+      state.update((s) => {
+        s.s3 = { ...s.s3, ...event['s3-update'] };
+        return s;
+      });
+      break;
     default:
       break;
   }
@@ -269,5 +306,6 @@ export const refreshAll = () => {
   refreshGroups();
   refreshPals();
   refreshRadioChannels();
+  // refreshStorageConfiguration();
 };
 refreshAll();
