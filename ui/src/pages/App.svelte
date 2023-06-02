@@ -103,7 +103,7 @@
             {version}
           </div>
         </div>
-        <div>
+        <div class="overflow-hidden">
           <div class="text-2xl font-bold">
             Current {title} hash
           </div>
