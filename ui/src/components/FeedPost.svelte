@@ -1,5 +1,5 @@
 <script>
-  import { LinkPreview } from 'svelte-link-preview';
+  import linkifyHtml from 'linkify-html';
   import { link } from 'svelte-spa-router';
   import { fade, slide } from 'svelte/transition';
   import { format } from 'timeago.js';
@@ -11,9 +11,9 @@
     getCurator,
     getReplies,
   } from '@root/state';
-  import { getMeta, fromUrbitTime } from '@root/util';
+  import { getMeta, fromUrbitTime, getAnyLink, isUrl } from '@root/util';
   import { ItemVerticalListPreview, Sigil, FeedPostForm } from '@components';
-  import { CommentIcon, IconButton } from '@fragments';
+  import { CommentIcon, IconButton, LinkPreview } from '@fragments';
 
   export let key;
   export let allowReplies = true;
@@ -37,7 +37,6 @@
       `https://preview.foddur-hodler.one/v2?url=${url}`
     );
     const json = await response.json();
-    console.log({ json });
     return json.metadata;
   };
 
@@ -51,6 +50,7 @@
   {@const {
     bespoke: { nickname },
   } = getCurator(ship)}
+  {@const blurbLink = getAnyLink(blurb)}
   <div
     class="grid grid-cols-12 rounded-lg shadow p-5 border gap-2 lg:gap-4"
     in:fade
@@ -68,9 +68,15 @@
         <span>·</span>
         <span>{format(createdAt)}</span>
       </div>
-      <div class="whitespace-pre-wrap line-clamp-50">
-        {blurb}
-        <LinkPreview url="https://google.com" fetcher={customFetcher} />
+      <div class="whitespace-pre-wrap line-clamp-50 flex flex-col gap-2">
+        <div>
+          {@html linkifyHtml(blurb)}
+        </div>
+        {#if blurbLink}
+          <div>
+            <LinkPreview url={blurbLink} fetcher={customFetcher} />
+          </div>
+        {/if}
       </div>
       {#if ref}
         <div class="rounded-lg">
