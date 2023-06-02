@@ -151,6 +151,7 @@
       <SidebarGroup>
         <IconButton icon={PlusIcon} on:click={add}>Add Item</IconButton>
         <IconButton icon={CheckIcon} on:click={save}>Save</IconButton>
+        <IconButton icon={LeftArrowIcon} on:click={pop}>Back</IconButton>
       </SidebarGroup>
     </RightSidebar>
   </div>

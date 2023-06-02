@@ -1,5 +1,5 @@
 <script>
-  import { pop } from 'svelte-spa-router';
+  import { link, pop } from 'svelte-spa-router';
   import { poke } from '@root/api';
   import {
     state,
@@ -109,10 +109,15 @@
     {:else if activeTab === 'Collections'}
       <div class="grid gap-8 grid-cols-4 pb-4">
         <div class="text-lg font-bold col-span-4 pt-4">
-          Drag to reorder
+          Drag to reorder (click to edit)
         </div>
         <SortableList bind:list={collections} key="time" let:item>
-          <CollectionsSquarePreview key={item} />
+          <a
+            use:link
+            href={keyStrFromObj(item).replace('collection', 'collection-edit')}
+          >
+            <CollectionsSquarePreview key={item} />
+          </a>
         </SortableList>
       </div>
     {:else if activeTab === 'integrations'}
