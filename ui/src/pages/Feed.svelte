@@ -7,6 +7,7 @@
     getGlobalFeed,
     getCuratorFeed,
     keyStrToObj,
+    getCollectedItemLeaderboard,
   } from '@root/state';
   import {
     Feed,
@@ -24,6 +25,7 @@
   import { fromUrbitTime, isValidPatp } from '@root/util';
 
   let sortedPals = [];
+  let sortedRecommendations = [];
   let patpItemCount = {};
   let feed;
   state.subscribe((s) => {
@@ -61,6 +63,8 @@
         return (patpItemCount[`~${b}`] || 0) - (patpItemCount[`~${a}`] || 0);
       });
     }
+
+    sortedRecommendations = getCollectedItemLeaderboard(me).slice(0, 4);
   });
 
   let searchShip;
@@ -116,6 +120,14 @@
         </div>
       </div>
     </SidebarGroup>
+    {#if sortedRecommendations.length > 0}
+      <SidebarGroup>
+        <div class="text-xl font-bold mx-2">Most recommended</div>
+        {#each sortedRecommendations as [recommendation, count]}
+          <ItemVerticalListPreview key={keyStrToObj(recommendation)} small />
+        {/each}
+      </SidebarGroup>
+    {/if}
     {#if $state.radioStations}
       <SidebarGroup>
         <div class="text-xl font-bold mx-2">Jump into %radio 📻</div>
