@@ -38,7 +38,7 @@
     on:drop|preventDefault={(event) => drop(event, index)}
     ondragover="return false"
     on:dragenter={() => (hovering = index)}
-    class:bg-black={hovering === index}
+    class:bg-grey={hovering === index}
     class:text-white={hovering === index}
   >
     <slot {item} />

@@ -6,6 +6,7 @@ import {
   getJoinedGroups,
   getInstalledApps,
   getPals,
+  getStorageConfiguration,
   subscribeToGroup,
   requestRadioChannels,
 } from '@root/api';
@@ -182,6 +183,14 @@ export const getJoinedGroupDetails = (groupKey) => {
   return get(state).groups?.[groupKey];
 };
 
+export const getRepliesByTo = (ship, key) => {
+  return Object.entries(get(state).social?.[`/${ship}/reply-to`] || {})
+    .filter(([_, item]) =>
+      item.find((i) => keyStrFromObj(i) === keyStrFromObj(key))
+    )
+    .map(([replyKey, _]) => keyStrToObj(replyKey));
+};
+
 export const getReplies = (ship, key) => {
   return get(state).social?.[`/${ship}/reply-from`]?.[keyStrFromObj(key)];
 };
@@ -209,7 +218,6 @@ export const handleSubscriptionEvent = (event, type) => {
             ];
           }
         }
-        console.log({ social: s.social });
         return s;
       });
       break;
@@ -228,6 +236,12 @@ export const handleSubscriptionEvent = (event, type) => {
     case 'greg-event':
       state.update((s) => {
         s.radioStations = event.response;
+        return s;
+      });
+      break;
+    case 'storage-update':
+      state.update((s) => {
+        s.s3 = { ...s.s3, ...event['s3-update'] };
         return s;
       });
       break;
@@ -270,5 +284,6 @@ export const refreshAll = () => {
   refreshGroups();
   refreshPals();
   refreshRadioChannels();
+  // refreshStorageConfiguration();
 };
 refreshAll();

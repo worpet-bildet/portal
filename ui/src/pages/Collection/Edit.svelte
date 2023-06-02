@@ -111,11 +111,15 @@
 
 {#if collection}
   <div class="grid grid-cols-12 gap-x-8">
-    <div class="grid gap-4 col-span-9 border shadow p-4 rounded-lg">
+    <div class="grid gap-4 col-span-9 bg-panels p-4 rounded-lg">
       <div class="text-2xl font-bold">Editing {title}</div>
       <div class="flex flex-col gap-2">
         <div>Title</div>
-        <input class="p-2 border-b" type="text" bind:value={title} />
+        <input
+          class="p-2 border-b focus:outline-none"
+          type="text"
+          bind:value={title}
+        />
       </div>
       <div class="flex flex-col gap-2">
         <div>Description</div>
@@ -123,16 +127,20 @@
       </div>
       <div class="flex flex-col gap-2">
         <div>Image</div>
-        <input class="p-2 border-b" type="text" bind:value={image} />
+        <input
+          class="p-2 border-b focus:outline-none"
+          type="text"
+          bind:value={image}
+        />
       </div>
       <div class="flex flex-col gap-2">
-        <div>Items (drag to reorder)</div>
+        <div class="py-2">Items (drag to reorder)</div>
         <SortableList bind:list={items} key="keyStr" let:item>
           <ItemVerticalListPreview
             key={item}
             clickable={false}
             removable={true}
-            editable={item.struc === 'other'}
+            editable={false}
             on:remove={({ detail }) => remove(detail)}
             on:edit={({ detail }) => edit(detail)}
           />

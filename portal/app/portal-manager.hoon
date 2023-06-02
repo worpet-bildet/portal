@@ -71,9 +71,9 @@
     ::  a ne vanjski jer dolazi od portal-managera
     =/  msg  !<(message vase)
     ?>  =(our.bowl ~worpet-bildet)
-    ?>  =(src.bowl src.msg)
     ?+    -.msg  !!
         %index-as-curator
+      ?>  =(src.bowl src.msg)
       =/  act  ~(act cards [our.bowl %portal-store])
       =/  index-key  [%collection our.bowl '' 'index']
       =/  ship-key   [%ship src.msg '' '']
@@ -84,7 +84,20 @@
   ==
 ::
 ++  on-arvo  on-arvo:default
-++  on-watch  on-watch:default
+  :: |=  [=wire sign=sign-arvo]
+  :: ^-  (quip card:agent:gall _this)
+  :: ?>  ?=([%remotescry ~] wire)
+  :: ?>  ?=([%ames %tune *] sign)
+  :: ?~  roar.sign  ::  no response from ames  
+  ::   `this
+  :: ?~  q.dat.u.roar.sign  ::  empty data at path
+  ::   `this
+  :: ?>  ?=(%portal-item p.u.q.dat.u.roar.sign)
+  :: =+  ;;  item  q.u.q.dat.u.roar.sign
+  :: :_  this
+  :: [%give %fact [/updates]~ %portal-update !>(-)]~  ::  FE update
+
+++  on-watch  _`this
 ++  on-leave  on-leave:default
 ++  on-peek
   |=  =path
