@@ -52,7 +52,7 @@
 </script>
 
 <div
-  class={`Container ${className}`}
+  class={`Container ${className} bg-panels`}
   on:click={clickHandler}
   style={`width:${width};height:${height};textAlign:${textAlign}`}
 >
@@ -88,7 +88,6 @@
   /* common */
   .Container {
     text-align: left;
-    background-color: white;
     display: flex;
     flex-direction: column;
     border-radius: 7px;
@@ -99,7 +98,6 @@
   }
 
   .Container:hover {
-    background-color: rgb(250, 250, 250) !important;
     cursor: pointer;
   }
 
