@@ -1,6 +1,12 @@
 <script>
   import { push } from 'svelte-spa-router';
-  import { state, getCurator, getCuratorFeed, refreshPals } from '@root/state';
+  import {
+    state,
+    getCurator,
+    getCuratorFeed,
+    refreshPals,
+    getCuratorFeaturedCollection,
+  } from '@root/state';
   import { subscribeToCurator, addPal, removePal, me } from '@root/api';
   import { getMeta } from '@root/util';
   import {
@@ -26,16 +32,17 @@
   let { patp } = params;
 
   let feed = [];
-  let curator, isMyPal, subscribingToCurator;
+  let curator, isMyPal, subscribingToCurator, featuredCollection;
   const loadCurator = async () => {
     curator = getCurator(patp);
-    // featuredCollection = getCuratorFeaturedCollection(patp);
+    featuredCollection = getCuratorFeaturedCollection(patp);
     feed = getCuratorFeed(patp);
     isMyPal = !!$state.pals?.[patp.slice(1)];
     if (!feed && $state.isLoaded && !subscribingToCurator) {
       subscribingToCurator = true;
       return subscribeToCurator(patp);
     }
+    console.log({ featuredCollection });
   };
 
   $: {

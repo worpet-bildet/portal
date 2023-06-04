@@ -34,6 +34,7 @@
   $: {
     let { wild } = params;
     itemKey = `/app/${wild}`;
+    cord = wild.split('/')[1];
     loadApp($state);
   }
   const loadApp = (s) => {
@@ -53,6 +54,7 @@
     } = getMeta(item));
     isInstalling =
       s.apps?.[cord]?.chad?.hasOwnProperty('install') || isInstalling;
+
     isInstalled = !isInstalling && !!s.apps?.[cord];
   };
 
@@ -103,7 +105,7 @@
             {version}
           </div>
         </div>
-        <div>
+        <div class="overflow-hidden">
           <div class="text-2xl font-bold">
             Current {title} hash
           </div>
