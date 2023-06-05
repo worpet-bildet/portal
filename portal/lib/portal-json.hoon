@@ -209,6 +209,13 @@
                         ==
       %feed         %-  frond
                         ['feed' (enjs-feed feed.bespoke)]
+      %blog         %-  pairs
+                         :~  ['title' s+title.bespoke]
+                             ['blurb' s+blurb.bespoke]
+                             ['uri' s+uri.bespoke]
+                             ['path' s+path.bespoke]
+                             ['image' s+image.bespoke]
+                         ==
       %validity-store  s+''
     ==
   ::   --
@@ -299,7 +306,7 @@
     ^-  json
     :-  %a
     %+  turn  feed
-    |=  [time=cord =^ship =key] 
+    |=  [time=cord =^ship =key]
     %-  pairs
     :~  ['time' s+time]
         ['ship' (enjs-ship ship)]
@@ -432,9 +439,9 @@
       -.pol
     [-.pol (pole-to-cell +.pol)]
   ::
-  ::  optional args in create 
+  ::  optional args in create
   ::  only work in conversions
-  ++  dejs-soft-bespoke-create  
+  ++  dejs-soft-bespoke-create
     |=  jon=json
     ;;  (unit bespoke)
     =,  dejs-soft
@@ -445,7 +452,7 @@
             [%collection json]
             [%retweet json]
             [%review json]
-        ==   
+        ==
     ?-    -.jn
         %other
       =/  raw  %.  ;;((map @t json) +>:jn)
@@ -471,7 +478,7 @@
                   ==
       =+  (turn `(list (unit))`raw |=(a=(unit *) (fall a ~)))
       (some retweet+(pole-to-cell -))
-        %app 
+        %app
       =/  raw  %.  ;;((map @t json) +>:jn)
       %-  ot-raw  :~  screenshots+dejs-soft-s-list
                       dist-desk+so
@@ -486,7 +493,7 @@
                       rating+ni
                   ==
       =+  (turn `(list (unit))`raw |=(a=(unit *) (fall a ~)))
-      (some review+(pole-to-cell raw))
+      (some review+(pole-to-cell -))
     ==
   ::
   ++  dejs-soft-bespoke-edit  ::use ot-raw
@@ -531,7 +538,7 @@
                       treaty+so  :: should not be editable
                   ==
       (some app+(pole-to-cell raw))
-        %review  
+        %review
       =/  raw  %.  ;;((map @t json) +>:jn)
       %-  ot-raw  :~  blurb+so
                       rating+ni
