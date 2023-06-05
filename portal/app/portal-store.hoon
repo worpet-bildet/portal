@@ -131,7 +131,7 @@
     =+  ~(tap in ~(key by read:da-item))
     %-  tail
     %^  spin  -  state
-    |=  [p=[=ship =dude:gall =path] q=[state=state-1]]
+    |=  [p=[=ship =dude:gall =path] q=[state=state-2]]
     =/  key  (path-to-key:conv +:path.p)
     =.  state  state.q
     ?.  ?=(?(%feed %collection) struc.key)
