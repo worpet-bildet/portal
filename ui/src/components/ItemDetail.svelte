@@ -1,9 +1,24 @@
 <script>
   import { link } from 'svelte-spa-router';
+  import { getItem, keyStrFromObj } from '@root/state';
   import { isUrl } from '@root/util';
   import { Sigil } from '@components';
-  import { ItemImage } from '@fragments';
-  export let cover, avatar, title, description, patp, color, type;
+  import { ItemImage, StarRating } from '@fragments';
+  export let cover, avatar, title, description, patp, color, type, reviews;
+
+  let reviewCount, reviewAverageRating;
+  $: {
+    if (reviews && reviews.length > 0) {
+      // if we have reviews, let's count them, and get the average score!
+      reviewCount = reviews.length;
+      reviewAverageRating = (
+        reviews.reduce((rating = 0, r) => {
+          rating += Number(getItem(keyStrFromObj(r))?.bespoke?.rating);
+          return rating;
+        }, 0) / reviewCount
+      ).toFixed(1);
+    }
+  }
 
   let avatarPad, avatarContainer, innerWidth;
   $: if (avatarPad && avatarContainer) {
@@ -83,6 +98,33 @@
           </a>{/if}
       </div>
     </div>
+    {#if reviews && reviewAverageRating}
+      <div class="col-span-12 flex justify-end gap-8">
+        <div class="flex items-center gap-4">
+          <span>
+            <StarRating
+              config={{
+                readOnly: true,
+                countStars: 1,
+                range: {
+                  min: 0,
+                  max: 5,
+                  step: 1,
+                },
+                score: 5,
+              }}
+            />
+          </span>
+          <span>
+            {reviewAverageRating}
+          </span>
+        </div>
+        <div class="border border-spacer" />
+        <div class="flex items-center gap-4">
+          {reviewCount} reviews
+        </div>
+      </div>
+    {/if}
   </div>
   <slot />
 </div>

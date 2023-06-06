@@ -15,6 +15,7 @@ export const getMeta = (item) => {
     struc: getStruc(item),
     ref: getRef(item),
     keyStr: item?.keyStr,
+    rating: item?.bespoke?.rating,
   };
 };
 

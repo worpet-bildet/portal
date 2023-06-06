@@ -1,7 +1,7 @@
 <script>
   import { push } from 'svelte-spa-router';
   import config from '@root/config';
-  import { me, subscribeToItem } from '@root/api';
+  import { me, subscribeToItem, poke } from '@root/api';
   import {
     state,
     getGlobalFeed,
@@ -67,6 +67,33 @@
     sortedRecommendations = getCollectedItemLeaderboard(me).slice(0, 4);
   });
 
+  const handlePost = ({ detail: { content, uploadedImageUrl } }) => {
+    poke({
+      app: 'portal-manager',
+      mark: 'portal-action',
+      json: {
+        create: {
+          bespoke: {
+            other: {
+              title: '',
+              blurb: content || '',
+              link: '',
+              image: uploadedImageUrl || '',
+            },
+          },
+          'prepend-to-feed': [
+            {
+              ship: me,
+              struc: 'feed',
+              time: '~2000.1.1',
+              cord: '',
+            },
+          ],
+        },
+      },
+    });
+  };
+
   let searchShip;
   let lastValidShip = searchShip;
   $: {
@@ -96,7 +123,7 @@
 
 <div class="grid grid-cols-9 gap-8 mb-4">
   <div class="flex flex-col gap-4 col-span-12 md:col-span-6">
-    <FeedPostForm />
+    <FeedPostForm on:post={handlePost} />
     <Feed {feed} />
   </div>
   <RightSidebar>

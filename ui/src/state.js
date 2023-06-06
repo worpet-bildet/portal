@@ -205,6 +205,10 @@ export const getJoinedGroupDetails = (groupKey) => {
   return get(state).groups?.[groupKey];
 };
 
+export const getReplies = (ship, key) => {
+  return get(state).social?.[`/${ship}/reply-from`]?.[keyStrFromObj(key)];
+};
+
 export const getRepliesByTo = (ship, key) => {
   return Object.entries(get(state).social?.[`/${ship}/reply-to`] || {})
     .filter(([_, item]) =>
@@ -213,8 +217,16 @@ export const getRepliesByTo = (ship, key) => {
     .map(([replyKey, _]) => keyStrToObj(replyKey));
 };
 
-export const getReplies = (ship, key) => {
-  return get(state).social?.[`/${ship}/reply-from`]?.[keyStrFromObj(key)];
+export const getReviews = (ship, key) => {
+  return get(state).social?.[`/${ship}/review-from`]?.[keyStrFromObj(key)];
+};
+
+export const getReviewsByTo = (ship, key) => {
+  return Object.entries(get(state).social?.[`/${ship}/review-to`] || {})
+    .filter(([_, item]) =>
+      item.find((i) => keyStrFromObj(i) === keyStrFromObj(key))
+    )
+    .map(([reviewKey, _]) => keyStrToObj(reviewKey));
 };
 
 export const handleSubscriptionEvent = (event, type) => {
