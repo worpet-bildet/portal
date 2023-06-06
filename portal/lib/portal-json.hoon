@@ -1,4 +1,4 @@
-/-  *portal-data, *portal-action, gr=social-graph
+/-  *portal-data, *portal-action, gr=social-graph, portal-config
 /+  *portal, docket, treaty
 |%
 ++  enjs
@@ -24,6 +24,13 @@
   ::     =/  l  (turn ~(tap by mapp) transform)
   ::     [%o `(map @t json)`(malt l)]
   ::   --
+  ++  enjs-dev-map
+    |=  =dev-map:portal-config
+    ^-  json
+    %-  ~(run by dev-map)
+    |=  =ship
+    ^-  json
+    (enjs-ship ship)
   ++  enjs-valid
     |=  =valid
     ^-  json
@@ -76,6 +83,14 @@
     ::     [%keys =key-set]  :: TODO change to key-list
     ::     [%valid =valid]
     :: ==
+  ++  enjs-managaer-result
+    |=  [=manager-result]
+    ^-  json
+    ?@  manager-result  b+manager-result
+    ?+  -.manager-result  !!
+      %portal-devs  %+  frond  'portal-devs'  (enjs-dev-map +.manager-result)
+    ==
+
   ++  enjs-store-result
     |=  [=store-result]
     ^-  json

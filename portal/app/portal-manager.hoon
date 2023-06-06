@@ -1,5 +1,5 @@
 /-  *portal-data, *portal-action, *portal-message, portal-config,
-    groups, treaty
+    groups, treaty, portal-devs
 /+  default-agent, dbug, *portal, io=agentio, sig
 |%
 +$  versioned-state
@@ -8,11 +8,24 @@
       state-2:portal-config
       state-3:portal-config
       state-4:portal-config
+      state-5
+  ==
++$  state-5
+  $:  %5
+      sub-portal-devs=(mk-subs portal-devs ,[%portal-devs ~])
+      =dev-map:portal-config
+      =portal-curator:portal-config
+      =portal-indexer:portal-config
+      =purge-timer:portal-config
+      =purge-time:portal-config
+      =indexed-as-curator:portal-config
+      =onboarded:portal-config
+      =our-apps:portal-config
   ==
 +$  card  card:agent:gall
 --
 %-  agent:dbug
-=|  state-4:portal-config
+=|  state-5
 =*  state  -
 ^-  agent:gall
 =<
@@ -20,8 +33,10 @@
 +*  this        .
     default     ~(. (default-agent this %|) bowl)
     helper      ~(. +> bowl)
+    da-portal-devs  =/  da  (da portal-devs ,[%portal-devs ~])
+      (da sub-portal-devs bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
 ++  on-init 
-  =.  state  *state-4:portal-config
+  =.  state  *state-5
   =^  cards  state  init-sequence:helper
   [cards this]
 ::
@@ -30,14 +45,11 @@
   |=  =vase
   ^-  (quip card _this)
   =/  old  !<(versioned-state vase)
-  =/  new-state  *state-4:portal-config
   =.  state
     ?-  -.old
-      %0      new-state
-      %1      new-state
-      [%2 *]  new-state
-      %3      new-state
-      %4      old
+      ?(%0 %1 [%2 *] %3)  *state-5
+      %4                  [%5 (mk-subs portal-devs ,[%portal-devs ~]) ~ +.old]
+      %5                  old
     ==
   =^  cards  state  init-sequence:helper
   [cards this]
@@ -45,7 +57,7 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
-  =/  manager  ~(. manager [bowl state ~])
+  =/  manager  ~(. manager [bowl ~])
   ?+    mark    (on-poke:default mark vase)
       %portal-action
     ?>  =(our.bowl src.bowl)
@@ -55,7 +67,8 @@
       :_  this  [(~(act cards [our.bowl %portal-store]) act)]~
       ::
         %sub
-      =^  cards  state  (sub:on-poke:manager act)  [cards this]
+      =/  cards  (sub:on-poke:manager act)  
+      [cards this]
       ::
         %onboarded
       `this(onboarded toggle.act)
@@ -105,6 +118,8 @@
       :_  this
       (snoc create-my-apps create-app)
       ::
+
+      ::
       ::
         %index-as-curator
       ?>  =(our.bowl ~worpet-bildet)
@@ -116,9 +131,44 @@
       =?  cards  toggle.msg  (snoc cards (act [%prepend ~[ship-key] index-key]))
       [cards this]
     ==
+    ::
+      %sss-on-rock
+    =/  msg  !<(from:da-portal-devs (fled vase))
+    ?<  ?=([%crash *] rock.msg)
+    ?~  wave.msg  `this
+    ?-  -.u.wave.msg
+        %init
+      =+  ~(tap by rock.u.wave.msg)
+      =/  upd  %+  malt  %+  turn  -
+      |=  [p=[=ship =desk] q=ship]
+      (crip ;:(welp (scow %p ship.p) "/" (scow %tas desk.q)))
+      =.  dev-map  (~(uni by dev-map) upd)
+      ::  TODO sub to all received apps
+      :_  this
+      (dev-map-upd upd)
+      ::
+        %put
+      =/  dist-desk  (crip ;:(welp (scow %p ship.key.u.wave.msg) "/" (scow %tas desk.key.u.wave.msg)))
+      =.  dev-map  (~(put by dev-map) dist-desk dev.u.wave.msg)
+      :_  this
+      %+  snoc  (dev-map-upd (malt (limo ~[dist-desk dev.u.wave.msg])))
+      [(~(poke pass:io /sub) [our.bowl %portal-store] portal-action+!>([%sub [%app dev '' desk.val]:u.wave.msg]))]
+      ::
+        %del
+      `this
+    ==
+    ::
+      %sss-portal-devs
+    =^  cards  sub-portal-devs  (apply:da-portal-devs !<(into:da-sum (fled vase)))
+    [cards this]
   ==
 ::
 ++  on-arvo  on-arvo:default
+  |=  [=wire sign=sign-arvo]
+  ^-  (quip card:agent:gall _this)
+  ?+  wire  `this
+    [~ %sss %behn @ @ @ %portal-devs ~]  [(behn:da-portal-devs |3:wire) this]
+  ==
   :: |=  [=wire sign=sign-arvo]
   :: ^-  (quip card:agent:gall _this)
   :: ?>  ?=([%remotescry ~] wire)
@@ -140,6 +190,7 @@
   ?+    path    (on-peek:default path)
     [%x %indexed-as-curator ~]  ``manager-result+!>(indexed-as-curator)
     [%x %onboarded ~]           ``manager-result+!>(onboarded)
+    [%x %portal-devs ~]         ``manager-result+!>([%portal-devs dev-map])
   ==
 ++  on-agent
   |=  [=wire =sign:agent:gall]
@@ -230,5 +281,11 @@
   :~  [(~(act cards [[our.bowl %portal-store]]) sub-init)]
   ::  sub to our published apps
       [%pass /our-apps %agent [our.bowl %treaty] %watch /alliance]
+  ==
+::
+++  dev-map-upd
+  |=  =_dev-map
+  ^-  (list card)
+  :~  [%give %fact [/updates]~ %portal-dev-map !>(dev-map)]
   ==
 --

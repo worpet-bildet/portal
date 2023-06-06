@@ -154,6 +154,9 @@
   ==
 ::
 ::  comes from %portal-manager
-+$  manager-result  ?
++$  manager-result
+  $@  ?
+  $%  [%portal-devs (map @t ship)]
+  ==
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 --
