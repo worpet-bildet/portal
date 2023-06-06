@@ -174,6 +174,7 @@
     |=  [=bespoke]
     ^-  json
     ?-    -.bespoke
+      %blog        s+''
       %ship        s+''
       %group       %-  pairs
                          :~  ['title' s+title.data.bespoke]
@@ -183,6 +184,7 @@
                          ==
       %app          %-  pairs
                          :~  ['screenshots' (enjs-list screenshots.bespoke |=(s=* s+s))]
+                             ['blurb' s+blurb.bespoke]
                              ['distDesk' s+dist-desk.bespoke]
                              ['signature' (enjs-sig sig.bespoke)]
                              ['treaty' (treaty:enjs:treaty treaty.bespoke)]
@@ -474,6 +476,7 @@
         %app 
       =/  raw  %.  ;;((map @t json) +>:jn)
       %-  ot-raw  :~  screenshots+dejs-soft-s-list
+                      blurb+so
                       dist-desk+so
                       sig+so     :: should not be editable
                       treaty+so  :: should not be editable
@@ -526,6 +529,7 @@
         %app
       =/  raw  %.  ;;((map @t json) +>:jn)
       %-  ot-raw  :~  screenshots+dejs-soft-s-list
+                      blurb+so
                       dist-desk+so
                       sig+so     :: should not be editable
                       treaty+so  :: should not be editable

@@ -1,4 +1,4 @@
-/-   *treaty, group-preview=meta, portal-data-0
+/-   *treaty, group-preview=meta, *portal-signature
 |%
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
@@ -74,7 +74,7 @@
 +$  bespoke
   $%  [struc=%ship ~]
       [struc=%group =data:group-preview]
-      [struc=%app screenshots=(list @t) dist-desk=@t sig=signature =treaty]
+      [struc=%app screenshots=(list @t) blurb=@t dist-desk=@t sig=signature =treaty]
       [struc=%review blurb=@t rating=@ud]
       [struc=%retweet blurb=@t ref=key]
       [struc=%feed =feed]
@@ -115,20 +115,6 @@
 ++  valid-mop  ((on check-date validation-result) gth)
 ::
 +$  validity-records  (map key validation-time-map)
-::
-::
-::
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::
-::  Signatures
-::
-+$  signature   [hex=@ux =ship =life]
-::
-+$  sig-input
-  $%  [%item =key =lens =bespoke =meta]     ::  for signing the item each time it is edited
-      [%key =key]                      ::  for signing item by somebody from the outside (not in use yet)
-      [%app =key desk-name=@tas]      ::  for signing apps by the distributor ship
-  ==
 ::
 ::
 ::

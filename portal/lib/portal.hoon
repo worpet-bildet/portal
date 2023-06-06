@@ -1,5 +1,5 @@
 /-  *portal-data, portal-config, *portal-action, *portal-message,
-    portal-data-0, gr=social-graph
+    portal-data-0, gr=social-graph, treaty
 /+  sig, io=agentio, mip, sss
 |%
 +$  card  card:agent:gall
@@ -262,7 +262,7 @@
         ==
         ::
           %app
-        =.  bespoke  [%app ~ '' *signature *treaty]
+        =.  bespoke  [%app ~ '' '' *signature *treaty:treaty]
         =/  path  /treaty/(scot %p ship.key.act)/[`@tas`cord.key.act]
         =/  wire  [%treaty (key-to-path:conv key.act)]
         =/  sub-status  (~(gut by wex.bowl) [wire ship.key.act %treaty] ~)
@@ -304,6 +304,7 @@
         ?>  ?=(%app -.bespoke.item)
         :*  %app
             (fall screenshots.u.bespoke.act screenshots.bespoke.item)
+            (fall blurb.u.bespoke.act blurb.bespoke.item)
             (fall dist-desk.u.bespoke.act dist-desk.bespoke.item)
             (fall sig.u.bespoke.act sig.bespoke.item)
             (fall treaty.u.bespoke.act treaty.bespoke.item)
@@ -470,14 +471,19 @@
   ++  sig
     |=  [=key dist-ship=@p desk-name=@tas =signature our=@p now=@da]
     ^-  valid
-    ?:  (ships-related:misc ship.key dist-ship)
-      [~ %.y]
+    :: not doing this anymore, requires sig from everyone who is not us
+    :: ?:  (ships-related:misc ship.key dist-ship)
+    ::   [~ %.y]
+    ?:  =(ship.key dist-ship)
+      `&
     ?.  =(ship.signature dist-ship)
       ~&  "signature fail: ship in sig ({(scow %p ship.signature)}) and distributor ship ({(scow %p dist-ship)}) are not the same"
       [~ %.n]
     ?:  =((get-ship-type:misc our) %comet)
       ~&  "our ship is a comet - skipping signature validation of {(trip desk-name)} by {(scow %p dist-ship)}. beware, apps may be unsafe and/or pirated"
       ~
+    ::  TODO validation has wrong sig-input
+    ::  TODO needs to validate all formatted like /app/[ship]//[name]
     ?.  (validate:^sig [our signature [%app key desk-name] now])
       ~&  "signature fail: distributor signature validation failed"
       ~&  >>  signature

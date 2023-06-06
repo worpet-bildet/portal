@@ -33,7 +33,7 @@
         our  %deed  now  /(scot %p ship.signature)/(scot %ud life.signature)
       ==
   ::  if signature is from a past life, skip validation
-  ::  XX: should be visualised on frontend, not great.
+  ::  XX: should be visua[%sign-app dev=ship dist-desk=@t]lised on frontend, not great.
   ?.  =(a.deed life.signature)  %.n
   ::  verify signature from ship at life
   ::
