@@ -1,8 +1,21 @@
 <script>
-  import { poke, subscribeToItem } from '@root/api';
-  import { state, getItem, refreshApps, keyStrToObj } from '@root/state';
-  import { getMeta } from '@root/util';
-  import { ItemDetail, RecommendModal } from '@components';
+  import { me, poke, subscribeToItem } from '@root/api';
+  import {
+    state,
+    getItem,
+    refreshApps,
+    keyStrToObj,
+    keyStrFromObj,
+    getReviews,
+    getReviewsByTo,
+  } from '@root/state';
+  import { getMeta, fromUrbitTime } from '@root/util';
+  import {
+    ItemDetail,
+    RecommendModal,
+    FeedPost,
+    FeedPostForm,
+  } from '@components';
   import {
     RightSidebar,
     IconButton,
@@ -15,7 +28,8 @@
   } from '@fragments';
 
   let cord,
-    itemKey,
+    tempItemKey,
+    defItemKey,
     item,
     image,
     title,
@@ -33,28 +47,32 @@
   export let params;
   $: {
     let { wild } = params;
-    itemKey = `/app/${wild}`;
+    ship = wild.split('/')[0];
     cord = wild.split('/')[1];
+    // don't ask
+    tempItemKey = `/app/${ship}/${cord}/`;
+    defItemKey = `/app/${ship}//${cord}`;
     loadApp($state);
   }
   const loadApp = (s) => {
-    if (!itemKey) return;
-    item = getItem(itemKey);
-    if (s.isLoaded && !item) return subscribeToItem(keyStrToObj(itemKey));
-    ({
-      image,
-      title,
-      description,
-      ship,
-      website,
-      color,
-      version,
-      hash,
-      servedFrom,
-    } = getMeta(item));
+    if (!tempItemKey && !defItemKey) return;
+
+    // yuck
+    if (defItemKey && !getItem(defItemKey))
+      subscribeToItem(keyStrToObj(defItemKey));
+
+    // don't ask pt.2
+    item = getItem(defItemKey) || getItem(tempItemKey);
+    if (s.isLoaded && !item) {
+      subscribeToItem(keyStrToObj(defItemKey));
+      return subscribeToItem(keyStrToObj(tempItemKey));
+    }
+
+    ({ image, title, description, website, color, version, hash, servedFrom } =
+      getMeta(item));
+
     isInstalling =
       s.apps?.[cord]?.chad?.hasOwnProperty('install') || isInstalling;
-
     isInstalled = !isInstalling && !!s.apps?.[cord];
   };
 
@@ -148,5 +166,8 @@
       </SidebarGroup>
     </RightSidebar>
   </div>
-  <RecommendModal bind:open={recommendModalOpen} key={keyStrToObj(itemKey)} />
+  <RecommendModal
+    bind:open={recommendModalOpen}
+    key={keyStrToObj(tempItemKey)}
+  />
 {/if}
