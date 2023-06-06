@@ -59,17 +59,6 @@
       %1  (state-1-to-2:state-transition:stor old)
       %2  old
     ==
-  ::  - remove all ships/groups/apps from main collection and add them to all collection
-  =^  cards  state
-    =/  col-key  [%collection our.bowl '' '~2000.1.1']
-    =/  col  (get-item col-key)
-    ?>  ?=([%collection *] bespoke.col)
-    =/  l  (skim-strucs:keys key-list.bespoke.col ~[%app %group %ship])
-    =^  c1  state  (remove:handle-poke:stor [%remove l col-key])
-    =.  l  (skip-strucs:keys l ~[%ship])
-    =^  c2  state
-      (append:handle-poke:stor [%append l [%collection our.bowl '' 'all']])
-    [(welp c1 c2) state]
   ::  -  destroy empty collections
   =/  output
     =+  ~(tap by items.state)
@@ -95,8 +84,8 @@
   ::  - cleanup past mistakes
   ::  - publish all items which are unpublished
   ::    ->  either to rem scry or sss
-  =/  item-paths
-    .^((list path) %gt /(scot %p our.bowl)/portal-store/(scot %da now.bowl)//item)
+  :: =/  item-paths
+  ::   .^((list path) %gt /(scot %p our.bowl)/portal-store/(scot %da now.bowl)//item)
   =+  ~(val by items.state)
   =^  cards-4  state
     %-  tail  %^  spin  -  [*(list card) state]
@@ -105,27 +94,16 @@
     =/  path  [%item (key-to-path:conv key.item)]
     =.  state  state.q
     ?:  =(lens.item %temp)  q                        ::  if %temp, no need
-    ?.  ?=(?(%collection %feed) struc.key.item)      ::  if not %col or %feed
-      ?~  (find [path]~ item-paths)                  ::  pub to rem scry
-        q
+    ?.  ?=(?(%collection %feed %app) struc.key.item)      ::  if not %col or %feed or %app
+      q
+      :: ?~  (find [path]~ item-paths)                  
         :: :_  state.q
         :: (welp cards.q (gro:cards-methods item))
-      :_  state.q
-      (welp cards.q (cul:cards-methods key.item 0))
+      :: :_  state.q
+      :: (welp cards.q (cul:cards-methods key.item 0))
     ?:  (~(has by read:du-item) path)  q   ::  if already published, no need
     =^  cards  item-pub.state.q  (give:du-item path [%whole item])
     [(welp cards.q cards) state.q]
-  ::  - track all ships whose items we were subbed to before using %portal-graph
-  ::  this will inevitably send a bunch of unnecessary tracks(?)
-  :: =/  cards-5
-  ::   =+  ~(tap in ~(key by read:da-item))
-  ::   %-  head  %-  tail
-  ::   %^  spin  -  [*(list card) (silt ~[our.bowl])]
-  ::   |=  [p=[=ship =dude:gall =path] q=[cards=(list card) ships=(set ship)]]
-  ::   :-  p
-  ::   ?:  (~(has in ships.q) ship.p)  q   ::  if already subbed, no need
-  ::   :-  (welp cards.q (track-gr:cards-methods:stor ship.p))
-  ::       (~(put in ships.q) ship.p)
   ::  - unsub from all which are not %feed or %col because of rem scry transition
   =.  state
     =+  ~(tap in ~(key by read:da-item))
@@ -134,12 +112,12 @@
     |=  [p=[=ship =dude:gall =path] q=[state=state-2]]
     =/  key  (path-to-key:conv +:path.p)
     =.  state  state.q
-    ?.  ?=(?(%feed %collection) struc.key)
+    ?.  ?=(?(%feed %collection %app) struc.key)
       =.  item-sub.state.q  (quit:da-item ship.key %portal-store path.p)
       [p state.q]
     [p state.q]
   :_  this
-  ;:(welp cards cards-1 cards-2 cards-3 cards-4)
+  ;:(welp cards-1 cards-2 cards-3 cards-4)
 ::
 ++  on-poke
   |=  [=mark =vase]
@@ -159,6 +137,7 @@
       %remove  =^(cards state (remove:handle-poke:stor act) [cards this])
       %delete  =^(cards state (delete:handle-poke:stor act) [cards this])
       %purge   =^(cards state (purge:handle-poke:stor act) [cards this])
+      %destroy  =^(cards state (destroy:handle-poke:stor act) [cards this])
     ==
     ::
       %portal-message
@@ -385,7 +364,7 @@
       =/  path  [%item (key-to-path:conv key.act)]
       ::  note SSS only for feeds and collections is also temporary fix
       ::  because it is not scalable as well
-      ?.  ?=(?(%feed %collection) struc.key.act)
+      ?.  ?=(?(%feed %collection %app) struc.key.act)
         ?:  (~(has by items) key.act)  `state
         :_  state
         %+  snoc  `(list card)`(track-gr:cards-methods ship.key.act)
@@ -647,7 +626,7 @@
     :^  key
         lens
         ?:  ?=([%app *] bespoke)
-          [%app ~ [dist-desk sig treaty]:bespoke]
+          [%app ~ '' [dist-desk sig treaty]:bespoke]
         bespoke
         meta
   ::
@@ -740,8 +719,7 @@
               (list-key-conv key)
             ==
         ==
-      =/  sig  (sign:sig our.bowl now.bowl [%item key lens bespoke meta])
-      (some [key [key lens bespoke meta sig]])
+      (some [key [key lens bespoke meta *signature]])
     ~
   --
 --

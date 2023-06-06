@@ -70,9 +70,44 @@
     ::  TODO src.bowl src.msg problem kad store misli da je src our
     ::  a ne vanjski jer dolazi od portal-managera
     =/  msg  !<(message vase)
-    ?>  =(our.bowl ~worpet-bildet)
     ?+    -.msg  !!
+        %sign-app
+      =/  dist-desk  (parse-dist-desk:misc dist-desk.msg)
+      ?~  dist-desk  `this
+      ?>  =(src.bowl dist-name.u.dist-desk)
+      ?>  =(ship.sig.msg dist-name.u.dist-desk)
+      ?<  =((get-ship-type:misc our.bowl) %comet)
+      ?>  %:  validate:sig  our.bowl  sig.msg
+          [%sign-app our.bowl dist-desk.msg]  now.bowl  ==
+      ~&  >  "sig is valid!"
+      ::  making sure published-apps collection exists
+      =/  create-my-apps
+      ?:  %-  ~(item-exists scry our.bowl now.bowl)
+              [%collection our.bowl '' 'published-apps']
+          ~
+        :~
+          %-  ~(act cards [[our.bowl %portal-store]])
+            :*  %create  ~  ~  `'published-apps'  `%def
+                `[%collection 'My Apps' 'Collection of all apps I have published.' '' ~]
+                [%collection our.bowl '' '~2000.1.1']~  ~  ~  ==
+        ==
+      =/  create-app
+        %-  ~(act cards [[our.bowl %portal-store]])
+        ?:  %-  ~(item-exists scry our.bowl now.bowl)
+            [%app our.bowl '' desk-name.u.dist-desk]
+          :^    %replace  
+              [%app our.bowl '' desk-name.u.dist-desk]
+            %def  
+          [%app ~ '' dist-desk.msg sig.msg treaty.msg]
+        :*  %create  ~  ~  `desk-name.u.dist-desk  `%def
+          `[%app ~ '' dist-desk.msg sig.msg treaty.msg]
+          ~[[%collection our.bowl '' 'published-apps']]  ~  ~  == 
+      :_  this
+      (snoc create-my-apps create-app)
+      ::
+      ::
         %index-as-curator
+      ?>  =(our.bowl ~worpet-bildet)
       ?>  =(src.bowl src.msg)
       =/  act  ~(act cards [our.bowl %portal-store])
       =/  index-key  [%collection our.bowl '' 'index']
@@ -133,14 +168,14 @@
             ~
             ``@t`i.t.t.wire
             `%def
-            `[%app ~ '' *signature treaty]
+            `[%app ~ '' '' *signature treaty]
             [%collection our.bowl '' 'published-apps']~
             ~
             ~
         ==
       :_  this
       :~  (~(act cards [our.bowl %portal-store]) create-app)
-          [%pass wire %agent [our.bowl %treaty] %leave ~]
+          [%pass wire %agent [our.bowl %treaty] %leave ~]  ::  why leave here?
       ==
     ==
     ::
@@ -149,7 +184,7 @@
         %fact
       =/  treaty  !<(treaty:treaty q.cage.sign)
       =/  key  (path-to-key:conv +.wire)
-      =/  act  [%replace key %temp [%app ~ '' *signature treaty]]
+      =/  act  [%replace key %temp [%app ~ '' '' *signature treaty]]
       :_  this
       :~  [(~(act cards [our.bowl %portal-store]) act)]
           [%pass wire %agent [ship.key %treaty] %leave ~]
