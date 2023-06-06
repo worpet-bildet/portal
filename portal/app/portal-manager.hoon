@@ -1,6 +1,6 @@
 /-  *portal-data, *portal-action, *portal-message, portal-config,
     groups, treaty, portal-devs
-/+  default-agent, dbug, *portal, io=agentio, sig
+/+  default-agent, dbug, *portal, io=agentio, sig, *sss
 |%
 +$  versioned-state
   $%  state-0:portal-config
@@ -139,13 +139,14 @@
     ?-  -.u.wave.msg
         %init
       =+  ~(tap by rock.u.wave.msg)
-      =/  upd  %+  malt  %+  turn  -
-      |=  [p=[=ship =desk] q=ship]
-      (crip ;:(welp (scow %p ship.p) "/" (scow %tas desk.q)))
+      =/  upd  
+        %-  malt  
+        %+  turn  -
+        |=  [p=[=ship =desk] q=ship]
+        (crip ;:(welp (scow %p ship.p) "/" (scow %tas desk.q)))
       =.  dev-map  (~(uni by dev-map) upd)
       ::  TODO sub to all received apps
-      :_  this
-      (dev-map-upd upd)
+      :_  this  (dev-map-upd upd)
       ::
         %put
       =/  dist-desk  (crip ;:(welp (scow %p ship.key.u.wave.msg) "/" (scow %tas desk.key.u.wave.msg)))
@@ -163,7 +164,7 @@
     [cards this]
   ==
 ::
-++  on-arvo  on-arvo:default
+++  on-arvo
   |=  [=wire sign=sign-arvo]
   ^-  (quip card:agent:gall _this)
   ?+  wire  `this

@@ -8,7 +8,7 @@
   $:  %0
       our-apps=(set [ship desk])
       treaties=(map [ship desk] treaty:treaty)
-      portal-devs=(mk-pubs portal-devs ,[%portal-devs ~])
+      pub-portal-devs=(mk-pubs portal-devs ,[%portal-devs ~])
   ==
 +$  card  card:agent:gall
 ::
