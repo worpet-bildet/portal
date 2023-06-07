@@ -28,13 +28,15 @@
   } from '@fragments';
 
   let cord,
-    tempItemKey,
-    defItemKey,
+    ship,
+    defKey,
+    subscribingToDefItem,
+    itemKey,
+    isDefItem,
     item,
     image,
     title,
     description,
-    ship,
     website,
     color,
     version,
@@ -49,33 +51,38 @@
   export let params;
   $: {
     let { wild } = params;
-    ship = wild.split('/')[0];
-    cord = wild.split('/')[1];
+    let [ship, cord, time] = wild.split('/');
+
+    if (cord) defKey = `/app/${ship}//${cord}`;
+    if (time) defKey = `/app/${ship}//${time}`;
+
     // don't ask
-    tempItemKey = `/app/${ship}/${cord}/`;
-    defItemKey = `/app/${ship}//${cord}`;
+    if (cord) {
+      itemKey = `/app/${ship}/${cord}/`;
+    } else if (time) {
+      isDefItem = true;
+      itemKey = `/app/${ship}//${time}`;
+    }
     loadApp($state);
   }
-  const loadApp = (s) => {
-    if (!tempItemKey && !defItemKey) return;
 
-    // yuck
-    if (defItemKey && !getItem(defItemKey))
-      subscribeToItem(keyStrToObj(defItemKey));
-
-    // don't ask pt.2
-    item = getItem(defItemKey) || getItem(tempItemKey);
-    if (s.isLoaded && !item) {
-      subscribeToItem(keyStrToObj(defItemKey));
-      return subscribeToItem(keyStrToObj(tempItemKey));
-    itemKey = `/app/${wild}`;
-    loadApp($state);
-  }
   const loadApp = (s) => {
     if (!itemKey) return;
 
-    // don't ask pt.2
-    item = getItem(itemKey);
+    // Try to load the defItem if we already have one in state
+    // TODO: Ensure that we respect Jurij's upcoming map
+    if (!isDefItem) {
+      item = getItem(defKey);
+      console.log({ defItem: item });
+      if (!item && !subscribingToDefItem) {
+        subscribingToDefItem = true;
+        // TODO: Remove this because Jurij is also subscribing to the defitems
+        subscribeToItem(keyStrToObj(defKey));
+      }
+    } else {
+      item = getItem(itemKey);
+    }
+
     if (s.isLoaded && !item) {
       return subscribeToItem(keyStrToObj(itemKey));
     }
@@ -88,8 +95,8 @@
     // TODO: Review what ship and key should be here in the case that host is
     // not publisher
     reviews = [
-      ...(getReviews(ship, keyStrToObj(defItemKey)) || []),
-      ...(getReviewsByTo(me, keyStrToObj(defItemKey)) || []),
+      ...(getReviews(ship, keyStrToObj(defKey)) || []),
+      ...(getReviewsByTo(me, keyStrToObj(defKey)) || []),
     ]
       .filter((a, i, arr) => {
         return (
@@ -98,10 +105,9 @@
       })
       .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
 
-=======
->>>>>>> development
     isInstalling =
       s.apps?.[cord]?.chad?.hasOwnProperty('install') || isInstalling;
+
     isInstalled = !isInstalling && !!s.apps?.[cord];
     isReviewedByMe = reviews.find((r) => r.ship === me);
   };
@@ -249,8 +255,5 @@
       </SidebarGroup>
     </RightSidebar>
   </div>
-  <RecommendModal
-    bind:open={recommendModalOpen}
-    key={keyStrToObj(tempItemKey)}
-  />
+  <RecommendModal bind:open={recommendModalOpen} key={keyStrToObj(itemKey)} />
 {/if}

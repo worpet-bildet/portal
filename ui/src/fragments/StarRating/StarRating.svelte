@@ -12,7 +12,6 @@
     unfilledColor: '#c5c5c5',
     strokeColor: '#000',
     strokeUnfilledColor: '#000',
-    showScore: true,
   };
 </script>
 
@@ -55,16 +54,6 @@
       on:change
     />
   </div>
-<<<<<<< HEAD
-=======
-  {#if config.showScore}<span
-      class="show-score"
-      style="font-size: {starConfig.size / 2}px;"
-      >({parseFloat((config.score / config.countStars) * 100).toFixed(
-        2
-      )}%)</span
-    >{/if}
->>>>>>> development
 </section>
 
 <style>
@@ -94,11 +83,4 @@
     left: 0;
     height: 100%;
   }
-<<<<<<< HEAD
-=======
-  .show-score {
-    user-select: none;
-    color: #888;
-  }
->>>>>>> development
 </style>
