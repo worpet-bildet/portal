@@ -115,13 +115,13 @@
       =.  item-sub.state.q  (quit:da-item ship.key %portal-store path.p)
       [p q]
     =?  ships.q  
-      ?&  ?=(%app struc.key)
-          =(time.key '')  ::  is temp
-      ==
-    ?~  (find [ship.key]~ ships.q)
+        ?&  ?=(%app struc.key)
+            =(time.key '')  ::  is temp
+            =(~ (find [ship.key]~ ships.q))
+        ==
       (snoc ships.q ship.key)
-    ships.q
     [p ships.q state.q]
+  ~&  >>  ships
   :_  this
   %+  snoc   ;:(welp cards-1 cards-2 cards-3 cards-4)
   [%pass /updpm %agent [our.bowl %portal-manager] %poke %noun !>(ships)]
