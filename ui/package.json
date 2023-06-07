@@ -14,6 +14,8 @@
     "@tlon/sigil-js": "^1.4.5",
     "@urbit/api": "^2.3.0",
     "@urbit/http-api": "^2.3.0",
+    "linkify-html": "^4.1.1",
+    "linkifyjs": "^4.1.1",
     "svelte-autosize": "^1.1.0",
     "svelte-spa-router": "^3.3.0",
     "timeago.js": "^4.0.2"

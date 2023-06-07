@@ -1,4 +1,5 @@
 <script>
+  import linkifyHtml from 'linkify-html';
   import { link } from 'svelte-spa-router';
   import { fade, slide } from 'svelte/transition';
   import { format } from 'timeago.js';
@@ -11,9 +12,9 @@
     getReplies,
     getRepliesByTo,
   } from '@root/state';
-  import { getMeta, fromUrbitTime } from '@root/util';
+  import { getMeta, fromUrbitTime, getAnyLink, isImage } from '@root/util';
   import { ItemVerticalListPreview, Sigil, FeedPostForm } from '@components';
-  import { ChatIcon, IconButton, StarRating } from '@fragments';
+  import { ChatIcon, IconButton, LinkPreview, StarRating } from '@fragments';
 
   export let key;
   export let allowReplies = true;
@@ -46,10 +47,6 @@
 
   let showCommentForm = false;
 
-  // TODO: do some parsing of the blurb to figure out whether there are any
-  // links that we should respect, and if those links are images we should work
-  // out how to render them properly
-
   const handlePostComment = ({
     detail: { content, uploadedImageUrl, replyTo },
   }) => {
@@ -77,6 +74,14 @@
       },
     });
   };
+
+  const customFetcher = async (url) => {
+    const response = await fetch(
+      `https://preview.foddur-hodler.one/v2?url=${url}`
+    );
+    const json = await response.json();
+    return json.metadata;
+  };
 </script>
 
 {#if item}
@@ -84,6 +89,7 @@
   {@const {
     bespoke: { nickname },
   } = getCurator(ship)}
+  {@const blurbLink = getAnyLink(blurb)}
   <div
     class="grid grid-cols-12 bg-panels rounded-lg p-5 gap-2 lg:gap-4"
     in:fade
@@ -101,8 +107,21 @@
         <span>·</span>
         <span>{format(createdAt)}</span>
       </div>
-      <div class="whitespace-pre-wrap line-clamp-50 break-words">
-        {blurb}
+      <div
+        class="whitespace-pre-wrap line-clamp-50 flex flex-col gap-2 break-words"
+      >
+        <div>
+          {@html linkifyHtml(blurb)}
+        </div>
+        {#if blurbLink}
+          {#if isImage(blurbLink)}
+            <img src={blurbLink} class="object-cover" alt={blurb} />
+          {:else}
+            <div>
+              <LinkPreview url={blurbLink} fetcher={customFetcher} />
+            </div>
+          {/if}
+        {/if}
       </div>
       {#if image}
         <a href={image} target="_blank">

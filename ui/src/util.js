@@ -1,3 +1,5 @@
+import * as linkify from 'linkifyjs';
+
 export const getMeta = (item) => {
   return {
     title: getTitle(item) || item?.keyObj?.cord,
@@ -125,6 +127,9 @@ export const getServedFrom = (item) => {
 export const getCreatedAt = (item) => fromUrbitTime(item?.meta?.createdAt);
 export const getStruc = (item) => item?.keyObj?.struc;
 export const getRef = (item) => item?.bespoke?.ref;
+export const getAnyLink = (string) => {
+  return linkify.find(string)?.[0]?.href;
+};
 
 export const isUrl = (s) => {
   if (
@@ -136,6 +141,10 @@ export const isUrl = (s) => {
   } else {
     return false;
   }
+};
+
+export const isImage = (s) => {
+  return s.match(/\.(jpeg|jpg|gif|png|webp)$/) != null;
 };
 
 export const invertHex = (hex) => {
