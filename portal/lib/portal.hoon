@@ -218,7 +218,6 @@
   |_  [=bowl:gall cards=_*(list card)]
   ++  on-poke
     ::  all arms here should output cards
-    ::  TODO cleanup PM state and maybe output that then
     |%
     ::
     ++  sub
@@ -244,7 +243,6 @@
                                   ~
                                   ~
                               ==
-      ::  TODO wires state transition
       ?+    struc.key.act    !!
         ::
           %ship
@@ -267,9 +265,6 @@
         =/  sub-status  (~(gut by wex.bowl) [wire ship.key.act %treaty] ~)
         :~  [(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(create-empty-temp))]
             [%pass wire %agent [ship.key.act %treaty] %watch path]
-            %+  ~(poke pass:io /get-app-dev) 
-              [ship.key.act %portal-app-publisher]
-            portal-message+!>([%get-app-dev [ship cord]:key.act])
         ==
       ==
     --
@@ -417,6 +412,7 @@
     ==
   --
 ::
+::  OOD
 ::  includes arms which are used to validate data
 ++  validator
   |%
@@ -491,6 +487,19 @@
       ~&  >>  signature
       [~ %.n]
     [~ %.y]
+
+
+      
+
   --
+::
+++  validate-sig
+  |=  [dist-desk=@t src=ship our=ship now=time sig=signature]
+  =/  dist-desk  (parse-dist-desk:misc dist-desk)
+  ?~  dist-desk  %.n
+  ?.  =(src dist-name.u.dist-desk)  %.n
+  ?.  =(ship.sig dist-name.u.dist-desk)  %.n
+  ?:  =((get-ship-type:misc our) %comet)  %.n
+  (validate:^sig our sig [%sign-app our dist-desk] now)
 ::
 --

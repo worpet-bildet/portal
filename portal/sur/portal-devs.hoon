@@ -3,8 +3,8 @@
 +$  rock  (map [ship desk] ship)
 +$  wave
   $%  [%init =rock]
-      [%put key=[ship desk] dev=ship]
-      [%del key=[ship desk]]
+      [%put key=[=ship =desk] dev=ship]
+      [%del key=[=ship =desk]]
   ==
 ++  wash
   |=  [=rock =wave]

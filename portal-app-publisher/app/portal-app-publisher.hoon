@@ -1,5 +1,5 @@
 /-  *action, treaty, portal-devs
-/+  default-agent, dbug, sig, *sss
+/+  default-agent, dbug, *sig, *sss
 |%
 +$  versioned-state
   $%  state-0
@@ -8,7 +8,7 @@
   $:  %0
       our-apps=(set [ship desk])
       treaties=(map [ship desk] treaty:treaty)
-      pub-portal-devs=(mk-pubs portal-devs ,[%portal-devs ~])
+      pub-portal-devs=_(mk-pubs portal-devs ,[%portal-devs ~])
   ==
 +$  card  card:agent:gall
 ::
@@ -46,8 +46,8 @@
     :*  %pass  /our-treaty/(scot %p ship)/[desk]  %agent
         [our.bowl %treaty]  %watch  /treaty/(scot %p ship)/[desk]
     ==
-  =^  cards-1  pub-portal-devs
-    (give:du-portal-devs [%portal-devs ~] [%init portal-devs])
+  =^  cards-1  pub-portal-devs  
+    (give:du-portal-devs [%portal-devs ~] [%init ~])
   :_  this
   %+  snoc  (welp cards cards-1)
   [%pass /our-apps %agent [our.bowl %treaty] %watch /alliance]
@@ -76,13 +76,13 @@
     %+  snoc  cards-1
     :*  %pass  /sign  %agent  [dev.act %portal-manager]  %poke  
         %portal-message  
-        !>([%sign-app dist-desk.act (sign:sig our.bowl now.bowl act) treaty])
+        !>([%sign-app dist-desk.act (sign our.bowl now.bowl act) treaty])
+    ==
     ::
       %sss-to-pub
-    =/  msg  !<(into:du-item (fled vase))
-    =^  cards  pub-portal-devs  (apply:du-item msg)
+    =/  msg  !<(into:du-portal-devs (fled vase))
+    =^  cards  pub-portal-devs  (apply:du-portal-devs msg)
     [cards this]
-    ==
   ==
 ++  on-watch  on-watch:default
 ++  on-leave  on-leave:default
@@ -112,18 +112,6 @@
       `this
     ==
     ::
-      [~ %sss *]
-    ?>  ?=(%poke-ack -.sign)
-    ?~  p.sign  `this
-    %-  (slog u.p.sign)
-    ?+    wire   `this
-        [~ %sss %on-rock @ @ @ %item @ @ @ @ ~]
-      =.  sub-portal-devs  (chit:da-portal-devs |3:wire sign)
-      `this
-        [~ %sss %scry-request @ @ @ %item @ @ @ @ ~]
-      =^  cards  sub-portal-devs  (tell:da-portal-devs |3:wire sign)
-      [cards this]
-    ==
   ==
 ++  on-arvo   on-arvo:default
 ++  on-fail   on-fail:default

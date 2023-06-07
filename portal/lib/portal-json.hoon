@@ -27,9 +27,9 @@
   ++  enjs-dev-map
     |=  =dev-map:portal-config
     ^-  json
+    :-  %o
     %-  ~(run by dev-map)
-    |=  =ship
-    ^-  json
+    |=  ship=@p  ::  =ship is buggy for some reason
     (enjs-ship ship)
   ++  enjs-valid
     |=  =valid
@@ -80,14 +80,14 @@
     :: $@  ?
     :: $%  [%items =items]
     ::     [%item item=?(~ item)]
-    ::     [%keys =key-set]  :: TODO change to key-list
+    ::     [%keys =key-set]  
     ::     [%valid =valid]
     :: ==
-  ++  enjs-managaer-result
+  ++  enjs-manager-result
     |=  [=manager-result]
     ^-  json
     ?@  manager-result  b+manager-result
-    ?+  -.manager-result  !!
+    ?-  -.manager-result
       %portal-devs  %+  frond  'portal-devs'  (enjs-dev-map +.manager-result)
     ==
 
@@ -95,7 +95,7 @@
     |=  [=store-result]
     ^-  json
     ?@  store-result  b+store-result
-    ?+  -.store-result  !!
+    ?+  -.store-result  s+''
           %items  %+  frond  'items'  (enjs-items items.store-result)
           %item  %+  frond  'item'  (enjs-item-or-null item.store-result)
     ==
@@ -189,7 +189,6 @@
     |=  [=bespoke]
     ^-  json
     ?-    -.bespoke
-      %blog        s+''
       %ship        s+''
       %group       %-  pairs
                          :~  ['title' s+title.data.bespoke]
@@ -318,7 +317,7 @@
   ::   :-  %a
   ::   %+  turn  key-list
   ::   |=(=key (enjs-jam-key key))
-    ++  enjs-feed
+  ++  enjs-feed
     |=  =feed
     ^-  json
     :-  %a
