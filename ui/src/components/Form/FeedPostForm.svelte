@@ -95,7 +95,7 @@
       <Sigil patp={me} />
     </div>
   </div>
-  <div class="col-span-11">
+  <div class="col-span-11 pb-2">
     <TextArea placeholder="Share a limerick, maybe" bind:value={content} />
     {#if uploadedImageUrl}
       <div class="flex">
