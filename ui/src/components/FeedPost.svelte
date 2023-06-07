@@ -50,7 +50,7 @@
   const handlePostComment = ({
     detail: { content, uploadedImageUrl, replyTo },
   }) => {
-    poke({
+    return poke({
       app: 'portal-manager',
       mark: 'portal-action',
       json: {
@@ -73,14 +73,6 @@
         },
       },
     });
-  };
-
-  const customFetcher = async (url) => {
-    const response = await fetch(
-      `https://preview.foddur-hodler.one/v2?url=${url}`
-    );
-    const json = await response.json();
-    return json.metadata;
   };
 </script>
 
@@ -118,7 +110,7 @@
             <img src={blurbLink} class="object-cover" alt={blurb} />
           {:else}
             <div>
-              <LinkPreview url={blurbLink} fetcher={customFetcher} />
+              <LinkPreview url={blurbLink} />
             </div>
           {/if}
         {/if}

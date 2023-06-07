@@ -5,12 +5,11 @@
     countStars: 5,
     range: { min: 0, max: 5, step: 0.001 },
     score: 0.0,
-    showScore: true,
   };
   let starConfig = {
     size: 30,
-    fillColor: '#F9ED4F',
-    strokeColor: '#BB8511',
+    fillColor: '#181A1C',
+    strokeColor: '#000',
     unfilledColor: '#c5c5c5',
     strokeUnfilledColor: '#000',
   };
@@ -55,13 +54,6 @@
       on:change
     />
   </div>
-  {#if config.showScore}<span
-      class="show-score"
-      style="font-size: {starConfig.size / 2}px;"
-      >({parseFloat((config.score / config.countStars) * 100).toFixed(
-        2
-      )}%)</span
-    >{/if}
 </section>
 
 <style>
@@ -90,9 +82,5 @@
     right: 0;
     left: 0;
     height: 100%;
-  }
-  .show-score {
-    user-select: none;
-    color: #888;
   }
 </style>

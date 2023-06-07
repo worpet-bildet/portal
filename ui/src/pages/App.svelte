@@ -40,7 +40,7 @@
     version,
     hash,
     reviews,
-    reviewError,
+    isReviewedByMe,
     isInstalling,
     isInstalled,
     servedFrom,
@@ -91,10 +91,7 @@
     isInstalling =
       s.apps?.[cord]?.chad?.hasOwnProperty('install') || isInstalling;
     isInstalled = !isInstalling && !!s.apps?.[cord];
-  };
-
-  const isReviewedBy = (patp) => {
-    return reviews.find((r) => r.ship === patp);
+    isReviewedByMe = reviews.find((r) => r.ship === me);
   };
 
   state.subscribe((s) => {
@@ -184,16 +181,28 @@
           </pre>
         </div>
       </div>
-      {#if !isReviewedBy(me)}
-        <FeedPostForm
-          on:post={handlePostReview}
-          recommendButtons={false}
-          ratingStars={true}
-        />
+      {#if !isReviewedByMe}
+        <div class="flex flex-col gap-2">
+          <div class="text-xl font-bold">
+            Review {title}
+          </div>
+          <FeedPostForm
+            on:post={handlePostReview}
+            recommendButtons={false}
+            ratingStars={true}
+          />
+        </div>
       {/if}
-      {#each reviews as review (keyStrFromObj(review))}
-        <FeedPost key={review} allowReplies={false} showRating={true} />
-      {/each}
+      {#if reviews.length > 0}
+        <div class="flex flex-col gap-4">
+          <div class="text-2xl font-bold">Reviews</div>
+          <div>
+            {#each reviews as review (keyStrFromObj(review))}
+              <FeedPost key={review} allowReplies={false} showRating={true} />
+            {/each}
+          </div>
+        </div>
+      {/if}
     </ItemDetail>
     <RightSidebar>
       <SidebarGroup>
