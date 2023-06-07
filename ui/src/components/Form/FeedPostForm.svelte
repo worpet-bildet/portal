@@ -82,7 +82,6 @@
   };
 
   $: linkToPreview = getAnyLink(content || '');
-  $: console.log(content);
 </script>
 
 <div

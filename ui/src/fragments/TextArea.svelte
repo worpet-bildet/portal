@@ -9,6 +9,7 @@
   const reset = async () => {
     await tick();
     autosize.update(textarea);
+    target.innerHTML = '';
   };
 
   $: if (value === '') {
