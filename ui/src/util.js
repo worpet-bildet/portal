@@ -129,6 +129,9 @@ export const getRef = (item) => item?.bespoke?.ref;
 export const getAnyLink = (string) => {
   return linkify.find(string)?.[0]?.href;
 };
+export const getAllLinks = (string) => {
+  return linkify.find(string).map((l) => l.href);
+};
 
 export const isUrl = (s) => {
   if (

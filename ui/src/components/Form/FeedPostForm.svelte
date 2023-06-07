@@ -1,9 +1,9 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
-  import { me, poke } from '@root/api';
+  import { me } from '@root/api';
   import { state, keyStrToObj } from '@root/state';
-  import { toUrbitTime } from '@root/util';
+  import { toUrbitTime, getAnyLink } from '@root/util';
   import { RecommendModal, Sigil } from '@components';
   import {
     TextArea,
@@ -13,53 +13,21 @@
     ImageIcon,
     Modal,
     ItemImage,
+    LinkPreview,
   } from '@fragments';
 
   export let replyTo;
   export let recommendButtons = true;
+  export let error;
 
   let dispatch = createEventDispatcher();
   let content;
 
   const post = () => {
-    let p = {
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        create: {
-          bespoke: {
-            other: {
-              title: '',
-              blurb: content,
-              link: '',
-              image: uploadedImageUrl,
-            },
-          },
-        },
-      },
-    };
-    if (!replyTo) {
-      p.json.create['prepend-to-feed'] = [
-        {
-          ship: me,
-          struc: 'feed',
-          time: '~2000.1.1',
-          cord: '',
-        },
-      ];
-    } else {
-      p.json.create['tags-to'] = [
-        {
-          key: replyTo,
-          'tag-to': `/${me}/reply-to`,
-          'tag-from': `/${replyTo.ship}/reply-from`,
-        },
-      ];
-    }
-    poke(p);
+    dispatch('post', { content, uploadedImageUrl, replyTo });
     content = '';
     uploadedImageUrl = '';
-    dispatch('post');
+    error = '';
   };
 
   // TODO: Factor out the selection of groups/apps into its own component
@@ -69,6 +37,7 @@
     selectedKey,
     fileInput,
     uploadedImageUrl;
+
   let groups = {};
   let apps = {};
   state.subscribe((s) => {
@@ -111,9 +80,16 @@
 
     uploadedImageUrl = `${$state.s3.credentials.endpoint}/${params.Bucket}/${params.Key}`;
   };
+
+  $: linkToPreview = getAnyLink(content || '');
+  $: console.log(content);
 </script>
 
-<div class="grid grid-cols-12 bg-panels py-3 pl-3 rounded-lg pr-3">
+<div
+  class="grid grid-cols-12 bg-panels py-3 pl-3 rounded-lg pr-3"
+  class:border={error}
+  class:border-error={error}
+>
   <div class="col-span-1 pr-2">
     <div class="rounded-md overflow-hidden align-middle">
       <Sigil patp={me} />
@@ -123,8 +99,11 @@
     <TextArea placeholder="Share a limerick, maybe" bind:value={content} />
     {#if uploadedImageUrl}
       <div class="flex">
-        <img src={uploadedImageUrl} class="object-cover" alt="your image" />
+        <img src={uploadedImageUrl} class="object-cover" alt="uploaded" />
       </div>
+    {/if}
+    {#if linkToPreview}
+      <LinkPreview url={linkToPreview} />
     {/if}
   </div>
   <div class="col-span-12 col-start-2 flex justify-between">
@@ -163,7 +142,6 @@
             on:click={() => {
               if (!$state.s3 || !$state.s3.configuration.currentBucket) return;
               fileInput.click();
-              console.log('pop the image modal for uploading something to s3');
             }}
             transparent
           />
@@ -177,6 +155,9 @@
       on:click={post}>Post</button
     >
   </div>
+  {#if error}
+    <div class="col-span-11 col-start-2 text-error pt-2">{error}</div>
+  {/if}
   <Modal bind:open={appModalOpen}>
     <div class="flex flex-col gap-4 p-4">
       <div class="text-2xl font-bold">Recommend an app</div>

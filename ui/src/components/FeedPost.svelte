@@ -3,7 +3,7 @@
   import { link } from 'svelte-spa-router';
   import { fade, slide } from 'svelte/transition';
   import { format } from 'timeago.js';
-  import { me, subscribeToItem } from '@root/api';
+  import { poke, me, subscribeToItem } from '@root/api';
   import {
     state,
     getItem,
@@ -46,12 +46,32 @@
 
   let showCommentForm = false;
 
-  const customFetcher = async (url) => {
-    const response = await fetch(
-      `https://preview.foddur-hodler.one/v2?url=${url}`
-    );
-    const json = await response.json();
-    return json.metadata;
+  const handlePostComment = ({
+    detail: { content, uploadedImageUrl, replyTo },
+  }) => {
+    poke({
+      app: 'portal-manager',
+      mark: 'portal-action',
+      json: {
+        create: {
+          bespoke: {
+            other: {
+              title: '',
+              blurb: content,
+              link: '',
+              image: uploadedImageUrl,
+            },
+          },
+          'tags-to': [
+            {
+              key: replyTo,
+              'tag-to': `/${me}/reply-to`,
+              'tag-from': `/${replyTo.ship}/reply-from`,
+            },
+          ],
+        },
+      },
+    });
   };
 </script>
 
@@ -82,14 +102,14 @@
         class="whitespace-pre-wrap line-clamp-50 flex flex-col gap-2 break-words"
       >
         <div>
-          {@html linkifyHtml(blurb)}
+          {@html linkifyHtml(blurb, { attributes: { class: 'text-link' } })}
         </div>
         {#if blurbLink}
           {#if isImage(blurbLink)}
             <img src={blurbLink} class="object-cover" alt={blurb} />
           {:else}
             <div>
-              <LinkPreview url={blurbLink} fetcher={customFetcher} />
+              <LinkPreview url={blurbLink} />
             </div>
           {/if}
         {/if}
@@ -126,7 +146,11 @@
     </div>
     {#if showCommentForm}
       <div class="flex flex-col gap-4 col-span-12" transition:slide>
-        <FeedPostForm replyTo={item.keyObj} recommendButtons={false} />
+        <FeedPostForm
+          replyTo={item.keyObj}
+          recommendButtons={false}
+          on:post={handlePostComment}
+        />
         {#each replies as replyKey (keyStrFromObj(replyKey))}
           <svelte:self key={replyKey} allowReplies={false} />
         {/each}

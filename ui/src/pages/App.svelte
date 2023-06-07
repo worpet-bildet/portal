@@ -34,27 +34,22 @@
   $: {
     let { wild } = params;
     itemKey = `/app/${wild}`;
-    cord = wild.split('/')[1];
     loadApp($state);
   }
   const loadApp = (s) => {
     if (!itemKey) return;
+
+    // don't ask pt.2
     item = getItem(itemKey);
-    if (s.isLoaded && !item) return subscribeToItem(keyStrToObj(itemKey));
-    ({
-      image,
-      title,
-      description,
-      ship,
-      website,
-      color,
-      version,
-      hash,
-      servedFrom,
-    } = getMeta(item));
+    if (s.isLoaded && !item) {
+      return subscribeToItem(keyStrToObj(itemKey));
+    }
+
+    ({ image, title, description, website, color, version, hash, servedFrom } =
+      getMeta(item));
+
     isInstalling =
       s.apps?.[cord]?.chad?.hasOwnProperty('install') || isInstalling;
-
     isInstalled = !isInstalling && !!s.apps?.[cord];
   };
 
