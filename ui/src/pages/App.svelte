@@ -1,21 +1,8 @@
 <script>
-  import { me, poke, subscribeToItem } from '@root/api';
-  import {
-    state,
-    getItem,
-    refreshApps,
-    keyStrToObj,
-    keyStrFromObj,
-    getReviews,
-    getReviewsByTo,
-  } from '@root/state';
-  import { getMeta, fromUrbitTime } from '@root/util';
-  import {
-    ItemDetail,
-    RecommendModal,
-    FeedPost,
-    FeedPostForm,
-  } from '@components';
+  import { poke, subscribeToItem } from '@root/api';
+  import { state, getItem, refreshApps, keyStrToObj } from '@root/state';
+  import { getMeta } from '@root/util';
+  import { ItemDetail, RecommendModal } from '@components';
   import {
     RightSidebar,
     IconButton,
