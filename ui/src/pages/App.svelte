@@ -15,8 +15,7 @@
   } from '@fragments';
 
   let cord,
-    tempItemKey,
-    defItemKey,
+    itemKey,
     item,
     image,
     title,
@@ -34,25 +33,16 @@
   export let params;
   $: {
     let { wild } = params;
-    ship = wild.split('/')[0];
-    cord = wild.split('/')[1];
-    // don't ask
-    tempItemKey = `/app/${ship}/${cord}/`;
-    defItemKey = `/app/${ship}//${cord}`;
+    itemKey = `/app/${wild}`;
     loadApp($state);
   }
   const loadApp = (s) => {
-    if (!tempItemKey && !defItemKey) return;
-
-    // yuck
-    if (defItemKey && !getItem(defItemKey))
-      subscribeToItem(keyStrToObj(defItemKey));
+    if (!itemKey) return;
 
     // don't ask pt.2
-    item = getItem(defItemKey) || getItem(tempItemKey);
+    item = getItem(itemKey);
     if (s.isLoaded && !item) {
-      subscribeToItem(keyStrToObj(defItemKey));
-      return subscribeToItem(keyStrToObj(tempItemKey));
+      return subscribeToItem(keyStrToObj(itemKey));
     }
 
     ({ image, title, description, website, color, version, hash, servedFrom } =
@@ -153,8 +143,5 @@
       </SidebarGroup>
     </RightSidebar>
   </div>
-  <RecommendModal
-    bind:open={recommendModalOpen}
-    key={keyStrToObj(tempItemKey)}
-  />
+  <RecommendModal bind:open={recommendModalOpen} key={keyStrToObj(itemKey)} />
 {/if}

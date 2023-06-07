@@ -109,7 +109,7 @@
             <img src={blurbLink} class="object-cover" alt={blurb} />
           {:else}
             <div>
-              <LinkPreview url={blurbLink} fetcher={customFetcher} />
+              <LinkPreview url={blurbLink} />
             </div>
           {/if}
         {/if}
