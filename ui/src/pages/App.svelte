@@ -1,8 +1,21 @@
 <script>
-  import { poke, subscribeToItem } from '@root/api';
-  import { state, getItem, refreshApps, keyStrToObj } from '@root/state';
-  import { getMeta } from '@root/util';
-  import { ItemDetail, RecommendModal } from '@components';
+  import { me, poke, subscribeToItem } from '@root/api';
+  import {
+    state,
+    getItem,
+    refreshApps,
+    keyStrToObj,
+    keyStrFromObj,
+    getReviews,
+    getReviewsByTo,
+  } from '@root/state';
+  import { getMeta, fromUrbitTime } from '@root/util';
+  import {
+    ItemDetail,
+    RecommendModal,
+    FeedPost,
+    FeedPostForm,
+  } from '@components';
   import {
     RightSidebar,
     IconButton,
@@ -15,7 +28,8 @@
   } from '@fragments';
 
   let cord,
-    itemKey,
+    tempItemKey,
+    defItemKey,
     item,
     image,
     title,
@@ -25,6 +39,8 @@
     color,
     version,
     hash,
+    reviews,
+    reviewError,
     isInstalling,
     isInstalled,
     servedFrom,
@@ -33,29 +49,52 @@
   export let params;
   $: {
     let { wild } = params;
-    itemKey = `/app/${wild}`;
+    ship = wild.split('/')[0];
     cord = wild.split('/')[1];
+    // don't ask
+    tempItemKey = `/app/${ship}/${cord}/`;
+    defItemKey = `/app/${ship}//${cord}`;
     loadApp($state);
   }
   const loadApp = (s) => {
-    if (!itemKey) return;
-    item = getItem(itemKey);
-    if (s.isLoaded && !item) return subscribeToItem(keyStrToObj(itemKey));
-    ({
-      image,
-      title,
-      description,
-      ship,
-      website,
-      color,
-      version,
-      hash,
-      servedFrom,
-    } = getMeta(item));
+    if (!tempItemKey && !defItemKey) return;
+
+    // yuck
+    if (defItemKey && !getItem(defItemKey))
+      subscribeToItem(keyStrToObj(defItemKey));
+
+    // don't ask pt.2
+    item = getItem(defItemKey) || getItem(tempItemKey);
+    if (s.isLoaded && !item) {
+      subscribeToItem(keyStrToObj(defItemKey));
+      return subscribeToItem(keyStrToObj(tempItemKey));
+    }
+
+    ({ image, title, description, website, color, version, hash, servedFrom } =
+      getMeta(item));
+
+    // here we want to get the reviews for the app, which we should be able to
+    // do in a similar way as getting comments
+    // TODO: Review what ship and key should be here in the case that host is
+    // not publisher
+    reviews = [
+      ...(getReviews(ship, keyStrToObj(defItemKey)) || []),
+      ...(getReviewsByTo(me, keyStrToObj(defItemKey)) || []),
+    ]
+      .filter((a, i, arr) => {
+        return (
+          i === arr.findIndex((i) => keyStrFromObj(i) === keyStrFromObj(a))
+        );
+      })
+      .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
+
     isInstalling =
       s.apps?.[cord]?.chad?.hasOwnProperty('install') || isInstalling;
-
     isInstalled = !isInstalling && !!s.apps?.[cord];
+  };
+
+  const isReviewedBy = (patp) => {
+    return reviews.find((r) => r.ship === patp);
   };
 
   state.subscribe((s) => {
@@ -84,6 +123,36 @@
     });
     refreshApps();
   };
+
+  const handlePostReview = async ({ detail: { content, rating } }) => {
+    poke({
+      app: 'portal-manager',
+      mark: 'portal-action',
+      json: {
+        create: {
+          bespoke: {
+            review: {
+              blurb: content,
+              rating: Number(rating), // i hate js
+            },
+          },
+          'tags-to': [
+            {
+              // this is the DEF item key
+              key: {
+                struc: 'app',
+                ship: ship,
+                time: cord,
+                cord: '',
+              },
+              'tag-to': `/${me}/review-to`,
+              'tag-from': `/${ship}/review-from`,
+            },
+          ],
+        },
+      },
+    });
+  };
 </script>
 
 {#if item}
@@ -94,6 +163,7 @@
       patp={ship}
       {color}
       avatar={image}
+      {reviews}
       type="app"
     >
       <div class="grid gap-8 bg-panels p-6 rounded-lg">
@@ -114,6 +184,16 @@
           </pre>
         </div>
       </div>
+      {#if !isReviewedBy(me)}
+        <FeedPostForm
+          on:post={handlePostReview}
+          recommendButtons={false}
+          ratingStars={true}
+        />
+      {/if}
+      {#each reviews as review (keyStrFromObj(review))}
+        <FeedPost key={review} allowReplies={false} showRating={true} />
+      {/each}
     </ItemDetail>
     <RightSidebar>
       <SidebarGroup>
@@ -148,5 +228,8 @@
       </SidebarGroup>
     </RightSidebar>
   </div>
-  <RecommendModal bind:open={recommendModalOpen} key={keyStrToObj(itemKey)} />
+  <RecommendModal
+    bind:open={recommendModalOpen}
+    key={keyStrToObj(tempItemKey)}
+  />
 {/if}

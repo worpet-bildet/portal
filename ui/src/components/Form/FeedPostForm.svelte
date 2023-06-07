@@ -1,7 +1,7 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
-  import { me, poke } from '@root/api';
+  import { me } from '@root/api';
   import { state, keyStrToObj } from '@root/state';
   import { toUrbitTime } from '@root/util';
   import { RecommendModal, Sigil } from '@components';
@@ -13,53 +13,30 @@
     ImageIcon,
     Modal,
     ItemImage,
+    StarRating,
   } from '@fragments';
 
   export let replyTo;
   export let recommendButtons = true;
+  export let ratingStars = false;
+  export let error;
 
   let dispatch = createEventDispatcher();
-  let content;
+  let content, rating;
 
   const post = () => {
-    let p = {
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        create: {
-          bespoke: {
-            other: {
-              title: '',
-              blurb: content,
-              link: '',
-              image: uploadedImageUrl,
-            },
-          },
-        },
-      },
-    };
-    if (!replyTo) {
-      p.json.create['prepend-to-feed'] = [
-        {
-          ship: me,
-          struc: 'feed',
-          time: '~2000.1.1',
-          cord: '',
-        },
-      ];
-    } else {
-      p.json.create['tags-to'] = [
-        {
-          key: replyTo,
-          'tag-to': `/${me}/reply-to`,
-          'tag-from': `/${replyTo.ship}/reply-from`,
-        },
-      ];
+    if (!content) {
+      return (error = 'Please write something, anything.');
     }
-    poke(p);
+    if ((ratingStars && !rating) || Number(rating) === 0) {
+      return (error = 'Please give a score.');
+    }
+    dispatch('post', { content, uploadedImageUrl, replyTo, rating });
     content = '';
     uploadedImageUrl = '';
-    dispatch('post');
+    rating = '';
+    error = '';
+    rating = 0;
   };
 
   // TODO: Factor out the selection of groups/apps into its own component
@@ -69,6 +46,7 @@
     selectedKey,
     fileInput,
     uploadedImageUrl;
+
   let groups = {};
   let apps = {};
   state.subscribe((s) => {
@@ -111,9 +89,17 @@
 
     uploadedImageUrl = `${$state.s3.credentials.endpoint}/${params.Bucket}/${params.Key}`;
   };
+
+  const handleRate = ({ target: { value } }) => {
+    rating = value;
+  };
 </script>
 
-<div class="grid grid-cols-12 bg-panels py-3 pl-3 rounded-lg pr-3">
+<div
+  class="grid grid-cols-12 bg-panels py-3 pl-3 rounded-lg pr-3"
+  class:border={error}
+  class:border-error={error}
+>
   <div class="col-span-1 pr-2">
     <div class="rounded-md overflow-hidden align-middle">
       <Sigil patp={me} />
@@ -123,7 +109,7 @@
     <TextArea placeholder="Share a limerick, maybe" bind:value={content} />
     {#if uploadedImageUrl}
       <div class="flex">
-        <img src={uploadedImageUrl} class="object-cover" alt="your image" />
+        <img src={uploadedImageUrl} class="object-cover" alt="uploaded" />
       </div>
     {/if}
   </div>
@@ -163,12 +149,25 @@
             on:click={() => {
               if (!$state.s3 || !$state.s3.configuration.currentBucket) return;
               fileInput.click();
-              console.log('pop the image modal for uploading something to s3');
             }}
             transparent
           />
         </div>
       </div>
+    {:else if ratingStars}
+      <StarRating
+        on:change={handleRate}
+        config={{
+          readOnly: false,
+          countStars: 5,
+          range: {
+            min: 0,
+            max: 5,
+            step: 1,
+          },
+          score: rating,
+        }}
+      />
     {:else}
       <div />
     {/if}
@@ -177,6 +176,9 @@
       on:click={post}>Post</button
     >
   </div>
+  {#if error}
+    <div class="col-span-11 col-start-2 text-error pt-2">{error}</div>
+  {/if}
   <Modal bind:open={appModalOpen}>
     <div class="flex flex-col gap-4 p-4">
       <div class="text-2xl font-bold">Recommend an app</div>
