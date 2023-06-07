@@ -1,8 +1,6 @@
 /-  *portal-data, *portal-message, portal-item, portal-data-0, portal-data-1,
     gr=social-graph
-/+  default-agent, dbug, *portal, sss
-=/  item-sub  (mk-subs:sss portal-item ,[%item @ @ @ @ ~])
-=/  item-pub  (mk-pubs:sss portal-item ,[%item @ @ @ @ ~])
+/+  default-agent, dbug, *portal, sss  
 |%
 +$  versioned-state
   $%  state-0
@@ -22,8 +20,8 @@
 +$  state-2
   $:  %2
       =items
-      =_item-sub
-      =_item-pub
+      item-sub=_(mk-subs:sss portal-item ,[%item @ @ @ @ ~])
+      item-pub=_(mk-pubs:sss portal-item ,[%item @ @ @ @ ~])
   ==
 +$  card  card:agent:gall
 --
@@ -180,8 +178,19 @@
     ?<  ?=([%crash *] rock.msg)
     ?~  wave.msg  `this
     ?-  -.u.wave.msg
-        %whole            :_  this  (upd:cards-methods:stor item.u.wave.msg)
-        %prepend-to-feed  :_  this  (upd:cards-methods:stor rock.msg)
+        %whole            
+      ?:  ?&  ?=(%app -.bespoke.item.u.wave.msg)
+              ?=(%def lens.item.u.wave.msg)
+              !(validate-sig dist-desk.bespoke.item.u.wave.msg src.bowl our.bowl now.bowl sig.bespoke.item.u.wave.msg)
+          ==
+        ::  Bad sig on app! Malicious!
+        =.  item-sub
+          (quit:da-item ship.key.item.u.wave.msg %portal-store [%item (key-to-path:conv key.item.u.wave.msg)])
+        `this
+      :_  this  (upd:cards-methods:stor item.u.wave.msg)
+      ::
+        %prepend-to-feed
+      :_  this  (upd:cards-methods:stor rock.msg)
     ==
   ==
 ::
@@ -713,7 +722,6 @@
               [%other ship.key '' time.key]
               ::
                 %list-list
-              ::  TODO apply the same conversions here
               %+  turn  list-key-list.bespoke.data.item-0
               |=  [key=[=ship type=[%list *] time=cord] text=cord]
               (list-key-conv key)

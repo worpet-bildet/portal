@@ -1,5 +1,5 @@
-/-  *action, treaty
-/+  default-agent, dbug, sig
+/-  *action, treaty, portal-devs
+/+  default-agent, dbug, *sig, *sss
 |%
 +$  versioned-state
   $%  state-0
@@ -8,7 +8,7 @@
   $:  %0
       our-apps=(set [ship desk])
       treaties=(map [ship desk] treaty:treaty)
-      portal-devs=(map [ship desk] ship)
+      pub-portal-devs=_(mk-pubs portal-devs ,[%portal-devs ~])
   ==
 +$  card  card:agent:gall
 ::
@@ -30,7 +30,8 @@
 |_  =bowl:gall
 +*  this  `agent:gall`.
     default   ~(. (default-agent `agent:gall`this %.n) bowl)
-::
+    du-portal-devs  =/  du  (du portal-devs ,[%portal-devs ~])
+                    (du pub-portal-devs bowl -:!>(*result:du))
 ++  on-init
   ^-  (quip card _this)
   =.  our-apps.state  ;;  (set [ship desk])
@@ -45,8 +46,10 @@
     :*  %pass  /our-treaty/(scot %p ship)/[desk]  %agent
         [our.bowl %treaty]  %watch  /treaty/(scot %p ship)/[desk]
     ==
+  =^  cards-1  pub-portal-devs  
+    (give:du-portal-devs [%portal-devs ~] [%init ~])
   :_  this
-  %+  snoc  cards
+  %+  snoc  (welp cards cards-1)
   [%pass /our-apps %agent [our.bowl %treaty] %watch /alliance]
 ::
 ++  on-save   !>(state)
@@ -67,11 +70,19 @@
     =/  dist-desk  (parse-dist-desk dist-desk.act)
     ?~  dist-desk  !!
     =/  treaty  (~(got by treaties) [dist-name desk-name]:u:dist-desk)
+    =^  cards-1  pub-portal-devs
+      (give:du-portal-devs [%portal-devs ~] [%put [dist-name desk-name]:u:dist-desk dev.act])
     :_  this
-    :~  :*  %pass  /sign  %agent  [dev.act %portal-manager]  %poke  
-            %portal-message  
-            !>([%sign-app dist-desk.act (sign:sig our.bowl now.bowl act) treaty])
-    ==  ==
+    %+  snoc  cards-1
+    :*  %pass  /sign  %agent  [dev.act %portal-manager]  %poke  
+        %portal-message  
+        !>([%sign-app dist-desk.act (sign our.bowl now.bowl act) treaty])
+    ==
+    ::
+      %sss-to-pub
+    =/  msg  !<(into:du-portal-devs (fled vase))
+    =^  cards  pub-portal-devs  (apply:du-portal-devs msg)
+    [cards this]
   ==
 ++  on-watch  on-watch:default
 ++  on-leave  on-leave:default
@@ -100,6 +111,7 @@
       =.  treaties  (~(put by treaties) [our.bowl `@t`i.t.t.wire] treaty)
       `this
     ==
+    ::
   ==
 ++  on-arvo   on-arvo:default
 ++  on-fail   on-fail:default

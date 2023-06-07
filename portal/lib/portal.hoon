@@ -215,17 +215,15 @@
   --
 ::
 ++  manager
-  |_  [=bowl:gall state=state-4:portal-config cards=_*(list card)]
+  |_  [=bowl:gall cards=_*(list card)]
   ++  on-poke
     ::  all arms here should output cards
-    ::  TODO cleanup PM state and maybe output that then
     |%
     ::
     ++  sub
       |=  [act=action]
-      ^-  [(list card) state-4:portal-config]
+      ^-  [(list card)]
       ?>  ?=([%sub *] act)
-      :_  state
       ?.  =(time.key.act '')   ::  branch on whether is %temp (empty time.key)
         :: if not temp
         ~[(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(act))]
@@ -245,7 +243,6 @@
                                   ~
                                   ~
                               ==
-      ::  TODO wires state transition
       ?+    struc.key.act    !!
         ::
           %ship
@@ -415,6 +412,7 @@
     ==
   --
 ::
+::  OOD
 ::  includes arms which are used to validate data
 ++  validator
   |%
@@ -489,6 +487,19 @@
       ~&  >>  signature
       [~ %.n]
     [~ %.y]
+
+
+      
+
   --
+::
+++  validate-sig
+  |=  [dist-desk=@t src=ship our=ship now=time sig=signature]
+  =/  dist-desk  (parse-dist-desk:misc dist-desk)
+  ?~  dist-desk  %.n
+  ?.  =(src dist-name.u.dist-desk)  %.n
+  ?.  =(ship.sig dist-name.u.dist-desk)  %.n
+  ?:  =((get-ship-type:misc our) %comet)  %.n
+  (validate:^sig our sig [%sign-app our dist-desk] now)
 ::
 --
