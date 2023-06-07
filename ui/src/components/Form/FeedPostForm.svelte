@@ -3,7 +3,7 @@
   import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
   import { me, poke } from '@root/api';
   import { state, keyStrToObj } from '@root/state';
-  import { toUrbitTime } from '@root/util';
+  import { toUrbitTime, getAnyLink } from '@root/util';
   import { RecommendModal, Sigil } from '@components';
   import {
     TextArea,
@@ -13,6 +13,7 @@
     ImageIcon,
     Modal,
     ItemImage,
+    LinkPreview,
   } from '@fragments';
 
   export let replyTo;
@@ -111,6 +112,10 @@
 
     uploadedImageUrl = `${$state.s3.credentials.endpoint}/${params.Bucket}/${params.Key}`;
   };
+
+  $: linkToPreview = getAnyLink(content || '');
+
+  $: console.log(content);
 </script>
 
 <div class="grid grid-cols-12 bg-panels py-3 pl-3 rounded-lg pr-3">
@@ -125,6 +130,9 @@
       <div class="flex">
         <img src={uploadedImageUrl} class="object-cover" alt="your image" />
       </div>
+    {/if}
+    {#if linkToPreview}
+      <LinkPreview url={linkToPreview} />
     {/if}
   </div>
   <div class="col-span-12 col-start-2 flex justify-between">

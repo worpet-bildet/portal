@@ -45,7 +45,7 @@
     window.open(url, '_blank');
   }
 
-  const proxyUrl = 'https://rlp-proxy.herokuapp.com/v2';
+  const proxyUrl = 'https://preview.foddur-hodler.one/v2';
   const placeholderImg = 'https://i.imgur.com/UeDNBNQ.jpeg';
 
   $: metadata = fetcher ? fetcher(url) : getMetadata(url);
