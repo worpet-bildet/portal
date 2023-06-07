@@ -142,6 +142,10 @@ export const isUrl = (s) => {
   }
 };
 
+export const isImage = (s) => {
+  return s.match(/\.(jpeg|jpg|gif|png|webp)$/) != null;
+};
+
 export const invertHex = (hex) => {
   return (Number(`0x1${hex}`) ^ 0xffffff).toString(16).slice(1).toUpperCase();
 };

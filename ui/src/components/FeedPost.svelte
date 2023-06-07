@@ -12,7 +12,7 @@
     getReplies,
     getRepliesByTo,
   } from '@root/state';
-  import { getMeta, fromUrbitTime, getAnyLink, isUrl } from '@root/util';
+  import { getMeta, fromUrbitTime, getAnyLink, isImage } from '@root/util';
   import { ItemVerticalListPreview, Sigil, FeedPostForm } from '@components';
   import { ChatIcon, IconButton, LinkPreview } from '@fragments';
 
@@ -85,9 +85,13 @@
           {@html linkifyHtml(blurb)}
         </div>
         {#if blurbLink}
-          <div>
-            <LinkPreview url={blurbLink} fetcher={customFetcher} />
-          </div>
+          {#if isImage(blurbLink)}
+            <img src={blurbLink} class="object-cover" alt={blurb} />
+          {:else}
+            <div>
+              <LinkPreview url={blurbLink} fetcher={customFetcher} />
+            </div>
+          {/if}
         {/if}
       </div>
       {#if image}
