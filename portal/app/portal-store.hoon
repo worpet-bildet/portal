@@ -54,7 +54,7 @@
     ?-  -.old
       %0  %-  state-1-to-2:state-transition:stor
              (state-0-to-1:state-transition:stor old)
-      %1  (state-1-to-2:state-transition:stor old)
+      %1  (state-1-to-2:state-transition:stor old)  ::  gets rid of temp items
       %2  old
     ==
   ::  -  destroy empty collections
@@ -103,28 +103,19 @@
     =^  cards  item-pub.state.q  (give:du-item path [%whole item])
     [(welp cards.q cards) state.q]
   ::  - unsub from all which are not %feed or %col because of rem scry transition
-  ::  -  make card which sends poke to PM for subbing (after introducing %def apps)
-  =^  ships  state
+  =.  state
     =+  ~(tap in ~(key by read:da-item))
     %-  tail
-    %^  spin  -  [*(list ship) state]
-    |=  [p=[=ship =dude:gall =path] q=[ships=(list ship) state=state-2]]
+    %^  spin  -  state
+    |=  [p=[=ship =dude:gall =path] q=[state=state-2]]
     =/  key  (path-to-key:conv +:path.p)
     =.  state  state.q
     ?.  ?=(?(%feed %collection %app) struc.key)
       =.  item-sub.state.q  (quit:da-item ship.key %portal-store path.p)
-      [p q]
-    =?  ships.q  
-        ?&  ?=(%app struc.key)
-            =(time.key '')  ::  is temp
-            =(~ (find [ship.key]~ ships.q))
-        ==
-      (snoc ships.q ship.key)
-    [p ships.q state.q]
-  ~&  >>  ships
+      [p state.q]
+    [p state.q]
   :_  this
-  %+  snoc   ;:(welp cards-1 cards-2 cards-3 cards-4)
-  [%pass /updpm %agent [our.bowl %portal-manager] %poke %noun !>(ships)]
+  ;:(welp cards-1 cards-2 cards-3 cards-4)
 ::
 ++  on-poke
   |=  [=mark =vase]
@@ -373,7 +364,7 @@
       ~&  >  "%portal-store: purge done"
       [cards state]
     ::
-    ++  sub
+    ++  sub  
       |=  [act=action]
       ^+  [*(list card) state]
       ?>  ?=([%sub *] act)
@@ -389,9 +380,9 @@
         `card`(~(msg cards [ship.key.act %portal-store]) [%get-item key.act])
       ::  don't subscribe to what you are already subbed to
       ?:  (~(has by read:da-item) [ship.key.act %portal-store path])  `state
-      =^  cards  item-sub  (surf:da-item ship.key.act %portal-store path)
+      =^  cards  item-sub.state  (surf:da-item ship.key.act %portal-store path)
       :_  state
-      (welp cards (track-gr:cards-methods ship.key.act))
+      (welp (track-gr:cards-methods ship.key.act) cards)
     ::
     ++  replace
       |=  [act=action]

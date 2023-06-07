@@ -59,35 +59,6 @@
   ^-  (quip card _this)
   =/  manager  ~(. manager [bowl ~])
   ?+    mark    (on-poke:default mark vase)
-      %noun
-    ::  when %portal-store goes thru on-load (after enabling %def apps)
-    ::  we sub to portal devs
-    ::  necessary because of troubles with using scry between agents during their on-load
-    ?>  =(our.bowl src.bowl)
-    =/  ships  !<((list ship) vase)  :: ships on temp items we're subbed to
-    ::  sub to all apps we have locally but arent subbed to
-    =/  subbed-to  ~(key by read:da-portal-devs)
-    ~&  >  "ships"
-    ~&  >  ships
-    =^  cards  state
-      %-  tail  %-  tail  
-      %^  spin  ships  [subbed-to *(list card) state]
-      |=  [=ship q=[=_subbed-to cards=(list card) state=state-5]]
-      :-  ship
-      =.  state  state.q
-      ?:  :: is not already subbed to
-          !(~(has in subbed-to.q) [ship %portal-app-publisher [%portal-devs ~]])
-        ~&  >  "not subbed to publisher"
-        ~&  >  ship
-        =^  cards  sub-portal-devs.state.q
-          (surf:da-portal-devs ship %portal-app-publisher [%portal-devs ~])
-        :+  (~(put in subbed-to.q) [ship %portal-app-publisher [%portal-devs ~]])
-          (welp cards.q cards)
-        state.q
-      q
-    [cards this]
-
-    ::
       %portal-action
     ?>  =(our.bowl src.bowl)
     =/  act  !<(action vase)
@@ -97,10 +68,9 @@
       ::
         %sub
       =/  cards  (sub:on-poke:manager act)
-      ?~  cards  `this
       ::  stupid way to do it, sss sub should be done within sub function
       ::  I'm just lazyyyy
-      ?:  ?=(%app struc.key.act)
+      ?:  &(?=(%app struc.key.act) =(time.key.act ''))  ::  temp app
         =^  cards-1  sub-portal-devs
           (surf:da-portal-devs ship.key.act %portal-app-publisher [%portal-devs ~])
         [(welp cards cards-1) this]
@@ -178,10 +148,11 @@
         (crip ;:(welp (scow %p ship.p) "/" (scow %tas desk.p)))
       =.  dev-map  (~(uni by dev-map) upd)
       ::  TODO sub to all received apps
-      ::  but I think %init as of right now is ~
+      ::  but I think %init as of right now is only ~
       :_  this  (dev-map-upd upd)
       ::
         %put
+      ::  we are accidentally subbing to all items from a publisher, but thats not really a problem
       =/  dist-desk  (crip ;:(welp (scow %p ship.key.u.wave.msg) "/" (scow %tas desk.key.u.wave.msg)))
       =.  dev-map  (~(put by dev-map) dist-desk dev.u.wave.msg)
       :_  this
@@ -235,13 +206,18 @@
     ?+    -.sign    (on-agent:default wire sign)
         %fact
       =/  upd  !<(update:alliance q.cage.sign)
-      =.  our-apps
+      =^  cards  our-apps
         ?-  -.upd
-          %add  (~(put in our-apps) [ship.upd desk.upd])
-          %del  (~(del in our-apps) [ship.upd desk.upd])
-          %ini  init.upd
+            %add  
+          :_  (~(put in our-apps) [ship.upd desk.upd])
+          :~  :*  %pass  /our-treaty/(scot %p ship.upd)/[desk.upd]  %agent
+          [our.bowl %treaty]  %watch  /treaty/(scot %p ship.upd)/[desk.upd]
+          ==  ==
+          ::
+          %del  `(~(del in our-apps) [ship.upd desk.upd])
+          %ini  `init.upd
         ==
-      `this
+      [cards this]
     ==
     ::
       [%our-treaty @ @ ~]

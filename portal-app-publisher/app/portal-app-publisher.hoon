@@ -95,13 +95,18 @@
     ?+    -.sign    (on-agent:default wire sign)
         %fact
       =/  upd  !<(update:alliance:treaty q.cage.sign)
-      =.  our-apps
+      =^  cards  our-apps
         ?-  -.upd
-          %add  (~(put in our-apps) [ship.upd desk.upd])
-          %del  (~(del in our-apps) [ship.upd desk.upd])
-          %ini  init.upd
+            %add  
+          :_  (~(put in our-apps) [ship.upd desk.upd])
+          :~  :*  %pass  /our-treaty/(scot %p ship.upd)/[desk.upd]  %agent
+          [our.bowl %treaty]  %watch  /treaty/(scot %p ship.upd)/[desk.upd]
+          ==  ==
+          ::
+          %del  `(~(del in our-apps) [ship.upd desk.upd])
+          %ini  `init.upd
         ==
-      `this
+      [cards this]
     ==
     ::
       [%our-treaty @ @ ~]

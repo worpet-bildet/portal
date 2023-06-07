@@ -79,7 +79,7 @@
     %-  tail
     .^  store-result
       %gx
-      /(scot %p our)/portal-store/(scot %da now)/keys/portal-store-result
+      /(scot %p our)/portal-store/(scot %da now)/keys/noun
     ==
   ::
   ++  get-item-latest-validity
@@ -500,6 +500,6 @@
   ?.  =(src dist-name.u.dist-desk)  %.n
   ?.  =(ship.sig dist-name.u.dist-desk)  %.n
   ?:  =((get-ship-type:misc our) %comet)  %.n
-  (validate:^sig our sig [%sign-app our dist-desk] now)
+  (validate:^sig our sig [%sign-app our ^dist-desk] now)
 ::
 --
