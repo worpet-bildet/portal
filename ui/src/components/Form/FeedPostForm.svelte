@@ -3,7 +3,7 @@
   import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
   import { me } from '@root/api';
   import { state, keyStrToObj } from '@root/state';
-  import { toUrbitTime } from '@root/util';
+  import { toUrbitTime, getAnyLink } from '@root/util';
   import { RecommendModal, Sigil } from '@components';
   import {
     TextArea,
@@ -14,6 +14,7 @@
     Modal,
     ItemImage,
     StarRating,
+    LinkPreview,
   } from '@fragments';
 
   export let replyTo;
@@ -93,6 +94,7 @@
   const handleRate = ({ target: { value } }) => {
     rating = value;
   };
+  $: linkToPreview = getAnyLink(content || '');
 </script>
 
 <div
@@ -105,12 +107,15 @@
       <Sigil patp={me} />
     </div>
   </div>
-  <div class="col-span-11">
+  <div class="col-span-11 pb-2">
     <TextArea placeholder="Share a limerick, maybe" bind:value={content} />
     {#if uploadedImageUrl}
       <div class="flex">
         <img src={uploadedImageUrl} class="object-cover" alt="uploaded" />
       </div>
+    {/if}
+    {#if linkToPreview}
+      <LinkPreview url={linkToPreview} />
     {/if}
   </div>
   <div class="col-span-12 col-start-2 flex justify-between">

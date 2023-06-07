@@ -68,6 +68,16 @@
     if (s.isLoaded && !item) {
       subscribeToItem(keyStrToObj(defItemKey));
       return subscribeToItem(keyStrToObj(tempItemKey));
+    itemKey = `/app/${wild}`;
+    loadApp($state);
+  }
+  const loadApp = (s) => {
+    if (!itemKey) return;
+
+    // don't ask pt.2
+    item = getItem(itemKey);
+    if (s.isLoaded && !item) {
+      return subscribeToItem(keyStrToObj(itemKey));
     }
 
     ({ image, title, description, website, color, version, hash, servedFrom } =
@@ -88,6 +98,8 @@
       })
       .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
 
+=======
+>>>>>>> development
     isInstalling =
       s.apps?.[cord]?.chad?.hasOwnProperty('install') || isInstalling;
     isInstalled = !isInstalling && !!s.apps?.[cord];

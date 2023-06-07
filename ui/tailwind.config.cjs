@@ -21,6 +21,7 @@ module.exports = {
       four: '#BEBAC1',
       five: '#AEB6BF',
       error: 'rgb(220 38 38)',
+      link: 'blue',
     },
     extend: {},
     borderColor: {
