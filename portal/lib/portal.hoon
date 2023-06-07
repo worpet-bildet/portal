@@ -79,7 +79,7 @@
     %-  tail
     .^  store-result
       %gx
-      /(scot %p our)/portal-store/(scot %da now)/keys/noun
+      /(scot %p our)/portal-store/(scot %da now)/keys/portal-store-result
     ==
   ::
   ++  get-item-latest-validity

@@ -52,33 +52,42 @@
       %5                  old
     ==
   =^  cards  state  init-sequence:helper
-  ::  sub to all apps we have locally but arent subbed to
-  =/  subbed-to  ~(key by read:da-portal-devs)
-  =+  (~(get-all-keys scry [our now]:bowl))
-  =^  cards-1  state
-    %-  tail  %-  tail  
-    %^  spin  ~(tap in -)  [subbed-to *(list card) state]
-    |=  [=key q=[=_subbed-to cards=(list card) state=state-5]]
-    :-  key
-    =.  state  state.q
-    ?:  ?&  ?=(%app struc.key) ::  is app
-        =(time.key '')  :: is temp
-        :: is not already subbed to
-        !(~(has in subbed-to.q) [ship.key %portal-app-publisher [%portal-devs ~]])
-    ==
-      =^  cards  sub-portal-devs.state.q
-        (surf:da-portal-devs ship.key %portal-app-publisher [%portal-devs ~])
-      :+  (~(put in subbed-to.q) [ship.key %portal-app-publisher [%portal-devs ~]])
-        (welp cards.q cards)
-      state.q
-    q
-  [(welp cards cards-1) this]
+  [cards this]
 ::
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
   =/  manager  ~(. manager [bowl ~])
   ?+    mark    (on-poke:default mark vase)
+      %noun
+    ::  when %portal-store goes thru on-load (after enabling %def apps)
+    ::  we sub to portal devs
+    ::  necessary because of troubles with using scry between agents during their on-load
+    ?>  =(our.bowl src.bowl)
+    =/  ships  !<((list ship) vase)  :: ships on temp items we're subbed to
+    ::  sub to all apps we have locally but arent subbed to
+    =/  subbed-to  ~(key by read:da-portal-devs)
+    ~&  >  "ships"
+    ~&  >  ships
+    =^  cards  state
+      %-  tail  %-  tail  
+      %^  spin  ships  [subbed-to *(list card) state]
+      |=  [=ship q=[=_subbed-to cards=(list card) state=state-5]]
+      :-  ship
+      =.  state  state.q
+      ?:  :: is not already subbed to
+          !(~(has in subbed-to.q) [ship %portal-app-publisher [%portal-devs ~]])
+        ~&  >  "not subbed to publisher"
+        ~&  >  ship
+        =^  cards  sub-portal-devs.state.q
+          (surf:da-portal-devs ship %portal-app-publisher [%portal-devs ~])
+        :+  (~(put in subbed-to.q) [ship %portal-app-publisher [%portal-devs ~]])
+          (welp cards.q cards)
+        state.q
+      q
+    [cards this]
+
+    ::
       %portal-action
     ?>  =(our.bowl src.bowl)
     =/  act  !<(action vase)
