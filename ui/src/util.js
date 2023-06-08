@@ -6,6 +6,7 @@ export const getMeta = (item) => {
     description: getDescription(item),
     blurb: getBlurb(item),
     image: getImage(item),
+    screenshots: getScreenshots(item),
     cover: getCover(item),
     ship: getShip(item),
     link: getLink(item),
@@ -63,6 +64,14 @@ export const getImage = (item) => {
       return item?.bespoke?.image;
   }
 };
+export const getScreenshots = (item) => {
+  switch (item?.lens) {
+    case 'def':
+      return item?.bespoke?.screenshots;
+    default:
+      return [];
+  }
+};
 export const getCover = (item) => {
   switch (item?.keyObj?.struc) {
     case 'app':
@@ -83,6 +92,7 @@ export const getLink = (item) => {
 export const getShip = (item) => {
   switch (item?.keyObj?.struc) {
     case 'app':
+      if (item?.lens === 'def') return item?.keyObj?.ship;
       return item?.bespoke?.treaty?.ship;
     default:
       return item?.keyObj?.ship;
