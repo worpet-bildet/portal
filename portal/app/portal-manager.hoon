@@ -35,7 +35,7 @@
     helper      ~(. +> bowl)
     da-portal-devs  =/  da  (da portal-devs ,[%portal-devs ~])
       (da sub-portal-devs bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
-++  on-init 
+++  on-init
   =.  state  *state-5
   =^  cards  state  init-sequence:helper
   [cards this]
@@ -110,13 +110,13 @@
         %-  ~(act cards [[our.bowl %portal-store]])
         ?:  %-  ~(item-exists scry our.bowl now.bowl)
             [%app our.bowl '' desk-name.u.dist-desk]
-          :^    %replace  
+          :^    %replace
               [%app our.bowl '' desk-name.u.dist-desk]
-            %def  
+            %def
           [%app ~ '' dist-desk.msg sig.msg treaty.msg]
         :*  %create  ~  ~  `desk-name.u.dist-desk  `%def
           `[%app ~ '' dist-desk.msg sig.msg treaty.msg]
-          ~[[%collection our.bowl '' 'published-apps']]  ~  ~  == 
+          ~[[%collection our.bowl '' 'published-apps']]  ~  ~  ==
       :_  this
       (snoc create-my-apps create-app)
       ::
@@ -140,8 +140,8 @@
     ?-  -.u.wave.msg
         %init
       =+  ~(tap by rock.u.wave.msg)
-      =/  upd  
-        %-  malt  
+      =/  upd
+        %-  malt
         %+  turn  -
         |=  [p=[=ship =desk] q=ship]
         :_  q
@@ -179,7 +179,7 @@
   :: ^-  (quip card:agent:gall _this)
   :: ?>  ?=([%remotescry ~] wire)
   :: ?>  ?=([%ames %tune *] sign)
-  :: ?~  roar.sign  ::  no response from ames  
+  :: ?~  roar.sign  ::  no response from ames
   ::   `this
   :: ?~  q.dat.u.roar.sign  ::  empty data at path
   ::   `this
@@ -194,9 +194,9 @@
   |=  =path
   ^-  (unit (unit cage))
   ?+    path    (on-peek:default path)
-    [%x %indexed-as-curator ~]  ``manager-result+!>(indexed-as-curator)
-    [%x %onboarded ~]           ``manager-result+!>(onboarded)
-    [%x %portal-devs ~]         ``manager-result+!>([%portal-devs dev-map])
+    [%x %indexed-as-curator ~]  ``portal-manager-result+!>(indexed-as-curator)
+    [%x %onboarded ~]           ``portal-manager-result+!>(onboarded)
+    [%x %portal-devs ~]         ``portal-manager-result+!>([%portal-devs dev-map])
   ==
 ++  on-agent
   |=  [=wire =sign:agent:gall]
@@ -208,7 +208,7 @@
       =/  upd  !<(update:alliance q.cage.sign)
       =^  cards  our-apps
         ?-  -.upd
-            %add  
+            %add
           :_  (~(put in our-apps) [ship.upd desk.upd])
           :~  :*  %pass  /our-treaty/(scot %p ship.upd)/[desk.upd]  %agent
           [our.bowl %treaty]  %watch  /treaty/(scot %p ship.upd)/[desk.upd]
@@ -225,7 +225,7 @@
         %fact
       =/  treaty  !<(treaty:treaty q.cage.sign)
       =/  create-app  ^-  action
-        :*  %create 
+        :*  %create
             ~
             ~
             ``@t`i.t.t.wire
@@ -286,7 +286,7 @@
 ::
 ++  init-sequence
   ^+  [*(list card) state]
-  =.  our-apps.state  ;;  our-apps:portal-config  
+  =.  our-apps.state  ;;  our-apps:portal-config
     %-  tail
     .^  update:alliance:treaty  %gx
         /(scot %p our.bowl)/treaty/(scot %da now.bowl)/alliance/noun

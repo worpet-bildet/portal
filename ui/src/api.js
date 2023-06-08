@@ -21,6 +21,13 @@ export const getPortalItems = () => {
   });
 };
 
+export const getPortalAppDevs = () => {
+  return scry({
+    app: 'portal-manager',
+    path: '/portal-devs',
+  });
+};
+
 export const getSocialItems = () => {
   return scry({
     app: 'portal-graph',

@@ -1,6 +1,7 @@
 import { get, writable } from 'svelte/store';
 import {
   getPortalItems,
+  getPortalAppDevs,
   getSocialItems,
   getContacts,
   getJoinedGroups,
@@ -23,6 +24,15 @@ export const refreshPortalItems = () => {
         s[i.keyStr] = i;
       });
       s.isLoaded = true;
+      return s;
+    });
+  });
+};
+
+export const refreshPortalAppDevs = () => {
+  getPortalAppDevs().then((appDevs) => {
+    state.update((s) => {
+      s.appDevs = appDevs?.['portal-devs'];
       return s;
     });
   });
@@ -311,6 +321,7 @@ const globalFeedKey = (indexer) => `/feed/${indexer}//global`;
 
 export const refreshAll = () => {
   refreshPortalItems();
+  refreshPortalAppDevs();
   refreshSocialItems();
   refreshContacts();
   // refreshProfile(me);

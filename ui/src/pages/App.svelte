@@ -29,8 +29,8 @@
 
   let cord,
     ship,
+    time,
     defKey,
-    subscribingToDefItem,
     itemKey,
     isDefItem,
     item,
@@ -49,11 +49,24 @@
     recommendModalOpen;
 
   export let params;
-  $: {
-    let { wild } = params;
-    let [ship, cord, time] = wild.split('/');
+  $: loadApp($state);
 
-    if (cord) defKey = `/app/${ship}//${cord}`;
+  let subscribingTo = {};
+
+  const loadApp = (s) => {
+    let { wild } = params;
+    [ship, cord, time] = wild.split('/');
+
+    // Here we should get the app devs from our state, and check whether we have
+    // a mapping for it at the moment
+    let actualDev;
+    if ((actualDev = s?.appDevs?.[`${ship}/${cord}`])) {
+      // This means we definitely have a def item, I think?
+      // Is this wise?
+      ship = actualDev;
+    }
+
+    if (cord || actualDev) defKey = `/app/${ship}//${cord}`;
     if (time) defKey = `/app/${ship}//${time}`;
 
     // don't ask
@@ -61,34 +74,42 @@
       itemKey = `/app/${ship}/${cord}/`;
     } else if (time) {
       isDefItem = true;
-      itemKey = `/app/${ship}//${time}`;
+      itemKey = defKey;
     }
-    loadApp($state);
-  }
 
-  const loadApp = (s) => {
     if (!itemKey) return;
 
     // Try to load the defItem if we already have one in state
-    // TODO: Ensure that we respect Jurij's upcoming map
     if (!isDefItem) {
       item = getItem(defKey);
-      console.log({ defItem: item });
-      if (!item && !subscribingToDefItem) {
-        subscribingToDefItem = true;
+      // console.log({ defItem: item });
+      if (!item && !subscribingTo[defKey]) {
+        console.log('Subscribing to', defKey);
+        subscribingTo[defKey] = true;
         // TODO: Remove this because Jurij is also subscribing to the defitems
         subscribeToItem(keyStrToObj(defKey));
       }
-    } else {
-      item = getItem(itemKey);
     }
 
+    item = getItem(itemKey);
+
+    // console.log({ item });
     if (s.isLoaded && !item) {
+      // console.log('Subbing to', itemKey);
       return subscribeToItem(keyStrToObj(itemKey));
     }
 
-    ({ image, title, description, website, color, version, hash, servedFrom } =
-      getMeta(item));
+    ({
+      image,
+      title,
+      description,
+      website,
+      color,
+      version,
+      hash,
+      servedFrom,
+      ship,
+    } = getMeta(item));
 
     // here we want to get the reviews for the app, which we should be able to
     // do in a similar way as getting comments

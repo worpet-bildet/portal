@@ -3,7 +3,7 @@
 |_  mng=manager-result
 ++  grow
   |%
-  ++  noun  str
+  ++  noun  mng
   ++  json  (enjs-manager-result:enjs:portal-json mng)
   --
 ++  grab

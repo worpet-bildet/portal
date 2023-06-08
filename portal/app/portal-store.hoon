@@ -1,6 +1,6 @@
 /-  *portal-data, *portal-message, portal-item, portal-data-0, portal-data-1,
     gr=social-graph
-/+  default-agent, dbug, *portal, sss  
+/+  default-agent, dbug, *portal, sss
 |%
 +$  versioned-state
   $%  state-0
@@ -94,7 +94,7 @@
     ?:  =(lens.item %temp)  q                        ::  if %temp, no need
     ?.  ?=(?(%collection %feed %app) struc.key.item)      ::  if not %col or %feed or %app
       q
-      :: ?~  (find [path]~ item-paths)                  
+      :: ?~  (find [path]~ item-paths)
         :: :_  state.q
         :: (welp cards.q (gro:cards-methods item))
       :: :_  state.q
@@ -178,7 +178,7 @@
     ?<  ?=([%crash *] rock.msg)
     ?~  wave.msg  `this
     ?-  -.u.wave.msg
-        %whole            
+        %whole
       ?:  ?&  ?=(%app -.bespoke.item.u.wave.msg)
               ?=(%def lens.item.u.wave.msg)
               !(validate-sig dist-desk.bespoke.item.u.wave.msg src.bowl our.bowl now.bowl sig.bespoke.item.u.wave.msg)
@@ -361,10 +361,9 @@
       =+  ~(tap by items)
       =.  items  %-  malt  %+  skip  -
                  |=([=key =item] ?=(?(%deleted) lens.item))
-      ~&  >  "%portal-store: purge done"
       [cards state]
     ::
-    ++  sub  
+    ++  sub
       |=  [act=action]
       ^+  [*(list card) state]
       ?>  ?=([%sub *] act)

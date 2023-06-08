@@ -6,6 +6,6 @@
   website+''
   license+''
   image+''
-  base+'portal'
+  base+'portal-app-publisher'
   glob-ames+[~worpet-bildet 0v0]
 ==
