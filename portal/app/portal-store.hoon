@@ -128,7 +128,10 @@
       %create   =^(cards state (create:handle-poke:stor act) [cards this])
       %replace  =^(cards state (replace:handle-poke:stor act) [cards this])
       %edit     =^(cards state (edit:handle-poke:stor act) [cards this])
-      %sub      =^(cards state (sub:handle-poke:stor act) [cards this])
+      %sub      
+      =^  cards  state 
+        (sub:handle-poke:stor act)
+      [cards this]
       %prepend-to-feed   =^(cards state (prepend-to-feed:handle-poke:stor act) [cards this])
       %append  =^(cards state (append:handle-poke:stor act) [cards this])
       %prepend  =^(cards state (prepend:handle-poke:stor act) [cards this])
@@ -183,7 +186,7 @@
               ?=(%def lens.item.u.wave.msg)
               !(validate-sig dist-desk.bespoke.item.u.wave.msg src.bowl our.bowl now.bowl sig.bespoke.item.u.wave.msg)
           ==
-        ::  Bad sig on app! Malicious!
+        ~&  >>>  "Bad sig on app! Malicious!"
         =.  item-sub
           (quit:da-item ship.key.item.u.wave.msg %portal-store [%item (key-to-path:conv key.item.u.wave.msg)])
         `this
@@ -261,7 +264,7 @@
     (~(has by read:da-item) [ship.key %portal-store [%item t.path]])
     ::
     ::  TODO
-      [%item-valid @ @ @ @]
+      [%item-valid @ @ @ @ ~]
     valid+(get-latest:validator our.bowl now.bowl (path-to-key:conv t.path))
   ==
   ::

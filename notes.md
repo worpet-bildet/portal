@@ -19,7 +19,7 @@ SCRY examples from dojo
 
 .^(store-result:data %gx /=portal-store=/keys/noun)
 .^(store-result:data %gx /=portal-store=/item/ship/~worpet-bildet///noun)
-.^(store-result:data %gx /=portal-store=/item-valid/collection/(scot %p our)//~2000.1.1/noun)
+.^(store-result:data %gx /=portal-store=/item/collection/(scot %p our)//~2000.1.1/noun)
 
 .^(graph-result:gr %gx /=portal-graph=/app-tags/portal-store/noun)
 .^(graph-result:gr %gx /=portal-graph=/nodeset/portal-store/~zod/a/noun)

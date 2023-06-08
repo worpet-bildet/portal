@@ -497,7 +497,7 @@
   |=  [dist-desk=@t src=ship our=ship now=time sig=signature]
   =/  dist-desk  (parse-dist-desk:misc dist-desk)
   ?~  dist-desk  %.n
-  ?.  =(src dist-name.u.dist-desk)  %.n
+  ::  note: src is allowed to be different from dist-ship
   ?.  =(ship.sig dist-name.u.dist-desk)  %.n
   ?:  =((get-ship-type:misc our) %comet)  %.n
   (validate:^sig our sig [%sign-app our ^dist-desk] now)

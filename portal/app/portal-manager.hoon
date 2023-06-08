@@ -71,6 +71,8 @@
       ::  stupid way to do it, sss sub should be done within sub function
       ::  I'm just lazyyyy
       ?:  &(?=(%app struc.key.act) =(time.key.act ''))  ::  temp app
+        :: subs to %portal-app-publisher and gets on-rock, 
+        :: where it subs to the actual %def app
         =^  cards-1  sub-portal-devs
           (surf:da-portal-devs ship.key.act %portal-app-publisher [%portal-devs ~])
         [(welp cards cards-1) this]
