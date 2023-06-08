@@ -2,7 +2,6 @@
   import linkifyHtml from 'linkify-html';
   import autosize from 'svelte-autosize';
   import { tick } from 'svelte';
-  import { getAllLinks } from '@root/util';
   export let value = '';
 
   let textarea, target;
@@ -17,12 +16,13 @@
   }
 
   const handleInput = () => {
-    target.innerHTML = linkifyHtml(value, {
-      attributes: { class: 'text-link' },
-    });
+    target.innerHTML = linkifyHtml(
+      value.replace(/\n/g, '<br />').replaceAll('<br /><br />', '<br />'),
+      {
+        attributes: { class: 'text-link' },
+      }
+    );
   };
-
-  let html;
 </script>
 
 <div class="relative">
@@ -38,7 +38,5 @@
   <div
     bind:this={target}
     class="p-2 pb-4 w-full text-lg placeholder-grey resize-none leading-tight box-border break-words focus:outline-none absolute top-0 left-0 pointer-events-none"
-  >
-    &nbsp;
-  </div>
+  />
 </div>
