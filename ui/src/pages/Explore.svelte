@@ -1,4 +1,5 @@
 <script>
+  import { onMount } from 'svelte';
   import { me } from '@root/api';
   import {
     state,
@@ -9,7 +10,7 @@
   import { ItemVerticalListPreview } from '@components';
   import { IconButton, SparklesIcon, AppIcon, GroupIcon } from '@fragments';
 
-  let items, activeItems, myItems;
+  let items, activeItems, myItems, urlQuery;
 
   const refreshItems = () => {
     activeItems = items;
@@ -33,19 +34,35 @@
     } else {
       filters.add(filter);
     }
-    filters = filters; // pls rerender
+
+    urlQuery = `?filters=`;
+    for (const q of filters) {
+      urlQuery += `${q},`;
+    }
+
+    window.location.href = `${window.location.origin}${window.location.pathname}#/explore${urlQuery}`;
+
     refreshItems();
   };
 
   state.subscribe((s) => {
     if (!s.apps || !s.groups) return;
     items = getCuratorAllCollectionItems(me);
+
     myItems = [
       ...Object.keys(s.groups).map(groupKeyToItemKey),
       ...Object.entries(s.apps).map(
         ([cord, { ship }]) => `/app/${ship}/${cord}/`
       ),
     ];
+
+    let url = window.location.href;
+    if (url.includes('filters=')) {
+      let f = url.substring(url.indexOf('filters=') + 8);
+      f.split(',')
+        .filter((f) => !!f)
+        .forEach((filter) => toggleFilter(filter));
+    }
 
     refreshItems();
   });
