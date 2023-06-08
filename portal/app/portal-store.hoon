@@ -184,7 +184,7 @@
         %whole
       ?:  ?&  ?=(%app -.bespoke.item.u.wave.msg)
               ?=(%def lens.item.u.wave.msg)
-              !(validate-sig dist-desk.bespoke.item.u.wave.msg src.bowl our.bowl now.bowl sig.bespoke.item.u.wave.msg)
+              !(validate-sig dist-desk.bespoke.item.u.wave.msg src.msg our.bowl now.bowl sig.bespoke.item.u.wave.msg)
           ==
         ~&  >>>  "Bad sig on app! Malicious!"
         =.  item-sub
