@@ -17,6 +17,7 @@ export const getMeta = (item) => {
     createdAt: getCreatedAt(item),
     struc: getStruc(item),
     ref: getRef(item),
+    lens: getLens(item),
     keyStr: item?.keyStr,
     rating: item?.bespoke?.rating,
   };
@@ -137,6 +138,7 @@ export const getServedFrom = (item) => {
 export const getCreatedAt = (item) => fromUrbitTime(item?.meta?.createdAt);
 export const getStruc = (item) => item?.keyObj?.struc;
 export const getRef = (item) => item?.bespoke?.ref;
+export const getLens = (item) => item?.lens;
 export const getAnyLink = (string) => {
   return linkify.find(string)?.[0]?.href;
 };
