@@ -37,6 +37,11 @@
       (da sub-portal-devs bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
 ++  on-init
   =.  state  *state-5
+  =.  our-apps.state  ;;  our-apps:portal-config
+    %-  tail
+    .^  update:alliance:treaty  %gx
+        /(scot %p our.bowl)/treaty/(scot %da now.bowl)/alliance/noun
+    ==
   =^  cards  state  init-sequence:helper
   [cards this]
 ::
@@ -288,11 +293,6 @@
 ::
 ++  init-sequence
   ^+  [*(list card) state]
-  =.  our-apps.state  ;;  our-apps:portal-config
-    %-  tail
-    .^  update:alliance:treaty  %gx
-        /(scot %p our.bowl)/treaty/(scot %da now.bowl)/alliance/noun
-    ==
   =/  cards-1
     =+  ~(tap in our-apps.state)
     %+  turn  -
