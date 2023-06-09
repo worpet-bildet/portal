@@ -1,4 +1,6 @@
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import Urbit from '@urbit/http-api';
+import { toUrbitTime } from '@root/util';
 
 export const api = new Urbit('', '', 'portal');
 api.ship = window.ship;
@@ -101,6 +103,31 @@ export const getStorageConfiguration = () => {
       path: '/credentials',
     }),
   ]);
+};
+
+export const uploadImage = async (file, s3) => {
+  const fileParts = file.name.split('.');
+  const fileName = fileParts.slice(0, -1);
+  const fileExtension = fileParts.pop();
+  const timestamp = toUrbitTime(new Date()).slice(1);
+
+  const params = {
+    Bucket: s3.configuration.currentBucket,
+    Key: `${me}/${timestamp}-${fileName}.${fileExtension}`,
+    Body: file,
+    ACL: 'public-read',
+    ContentType: file.type,
+  };
+
+  let _s3 = new S3Client({
+    credentials: s3.credentials,
+    endpoint: s3.credentials.endpoint,
+    region: s3.configuration.region,
+  });
+  const command = new PutObjectCommand(params);
+  await _s3.send(command);
+
+  return `${s3.credentials.endpoint}/${params.Bucket}/${params.Key}`;
 };
 
 export const addPal = (patp) => {

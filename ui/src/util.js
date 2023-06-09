@@ -6,6 +6,7 @@ export const getMeta = (item) => {
     description: getDescription(item),
     blurb: getBlurb(item),
     image: getImage(item),
+    screenshots: getScreenshots(item),
     cover: getCover(item),
     ship: getShip(item),
     link: getLink(item),
@@ -16,6 +17,7 @@ export const getMeta = (item) => {
     createdAt: getCreatedAt(item),
     struc: getStruc(item),
     ref: getRef(item),
+    lens: getLens(item),
     keyStr: item?.keyStr,
     rating: item?.bespoke?.rating,
   };
@@ -63,6 +65,14 @@ export const getImage = (item) => {
       return item?.bespoke?.image;
   }
 };
+export const getScreenshots = (item) => {
+  switch (item?.lens) {
+    case 'def':
+      return item?.bespoke?.screenshots;
+    default:
+      return [];
+  }
+};
 export const getCover = (item) => {
   switch (item?.keyObj?.struc) {
     case 'app':
@@ -83,6 +93,7 @@ export const getLink = (item) => {
 export const getShip = (item) => {
   switch (item?.keyObj?.struc) {
     case 'app':
+      if (item?.lens === 'def') return item?.keyObj?.ship;
       return item?.bespoke?.treaty?.ship;
     default:
       return item?.keyObj?.ship;
@@ -127,6 +138,7 @@ export const getServedFrom = (item) => {
 export const getCreatedAt = (item) => fromUrbitTime(item?.meta?.createdAt);
 export const getStruc = (item) => item?.keyObj?.struc;
 export const getRef = (item) => item?.bespoke?.ref;
+export const getLens = (item) => item?.lens;
 export const getAnyLink = (string) => {
   return linkify.find(string)?.[0]?.href;
 };

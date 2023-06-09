@@ -116,7 +116,7 @@
             />
           </span>
           <span>
-            {reviewAverageRating}
+            {reviewAverageRating === 'NaN' ? 'Loading...' : reviewAverageRating}
           </span>
         </div>
         <div class="border border-spacer" />

@@ -1,4 +1,5 @@
 <script>
+  import { onMount } from 'svelte';
   import { me } from '@root/api';
   import {
     state,
@@ -9,42 +10,59 @@
   import { ItemVerticalListPreview } from '@components';
   import { IconButton, SparklesIcon, AppIcon, GroupIcon } from '@fragments';
 
-  let items, activeItems, myItems;
+  let items, activeItems, myItems, urlQuery;
 
   const refreshItems = () => {
     activeItems = items;
-    if (filters.includes('new')) {
+    if (filters.has('new')) {
       activeItems = [
         ...items.filter((k) => !myItems.includes(keyStrFromObj(k))),
       ];
     }
-    if (filters.includes('apps')) {
+    if (filters.has('apps')) {
       activeItems = [...activeItems.filter((k) => k?.struc === 'app')];
     }
-    if (filters.includes('groups')) {
+    if (filters.has('groups')) {
       activeItems = [...activeItems.filter((k) => k?.struc === 'group')];
     }
   };
 
-  let filters = [];
+  let filters = new Set();
   const toggleFilter = (filter) => {
-    if (filters.includes(filter)) {
-      filters = filters.filter((f) => f !== filter);
+    if (filters.has(filter)) {
+      filters.delete(filter);
     } else {
-      filters = [...filters, filter];
+      filters.add(filter);
     }
+
+    urlQuery = `?filters=`;
+    for (const q of filters) {
+      urlQuery += `${q},`;
+    }
+
+    window.location.href = `${window.location.origin}${window.location.pathname}#/explore${urlQuery}`;
+
     refreshItems();
   };
 
   state.subscribe((s) => {
     if (!s.apps || !s.groups) return;
     items = getCuratorAllCollectionItems(me);
+
     myItems = [
       ...Object.keys(s.groups).map(groupKeyToItemKey),
       ...Object.entries(s.apps).map(
         ([cord, { ship }]) => `/app/${ship}/${cord}/`
       ),
     ];
+
+    let url = window.location.href;
+    if (url.includes('filters=')) {
+      let f = url.substring(url.indexOf('filters=') + 8);
+      f.split(',')
+        .filter((f) => !!f)
+        .forEach((filter) => toggleFilter(filter));
+    }
 
     refreshItems();
   });
@@ -59,22 +77,22 @@
   <div class="flex gap-4">
     <IconButton
       icon={SparklesIcon}
-      active={filters.includes('new')}
+      active={filters.has('new')}
       on:click={() => toggleFilter('new')}>New to me</IconButton
     >
     <IconButton
       icon={AppIcon}
-      active={filters.includes('apps')}
+      active={filters.has('apps')}
       on:click={() => {
-        if (filters.includes('groups')) toggleFilter('groups');
+        if (filters.has('groups')) toggleFilter('groups');
         toggleFilter('apps');
       }}>Apps</IconButton
     >
     <IconButton
       icon={GroupIcon}
-      active={filters.includes('groups')}
+      active={filters.has('groups')}
       on:click={() => {
-        if (filters.includes('apps')) toggleFilter('apps');
+        if (filters.has('apps')) toggleFilter('apps');
         toggleFilter('groups');
       }}>Groups</IconButton
     >

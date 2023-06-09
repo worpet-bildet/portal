@@ -1,9 +1,8 @@
 <script>
   import { createEventDispatcher } from 'svelte';
-  import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
-  import { me } from '@root/api';
+  import { me, uploadImage } from '@root/api';
   import { state, keyStrToObj } from '@root/state';
-  import { toUrbitTime, getAnyLink } from '@root/util';
+  import { getAnyLink } from '@root/util';
   import { RecommendModal, Sigil } from '@components';
   import {
     TextArea,
@@ -66,29 +65,7 @@
   });
 
   const handleImageSelect = async (e) => {
-    const file = e.target.files[0];
-    const fileParts = file.name.split('.');
-    const fileName = fileParts.slice(0, -1);
-    const fileExtension = fileParts.pop();
-    const timestamp = toUrbitTime(new Date()).slice(1);
-
-    const params = {
-      Bucket: $state.s3.configuration.currentBucket,
-      Key: `${me}/${timestamp}-${fileName}.${fileExtension}`,
-      Body: file,
-      ACL: 'public-read',
-      ContentType: file.type,
-    };
-
-    let s3 = new S3Client({
-      credentials: $state.s3.credentials,
-      endpoint: $state.s3.credentials.endpoint,
-      region: $state.s3.configuration.region,
-    });
-    const command = new PutObjectCommand(params);
-    await s3.send(command);
-
-    uploadedImageUrl = `${$state.s3.credentials.endpoint}/${params.Bucket}/${params.Key}`;
+    uploadedImageUrl = await uploadImage(e.target.files[0], $state.s3);
   };
 
   const handleRate = ({ target: { value } }) => {

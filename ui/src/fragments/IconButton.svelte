@@ -15,7 +15,7 @@
   class:opacity-50={disabled}
   class:cursor-not-allowed={disabled}
   class:bg-hover={active}
-  class:bg-panels={!transparent}
+  class:bg-panels={!transparent && !active}
   title={tooltip}
   on:click
   on:click={() => (async && !disabled ? (loading = true) : null)}
