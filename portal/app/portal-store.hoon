@@ -141,6 +141,11 @@
       %delete  =^(cards state (delete:handle-poke:stor act) [cards this])
       %purge   =^(cards state (purge:handle-poke:stor act) [cards this])
       %destroy  =^(cards state (destroy:handle-poke:stor act) [cards this])
+      %add-tag-request  
+      =^  cards  state 
+        (add-tag-request:handle-poke:stor act)
+      [cards this]
+
     ==
     ::
       %portal-message
@@ -184,11 +189,11 @@
     ?~  wave.msg  `this
     ::  how do diffs and strucs(special cases, e.g. with apps or with feed) relate?
     ?-  -.u.wave.msg  :: `this
-        %edit
-      ~&  >  "new feat: edit diffs on sss"
-      ::  TODO can I just use rock.msg instead of get-item, 
-      ::  I dunno if rock.msg is pre or post applying diff
-      :_  this  (upd:cards-methods:stor (get-item key.rock.msg))  
+      ::   %edit
+      :: ~&  >  "new feat: edit diffs on sss"
+      :: ::  TODO can I just use rock.msg instead of get-item, 
+      :: ::  I dunno if rock.msg is pre or post applying diff
+      :: :_  this  (upd:cards-methods:stor (get-item key.rock.msg))  
       ::
         %whole
       ?:  ?&  ?=(%app -.bespoke.item.u.wave.msg)
@@ -465,18 +470,15 @@
       ::  add tags to soc-graph (outward pointing),
       ::  and send corresponding messages that backward pointing tags be created
       =^  cards-3  state
+        ~&  >  "new feat: using add-tag-request func here now"
         %-  tail  %^  spin
         `(list [=key tag-to=^path tag-from=^path])`tags-to.act  [cards state]
         |=  [[=key tag-to=^path tag-from=^path] q=[cards=(list card) state=state-2]]
         :-  [key tag-to tag-from]
-        =/  our  (key-to-node:conv key.item)
-        =/  their    (key-to-node:conv key)
-        :_  state.q
-        %+  snoc  (gra:cards-methods portal-store+[%add-tag tag-to our their])
-        :*  %pass  /tag  %agent  [ship.key %portal-store]  %poke
-            %portal-message
-            !>([%add-tag-request our.bowl tag-from their our])
-        ==
+        =.  state  state.q
+        =^  cards  state.q
+          (add-tag-request [%add-tag-request key.item key tag-from tag-to])        
+        [(welp cards.q cards) state.q]
       [;:(welp cards cards-1 cards-2 cards-3) state]
     ::  also -> main collection deduplication
     ::  (preventing duplication in the first place)
@@ -591,6 +593,21 @@
         `state
       =.  item-sub  (quit:da-item ship.key.act %portal-store path)
       `state
+    ::
+    ++  add-tag-request
+      |=  [act=action]
+      ^+  [*(list card) state]
+      ~&  >  "new feat: add tag request!"
+      ?>  ?=([%add-tag-request *] act)
+      ::  no safeguards built yet
+      =/  our  (key-to-node:conv from.act)
+      =/  their    (key-to-node:conv to.act)
+      :_  state
+      %+  snoc  (gra:cards-methods portal-store+[%add-tag tag-to.act our their])
+      :*  %pass  /tag  %agent  [ship.to.act %portal-store]  %poke
+          %portal-message
+          !>([%add-tag-request our.bowl tag-from.act their our])
+      ==
     --
 ::
 ++  init-sequence

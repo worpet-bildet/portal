@@ -43,17 +43,6 @@
     :~  ['valid' b++.valid]
         ['noResult' b+%.n]
     ==
-  :: ++  enjs-front-end-update
-  ::   |=  =front-end-update
-  ::   ^-  json
-  ::   %-  pairs
-  ::   :~  ['srcIsOur' b+src-is-our.front-end-update]
-  ::       ['action' s+`@t`update.front-end-update]
-  ::       ['keyObj' (enjs-key key.front-end-update)]
-  ::       ['keyStr' (enjs-jam-key key.front-end-update)]
-  ::       ['item' ?~(item.front-end-update ~ (enjs-item-or-null item.front-end-update))]
-  ::       ['face' s+(crip (weld (trip update.front-end-update) (spud type.key.front-end-update)))]
-  ::   ==
   ++  enjs-item-or-null
     |=  [item=?(~ item)]
     ^-  json
@@ -164,27 +153,6 @@
         ['permissions N/A' s+'']
         ['reach N/A' s+'']
     ==
-  :: ++  enjs-data
-  ::   |=  [=data]
-  ::   ^-  json
-  ::   |^
-  ::   %-  pairs
-  ::   :~  ['general' (enjs-general general.data)]
-  ::       ['bespoke' (enjs-bespoke bespoke.data)]
-  ::   ==
-  ::   ++  enjs-general
-  ::     |=  [=general]
-  ::     ^-  json
-  ::     %-  pairs
-  ::     :~  ['title' s+title.general]
-  ::         ['link' s+link.general]
-  ::         ['description' s+description.general]
-  ::         ['tags' (enjs-cord-list tags.general)]
-  ::         ::['properties' o+properties.general]
-  ::         ['pictures' (enjs-cord-list pictures.general)]
-  ::         ['image' s+image.general]
-  ::         ['color' s+color.general]
-  ::     ==
   ++  enjs-bespoke
     |=  [=bespoke]
     ^-  json
@@ -234,83 +202,6 @@
                          ==
       %validity-store  s+''
     ==
-  ::   --
-  :: ++  enjs-social
-  ::   |=  =social
-  ::   ^-  json
-  ::   |^
-  ::   %-  pairs
-  ::   :~  ['ratings' (enjs-rats ratings.social)]
-  ::       ['comments' (enjs-coms comments.social)]
-  ::       ['reviews' (enjs-revs reviews.social)]
-  ::   ==
-  ::   ++  enjs-rats
-  ::     |=  =ratings
-  ::     ^-  json
-  ::     |^
-  ::     =/  lis  ~(tap by ratings)
-  ::     [%a (turn lis enjs-rat)]
-  ::     ++  enjs-rat
-  ::       |=  [usr-name=@p rating=[rating-num=@ud =updated-at =created-at]]
-  ::       ^-  json
-  ::       %-  pairs
-  ::       :~  ['key' s+`@t`(scot %p usr-name)]
-  ::           ['ship' s+`@t`(scot %p usr-name)]
-  ::           ['ratingNum' (numb rating-num.rating)]
-  ::           ['updatedAt' s+updated-at.rating]
-  ::           ['createdAt' s+created-at.rating]
-  ::       ==
-  ::     --
-  ::   ++  enjs-coms
-  ::     |=  =comments
-  ::     ^-  json
-  ::     |^
-  ::     =/  lis  ~(tap by comments)
-  ::     [%a (turn `(list [com-key comment])`lis enjs-com)]
-  ::     ++  enjs-com
-  ::       |=  [=com-key =comment]
-  ::       ^-  json
-  ::       %-  pairs
-  ::       :~  ['key' (enjs-jam-com-key com-key)]
-  ::           ['keyObj' (enjs-com-key com-key)]
-  ::           ['ship' s+`@t`(scot %p ship.com-key)]
-  ::           ['text' s+text.comment]
-  ::           ['updatedAt' s+updated-at.comment]
-  ::           ['createdAt' s+created-at.com-key]
-  ::       ==
-  ::     ++  enjs-com-key
-  ::       |=  =com-key
-  ::       ^-  json
-  ::       %-  pairs
-  ::       :~  ['ship' s+`@t`(scot %p ship.com-key)]
-  ::           ['createdAt' s+created-at.com-key]
-  ::       ==
-  ::     ++  enjs-jam-com-key
-  ::       |=  =com-key
-  ::       ^-  json
-  ::       s+(crip (weld (scow %p ship.com-key) (trip created-at.com-key)))
-  ::     --
-  ::   ++  enjs-revs
-  ::     |=  =reviews
-  ::     ^-  json
-  ::     |^
-  ::     =/  lis  ~(tap by reviews)
-  ::     [%a (turn lis enjs-rev)]
-  ::     ++  enjs-rev
-  ::       |=  [reviewer=@p =review]
-  ::       ^-  json
-  ::       %-  pairs
-  ::       :~  ['key' s+`@t`(scot %p reviewer)]
-  ::           ['ship' s+`@t`(scot %p reviewer)]
-  ::           ['text' s+text.review]
-  ::           ['hash' s+`@t`(scot %uv hash.review)]
-  ::           ['isCurrent' b+is-current.review]
-  ::           ['isSafe' b+is-safe.review]
-  ::           ['updatedAt' s+updated-at.review]
-  ::           ['createdAt' s+created-at.review]
-  ::       ==
-  ::     --
-  ::   --
   :: ++  enjs-jammed-key-list
   ::   |=  =key-list
   ::   ^-  json
@@ -409,6 +300,7 @@
                 [%delete (ot:dejs ~[key+dejs-key])]
                 [%sub (ot:dejs ~[key+dejs-key])]
                 [%prepend-to-feed (ot:dejs ~[key+dejs-key feed+dejs-feed])]
+                [%add-tag-request (ot:dejs ~[from+dejs-key to+dejs-key tag-from+dejs-path tag-to+dejs-path])]
             ==
     ?+    -.jn    jn
         %create

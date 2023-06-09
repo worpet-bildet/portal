@@ -1,4 +1,4 @@
-/-  *portal-data, *portal-config
+/-  *portal-data, *portal-config, gr=social-graph
 |%
 ::
 ::  units are optional args
@@ -28,6 +28,8 @@
               ==
         ==
       ==
+      ::
+      [%add-tag-request from=key to=key tag-from=path tag-to=path]
       ::
       [%replace =key =lens =bespoke]  ::  TODO should it act like put or edit?, i.e. can it create a nonexisting item. NO! (?)
       ::

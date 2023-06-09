@@ -96,12 +96,13 @@
     ::  src.bowl src.msg problem kad store misli da je src our
     ::  a ne vanjski jer dolazi od portal-managera
     =/  msg  !<(message vase)
-    ?+    -.msg  !!
+    ?+    -.msg    ~|("unexpected message: {<msg>}" !!)
         %sign-app
       ?>  (validate-sig dist-desk.msg src.bowl our.bowl now.bowl sig.msg)
       ~&  >  "%portal: sig is valid!"
       =/  dist-desk  (parse-dist-desk:misc dist-desk.msg)
-      ?~  dist-desk  !!
+      ?~  dist-desk  
+        ~|("app dist-desk incorrect when receiving sig: {<dist-desk.msg>}" !!)
       ::  making sure published-apps collection exists
       =/  create-my-apps
       ?:  %-  ~(item-exists scry our.bowl now.bowl)
@@ -249,26 +250,49 @@
     ==
     ::
       [%treaty @ @ @ @ ~]
+    ~&  >  "new feat: treating treaty like treaty does (to stay in sync)"
+    =/  key  (path-to-key:conv +.wire)
+    ~&  >  "key {<key>}"
     ?+    -.sign    (on-agent:default wire sign)
+        %kick
+      :_  this
+      ?:  =(our.bowl ship.key)  ~
+      ^-  (list card)
+      :~  :*  %pass  wire  %agent  [ship.key %treaty]  %watch
+              /treaty/(scot %p ship.key)/[cord.key]
+      ==  ==
+    ::
+        %watch-ack
+      ::  when treaty withdraws
+      ?~  p.sign  `this
+      ::  actually delete when we get the delete mechanics correct
+      =/  act  [%replace key %temp [%app ~ '' '' *signature *treaty:treaty]]
+      :_  this
+      [(~(act cards [our.bowl %portal-store]) act)]~
+    ::
         %fact
       =/  treaty  !<(treaty:treaty q.cage.sign)
-      =/  key  (path-to-key:conv +.wire)
       =/  act  [%replace key %temp [%app ~ '' '' *signature treaty]]
+      ~&  >  "new feat: not leaving treaty, but staying subbed and handling properly"
       :_  this
-      :~  [(~(act cards [our.bowl %portal-store]) act)]
-          [%pass wire %agent [ship.key %treaty] %leave ~]
-      ==
+      [(~(act cards [our.bowl %portal-store]) act)]~
     ==
     ::
       [%get-group-preview @ @ @ @ ~]
+    ~&  >  "new feat: treating groups previews like groups does (to stay in sync)"
+    =/  key  (path-to-key:conv +.wire)
+    ~&  >  "key {<key>}"
+    ::  basically just not leaving immediately and seeing if we can stay in sync
     ?+    -.sign    (on-agent:default wire sign)
+        %watch-ack  `this
+      ::  %kick  -> not sure what groups branches on when it handles kick
         %fact
       =/  preview  !<(preview:groups q.cage.sign)
       =/  key  (path-to-key:conv +.wire)
       =/  act  [%replace key %temp [%group meta.preview]]
       :_  this
       :~  [(~(act cards [our.bowl %portal-store]) act)]
-          [%pass wire %agent [p.flag.preview %groups] %leave ~]
+          ::  [%pass wire %agent [p.flag.preview %groups] %leave ~]
       ==
     ==
     ::
