@@ -1,4 +1,4 @@
-/-  *portal-data
+/-  *portal-data, *portal-action
 /+  portal
 ::  SSS item
 |%
@@ -7,9 +7,8 @@
 ::  TODO  waves, but you cant just add because you also need sig and meta
 +$  wave
   $%  [%whole =item]
-      [%prepend-to-feed =feed]  ::  TODO also sig and meta here
-      :: [%lens =lens =meta =sig]
-      :: [%bespoke =bespoke =meta =sig]
+      [%prepend-to-feed =feed]  :: todo, also metadata, or start treating as item?
+      ::[%edit $>(%edit action)]
   ==
 ++  wash
   |=  [=rock =wave]
@@ -17,10 +16,13 @@
       %whole
     item.wave
     ::
+    ::   %bespoke
+    :: rock
+   ::
       %prepend-to-feed
     ?>  ?=([%feed *] bespoke.rock)
     %=  rock
-      feed.bespoke  (oust [200 (lent wave)] (weld feed.wave feed.bespoke.rock))  
+      feed.bespoke  (oust [200 (lent wave)] (weld feed.wave feed.bespoke.rock))
     ==
   ==
 --

@@ -125,7 +125,7 @@
       ::
       ::
         %index-as-curator
-      ?>  =(our.bowl ~worpet-bildet)
+      ?>  =(our.bowl portal-indexer)
       ?>  =(src.bowl src.msg)
       =/  act  ~(act cards [our.bowl %portal-store])
       =/  index-key  [%collection our.bowl '' 'index']

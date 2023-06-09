@@ -270,17 +270,19 @@
     --
   --
 ::
-++  item-methods  ::  all arms here should output item
-  |_  =bowl:gall
+::  so I can use item-methods wherever, without needing bowl
+++  pure
+  |%
   ++  edit
-    |=  [=item act=action]
+    |=  [now=time =item act=action]
     ::  should output item
+    ~&  >  "new feat: different edit implementation"
     ^-  ^item
     ?>  ?=([%edit *] act)
     ?>  =(key.item key.act)
     %=  item
         updated-at.meta
-      `@t`(scot %da now.bowl)
+      `@t`(scot %da now)
       ::
         lens
       (fall lens.act lens.item)
@@ -330,6 +332,13 @@
         ==
       ==
     ==
+  --
+::
+++  item-methods  ::  all arms here should output item
+  |_  =bowl:gall
+  ++  edit 
+    ~&  >  "new feat: curried edit implementation"
+    (cury edit:pure now.bowl)
   ::
   ++  replace
     |=  [=item act=action]

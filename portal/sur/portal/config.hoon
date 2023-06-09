@@ -1,11 +1,12 @@
 /-  *portal-data, portal-data-0
+/*  indexer  %ship  /desk/ship
 |%
++$  portal-indexer  _indexer
 ::
 +$  default-curators  (set key)
-+$  portal-curator  _~worpet-bildet
 +$  purge-timer  $~(%.y ?)
 +$  purge-time  _~d1
-+$  portal-indexer  _~worpet-bildet
++$  portal-curator  portal-indexer
 +$  indexed-as-curator  $~(%.n ?)
 +$  onboarded  $~(%.n ?)
 +$  our-apps  (set [=ship =desk])

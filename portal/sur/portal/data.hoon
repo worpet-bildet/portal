@@ -105,7 +105,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
-::  Validity Store Structures
+::  Validity Store Structures  (completely remove?)
 ::
 +$  check-date  @da
 +$  valid  (unit ?)

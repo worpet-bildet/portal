@@ -1,6 +1,8 @@
 /-  *portal-data, *portal-message, portal-item, portal-data-0, portal-data-1,
-    gr=social-graph
+    gr=social-graph, portal-config
 /+  default-agent, dbug, *portal, sss
+=/  indexer  *portal-indexer:portal-config
+~&  >  "new feat: make worpet-bildet 'env var'"
 |%
 +$  versioned-state
   $%  state-0
@@ -162,7 +164,7 @@
       ::
         %feed-update
       ?>  =(src.bowl src.msg)
-      ?>  =(our.bowl ~worpet-bildet)
+      ?>  =(our.bowl indexer)
       =/  act  [%prepend-to-feed feed.msg [%feed our.bowl '' 'global']]
       =^(cards state (prepend-to-feed:handle-poke:stor act) [cards this])
     ==
@@ -180,7 +182,9 @@
     =/  msg  !<(from:da-item (fled:sss vase))
     ?<  ?=([%crash *] rock.msg)
     ?~  wave.msg  `this
-    ?-  -.u.wave.msg
+    ::  how do diffs and strucs relate?
+    ?-  -.u.wave.msg  :: `this
+        ::%lens  `this  ::  TODO
         %whole
       ?:  ?&  ?=(%app -.bespoke.item.u.wave.msg)
               ?=(%def lens.item.u.wave.msg)
@@ -193,6 +197,22 @@
       :_  this  (upd:cards-methods:stor item.u.wave.msg)
       ::
         %prepend-to-feed
+      ?:  =(/item/feed/(scot %p indexer)//global path.msg)
+        ~&  >  "new feat: autosubbing to global feed update"
+        =^  cards  state
+          %-  tail
+          %^  spin  feed.u.wave.msg  [*(list card) state]
+          |=  [p=[time=cord =ship =key] q=[cards=(list card) state=state-2]]
+          :-  p
+          =.  state  state.q
+          :_  state.q
+          %+  snoc  cards.q
+          :*  %pass  /sub  %agent  [our.bowl %portal-manager]  %poke
+              %portal-action  !>(sub+key.p)
+          ==
+        :_  this  
+        %+  welp  cards
+        (upd:cards-methods:stor rock.msg)
       :_  this  (upd:cards-methods:stor rock.msg)
     ==
   ==
@@ -482,7 +502,7 @@
         =/  msg  [%feed-update our.bowl feed.act]
         :_  state
         %+  snoc  (welp cards cards-1)
-        (~(poke pass:io /msg) [~worpet-bildet %portal-store] portal-message+!>(msg))
+        (~(poke pass:io /msg) [indexer %portal-store] portal-message+!>(msg))
       :-  (welp cards cards-1)
       state
     ::
@@ -570,9 +590,11 @@
 ::
 ++  init-sequence
   ^+  [*(list card) state]
-  =/  feed-path  [%item %feed '~worpet-bildet' '' 'global' ~]
-  =^  cards  item-sub  (surf:da-item ~worpet-bildet %portal-store feed-path)
-  =.  cards  (welp cards (track-gr:cards-methods ~worpet-bildet))
+  =/  feed-path  [%item %feed (scot %p indexer) '' 'global' ~]
+  ~&  >  "new feat: before surfing indexer, quit it"
+  =.  item-sub  (quit:da-item indexer %portal-store feed-path)
+  =^  cards  item-sub  (surf:da-item indexer %portal-store feed-path)
+  =.  cards  (welp cards (track-gr:cards-methods indexer))
   =^  cards-1  state
     %-  create:handle-poke
     :*  %create  ~  ~  `'~2000.1.1'  `%def
@@ -601,7 +623,7 @@
     `[%collection 'My Apps' 'Collection of all apps I have published.' '' ~]
     [%collection our.bowl '' '~2000.1.1']~  ~  ~  ==
   ::
-  ?:  =(our.bowl ~worpet-bildet)
+  ?:  =(our.bowl indexer)
     =^  cards-7  state
       %-  create:handle-poke
       [%create ~ ~ `'global' `%global `[%feed ~] ~ ~ ~]
