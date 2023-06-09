@@ -1,4 +1,4 @@
-/-  *portal-data
+/-  *portal-signature
 |%
 ::
 ++  jael-scry
@@ -12,7 +12,7 @@
   ==
 ::
 ++  sign
-  |=  [our=ship now=time =sig-input]
+  |=  [our=ship now=time sig-input=*]
   ^-  signature
   =+  (jael-scry ,=life our %life now /(scot %p our))
   =+  (jael-scry ,=ring our %vein now /(scot %ud life))
@@ -21,7 +21,7 @@
   life
 ::
 ++  validate
-  |=  [our=ship =signature =sig-input now=time]
+  |=  [our=ship =signature sig-input=* now=time]
   ^-  ?
   =+  (jael-scry ,lyf=(unit @) our %lyfe now /(scot %p ship.signature))
   ::  we do not have a public key from ship at this life

@@ -9,6 +9,7 @@
 +$  indexed-as-curator  $~(%.n ?)
 +$  onboarded  $~(%.n ?)
 +$  our-apps  (set [=ship =desk])
++$  dev-map   (map @t ship)
 ::
 +$  state-0  [%0 *]
 +$  state-1  [%1 *]
@@ -24,7 +25,7 @@
       =onboarded
   ==
 ::
-+$  state-4
+++  state-4
   $:  %4
       =portal-curator
       =portal-indexer
@@ -34,5 +35,5 @@
       =onboarded
       =our-apps
   ==
-
+::
 --

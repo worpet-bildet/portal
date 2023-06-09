@@ -20,11 +20,13 @@ module.exports = {
       three: '#C8BFC5',
       four: '#BEBAC1',
       five: '#AEB6BF',
+      error: 'rgb(220 38 38)',
       link: 'blue',
     },
     extend: {},
     borderColor: {
       DEFAULT: '#69696940',
+      error: 'rgb(220 38 38)',
       spacer: '#696969',
     },
     boxShadow: {

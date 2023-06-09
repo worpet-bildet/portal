@@ -1,4 +1,4 @@
-/-  *portal-data, gr=social-graph
+/-  *portal-data, gr=social-graph, treaty
 |%
 +$  message
   $%  [%index-as-curator src=ship toggle=?]
@@ -10,5 +10,7 @@
       ::
       [%get-item =key]
       [%item item=(unit item)]
+      ::
+      [%sign-app dist-desk=@t sig=signature =treaty:treaty]
   ==
 --

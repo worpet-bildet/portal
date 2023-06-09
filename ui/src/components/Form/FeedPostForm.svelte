@@ -1,9 +1,8 @@
 <script>
   import { createEventDispatcher } from 'svelte';
-  import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
-  import { me } from '@root/api';
+  import { me, uploadImage } from '@root/api';
   import { state, keyStrToObj } from '@root/state';
-  import { toUrbitTime, getAnyLink } from '@root/util';
+  import { getAnyLink } from '@root/util';
   import { RecommendModal, Sigil } from '@components';
   import {
     TextArea,
@@ -13,21 +12,31 @@
     ImageIcon,
     Modal,
     ItemImage,
+    StarRating,
     LinkPreview,
   } from '@fragments';
 
   export let replyTo;
   export let recommendButtons = true;
+  export let ratingStars = false;
   export let error;
 
   let dispatch = createEventDispatcher();
-  let content;
+  let content, rating;
 
   const post = () => {
-    dispatch('post', { content, uploadedImageUrl, replyTo });
+    if (!content) {
+      return (error = 'Please write something, anything.');
+    }
+    if ((ratingStars && !rating) || Number(rating) === 0) {
+      return (error = 'Please give a score.');
+    }
+    dispatch('post', { content, uploadedImageUrl, replyTo, rating });
     content = '';
     uploadedImageUrl = '';
+    rating = '';
     error = '';
+    rating = 0;
   };
 
   // TODO: Factor out the selection of groups/apps into its own component
@@ -56,31 +65,12 @@
   });
 
   const handleImageSelect = async (e) => {
-    const file = e.target.files[0];
-    const fileParts = file.name.split('.');
-    const fileName = fileParts.slice(0, -1);
-    const fileExtension = fileParts.pop();
-    const timestamp = toUrbitTime(new Date()).slice(1);
-
-    const params = {
-      Bucket: $state.s3.configuration.currentBucket,
-      Key: `${me}/${timestamp}-${fileName}.${fileExtension}`,
-      Body: file,
-      ACL: 'public-read',
-      ContentType: file.type,
-    };
-
-    let s3 = new S3Client({
-      credentials: $state.s3.credentials,
-      endpoint: $state.s3.credentials.endpoint,
-      region: $state.s3.configuration.region,
-    });
-    const command = new PutObjectCommand(params);
-    await s3.send(command);
-
-    uploadedImageUrl = `${$state.s3.credentials.endpoint}/${params.Bucket}/${params.Key}`;
+    uploadedImageUrl = await uploadImage(e.target.files[0], $state.s3);
   };
 
+  const handleRate = ({ target: { value } }) => {
+    rating = value;
+  };
   $: linkToPreview = getAnyLink(content || '');
 </script>
 
@@ -146,6 +136,20 @@
           />
         </div>
       </div>
+    {:else if ratingStars}
+      <StarRating
+        on:change={handleRate}
+        config={{
+          readOnly: false,
+          countStars: 5,
+          range: {
+            min: 0,
+            max: 5,
+            step: 1,
+          },
+          score: rating,
+        }}
+      />
     {:else}
       <div />
     {/if}

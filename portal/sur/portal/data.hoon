@@ -1,4 +1,4 @@
-/-   *treaty, group-preview=meta, portal-data-0
+/-   *treaty, group-preview=meta, *portal-signature
 |%
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
@@ -17,14 +17,17 @@
       %feed
       %validity-store
       %retweet
+      %review
+      %blog
+      ::  studio
       %other
   ==
 ::
 ::  lens is how we see an item and how we treat it
 ::
 +$  lens
-  $?  %deleted   
-      %temp  
+  $?  %deleted
+      %temp
       %index
       %def
       %global
@@ -44,12 +47,11 @@
   =<  item
   |%
   +$  item
-    $:  =key
-        =lens
-        =bespoke
-        =meta
-        =sig
-    ==
+   $:  =key
+       =lens
+       =bespoke
+       =meta
+   ==
   +$  update  item ::  rename to diff? or add +$  diff?
   --
 ::
@@ -72,11 +74,14 @@
 +$  bespoke
   $%  [struc=%ship ~]
       [struc=%group =data:group-preview]
-      [struc=%app dist-desk=@t sig=signature =treaty]
+      [struc=%app screenshots=(list @t) blurb=@t dist-desk=@t sig=signature =treaty]
+      [struc=%review blurb=@t rating=@ud]
       [struc=%retweet blurb=@t ref=key]
       [struc=%feed =feed]
       [struc=%collection title=@t blurb=@t image=@t =key-list]
       [struc=%validity-store =validity-records]
+      [struc=%blog title=@t blurb=@t uri=@t path=@t image=@t]
+      ::  TODO %studio
       [struc=%other title=@t blurb=@t link=@t image=@t]
   ==
 ::
@@ -110,20 +115,6 @@
 ++  valid-mop  ((on check-date validation-result) gth)
 ::
 +$  validity-records  (map key validation-time-map)
-::
-::
-::
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::
-::  Signatures
-::
-+$  signature   [hex=@ux =ship =life]
-::
-+$  sig-input
-  $%  [%item =key =lens =bespoke =meta]     ::  for signing the item each time it is edited
-      [%key =key]                      ::  for signing item by somebody from the outside (not in use yet)
-      [%app =key desk-name=@tas]      ::  for signing apps by the distributor ship
-  ==
 ::
 ::
 ::
@@ -163,6 +154,9 @@
   ==
 ::
 ::  comes from %portal-manager
-+$  manager-result  ?
++$  manager-result
+  $@  ?
+  $%  [%portal-devs (map @t ship)]
+  ==
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 --

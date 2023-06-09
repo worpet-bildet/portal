@@ -1,4 +1,4 @@
-/-  *portal-data, *portal-action, gr=social-graph
+/-  *portal-data, *portal-action, gr=social-graph, portal-config
 /+  *portal, docket, treaty
 |%
 ++  enjs
@@ -24,6 +24,13 @@
   ::     =/  l  (turn ~(tap by mapp) transform)
   ::     [%o `(map @t json)`(malt l)]
   ::   --
+  ++  enjs-dev-map
+    |=  =dev-map:portal-config
+    ^-  json
+    :-  %o
+    %-  ~(run by dev-map)
+    |=  ship=@p  ::  =ship is buggy for some reason
+    (enjs-ship ship)
   ++  enjs-valid
     |=  =valid
     ^-  json
@@ -57,7 +64,6 @@
         ['lens' s+`@t`lens.item]
         ['bespoke' (enjs-bespoke bespoke.item)]
         ['meta' (enjs-meta meta.item)]
-        ['sig' (enjs-sig sig.item)]
     ==
   ++  enjs-update
     |=  [=item]
@@ -68,21 +74,28 @@
         ['lens' s+`@t`lens.item]
         ['bespoke' (enjs-bespoke bespoke.item)]
         ['meta' (enjs-meta meta.item)]
-        ['sig' (enjs-sig sig.item)]
     ==
   ::
       :: +$  store-result
     :: $@  ?
     :: $%  [%items =items]
     ::     [%item item=?(~ item)]
-    ::     [%keys =key-set]  :: TODO change to key-list
+    ::     [%keys =key-set]  
     ::     [%valid =valid]
     :: ==
+  ++  enjs-manager-result
+    |=  [=manager-result]
+    ^-  json
+    ?@  manager-result  b+manager-result
+    ?-  -.manager-result
+      %portal-devs  %+  frond  'portal-devs'  (enjs-dev-map +.manager-result)
+    ==
+
   ++  enjs-store-result
     |=  [=store-result]
     ^-  json
     ?@  store-result  b+store-result
-    ?+  -.store-result  !!
+    ?+  -.store-result  s+''
           %items  %+  frond  'items'  (enjs-items items.store-result)
           %item  %+  frond  'item'  (enjs-item-or-null item.store-result)
     ==
@@ -184,7 +197,9 @@
                              ['cover' s+cover.data.bespoke]
                          ==
       %app          %-  pairs
-                         :~  ['distDesk' s+dist-desk.bespoke]
+                         :~  ['screenshots' (enjs-list screenshots.bespoke |=(s=* s+s))]
+                             ['blurb' s+blurb.bespoke]
+                             ['distDesk' s+dist-desk.bespoke]
                              ['signature' (enjs-sig sig.bespoke)]
                              ['treaty' (treaty:enjs:treaty treaty.bespoke)]
                          ==
@@ -204,9 +219,19 @@
                         :~  ['blurb' s+blurb.bespoke]
                             ['ref' (enjs-key ref.bespoke)]
                         ==
-
+      %review       %-  pairs
+                        :~  ['blurb' s+blurb.bespoke]
+                            ['rating' n+(scot %ud rating.bespoke)]
+                        ==
       %feed         %-  frond
                         ['feed' (enjs-feed feed.bespoke)]
+      %blog         %-  pairs
+                         :~  ['title' s+title.bespoke]
+                             ['blurb' s+blurb.bespoke]
+                             ['uri' s+uri.bespoke]
+                             ['path' s+path.bespoke]
+                             ['image' s+image.bespoke]
+                         ==
       %validity-store  s+''
     ==
   ::   --
@@ -292,18 +317,21 @@
   ::   :-  %a
   ::   %+  turn  key-list
   ::   |=(=key (enjs-jam-key key))
-    ++  enjs-feed
+  ++  enjs-feed
     |=  =feed
     ^-  json
     :-  %a
     %+  turn  feed
-    |=  [time=cord =^ship =key] 
+    |=  [time=cord =^ship =key]
     %-  pairs
     :~  ['time' s+time]
         ['ship' (enjs-ship ship)]
         ['key' (enjs-key key)]
     ==
-
+  ++  enjs-list
+    |=  [list=(list *) enjs-func=gate]
+    ;;  json
+    a+(turn list enjs-func)
   ++  enjs-key-list
     |=  =key-list
     ^-  json
@@ -427,9 +455,9 @@
       -.pol
     [-.pol (pole-to-cell +.pol)]
   ::
-  ::  optional args in create 
+  ::  optional args in create
   ::  only work in conversions
-  ++  dejs-soft-bespoke-create  
+  ++  dejs-soft-bespoke-create
     |=  jon=json
     ;;  (unit bespoke)
     =,  dejs-soft
@@ -439,7 +467,8 @@
             [%app json]
             [%collection json]
             [%retweet json]
-        ==   
+            [%review json]
+        ==
     ?-    -.jn
         %other
       =/  raw  %.  ;;((map @t json) +>:jn)
@@ -465,7 +494,23 @@
                   ==
       =+  (turn `(list (unit))`raw |=(a=(unit *) (fall a ~)))
       (some retweet+(pole-to-cell -))
-        %app  !!
+        %app
+      =/  raw  %.  ;;((map @t json) +>:jn)
+      %-  ot-raw  :~  screenshots+dejs-soft-s-list
+                      blurb+so
+                      dist-desk+so
+                      sig+so     :: should not be editable
+                      treaty+so  :: should not be editable
+                  ==
+      =+  (turn `(list (unit))`raw |=(a=(unit *) (fall a ~)))
+      (some app+(pole-to-cell -))
+        %review
+      =/  raw  %.  ;;((map @t json) +>:jn)
+      %-  ot-raw  :~  blurb+so
+                      rating+ni
+                  ==
+      =+  (turn `(list (unit))`raw |=(a=(unit *) (fall a ~)))
+      (some review+(pole-to-cell -))
     ==
   ::
   ++  dejs-soft-bespoke-edit  ::use ot-raw
@@ -477,6 +522,7 @@
                 [%app json]
                 [%collection json]
                 [%retweet json]
+                [%review json]
             ==
     ?-    -.jn
         %other
@@ -501,7 +547,21 @@
                       ref+dejs-soft-key
                   ==
       (some retweet+(pole-to-cell raw))
-        %app  !!
+        %app
+      =/  raw  %.  ;;((map @t json) +>:jn)
+      %-  ot-raw  :~  screenshots+dejs-soft-s-list
+                      blurb+so
+                      dist-desk+so
+                      sig+so     :: should not be editable
+                      treaty+so  :: should not be editable
+                  ==
+      (some app+(pole-to-cell raw))
+        %review
+      =/  raw  %.  ;;((map @t json) +>:jn)
+      %-  ot-raw  :~  blurb+so
+                      rating+ni
+                  ==
+      (some review+(pole-to-cell raw))
     ==
   ::
   ++  dejs-key-text
@@ -523,6 +583,17 @@
         key+dejs-key
     ==
   ::
+  ++  dejs-soft-s-list
+    |=  jon=json
+    ^-  (unit (list @t))
+    %.  jon
+    (ar:dejs-soft so:dejs-soft)
+
+  ++  dejs-s-list
+    |=  jon=json
+    ^-  (list @t)
+    %.  jon
+    (ar:dejs so:dejs)
   ++  dejs-key-list
     |=  jon=json
     ^-  key-list

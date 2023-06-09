@@ -21,7 +21,7 @@
             lens=(unit lens)
             $=  bespoke  %-  unit
               $%  [%other title=(unit @t) blurb=(unit @t) link=(unit @t) image=(unit @t)]
-                  [%app dist-desk=(unit @t) sig=(unit signature) treaty=(unit treaty)]
+                  [%app screenshots=(unit (list @t)) blurb=(unit @t) dist-desk=(unit @t) sig=(unit signature) treaty=(unit treaty)]
                   [%collection title=(unit @t) blurb=(unit @t) image=(unit @t) key-list=(unit key-list)]  ::does it need link?
                   [%feed feed=(unit feed)]
                   [%retweet blurb=(unit @t) ref=(unit key)]

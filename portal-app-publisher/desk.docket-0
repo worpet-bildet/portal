@@ -1,0 +1,11 @@
+:~
+  title+'Portal App Publisher'
+  info+'A tool for app publishers on Portal.'
+  color+0x0
+  version+[0 0 1]
+  website+''
+  license+''
+  image+''
+  base+'portal-app-publisher'
+  glob-ames+[~worpet-bildet 0v0]
+==

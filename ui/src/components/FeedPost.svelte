@@ -14,10 +14,11 @@
   } from '@root/state';
   import { getMeta, fromUrbitTime, getAnyLink, isImage } from '@root/util';
   import { ItemVerticalListPreview, Sigil, FeedPostForm } from '@components';
-  import { ChatIcon, IconButton, LinkPreview } from '@fragments';
+  import { ChatIcon, IconButton, LinkPreview, StarRating } from '@fragments';
 
   export let key;
   export let allowReplies = true;
+  export let showRating;
 
   let item;
   let subscribingTo = {};
@@ -49,7 +50,7 @@
   const handlePostComment = ({
     detail: { content, uploadedImageUrl, replyTo },
   }) => {
-    poke({
+    return poke({
       app: 'portal-manager',
       mark: 'portal-action',
       json: {
@@ -76,7 +77,7 @@
 </script>
 
 {#if item}
-  {@const { blurb, ship, createdAt, ref, image } = getMeta(item)}
+  {@const { blurb, ship, createdAt, ref, image, rating } = getMeta(item)}
   {@const {
     bespoke: { nickname },
   } = getCurator(ship)}
@@ -129,6 +130,22 @@
         </div>
       {/if}
     </div>
+    {#if showRating}
+      <div class="flex justify-start col-span-12 col-start-2">
+        <StarRating
+          config={{
+            readOnly: true,
+            countStars: 5,
+            range: {
+              min: 0,
+              max: 5,
+              step: 1,
+            },
+            score: rating,
+          }}
+        />
+      </div>
+    {/if}
     <div class="col-span-12">
       {#if allowReplies}
         <div class="pt-4">

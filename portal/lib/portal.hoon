@@ -1,5 +1,5 @@
 /-  *portal-data, portal-config, *portal-action, *portal-message,
-    portal-data-0, gr=social-graph
+    portal-data-0, gr=social-graph, treaty
 /+  sig, io=agentio, mip, sss
 |%
 +$  card  card:agent:gall
@@ -215,17 +215,15 @@
   --
 ::
 ++  manager
-  |_  [=bowl:gall state=state-4:portal-config cards=_*(list card)]
+  |_  [=bowl:gall cards=_*(list card)]
   ++  on-poke
     ::  all arms here should output cards
-    ::  TODO cleanup PM state and maybe output that then
     |%
     ::
     ++  sub
       |=  [act=action]
-      ^-  [(list card) state-4:portal-config]
+      ^-  [(list card)]
       ?>  ?=([%sub *] act)
-      :_  state
       ?.  =(time.key.act '')   ::  branch on whether is %temp (empty time.key)
         :: if not temp
         ~[(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(act))]
@@ -245,7 +243,6 @@
                                   ~
                                   ~
                               ==
-      ::  TODO wires state transition
       ?+    struc.key.act    !!
         ::
           %ship
@@ -262,7 +259,7 @@
         ==
         ::
           %app
-        =.  bespoke  [%app '' *signature *treaty]
+        =.  bespoke  [%app ~ '' '' *signature *treaty:treaty]
         =/  path  /treaty/(scot %p ship.key.act)/[`@tas`cord.key.act]
         =/  wire  [%treaty (key-to-path:conv key.act)]
         =/  sub-status  (~(gut by wex.bowl) [wire ship.key.act %treaty] ~)
@@ -281,99 +278,85 @@
     ^-  ^item
     ?>  ?=([%edit *] act)
     ?>  =(key.item key.act)
-    =.  item
-      %=  item
-          updated-at.meta
-        `@t`(scot %da now.bowl)
+    %=  item
+        updated-at.meta
+      `@t`(scot %da now.bowl)
+      ::
+        lens
+      (fall lens.act lens.item)
+      ::
+        bespoke
+      ?~  bespoke.act  bespoke.item
+      ?-  -.u.bespoke.act
+          %other
+        ?>  ?=(%other -.bespoke.item)
+        :*  %other
+            (fall title.u.bespoke.act title.bespoke.item)
+            (fall blurb.u.bespoke.act blurb.bespoke.item)
+            (fall link.u.bespoke.act link.bespoke.item)
+            (fall image.u.bespoke.act image.bespoke.item)
+        ==
         ::
-          lens
-        (fall lens.act lens.item)
+          %app
+        ?>  ?=(%app -.bespoke.item)
+        :*  %app
+            (fall screenshots.u.bespoke.act screenshots.bespoke.item)
+            (fall blurb.u.bespoke.act blurb.bespoke.item)
+            (fall dist-desk.u.bespoke.act dist-desk.bespoke.item)
+            (fall sig.u.bespoke.act sig.bespoke.item)
+            (fall treaty.u.bespoke.act treaty.bespoke.item)
+        ==
         ::
-          bespoke
-        ?~  bespoke.act  bespoke.item
-        ?-  -.u.bespoke.act
-            %other
-          ?>  ?=(%other -.bespoke.item)
-          :*  %other
-              (fall title.u.bespoke.act title.bespoke.item)
-              (fall blurb.u.bespoke.act blurb.bespoke.item)
-              (fall link.u.bespoke.act link.bespoke.item)
-              (fall image.u.bespoke.act image.bespoke.item)
-          ==
-          ::
-            %app
-          ?>  ?=(%app -.bespoke.item)
-          :*  %app
-              (fall dist-desk.u.bespoke.act dist-desk.bespoke.item)
-              (fall sig.u.bespoke.act sig.bespoke.item)
-              (fall treaty.u.bespoke.act treaty.bespoke.item)
-          ==
-          ::
-            %collection
-          ?>  ?=(%collection -.bespoke.item)
-          :*  %collection
-              (fall title.u.bespoke.act title.bespoke.item)
-              (fall blurb.u.bespoke.act blurb.bespoke.item)
-              (fall image.u.bespoke.act image.bespoke.item)
-              (fall key-list.u.bespoke.act key-list.bespoke.item)
-          ==
-          ::
-            %feed
-          ?>  ?=(%feed -.bespoke.item)
-          :*  %feed
-              (fall feed.u.bespoke.act feed.bespoke.item)
-          ==
-          ::
-            %retweet
-          ?>  ?=(%retweet -.bespoke.item)
-          :*  %retweet
-              (fall blurb.u.bespoke.act blurb.bespoke.item)
-              (fall ref.u.bespoke.act ref.bespoke.item)
-          ==
+          %collection
+        ?>  ?=(%collection -.bespoke.item)
+        :*  %collection
+            (fall title.u.bespoke.act title.bespoke.item)
+            (fall blurb.u.bespoke.act blurb.bespoke.item)
+            (fall image.u.bespoke.act image.bespoke.item)
+            (fall key-list.u.bespoke.act key-list.bespoke.item)
+        ==
+        ::
+          %feed
+        ?>  ?=(%feed -.bespoke.item)
+        :*  %feed
+            (fall feed.u.bespoke.act feed.bespoke.item)
+        ==
+        ::
+          %retweet
+        ?>  ?=(%retweet -.bespoke.item)
+        :*  %retweet
+            (fall blurb.u.bespoke.act blurb.bespoke.item)
+            (fall ref.u.bespoke.act ref.bespoke.item)
         ==
       ==
-    ?:  =(lens.item %temp)
-      item(sig *signature)
-    =/  sig  %^  sign:sig  our.bowl  now.bowl
-      [%item key.act lens.item bespoke.item meta.item]
-    item(sig sig)
+    ==
   ::
   ++  replace
     |=  [=item act=action]
     ^-  ^item
     ?>  ?=([%replace *] act)
     ?>  =(key.item key.act)
-    =.  item
-      %=  item
-        lens             lens.act
-        bespoke          bespoke.act
-        updated-at.meta  `@t`(scot %da now.bowl)
-      ==
-    ?:  =(lens.act %temp)
-      item(sig *signature)
-    =/  sig  %^  sign:sig  our.bowl  now.bowl
-      [%item key.act lens.act bespoke.act meta.item]
-    item(sig sig)
+    %=  item
+      lens             lens.act
+      bespoke          bespoke.act
+      updated-at.meta  `@t`(scot %da now.bowl)
+    ==
   ::
   ++  create
     |=  [act=action]
     ^-  item
     ?>  ?=([%create *] act)     ::  assert that action is %create
-    =/  lens      (fall lens.act *lens)
-    =/  bespoke   (fall bespoke.act *bespoke)
-    =/  key  :^   -.bespoke
-                  (fall ship.act our.bowl)
-                  (fall cord.act '')
-                  (fall time.act `@t`(scot %da now.bowl))
-    =/  meta  :^  created-at=`@t`(scot %da now.bowl)
-                  updated-at=''
-                  permissions=~[our.bowl]
-                  reach=[%public ~]
-    ?:  =(lens %temp)
-      [key lens bespoke meta *signature]
-    =/  sig  %^  sign:sig  our.bowl  now.bowl
-      [%item key lens bespoke meta]
-    [key lens bespoke meta sig]  ::  return item
+    =/  bespoke  (fall bespoke.act *bespoke)
+    :^  :^  -.bespoke
+            (fall ship.act our.bowl)
+            (fall cord.act '')
+            (fall time.act `@t`(scot %da now.bowl))
+        (fall lens.act *lens)
+        bespoke
+        :^  created-at=`@t`(scot %da now.bowl)
+            updated-at=''
+            permissions=~[our.bowl]
+            reach=[%public ~]
   ::
   ++  prepend-to-feed
     |=  [feed=item act=action]
@@ -423,16 +406,13 @@
     ^-  ^item
     ?>  ?=([%delete *] act)
     ?>  =(key.item key.act)
-    =.  item
-      %=  item
-        lens             %deleted
-        updated-at.meta  `@t`(scot %da now.bowl)
-      ==
-    =/  sig  %^  sign:sig  our.bowl  now.bowl
-      [%item key.act lens.item bespoke.item meta.item]
-    item(sig sig)
+    %=  item
+      lens             %deleted
+      updated-at.meta  `@t`(scot %da now.bowl)
+    ==
   --
 ::
+::  OOD
 ::  includes arms which are used to validate data
 ++  validator
   |%
@@ -489,19 +469,37 @@
   ++  sig
     |=  [=key dist-ship=@p desk-name=@tas =signature our=@p now=@da]
     ^-  valid
-    ?:  (ships-related:misc ship.key dist-ship)
-      [~ %.y]
+    :: not doing this anymore, requires sig from everyone who is not us
+    :: ?:  (ships-related:misc ship.key dist-ship)
+    ::   [~ %.y]
+    ?:  =(ship.key dist-ship)
+      `&
     ?.  =(ship.signature dist-ship)
       ~&  "signature fail: ship in sig ({(scow %p ship.signature)}) and distributor ship ({(scow %p dist-ship)}) are not the same"
       [~ %.n]
     ?:  =((get-ship-type:misc our) %comet)
       ~&  "our ship is a comet - skipping signature validation of {(trip desk-name)} by {(scow %p dist-ship)}. beware, apps may be unsafe and/or pirated"
       ~
+    ::  TODO validation has wrong sig-input
+    ::  TODO needs to validate all formatted like /app/[ship]//[name]
     ?.  (validate:^sig [our signature [%app key desk-name] now])
       ~&  "signature fail: distributor signature validation failed"
       ~&  >>  signature
       [~ %.n]
     [~ %.y]
+
+
+      
+
   --
+::
+++  validate-sig
+  |=  [dist-desk=@t src=ship our=ship now=time sig=signature]
+  =/  dist-desk  (parse-dist-desk:misc dist-desk)
+  ?~  dist-desk  %.n
+  ::  note: src is allowed to be different from dist-ship
+  ?.  =(ship.sig dist-name.u.dist-desk)  %.n
+  ?:  =((get-ship-type:misc our) %comet)  %.n
+  (validate:^sig our sig [%sign-app src ^dist-desk] now)
 ::
 --

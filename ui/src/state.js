@@ -1,6 +1,7 @@
 import { get, writable } from 'svelte/store';
 import {
   getPortalItems,
+  getPortalAppDevs,
   getSocialItems,
   getContacts,
   getJoinedGroups,
@@ -23,6 +24,15 @@ export const refreshPortalItems = () => {
         s[i.keyStr] = i;
       });
       s.isLoaded = true;
+      return s;
+    });
+  });
+};
+
+export const refreshPortalAppDevs = () => {
+  getPortalAppDevs().then((appDevs) => {
+    state.update((s) => {
+      s.appDevs = appDevs?.['portal-devs'];
       return s;
     });
   });
@@ -217,6 +227,18 @@ export const getRepliesByTo = (ship, key) => {
     .map(([replyKey, _]) => keyStrToObj(replyKey));
 };
 
+export const getReviews = (ship, key) => {
+  return get(state).social?.[`/${ship}/review-from`]?.[keyStrFromObj(key)];
+};
+
+export const getReviewsByTo = (ship, key) => {
+  return Object.entries(get(state).social?.[`/${ship}/review-to`] || {})
+    .filter(([_, item]) =>
+      item.find((i) => keyStrFromObj(i) === keyStrFromObj(key))
+    )
+    .map(([reviewKey, _]) => keyStrToObj(reviewKey));
+};
+
 export const handleSubscriptionEvent = (event, type) => {
   console.log({ event, type });
   switch (type) {
@@ -299,6 +321,7 @@ const globalFeedKey = (indexer) => `/feed/${indexer}//global`;
 
 export const refreshAll = () => {
   refreshPortalItems();
+  refreshPortalAppDevs();
   refreshSocialItems();
   refreshContacts();
   // refreshProfile(me);
