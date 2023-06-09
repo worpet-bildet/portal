@@ -182,9 +182,14 @@
     =/  msg  !<(from:da-item (fled:sss vase))
     ?<  ?=([%crash *] rock.msg)
     ?~  wave.msg  `this
-    ::  how do diffs and strucs relate?
+    ::  how do diffs and strucs(special cases, e.g. with apps or with feed) relate?
     ?-  -.u.wave.msg  :: `this
-        ::%lens  `this  ::  TODO
+        %edit
+      ~&  >  "new feat: edit diffs on sss"
+      ::  TODO can I just use rock.msg instead of get-item, 
+      ::  I dunno if rock.msg is pre or post applying diff
+      :_  this  (upd:cards-methods:stor (get-item key.rock.msg))  
+      ::
         %whole
       ?:  ?&  ?=(%app -.bespoke.item.u.wave.msg)
               ?=(%def lens.item.u.wave.msg)
