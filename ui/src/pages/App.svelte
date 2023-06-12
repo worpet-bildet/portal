@@ -372,7 +372,7 @@
         {:else if isInstalling}
           <IconButton loading>Installing...</IconButton>
         {:else}
-          <IconButton icon={InstallIcon} on:click={() => window.open(`${window.location.origin}/apps/grid/search/${ship}/apps`)}
+          <IconButton icon={InstallIcon} on:click={() => window.open(`${window.location.origin}/apps/grid/search/${ship}/apps/${ship}/${cord}`)}
             >Install</IconButton
           >
         {/if}
