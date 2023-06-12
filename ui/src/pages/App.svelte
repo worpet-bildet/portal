@@ -257,9 +257,6 @@
       {reviews}
       type="app"
     >
-      <div class="flex w-full items-center justify-center bg-panels">
-        Installing apps with Portal is currently broken. We're working on a fix.
-      </div>
       <Tabs bind:activeTab {tabs} />
       {#if activeTab === 'Screenshots'}
         <div class="grid grid-cols-9 gap-4">
@@ -375,7 +372,7 @@
         {:else if isInstalling}
           <IconButton loading>Installing...</IconButton>
         {:else}
-          <IconButton icon={InstallIcon} on:click={install} async
+          <IconButton icon={InstallIcon} on:click={() => window.open(`${window.location.origin}/apps/grid/search/${ship}/apps`)}
             >Install</IconButton
           >
         {/if}
