@@ -116,8 +116,6 @@
       lens,
     } = getMeta(item));
 
-    console.log({ item, screenshots });
-
     // here we want to get the reviews for the app, which we should be able to
     // do in a similar way as getting comments
     // TODO: Review what ship and key should be here in the case that host is
@@ -132,6 +130,19 @@
         );
       })
       .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
+
+    if (!s?.social?.[`/${ship}/review-from`]) {
+      poke({
+        app: 'portal-graph',
+        mark: 'social-graph-track',
+        json: {
+          start: {
+            source: ship,
+            tag: `/${ship}`,
+          },
+        },
+      });
+    }
 
     isInstalling =
       s.apps?.[cord]?.chad?.hasOwnProperty('install') || isInstalling;
