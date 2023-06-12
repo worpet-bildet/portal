@@ -495,6 +495,7 @@
 ::
 ++  validate-sig
   |=  [dist-desk=@t src=ship our=ship now=time sig=signature]
+  ?~  dist-desk  %.y
   =/  dist-desk  (parse-dist-desk:misc dist-desk)
   ?~  dist-desk  %.n
   ::  note: src is allowed to be different from dist-ship
