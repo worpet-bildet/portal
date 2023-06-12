@@ -50,6 +50,7 @@
     isInstalling,
     isInstalled,
     servedFrom,
+    subbingToSocialGraph,
     recommendModalOpen;
 
   export let params;
@@ -131,7 +132,18 @@
       })
       .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
 
-    if (!s?.social?.[`/${ship}/review-from`]) {
+    if (!s?.social?.[`/${ship}/review-from`] && !subbingToSocialGraph && ship) {
+      subbingToSocialGraph = true;
+      console.log({
+        app: 'portal-graph',
+        mark: 'social-graph-track',
+        json: {
+          start: {
+            source: ship,
+            tag: `/${ship}`,
+          },
+        },
+      });
       poke({
         app: 'portal-graph',
         mark: 'social-graph-track',
