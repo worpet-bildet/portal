@@ -395,6 +395,16 @@
 ++  dejs
   =,  format
   |%
+  ++  dejs-social-graph-track
+    |=  jon=json
+    ;;  track:gr
+    =,  dejs
+    :-  %portal-store
+    %.  jon
+    %-  of
+    :~  [%start (ot:dejs ~[source+dejs-ship tag+dejs-path])]
+        [%stop (ot:dejs ~[source+dejs-ship tag+dejs-path])]
+    ==
   ++  dejs-action
     |=  jon=json
     ;;  action
