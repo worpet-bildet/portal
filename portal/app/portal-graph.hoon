@@ -181,8 +181,8 @@
         %start
       ::  %portal modification
       ::  if tag is being tracked already, don't do anything
-      ?^  (~(get by tracking.state) [p -.tag.q^~])  
-        `this
+      :: ?^  (~(get by tracking.state) [p -.tag.q^~])  
+      ::   `this
       ::
       ::  destroy our local representation of this top-level tag,
       ::  to prepare for synchronization with remote.
