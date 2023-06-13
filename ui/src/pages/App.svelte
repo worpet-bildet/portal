@@ -161,7 +161,13 @@
     isInstalling =
       s.apps?.[cord]?.chad?.hasOwnProperty('install') || isInstalling;
 
-    isInstalled = !isInstalling && !!s.apps?.[cord || time];
+    isInstalled =
+      (!isInstalling && !!s.apps?.[cord || time]) ||
+      (s.apps?.[cord]?.chad?.hasOwnProperty('site') &&
+        !!s.apps?.[cord || time]);
+
+    if (isInstalled) isInstalling = false;
+
     isReviewedByMe = reviews.find((r) => r.ship === me);
   };
 
@@ -196,7 +202,6 @@
   };
 
   const handlePostReview = async ({ detail: { content, rating } }) => {
-    console.log({ me, ship, content, rating, cord });
     poke({
       app: 'portal-manager',
       mark: 'portal-action',
@@ -376,9 +381,7 @@
         {:else if isInstalling}
           <IconButton loading>Installing...</IconButton>
         {:else}
-          <IconButton icon={InstallIcon} on:click={() => window.open(`${window.location.origin}/apps/grid/search/${ship}/apps/${ship}/${cord}`)}
-            >Install</IconButton
-          >
+          <IconButton icon={InstallIcon} on:click={install}>Install</IconButton>
         {/if}
         {#if website}
           <IconButton icon={GlobeIcon} on:click={() => window.open(website)}
