@@ -8,6 +8,7 @@
     keyStrFromObj,
     getReviews,
     getReviewsByTo,
+    getMoreFromThisShip,
   } from '@root/state';
   import { getMeta, fromUrbitTime } from '@root/util';
   import {
@@ -15,6 +16,7 @@
     RecommendModal,
     FeedPost,
     FeedPostForm,
+    ItemVerticalListPreview,
   } from '@components';
   import {
     RightSidebar,
@@ -163,9 +165,11 @@
     isReviewedByMe = reviews.find((r) => r.ship === me);
   };
 
+  let sortedRecommendations = [];
   state.subscribe((s) => {
     if (!s.isLoaded) return;
     loadApp(s);
+    sortedRecommendations = getMoreFromThisShip(ship).slice(0, 4);
   });
 
   const uninstall = () => {
@@ -391,6 +395,14 @@
           >
         {/if}
       </SidebarGroup>
+      {#if sortedRecommendations.length > 0}
+        <SidebarGroup>
+          <div class="text-lg mx-1">More from {ship}</div>
+          {#each sortedRecommendations as [recommendation, count]}
+            <ItemVerticalListPreview key={keyStrToObj(recommendation)} small />
+          {/each}
+        </SidebarGroup>
+      {/if}
     </RightSidebar>
   </div>
   <RecommendModal bind:open={recommendModalOpen} key={keyStrToObj(itemKey)} />

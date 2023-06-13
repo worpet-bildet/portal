@@ -203,6 +203,27 @@ export const getCollectedItemLeaderboard = (excludePatp) => {
   ).sort((a, b) => b[1] - a[1]);
 };
 
+export const getMoreFromThisShip = (patp) => {
+  return Object.entries(
+    Object.values(get(state))
+      .filter(
+        (k) =>
+          k?.keyObj?.struc === 'collection' &&
+          k?.keyObj?.time !== 'global' &&
+          k?.keyObj?.time !== 'index'
+      )
+      .reduce((a, b) => {
+        b?.bespoke?.['key-list']
+          .filter((k) => k?.struc !== 'collection' && k?.ship === patp)
+          .forEach((k) => {
+            if (!a[keyStrFromObj(k)]) return (a[keyStrFromObj(k)] = 1);
+            a[keyStrFromObj(k)]++;
+          });
+        return a;
+      }, {})
+  ).sort((a, b) => b[1] - a[1]);
+};
+
 // export const getProfile = (ship) => {
 //   return get(state).profiles?.[ship];
 // };

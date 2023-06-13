@@ -5,10 +5,11 @@
     getJoinedGroupDetails,
     refreshGroups,
     keyStrToObj,
+    getMoreFromThisShip,
   } from '@root/state';
   import { joinGroup, leaveGroup, subscribeToItem } from '@root/api';
   import { getMeta } from '@root/util';
-  import { ItemDetail, RecommendModal } from '@components';
+  import { ItemDetail, RecommendModal, ItemVerticalListPreview } from '@components';
   import {
     ChatIcon,
     DiaryIcon,
@@ -41,9 +42,11 @@
   }
 
   let group, joinedDetails;
+  let sortedRecommendations = [];
   state.subscribe((s) => {
     if (!s.isLoaded) return;
     loadGroup();
+    sortedRecommendations = getMoreFromThisShip(host).slice(0, 4);
   });
 
   const join = () => joinGroup(groupKey).then(refreshGroups);
@@ -59,7 +62,7 @@
 {#if group}
   {@const { cover, image, description, title } = getMeta(group)}
   <div class="grid grid-cols-12 gap-x-8 mb-4">
-    <ItemDetail {cover} avatar={image} {title} {description} type="group">
+    <ItemDetail {cover} avatar={image} {title} {description} patp={host} type="group">
       <div class="col-span-12 md:col-span-9 bg-panels p-6 rounded-lg">
         {#if !joinedDetails}
           <div>Join the group to see more information</div>
@@ -141,6 +144,14 @@
           on:click={() => (recommendModalOpen = true)}>Recommend</IconButton
         >
       </SidebarGroup>
+      {#if sortedRecommendations.length > 0}
+        <SidebarGroup>
+          <div class="text-lg mx-1">More from {host}</div>
+          {#each sortedRecommendations as [recommendation, count]}
+            <ItemVerticalListPreview key={keyStrToObj(recommendation)} small />
+          {/each}
+        </SidebarGroup>
+      {/if}
     </RightSidebar>
     <!-- <div class="hidden lg:flex lg:col-span-3 flex-col gap-8">
       {#if curator && curator.groups && curator.groups.length > 0}

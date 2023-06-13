@@ -6,6 +6,8 @@
     getCuratorFeed,
     refreshPals,
     getCuratorFeaturedCollection,
+    keyStrToObj,
+    getMoreFromThisShip,
   } from '@root/state';
   import { subscribeToCurator, addPal, removePal, me } from '@root/api';
   import { getMeta } from '@root/util';
@@ -49,9 +51,11 @@
     loadCurator();
   }
 
+  let sortedRecommendations = [];
   state.subscribe((s) => {
     if (!s) return;
     loadCurator();
+    sortedRecommendations = getMoreFromThisShip(patp).slice(0, 4);
   });
 
   const togglePal = () => {
@@ -128,7 +132,7 @@
       {#if curator?.bespoke?.groups?.length > 0}
         <SidebarGroup>
           <div class="grid gap-y-4">
-            <div>{patp} recommends</div>
+            <div class="text-lg mx-1">{patp} recommends</div>
             {#each curator.bespoke.groups as key}
               <ItemVerticalListPreview
                 small
@@ -141,6 +145,14 @@
               />
             {/each}
           </div>
+        </SidebarGroup>
+      {/if}
+      {#if sortedRecommendations.length > 0}
+        <SidebarGroup>
+          <div class="text-lg mx-1">More from {patp}</div>
+          {#each sortedRecommendations as [recommendation, count]}
+            <ItemVerticalListPreview key={keyStrToObj(recommendation)} small />
+          {/each}
         </SidebarGroup>
       {/if}
     </RightSidebar>
