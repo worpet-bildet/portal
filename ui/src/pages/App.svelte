@@ -52,6 +52,7 @@
     isInstalling,
     isInstalled,
     servedFrom,
+    subbingToSocialGraph,
     recommendModalOpen;
 
   export let params;
@@ -118,8 +119,6 @@
       lens,
     } = getMeta(item));
 
-    console.log({ item, screenshots });
-
     // here we want to get the reviews for the app, which we should be able to
     // do in a similar way as getting comments
     // TODO: Review what ship and key should be here in the case that host is
@@ -134,6 +133,30 @@
         );
       })
       .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
+
+    if (!s?.social?.[`/${ship}/review-from`] && !subbingToSocialGraph && ship) {
+      subbingToSocialGraph = true;
+      console.log({
+        app: 'portal-graph',
+        mark: 'social-graph-track',
+        json: {
+          start: {
+            source: ship,
+            tag: `/${ship}`,
+          },
+        },
+      });
+      poke({
+        app: 'portal-graph',
+        mark: 'social-graph-track',
+        json: {
+          start: {
+            source: ship,
+            tag: `/${ship}`,
+          },
+        },
+      });
+    }
 
     isInstalling =
       s.apps?.[cord]?.chad?.hasOwnProperty('install') || isInstalling;
@@ -238,9 +261,6 @@
       {reviews}
       type="app"
     >
-      <div class="flex w-full items-center justify-center bg-panels">
-        Installing apps with Portal is currently broken. We're working on a fix.
-      </div>
       <Tabs bind:activeTab {tabs} />
       {#if activeTab === 'Screenshots'}
         <div class="grid grid-cols-9 gap-4">
@@ -356,7 +376,7 @@
         {:else if isInstalling}
           <IconButton loading>Installing...</IconButton>
         {:else}
-          <IconButton icon={InstallIcon} on:click={install} async
+          <IconButton icon={InstallIcon} on:click={() => window.open(`${window.location.origin}/apps/grid/search/${ship}/apps/${ship}/${cord}`)}
             >Install</IconButton
           >
         {/if}
