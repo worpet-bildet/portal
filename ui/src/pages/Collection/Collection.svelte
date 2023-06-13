@@ -1,7 +1,7 @@
 <script>
   import { push, pop } from 'svelte-spa-router';
   import { me } from '@root/api';
-  import { state, getItem, getCollectionItems, getCurator } from '@root/state';
+  import { state, getItem, getCollectionItems, getCurator, keyStrToObj, getMoreFromThisShip } from '@root/state';
   import { getMeta } from '@root/util';
   import {
     ItemDetail,
@@ -24,10 +24,12 @@
 
   let collection, items, recommendModalOpen;
 
+  let sortedRecommendations = [];
   state.subscribe(() => {
     collection = getItem(collectionKey);
     if (!collection) return;
     items = getCollectionItems(collection.keyStr);
+    sortedRecommendations = getMoreFromThisShip(ship).slice(0, 4);
   });
 </script>
 
@@ -63,6 +65,14 @@
           >
         {/if}
       </SidebarGroup>
+      {#if sortedRecommendations.length > 0}
+        <SidebarGroup>
+          <div class="text-lg mx-1">More from {ship}</div>
+          {#each sortedRecommendations as [recommendation, count]}
+            <ItemVerticalListPreview key={keyStrToObj(recommendation)} small />
+          {/each}
+        </SidebarGroup>
+      {/if}
     </RightSidebar>
   </div>
   <RecommendModal bind:open={recommendModalOpen} key={collection.keyObj} />
