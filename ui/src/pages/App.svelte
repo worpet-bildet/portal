@@ -8,6 +8,7 @@
     keyStrFromObj,
     getReviews,
     getReviewsByTo,
+    getMoreFromThisShip,
   } from '@root/state';
   import { getMeta, fromUrbitTime } from '@root/util';
   import {
@@ -15,6 +16,7 @@
     RecommendModal,
     FeedPost,
     FeedPostForm,
+    ItemVerticalListPreview,
   } from '@components';
   import {
     RightSidebar,
@@ -163,9 +165,11 @@
     isReviewedByMe = reviews.find((r) => r.ship === me);
   };
 
+  let sortedRecommendations = [];
   state.subscribe((s) => {
     if (!s.isLoaded) return;
     loadApp(s);
+    sortedRecommendations = getMoreFromThisShip(ship).slice(0, 4);
   });
 
   const uninstall = () => {
@@ -257,9 +261,6 @@
       {reviews}
       type="app"
     >
-      <div class="flex w-full items-center justify-center bg-panels">
-        Installing apps with Portal is currently broken. We're working on a fix.
-      </div>
       <Tabs bind:activeTab {tabs} />
       {#if activeTab === 'Screenshots'}
         <div class="grid grid-cols-9 gap-4">
@@ -375,7 +376,7 @@
         {:else if isInstalling}
           <IconButton loading>Installing...</IconButton>
         {:else}
-          <IconButton icon={InstallIcon} on:click={install} async
+          <IconButton icon={InstallIcon} on:click={() => window.open(`${window.location.origin}/apps/grid/search/${ship}/apps/${ship}/${cord}`)}
             >Install</IconButton
           >
         {/if}
@@ -394,6 +395,14 @@
           >
         {/if}
       </SidebarGroup>
+      {#if sortedRecommendations.length > 0}
+        <SidebarGroup>
+          <div class="text-lg mx-1">More from {ship}</div>
+          {#each sortedRecommendations as [recommendation, count]}
+            <ItemVerticalListPreview key={keyStrToObj(recommendation)} small />
+          {/each}
+        </SidebarGroup>
+      {/if}
     </RightSidebar>
   </div>
   <RecommendModal bind:open={recommendModalOpen} key={keyStrToObj(itemKey)} />
