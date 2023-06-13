@@ -3,6 +3,7 @@ import * as linkify from 'linkifyjs';
 export const getMeta = (item) => {
   return {
     title: getTitle(item) || item?.keyObj?.cord,
+    nickname: getNickname(item),
     description: getDescription(item),
     blurb: getBlurb(item),
     image: getImage(item),
@@ -33,6 +34,14 @@ export const getTitle = (item) => {
         : item?.keyObj?.ship;
     default:
       return item?.bespoke?.title;
+  }
+};
+export const getNickname = (item) => {
+  switch (item?.keyObj?.struc) {
+    case 'ship':
+      return item?.bespoke?.nickname;
+    default:
+      return getTitle(item);
   }
 };
 export const getDescription = (item) => {
