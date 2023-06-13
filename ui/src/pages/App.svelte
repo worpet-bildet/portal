@@ -251,6 +251,20 @@
     });
   };
 
+  const deleteScreenshot = (screenshot) => {
+    screenshots = screenshots.filter((s) => s !== screenshot);
+    poke({
+      app: 'portal-manager',
+      mark: 'portal-action',
+      json: {
+        edit: {
+          key: keyStrToObj(defKey),
+          bespoke: { app: { ...item?.bespoke, screenshots } },
+        },
+      },
+    });
+  };
+
   let activeTab = 'Screenshots';
   let tabs = ['Screenshots', 'Reviews', 'Info'];
 </script>
@@ -276,15 +290,25 @@
             </div>
           {/if}
           {#each screenshots as screenshot}
-            <a href={screenshot} target="_blank" class="col-span-3">
-              <div class=" border shadow rounded-lg overflow-hidden h-full">
+            <div
+              class="relative border shadow rounded-lg overflow-hidden h-full col-span-3"
+            >
+              <a href={screenshot} target="_blank" class="">
                 <img
                   src={screenshot}
                   class="h-full object-cover"
                   alt="Screenshot"
                 />
-              </div>
-            </a>
+              </a>
+              {#if me === ship}
+                <button
+                  class="absolute top-0 right-0 px-3 py-2 border bg-dark rounded-md text-white"
+                  on:click={() => deleteScreenshot(screenshot)}
+                >
+                  X
+                </button>
+              {/if}
+            </div>
           {/each}
         </div>
         {#if me === ship}
