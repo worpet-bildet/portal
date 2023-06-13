@@ -98,7 +98,7 @@
     =/  msg  !<(message vase)
     ?+    -.msg  !!
         %sign-app
-      ?>  (validate-sig dist-desk.msg src.bowl our.bowl now.bowl sig.msg)
+      ?>  (validate-sig dist-desk.msg our.bowl our.bowl now.bowl sig.msg)
       ~&  >  "%portal: sig is valid!"
       =/  dist-desk  (parse-dist-desk:misc dist-desk.msg)
       ?~  dist-desk  !!
