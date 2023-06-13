@@ -69,7 +69,8 @@
 </script>
 
 {#if curator}
-  {@const { title, cover, image, description, color } = getMeta(curator)}
+  {@const { title, nickname, cover, image, description, color } =
+    getMeta(curator)}
   <div class="grid grid-cols-12 gap-x-8">
     <ItemDetail
       {cover}
@@ -132,7 +133,7 @@
       {#if curator?.bespoke?.groups?.length > 0}
         <SidebarGroup>
           <div class="grid gap-y-4">
-            <div class="text-lg mx-1">{patp} recommends</div>
+            <div class="text-lg mx-1">{nickname || patp} recommends</div>
             {#each curator.bespoke.groups as key}
               <ItemVerticalListPreview
                 small
@@ -149,8 +150,8 @@
       {/if}
       {#if sortedRecommendations.length > 0}
         <SidebarGroup>
-          <div class="text-lg mx-1">More from {patp}</div>
-          {#each sortedRecommendations as [recommendation, count]}
+          <div class="text-lg mx-1">More from {nickname || patp}</div>
+          {#each sortedRecommendations as [recommendation]}
             <ItemVerticalListPreview key={keyStrToObj(recommendation)} small />
           {/each}
         </SidebarGroup>
