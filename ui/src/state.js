@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { get, writable } from 'svelte/store';
 import {
   getPortalItems,
@@ -229,15 +230,22 @@ export const getMoreFromThisShip = (patp) => {
 // };
 
 export const getAllCollectionsAndItems = (collectionKey) => {
-  return get(state)[collectionKey]?.bespoke?.['key-list'].concat(Object.values(Object.fromEntries(
-    Object.entries(get(state)).filter(
-      ([key]) => key.includes('/collection/')
-      ).filter(
-        ([key]) => !key.includes('published')
-        ).filter(
-          ([key]) => !key.includes('all')
-          )
-      )).map(item => item.keyObj)).concat(Object.keys(get(state)['profiles']).map(profileKeyToItemKey).map(profileStrToObj));
+  return get(state)
+    [collectionKey]?.bespoke?.['key-list'].concat(
+      Object.values(
+        Object.fromEntries(
+          Object.entries(get(state))
+            .filter(([key]) => key.includes('/collection/'))
+            .filter(([key]) => !key.includes('published'))
+            .filter(([key]) => !key.includes('all'))
+        )
+      ).map((item) => item.keyObj)
+    )
+    .concat(
+      Object.keys(get(state)['profiles'])
+        .map(profileKeyToItemKey)
+        .map(profileStrToObj)
+    );
 };
 
 export const getCollectionItems = (collectionKey) => {
@@ -258,6 +266,10 @@ export const getRepliesByTo = (ship, key) => {
       item.find((i) => keyStrFromObj(i) === keyStrFromObj(key))
     )
     .map(([replyKey, _]) => keyStrToObj(replyKey));
+};
+
+export const getLikes = (ship, key) => {
+  return get(state).social?.[`/${ship}/like-from`]?.[keyStrFromObj(key)];
 };
 
 export const getReviews = (ship, key) => {
@@ -289,10 +301,13 @@ export const handleSubscriptionEvent = (event, type) => {
             if (!s.social[socialKey][socialUpdate]) {
               s.social[socialKey][socialUpdate] = [];
             }
-            s.social[socialKey][socialUpdate] = [
-              ...s.social[socialKey][socialUpdate],
-              ...event.app[socialKey][socialUpdate],
-            ];
+            s.social[socialKey][socialUpdate] = _.uniqBy(
+              [
+                ...s.social[socialKey][socialUpdate],
+                ...event.app[socialKey][socialUpdate],
+              ],
+              keyStrFromObj
+            );
           }
         }
         return s;
@@ -357,10 +372,10 @@ export const keyStrToObj = (str) => {
 export const profileStrToObj = (str) => {
   const parts = str.split('/');
   return {
-    struc: "ship",
+    struc: 'ship',
     ship: parts[1],
-    cord: "",
-    time: "",
+    cord: '',
+    time: '',
   };
 };
 

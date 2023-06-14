@@ -11,18 +11,28 @@
     getCurator,
     getReplies,
     getRepliesByTo,
+    getLikes,
   } from '@root/state';
   import { getMeta, fromUrbitTime, getAnyLink, isImage } from '@root/util';
   import { ItemVerticalListPreview, Sigil, FeedPostForm } from '@components';
-  import { ChatIcon, IconButton, LinkPreview, StarRating } from '@fragments';
+  import {
+    ChatIcon,
+    LikeIcon,
+    LikedIcon,
+    IconButton,
+    LinkPreview,
+    StarRating,
+  } from '@fragments';
 
   export let key;
   export let allowReplies = true;
+  export let allowLikes = true;
   export let showRating;
 
   let item;
   let subscribingTo = {};
   let replies = [];
+  let likeCount, likedByMe;
   state.subscribe((s) => {
     item = getItem(keyStrFromObj(key));
     if (s.isLoaded && !item && !subscribingTo[keyStrFromObj(key)]) {
@@ -43,13 +53,18 @@
         );
       })
       .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
+
+    let likes = [...(getLikes(key.ship, key) || [])];
+
+    likeCount = likes.length;
+    likedByMe = likes.find((l) => l.ship === me);
   });
 
   let showCommentForm = false;
 
-  const handlePostComment = ({
+  function handlePostComment({
     detail: { content, uploadedImageUrl, replyTo },
-  }) => {
+  }) {
     return poke({
       app: 'portal-manager',
       mark: 'portal-action',
@@ -73,6 +88,25 @@
         },
       },
     });
+  }
+
+  const likePost = () => {
+    likedByMe = true;
+    poke({
+      app: 'portal-manager',
+      mark: 'portal-action',
+      json: {
+        'add-tag-request': {
+          our: { struc: 'ship', ship: me, cord: '', time: '' },
+          their: key,
+          'tag-to': `/${me}/like-to`,
+          'tag-from': `/${key.ship}/like-from`,
+        },
+      },
+    });
+  };
+  const unlikePost = () => {
+    likedByMe = false;
   };
 </script>
 
@@ -103,7 +137,9 @@
         class="whitespace-pre-wrap line-clamp-50 flex flex-col gap-2 break-words"
       >
         <div>
-          {@html linkifyHtml(blurb, { attributes: { class: 'text-link' } })}
+          {@html linkifyHtml(blurb, {
+            attributes: { class: 'text-link', target: '_blank' },
+          })}
         </div>
         {#if blurbLink}
           {#if isImage(blurbLink)}
@@ -147,8 +183,8 @@
       </div>
     {/if}
     <div class="col-span-12">
-      {#if allowReplies}
-        <div class="pt-4">
+      <div class="pt-4 flex gap-4">
+        {#if allowReplies}
           <IconButton
             icon={ChatIcon}
             active={showCommentForm}
@@ -158,8 +194,21 @@
               {replies.length}
             {/if}
           </IconButton>
-        </div>
-      {/if}
+        {/if}
+        {#if likedByMe}
+          <div class="text-error">
+            <IconButton icon={LikedIcon} on:click={unlikePost}
+              ><span class="text-black">
+                {likeCount}
+              </span></IconButton
+            >
+          </div>
+        {:else}
+          <IconButton icon={LikeIcon} active={false} on:click={likePost}>
+            {likeCount}
+          </IconButton>
+        {/if}
+      </div>
     </div>
     {#if showCommentForm}
       <div class="flex flex-col gap-4 col-span-12" transition:slide>

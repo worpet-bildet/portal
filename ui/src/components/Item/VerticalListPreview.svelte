@@ -2,7 +2,7 @@
   import { createEventDispatcher } from 'svelte';
   import { push } from 'svelte-spa-router';
   import { state, keyStrFromObj, getItem } from '@root/state';
-  import { subscribeToItem } from '@root/api';
+  import { subscribeToItem, getLinkMetadata } from '@root/api';
   import { getMeta } from '@root/util';
   import { CollectionsSquarePreview, Sigil } from '@components';
   import {
@@ -10,6 +10,7 @@
     TrashIcon,
     EditIcon,
     ExternalDestinationIcon,
+    LinkPreview,
   } from '@fragments';
 
   export let key;
@@ -77,6 +78,10 @@
         <Sigil patp={ship} />
       {:else if struc === 'collection' && !image}
         <CollectionsSquarePreview {key} withTitle={false} />
+      {:else if !image && link}
+        {#await getLinkMetadata(link) then { title, image }}
+          <ItemImage {image} {title} />
+        {/await}
       {:else}
         <ItemImage {image} {title} {color} />
       {/if}
