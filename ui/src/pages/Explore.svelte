@@ -10,7 +10,14 @@
     keyStrFromObj,
   } from '@root/state';
   import { ItemVerticalListPreview } from '@components';
-  import { IconButton, SparklesIcon, AppIcon, GroupIcon, PersonIcon, CollectionIcon } from '@fragments';
+  import {
+    IconButton,
+    SparklesIcon,
+    AppIcon,
+    GroupIcon,
+    PersonIcon,
+    CollectionIcon,
+  } from '@fragments';
 
   let items, activeItems, myItems, urlQuery;
 
@@ -63,7 +70,11 @@
         ([cord, { ship }]) => `/app/${ship}/${cord}/`
       ),
       ...Object.keys(s.profiles).map(profileKeyToItemKey),
-      ...Object.keys(Object.fromEntries(Object.entries(s).filter(([key]) => key.includes('/collection/')))).map(collectionKeyToItemKey)
+      ...Object.keys(
+        Object.fromEntries(
+          Object.entries(s).filter(([key]) => key.includes('/collection/'))
+        )
+      ).map(collectionKeyToItemKey),
     ];
 
     let url = window.location.href;
