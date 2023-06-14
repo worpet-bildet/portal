@@ -577,11 +577,11 @@
     ~&  >  "new feat: add tag request!"
     ?>  ?=([%add-tag-request *] act)
     ::  no safeguards built yet
-    =/  our  (key-to-node:conv from.act)
-    =/  their    (key-to-node:conv to.act)
+    =/  our  (key-to-node:conv our.act)
+    =/  their    (key-to-node:conv their.act)
     :_  state
     %+  snoc  (gra:cards-methods portal-store+[%add-tag tag-to.act our their])
-    :*  %pass  /tag  %agent  [ship.to.act %portal-store]  %poke
+    :*  %pass  /tag  %agent  [ship.their.act %portal-store]  %poke
         %portal-message
         !>([%add-tag-request our.bowl tag-from.act their our])
     ==
