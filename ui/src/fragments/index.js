@@ -12,6 +12,7 @@ export { default as IconButton } from './IconButton.svelte';
 export { default as LinkPreview } from './LinkPreview.svelte';
 export { default as CollectIcon } from './Icons/Collect.svelte';
 export { default as LikeIcon } from './Icons/Like.svelte';
+export { default as LikedIcon } from './Icons/Liked.svelte';
 export { default as ShareIcon } from './Icons/Share.svelte';
 export { default as AddPalIcon } from './Icons/AddPal.svelte';
 export { default as RemovePalIcon } from './Icons/RemovePal.svelte';
