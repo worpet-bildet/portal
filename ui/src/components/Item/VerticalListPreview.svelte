@@ -70,7 +70,7 @@
     class:bg-mdark={selected}
   >
     <div
-      class="border overflow-hidden h-full rounded-md"
+      class="border overflow-hidden rounded-md"
       class:col-span-1={!small}
       class:col-span-2={small}
     >
