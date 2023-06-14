@@ -196,12 +196,13 @@
           </IconButton>
         {/if}
         {#if likedByMe}
-          <div class="text-error">
-            <IconButton icon={LikedIcon} on:click={unlikePost}
-              ><span class="text-black">
-                {likeCount}
-              </span></IconButton
-            >
+          <div class="text-error flex items-center gap-4 p-2">
+            <div class="w-6 h-6">
+              <LikedIcon />
+            </div>
+            <span class="text-black">
+              {likeCount}
+            </span>
           </div>
         {:else}
           <IconButton icon={LikeIcon} active={false} on:click={likePost}>
