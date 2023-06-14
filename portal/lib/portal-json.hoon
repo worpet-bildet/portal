@@ -419,6 +419,7 @@
                 [%delete (ot:dejs ~[key+dejs-key])]
                 [%sub (ot:dejs ~[key+dejs-key])]
                 [%prepend-to-feed (ot:dejs ~[key+dejs-key feed+dejs-feed])]
+                [%add-tag-request (ot:dejs ~[from+dejs-key to+dejs-key tag-from+dejs-path tag-to+dejs-path])]
             ==
     ?+    -.jn    jn
         %create

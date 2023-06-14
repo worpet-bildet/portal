@@ -31,6 +31,8 @@
       ::
       [%replace =key =lens =bespoke]  ::  TODO should it act like put or edit?, i.e. can it create a nonexisting item. NO! (?)
       ::
+      [%add-tag-request from=key to=key tag-from=path tag-to=path]
+      ::      
       [%append =key-list col-key=[struc=%collection =ship =cord time=cord]]
       [%prepend =key-list col-key=[struc=%collection =ship =cord time=cord]]
       ::  removes all instances of key from collection
