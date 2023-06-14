@@ -11,6 +11,7 @@
     getCurator,
     getReplies,
     getRepliesByTo,
+    getLikes,
   } from '@root/state';
   import { getMeta, fromUrbitTime, getAnyLink, isImage } from '@root/util';
   import { ItemVerticalListPreview, Sigil, FeedPostForm } from '@components';
@@ -31,7 +32,7 @@
   let item;
   let subscribingTo = {};
   let replies = [];
-  let likeCount;
+  let likeCount, likedByMe;
   state.subscribe((s) => {
     item = getItem(keyStrFromObj(key));
     if (s.isLoaded && !item && !subscribingTo[keyStrFromObj(key)]) {
@@ -53,7 +54,10 @@
       })
       .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
 
-    likeCount = 0;
+    let likes = [...(getLikes(key.ship, key) || [])];
+
+    likeCount = likes.length;
+    likedByMe = likes.find((l) => l.ship === me);
   });
 
   let showCommentForm = false;
@@ -86,14 +90,23 @@
     });
   }
 
-  let likedByMe = false;
   const likePost = () => {
     likedByMe = true;
-    console.log('liked');
+    poke({
+      app: 'portal-manager',
+      mark: 'portal-action',
+      json: {
+        'add-tag-request': {
+          our: { struc: 'ship', ship: me, cord: '', time: '' },
+          their: key,
+          'tag-to': `/${me}/like-to`,
+          'tag-from': `/${key.ship}/like-from`,
+        },
+      },
+    });
   };
   const unlikePost = () => {
     likedByMe = false;
-    console.log('unliked');
   };
 </script>
 
