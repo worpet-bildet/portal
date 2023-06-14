@@ -137,7 +137,9 @@
         class="whitespace-pre-wrap line-clamp-50 flex flex-col gap-2 break-words"
       >
         <div>
-          {@html linkifyHtml(blurb, { attributes: { class: 'text-link' } })}
+          {@html linkifyHtml(blurb, {
+            attributes: { class: 'text-link', target: '_blank' },
+          })}
         </div>
         {#if blurbLink}
           {#if isImage(blurbLink)}
