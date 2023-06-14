@@ -139,6 +139,10 @@
       %delete  =^(cards state (delete:handle-poke:stor act) [cards this])
       %purge   =^(cards state (purge:handle-poke:stor act) [cards this])
       %destroy  =^(cards state (destroy:handle-poke:stor act) [cards this])
+        %add-tag-request  
+      =^  cards  state 
+      (add-tag-request:handle-poke:stor act)
+      [cards this]
     ==
     ::
       %portal-message
@@ -566,6 +570,21 @@
         `state
       =.  item-sub  (quit:da-item ship.key.act %portal-store path)
       `state
+    ::
+    ++  add-tag-request
+    |=  [act=action]
+    ^+  [*(list card) state]
+    ~&  >  "new feat: add tag request!"
+    ?>  ?=([%add-tag-request *] act)
+    ::  no safeguards built yet
+    =/  our  (key-to-node:conv our.act)
+    =/  their    (key-to-node:conv their.act)
+    :_  state
+    %+  snoc  (gra:cards-methods portal-store+[%add-tag tag-to.act our their])
+    :*  %pass  /tag  %agent  [ship.their.act %portal-store]  %poke
+        %portal-message
+        !>([%add-tag-request our.bowl tag-from.act their our])
+    ==
     --
 ::
 ++  init-sequence

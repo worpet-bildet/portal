@@ -20,22 +20,30 @@
   ++  path-to-key
     |=  [=path]
     ;;  key
+    ~&  >  "new feat: path-to-key depending on path length"
     :^  ;;  struc  -:path
         `ship`(slav %p +<:path)
-        `cord`+>-:path
-        `cord`+>+<:path
+        ?:((gte (lent path) 3) `cord`+>-:path '')
+        ?:((gte (lent path) 4) `cord`+>+<:path '')
   ::
   ++  key-to-node
     |=  [=key]
     ;;  node:gr
     [%entity %portal-store (spat (key-to-path key))]
-  ::
-  :: doesn't work for temp items, because last path element is ''
+  ::  
   ++  node-to-key  
     |=  [=node:gr]
     ;;  key
     ?>  ?=([%entity *] node)
-    (path-to-key (stab name.node))
+    ~&  >  "new feat: transforming to key should now support temp items"
+    =/  p  (trip name.node)
+    =?  p  
+        =('/' (rear p))
+      (snip p)
+    =?  p  
+        =('/' (rear p))
+      (snip p)
+    (path-to-key (stab (crip p)))
   --
 ::
 ++  scry
