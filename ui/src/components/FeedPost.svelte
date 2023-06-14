@@ -92,6 +92,7 @@
 
   const likePost = () => {
     likedByMe = true;
+    likeCount++;
     poke({
       app: 'portal-manager',
       mark: 'portal-action',
