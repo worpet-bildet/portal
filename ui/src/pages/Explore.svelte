@@ -29,34 +29,41 @@
       ];
     }
     if (filters.has('apps')) {
-      activeItems = [...activeItems.filter((k) => k?.struc === 'app')];
+      activeItems = activeItems.filter((k) => k?.struc === 'app');
     }
     if (filters.has('groups')) {
-      activeItems = [...activeItems.filter((k) => k?.struc === 'group')];
+      activeItems = activeItems.filter((k) => k?.struc === 'group');
     }
     if (filters.has('ships')) {
-      activeItems = [...activeItems.filter((k) => k?.struc === 'ship')];
+      activeItems = activeItems.filter((k) => k?.struc === 'ship');
     }
     if (filters.has('collections')) {
-      activeItems = [...activeItems.filter((k) => k?.struc === 'collection')];
+      activeItems = activeItems.filter((k) => k?.struc === 'collection');
     }
   };
 
   let filters = new Set();
   const toggleFilter = (filter) => {
+    let _filters = new Set();
+
+    if (filters.has('new') && filter !== 'new') {
+      _filters.add('new');
+    }
+
     if (filters.has(filter)) {
-      filters.delete(filter);
+      _filters.delete(filter);
     } else {
-      filters.add(filter);
+      _filters.add(filter);
     }
 
     urlQuery = `?filters=`;
-    for (const q of filters) {
+    for (const q of _filters) {
       urlQuery += `${q},`;
     }
 
     window.location.href = `${window.location.origin}${window.location.pathname}#/explore${urlQuery}`;
 
+    filters = _filters;
     refreshItems();
   };
 
@@ -105,9 +112,6 @@
       icon={AppIcon}
       active={filters.has('apps')}
       on:click={() => {
-        if (filters.has('groups')) toggleFilter('groups');
-        if (filters.has('ships')) toggleFilter('ships');
-        if (filters.has('collections')) toggleFilter('collections');
         toggleFilter('apps');
       }}>Apps</IconButton
     >
@@ -115,9 +119,6 @@
       icon={GroupIcon}
       active={filters.has('groups')}
       on:click={() => {
-        if (filters.has('apps')) toggleFilter('apps');
-        if (filters.has('ships')) toggleFilter('ships');
-        if (filters.has('collections')) toggleFilter('collections');
         toggleFilter('groups');
       }}>Groups</IconButton
     >
@@ -125,9 +126,6 @@
       icon={PersonIcon}
       active={filters.has('ships')}
       on:click={() => {
-        if (filters.has('apps')) toggleFilter('apps');
-        if (filters.has('groups')) toggleFilter('groups');
-        if (filters.has('collections')) toggleFilter('collections');
         toggleFilter('ships');
       }}>People</IconButton
     >
@@ -135,9 +133,6 @@
       icon={CollectionIcon}
       active={filters.has('collections')}
       on:click={() => {
-        if (filters.has('apps')) toggleFilter('apps');
-        if (filters.has('groups')) toggleFilter('groups');
-        if (filters.has('ships')) toggleFilter('ships');
         toggleFilter('collections');
       }}>Collections</IconButton
     >
