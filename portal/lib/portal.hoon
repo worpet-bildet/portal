@@ -20,7 +20,6 @@
   ++  path-to-key
     |=  [=path]
     ;;  key
-    ~&  >  "new feat: path-to-key depending on path length"
     :^  ;;  struc  -:path
         `ship`(slav %p +<:path)
         ?:((gte (lent path) 3) `cord`+>-:path '')
@@ -35,7 +34,6 @@
     |=  [=node:gr]
     ;;  key
     ?>  ?=([%entity *] node)
-    ~&  >  "new feat: transforming to key should now support temp items"
     =/  p  (trip name.node)
     ::  TODO if blog paths allowed to have trailing /, we needs to be fixed
     =?  p  

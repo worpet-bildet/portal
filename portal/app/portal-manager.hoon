@@ -191,7 +191,6 @@
         [[%paths ~] *]
       ::  init is actually not a biggie, it's done only on state %2->%3 in blog while the uri doesnt exist yet
       ::
-      ~&  >  "new feat: blog sync"
       ?~  wave.msg  `this
       =/  create-my-blogs
         :~  %-  ~(act cards [our.bowl %portal-store])
@@ -210,7 +209,6 @@
           ~[[%collection our.bowl '' 'published-blogs']]  ~  ~  ==
       ?-  -.u.wave.msg
           %init
-        ~&  >  "init"
         ::  needs testing
         =/  cards 
           =+  ~(tap in paths.u.wave.msg)
@@ -222,13 +220,11 @@
         :_  this  (welp create-my-blogs cards)
         ::
           %post 
-        ~&  >  "post"
         :_  this
         %+  snoc  create-my-blogs
         (create-blog-card ~ (spat path.u.wave.msg))
         ::
           %depost
-        ~&  >  "depost"
         :_  this
         :~  %-  ~(act cards [our.bowl %portal-store])
             :+  %remove
@@ -237,7 +233,6 @@
         ==
         ::
           %uri
-        ~&  >  "uri"
         =/  item  %-  ~(get-item scry our.bowl now.bowl)
                   [%collection our.bowl '' 'published-blogs']
         ?>  ?=([%collection *] bespoke.item)
@@ -403,8 +398,6 @@
         [our.bowl %treaty]  %watch  /treaty/(scot %p ship)/[desk]
     ==
   =^  cards-2  sub-blog-paths  (surf:da-blog-paths our.bowl %blog [%paths ~])
-  ~&  >  "new feat: blog sub"
-  ~&  >  "care -> difference in timers"
   =/  sub-init  [%sub [%collection portal-indexer '' '~2000.1.1']]
   :_  state
   ;:  welp 

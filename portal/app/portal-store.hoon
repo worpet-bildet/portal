@@ -574,7 +574,6 @@
     ++  add-tag-request
     |=  [act=action]
     ^+  [*(list card) state]
-    ~&  >  "new feat: add tag request!"
     ?>  ?=([%add-tag-request *] act)
     ::  no safeguards built yet
     =/  our  (key-to-node:conv our.act)
