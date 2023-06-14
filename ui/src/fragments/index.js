@@ -19,6 +19,7 @@ export { default as ChatIcon } from './Icons/Chat.svelte';
 export { default as DiaryIcon } from './Icons/Diary.svelte';
 export { default as HeapIcon } from './Icons/Heap.svelte';
 export { default as PersonIcon } from './Icons/Person.svelte';
+export { default as CollectionIcon } from './Icons/Collection.svelte';
 export { default as EditIcon } from './Icons/Edit.svelte';
 export { default as ExternalDestinationIcon } from './Icons/ExternalDestination.svelte';
 export { default as PlusIcon } from './Icons/Plus.svelte';

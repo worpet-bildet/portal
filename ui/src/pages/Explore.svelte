@@ -5,10 +5,12 @@
     state,
     getCuratorAllCollectionItems,
     groupKeyToItemKey,
+    profileKeyToItemKey,
+    collectionKeyToItemKey,
     keyStrFromObj,
   } from '@root/state';
   import { ItemVerticalListPreview } from '@components';
-  import { IconButton, SparklesIcon, AppIcon, GroupIcon } from '@fragments';
+  import { IconButton, SparklesIcon, AppIcon, GroupIcon, PersonIcon, CollectionIcon } from '@fragments';
 
   let items, activeItems, myItems, urlQuery;
 
@@ -24,6 +26,12 @@
     }
     if (filters.has('groups')) {
       activeItems = [...activeItems.filter((k) => k?.struc === 'group')];
+    }
+    if (filters.has('ships')) {
+      activeItems = [...activeItems.filter((k) => k?.struc === 'ship')];
+    }
+    if (filters.has('collections')) {
+      activeItems = [...activeItems.filter((k) => k?.struc === 'collection')];
     }
   };
 
@@ -54,6 +62,8 @@
       ...Object.entries(s.apps).map(
         ([cord, { ship }]) => `/app/${ship}/${cord}/`
       ),
+      ...Object.keys(s.profiles).map(profileKeyToItemKey),
+      ...Object.keys(Object.fromEntries(Object.entries(s).filter(([key]) => key.includes('/collection/')))).map(collectionKeyToItemKey)
     ];
 
     let url = window.location.href;
@@ -85,6 +95,8 @@
       active={filters.has('apps')}
       on:click={() => {
         if (filters.has('groups')) toggleFilter('groups');
+        if (filters.has('ships')) toggleFilter('ships');
+        if (filters.has('collections')) toggleFilter('collections');
         toggleFilter('apps');
       }}>Apps</IconButton
     >
@@ -93,8 +105,30 @@
       active={filters.has('groups')}
       on:click={() => {
         if (filters.has('apps')) toggleFilter('apps');
+        if (filters.has('ships')) toggleFilter('ships');
+        if (filters.has('collections')) toggleFilter('collections');
         toggleFilter('groups');
       }}>Groups</IconButton
+    >
+    <IconButton
+      icon={PersonIcon}
+      active={filters.has('ships')}
+      on:click={() => {
+        if (filters.has('apps')) toggleFilter('apps');
+        if (filters.has('groups')) toggleFilter('groups');
+        if (filters.has('collections')) toggleFilter('collections');
+        toggleFilter('ships');
+      }}>People</IconButton
+    >
+    <IconButton
+      icon={CollectionIcon}
+      active={filters.has('collections')}
+      on:click={() => {
+        if (filters.has('apps')) toggleFilter('apps');
+        if (filters.has('groups')) toggleFilter('groups');
+        if (filters.has('ships')) toggleFilter('ships');
+        toggleFilter('collections');
+      }}>Collections</IconButton
     >
   </div>
   {#if items}

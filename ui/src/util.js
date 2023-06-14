@@ -231,7 +231,7 @@ export const isLightColor = (hex) => {
 export const isValidPatp = (patp) => {
   if (!patp) return false;
   let _patp = '';
-  if (/(^[~|\w])/i.test(patp)) {
+  if (/(^[~])/i.test(patp)) {
     _patp = patp;
   } else {
     _patp = `~${patp}`;

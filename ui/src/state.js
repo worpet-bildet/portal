@@ -160,7 +160,7 @@ export const getCuratorCollections = (patp) => {
 };
 
 export const getCuratorAllCollectionItems = (patp) => {
-  return getCollectionItems(allCollectionKey(patp));
+  return getAllCollectionsAndItems(allCollectionKey(patp));
 };
 
 export const getCuratorFeaturedCollection = (patp) => {
@@ -227,6 +227,18 @@ export const getMoreFromThisShip = (patp) => {
 // export const getProfile = (ship) => {
 //   return get(state).profiles?.[ship];
 // };
+
+export const getAllCollectionsAndItems = (collectionKey) => {
+  return get(state)[collectionKey]?.bespoke?.['key-list'].concat(Object.values(Object.fromEntries(
+    Object.entries(get(state)).filter(
+      ([key]) => key.includes('/collection/')
+      ).filter(
+        ([key]) => !key.includes('published')
+        ).filter(
+          ([key]) => !key.includes('all')
+          )
+      )).map(item => item.keyObj)).concat(Object.keys(get(state)['profiles']).map(profileKeyToItemKey).map(profileStrToObj));
+};
 
 export const getCollectionItems = (collectionKey) => {
   return get(state)[collectionKey]?.bespoke?.['key-list'];
@@ -320,6 +332,14 @@ export const groupKeyToItemKey = (groupKey) => {
   return `/group/${parts[0]}/${parts[1]}/`;
 };
 
+export const profileKeyToItemKey = (profileKey) => {
+  return `/${profileKey}/`;
+};
+
+export const collectionKeyToItemKey = (collectionKey) => {
+  return `${collectionKey}`;
+};
+
 export const keyStrFromObj = ({ struc, ship, cord, time }) => {
   return `/${struc}/${ship}/${cord}/${time}`;
 };
@@ -331,6 +351,16 @@ export const keyStrToObj = (str) => {
     ship: parts[2],
     cord: parts[3],
     time: parts[4],
+  };
+};
+
+export const profileStrToObj = (str) => {
+  const parts = str.split('/');
+  return {
+    struc: "ship",
+    ship: parts[1],
+    cord: "",
+    time: "",
   };
 };
 
