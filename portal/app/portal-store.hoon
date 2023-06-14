@@ -92,7 +92,7 @@
     =/  path  [%item (key-to-path:conv key.item)]
     =.  state  state.q
     ?:  =(lens.item %temp)  q                        ::  if %temp, no need
-    ?.  ?=(?(%collection %feed %app) struc.key.item)      ::  if not %col or %feed or %app
+    ?.  ?=(?(%collection %feed %app %blog) struc.key.item)      ::  if not %col or %feed or %app
       q
       :: ?~  (find [path]~ item-paths)
         :: :_  state.q
@@ -110,7 +110,7 @@
     |=  [p=[=ship =dude:gall =path] q=[state=state-2]]
     =/  key  (path-to-key:conv +:path.p)
     =.  state  state.q
-    ?.  ?=(?(%feed %collection %app) struc.key)
+    ?.  ?=(?(%feed %collection %app %blog) struc.key)
       =.  item-sub.state.q  (quit:da-item ship.key %portal-store path.p)
       [p state.q]
     [p state.q]
@@ -379,7 +379,7 @@
       =/  path  [%item (key-to-path:conv key.act)]
       ::  note SSS only for feeds and collections is also temporary fix
       ::  because it is not scalable as well
-      ?.  ?=(?(%feed %collection %app) struc.key.act)
+      ?.  ?=(?(%feed %collection %app %blog) struc.key.act)
         ?:  (~(has by items) key.act)  `state
         :_  state
         %+  snoc  `(list card)`(track-gr:cards-methods ship.key.act)

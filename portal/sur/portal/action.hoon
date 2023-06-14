@@ -25,6 +25,7 @@
                   [%collection title=(unit @t) blurb=(unit @t) image=(unit @t) key-list=(unit key-list)]  ::does it need link?
                   [%feed feed=(unit feed)]
                   [%retweet blurb=(unit @t) ref=(unit key)]
+                  [%blog title=(unit @t) blurb=(unit @t) uri=(unit @t) path=(unit @t) image=(unit @t)]
               ==
         ==
       ==

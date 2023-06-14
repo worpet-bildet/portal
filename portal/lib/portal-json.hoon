@@ -134,7 +134,7 @@
     ^-  json
     :-  %a
     %+  turn  ~(tap in nodes)  enjs-node-to-key
-  ++  enjs-node-to-key  ::  will crash on temp item
+  ++  enjs-node-to-key
     |=  [=node:gr]
     ^-  json
     %-  enjs-key
@@ -479,6 +479,7 @@
             [%collection json]
             [%retweet json]
             [%review json]
+            [%blog json]
         ==
     ?-    -.jn
         %other
@@ -522,6 +523,16 @@
                   ==
       =+  (turn `(list (unit))`raw |=(a=(unit *) (fall a ~)))
       (some review+(pole-to-cell -))
+        %blog
+      =/  raw  %.  ;;((map @t json) +>:jn)
+      %-  ot-raw  :~  title+so
+                      blurb+so
+                      uri+so
+                      path+so
+                      image+so
+                  ==
+      =+  (turn `(list (unit))`raw |=(a=(unit *) (fall a ~)))
+      (some blog+(pole-to-cell raw))
     ==
   ::
   ++  dejs-soft-bespoke-edit  ::use ot-raw
@@ -534,6 +545,7 @@
                 [%collection json]
                 [%retweet json]
                 [%review json]
+                [%blog json]
             ==
     ?-    -.jn
         %other
@@ -573,6 +585,15 @@
                       rating+ni
                   ==
       (some review+(pole-to-cell raw))
+        %blog
+      =/  raw  %.  ;;((map @t json) +>:jn)
+      %-  ot-raw  :~  title+so
+                      blurb+so
+                      uri+so
+                      path+so
+                      image+so
+                  ==
+      (some blog+(pole-to-cell raw))
     ==
   ::
   ++  dejs-key-text

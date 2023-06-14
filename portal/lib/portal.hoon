@@ -37,6 +37,7 @@
     ?>  ?=([%entity *] node)
     ~&  >  "new feat: transforming to key should now support temp items"
     =/  p  (trip name.node)
+    ::  TODO if blog paths allowed to have trailing /, we needs to be fixed
     =?  p  
         =('/' (rear p))
       (snip p)
@@ -335,6 +336,16 @@
         :*  %retweet
             (fall blurb.u.bespoke.act blurb.bespoke.item)
             (fall ref.u.bespoke.act ref.bespoke.item)
+        ==
+        ::
+          %blog
+        ?>  ?=(%blog -.bespoke.item)
+        :*  %blog
+            (fall title.u.bespoke.act title.bespoke.item)
+            (fall blurb.u.bespoke.act blurb.bespoke.item)
+            (fall uri.u.bespoke.act uri.bespoke.item)
+            (fall path.u.bespoke.act path.bespoke.item)
+            (fall image.u.bespoke.act image.bespoke.item)
         ==
       ==
     ==

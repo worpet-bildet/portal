@@ -1,5 +1,5 @@
 /-  *portal-data, *portal-action, *portal-message, portal-config,
-    groups, treaty, portal-devs
+    groups, treaty, portal-devs, blog-paths
 /+  default-agent, dbug, *portal, io=agentio, *sig, *sss
 |%
 +$  versioned-state
@@ -9,6 +9,20 @@
       state-3:portal-config
       state-4:portal-config
       state-5
+      state-6
+  ==
++$  state-6
+  $:  %6
+      sub-blog-paths=_(mk-subs blog-paths ,[%paths ~])
+      sub-portal-devs=_(mk-subs portal-devs ,[%portal-devs ~])
+      =dev-map:portal-config
+      =portal-curator:portal-config
+      =portal-indexer:portal-config
+      =purge-timer:portal-config
+      =purge-time:portal-config
+      =indexed-as-curator:portal-config
+      =onboarded:portal-config
+      =our-apps:portal-config
   ==
 +$  state-5
   $:  %5
@@ -25,18 +39,21 @@
 +$  card  card:agent:gall
 --
 %-  agent:dbug
-=|  state-5
+=|  state-6
 =*  state  -
 ^-  agent:gall
 =<
 |_  =bowl:gall
+::  can I do all of this +* in the helper core?
 +*  this        .
     default     ~(. (default-agent this %|) bowl)
     helper      ~(. +> bowl)
     da-portal-devs  =/  da  (da portal-devs ,[%portal-devs ~])
       (da sub-portal-devs bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
+    da-blog-paths   =/  da  (da blog-paths ,[%paths ~])
+      (da sub-blog-paths bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
 ++  on-init
-  =.  state  *state-5
+  =.  state  *state-6
   =.  our-apps.state  ;;  our-apps:portal-config
     %-  tail
     .^  update:alliance:treaty  %gx
@@ -52,9 +69,10 @@
   =/  old  !<(versioned-state vase)
   =.  state
     ?-  -.old
-      ?(%0 %1 [%2 *] %3)  [%5 (mk-subs portal-devs ,[%portal-devs ~]) ~ +:*state-4:portal-config]
-      %4                  [%5 (mk-subs portal-devs ,[%portal-devs ~]) ~ +.old]  ::  TODO test
-      %5                  old
+      ?(%0 %1 [%2 *] %3)  [%6 (mk-subs blog-paths ,[%paths ~]) (mk-subs portal-devs ,[%portal-devs ~]) ~ +:*state-4:portal-config]
+      %4                  [%6 (mk-subs blog-paths ,[%paths ~]) (mk-subs portal-devs ,[%portal-devs ~]) ~ +.old]  ::  TODO test
+      %5                  [%6 (mk-subs blog-paths ,[%paths ~]) +.old]
+      %6                  old
     ==
   =^  cards  state  init-sequence:helper
   [cards this]
@@ -108,13 +126,13 @@
               [%collection our.bowl '' 'published-apps']
           ~
         :~
-          %-  ~(act cards [[our.bowl %portal-store]])
+          %-  ~(act cards [our.bowl %portal-store])
             :*  %create  ~  ~  `'published-apps'  `%def
                 `[%collection 'My Apps' 'Collection of all apps I have published.' '' ~]
                 [%collection our.bowl '' '~2000.1.1']~  ~  ~  ==
         ==
       =/  create-app
-        %-  ~(act cards [[our.bowl %portal-store]])
+        %-  ~(act cards [our.bowl %portal-store])
         ?:  %-  ~(item-exists scry our.bowl now.bowl)
             [%app our.bowl '' desk-name.u.dist-desk]
           :^    %replace
@@ -141,39 +159,112 @@
     ==
     ::
       %sss-on-rock
-    =/  msg  !<(from:da-portal-devs (fled vase))
-    ?<  ?=([%crash *] rock.msg)
-    ?~  wave.msg  `this
-    ?-  -.u.wave.msg
-        %init
-      =+  ~(tap by rock.u.wave.msg)
-      =/  upd
-        %-  malt
-        %+  turn  -
-        |=  [p=[=ship =desk] q=ship]
-        :_  q
-        (crip ;:(welp (scow %p ship.p) "/" (scow %tas desk.p)))
-      =.  dev-map  (~(uni by dev-map) upd)
-      ::  TODO sub to all received apps
-      ::  but I think %init as of right now is only ~
-      :_  this  (dev-map-upd upd)
+    ?-  msg=!<($%(from:da-portal-devs from:da-blog-paths) (fled vase))
+        [[%portal-devs ~] *]
+      ?~  wave.msg  `this
+      ?-  -.u.wave.msg
+          %init
+        =+  ~(tap by rock.u.wave.msg)
+        =/  upd
+          %-  malt
+          %+  turn  -
+          |=  [p=[=ship =desk] q=ship]
+          :_  q
+          (crip ;:(welp (scow %p ship.p) "/" (scow %tas desk.p)))
+        =.  dev-map  (~(uni by dev-map) upd)
+        ::  TODO sub to all received apps
+        ::  but I think %init as of right now is only ~
+        :_  this  (dev-map-upd upd)
+        ::
+          %put
+        ::  we are accidentally subbing to all items from a publisher, but thats not really a problem
+        =/  dist-desk  (crip ;:(welp (scow %p ship.key.u.wave.msg) "/" (scow %tas desk.key.u.wave.msg)))
+        =.  dev-map  (~(put by dev-map) dist-desk dev.u.wave.msg)
+        :_  this
+        %+  snoc  (dev-map-upd (malt (limo ~[[dist-desk dev.u.wave.msg]])))
+        [(~(poke pass:io /sub) [our.bowl %portal-store] portal-action+!>([%sub [%app dev '' desk.key]:u.wave.msg]))]
+        ::
+          %del
+        `this
+      ==
       ::
-        %put
-      ::  we are accidentally subbing to all items from a publisher, but thats not really a problem
-      =/  dist-desk  (crip ;:(welp (scow %p ship.key.u.wave.msg) "/" (scow %tas desk.key.u.wave.msg)))
-      =.  dev-map  (~(put by dev-map) dist-desk dev.u.wave.msg)
-      :_  this
-      %+  snoc  (dev-map-upd (malt (limo ~[[dist-desk dev.u.wave.msg]])))
-      [(~(poke pass:io /sub) [our.bowl %portal-store] portal-action+!>([%sub [%app dev '' desk.key]:u.wave.msg]))]
+        [[%paths ~] *]
+      ::  init is actually not a biggie, it's done only on state %2->%3 in blog while the uri doesnt exist yet
       ::
-        %del
-      `this
+      ~&  >  "new feat: blog sync"
+      ?~  wave.msg  `this
+      =/  create-my-blogs
+        :~  %-  ~(act cards [our.bowl %portal-store])
+            :*  %create  ~  ~  `'published-blogs'  `%def
+                `[%collection 'My Blogs' 'Collection of all blogs I have published.' '' ~]
+                [%collection our.bowl '' '~2000.1.1']~  ~  ~  ==
+        ==
+      =/  create-blog-card
+        |=  [uri=(unit @t) path=@t]
+        %-  ~(act cards [our.bowl %portal-store])
+        ?:  %-  ~(item-exists scry our.bowl now.bowl)
+            [%blog our.bowl '' path]
+          [%append [%blog our.bowl '' path]~ [%collection our.bowl '' 'published-blogs']]
+        :*  %create  ~  ~  `path  `%def
+          `[%blog '' '' (fall uri '') path '']
+          ~[[%collection our.bowl '' 'published-blogs']]  ~  ~  ==
+      ?-  -.u.wave.msg
+          %init
+        ~&  >  "init"
+        ::  needs testing
+        =/  cards 
+          =+  ~(tap in paths.u.wave.msg)
+          %-  tail  %^  spin  -  *(list card)
+          |=  [=path cards=(list card)]
+          :-  path
+          %+  snoc  cards
+          (create-blog-card ~ (spat path))
+        :_  this  (welp create-my-blogs cards)
+        ::
+          %post 
+        ~&  >  "post"
+        :_  this
+        %+  snoc  create-my-blogs
+        (create-blog-card ~ (spat path.u.wave.msg))
+        ::
+          %depost
+        ~&  >  "depost"
+        :_  this
+        :~  %-  ~(act cards [our.bowl %portal-store])
+            :+  %remove
+              [%blog our.bowl '' (spat path.u.wave.msg)]~
+            [%collection our.bowl '' 'published-blogs']
+        ==
+        ::
+          %uri
+        ~&  >  "uri"
+        =/  item  %-  ~(get-item scry our.bowl now.bowl)
+                  [%collection our.bowl '' 'published-blogs']
+        ?>  ?=([%collection *] bespoke.item)
+        =/  cards 
+          %-  tail  %^  spin  key-list.bespoke.item  *(list card)
+          |=  [=key cards=(list card)]
+          :-  key
+          %+  snoc  cards
+          ^-  card
+          %-  ~(act ^cards [our.bowl %portal-store])
+          :^    %edit
+              [%blog our.bowl '' time.key]
+            ~
+          `[%blog ~ ~ `uri.u.wave.msg ~ ~]
+        :_  this  (welp create-my-blogs cards)
+      ==
     ==
     ::
       %sss-portal-devs
     =^  cards  sub-portal-devs
       (apply:da-portal-devs !<(into:da-portal-devs (fled vase)))
     [cards this]
+    ::
+      %sss-blog-paths
+    =^  cards  sub-blog-paths
+      (apply:da-blog-paths !<(into:da-blog-paths (fled vase)))
+    cards^this
   ==
 ::
 ++  on-arvo
@@ -181,6 +272,7 @@
   ^-  (quip card:agent:gall _this)
   ?+  wire  `this
     [~ %sss %behn @ @ @ %portal-devs ~]  [(behn:da-portal-devs |3:wire) this]
+    [~ %sss %behn @ @ @ %paths ~]  [(behn:da-blog-paths |3:wire) this]
   ==
   :: |=  [=wire sign=sign-arvo]
   :: ^-  (quip card:agent:gall _this)
@@ -283,6 +375,14 @@
         [~ %sss %scry-request @ @ @ %portal-devs ~]
       =^  cards  sub-portal-devs  (tell:da-portal-devs |3:wire sign)
       [cards this]
+      ::
+        [~ %sss %on-rock @ @ @ %paths ~]
+      =.  sub-blog-paths  (chit:da-blog-paths |3:wire sign)
+      `this
+        [~ %sss %scry-request @ @ @ %paths ~]
+      =^  cards  sub-blog-paths  (tell:da-blog-paths |3:wire sign)
+      [cards this]
+
     ==
   ==
 ::
@@ -290,6 +390,8 @@
 --
 |_  [=bowl:gall]
 +*  this      .
+    da-blog-paths   =/  da  (da blog-paths ,[%paths ~])
+      (da sub-blog-paths bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
 ::
 ++  init-sequence
   ^+  [*(list card) state]
@@ -300,14 +402,19 @@
     :*  %pass  /our-treaty/(scot %p ship)/[desk]  %agent
         [our.bowl %treaty]  %watch  /treaty/(scot %p ship)/[desk]
     ==
+  =^  cards-2  sub-blog-paths  (surf:da-blog-paths our.bowl %blog [%paths ~])
+  ~&  >  "new feat: blog sub"
+  ~&  >  "care -> difference in timers"
   =/  sub-init  [%sub [%collection portal-indexer '' '~2000.1.1']]
   :_  state
-  %+  welp  cards-1
+  ;:  welp 
+    cards-1
+    cards-2
   ::  sub to home page
-  :~  [(~(act cards [[our.bowl %portal-store]]) sub-init)]
+  :~  [(~(act cards [our.bowl %portal-store]) sub-init)]
   ::  sub to our published apps
       [%pass /our-apps %agent [our.bowl %treaty] %watch /alliance]
-  ==
+  ==  ==
 ::
 ++  dev-map-upd
   |=  =_dev-map
