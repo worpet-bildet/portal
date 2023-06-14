@@ -78,7 +78,7 @@
         <Sigil patp={ship} />
       {:else if struc === 'collection' && !image}
         <CollectionsSquarePreview {key} withTitle={false} />
-      {:else if !image && link}
+      {:else if !image && link && struc !== 'app'}
         {#await getLinkMetadata(link) then { title, image }}
           <ItemImage {image} {title} />
         {/await}
