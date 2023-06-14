@@ -206,7 +206,7 @@
             [%blog our.bowl '' path]
           [%append [%blog our.bowl '' path]~ [%collection our.bowl '' 'published-blogs']]
         :*  %create  ~  ~  `path  `%def
-          `[%blog '' '' (fall uri '') path '']
+          `[%blog (blog-path-to-title path) '' (fall uri '') path '']
           ~[[%collection our.bowl '' 'published-blogs']]  ~  ~  ==
       ?-  -.u.wave.msg
           %init
@@ -421,4 +421,26 @@
   ^-  (list card)
   :~  [%give %fact [/updates]~ %portal-dev-map !>(dev-map)]
   ==
+::
+++  blog-path-to-title
+  |=  p=@t
+  =/  p  (trip p)
+  =?  p  
+      =('/' (rear p))
+    (snip p)
+  =.  p  =+  (flop p)
+    (flop (scag (need (find ['/']~ -)) -))
+  =.  p
+  %-  tail  %^  spin  (fand ['-']~ p)  p
+    |=  [i=@ud p=tape]
+    :-  i
+    =.  p  (snap p i ' ')
+    =?  p
+        &((lth +(i) (lent p)) (gte (snag +(i) p) 'a') (lte (snag +(i) p) 'z'))
+      (snap p +(i) (sub (snag +(i) p) 32))
+    p
+  =?  p
+      &((gte -.p 'a') (lte -.p 'z'))
+    (snap p 0 (sub -.p 32))
+  (crip p)
 --
