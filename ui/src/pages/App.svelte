@@ -185,6 +185,7 @@
       json: cord,
     }).then(refreshApps);
   };
+
   const install = async () => {
     isInstalling = true;
     let distDesk = item?.bespoke?.distDesk || `${ship}/${cord || time}`;
