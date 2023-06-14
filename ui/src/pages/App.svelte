@@ -56,17 +56,17 @@
     recommendModalOpen;
 
   export let params;
-  $: loadApp($state);
+  $: {
+    let { wild } = params;
+    [ship, cord, time] = wild.split('/');
+    loadApp($state);
+  }
 
   let subscribingTo = {};
 
   const loadApp = (s) => {
-    let { wild } = params;
-    [ship, cord, time] = wild.split('/');
-
     // Here we should get the app devs from our state, and check whether we have
     // a mapping for it at the moment
-
     let actualDev;
     if ((actualDev = s?.appDevs?.[`${ship}/${cord}`])) {
       // This means we definitely have a def item, I think?
