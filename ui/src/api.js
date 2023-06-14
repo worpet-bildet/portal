@@ -130,6 +130,14 @@ export const uploadImage = async (file, s3) => {
   return `${s3.credentials.endpoint}/${params.Bucket}/${params.Key}`;
 };
 
+export const getLinkMetadata = async (url) => {
+  const proxyUrl = 'https://preview.foddur-hodler.one/v2';
+  const data = await fetch(`${proxyUrl}?url=${url}`)
+    .then((res) => res.json())
+    .then((r) => r.metadata);
+  return data;
+};
+
 export const addPal = (patp) => {
   return poke({
     app: 'pals',
