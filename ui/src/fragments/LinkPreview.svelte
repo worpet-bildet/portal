@@ -12,11 +12,11 @@
   $: metadata = getLinkMetadata(url);
 </script>
 
-<div
-  class={`flex flex-col rounded-md border text-left bg-panels cursor-pointer`}
-  on:click={clickHandler}
->
-  {#await metadata then data}
+{#await metadata then data}
+  <div
+    class={`flex flex-col rounded-md border text-left bg-panels cursor-pointer`}
+    on:click={clickHandler}
+  >
     <div
       class="w-full h-64 bg-center bg-cover bg-no-repeat"
       style={`background-image:url(${data.image || placeholderImg});`}
@@ -35,5 +35,7 @@
         <span>{data.hostname || ''}</span>
       </div>
     </div>
-  {/await}
-</div>
+  </div>
+{:catch}
+  <div />
+{/await}
