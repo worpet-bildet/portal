@@ -212,17 +212,22 @@
                 `[%collection 'My Blogs' 'Collection of all blogs I have published.' '' ~]
                 [%collection our.bowl '' '~2000.1.1']~  ~  ~  ==
         ==
-      =/  create-blog-card
+      =/  create-blog-cards
         |=  [uri=(unit @t) =path]
         =/  key-time  (path-to-key-time path)
         =/  path  (spat path)
-        %-  ~(act cards [our.bowl %portal-store])
-        ?:  %-  ~(item-exists scry our.bowl now.bowl)
-            [%blog our.bowl '' key-time]
-          [%append [%blog our.bowl '' key-time]~ [%collection our.bowl '' 'published-blogs']]
+        =/  key  [%blog our.bowl '' key-time]
+        ?:  (~(item-exists scry our.bowl now.bowl) key)
+          =/  col
+            (~(get-item scry our.bowl now.bowl) [%collection our.bowl '' 'published-blogs'])
+          ?>  ?=([%collection *] bespoke.col)
+          ?~  (find [key]~ key-list.bespoke.col)
+            [(~(act cards [our.bowl %portal-store]) [%append [key]~ [%collection our.bowl '' 'published-blogs']])]~
+          ~
+        :~  %-  ~(act cards [our.bowl %portal-store])
         :*  %create  ~  ~  `key-time  `%def
           `[%blog (blog-path-to-title path) '' (fall uri '') path '']
-          ~[[%collection our.bowl '' 'published-blogs']]  ~  ~  ==
+          ~[[%collection our.bowl '' 'published-blogs']]  ~  ~  ==  ==
       ?-  -.u.wave.msg
           %init
         ::  needs testing
@@ -231,14 +236,14 @@
           %-  tail  %^  spin  -  *(list card)
           |=  [=path cards=(list card)]
           :-  path
-          %+  snoc  cards
-          (create-blog-card ~ path)
+          %+  welp  cards
+          (create-blog-cards ~ path)
         :_  this  (welp create-my-blogs cards)
         ::
           %post 
         :_  this
-        %+  snoc  create-my-blogs
-        (create-blog-card ~ path.u.wave.msg)
+        %+  welp  create-my-blogs
+        (create-blog-cards ~ path.u.wave.msg)
         ::
           %depost
         :_  this
@@ -435,7 +440,7 @@
   %+  turn  -
   |=  [i=@t]
   ?:  =(i '/')
-    '0'
+    '~'
   i
 
 ::
