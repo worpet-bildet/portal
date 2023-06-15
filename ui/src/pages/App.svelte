@@ -8,6 +8,7 @@
     keyStrFromObj,
     getReviews,
     getReviewsByTo,
+    getMoreFromThisShip,
   } from '@root/state';
   import { getMeta, fromUrbitTime } from '@root/util';
   import {
@@ -15,6 +16,7 @@
     RecommendModal,
     FeedPost,
     FeedPostForm,
+    ItemVerticalListPreview,
   } from '@components';
   import {
     RightSidebar,
@@ -50,20 +52,21 @@
     isInstalling,
     isInstalled,
     servedFrom,
+    subbingToSocialGraph,
     recommendModalOpen;
 
   export let params;
-  $: loadApp($state);
+  $: {
+    let { wild } = params;
+    [ship, cord, time] = wild.split('/');
+    loadApp($state);
+  }
 
   let subscribingTo = {};
 
   const loadApp = (s) => {
-    let { wild } = params;
-    [ship, cord, time] = wild.split('/');
-
     // Here we should get the app devs from our state, and check whether we have
     // a mapping for it at the moment
-
     let actualDev;
     if ((actualDev = s?.appDevs?.[`${ship}/${cord}`])) {
       // This means we definitely have a def item, I think?
@@ -116,8 +119,6 @@
       lens,
     } = getMeta(item));
 
-    console.log({ item, screenshots });
-
     // here we want to get the reviews for the app, which we should be able to
     // do in a similar way as getting comments
     // TODO: Review what ship and key should be here in the case that host is
@@ -133,16 +134,48 @@
       })
       .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
 
+    if (!s?.social?.[`/${ship}/review-from`] && !subbingToSocialGraph && ship) {
+      subbingToSocialGraph = true;
+      console.log({
+        app: 'portal-graph',
+        mark: 'social-graph-track',
+        json: {
+          start: {
+            source: ship,
+            tag: `/${ship}`,
+          },
+        },
+      });
+      poke({
+        app: 'portal-graph',
+        mark: 'social-graph-track',
+        json: {
+          start: {
+            source: ship,
+            tag: `/${ship}`,
+          },
+        },
+      });
+    }
+
     isInstalling =
       s.apps?.[cord]?.chad?.hasOwnProperty('install') || isInstalling;
 
-    isInstalled = !isInstalling && !!s.apps?.[cord || time];
+    isInstalled =
+      (!isInstalling && !!s.apps?.[cord || time]) ||
+      (s.apps?.[cord]?.chad?.hasOwnProperty('site') &&
+        !!s.apps?.[cord || time]);
+
+    if (isInstalled) isInstalling = false;
+
     isReviewedByMe = reviews.find((r) => r.ship === me);
   };
 
+  let sortedRecommendations = [];
   state.subscribe((s) => {
     if (!s.isLoaded) return;
     loadApp(s);
+    sortedRecommendations = getMoreFromThisShip(ship).slice(0, 4);
   });
 
   const uninstall = () => {
@@ -152,6 +185,7 @@
       json: cord,
     }).then(refreshApps);
   };
+
   const install = async () => {
     isInstalling = true;
     let distDesk = item?.bespoke?.distDesk || `${ship}/${cord || time}`;
@@ -169,7 +203,6 @@
   };
 
   const handlePostReview = async ({ detail: { content, rating } }) => {
-    console.log({ me, ship, content, rating, cord });
     poke({
       app: 'portal-manager',
       mark: 'portal-action',
@@ -219,6 +252,20 @@
     });
   };
 
+  const deleteScreenshot = (screenshot) => {
+    screenshots = screenshots.filter((s) => s !== screenshot);
+    poke({
+      app: 'portal-manager',
+      mark: 'portal-action',
+      json: {
+        edit: {
+          key: keyStrToObj(defKey),
+          bespoke: { app: { ...item?.bespoke, screenshots } },
+        },
+      },
+    });
+  };
+
   let activeTab = 'Screenshots';
   let tabs = ['Screenshots', 'Reviews', 'Info'];
 </script>
@@ -234,9 +281,6 @@
       {reviews}
       type="app"
     >
-      <div class="flex w-full items-center justify-center bg-panels">
-        Installing apps with Portal is currently broken. We're working on a fix.
-      </div>
       <Tabs bind:activeTab {tabs} />
       {#if activeTab === 'Screenshots'}
         <div class="grid grid-cols-9 gap-4">
@@ -247,15 +291,25 @@
             </div>
           {/if}
           {#each screenshots as screenshot}
-            <a href={screenshot} target="_blank" class="col-span-3">
-              <div class=" border shadow rounded-lg overflow-hidden h-full">
+            <div
+              class="relative border shadow rounded-lg overflow-hidden h-full col-span-3"
+            >
+              <a href={screenshot} target="_blank" class="">
                 <img
                   src={screenshot}
                   class="h-full object-cover"
                   alt="Screenshot"
                 />
-              </div>
-            </a>
+              </a>
+              {#if me === ship}
+                <button
+                  class="absolute top-0 right-0 px-3 py-2 border bg-dark rounded-md text-white"
+                  on:click={() => deleteScreenshot(screenshot)}
+                >
+                  X
+                </button>
+              {/if}
+            </div>
           {/each}
         </div>
         {#if me === ship}
@@ -352,9 +406,7 @@
         {:else if isInstalling}
           <IconButton loading>Installing...</IconButton>
         {:else}
-          <IconButton icon={InstallIcon} on:click={install} async
-            >Install</IconButton
-          >
+          <IconButton icon={InstallIcon} on:click={install}>Install</IconButton>
         {/if}
         {#if website}
           <IconButton icon={GlobeIcon} on:click={() => window.open(website)}
@@ -371,6 +423,14 @@
           >
         {/if}
       </SidebarGroup>
+      {#if sortedRecommendations.length > 0}
+        <SidebarGroup>
+          <div class="text-lg mx-1">More from {ship}</div>
+          {#each sortedRecommendations as [recommendation, count]}
+            <ItemVerticalListPreview key={keyStrToObj(recommendation)} small />
+          {/each}
+        </SidebarGroup>
+      {/if}
     </RightSidebar>
   </div>
   <RecommendModal bind:open={recommendModalOpen} key={keyStrToObj(itemKey)} />

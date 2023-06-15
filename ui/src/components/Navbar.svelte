@@ -13,7 +13,7 @@
 
   const nav = [
     {
-      title: 'Post',
+      title: 'Feed',
       link: '/',
     },
     {

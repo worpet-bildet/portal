@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { get, writable } from 'svelte/store';
 import {
   getPortalItems,
@@ -160,7 +161,7 @@ export const getCuratorCollections = (patp) => {
 };
 
 export const getCuratorAllCollectionItems = (patp) => {
-  return getCollectionItems(allCollectionKey(patp));
+  return getAllCollectionsAndItems(allCollectionKey(patp));
 };
 
 export const getCuratorFeaturedCollection = (patp) => {
@@ -203,9 +204,49 @@ export const getCollectedItemLeaderboard = (excludePatp) => {
   ).sort((a, b) => b[1] - a[1]);
 };
 
+export const getMoreFromThisShip = (patp) => {
+  return Object.entries(
+    Object.values(get(state))
+      .filter(
+        (k) =>
+          k?.keyObj?.struc === 'collection' &&
+          k?.keyObj?.time !== 'global' &&
+          k?.keyObj?.time !== 'index'
+      )
+      .reduce((a, b) => {
+        b?.bespoke?.['key-list']
+          .filter((k) => k?.struc !== 'collection' && k?.ship === patp)
+          .forEach((k) => {
+            if (!a[keyStrFromObj(k)]) return (a[keyStrFromObj(k)] = 1);
+            a[keyStrFromObj(k)]++;
+          });
+        return a;
+      }, {})
+  ).sort((a, b) => b[1] - a[1]);
+};
+
 // export const getProfile = (ship) => {
 //   return get(state).profiles?.[ship];
 // };
+
+export const getAllCollectionsAndItems = (collectionKey) => {
+  return get(state)
+    [collectionKey]?.bespoke?.['key-list'].concat(
+      Object.values(
+        Object.fromEntries(
+          Object.entries(get(state))
+            .filter(([key]) => key.includes('/collection/'))
+            .filter(([key]) => !key.includes('published'))
+            .filter(([key]) => !key.includes('all'))
+        )
+      ).map((item) => item.keyObj)
+    )
+    .concat(
+      Object.keys(get(state)['profiles'])
+        .map(profileKeyToItemKey)
+        .map(profileStrToObj)
+    );
+};
 
 export const getCollectionItems = (collectionKey) => {
   return get(state)[collectionKey]?.bespoke?.['key-list'];
@@ -225,6 +266,10 @@ export const getRepliesByTo = (ship, key) => {
       item.find((i) => keyStrFromObj(i) === keyStrFromObj(key))
     )
     .map(([replyKey, _]) => keyStrToObj(replyKey));
+};
+
+export const getLikes = (ship, key) => {
+  return get(state).social?.[`/${ship}/like-from`]?.[keyStrFromObj(key)];
 };
 
 export const getReviews = (ship, key) => {
@@ -256,10 +301,13 @@ export const handleSubscriptionEvent = (event, type) => {
             if (!s.social[socialKey][socialUpdate]) {
               s.social[socialKey][socialUpdate] = [];
             }
-            s.social[socialKey][socialUpdate] = [
-              ...s.social[socialKey][socialUpdate],
-              ...event.app[socialKey][socialUpdate],
-            ];
+            s.social[socialKey][socialUpdate] = _.uniqBy(
+              [
+                ...s.social[socialKey][socialUpdate],
+                ...event.app[socialKey][socialUpdate],
+              ],
+              keyStrFromObj
+            );
           }
         }
         return s;
@@ -299,6 +347,14 @@ export const groupKeyToItemKey = (groupKey) => {
   return `/group/${parts[0]}/${parts[1]}/`;
 };
 
+export const profileKeyToItemKey = (profileKey) => {
+  return `/${profileKey}/`;
+};
+
+export const collectionKeyToItemKey = (collectionKey) => {
+  return `${collectionKey}`;
+};
+
 export const keyStrFromObj = ({ struc, ship, cord, time }) => {
   return `/${struc}/${ship}/${cord}/${time}`;
 };
@@ -310,6 +366,16 @@ export const keyStrToObj = (str) => {
     ship: parts[2],
     cord: parts[3],
     time: parts[4],
+  };
+};
+
+export const profileStrToObj = (str) => {
+  const parts = str.split('/');
+  return {
+    struc: 'ship',
+    ship: parts[1],
+    cord: '',
+    time: '',
   };
 };
 

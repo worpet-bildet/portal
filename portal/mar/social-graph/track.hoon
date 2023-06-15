@@ -1,8 +1,9 @@
-/+  g=social-graph
+/+  g=social-graph, portal-json
 |_  =track:g
 ++  grab
   |%
   ++  noun  track:g
+  ++  json  dejs-social-graph-track:dejs:portal-json
   --
 ++  grow
   |%

@@ -3,6 +3,7 @@ import * as linkify from 'linkifyjs';
 export const getMeta = (item) => {
   return {
     title: getTitle(item) || item?.keyObj?.cord,
+    nickname: getNickname(item),
     description: getDescription(item),
     blurb: getBlurb(item),
     image: getImage(item),
@@ -33,6 +34,14 @@ export const getTitle = (item) => {
         : item?.keyObj?.ship;
     default:
       return item?.bespoke?.title;
+  }
+};
+export const getNickname = (item) => {
+  switch (item?.keyObj?.struc) {
+    case 'ship':
+      return item?.bespoke?.nickname;
+    default:
+      return getTitle(item);
   }
 };
 export const getDescription = (item) => {
@@ -148,7 +157,7 @@ export const getAllLinks = (string) => {
 
 export const isUrl = (s) => {
   if (
-    /^(http(s):\/\/.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=,]*)$/g.test(
+    /^(http[s]*:\/\/.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=,]*)$/g.test(
       s
     )
   ) {
@@ -222,7 +231,7 @@ export const isLightColor = (hex) => {
 export const isValidPatp = (patp) => {
   if (!patp) return false;
   let _patp = '';
-  if (/(^[~|\w])/i.test(patp)) {
+  if (/(^[~])/i.test(patp)) {
     _patp = patp;
   } else {
     _patp = `~${patp}`;

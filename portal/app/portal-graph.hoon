@@ -181,9 +181,13 @@
         %start
       ::  %portal modification
       ::  if tag is being tracked already, don't do anything
-      ?^  (~(get by tracking.state) [p -.tag.q^~])  
-        `this
-      ::
+      ::  read:da-sub gives a unit, so if its ~ or non existent (or if rock=~),
+      ::  we proceed, otherwise we dont do anything
+      =+  (~(gut by read:da-sub) [source.q %portal-graph path] ~)
+      ?.  ?|  ?=(~ -)
+              =(~ rock.-)
+          ==
+        `this      
       ::  destroy our local representation of this top-level tag,
       ::  to prepare for synchronization with remote.
       =.  graph.state

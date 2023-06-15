@@ -5,12 +5,24 @@
     state,
     getCuratorAllCollectionItems,
     groupKeyToItemKey,
+    profileKeyToItemKey,
+    collectionKeyToItemKey,
     keyStrFromObj,
+    getItem,
   } from '@root/state';
+  import { getMeta } from '@root/util';
   import { ItemVerticalListPreview } from '@components';
-  import { IconButton, SparklesIcon, AppIcon, GroupIcon } from '@fragments';
+  import {
+    IconButton,
+    SparklesIcon,
+    AppIcon,
+    GroupIcon,
+    PersonIcon,
+    CollectionIcon,
+    SearchIcon,
+  } from '@fragments';
 
-  let items, activeItems, myItems, urlQuery;
+  let items, activeItems, myItems, urlQuery, searchString;
 
   const refreshItems = () => {
     activeItems = items;
@@ -20,28 +32,41 @@
       ];
     }
     if (filters.has('apps')) {
-      activeItems = [...activeItems.filter((k) => k?.struc === 'app')];
+      activeItems = activeItems.filter((k) => k?.struc === 'app');
     }
     if (filters.has('groups')) {
-      activeItems = [...activeItems.filter((k) => k?.struc === 'group')];
+      activeItems = activeItems.filter((k) => k?.struc === 'group');
+    }
+    if (filters.has('ships')) {
+      activeItems = activeItems.filter((k) => k?.struc === 'ship');
+    }
+    if (filters.has('collections')) {
+      activeItems = activeItems.filter((k) => k?.struc === 'collection');
     }
   };
 
   let filters = new Set();
   const toggleFilter = (filter) => {
+    let _filters = new Set();
+
+    if (filters.has('new') && filter !== 'new') {
+      _filters.add('new');
+    }
+
     if (filters.has(filter)) {
-      filters.delete(filter);
+      _filters.delete(filter);
     } else {
-      filters.add(filter);
+      _filters.add(filter);
     }
 
     urlQuery = `?filters=`;
-    for (const q of filters) {
+    for (const q of _filters) {
       urlQuery += `${q},`;
     }
 
     window.location.href = `${window.location.origin}${window.location.pathname}#/explore${urlQuery}`;
 
+    filters = _filters;
     refreshItems();
   };
 
@@ -54,6 +79,12 @@
       ...Object.entries(s.apps).map(
         ([cord, { ship }]) => `/app/${ship}/${cord}/`
       ),
+      ...Object.keys(s.profiles).map(profileKeyToItemKey),
+      ...Object.keys(
+        Object.fromEntries(
+          Object.entries(s).filter(([key]) => key.includes('/collection/'))
+        )
+      ).map(collectionKeyToItemKey),
     ];
 
     let url = window.location.href;
@@ -66,6 +97,26 @@
 
     refreshItems();
   });
+
+  const filterBySearchString = (str) => {
+    refreshItems();
+    if (!activeItems || !str) return [];
+    activeItems = [
+      ...activeItems.filter((i) => {
+        const { title, blurb, ship } = getMeta(getItem(keyStrFromObj(i)));
+        if (
+          (title && title.toLowerCase().indexOf(str.toLowerCase()) !== -1) ||
+          (blurb && blurb.toLowerCase().indexOf(str.toLowerCase()) !== -1) ||
+          (ship && ship.toLowerCase().indexOf(str.toLowerCase()) !== -1)
+        ) {
+          return true;
+        }
+        return false;
+      }),
+    ];
+  };
+
+  $: filterBySearchString(searchString);
 </script>
 
 <div class="flex flex-col gap-4 mb-4">
@@ -84,7 +135,6 @@
       icon={AppIcon}
       active={filters.has('apps')}
       on:click={() => {
-        if (filters.has('groups')) toggleFilter('groups');
         toggleFilter('apps');
       }}>Apps</IconButton
     >
@@ -92,10 +142,32 @@
       icon={GroupIcon}
       active={filters.has('groups')}
       on:click={() => {
-        if (filters.has('apps')) toggleFilter('apps');
         toggleFilter('groups');
       }}>Groups</IconButton
     >
+    <IconButton
+      icon={PersonIcon}
+      active={filters.has('ships')}
+      on:click={() => {
+        toggleFilter('ships');
+      }}>People</IconButton
+    >
+    <IconButton
+      icon={CollectionIcon}
+      active={filters.has('collections')}
+      on:click={() => {
+        toggleFilter('collections');
+      }}>Collections</IconButton
+    >
+  </div>
+  <div class="flex gap-4">
+    <input
+      type="text"
+      class="border-b focus:outline-none placeholder-grey"
+      placeholder="try searching"
+      bind:value={searchString}
+    />
+    <div class="w-5"><SearchIcon /></div>
   </div>
   {#if items}
     <div class="flex flex-col gap-4 bg-panels p-6 rounded-lg">

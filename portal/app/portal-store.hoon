@@ -94,7 +94,7 @@
     =/  path  [%item (key-to-path:conv key.item)]
     =.  state  state.q
     ?:  =(lens.item %temp)  q                        ::  if %temp, no need
-    ?.  ?=(?(%collection %feed %app) struc.key.item)      ::  if not %col or %feed or %app
+    ?.  ?=(?(%collection %feed %app %blog) struc.key.item)      ::  if not %col or %feed or %app
       q
       :: ?~  (find [path]~ item-paths)
         :: :_  state.q
@@ -112,7 +112,7 @@
     |=  [p=[=ship =dude:gall =path] q=[state=state-2]]
     =/  key  (path-to-key:conv +:path.p)
     =.  state  state.q
-    ?.  ?=(?(%feed %collection %app) struc.key)
+    ?.  ?=(?(%feed %collection %app %blog) struc.key)
       =.  item-sub.state.q  (quit:da-item ship.key %portal-store path.p)
       [p state.q]
     [p state.q]
@@ -141,11 +141,10 @@
       %delete  =^(cards state (delete:handle-poke:stor act) [cards this])
       %purge   =^(cards state (purge:handle-poke:stor act) [cards this])
       %destroy  =^(cards state (destroy:handle-poke:stor act) [cards this])
-      %add-tag-request  
+        %add-tag-request  
       =^  cards  state 
-        (add-tag-request:handle-poke:stor act)
+      (add-tag-request:handle-poke:stor act)
       [cards this]
-
     ==
     ::
       %portal-message
@@ -278,6 +277,7 @@
       `key`(path-to-key:conv +.p.k)
     keys+(~(uni in ~(key by items)) -)
     ::
+    ::  TODO what do if time starts with '/', like blog ids '/some-blog-path'
       [%item @ @ @ @ ~]
     :-  %item
     =/  key  (path-to-key:conv t.path)
@@ -405,7 +405,7 @@
       =/  path  [%item (key-to-path:conv key.act)]
       ::  note SSS only for feeds and collections is also temporary fix
       ::  because it is not scalable as well
-      ?.  ?=(?(%feed %collection %app) struc.key.act)
+      ?.  ?=(?(%feed %collection %app %blog) struc.key.act)
         ?:  (~(has by items) key.act)  `state
         :_  state
         %+  snoc  `(list card)`(track-gr:cards-methods ship.key.act)
@@ -595,19 +595,18 @@
       `state
     ::
     ++  add-tag-request
-      |=  [act=action]
-      ^+  [*(list card) state]
-      ~&  >  "new feat: add tag request!"
-      ?>  ?=([%add-tag-request *] act)
-      ::  no safeguards built yet
-      =/  our  (key-to-node:conv from.act)
-      =/  their    (key-to-node:conv to.act)
-      :_  state
-      %+  snoc  (gra:cards-methods portal-store+[%add-tag tag-to.act our their])
-      :*  %pass  /tag  %agent  [ship.to.act %portal-store]  %poke
-          %portal-message
-          !>([%add-tag-request our.bowl tag-from.act their our])
-      ==
+    |=  [act=action]
+    ^+  [*(list card) state]
+    ?>  ?=([%add-tag-request *] act)
+    ::  no safeguards built yet
+    =/  our  (key-to-node:conv our.act)
+    =/  their    (key-to-node:conv their.act)
+    :_  state
+    %+  snoc  (gra:cards-methods portal-store+[%add-tag tag-to.act our their])
+    :*  %pass  /tag  %agent  [ship.their.act %portal-store]  %poke
+        %portal-message
+        !>([%add-tag-request our.bowl tag-from.act their our])
+    ==
     --
 ::
 ++  init-sequence

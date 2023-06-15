@@ -89,7 +89,7 @@
       <div class="gap-4">
         <!-- TODO: get any links in here to print nicely -->
         {#if description}<div>{description}</div>{/if}
-        {#if type === 'collection' || type === 'app'}<a
+        {#if type === 'collection' || type === 'app' || type === 'group'}<a
             use:link
             class="text-sm hover:text-grey hover:duration-500"
             href={`/${patp}`}

@@ -7,6 +7,8 @@
 ++  conv
   |%
   ::
+  ::  TODO what if time looks like '/some-blog-path'
+  ::  or '/some/blog/path'
   ++  key-to-path
     |=  [=key]
     ;;  [@ @ @ @ ~]
@@ -35,8 +37,8 @@
     |=  [=node:gr]
     ;;  key
     ?>  ?=([%entity *] node)
-    ~&  >  "new feat: transforming to key should now support temp items"
     =/  p  (trip name.node)
+    ::  TODO if blog paths allowed to have trailing /, we needs to be fixed
     =?  p  
         =('/' (rear p))
       (snip p)
@@ -338,6 +340,16 @@
             (fall blurb.u.bespoke.act blurb.bespoke.item)
             (fall ref.u.bespoke.act ref.bespoke.item)
         ==
+        ::
+          %blog
+        ?>  ?=(%blog -.bespoke.item)
+        :*  %blog
+            (fall title.u.bespoke.act title.bespoke.item)
+            (fall blurb.u.bespoke.act blurb.bespoke.item)
+            (fall uri.u.bespoke.act uri.bespoke.item)
+            (fall path.u.bespoke.act path.bespoke.item)
+            (fall image.u.bespoke.act image.bespoke.item)
+        ==
       ==
     ==
   --
@@ -511,12 +523,17 @@
   --
 ::
 ++  validate-sig
-  |=  [dist-desk=@t src=ship our=ship now=time sig=signature]
+  |=  [dist-desk=@t dev=ship our=ship now=time sig=signature]
+  ?~  dist-desk  %.y
   =/  dist-desk  (parse-dist-desk:misc dist-desk)
   ?~  dist-desk  %.n
   ::  note: src is allowed to be different from dist-ship
   ?.  =(ship.sig dist-name.u.dist-desk)  %.n
   ?:  =((get-ship-type:misc our) %comet)  %.n
-  (validate:^sig our sig [%sign-app src ^dist-desk] now)
+  ~&  "validating... w/ input:"
+  ~&  [%sign-app dev ^dist-desk]
+  ~&  "and sig:"
+  ~&  sig
+  (validate:^sig our sig [%sign-app dev ^dist-desk] now)
 ::
 --
