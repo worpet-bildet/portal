@@ -118,7 +118,7 @@
       ::       (surf:da-portal-devs ship.key.act %portal-app-publisher [%portal-devs ~])
       ::     [(welp cards cards-1) this]
       :: [cards this]
-
+        WIP RECREATE SUBS ARCH
       ::
         %sub
       =/  cards  (sub:helper act)
