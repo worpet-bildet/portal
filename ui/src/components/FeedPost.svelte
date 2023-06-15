@@ -57,11 +57,6 @@
     let likes = [...(getLikes(key.ship, key) || [])];
 
     likeCount = likes.length;
-    console.log(
-      likes.find((l) => {
-        console.log({ l });
-      })
-    );
     if (likedByMe && !likes.find((l) => l.ship === me)) likeCount++;
     likedByMe = likedByMe || likes.find((l) => l.ship === me);
   });
