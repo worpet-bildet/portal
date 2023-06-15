@@ -40,15 +40,6 @@
   const dispatch = createEventDispatcher();
   const remove = () => dispatch('remove', item.keyStr);
   const edit = () => dispatch('edit', item.keyStr);
-  const navigate = () => {
-    if (item.keyObj.struc === 'ship') {
-      push(`/${item.keyObj.ship}`);
-    } else if (item.keyObj.struc === 'other' && item.bespoke.link) {
-      window.open(item.bespoke.link);
-    } else {
-      push(item.keyStr);
-    }
-  };
 </script>
 
 {#if item}
@@ -60,7 +51,13 @@
   <button
     on:click={() => {
       if (clickable) {
-        navigate();
+        if (struc === 'ship') {
+          push(`/${ship}`);
+        } else if ((struc === 'other' || struc === 'blog') && link) {
+          window.open(link);
+        } else {
+          push(item.keyStr);
+        }
       } else if (selectable) {
         selected = !selected;
         dispatch('selected', { key, selected });
@@ -79,8 +76,14 @@
       {:else if struc === 'collection' && !image}
         <CollectionsSquarePreview {key} withTitle={false} />
       {:else if !image && link && struc !== 'app'}
-        {#await getLinkMetadata(link) then { title, image }}
-          <ItemImage {image} {title} />
+        {#await getLinkMetadata(link)}
+          <ItemImage {image} {title} {color} />
+        {:then data}
+          {#if !data}
+            <ItemImage {image} {title} {color} />
+          {:else}
+            <ItemImage image={data.image} title={data.title} />
+          {/if}
         {/await}
       {:else}
         <ItemImage {image} {title} {color} />
@@ -101,7 +104,7 @@
         </div>
         <div>·</div>
         <div>{struc}</div>
-        {#if struc === 'other' && link}
+        {#if (struc === 'other' && link) || struc === 'blog'}
           <div class="w-5">
             <ExternalDestinationIcon />
           </div>

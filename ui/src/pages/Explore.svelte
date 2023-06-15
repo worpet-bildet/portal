@@ -1,5 +1,4 @@
 <script>
-  import { onMount } from 'svelte';
   import { me } from '@root/api';
   import {
     state,

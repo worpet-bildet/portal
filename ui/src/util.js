@@ -95,6 +95,8 @@ export const getLink = (item) => {
   switch (item?.keyObj?.struc) {
     case 'app':
       return item?.bespoke?.treaty?.website;
+    case 'blog':
+      return `${item?.bespoke?.uri}${item?.bespoke?.path}`;
     default:
       return item?.bespoke?.link;
   }
