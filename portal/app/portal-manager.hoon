@@ -213,12 +213,14 @@
                 [%collection our.bowl '' '~2000.1.1']~  ~  ~  ==
         ==
       =/  create-blog-card
-        |=  [uri=(unit @t) path=@t]
+        |=  [uri=(unit @t) =path]
+        =/  key-time  (path-to-key-time path)
+        =/  path  (spat path)
         %-  ~(act cards [our.bowl %portal-store])
         ?:  %-  ~(item-exists scry our.bowl now.bowl)
-            [%blog our.bowl '' path]
-          [%append [%blog our.bowl '' path]~ [%collection our.bowl '' 'published-blogs']]
-        :*  %create  ~  ~  `path  `%def
+            [%blog our.bowl '' key-time]
+          [%append [%blog our.bowl '' key-time]~ [%collection our.bowl '' 'published-blogs']]
+        :*  %create  ~  ~  `key-time  `%def
           `[%blog (blog-path-to-title path) '' (fall uri '') path '']
           ~[[%collection our.bowl '' 'published-blogs']]  ~  ~  ==
       ?-  -.u.wave.msg
@@ -230,19 +232,19 @@
           |=  [=path cards=(list card)]
           :-  path
           %+  snoc  cards
-          (create-blog-card ~ (spat path))
+          (create-blog-card ~ path)
         :_  this  (welp create-my-blogs cards)
         ::
           %post 
         :_  this
         %+  snoc  create-my-blogs
-        (create-blog-card ~ (spat path.u.wave.msg))
+        (create-blog-card ~ path.u.wave.msg)
         ::
           %depost
         :_  this
         :~  %-  ~(act cards [our.bowl %portal-store])
             :+  %remove
-              [%blog our.bowl '' (spat path.u.wave.msg)]~
+              [%blog our.bowl '' (path-to-key-time path.u.wave.msg)]~
             [%collection our.bowl '' 'published-blogs']
         ==
         ::
@@ -422,6 +424,20 @@
   ^-  (list card)
   :~  [%give %fact [/updates]~ %portal-dev-map !>(dev-map)]
   ==
+::
+::  unidirectional mapping from path to time.key
+::  if the original path had '0' in it, backwards conversion will fail
+++  path-to-key-time
+  |=  =path
+  ^-  cord
+  =+  (spud path)
+  %-  crip
+  %+  turn  -
+  |=  [i=@t]
+  ?:  =(i '/')
+    '0'
+  i
+
 ::
 ++  blog-path-to-title
   |=  p=@t
