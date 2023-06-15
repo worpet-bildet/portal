@@ -22,7 +22,6 @@
   ++  path-to-key
     |=  [=path]
     ;;  key
-    ~&  >  "new feat: path-to-key depending on path length"
     :^  ;;  struc  -:path
         `ship`(slav %p +<:path)
         ?:((gte (lent path) 3) `cord`+>-:path '')
@@ -46,6 +45,13 @@
         =('/' (rear p))
       (snip p)
     (path-to-key (stab (crip p)))
+  ::
+  ++  feed-to-key-list
+    |=  =feed
+    ^-  key-list
+    %+  turn  feed
+    |=  [* * =key]
+    key
   --
 ::
 ++  scry
@@ -92,24 +98,22 @@
       /(scot %p our)/portal-store/(scot %da now)/keys/noun
     ==
   ::
+  ++  get-item-latest-validity
+    |=  [=key]
+    ;;  valid
+    %-  tail
+    .^  store-result
+      %gx
+      ;:  weld
+        /(scot %p our)/portal-store/(scot %da now)/item-valid
+        (key-to-path:conv key)
+        /noun
+    ==  ==
+  ::
   --
 ::
 ++  keys
   |%
-  ++  skid-temp
-    |=  [=key-list]
-    ^-  [temp=^key-list def=^key-list]
-    (skid key-list |=([=key] ?~(time.key %.y %.n)))
-  ::
-  ++  skim-temp
-    |=  [=key-list]
-    ^-  ^key-list
-    (skim key-list |=([=key] ?~(time.key %.y %.n)))
-  ::
-  ++  skip-temp
-    |=  [=key-list]
-    ^-  ^key-list
-    (skip key-list |=([=key] ?~(time.key %.y %.n)))
   ::
   ++  skip-strucs
     |=  [=key-list strucs=(list struc)]
@@ -226,19 +230,73 @@
       ==
   --
 ::
-::  so I can use item-methods wherever, without needing bowl
-++  pure
-  |%
+++  manager
+  |_  [=bowl:gall cards=_*(list card)]
+  ++  on-poke
+    ::  all arms here should output cards
+    |%
+    ::
+    ++  sub
+      |=  [act=action]
+      ^-  [(list card)]
+      ?>  ?=([%sub *] act)
+      ?.  =(time.key.act '')   ::  branch on whether is %temp (empty time.key)
+        :: if not temp
+        ~[(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(act))]
+      ::  if temp
+      ?:  (~(item-exists scry our.bowl now.bowl) key.act)  ~
+      =|  bespoke=bespoke
+      =*  create-empty-temp  ^-  action  :*  %create
+                                  `ship.key.act
+                                  `cord.key.act
+                                  `''
+                                  `%temp
+                                  `bespoke
+                                  ?:  ?|  =(%app struc.key.act) 
+                                          =(%group struc.key.act)  ==
+                                    [%collection our.bowl '' 'all']~
+                                  ~
+                                  ~
+                                  ~
+                              ==
+      ?+    struc.key.act    !!
+        ::
+          %ship
+        =.  bespoke  [%ship ~]
+        ~[(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(create-empty-temp))]
+        ::
+          %group
+        =.  bespoke  [%group *data:group-preview]
+        =/  path  /groups/(scot %p ship.key.act)/[`@tas`cord.key.act]/preview
+        =/  wire  [%get-group-preview (key-to-path:conv key.act)]
+        =/  sub-status  (~(gut by wex.bowl) [wire ship.key.act %groups] ~)
+        :~  [(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(create-empty-temp))]
+            [%pass wire %agent [ship.key.act %groups] %watch path]
+        ==
+        ::
+          %app
+        =.  bespoke  [%app ~ '' '' *signature *treaty:treaty]
+        =/  path  /treaty/(scot %p ship.key.act)/[`@tas`cord.key.act]
+        =/  wire  [%treaty (key-to-path:conv key.act)]
+        =/  sub-status  (~(gut by wex.bowl) [wire ship.key.act %treaty] ~)
+        :~  [(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(create-empty-temp))]
+            [%pass wire %agent [ship.key.act %treaty] %watch path]
+        ==
+      ==
+    --
+  --
+::
+++  item-methods  ::  all arms here should output item
+  |_  =bowl:gall
   ++  edit
-    |=  [now=time =item act=action]
+    |=  [=item act=action]
     ::  should output item
-    ~&  >  "new feat: different edit implementation"
     ^-  ^item
     ?>  ?=([%edit *] act)
     ?>  =(key.item key.act)
     %=  item
         updated-at.meta
-      `@t`(scot %da now)
+      `@t`(scot %da now.bowl)
       ::
         lens
       (fall lens.act lens.item)
@@ -298,13 +356,6 @@
         ==
       ==
     ==
-  --
-::
-++  item-methods  ::  all arms here should output item
-  |_  =bowl:gall
-  ++  edit 
-    ~&  >  "new feat: curried edit implementation"
-    (cury edit:pure now.bowl)
   ::
   ++  replace
     |=  [=item act=action]
@@ -342,20 +393,6 @@
     =/  new-feed  %+  oust  [1.000 (lent feed.act)]
       (weld feed.act feed.bespoke.feed)
     (edit feed [%edit key.feed ~ `[%feed `new-feed]])
-  ::
-  ++  append-no-dupe
-    |=  [col=item act=action]
-    ^-  item
-    ?>  ?=([%append-no-dupe *] act)
-    ?>  ?=(%collection -.bespoke.col)
-    ?>  =(col-key.act key.col)
-    ~&  >  "new feat: append without dupes"
-    =+  %~  tap  in
-      %-  ~(dif in (silt key-list.act))
-      (silt key-list.bespoke.col)
-    =/  new-key-list  (weld key-list.bespoke.col -)
-    %+  edit  col
-      [%edit col-key.act ~ `[%collection ~ ~ ~ `new-key-list]]
   ::
   ::  TODO abstract collection methods?
   ::  such that it takes in a gate that arbitrarily modifies the key list
@@ -399,6 +436,87 @@
       lens             %deleted
       updated-at.meta  `@t`(scot %da now.bowl)
     ==
+  --
+::
+::  OOD
+::  includes arms which are used to validate data
+++  validator
+  |%
+  ::(default-v1:validator our now key.upd upd) for actually validating
+  ++  default-v1
+    |=  [our=ship now=time item-key=key =item]
+    ^-  (list card)
+    ::  slight amount of time after this
+    ?.  &(=(struc.bespoke.item %app) !=(lens.item %temp))  ~
+    =/  v-store-key  `key`[%validity-store our '' '~2000.1.1']
+    =/  validity-store
+      ;;  ^item  (~(get-item scry our now) v-store-key)
+    ?+    -.bespoke.validity-store    ~
+        %validity-store
+      =/  validation-result  ['default-v1' (new-item our now item-key item) 'default']
+      =/  validity-records  validity-records.bespoke.validity-store
+      =/  validation-time-map  (~(gut by validity-records) item-key *validation-time-map)
+      =/  validation-time-map  (put:valid-mop validation-time-map now validation-result)
+      =/  validity-records  (~(put by validity-records) item-key validation-time-map)
+      =/  edit-action  `action`[%replace v-store-key %def [%validity-store validity-records]]
+      [%pass /edit %agent [our %portal-manager] %poke %portal-action !>(edit-action)]~   :: why send card instead of calling edit function?
+    ==
+  ::
+  ++  get-latest
+    |=  [our=ship now=time =key]
+    ^-  valid
+    =/  validity-store
+      ;;  item  (~(get-item scry our now) [%validity-store our '' '~2000.1.1'])
+    ?+    -.bespoke.validity-store    ~
+        %validity-store
+      =/  validity-records  validity-records.bespoke.validity-store
+      =/  validation-time-map  (~(gut by validity-records) key *validation-time-map)
+      ?~  validation-time-map  ~
+      =/  maybe-valid  (pry:valid-mop (^validation-time-map validation-time-map))
+      ?~  maybe-valid  ~
+      =/  maybe-valid  `validation-result`val.u.maybe-valid
+      valid.maybe-valid
+    ==
+  ::
+  ::  validates item for signature
+  ::  if app- dist-desk, signature, id
+  ++  new-item
+    |=  [our=@p now=@da =key =item]
+    ^-  valid
+    ?+    -.bespoke.item    ~
+        %app
+      =/  dist-desk  (parse-dist-desk:misc dist-desk.bespoke.item)
+      ?~  dist-desk  [~ %.n]
+      (sig key dist-name.u.dist-desk desk-name.u.dist-desk sig.bespoke.item our now)
+    ==
+
+  ::
+  ::  validates signature
+  ++  sig
+    |=  [=key dist-ship=@p desk-name=@tas =signature our=@p now=@da]
+    ^-  valid
+    :: not doing this anymore, requires sig from everyone who is not us
+    :: ?:  (ships-related:misc ship.key dist-ship)
+    ::   [~ %.y]
+    ?:  =(ship.key dist-ship)
+      `&
+    ?.  =(ship.signature dist-ship)
+      ~&  "signature fail: ship in sig ({(scow %p ship.signature)}) and distributor ship ({(scow %p dist-ship)}) are not the same"
+      [~ %.n]
+    ?:  =((get-ship-type:misc our) %comet)
+      ~&  "our ship is a comet - skipping signature validation of {(trip desk-name)} by {(scow %p dist-ship)}. beware, apps may be unsafe and/or pirated"
+      ~
+    ::  TODO validation has wrong sig-input
+    ::  TODO needs to validate all formatted like /app/[ship]//[name]
+    ?.  (validate:^sig [our signature [%app key desk-name] now])
+      ~&  "signature fail: distributor signature validation failed"
+      ~&  >>  signature
+      [~ %.n]
+    [~ %.y]
+
+
+      
+
   --
 ::
 ++  validate-sig
