@@ -39,3 +39,4 @@ export { default as GroupIcon } from './Icons/Group.svelte';
 export { default as HamburgerIcon } from './Icons/Hamburger.svelte';
 export { default as SparklesIcon } from './Icons/Sparkles.svelte';
 export { default as ImageIcon } from './Icons/Image.svelte';
+export { default as ArrowPathIcon } from './Icons/ArrowPath.svelte';

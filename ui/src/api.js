@@ -85,6 +85,13 @@ export const getPals = () => {
   });
 };
 
+export const getBlogs = () => {
+  return scry({
+    app: 'blog',
+    path: '/pages',
+  });
+};
+
 export const getHeapItems = (heap) => {
   return scry({
     app: 'heap',
