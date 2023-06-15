@@ -30,8 +30,6 @@
         ==
       ==
       ::
-      [%add-tag-request from=key to=key tag-from=path tag-to=path]
-      ::
       [%replace =key =lens =bespoke]  ::  TODO should it act like put or edit?, i.e. can it create a nonexisting item. NO! (?)
       ::
       [%add-tag-request our=key their=key tag-to=path tag-from=path]
@@ -46,8 +44,7 @@
       [%destroy =key]  :: abolishes the item from the atmosphere
       ::
       [%sub =key]
-      [%sub-many =key-list]
-      [%sub-to-item =key]
+      [%sub-to-many =key-list]
       ::
       ::
       [%prepend-to-feed =feed feed-key=[struc=%feed =ship =cord time=cord]]  ::  TODO rename?

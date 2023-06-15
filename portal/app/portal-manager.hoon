@@ -48,10 +48,10 @@
 +*  this        .
     default     ~(. (default-agent this %|) bowl)
     helper      ~(. +> bowl)
-    da-portal-devs  =/  da  (da portal-devs ,[%portal-devs ~])
-      (da sub-portal-devs bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
     da-blog-paths   =/  da  (da:sss-25 blog-paths ,[%paths ~])
       (da sub-blog-paths bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
+    da-portal-devs  =/  da  (da portal-devs ,[%portal-devs ~])
+      (da sub-portal-devs bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
 ++  on-init
   =.  state  *state-6
   =^  cards  state  init-sequence:helper
@@ -99,37 +99,24 @@
       [cards this]
       ::
         %sub-to-many
-      `this
-      ::  remnants of stupidity---
-      ::       act ->  [%sub =key-list]
-
-      :: ::  TODO, skim temp, cycle thru the flow below and send individual cards
-      :: ::  the rest send with %sub-to-many to %portal-store
-      :: (skim-temp key-list.act          
-      :: %-  tail  %^  spin  -  *(list card)
-      ::     |=  [=path cards=(list card)]
-      ::     :-  path
-      ::     %+  snoc  cards
-      ::     (create-blog-card ~ (spat path))
-)
-      :: =/  cards  (sub:on-poke:manager [%sub key])
-      ::   ?:  &(?=(%app struc.key.act) =(time.key.act ''))  ::  temp app
-      ::     =^  cards-1  sub-portal-devs
-      ::       (surf:da-portal-devs ship.key.act %portal-app-publisher [%portal-devs ~])
-      ::     [(welp cards cards-1) this]
-      :: [cards this]
-        WIP RECREATE SUBS ARCH
+      ~&  >  "new feat: sub to many"
+      ::  %def sent to portal-store
+      ::  %temp cycled thru single subs
+      =/  keys=[temp=key-list def=key-list]  (skid-temp:keys key-list.act) 
+      =^  cards  state
+        %-  tail  %^  spin  temp.keys  [*(list card) state]
+        |=  [=key q=[cards=(list card) state=state-6]]
+        :-  key
+        =.  state  state.q
+        =^  cards  state.q  (sub:helper [%sub key])
+        :_  state.q  (welp cards cards.q)
+      :_  this
+      %+  snoc  cards
+      (~(act ^cards [our.bowl %portal-store]) [%sub-to-many def.keys])
       ::
         %sub
-      =/  cards  (sub:helper act)
-      ::  stupid way to do it, sss sub should be done within sub function
-      ::  I'm just lazyyyy
-      ?:  &(?=(%app struc.key.act) =(time.key.act ''))  ::  temp app
-        :: subs to %portal-app-publisher and gets on-rock, 
-        :: where it subs to the actual %def app
-        =^  cards-1  sub-portal-devs
-          (surf:da-portal-devs ship.key.act %portal-app-publisher [%portal-devs ~])
-        [(welp cards cards-1) this]
+      ~&  >  "new feat: new sub implementation"
+      =^  cards  state  (sub:helper [%sub key.act])
       [cards this]
       ::
         %blog-sub  
@@ -375,6 +362,7 @@
       :_  this
       :~  (~(act cards [our.bowl %portal-store]) create-app)
           [%pass wire %agent [our.bowl %treaty] %leave ~]  ::  why leave here?
+          ::  why not sync temp item?
       ==
     ==
     ::
@@ -453,6 +441,8 @@
 +*  this      .
     da-blog-paths   =/  da  (da:sss-25 blog-paths ,[%paths ~])
       (da sub-blog-paths bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
+    da-portal-devs  =/  da  (da portal-devs ,[%portal-devs ~])
+      (da sub-portal-devs bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
 ::
 ++  init-sequence
   ^+  [*(list card) state]
@@ -487,7 +477,6 @@
   ?:  =(i '/')
     '~'
   i
-
 ::
 ++  blog-path-to-title
   |=  p=@t
@@ -504,21 +493,32 @@
     =.  p  (snap p i ' ')
     =?  p
         &((lth +(i) (lent p)) (gte (snag +(i) p) 'a') (lte (snag +(i) p) 'z'))
-      (snap p +(i) (sub (snag +(i) p) 32))
+      (snap p +(i) (^sub (snag +(i) p) 32))  ::^sub because it wants to subscribe instead of subtract lol
     p
   =?  p
       &((gte -.p 'a') (lte -.p 'z'))
-    (snap p 0 (sub -.p 32))
+    (snap p 0 (^sub -.p 32))
   (crip p)
 ::
+::  portal-manager only needs to do funky stuff with %temp items
 ++  sub
   |=  [act=action]
-  ^-  [(list card)]
+  ^+  [*(list card) state]
   ?>  ?=([%sub *] act)
   ?.  =(time.key.act '')   ::  branch on whether is %temp (empty time.key)
     :: if not temp
+    :_  state
     ~[(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(act))]
   ::  if temp
+  =;  cards
+    ?:  ?=(%app struc.key.act)  ::  temp app
+      :: subs to %portal-app-publisher and gets on-rock, 
+      :: where it subs to the actual %def app
+      ::  is this too much spam?
+      =^  cards-1  sub-portal-devs
+        (surf:da-portal-devs ship.key.act %portal-app-publisher [%portal-devs ~])
+      [(welp cards cards-1) state]
+    [cards state]
   ?:  (~(item-exists scry our.bowl now.bowl) key.act)  ~
   =|  bespoke=bespoke
   =*  create-empty-temp  ^-  action  :*  %create

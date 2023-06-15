@@ -1,8 +1,6 @@
 /-  *portal-data, *portal-message, portal-item, portal-data-0, portal-data-1,
-    gr=social-graph, portal-config
+    gr=social-graph
 /+  default-agent, dbug, *portal, sss
-=/  indexer  *portal-indexer:portal-config
-~&  >  "new feat: make worpet-bildet 'env var'"
 |%
 +$  versioned-state
   $%  state-0
@@ -130,21 +128,19 @@
       %create   =^(cards state (create:handle-poke:stor act) [cards this])
       %replace  =^(cards state (replace:handle-poke:stor act) [cards this])
       %edit     =^(cards state (edit:handle-poke:stor act) [cards this])
-      %sub      
-      =^  cards  state 
-        (sub:handle-poke:stor act)
-      [cards this]
-      %prepend-to-feed   =^(cards state (prepend-to-feed:handle-poke:stor act) [cards this])
-      %append  =^(cards state (append:handle-poke:stor act) [cards this])
+      %append   =^(cards state (append:handle-poke:stor act) [cards this])
       %prepend  =^(cards state (prepend:handle-poke:stor act) [cards this])
-      %remove  =^(cards state (remove:handle-poke:stor act) [cards this])
-      %delete  =^(cards state (delete:handle-poke:stor act) [cards this])
-      %purge   =^(cards state (purge:handle-poke:stor act) [cards this])
+      %remove   =^(cards state (remove:handle-poke:stor act) [cards this])
+      %delete   =^(cards state (delete:handle-poke:stor act) [cards this])
+      %purge    =^(cards state (purge:handle-poke:stor act) [cards this])
       %destroy  =^(cards state (destroy:handle-poke:stor act) [cards this])
-        %add-tag-request  
-      =^  cards  state 
-      (add-tag-request:handle-poke:stor act)
-      [cards this]
+      %sub      =^(cards state (sub:handle-poke:stor act) [cards this])
+        %sub-to-many
+      =^(cards state (sub-to-many:handle-poke:stor act) [cards this])
+        %prepend-to-feed 
+      =^(cards state (prepend-to-feed:handle-poke:stor act) [cards this])
+      %add-tag-request
+        =^(cards state (add-tag-request:handle-poke:stor act) [cards this])
     ==
     ::
       %portal-message
@@ -168,7 +164,7 @@
       ::
         %feed-update
       ?>  =(src.bowl src.msg)
-      ?>  =(our.bowl indexer)
+      ?>  =(our.bowl ~worpet-bildet)
       =/  act  [%prepend-to-feed feed.msg [%feed our.bowl '' 'global']]
       =^(cards state (prepend-to-feed:handle-poke:stor act) [cards this])
     ==
@@ -186,14 +182,7 @@
     =/  msg  !<(from:da-item (fled:sss vase))
     ?<  ?=([%crash *] rock.msg)
     ?~  wave.msg  `this
-    ::  how do diffs and strucs(special cases, e.g. with apps or with feed) relate?
-    ?-  -.u.wave.msg  :: `this
-      ::   %edit
-      :: ~&  >  "new feat: edit diffs on sss"
-      :: ::  TODO can I just use rock.msg instead of get-item, 
-      :: ::  I dunno if rock.msg is pre or post applying diff
-      :: :_  this  (upd:cards-methods:stor (get-item key.rock.msg))  
-      ::
+    ?-  -.u.wave.msg
         %whole
       ?:  ?&  ?=(%app -.bespoke.item.u.wave.msg)
               ?=(%def lens.item.u.wave.msg)
@@ -206,22 +195,6 @@
       :_  this  (upd:cards-methods:stor item.u.wave.msg)
       ::
         %prepend-to-feed
-      ?:  =(/item/feed/(scot %p indexer)//global path.msg)
-        ~&  >  "new feat: autosubbing to global feed update"
-        =^  cards  state
-          %-  tail
-          %^  spin  feed.u.wave.msg  [*(list card) state]
-          |=  [p=[time=cord =ship =key] q=[cards=(list card) state=state-2]]
-          :-  p
-          =.  state  state.q
-          :_  state.q
-          %+  snoc  cards.q
-          :*  %pass  /sub  %agent  [our.bowl %portal-manager]  %poke
-              %portal-action  !>(sub+key.p)
-          ==
-        :_  this  
-        %+  welp  cards
-        (upd:cards-methods:stor rock.msg)
       :_  this  (upd:cards-methods:stor rock.msg)
     ==
   ==
@@ -292,10 +265,6 @@
     ?:  |(=(our.bowl ship.key) =(time.key ''))
       (~(has by items) key)
     (~(has by read:da-item) [ship.key %portal-store [%item t.path]])
-    ::
-    ::  TODO
-      [%item-valid @ @ @ @ ~]
-    valid+(get-latest:validator our.bowl now.bowl (path-to-key:conv t.path))
   ==
   ::
 ++  on-fail   on-fail:default
@@ -364,7 +333,6 @@
     ^-  (list card)
     :~  [%pass /cull-scry %cull ud+n [%item (key-to-path:conv key)]]
     ==
-
   --
 ::
 ++  handle-poke  ::  all arms here should output [cards items]
@@ -415,6 +383,18 @@
       =^  cards  item-sub.state  (surf:da-item ship.key.act %portal-store path)
       :_  state
       (welp (track-gr:cards-methods ship.key.act) cards)
+    ::
+    ++  sub-to-many
+      |=  [act=action]
+      ^+  [*(list card) state]
+      ~&  >  "new-feat: sub-to-many"
+      ?>  ?=([%sub-to-many *] act)
+      %-  tail  %^  spin  key-list.act  [*(list card) state]
+      |=  [=key q=[cards=(list card) state=state-2]]
+      :-  key
+      =.  state  state.q
+      =^  cards  state.q  (sub [%sub key])
+      [(welp cards.q cards) state.q]
     ::
     ++  replace
       |=  [act=action]
@@ -470,15 +450,18 @@
       ::  add tags to soc-graph (outward pointing),
       ::  and send corresponding messages that backward pointing tags be created
       =^  cards-3  state
-        ~&  >  "new feat: using add-tag-request func here now"
         %-  tail  %^  spin
         `(list [=key tag-to=^path tag-from=^path])`tags-to.act  [cards state]
         |=  [[=key tag-to=^path tag-from=^path] q=[cards=(list card) state=state-2]]
         :-  [key tag-to tag-from]
-        =.  state  state.q
-        =^  cards  state.q
-          (add-tag-request [%add-tag-request key.item key tag-from tag-to])        
-        [(welp cards.q cards) state.q]
+        =/  our  (key-to-node:conv key.item)
+        =/  their    (key-to-node:conv key)
+        :_  state.q
+        %+  snoc  (gra:cards-methods portal-store+[%add-tag tag-to our their])
+        :*  %pass  /tag  %agent  [ship.key %portal-store]  %poke
+            %portal-message
+            !>([%add-tag-request our.bowl tag-from their our])
+        ==
       [;:(welp cards cards-1 cards-2 cards-3) state]
     ::  also -> main collection deduplication
     ::  (preventing duplication in the first place)
@@ -509,7 +492,7 @@
         =/  msg  [%feed-update our.bowl feed.act]
         :_  state
         %+  snoc  (welp cards cards-1)
-        (~(poke pass:io /msg) [indexer %portal-store] portal-message+!>(msg))
+        (~(poke pass:io /msg) [~worpet-bildet %portal-store] portal-message+!>(msg))
       :-  (welp cards cards-1)
       state
     ::
@@ -611,11 +594,9 @@
 ::
 ++  init-sequence
   ^+  [*(list card) state]
-  =/  feed-path  [%item %feed (scot %p indexer) '' 'global' ~]
-  ~&  >  "new feat: before surfing indexer, quit it"
-  =.  item-sub  (quit:da-item indexer %portal-store feed-path)
-  =^  cards  item-sub  (surf:da-item indexer %portal-store feed-path)
-  =.  cards  (welp cards (track-gr:cards-methods indexer))
+  =/  feed-path  [%item %feed '~worpet-bildet' '' 'global' ~]
+  =^  cards  item-sub  (surf:da-item ~worpet-bildet %portal-store feed-path)
+  =.  cards  (welp cards (track-gr:cards-methods ~worpet-bildet))
   =^  cards-1  state
     %-  create:handle-poke
     :*  %create  ~  ~  `'~2000.1.1'  `%def
@@ -644,7 +625,7 @@
     `[%collection 'My Apps' 'Collection of all apps I have published.' '' ~]
     [%collection our.bowl '' '~2000.1.1']~  ~  ~  ==
   ::
-  ?:  =(our.bowl indexer)
+  ?:  =(our.bowl ~worpet-bildet)
     =^  cards-7  state
       %-  create:handle-poke
       [%create ~ ~ `'global' `%global `[%feed ~] ~ ~ ~]
