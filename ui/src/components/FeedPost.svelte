@@ -57,7 +57,13 @@
     let likes = [...(getLikes(key.ship, key) || [])];
 
     likeCount = likes.length;
-    likedByMe = likes.find((l) => l.ship === me);
+    console.log(
+      likes.find((l) => {
+        console.log({ l });
+      })
+    );
+    if (likedByMe && !likes.find((l) => l.ship === me)) likeCount++;
+    likedByMe = likedByMe || likes.find((l) => l.ship === me);
   });
 
   let showCommentForm = false;
