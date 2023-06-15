@@ -406,7 +406,16 @@
         {:else if isInstalling}
           <IconButton loading>Installing...</IconButton>
         {:else}
-          <IconButton icon={InstallIcon} on:click={install}>Install</IconButton>
+          <IconButton
+            icon={InstallIcon}
+            on:click={() => {
+              // FIXME: stopgap
+              window.open(
+                `${window.location.origin}/apps/grid/search/${ship}/apps`
+              );
+              // install()
+            }}>Install</IconButton
+          >
         {/if}
         {#if website}
           <IconButton icon={GlobeIcon} on:click={() => window.open(website)}
