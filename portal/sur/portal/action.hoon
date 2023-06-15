@@ -34,7 +34,7 @@
       ::
       [%add-tag-request our=key their=key tag-to=path tag-from=path]
       ::  
-      ::  TODO action which appends without duplication    
+      [%append-no-dupe =key-list col-key=[struc=%collection =ship =cord time=cord]]
       [%append =key-list col-key=[struc=%collection =ship =cord time=cord]]
       [%prepend =key-list col-key=[struc=%collection =ship =cord time=cord]]
       ::  removes all instances of key from collection

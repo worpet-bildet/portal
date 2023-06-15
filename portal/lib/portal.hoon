@@ -343,6 +343,20 @@
       (weld feed.act feed.bespoke.feed)
     (edit feed [%edit key.feed ~ `[%feed `new-feed]])
   ::
+  ++  append-no-dupe
+    |=  [col=item act=action]
+    ^-  item
+    ?>  ?=([%append-no-dupe *] act)
+    ?>  ?=(%collection -.bespoke.col)
+    ?>  =(col-key.act key.col)
+    ~&  >  "new feat: append without dupes"
+    =+  %~  tap  in
+      %-  ~(dif in (silt key-list.act))
+      (silt key-list.bespoke.col)
+    =/  new-key-list  (weld key-list.bespoke.col -)
+    %+  edit  col
+      [%edit col-key.act ~ `[%collection ~ ~ ~ `new-key-list]]
+  ::
   ::  TODO abstract collection methods?
   ::  such that it takes in a gate that arbitrarily modifies the key list
   ++  append-to-col
