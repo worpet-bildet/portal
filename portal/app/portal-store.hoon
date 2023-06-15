@@ -135,8 +135,8 @@
       %purge    =^(cards state (purge:handle-poke:stor act) [cards this])
       %destroy  =^(cards state (destroy:handle-poke:stor act) [cards this])
       %sub      =^(cards state (sub:handle-poke:stor act) [cards this])
-      ::   %append-no-dupe
-      :: =^(cards state (append-no-dupe:handle-poke:stor act) [cards this])
+        %append-no-dupe
+      =^(cards state (append-no-dupe:handle-poke:stor act) [cards this])
         %sub-to-many
       =^(cards state (sub-to-many:handle-poke:stor act) [cards this])
         %prepend-to-feed 
@@ -199,11 +199,15 @@
                 ?=([%feed *] bespoke.item.u.wave.msg)
             ==
           ~
+        ~&  >  "new feat: sub to entire feed on inital load"
         [(~(act cards [our.bowl %portal-manager]) [%sub-to-many (feed-to-key-list:conv feed.bespoke.item.u.wave.msg)])]~
-      :_  this  %+  welp  cards  (upd:cards-methods:stor item.u.wave.msg)
+      :_  this  (welp cards (upd:cards-methods:stor item.u.wave.msg))
       ::
         %prepend-to-feed
-      :_  this  (upd:cards-methods:stor rock.msg)
+      ~&  "new feat: autosub to feed upd"
+      :_  this  
+      %+  welp  (upd:cards-methods:stor rock.msg)
+      [(~(act cards [our.bowl %portal-manager]) [%sub-to-many (feed-to-key-list:conv feed.u.wave.msg)])]~
     ==
   ==
 ::
@@ -504,16 +508,16 @@
       :-  (welp cards cards-1)
       state
     ::
-    :: ++  append-no-dupe
-    ::   |=  [act=action]
-    ::   ^+  [*(list card) state]
-    ::   ?>  ?=([%append-no-dupe *] act)
-    ::   =/  path  [%item (key-to-path:conv col-key.act)]
-    ::   =/  col  (append-no-dupe:itm (get-item col-key.act) act)
-    ::   =.  items  (put-item col)
-    ::   =^  cards  item-pub  (give:du-item path [%whole col])
-    ::   :_  state
-    ::   (welp cards (upd:cards-methods col))
+    ++  append-no-dupe
+      |=  [act=action]
+      ^+  [*(list card) state]
+      ?>  ?=([%append-no-dupe *] act)
+      =/  path  [%item (key-to-path:conv col-key.act)]
+      =/  col  (append-no-dupe:itm (get-item col-key.act) act)
+      =.  items  (put-item col)
+      =^  cards  item-pub  (give:du-item path [%whole col])
+      :_  state
+      (welp cards (upd:cards-methods col))
     ::
     ++  append
       |=  [act=action]

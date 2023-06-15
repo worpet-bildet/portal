@@ -99,21 +99,20 @@
       [cards this]
       ::
         %sub-to-many
-      `this
-      :: ~&  >  "new feat: sub to many"
-      :: ::  %def sent to portal-store
-      :: ::  %temp cycled thru single subs
-      :: =/  keys=[temp=key-list def=key-list]  (skid-temp:keys key-list.act) 
-      :: =^  cards  state
-      ::   %-  tail  %^  spin  temp.keys  [*(list card) state]
-      ::   |=  [=key q=[cards=(list card) state=state-6]]
-      ::   :-  key
-      ::   =.  state  state.q
-      ::   =^  cards  state.q  (sub:helper [%sub key])
-      ::   :_  state.q  (welp cards cards.q)
-      :: :_  this
-      :: %+  snoc  cards
-      :: (~(act ^cards [our.bowl %portal-store]) [%sub-to-many def.keys])
+      ~&  >  "new feat: sub to many"
+      ::  %def sent to portal-store
+      ::  %temp cycled thru single subs
+      =/  keys=[temp=key-list def=key-list]  (skid-temp:keys key-list.act) 
+      =^  cards  state
+        %-  tail  %^  spin  temp.keys  [*(list card) state]
+        |=  [=key q=[cards=(list card) state=state-6]]
+        :-  key
+        =.  state  state.q
+        =^  cards  state.q  (sub:helper [%sub key])
+        :_  state.q  (welp cards cards.q)
+      :_  this
+      %+  snoc  cards
+      (~(act ^cards [our.bowl %portal-store]) [%sub-to-many def.keys])
       ::
         %sub
       ~&  >  "new feat: new sub implementation"
