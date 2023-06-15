@@ -252,6 +252,7 @@
       `key`(path-to-key:conv +.p.k)
     keys+(~(uni in ~(key by items)) -)
     ::
+    ::  TODO what do if time starts with '/', like blog ids '/some-blog-path'
       [%item @ @ @ @ ~]
     :-  %item
     =/  key  (path-to-key:conv t.path)

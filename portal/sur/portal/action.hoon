@@ -49,7 +49,9 @@
       [%prepend-to-feed =feed feed-key=[struc=%feed =ship =cord time=cord]]  ::  TODO rename?
       [%index-as-curator toggle=?]
       [%onboarded toggle=?]
+      [%blog-sub ~]
       ::
+      [%manager-init ~]
       ::  ? purge needs to be defined as action?
       :: TODO make purge have only 'items-to-keep' arg
       [%purge portal-curator=@p]
