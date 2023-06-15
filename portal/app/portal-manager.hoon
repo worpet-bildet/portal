@@ -1,6 +1,6 @@
 /-  *portal-data, *portal-action, *portal-message, portal-config,
     groups, treaty, portal-devs, blog-paths
-/+  default-agent, dbug, *portal, io=agentio, *sig, *sss
+/+  default-agent, dbug, *portal, io=agentio, *sig, *sss, sss-25
 |%
 +$  versioned-state
   $%  state-0:portal-config
@@ -13,7 +13,7 @@
   ==
 +$  state-6
   $:  %6
-      sub-blog-paths=_(mk-subs blog-paths ,[%paths ~])
+      sub-blog-paths=_(mk-subs:sss-25 blog-paths ,[%paths ~])
       sub-portal-devs=_(mk-subs portal-devs ,[%portal-devs ~])
       =dev-map:portal-config
       =portal-curator:portal-config
@@ -50,15 +50,10 @@
     helper      ~(. +> bowl)
     da-portal-devs  =/  da  (da portal-devs ,[%portal-devs ~])
       (da sub-portal-devs bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
-    da-blog-paths   =/  da  (da blog-paths ,[%paths ~])
+    da-blog-paths   =/  da  (da:sss-25 blog-paths ,[%paths ~])
       (da sub-blog-paths bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
 ++  on-init
   =.  state  *state-6
-  =.  our-apps.state  ;;  our-apps:portal-config
-    %-  tail
-    .^  update:alliance:treaty  %gx
-        /(scot %p our.bowl)/treaty/(scot %da now.bowl)/alliance/noun
-    ==
   =^  cards  state  init-sequence:helper
   [cards this]
 ::
@@ -89,6 +84,21 @@
       ::  default:  forward to %portal-store
       :_  this  [(~(act cards [our.bowl %portal-store]) act)]~
       ::
+        %manager-init
+      =.  our-apps.state  ;;  our-apps:portal-config
+        %-  tail
+        .^  update:alliance:treaty  %gx
+            /(scot %p our.bowl)/treaty/(scot %da now.bowl)/alliance/noun
+        ==
+      =/  cards
+        =+  ~(tap in our-apps.state)
+        %+  turn  -
+        |=  [=ship =desk]
+        :*  %pass  /our-treaty/(scot %p ship)/[desk]  %agent
+            [our.bowl %treaty]  %watch  /treaty/(scot %p ship)/[desk]
+        ==
+      [cards this]
+      ::
         %sub
       =/  cards  (sub:on-poke:manager act)
       ::  stupid way to do it, sss sub should be done within sub function
@@ -101,6 +111,10 @@
         [(welp cards cards-1) this]
       [cards this]
       ::
+        %blog-sub  
+      =^  cards  sub-blog-paths  (surf:da-blog-paths our.bowl %blog [%paths ~])
+      [cards this]
+      
         %onboarded
       `this(onboarded toggle.act)
       ::
@@ -385,29 +399,23 @@
 --
 |_  [=bowl:gall]
 +*  this      .
-    da-blog-paths   =/  da  (da blog-paths ,[%paths ~])
+    da-blog-paths   =/  da  (da:sss-25 blog-paths ,[%paths ~])
       (da sub-blog-paths bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
 ::
 ++  init-sequence
   ^+  [*(list card) state]
-  =/  cards-1
-    =+  ~(tap in our-apps.state)
-    %+  turn  -
-    |=  [=ship =desk]
-    :*  %pass  /our-treaty/(scot %p ship)/[desk]  %agent
-        [our.bowl %treaty]  %watch  /treaty/(scot %p ship)/[desk]
-    ==
-  =^  cards-2  sub-blog-paths  (surf:da-blog-paths our.bowl %blog [%paths ~])
+  =^  cards-1  sub-blog-paths  (surf:da-blog-paths our.bowl %blog [%paths ~])
   =/  sub-init  [%sub [%collection portal-indexer '' '~2000.1.1']]
   :_  state
-  ;:  welp 
+  %+  welp 
     cards-1
-    cards-2
-  ::  sub to home page
+      ::  sub to home page
   :~  [(~(act cards [our.bowl %portal-store]) sub-init)]
-  ::  sub to our published apps
+      ::  sub to our published apps
       [%pass /our-apps %agent [our.bowl %treaty] %watch /alliance]
-  ==  ==
+      ::  scrying should not be done on on-load or on-init
+      (~(act cards [our.bowl %portal-manager]) [%manager-init ~])
+  ==
 ::
 ++  dev-map-upd
   |=  =_dev-map

@@ -7,6 +7,8 @@
 ++  conv
   |%
   ::
+  ::  TODO what if time looks like '/some-blog-path'
+  ::  or '/some/blog/path'
   ++  key-to-path
     |=  [=key]
     ;;  [@ @ @ @ ~]
