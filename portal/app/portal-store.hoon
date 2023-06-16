@@ -1,6 +1,7 @@
 /-  *portal-data, *portal-message, portal-item, portal-data-0, portal-data-1,
     gr=social-graph
 /+  default-agent, dbug, *portal, sss
+/$  items-to-json  %portal-items  %json
 |%
 +$  versioned-state
   $%  state-0
@@ -196,12 +197,10 @@
                 ?=([%feed *] bespoke.item.u.wave.msg)
             ==
           ~
-        ~&  >  "new feat: sub to first 20 feed items on inital load"
         [(~(act cards [our.bowl %portal-manager]) [%sub-to-many (feed-to-key-list:conv (scag 20 feed.bespoke.item.u.wave.msg))])]~
       :_  this  (welp cards (upd:cards-methods:stor item.u.wave.msg))
       ::
         %prepend-to-feed
-      ~&  "new feat: autosub to feed upd"
       :_  this  
       %+  welp  (upd:cards-methods:stor rock.msg)
       [(~(act cards [our.bowl %portal-manager]) [%sub-to-many (feed-to-key-list:conv feed.u.wave.msg)])]~
@@ -381,7 +380,6 @@
     ++  sub-to-many
       |=  [act=action]
       ^+  [*(list card) state]
-      ~&  >  "new-feat: sub-to-many"
       ?>  ?=([%sub-to-many *] act)
       %-  tail  %^  spin  key-list.act  [*(list card) state]
       |=  [=key q=[cards=(list card) state=state-2]]
@@ -405,6 +403,7 @@
         %+  snoc  `(list card)`(track-gr:cards-methods ship.key.act)
         `card`(~(msg cards [ship.key.act %portal-store]) [%get-item key.act])
       ::  don't subscribe to what you are already subbed to
+      ::  stronger fence than the one in %portal-graph
       ?:  (~(has by read:da-item) [ship.key.act %portal-store path])  `state
       =^  cards  item-sub.state  (surf:da-item ship.key.act %portal-store path)
       :_  state
