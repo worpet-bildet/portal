@@ -1,6 +1,7 @@
 /-  *portal-data, *portal-message, portal-item, portal-data-0, portal-data-1,
     gr=social-graph
 /+  default-agent, dbug, *portal, sss
+/$  items-to-json  %portal-items  %json
 |%
 +$  versioned-state
   $%  state-0
@@ -128,10 +129,6 @@
       %create   =^(cards state (create:handle-poke:stor act) [cards this])
       %replace  =^(cards state (replace:handle-poke:stor act) [cards this])
       %edit     =^(cards state (edit:handle-poke:stor act) [cards this])
-      %sub      
-      =^  cards  state 
-        (sub:handle-poke:stor act)
-      [cards this]
       %prepend-to-feed   =^(cards state (prepend-to-feed:handle-poke:stor act) [cards this])
       %append  =^(cards state (append:handle-poke:stor act) [cards this])
       %prepend  =^(cards state (prepend:handle-poke:stor act) [cards this])
@@ -139,10 +136,11 @@
       %delete  =^(cards state (delete:handle-poke:stor act) [cards this])
       %purge   =^(cards state (purge:handle-poke:stor act) [cards this])
       %destroy  =^(cards state (destroy:handle-poke:stor act) [cards this])
+      %sub      =^(cards state (sub:handle-poke:stor act) [cards this])
+        %sub-to-many
+      =^(cards state (sub-to-many:handle-poke:stor act) [cards this])
         %add-tag-request  
-      =^  cards  state 
-      (add-tag-request:handle-poke:stor act)
-      [cards this]
+      =^(cards state (add-tag-request:handle-poke:stor act) [cards this])
     ==
     ::
       %portal-message
@@ -194,10 +192,18 @@
         =.  item-sub
           (quit:da-item ship.key.item.u.wave.msg %portal-store [%item (key-to-path:conv key.item.u.wave.msg)])
         `this
-      :_  this  (upd:cards-methods:stor item.u.wave.msg)
+      =/  cards
+        ?.  ?&  =('global' time.key.item.u.wave.msg)
+                ?=([%feed *] bespoke.item.u.wave.msg)
+            ==
+          ~
+        [(~(act cards [our.bowl %portal-manager]) [%sub-to-many (feed-to-key-list:conv (scag 20 feed.bespoke.item.u.wave.msg))])]~
+      :_  this  (welp cards (upd:cards-methods:stor item.u.wave.msg))
       ::
         %prepend-to-feed
-      :_  this  (upd:cards-methods:stor rock.msg)
+      :_  this  
+      %+  welp  (upd:cards-methods:stor rock.msg)
+      [(~(act cards [our.bowl %portal-manager]) [%sub-to-many (feed-to-key-list:conv feed.u.wave.msg)])]~
     ==
   ==
 ::
@@ -371,6 +377,17 @@
                  |=([=key =item] ?=(?(%deleted) lens.item))
       [cards state]
     ::
+    ++  sub-to-many
+      |=  [act=action]
+      ^+  [*(list card) state]
+      ?>  ?=([%sub-to-many *] act)
+      %-  tail  %^  spin  key-list.act  [*(list card) state]
+      |=  [=key q=[cards=(list card) state=state-2]]
+      :-  key
+      =.  state  state.q
+      =^  cards  state.q  (sub [%sub key])
+      [(welp cards.q cards) state.q]
+    ::
     ++  sub
       |=  [act=action]
       ^+  [*(list card) state]
@@ -386,6 +403,7 @@
         %+  snoc  `(list card)`(track-gr:cards-methods ship.key.act)
         `card`(~(msg cards [ship.key.act %portal-store]) [%get-item key.act])
       ::  don't subscribe to what you are already subbed to
+      ::  stronger fence than the one in %portal-graph
       ?:  (~(has by read:da-item) [ship.key.act %portal-store path])  `state
       =^  cards  item-sub.state  (surf:da-item ship.key.act %portal-store path)
       :_  state

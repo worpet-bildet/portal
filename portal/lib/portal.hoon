@@ -45,6 +45,13 @@
         =('/' (rear p))
       (snip p)
     (path-to-key (stab (crip p)))
+  ::
+  ++  feed-to-key-list
+    |=  =feed
+    ^-  key-list
+    %+  turn  feed
+    |=  [* * =key]
+    key
   --
 ::
 ++  scry
@@ -107,6 +114,10 @@
 ::
 ++  keys
   |%
+  ++  skid-temp
+    |=  [=key-list]
+    ^-  [temp=^key-list def=^key-list]
+    (skid key-list |=([=key] ?~(time.key %.y %.n)))
   ::
   ++  skip-strucs
     |=  [=key-list strucs=(list struc)]
@@ -221,62 +232,6 @@
       ?+    -.bespoke.item    ~
           %collection  key-list.bespoke.item
       ==
-  --
-::
-++  manager
-  |_  [=bowl:gall cards=_*(list card)]
-  ++  on-poke
-    ::  all arms here should output cards
-    |%
-    ::
-    ++  sub
-      |=  [act=action]
-      ^-  [(list card)]
-      ?>  ?=([%sub *] act)
-      ?.  =(time.key.act '')   ::  branch on whether is %temp (empty time.key)
-        :: if not temp
-        ~[(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(act))]
-      ::  if temp
-      ?:  (~(item-exists scry our.bowl now.bowl) key.act)  ~
-      =|  bespoke=bespoke
-      =*  create-empty-temp  ^-  action  :*  %create
-                                  `ship.key.act
-                                  `cord.key.act
-                                  `''
-                                  `%temp
-                                  `bespoke
-                                  ?:  ?|  =(%app struc.key.act) 
-                                          =(%group struc.key.act)  ==
-                                    [%collection our.bowl '' 'all']~
-                                  ~
-                                  ~
-                                  ~
-                              ==
-      ?+    struc.key.act    !!
-        ::
-          %ship
-        =.  bespoke  [%ship ~]
-        ~[(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(create-empty-temp))]
-        ::
-          %group
-        =.  bespoke  [%group *data:group-preview]
-        =/  path  /groups/(scot %p ship.key.act)/[`@tas`cord.key.act]/preview
-        =/  wire  [%get-group-preview (key-to-path:conv key.act)]
-        =/  sub-status  (~(gut by wex.bowl) [wire ship.key.act %groups] ~)
-        :~  [(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(create-empty-temp))]
-            [%pass wire %agent [ship.key.act %groups] %watch path]
-        ==
-        ::
-          %app
-        =.  bespoke  [%app ~ '' '' *signature *treaty:treaty]
-        =/  path  /treaty/(scot %p ship.key.act)/[`@tas`cord.key.act]
-        =/  wire  [%treaty (key-to-path:conv key.act)]
-        =/  sub-status  (~(gut by wex.bowl) [wire ship.key.act %treaty] ~)
-        :~  [(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(create-empty-temp))]
-            [%pass wire %agent [ship.key.act %treaty] %watch path]
-        ==
-      ==
-    --
   --
 ::
 ++  item-methods  ::  all arms here should output item
@@ -519,7 +474,9 @@
   ?~  dist-desk  %.n
   ::  note: src is allowed to be different from dist-ship
   ?.  =(ship.sig dist-name.u.dist-desk)  %.n
-  ?:  =((get-ship-type:misc our) %comet)  %.n
+  ?:  =((get-ship-type:misc our) %comet) 
+    ~&  "we are a comet, cannot validate app sigs" 
+    %.y
   ~&  "validating... w/ input:"
   ~&  [%sign-app dev ^dist-desk]
   ~&  "and sig:"
