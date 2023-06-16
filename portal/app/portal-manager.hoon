@@ -1,6 +1,7 @@
 /-  *portal-data, *portal-action, *portal-message, portal-config,
     groups, treaty, portal-devs, blog-paths
 /+  default-agent, dbug, *portal, io=agentio, *sig, *sss, sss-25
+/$  json-to-action  %json  %portal-action
 |%
 +$  versioned-state
   $%  state-0:portal-config

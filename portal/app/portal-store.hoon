@@ -1,6 +1,7 @@
 /-  *portal-data, *portal-message, portal-item, portal-data-0, portal-data-1,
     gr=social-graph
 /+  default-agent, dbug, *portal, sss
+/$  items-to-json  %portal-items  %json
 |%
 +$  versioned-state
   $%  state-0
