@@ -405,6 +405,7 @@
         %+  snoc  `(list card)`(track-gr:cards-methods ship.key.act)
         `card`(~(msg cards [ship.key.act %portal-store]) [%get-item key.act])
       ::  don't subscribe to what you are already subbed to
+      ::  imperfect fence, maybe use the one from %portal-graph
       ?:  (~(has by read:da-item) [ship.key.act %portal-store path])  `state
       =^  cards  item-sub.state  (surf:da-item ship.key.act %portal-store path)
       :_  state
