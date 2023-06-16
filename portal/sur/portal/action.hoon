@@ -44,6 +44,7 @@
       [%destroy =key]  :: abolishes the item from the atmosphere
       ::
       [%sub =key]
+      [%sub-to-many =key-list]
       [%sub-to-item =key]
       ::
       ::

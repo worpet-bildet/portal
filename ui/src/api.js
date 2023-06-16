@@ -1,3 +1,4 @@
+import { writable, get } from 'svelte/store';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import Urbit from '@urbit/http-api';
 import { toUrbitTime } from '@root/util';
@@ -9,12 +10,29 @@ export const poke = (p) => api.poke(p);
 export const scry = (s) => api.scry(s);
 export const me = `~${api.ship}`;
 
-let subqueue = [];
-setInterval(() => {
-  if (subqueue.length > 0) {
-    poke(subqueue.shift());
+let subqueue = writable([]);
+let timeout;
+subqueue.subscribe((q) => {
+  const sub = (_q) => {
+    if (!_q.length) return;
+    poke({
+      app: 'portal-manager',
+      mark: 'portal-action',
+      json: {
+        'sub-to-many': {
+          'key-list': _q,
+        },
+      },
+    });
+    subqueue.set([]);
+  };
+  if (q.length >= 50) {
+    sub(q);
+  } else {
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(() => sub(q), 3 * 1000);
   }
-}, 1000);
+});
 
 export const getPortalItems = () => {
   return scry({
@@ -220,15 +238,10 @@ export const subscribeToGroup = (key) => {
 };
 
 export const subscribeToItem = (keyObj) => {
-  subqueue.push({
-    app: 'portal-manager',
-    mark: 'portal-action',
-    json: {
-      sub: {
-        key: keyObj,
-      },
-    },
-  });
+  if (get(subqueue).find((i) => JSON.stringify(i) === JSON.stringify(keyObj))) {
+    return;
+  }
+  subqueue.update((q) => [...q, keyObj]);
 };
 
 export const subscribeToContactProfile = (patp) => {
