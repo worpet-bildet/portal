@@ -474,7 +474,9 @@
   ?~  dist-desk  %.n
   ::  note: src is allowed to be different from dist-ship
   ?.  =(ship.sig dist-name.u.dist-desk)  %.n
-  ?:  =((get-ship-type:misc our) %comet)  %.n
+  ?:  =((get-ship-type:misc our) %comet) 
+    ~&  "we are a comet, cannot validate app sigs" 
+    %.y
   ~&  "validating... w/ input:"
   ~&  [%sign-app dev ^dist-desk]
   ~&  "and sig:"
