@@ -100,7 +100,6 @@
       [cards this]
       ::
         %sub-to-many
-      ~&  >  "new feat: sub to many"
       ::  %def sent to portal-store
       ::  %temp cycled thru single subs
       =/  keys=[temp=key-list def=key-list]  (skid-temp:keys key-list.act) 
@@ -116,7 +115,6 @@
       (~(act ^cards [our.bowl %portal-store]) [%sub-to-many def.keys])
       ::
         %sub
-      ~&  >  "new feat: new sub implementation"
       =^  cards  state  (sub:helper [%sub key.act])
       [cards this]
       ::
