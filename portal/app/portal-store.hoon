@@ -196,8 +196,8 @@
                 ?=([%feed *] bespoke.item.u.wave.msg)
             ==
           ~
-        ~&  >  "new feat: sub to entire feed on inital load"
-        [(~(act cards [our.bowl %portal-manager]) [%sub-to-many (feed-to-key-list:conv feed.bespoke.item.u.wave.msg)])]~
+        ~&  >  "new feat: sub to first 20 feed items on inital load"
+        [(~(act cards [our.bowl %portal-manager]) [%sub-to-many (feed-to-key-list:conv (scag 20 feed.bespoke.item.u.wave.msg))])]~
       :_  this  (welp cards (upd:cards-methods:stor item.u.wave.msg))
       ::
         %prepend-to-feed
