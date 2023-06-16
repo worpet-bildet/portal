@@ -114,6 +114,10 @@
 ::
 ++  keys
   |%
+  ++  skid-temp
+    |=  [=key-list]
+    ^-  [temp=^key-list def=^key-list]
+    (skid key-list |=([=key] ?~(time.key %.y %.n)))
   ::
   ++  skip-strucs
     |=  [=key-list strucs=(list struc)]
