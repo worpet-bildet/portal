@@ -182,32 +182,45 @@
         />
       </div>
     {/if}
-    <div class="col-span-12">
+    <div class="col-span-12 col-start-2">
       <div class="pt-4 flex gap-4">
         {#if allowReplies}
-          <IconButton
-            icon={ChatIcon}
-            active={showCommentForm}
-            on:click={() => (showCommentForm = !showCommentForm)}
-          >
+          <div class="rounded-full overflow-hidden">
+            <IconButton
+              icon={ChatIcon}
+              active={showCommentForm}
+              on:click={() => (showCommentForm = !showCommentForm)}
+              transparent
+            >
+            </IconButton>
+          </div>
+          <div class="pt-2">
             {#if replies.length > 0}
               {replies.length}
             {/if}
-          </IconButton>
+          </div>
         {/if}
         {#if likedByMe}
           <div class="text-error flex items-center gap-4 p-2">
-            <div class="w-6 h-6">
+            <div class="w-6 h-6 rounded-full">
               <LikedIcon />
             </div>
             <span class="text-black">
-              {likeCount}
+              {#if likeCount > 0}
+                {likeCount}
+              {/if}
             </span>
           </div>
         {:else}
-          <IconButton icon={LikeIcon} active={false} on:click={likePost}>
-            {likeCount}
-          </IconButton>
+          <div class="rounded-full">
+            <IconButton icon={LikeIcon} active={false} on:click={likePost} transparent>
+            </IconButton>
+            <div class="pt-2">
+              {#if likeCount > 0}
+                {likeCount}
+              {/if}
+            </div>
+          </div>
         {/if}
       </div>
     </div>
