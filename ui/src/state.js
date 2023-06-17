@@ -8,6 +8,7 @@ import {
   getJoinedGroups,
   getInstalledApps,
   getPals,
+  getBlogs,
   getStorageConfiguration,
   subscribeToGroup,
   requestRadioChannels,
@@ -125,6 +126,15 @@ export const refreshPals = async () => {
 export const refreshRadioChannels = () => {
   // we receive the response to this in teh subscription handler below
   requestRadioChannels();
+};
+
+export const refreshBlogs = () => {
+  getBlogs().then((b) => {
+    state.update((s) => {
+      s.blogs = b;
+      return s;
+    });
+  });
 };
 
 export const getCurator = (patp) => {
@@ -361,11 +371,12 @@ export const keyStrFromObj = ({ struc, ship, cord, time }) => {
 
 export const keyStrToObj = (str) => {
   const parts = str.split('/');
+  let time = parts[1] === 'blog' ? parts.slice(4).join('/') : parts[4];
   return {
     struc: parts[1],
     ship: parts[2],
     cord: parts[3],
-    time: parts[4],
+    time: time,
   };
 };
 
@@ -395,6 +406,7 @@ export const refreshAll = () => {
   refreshGroups();
   refreshPals();
   refreshRadioChannels();
+  refreshBlogs();
   // refreshStorageConfiguration();
 };
 refreshAll();

@@ -1,5 +1,4 @@
 <script>
-  import { onMount } from 'svelte';
   import { me } from '@root/api';
   import {
     state,
@@ -8,7 +7,9 @@
     profileKeyToItemKey,
     collectionKeyToItemKey,
     keyStrFromObj,
+    getItem,
   } from '@root/state';
+  import { getMeta } from '@root/util';
   import { ItemVerticalListPreview } from '@components';
   import {
     IconButton,
@@ -17,9 +18,10 @@
     GroupIcon,
     PersonIcon,
     CollectionIcon,
+    SearchIcon,
   } from '@fragments';
 
-  let items, activeItems, myItems, urlQuery;
+  let items, activeItems, myItems, urlQuery, searchString;
 
   const refreshItems = () => {
     activeItems = items;
@@ -94,6 +96,26 @@
 
     refreshItems();
   });
+
+  const filterBySearchString = (str) => {
+    refreshItems();
+    if (!activeItems || !str) return [];
+    activeItems = [
+      ...activeItems.filter((i) => {
+        const { title, blurb, ship } = getMeta(getItem(keyStrFromObj(i)));
+        if (
+          (title && title.toLowerCase().indexOf(str.toLowerCase()) !== -1) ||
+          (blurb && blurb.toLowerCase().indexOf(str.toLowerCase()) !== -1) ||
+          (ship && ship.toLowerCase().indexOf(str.toLowerCase()) !== -1)
+        ) {
+          return true;
+        }
+        return false;
+      }),
+    ];
+  };
+
+  $: filterBySearchString(searchString);
 </script>
 
 <div class="flex flex-col gap-4 mb-4">
@@ -136,6 +158,15 @@
         toggleFilter('collections');
       }}>Collections</IconButton
     >
+  </div>
+  <div class="flex gap-4">
+    <input
+      type="text"
+      class="border-b focus:outline-none placeholder-grey"
+      placeholder="try searching"
+      bind:value={searchString}
+    />
+    <div class="w-5"><SearchIcon /></div>
   </div>
   {#if items}
     <div class="flex flex-col gap-4 bg-panels p-6 rounded-lg">

@@ -418,8 +418,10 @@
                 [%remove (ot:dejs ~[item-key+dejs-key col-key+dejs-key])]
                 [%delete (ot:dejs ~[key+dejs-key])]
                 [%sub (ot:dejs ~[key+dejs-key])]
+                [%sub-to-many (ot:dejs ~[key-list+dejs-key-list])]
                 [%prepend-to-feed (ot:dejs ~[key+dejs-key feed+dejs-feed])]
                 [%add-tag-request (ot:dejs ~[our+dejs-key their+dejs-key tag-to+dejs-path tag-from+dejs-path])]
+                [%blog-sub ul:dejs]
             ==
     ?+    -.jn    jn
         %create

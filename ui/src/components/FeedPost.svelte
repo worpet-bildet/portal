@@ -57,7 +57,8 @@
     let likes = [...(getLikes(key.ship, key) || [])];
 
     likeCount = likes.length;
-    likedByMe = likes.find((l) => l.ship === me);
+    if (likedByMe && !likes.find((l) => l.ship === me)) likeCount++;
+    likedByMe = likedByMe || likes.find((l) => l.ship === me);
   });
 
   let showCommentForm = false;
@@ -92,6 +93,7 @@
 
   const likePost = () => {
     likedByMe = true;
+    likeCount++;
     poke({
       app: 'portal-manager',
       mark: 'portal-action',
