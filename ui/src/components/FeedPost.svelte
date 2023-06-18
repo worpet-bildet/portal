@@ -202,7 +202,7 @@
             <div class="w-6 h-6">
               <LikedIcon />
             </div>
-            <span class="text-black">
+            <span class="text-black dark:text-mlight">
               {likeCount}
             </span>
           </div>
