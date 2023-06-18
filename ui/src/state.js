@@ -20,12 +20,10 @@ import { fromUrbitTime } from '@root/util';
 export const state = writable(load() || {});
 export const feed = writable({});
 
-// TODO: only really need to do this when the page is closed
-state.subscribe(save);
-
 export const toggleDarkmode = () => {
   state.update((s) => {
     s.darkmode = !s.darkmode;
+    save({ darkmode: s.darkmode });
     return s;
   });
 };
