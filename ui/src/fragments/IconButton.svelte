@@ -10,7 +10,7 @@
 </script>
 
 <button
-  class="py-2 px-2 flex hover:bg-hover items-center gap-4 hover:duration-500 overflow-hidden rounded-lg"
+  class="py-2 px-2 flex hover:bg-hover items-center gap-4 hover:duration-500 overflow-hidden rounded-lg dark:fill-white"
   class:pointer-events-none={disabled}
   class:opacity-50={disabled}
   class:cursor-not-allowed={disabled}

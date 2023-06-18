@@ -74,34 +74,6 @@
   // OTHER FORMSTEPS = ['addship', 'addother']
 
   const save = () => {
-    console.log({
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        create: {
-          'append-to': [
-            {
-              ship: me,
-              time: '~2000.1.1',
-              struc: 'collection',
-              cord: '',
-            },
-          ],
-          bespoke: {
-            collection: {
-              title: name,
-              blurb: description,
-              image: '',
-              'key-list': [
-                ...groupKeys.map((i) => keyStrToObj(i)),
-                ...appKeys.map((i) => keyStrToObj(i)),
-                otherKeys,
-              ],
-            },
-          },
-        },
-      },
-    });
     poke({
       app: 'portal-manager',
       mark: 'portal-action',
@@ -184,9 +156,7 @@
   resetForm();
 </script>
 
-<IconButton icon={PlusIcon} on:click={addCollection}
-  >New Collection</IconButton
->
+<IconButton icon={PlusIcon} on:click={addCollection}>New Collection</IconButton>
 <Modal bind:open={showModal}>
   <StepForm
     bind:formstep

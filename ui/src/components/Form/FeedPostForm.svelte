@@ -154,7 +154,7 @@
       <div />
     {/if}
     <button
-      class="bg-hover text-grey hover:bg-mdark hover:duration-500 font-saucebold rounded-lg px-3 py-1 self-end"
+      class="bg-hover text-grey dark:text-white dark:hover:bg-black hover:bg-mdark hover:duration-500 font-saucebold rounded-lg px-3 py-1 self-end"
       on:click={post}>Post</button
     >
   </div>

@@ -13,11 +13,22 @@ import {
   subscribeToGroup,
   requestRadioChannels,
 } from '@root/api';
+import { save, load } from '@root/storage';
 import config from '@root/config';
 import { fromUrbitTime } from '@root/util';
 
-export const state = writable({});
+export const state = writable(load());
 export const feed = writable({});
+
+// TODO: only really need to do this when the page is closed
+state.subscribe(save);
+
+export const toggleDarkmode = () => {
+  state.update((s) => {
+    s.darkmode = !s.darkmode;
+    return s;
+  });
+};
 
 export const refreshPortalItems = () => {
   getPortalItems().then(({ items }) => {
