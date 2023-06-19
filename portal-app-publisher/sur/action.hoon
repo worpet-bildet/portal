@@ -8,7 +8,9 @@
       ::  .^([r=dict:clay w=dict:clay] %cp /=app1=)
       :: |pass c+[%perm %app1 *path [%r `[%white (sy ~[[%.n 'portal-sell-app1']])]]]
       ::  -send-task-take-gift [%cred 'portal-sell-app1' (sy ~[~zod])]
-      ::
+      ::::
+      ::  what should be in the state for app-pub (e.g. ships who payed and how much)
+
       ::  ask people to make docket file which we read from portal-app-pub
       ::  price -> in %app item
       ::  recepient address -> on portal app pub

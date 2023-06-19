@@ -1,5 +1,5 @@
 /-  *action, treaty, portal-devs
-/+  default-agent, dbug, *sig, *sss, ethio, ethereum
+/+  default-agent, dbug, *sig, *sss, *portal-app-pub
 |%
 +$  versioned-state
   $%  state-0
@@ -132,9 +132,13 @@
   ?>  ?=([%get-tx ~] wire)
   ?>  ?=([%khan %arow *] sign)
   ?:  ?=(%.y -.p.sign)
-    =/  result  !<(transaction-result:rpc:ethereum q.p.p.sign)
-    ~&  result
+    =/  result  !<(?(~ transaction-result) q.p.p.sign)
+    ?~  result
+      ~&  >>  "transaction wasn't made over last 24 hr"
+      `this
+    ~&  `@ud`(need value.result)
     `this
+  ::   how to deal with it after a day?
   ~&  >>  "fetching data failed"
   `this
 ::
