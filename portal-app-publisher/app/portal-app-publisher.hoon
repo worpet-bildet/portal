@@ -1,5 +1,5 @@
 /-  *action, treaty, portal-devs
-/+  default-agent, dbug, *sig, *sss
+/+  default-agent, dbug, *sig, *sss, ethio, ethereum
 |%
 +$  versioned-state
   $%  state-0
@@ -33,6 +33,7 @@
     du-portal-devs  =/  du  (du portal-devs ,[%portal-devs ~])
                     (du pub-portal-devs bowl -:!>(*result:du))
 ++  on-init
+  ::  TODO poke yourself for scries
   ^-  (quip card _this)
   =.  our-apps.state  ;;  (set [ship desk])
     %-  tail
@@ -66,17 +67,24 @@
       %action
     ?>  =(our.bowl src.bowl)
     =/  act  !<(action vase)
-    ?>  ?=([%sign-app *] act)
-    =/  dist-desk  (parse-dist-desk dist-desk.act)
-    ?~  dist-desk  !!
-    =/  treaty  (~(got by treaties) [dist-name desk-name]:u:dist-desk)
-    =^  cards-1  pub-portal-devs
-      (give:du-portal-devs [%portal-devs ~] [%put [dist-name desk-name]:u:dist-desk dev.act])
-    :_  this
-    %+  snoc  cards-1
-    :*  %pass  /sign  %agent  [dev.act %portal-manager]  %poke  
-        %portal-message  
-        !>([%sign-app dist-desk.act (sign our.bowl now.bowl act) treaty])
+    ?+    act    !!
+        [%get-tx-by-hash *]
+      =+  (hex-to-num:ethereum tx-hash.act)
+      :_  this
+      [%pass /get-tx %arvo %k %fard dap.bowl %get-tx-by-hash %noun !>([url.act -])]~
+      ::
+        [%sign-app *]
+      =/  dist-desk  (parse-dist-desk dist-desk.act)
+      ?~  dist-desk  !!
+      =/  treaty  (~(got by treaties) [dist-name desk-name]:u:dist-desk)
+      =^  cards-1  pub-portal-devs
+        (give:du-portal-devs [%portal-devs ~] [%put [dist-name desk-name]:u:dist-desk dev.act])
+      :_  this
+      %+  snoc  cards-1
+      :*  %pass  /sign  %agent  [dev.act %portal-manager]  %poke  
+          %portal-message  
+          !>([%sign-app dist-desk.act (sign our.bowl now.bowl act) treaty])
+      ==
     ==
     ::
       %sss-to-pub
@@ -118,6 +126,17 @@
     ==
     ::
   ==
-++  on-arvo   on-arvo:default
+++  on-arvo
+  |=  [=wire sign=sign-arvo]
+  ^-  (quip card:agent:gall _this)
+  ?>  ?=([%get-tx ~] wire)
+  ?>  ?=([%khan %arow *] sign)
+  ?:  ?=(%.y -.p.sign)
+    =/  result  !<(transaction-result:rpc:ethereum q.p.p.sign)
+    ~&  result
+    `this
+  ~&  >>  "fetching data failed"
+  `this
+::
 ++  on-fail   on-fail:default
 --
