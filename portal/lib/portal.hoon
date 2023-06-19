@@ -138,6 +138,15 @@
     |=  [=key-list ships=(list ship)]
     ^-  ^key-list
     (skim key-list |=([=key] ?~((find [ship.key]~ ships) %.n %.y)))
+  ::
+  ++  deduplicate 
+    |=  [a=(list key)]
+    %-  flop  %-  tail
+    %^  spin  a  *(list key)  
+    |=  [el=key st=(list key)]
+    ?~  (find [el]~ st)
+      el^[el st]
+    [el st]
   --
 ::
 ++  loob
@@ -349,12 +358,9 @@
     ?>  ?=(%collection -.bespoke.col)
     ?>  =(col-key.act key.col)
     ~&  >  "new feat: append-no-dupe"
-    =+  %~  tap  in
-    %-  ~(dif in (silt key-list.act))
-    (silt key-list.bespoke.col)
-    =/  new-key-list  (weld key-list.bespoke.col -)
+    =+  (welp key-list.bespoke.col key-list.act)
     %+  edit  col
-      [%edit col-key.act ~ `[%collection ~ ~ ~ `new-key-list]]
+      [%edit col-key.act ~ `[%collection ~ ~ ~ `(deduplicate:keys -)]]
   ::
   ::  TODO abstract collection methods?
   ::  such that it takes in a gate that arbitrarily modifies the key list
