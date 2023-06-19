@@ -509,12 +509,12 @@
       :-  (welp cards cards-1)
       state
     ::
-    ++  append
+    ++  append  ::  deduplicates
       |=  [act=action]
       ^+  [*(list card) state]
       ?>  ?=([%append *] act)
       =/  path  [%item (key-to-path:conv col-key.act)]
-      =/  col  (append-to-col:itm (get-item col-key.act) act)
+      =/  col  (append-no-dupe:itm (get-item col-key.act) act)
       =.  items  (put-item col)
       =^  cards  item-pub  (give:du-item path [%whole col])
       :_  state

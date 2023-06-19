@@ -138,6 +138,15 @@
     |=  [=key-list ships=(list ship)]
     ^-  ^key-list
     (skim key-list |=([=key] ?~((find [ship.key]~ ships) %.n %.y)))
+  ::
+  ++  deduplicate
+    |=  [a=(list key)]
+    %-  flop  %-  tail
+    %^  spin  a  *(list key)  
+    |=  [el=key st=(list key)]
+    ?~  (find [el]~ st)
+      el^[el st]
+    [el st]
   --
 ::
 ++  loob
@@ -343,6 +352,16 @@
       (weld feed.act feed.bespoke.feed)
     (edit now feed [%edit key.feed ~ `[%feed `new-feed]])
   ::
+  ++  append-no-dupe
+    |=  [now=time col=item act=action]
+    ^-  item
+    ?>  ?=([%append *] act)
+    ?>  ?=(%collection -.bespoke.col)
+    ?>  =(col-key.act key.col)
+    =+  (welp key-list.bespoke.col key-list.act)
+    %^  edit  now  col
+      [%edit col-key.act ~ `[%collection ~ ~ ~ `(deduplicate:keys -)]]
+  ::
   ++  append-to-col
     |=  [now=time col=item act=action]
     ^-  item
@@ -384,8 +403,6 @@
       lens             %deleted
       updated-at.meta  `@t`(scot %da now)
     ==
-
-  ::
   ::
   --
 ::
@@ -395,6 +412,7 @@
   ++  replace          (cury replace:pure now.bowl)
   ++  create           (cury create:pure [our now]:bowl)
   ++  prepend-to-feed  (cury prepend-to-feed:pure now.bowl)
+  ++  append-no-dupe   (cury append-no-dupe:pure now.bowl)
   ++  append-to-col    (cury append-to-col:pure now.bowl)
   ++  prepend-to-col   (cury prepend-to-col:pure now.bowl)
   ++  remove-from-col  (cury remove-from-col:pure now.bowl)
