@@ -20,7 +20,7 @@
   %+  request-rpc:ethio  url
   :*  `'tx by hash'
       %eth-get-transaction-by-hash
-      0x0
+      tx-hash
   ==
 ?^  jon
   %-  pure:m  
