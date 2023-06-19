@@ -234,17 +234,18 @@
       ==
   --
 ::
-++  item-methods  ::  all arms here should output item
-  |_  =bowl:gall
+::  so I can use item-methods wherever, without needing bowl
+++  pure
+  |%
   ++  edit
-    |=  [=item act=action]
+    |=  [now=time =item act=action]
     ::  should output item
     ^-  ^item
     ?>  ?=([%edit *] act)
     ?>  =(key.item key.act)
     %=  item
         updated-at.meta
-      `@t`(scot %da now.bowl)
+      `@t`(scot %da now)
       ::
         lens
       (fall lens.act lens.item)
@@ -306,84 +307,98 @@
     ==
   ::
   ++  replace
-    |=  [=item act=action]
+    |=  [now=time =item act=action]
     ^-  ^item
     ?>  ?=([%replace *] act)
     ?>  =(key.item key.act)
     %=  item
       lens             lens.act
       bespoke          bespoke.act
-      updated-at.meta  `@t`(scot %da now.bowl)
+      updated-at.meta  `@t`(scot %da now)
     ==
   ::
   ++  create
-    |=  [act=action]
+    |=  [[our=ship now=time] act=action]
     ^-  item
     ?>  ?=([%create *] act)     ::  assert that action is %create
     =/  bespoke  (fall bespoke.act *bespoke)
     :^  :^  -.bespoke
-            (fall ship.act our.bowl)
+            (fall ship.act our)
             (fall cord.act '')
-            (fall time.act `@t`(scot %da now.bowl))
+            (fall time.act `@t`(scot %da now))
         (fall lens.act *lens)
         bespoke
-        :^  created-at=`@t`(scot %da now.bowl)
+        :^  created-at=`@t`(scot %da now)
             updated-at=''
-            permissions=~[our.bowl]
+            permissions=~[our]
             reach=[%public ~]
   ::
   ++  prepend-to-feed
-    |=  [feed=item act=action]
+    |=  [now=time feed=item act=action]
     ^-  item
     ?>  ?=([%prepend-to-feed *] act)
     ?>  ?=(%feed -.bespoke.feed)
     ?>  =(key.feed feed-key.act)
     =/  new-feed  %+  oust  [1.000 (lent feed.act)]
       (weld feed.act feed.bespoke.feed)
-    (edit feed [%edit key.feed ~ `[%feed `new-feed]])
+    (edit now feed [%edit key.feed ~ `[%feed `new-feed]])
   ::
-  ::  TODO abstract collection methods?
-  ::  such that it takes in a gate that arbitrarily modifies the key list
   ++  append-to-col
-    |=  [col=item act=action]
+    |=  [now=time col=item act=action]
     ^-  item
     ?>  ?=([%append *] act)
     ?>  ?=(%collection -.bespoke.col)
     ?>  =(col-key.act key.col)
     =/  new-key-list  (weld key-list.bespoke.col key-list.act)
-    %+  edit  col
+    %^  edit  now  col
       [%edit col-key.act ~ `[%collection ~ ~ ~ `new-key-list]]
   ::
   ++  prepend-to-col
-    |=  [col=item act=action]
+    |=  [now=time col=item act=action]
     ^-  item
     ?>  ?=([%prepend *] act)
     ?>  ?=(%collection -.bespoke.col)
     ?>  =(col-key.act key.col)
     =/  new-key-list  (weld key-list.act key-list.bespoke.col)
-    %+  edit  col
+    %^  edit  now  col
       [%edit col-key.act ~ `[%collection ~ ~ ~ `new-key-list]]
   ::
   ++  remove-from-col
-    |=  [col=item act=action]
+    |=  [now=time col=item act=action]
     ^-  item
     ?>  ?=([%remove *] act)
     ?>  ?=(%collection -.bespoke.col)
     ?>  =(col-key.act key.col)
     =/  new-key-list  %+  skip  key-list.bespoke.col
       |=(=key ?~((find [key]~ key-list.act) %.n %.y))
-    %+  edit  col
+    %^  edit  now  col
       [%edit col-key.act ~ `[%collection ~ ~ ~ `new-key-list]]
+
   ::
   ++  delete
-    |=  [=item act=action]
+    |=  [now=time =item act=action]
     ^-  ^item
     ?>  ?=([%delete *] act)
     ?>  =(key.item key.act)
     %=  item
       lens             %deleted
-      updated-at.meta  `@t`(scot %da now.bowl)
+      updated-at.meta  `@t`(scot %da now)
     ==
+
+  ::
+  ::
+  --
+::
+++  item-methods  ::  all arms here should output item
+  |_  =bowl:gall
+  ++  edit             (cury edit:pure now.bowl)
+  ++  replace          (cury replace:pure now.bowl)
+  ++  create           (cury create:pure [our now]:bowl)
+  ++  prepend-to-feed  (cury prepend-to-feed:pure now.bowl)
+  ++  append-to-col    (cury append-to-col:pure now.bowl)
+  ++  prepend-to-col   (cury prepend-to-col:pure now.bowl)
+  ++  remove-from-col  (cury remove-from-col:pure now.bowl)
+  ++  delete           (cury delete:pure now.bowl)
   --
 ::
 ::  OOD
