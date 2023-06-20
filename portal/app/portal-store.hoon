@@ -139,7 +139,7 @@
       %sub      =^(cards state (sub:handle-poke:stor act) [cards this])
         %sub-to-many
       =^(cards state (sub-to-many:handle-poke:stor act) [cards this])
-        %add-tag-request  
+        %add-tag-request
       =^(cards state (add-tag-request:handle-poke:stor act) [cards this])
     ==
     ::
@@ -201,7 +201,7 @@
       :_  this  (welp cards (upd:cards-methods:stor item.u.wave.msg))
       ::
         %prepend-to-feed
-      :_  this  
+      :_  this
       %+  welp  (upd:cards-methods:stor rock.msg)
       [(~(act cards [our.bowl %portal-manager]) [%sub-to-many (feed-to-key-list:conv feed.u.wave.msg)])]~
     ==
@@ -404,7 +404,12 @@
         `card`(~(msg cards [ship.key.act %portal-store]) [%get-item key.act])
       ::  don't subscribe to what you are already subbed to
       ::  stronger fence than the one in %portal-graph
-      ?:  (~(has by read:da-item) [ship.key.act %portal-store path])  `state
+      ?:  ?&  (~(has by read:da-item) [ship.key.act %portal-store path])  
+              !=(key.act [%feed ~worpet-bildet '' 'global'])  ==  
+              ::  stupid hack bcs sss sometimes loses the subscriber from the mem pool
+              ::  so we are allowing the global feed sub to go thru if someone was 
+              ::  `accidentally` unsubscribed
+          `state
       =^  cards  item-sub.state  (surf:da-item ship.key.act %portal-store path)
       :_  state
       (welp (track-gr:cards-methods ship.key.act) cards)

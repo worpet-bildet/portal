@@ -54,10 +54,13 @@
     </a>
 
     <div class="hidden flex-col md:flex gap-4 md:flex-row">
-      <IconButton
-        icon={$state.darkmode ? SunIcon : MoonIcon}
-        on:click={toggleDarkmode}
-      />
+      <div class="rounded-full overflow-hidden pt-0.5">
+        <IconButton
+          icon={$state.darkmode ? SunIcon : MoonIcon}
+          on:click={toggleDarkmode}
+          transparent
+        />
+      </div>
       {#each nav as n}
         <button
           on:click={() => (n.action ? n.action() : push(n.link))}

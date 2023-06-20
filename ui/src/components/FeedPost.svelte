@@ -119,7 +119,7 @@
   } = getCurator(ship)}
   {@const blurbLink = getAnyLink(blurb)}
   <div
-    class="grid grid-cols-12 bg-panels rounded-lg p-5 gap-2 lg:gap-4"
+    class="grid grid-cols-12 bg-panels rounded-lg px-5 pt-5 gap-2 lg:gap-4 lg:gap-y-0"
     in:fade
   >
     <div class="col-span-1">
@@ -184,33 +184,48 @@
         />
       </div>
     {/if}
-    <div class="col-span-12">
-      <div class="pt-4 flex gap-4">
+    <div class="col-span-12 col-start-2 py-2">
+      <div class="-ml-2.5 flex gap-8">
         {#if allowReplies}
-          <IconButton
-            icon={ChatIcon}
-            active={showCommentForm}
-            on:click={() => (showCommentForm = !showCommentForm)}
-          >
-            {#if replies.length > 0}
-              {replies.length}
-            {/if}
-          </IconButton>
-        {/if}
-        {#if likedByMe}
-          <div class="text-error flex items-center gap-4 p-2">
-            <div class="w-6 h-6">
-              <LikedIcon />
+          <div class="flex">
+            <div class="rounded-full overflow-hidden">
+              <IconButton
+                icon={ChatIcon}
+                active={showCommentForm}
+                on:click={() => (showCommentForm = !showCommentForm)}
+                transparent
+              >
+              </IconButton>
             </div>
-            <span class="text-black dark:text-mlight">
-              {likeCount}
-            </span>
+            <div class="pt-2 text-sm w-2">
+              {#if replies.length > 0}
+                {replies.length}
+              {/if}
+            </div>
           </div>
-        {:else}
-          <IconButton icon={LikeIcon} active={false} on:click={likePost}>
-            {likeCount}
-          </IconButton>
         {/if}
+        <div class="flex items-center gap-2">
+          {#if likedByMe}
+            <div class="w-5 h-5 ml-2 text-error">
+              <LikeIcon />
+            </div>
+            <span class="text-sm dark:text-mlight">
+              {#if likeCount > 0}
+                {likeCount}
+              {/if}
+            </span>
+          {:else}
+            <div class="rounded-full overflow-hidden">
+              <IconButton icon={LikeIcon} active={false} on:click={likePost} transparent>
+              </IconButton>
+            </div>
+            <div class="pt-2 pb-2 text-sm">
+              {#if likeCount > 0}
+                {likeCount}
+              {/if}
+            </div>
+          {/if}
+        </div>
       </div>
     </div>
     {#if showCommentForm}
