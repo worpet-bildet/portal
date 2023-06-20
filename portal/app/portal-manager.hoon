@@ -164,7 +164,7 @@
         %payment-tx-hash
       :_  this
       :~  :*  %pass  /payment-hash  %agent  [seller.act %portal-app-publisher]  %poke  
-        %portal-message  !>([%payment-tx-hash seller.act tx-hash.act])
+        %portal-message  !>([%payment-tx-hash tx-hash.act])
       ==  ==
     ==
     ::
@@ -204,6 +204,7 @@
       (snoc create-my-apps create-app)
       ::
         %payment-reference
+      ~&  >  "got ref"
       :_  this
       [%give %fact [/updates]~ %portal-message !>(msg)]~
       ::
