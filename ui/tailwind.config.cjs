@@ -38,4 +38,5 @@ module.exports = {
   variants: {
     extend: {},
   },
+  darkMode: 'class',
 };

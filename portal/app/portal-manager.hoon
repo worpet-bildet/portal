@@ -225,12 +225,8 @@
         =/  path  (spat path)
         =/  key  [%blog our.bowl '' key-time]
         ?:  (~(item-exists scry our.bowl now.bowl) key)
-          =/  col
-            (~(get-item scry our.bowl now.bowl) [%collection our.bowl '' 'published-blogs'])
-          ?>  ?=([%collection *] bespoke.col)
-          ?~  (find [key]~ key-list.bespoke.col)
-            [(~(act cards [our.bowl %portal-store]) [%append [key]~ [%collection our.bowl '' 'published-blogs']])]~
-          ~
+          :~  %-  ~(act cards [our.bowl %portal-store]) 
+          [%append [key]~ [%collection our.bowl '' 'published-blogs']]  ==
         :~  %-  ~(act cards [our.bowl %portal-store])
         :*  %create  ~  ~  `key-time  `%def
           `[%blog (blog-path-to-title path) '' (fall uri '') path '']

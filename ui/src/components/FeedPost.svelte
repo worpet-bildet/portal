@@ -209,7 +209,7 @@
             <div class="w-5 h-5">
               <LikeIcon />
             </div>
-            <span class="text-black text-sm">
+            <span class="text-black text-sm dark:text-mlight">
               {#if likeCount > 0}
                 {likeCount}
               {/if}
