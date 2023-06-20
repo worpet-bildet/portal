@@ -20,9 +20,9 @@
   on:click
   on:click={() => (async && !disabled ? (loading = true) : null)}
 >
-  <span class="w-6">
+  <span class="w-5">
     {#if loading}
-      <svelte:component this={LoadingIcon} class="w-6" />
+      <svelte:component this={LoadingIcon} class="w-5" />
     {:else}
       <svelte:component this={icon} />
     {/if}

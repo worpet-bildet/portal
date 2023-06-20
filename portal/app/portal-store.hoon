@@ -139,7 +139,7 @@
       %sub      =^(cards state (sub:handle-poke:stor act) [cards this])
         %sub-to-many
       =^(cards state (sub-to-many:handle-poke:stor act) [cards this])
-        %add-tag-request  
+        %add-tag-request
       =^(cards state (add-tag-request:handle-poke:stor act) [cards this])
     ==
     ::
@@ -164,7 +164,7 @@
       ::
         %feed-update
       ?>  =(src.bowl src.msg)
-      ?>  =(our.bowl ~worpet-bildet)
+      ?>  =(our.bowl ~mister-toptyr-bilder)
       =/  act  [%prepend-to-feed feed.msg [%feed our.bowl '' 'global']]
       =^(cards state (prepend-to-feed:handle-poke:stor act) [cards this])
     ==
@@ -201,7 +201,7 @@
       :_  this  (welp cards (upd:cards-methods:stor item.u.wave.msg))
       ::
         %prepend-to-feed
-      :_  this  
+      :_  this
       %+  welp  (upd:cards-methods:stor rock.msg)
       [(~(act cards [our.bowl %portal-manager]) [%sub-to-many (feed-to-key-list:conv feed.u.wave.msg)])]~
     ==
@@ -505,7 +505,7 @@
         =/  msg  [%feed-update our.bowl feed.act]
         :_  state
         %+  snoc  (welp cards cards-1)
-        (~(poke pass:io /msg) [~worpet-bildet %portal-store] portal-message+!>(msg))
+        (~(poke pass:io /msg) [~mister-toptyr-bilder %portal-store] portal-message+!>(msg))
       :-  (welp cards cards-1)
       state
     ::
@@ -607,9 +607,9 @@
 ::
 ++  init-sequence
   ^+  [*(list card) state]
-  =/  feed-path  [%item %feed '~worpet-bildet' '' 'global' ~]
-  =^  cards  item-sub  (surf:da-item ~worpet-bildet %portal-store feed-path)
-  =.  cards  (welp cards (track-gr:cards-methods ~worpet-bildet))
+  =/  feed-path  [%item %feed '~mister-toptyr-bilder' '' 'global' ~]
+  =^  cards  item-sub  (surf:da-item ~mister-toptyr-bilder %portal-store feed-path)
+  =.  cards  (welp cards (track-gr:cards-methods ~mister-toptyr-bilder))
   =^  cards-1  state
     %-  create:handle-poke
     :*  %create  ~  ~  `'~2000.1.1'  `%def
@@ -638,7 +638,7 @@
     `[%collection 'My Apps' 'Collection of all apps I have published.' '' ~]
     [%collection our.bowl '' '~2000.1.1']~  ~  ~  ==
   ::
-  ?:  =(our.bowl ~worpet-bildet)
+  ?:  =(our.bowl ~mister-toptyr-bilder)
     =^  cards-7  state
       %-  create:handle-poke
       [%create ~ ~ `'global' `%global `[%feed ~] ~ ~ ~]

@@ -21,7 +21,20 @@
     SearchIcon,
   } from '@fragments';
 
-  let items, activeItems, myItems, urlQuery, searchString;
+  let items, activeItems, myItems, urlQuery, searchString, fullString;
+
+  const createUrl = (toggleFilters) => {
+    urlQuery = `?filters=`;
+    for (const q of toggleFilters) {
+      urlQuery += `${q},`;
+    }
+
+    // if (strFilter) {
+    //   urlQuery += `strFilter`
+    // }
+
+    window.location.href = `${window.location.origin}${window.location.pathname}#/explore${urlQuery}`;
+  }
 
   const refreshItems = () => {
     activeItems = items;
@@ -58,12 +71,15 @@
       _filters.add(filter);
     }
 
-    urlQuery = `?filters=`;
-    for (const q of _filters) {
-      urlQuery += `${q},`;
-    }
+    // console.log(_filters)
+    // console.log("_filters")
+    // // _filters = _filters + searchString
+    console.log(searchString)
+    console.log("searchString")
+    console.log(_filters)
+    console.log("_filters")
 
-    window.location.href = `${window.location.origin}${window.location.pathname}#/explore${urlQuery}`;
+    createUrl(_filters)
 
     filters = _filters;
     refreshItems();
@@ -98,6 +114,8 @@
   });
 
   const filterBySearchString = (str) => {
+    fullString = fullString + str
+    createUrl(filters + fullString )
     refreshItems();
     if (!activeItems || !str) return [];
     activeItems = [
