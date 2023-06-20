@@ -404,7 +404,12 @@
         `card`(~(msg cards [ship.key.act %portal-store]) [%get-item key.act])
       ::  don't subscribe to what you are already subbed to
       ::  stronger fence than the one in %portal-graph
-      ?:  (~(has by read:da-item) [ship.key.act %portal-store path])  `state
+      ?:  ?&  (~(has by read:da-item) [ship.key.act %portal-store path])  
+              !=(key.act [%feed ~worpet-bildet '' 'global'])  ==  
+              ::  stupid hack bcs sss sometimes loses the subscriber from the mem pool
+              ::  so we are allowing the global feed sub to go thru if someone was 
+              ::  `accidentally` unsubscribed
+          `state
       =^  cards  item-sub.state  (surf:da-item ship.key.act %portal-store path)
       :_  state
       (welp (track-gr:cards-methods ship.key.act) cards)
