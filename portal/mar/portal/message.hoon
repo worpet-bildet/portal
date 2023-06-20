@@ -1,4 +1,5 @@
 /-  *portal-message
+/+  portal-json
 |_  msg=message
 ++  grow
   |%

@@ -407,6 +407,12 @@
 ++  dejs
   =,  format
   |%
+  ++  dejs-hex
+    |=  jon=json
+    ;;  @ux
+    ?>  ?=([%s *] jon)
+    (hex-to-num:ethereum +.jon)
+
   ++  dejs-social-graph-track
     |=  jon=json
     ;;  track:gr
@@ -435,6 +441,7 @@
                 [%add-tag-request (ot:dejs ~[our+dejs-key their+dejs-key tag-to+dejs-path tag-from+dejs-path])]
                 [%blog-sub ul:dejs]
                 [%payment-request (ot:dejs ~[seller+dejs-ship desk+so:dejs])]
+                [%payment-tx-hash (ot:dejs ~[seller+dejs-ship tx-hash+dejs-hex])]
             ==
     ?+    -.jn    jn
         %create

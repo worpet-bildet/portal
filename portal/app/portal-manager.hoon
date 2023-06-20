@@ -160,6 +160,12 @@
       :~  :*  %pass  /payment-req  %agent  [seller.act %portal-app-publisher]  %poke  
         %portal-message  !>([%payment-request desk.act])
       ==  ==
+      ::
+        %payment-tx-hash
+      :_  this
+      :~  :*  %pass  /payment-hash  %agent  [seller.act %portal-app-publisher]  %poke  
+        %portal-message  !>([%payment-tx-hash seller.act tx-hash.act])
+      ==  ==
     ==
     ::
       %portal-message

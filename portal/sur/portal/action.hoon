@@ -57,6 +57,6 @@
       [%purge portal-curator=@p]
       ::
       [%payment-request seller=ship =desk]
-      ::[%payment-tx-hash ]
+      [%payment-tx-hash seller=ship tx-hash=@ux]
     ==
 --
