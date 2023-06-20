@@ -47,6 +47,20 @@
       })
       .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
 
+    // TODO
+    // Get the latest post, if it was more than six hours ago, send another sub
+    if (
+      feed[0] &&
+      fromUrbitTime(feed[0].time) < Date.now() - 1000 * 60 * 60 * 6
+    ) {
+      subscribeToItem({
+        struc: 'feed',
+        ship: config.indexer,
+        cord: '',
+        time: 'global',
+      });
+    }
+
     // We also want to sort the pals here by how many posts they have made
     if (pals) {
       patpItemCount = {};
