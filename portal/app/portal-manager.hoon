@@ -205,7 +205,7 @@
       ::
         %payment-reference
       :_  this
-      [%give %fact [/updates]~ %portal-message !>(msg)]~
+      [%give %fact [/updates]~ %noun !>(~)]~
       ::
         %index-as-curator
       ?>  =(our.bowl ~worpet-bildet)
