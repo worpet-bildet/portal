@@ -266,8 +266,8 @@
     });
   };
 
-  let activeTab = 'Screenshots';
-  let tabs = ['Screenshots', 'Reviews', 'Info'];
+  let activeTab = 'Reviews';
+  let tabs = ['Reviews', 'Screenshots', 'Info'];
 </script>
 
 {#if item}
@@ -286,9 +286,8 @@
         <div class="grid grid-cols-9 gap-4">
           {#if screenshots.length === 0}
             <div class="col-span-9">
-              There are no screenshots for {title} yet. If you know the developer,
-              {ship}, prompt them to get in touch with ~dilryd-mopreg.
-            </div>
+              {ship} needs to download %portal to publish screenshots of {title}. Please prompt them to follow <a href="https://twitter.com/worpet_bildet/status/1668643121813438466?s=20">this guide</a></div>
+
           {/if}
           {#each screenshots as screenshot}
             <div
@@ -389,8 +388,9 @@
             </div>
           {/if}
         {:else}
-          It is not yet possible to review {title}. If you know the developer, {ship},
-          prompt them to get in touch with ~dilryd-mopreg.
+          <div class="col-span-9">
+            {ship} needs to download %portal to allow reviews of {title}. Please prompt them to follow <a href="https://twitter.com/worpet_bildet/status/1668643121813438466?s=20">this guide</a>
+          </div>
         {/if}
       {/if}
     </ItemDetail>

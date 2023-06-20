@@ -102,7 +102,7 @@
         %sub-to-many
       ::  %def sent to portal-store
       ::  %temp cycled thru single subs
-      =/  keys=[temp=key-list def=key-list]  (skid-temp:keys key-list.act) 
+      =/  keys=[temp=key-list def=key-list]  (skid-temp:keys key-list.act)
       =^  cards  state
         %-  tail  %^  spin  temp.keys  [*(list card) state]
         |=  [=key q=[cards=(list card) state=state-6]]
@@ -118,10 +118,10 @@
       =^  cards  state  (sub:helper [%sub key.act])
       [cards this]
       ::
-        %blog-sub  
+        %blog-sub
       =^  cards  sub-blog-paths  (surf:da-blog-paths our.bowl %blog [%paths ~])
       [cards this]
-      
+
         %onboarded
       `this(onboarded toggle.act)
       ::
@@ -225,7 +225,7 @@
         =/  path  (spat path)
         =/  key  [%blog our.bowl '' key-time]
         ?:  (~(item-exists scry our.bowl now.bowl) key)
-          :~  %-  ~(act cards [our.bowl %portal-store]) 
+          :~  %-  ~(act cards [our.bowl %portal-store])
           [%append [key]~ [%collection our.bowl '' 'published-blogs']]  ==
         :~  %-  ~(act cards [our.bowl %portal-store])
         :*  %create  ~  ~  `key-time  `%def
@@ -234,7 +234,7 @@
       ?-  -.u.wave.msg
           %init
         ::  needs testing
-        =/  cards 
+        =/  cards
           =+  ~(tap in paths.u.wave.msg)
           %-  tail  %^  spin  -  *(list card)
           |=  [=path cards=(list card)]
@@ -243,7 +243,7 @@
           (create-blog-cards ~ path)
         :_  this  (welp create-my-blogs cards)
         ::
-          %post 
+          %post
         :_  this
         %+  welp  create-my-blogs
         (create-blog-cards ~ path.u.wave.msg)
@@ -260,7 +260,7 @@
         =/  item  %-  ~(get-item scry our.bowl now.bowl)
                   [%collection our.bowl '' 'published-blogs']
         ?>  ?=([%collection *] bespoke.item)
-        =/  cards 
+        =/  cards
           %-  tail  %^  spin  key-list.bespoke.item  *(list card)
           |=  [=key cards=(list card)]
           :-  key
@@ -419,7 +419,7 @@
   =^  cards-1  sub-blog-paths  (surf:da-blog-paths our.bowl %blog [%paths ~])
   =/  sub-init  [%sub [%collection portal-indexer '' '~2000.1.1']]
   :_  state
-  %+  welp 
+  %+  welp
     cards-1
       ::  sub to home page
   :~  [(~(act cards [our.bowl %portal-store]) sub-init)]
@@ -451,7 +451,7 @@
 ++  blog-path-to-title
   |=  p=@t
   =/  p  (trip p)
-  =?  p  
+  =?  p
       =('/' (rear p))
     (snip p)
   =.  p  =+  (flop p)
@@ -482,7 +482,7 @@
   ::  if temp
   =;  cards
     ?:  ?=(%app struc.key.act)  ::  temp app
-      :: subs to %portal-app-publisher and gets on-rock, 
+      :: subs to %portal-app-publisher and gets on-rock,
       :: where it subs to the actual %def app
       ::  is this too much spam?
       =^  cards-1  sub-portal-devs
@@ -497,7 +497,7 @@
                               `''
                               `%temp
                               `bespoke
-                              ?:  ?|  =(%app struc.key.act) 
+                              ?:  ?|  =(%app struc.key.act)
                                       =(%group struc.key.act)  ==
                                 [%collection our.bowl '' 'all']~
                               ~

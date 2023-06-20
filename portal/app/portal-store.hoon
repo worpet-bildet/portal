@@ -139,7 +139,7 @@
       %sub      =^(cards state (sub:handle-poke:stor act) [cards this])
         %sub-to-many
       =^(cards state (sub-to-many:handle-poke:stor act) [cards this])
-        %add-tag-request  
+        %add-tag-request
       =^(cards state (add-tag-request:handle-poke:stor act) [cards this])
     ==
     ::
@@ -201,7 +201,7 @@
       :_  this  (welp cards (upd:cards-methods:stor item.u.wave.msg))
       ::
         %prepend-to-feed
-      :_  this  
+      :_  this
       %+  welp  (upd:cards-methods:stor rock.msg)
       [(~(act cards [our.bowl %portal-manager]) [%sub-to-many (feed-to-key-list:conv feed.u.wave.msg)])]~
     ==
