@@ -88,6 +88,7 @@
     ^-  json
     ?+    -.message    s+''
         %payment-reference  
+      %+  frond  'payment-reference'
       %-  pairs
         :~  ['receiving-address' s+(crip (num-to-hex:ethereum receiving-address.message))]
             ['hex' s+(crip (num-to-hex:ethereum hex.message))]
