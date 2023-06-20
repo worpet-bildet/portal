@@ -169,7 +169,7 @@
       ::
       ::
         %index-as-curator
-      ?>  =(our.bowl ~mister-toptyr-bilder)
+      ?>  =(our.bowl ~worpet-bildet)
       ?>  =(src.bowl src.msg)
       =/  act  ~(act cards [our.bowl %portal-store])
       =/  index-key  [%collection our.bowl '' 'index']
@@ -225,7 +225,7 @@
         =/  path  (spat path)
         =/  key  [%blog our.bowl '' key-time]
         ?:  (~(item-exists scry our.bowl now.bowl) key)
-          :~  %-  ~(act cards [our.bowl %portal-store]) 
+          :~  %-  ~(act cards [our.bowl %portal-store])
           [%append [key]~ [%collection our.bowl '' 'published-blogs']]  ==
         :~  %-  ~(act cards [our.bowl %portal-store])
         :*  %create  ~  ~  `key-time  `%def
