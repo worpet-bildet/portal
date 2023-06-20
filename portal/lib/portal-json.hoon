@@ -1,5 +1,5 @@
 /-  *portal-data, *portal-action, gr=social-graph, portal-config
-/+  *portal, docket, treaty
+/+  *portal, docket, treaty, ethereum
 |%
 ++  enjs
   =,  enjs:format
@@ -83,6 +83,18 @@
     ::     [%keys =key-set]  
     ::     [%valid =valid]
     :: ==
+  ++  enjs-message
+    |=  [=message]
+    ^-  json
+    ?+    -.message    s+''
+        %payment-reference  
+      %-  pairs
+        :~  ['receiving-address' s+(crip (num-to-hex:ethereum receiving-address.message))]
+            ['hex' s+(crip (num-to-hex:ethereum hex.message))]
+            ['eth-price' n+(scot %ud eth-price.message)]
+        ==
+    ==
+
   ++  enjs-manager-result
     |=  [=manager-result]
     ^-  json

@@ -1,10 +1,9 @@
 /-  *portal-message
-/+  etch
 |_  msg=message
 ++  grow
   |%
   ++  noun  msg
-  ++  json  (en-vase:etch !>(msg))
+  ++  json  (enjs-message:enjs:portal-json msg)
   --
 ++  grab
   |%
