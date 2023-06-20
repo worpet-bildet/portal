@@ -1,4 +1,5 @@
 /-  *portal-message
+/+  etch
 |_  msg=message
 ++  grow
   |%
