@@ -44,7 +44,6 @@
       ::
       [%sub =key]
       [%sub-to-many =key-list]
-      [%sub-to-item =key]
       ::
       ::
       [%prepend-to-feed =feed feed-key=[struc=%feed =ship =cord time=cord]]  ::  TODO rename?
@@ -56,5 +55,8 @@
       ::  ? purge needs to be defined as action?
       :: TODO make purge have only 'items-to-keep' arg
       [%purge portal-curator=@p]
+      ::
+      [%payment-request seller=ship =desk]
+      ::[%payment-tx-hash ]
     ==
 --

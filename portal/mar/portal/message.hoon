@@ -3,6 +3,7 @@
 ++  grow
   |%
   ++  noun  msg
+  ++  json  (en-vase:etch !>(msg))
   --
 ++  grab
   |%

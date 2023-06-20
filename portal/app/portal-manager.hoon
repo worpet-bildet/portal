@@ -11,6 +11,21 @@
       state-4:portal-config
       state-5
       state-6
+      state-7
+  ==
++$  state-7
+  $:  %7
+      bought-apps=(map [ship desk] eth-price=@ud)
+      sub-blog-paths=_(mk-subs:sss-25 blog-paths ,[%paths ~])
+      sub-portal-devs=_(mk-subs portal-devs ,[%portal-devs ~])
+      =dev-map:portal-config
+      =portal-curator:portal-config
+      =portal-indexer:portal-config
+      =purge-timer:portal-config
+      =purge-time:portal-config
+      =indexed-as-curator:portal-config
+      =onboarded:portal-config
+      =our-apps:portal-config
   ==
 +$  state-6
   $:  %6
@@ -40,7 +55,7 @@
 +$  card  card:agent:gall
 --
 %-  agent:dbug
-=|  state-6
+=|  state-7
 =*  state  -
 ^-  agent:gall
 =<
@@ -54,7 +69,7 @@
     da-blog-paths   =/  da  (da:sss-25 blog-paths ,[%paths ~])
       (da sub-blog-paths bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
 ++  on-init
-  =.  state  *state-6
+  =.  state  *state-7
   =^  cards  state  init-sequence:helper
   [cards this]
 ::
@@ -65,10 +80,20 @@
   =/  old  !<(versioned-state vase)
   =.  state
     ?-  -.old
-      ?(%0 %1 [%2 *] %3)  [%6 (mk-subs blog-paths ,[%paths ~]) (mk-subs portal-devs ,[%portal-devs ~]) ~ +:*state-4:portal-config]
-      %4                  [%6 (mk-subs blog-paths ,[%paths ~]) (mk-subs portal-devs ,[%portal-devs ~]) ~ +.old]  ::  TODO test
-      %5                  [%6 (mk-subs blog-paths ,[%paths ~]) +.old]
-      %6                  old
+        ?(%0 %1 [%2 *] %3)  
+      [%7 *(map [ship desk] @ud) (mk-subs blog-paths ,[%paths ~]) (mk-subs portal-devs ,[%portal-devs ~]) ~ +:*state-4:portal-config]
+      ::
+        %4
+      [%7 *(map [ship desk] @ud) (mk-subs blog-paths ,[%paths ~]) (mk-subs portal-devs ,[%portal-devs ~]) ~ +.old]  ::  TODO test
+      ::
+        %5
+      [%7 *(map [ship desk] @ud) (mk-subs blog-paths ,[%paths ~]) +.old]
+      ::
+        %6
+      [%7 *(map [ship desk] @ud) +.old]
+      ::
+        %7
+      old
     ==
   =^  cards  state  init-sequence:helper
   [cards this]
@@ -105,7 +130,7 @@
       =/  keys=[temp=key-list def=key-list]  (skid-temp:keys key-list.act)
       =^  cards  state
         %-  tail  %^  spin  temp.keys  [*(list card) state]
-        |=  [=key q=[cards=(list card) state=state-6]]
+        |=  [=key q=[cards=(list card) state=state-7]]
         :-  key
         =.  state  state.q
         =^  cards  state.q  (sub:helper [%sub key])
@@ -129,6 +154,12 @@
       =/  msg  [%index-as-curator src.bowl toggle.act]
       :_  this(indexed-as-curator toggle.act)
       [(~(msg cards [portal-indexer.state %portal-manager]) msg)]~
+      ::
+        %payment-request
+      :_  this
+      :~  :*  %pass  /payment-req  %agent  [seller.act %portal-app-publisher]  %poke  
+        %portal-message  !>([%payment-request desk.act])
+      ==  ==
     ==
     ::
       %portal-message
@@ -166,7 +197,9 @@
       :_  this
       (snoc create-my-apps create-app)
       ::
-      ::
+        %payment-reference
+      :_  this
+      [%give %fact [/updates]~ %portal-message !>(msg)]~
       ::
         %index-as-curator
       ?>  =(our.bowl ~worpet-bildet)
