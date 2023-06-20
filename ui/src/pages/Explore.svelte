@@ -21,20 +21,7 @@
     SearchIcon,
   } from '@fragments';
 
-  let items, activeItems, myItems, urlQuery, searchString, fullString;
-
-  const createUrl = (toggleFilters) => {
-    urlQuery = `?filters=`;
-    for (const q of toggleFilters) {
-      urlQuery += `${q},`;
-    }
-
-    // if (strFilter) {
-    //   urlQuery += `strFilter`
-    // }
-
-    window.location.href = `${window.location.origin}${window.location.pathname}#/explore${urlQuery}`;
-  }
+  let items, activeItems, myItems, urlQuery, searchString;
 
   const refreshItems = () => {
     activeItems = items;
@@ -71,15 +58,12 @@
       _filters.add(filter);
     }
 
-    // console.log(_filters)
-    // console.log("_filters")
-    // // _filters = _filters + searchString
-    console.log(searchString)
-    console.log("searchString")
-    console.log(_filters)
-    console.log("_filters")
+    urlQuery = `?filters=`;
+    for (const q of _filters) {
+      urlQuery += `${q},`;
+    }
 
-    createUrl(_filters)
+    window.location.href = `${window.location.origin}${window.location.pathname}#/explore${urlQuery}`;
 
     filters = _filters;
     refreshItems();
@@ -114,8 +98,6 @@
   });
 
   const filterBySearchString = (str) => {
-    fullString = fullString + str
-    createUrl(filters + fullString )
     refreshItems();
     if (!activeItems || !str) return [];
     activeItems = [

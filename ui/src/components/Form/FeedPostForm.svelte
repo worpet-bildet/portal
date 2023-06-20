@@ -190,7 +190,7 @@
     </div>
   </Modal>
   <Modal bind:open={groupModalOpen}>
-    <div class="flex flex-col gap-4 p4">
+    <div class="flex flex-col gap-4 p-4">
       <div class="text-2xl font-bold">Recommend a group</div>
       {#if Object.values(groups).length === 0}
         <div>
