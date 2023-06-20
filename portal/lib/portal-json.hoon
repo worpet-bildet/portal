@@ -422,7 +422,7 @@
                 [%prepend-to-feed (ot:dejs ~[key+dejs-key feed+dejs-feed])]
                 [%add-tag-request (ot:dejs ~[our+dejs-key their+dejs-key tag-to+dejs-path tag-from+dejs-path])]
                 [%blog-sub ul:dejs]
-                [%payment-request (ot:dejs ~[seller+dejs-ship desk+so])]
+                [%payment-request (ot:dejs ~[seller+dejs-ship desk+so:dejs])]
             ==
     ?+    -.jn    jn
         %create
