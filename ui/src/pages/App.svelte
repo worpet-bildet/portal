@@ -187,19 +187,45 @@
   };
 
   const install = async () => {
-    isInstalling = true;
-    let distDesk = item?.bespoke?.distDesk || `${ship}/${cord || time}`;
-    await poke({
-      app: 'docket',
-      mark: 'docket-install',
-      json: distDesk,
+    console.log({
+      app: 'portal-manager',
+      mark: 'portal-action',
+      json: {
+        'payment-request': {
+          seller: ship,
+          desk: 'sell-me',
+          // desk: cord || time,
+        },
+      },
     });
-    await poke({
-      app: 'hood',
-      mark: 'kiln-revive',
-      json: distDesk.split('/')[1],
+    poke({
+      app: 'portal-manager',
+      mark: 'portal-action',
+      json: {
+        'payment-request': {
+          seller: ship,
+          desk: 'sell-me',
+          // desk: cord || time,
+        },
+      },
     });
-    refreshApps();
+
+    // FIXME: stopgap
+    // window.open(`${window.location.origin}/apps/grid/search/${ship}/apps`);
+
+    // isInstalling = true;
+    // let distDesk = item?.bespoke?.distDesk || `${ship}/${cord || time}`;
+    // await poke({
+    //   app: 'docket',
+    //   mark: 'docket-install',
+    //   json: distDesk,
+    // });
+    // await poke({
+    //   app: 'hood',
+    //   mark: 'kiln-revive',
+    //   json: distDesk.split('/')[1],
+    // });
+    // refreshApps();
   };
 
   const handlePostReview = async ({ detail: { content, rating } }) => {
@@ -286,8 +312,13 @@
         <div class="grid grid-cols-9 gap-4">
           {#if screenshots.length === 0}
             <div class="col-span-9">
-              {ship} needs to download %portal to publish screenshots of {title}. Please prompt them to follow <a href="https://twitter.com/worpet_bildet/status/1668643121813438466?s=20">this guide</a></div>
-
+              {ship} needs to download %portal to publish screenshots of {title}.
+              Please prompt them to follow
+              <a
+                href="https://twitter.com/worpet_bildet/status/1668643121813438466?s=20"
+                >this guide</a
+              >
+            </div>
           {/if}
           {#each screenshots as screenshot}
             <div
@@ -389,7 +420,12 @@
           {/if}
         {:else}
           <div class="col-span-9">
-            {ship} needs to download %portal to allow reviews of {title}. Please prompt them to follow <a href="https://twitter.com/worpet_bildet/status/1668643121813438466?s=20">this guide</a>
+            {ship} needs to download %portal to allow reviews of {title}. Please
+            prompt them to follow
+            <a
+              href="https://twitter.com/worpet_bildet/status/1668643121813438466?s=20"
+              >this guide</a
+            >
           </div>
         {/if}
       {/if}
@@ -406,16 +442,7 @@
         {:else if isInstalling}
           <IconButton loading>Installing...</IconButton>
         {:else}
-          <IconButton
-            icon={InstallIcon}
-            on:click={() => {
-              // FIXME: stopgap
-              window.open(
-                `${window.location.origin}/apps/grid/search/${ship}/apps`
-              );
-              // install()
-            }}>Install</IconButton
-          >
+          <IconButton icon={InstallIcon} on:click={install}>Install</IconButton>
         {/if}
         {#if website}
           <IconButton icon={GlobeIcon} on:click={() => window.open(website)}
