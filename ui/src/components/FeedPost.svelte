@@ -185,7 +185,7 @@
       </div>
     {/if}
     <div class="col-span-12 col-start-2 py-2">
-      <div class="-ml-3 flex gap-8">
+      <div class="-ml-2.5 flex gap-8">
         {#if allowReplies}
           <div class="flex">
             <div class="rounded-full overflow-hidden">
@@ -204,28 +204,28 @@
             </div>
           </div>
         {/if}
-        {#if likedByMe}
-          <div class="text-error flex items-center gap-2 px-2">
-            <div class="w-5 h-5">
+        <div class="flex items-center gap-2">
+          {#if likedByMe}
+            <div class="w-5 h-5 ml-2 text-error">
               <LikeIcon />
             </div>
-            <span class="text-black text-sm dark:text-mlight">
+            <span class="text-sm dark:text-mlight">
               {#if likeCount > 0}
                 {likeCount}
               {/if}
             </span>
-          </div>
-        {:else}
-          <div class="rounded-full overflow-hidden">
-            <IconButton icon={LikeIcon} active={false} on:click={likePost} transparent>
-            </IconButton>
-          </div>
-          <div class="pt-2 text-sm">
-            {#if likeCount > 0}
-              {likeCount}
-            {/if}
-          </div>
-        {/if}
+          {:else}
+            <div class="rounded-full overflow-hidden">
+              <IconButton icon={LikeIcon} active={false} on:click={likePost} transparent>
+              </IconButton>
+            </div>
+            <div class="pt-2 pb-2 text-sm">
+              {#if likeCount > 0}
+                {likeCount}
+              {/if}
+            </div>
+          {/if}
+        </div>
       </div>
     </div>
     {#if showCommentForm}
