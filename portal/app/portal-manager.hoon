@@ -2,6 +2,9 @@
     groups, treaty, portal-devs, blog-paths
 /+  default-agent, dbug, *portal, io=agentio, *sig, *sss, sss-25
 /$  json-to-action  %json  %portal-action
+/$  msg-to-json  %portal-message  %json
+/$  dev-map-to-json  %portal-dev-map  %json
+/$  portal-manager-result-to-json  %portal-manager-result  %json
 |%
 +$  versioned-state
   $%  state-0:portal-config
@@ -207,6 +210,11 @@
       ~&  >  "got ref"
       :_  this
       [%give %fact [/updates]~ %portal-message !>(msg)]~
+      ::
+        %payment-confirmed
+      ::  TODO send poke to install
+      ::  send some upd to FE?
+      `this
       ::
         %index-as-curator
       ?>  =(our.bowl ~worpet-bildet)

@@ -1,7 +1,10 @@
-/-  *portal-data, *portal-message, portal-item, portal-data-0, portal-data-1,
-    gr=social-graph
+/-  *portal-data, *portal-message, portal-item, gr=social-graph
+/-  portal-data-0, portal-data-1
 /+  default-agent, dbug, *portal, sss
 /$  items-to-json  %portal-items  %json
+/$  item-to-json  %portal-item  %json
+/$  store-result-to-json  %portal-store-result  %json
+/$  portal-update-to-json  %portal-update  %json
 |%
 +$  versioned-state
   $%  state-0
