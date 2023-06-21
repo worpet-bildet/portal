@@ -119,7 +119,7 @@
   } = getCurator(ship)}
   {@const blurbLink = getAnyLink(blurb)}
   <div
-    class="grid grid-cols-12 bg-panels rounded-lg px-5 pt-5 gap-2 lg:gap-4 lg:gap-y-0"
+    class="grid grid-cols-12 bg-panels dark:bg-darkgrey dark:border rounded-lg px-5 pt-5 gap-2 lg:gap-4 lg:gap-y-0"
     in:fade
   >
     <div class="col-span-1">
@@ -204,12 +204,12 @@
             </div>
           </div>
         {/if}
-        <div class="flex items-center gap-2">
+        <div class="flex items-center">
           {#if likedByMe}
             <div class="w-5 h-5 ml-2 text-error">
-              <LikeIcon />
+              <LikedIcon />
             </div>
-            <span class="text-sm dark:text-mlight">
+            <span class="p-2 text-sm dark:text-mlight text-error">
               {#if likeCount > 0}
                 {likeCount}
               {/if}
@@ -229,7 +229,7 @@
       </div>
     </div>
     {#if showCommentForm}
-      <div class="flex flex-col gap-4 col-span-12" transition:slide>
+      <div class="flex flex-col gap-4 col-span-12 pb-4" transition:slide>
         <FeedPostForm
           replyTo={item.keyObj}
           recommendButtons={false}

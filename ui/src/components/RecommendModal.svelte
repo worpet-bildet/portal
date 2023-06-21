@@ -45,7 +45,7 @@
 <Modal bind:open>
   <div class="flex flex-col justify-center gap-4 p-4">
     <div class="text-xl">Say something about {title || 'this'}</div>
-    <div class="grid grid-cols-12 gap-4">
+    <div class="grid grid-cols-12 gap-4 p-4 dark:border">
       <div class="col-span-1">
         <MySigil />
       </div>
@@ -56,7 +56,7 @@
         <ItemVerticalListPreview {key} clickable={false} />
       </div>
       <button
-        class="bg-hover text-grey hover:bg-mdark hover:duration-500 font-saucebold rounded-lg py-2 px-4 col-start-11 col-span-2 lg:col-start-12 lg:col-span-1"
+        class="bg-hover text-grey hover:bg-mdark dark:bg-white dark:text-black hover:duration-500 font-saucebold rounded-lg py-2 px-4 col-start-11 col-span-2 lg:col-start-12 lg:col-span-1"
         on:click={recommend}>Post</button
       >
     </div>

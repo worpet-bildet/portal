@@ -87,7 +87,7 @@
 </script>
 
 <div class="grid grid-cols-12 gap-x-8">
-  <div class="grid gap-y-4 col-span-9 bg-panels p-6 rounded-lg">
+  <div class="grid gap-y-4 col-span-9 bg-panels dark:bg-darkgrey dark:border p-6 rounded-lg">
     <Tabs {tabs} bind:activeTab />
     {#if activeTab === 'Profile'}
       <div class="flex flex-col gap-2">

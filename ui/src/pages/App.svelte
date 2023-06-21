@@ -312,7 +312,7 @@
           {/each}
         </div>
         {#if me === ship}
-          <div class="grid gap-8 bg-panels p-6 rounded-lg">
+          <div class="grid gap-8 bg-panels dark:bg-darkgrey dark:border p-6 rounded-lg">
             <div class="flex gap-4">
               <input
                 type="file"
@@ -336,7 +336,7 @@
           </div>
         {/if}
       {:else if activeTab === 'Info'}
-        <div class="grid gap-8 bg-panels p-6 rounded-lg">
+        <div class="grid gap-8 bg-panels dark:bg-darkgrey dark:border p-6 rounded-lg">
           <div>
             <div class="text-2xl font-bold">
               Current {title} version

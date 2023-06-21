@@ -9,6 +9,7 @@ module.exports = {
       grey: '#696969',
       black: '#000000',
       dark: '#00000080',
+      darkBorders: '#80808040',
       darkgrey: '#181A1C',
       panels: '#f9f9f940', //#D6D3D6',
       white: '#ffffff',
@@ -16,11 +17,6 @@ module.exports = {
       offwhite: '#c5c5c5',
       mdark: '#eeeef0',
       mlight: '#f9f9f9',
-      top: '#D8D1D0',
-      two: '#D5CDCB',
-      three: '#C8BFC5',
-      four: '#BEBAC1',
-      five: '#AEB6BF',
       error: 'rgb(220 38 38)',
       link: 'blue',
     },
@@ -36,7 +32,8 @@ module.exports = {
   },
   screens: {},
   variants: {
-    extend: {},
+    extend: {
+    },
   },
   darkMode: 'class',
 };

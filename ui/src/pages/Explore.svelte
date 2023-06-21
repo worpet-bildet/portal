@@ -169,7 +169,7 @@
     <div class="w-5"><SearchIcon /></div>
   </div>
   {#if items}
-    <div class="flex flex-col gap-4 bg-panels p-6 rounded-lg">
+    <div class="flex flex-col gap-4 bg-panels dark:bg-darkgrey dark:border p-6 rounded-lg">
       {#if activeItems.length > 0}
         {#each activeItems as key}
           <ItemVerticalListPreview {key} />

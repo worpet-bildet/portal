@@ -63,7 +63,7 @@
         dispatch('selected', { key, selected });
       }
     }}
-    class="grid grid-cols-6 w-full items-center gap-4 p-1 hover:bg-hover hover:duration-500 cursor-pointer rounded-lg text-sm text-left"
+    class="grid grid-cols-6 w-full items-center gap-4 p-1 hover:bg-hover dark:border dark:hover:border-white hover:duration-500 cursor-pointer rounded-lg text-sm text-left"
     class:bg-mdark={selected}
   >
     <div
