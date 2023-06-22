@@ -22,10 +22,9 @@
   class:bg-hover={active && !$state.darkmode && !changeColorOnHover}
   class:bg-panels={!transparent && !active && !$state.darkmode}
   class:fill-grey={(!whiteIcon && !active) || icon.name.includes('People') && !changeColorOnHover}
-  class:fill-black={icon.name.includes('Chat') && active}
+  class:fill-black={icon.name.includes('Chat') && active && !$state.darkmode}
   class:fill-white={whiteIcon && icon.name.includes('Moon')}
   class:dark:fill-white={(icon.name.includes('Chat') && active) || whiteIcon}
-  class:stroke-grey={icon.name.includes('Like')}
   class:hover:stroke-black={icon.name.includes('Like')}
   class:dark:hover:stroke-white={icon.name.includes('Like')}
   class:hover:bg-hover={!changeColorOnHover && !$state.darkmode}

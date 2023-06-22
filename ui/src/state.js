@@ -233,11 +233,14 @@ export const getMoreFromThisShip = (patp) => {
         (k) =>
           k?.keyObj?.struc === 'collection' &&
           k?.keyObj?.time !== 'global' &&
-          k?.keyObj?.time !== 'index'
+          k?.keyObj?.time !== 'index' &&
+          k?.keyObj?.cord !== 'portal'
       )
       .reduce((a, b) => {
         b?.bespoke?.['key-list']
-          .filter((k) => k?.struc !== 'collection' && k?.ship === patp)
+          .filter((k) => k?.struc !== 'collection' && k?.ship === patp &&
+            (k?.cord !== 'portal' || k?.cord !== '🪩 Portal')
+          )
           .forEach((k) => {
             if (!a[keyStrFromObj(k)]) return (a[keyStrFromObj(k)] = 1);
             a[keyStrFromObj(k)]++;

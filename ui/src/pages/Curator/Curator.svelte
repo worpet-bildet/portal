@@ -56,6 +56,7 @@
     if (!s) return;
     loadCurator();
     sortedRecommendations = getMoreFromThisShip(patp).slice(0, 4);
+    console.log(sortedRecommendations)
   });
 
   const togglePal = () => {
