@@ -160,7 +160,7 @@
       <div />
     {/if}
     <button
-      class="bg-hover dark:bg-white text-grey dark:text-black hover:bg-mdark dark:hover:bg-mdark hover:duration-500 font-saucebold rounded-lg px-3 py-1 self-end"
+      class="bg-hover dark:bg-white text-grey dark:text-black hover:bg-white dark:hover:bg-offwhite hover:duration-500 font-saucebold rounded-lg px-3 py-1 self-end"
       on:click={post}>Post</button
     >
   </div>

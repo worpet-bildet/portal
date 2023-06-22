@@ -15,8 +15,6 @@ module.exports = {
       white: '#ffffff',
       hover: '#ffffff60',
       offwhite: '#c5c5c5',
-      mdark: '#eeeef0',
-      mlight: '#f9f9f9',
       error: 'rgb(220 38 38)',
       link: 'blue',
     },

@@ -124,11 +124,6 @@
       { struc: 'app', ship: '~paldev', cord: 'pals', time: '' },
       { struc: 'app', ship: '~nodmyn-dosrux', cord: 'radio', time: '' }
   ]
-
-  const events = [
-      { struc: 'app', ship: '~paldev', cord: 'pals', time: '' },
-      { struc: 'app', ship: '~nodmyn-dosrux', cord: 'radio', time: '' }
-  ]
 </script>
 
 <div class="grid grid-cols-9 gap-8 mb-4">

@@ -155,7 +155,6 @@
     <SidebarGroup>
       <IconButton
         icon={CheckIcon}
-
         on:click={() => {
           switch (activeTab) {
             case 'Profile':

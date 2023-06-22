@@ -116,7 +116,6 @@
           <div class="flex justify-between">
             <IconButton
               icon={LeftArrowIcon}
-
               on:click={() => (formstep = 'type')}>Back</IconButton
             >
             <div />
@@ -144,7 +143,6 @@
           <div class="flex justify-between">
             <IconButton
               icon={LeftArrowIcon}
-
               on:click={() => (formstep = 'type')}>Back</IconButton
             >
             <div />
@@ -182,7 +180,6 @@
           >
           <IconButton
             icon={CheckIcon}
-
             on:click={lastValidShip !== newShip || !newShip ? null : saveShip}
             disabled={lastValidShip !== newShip || !newShip}>Save</IconButton
           >
