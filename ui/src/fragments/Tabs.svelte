@@ -5,8 +5,8 @@
 <div class="flex gap-4 border-b">
   {#each tabs as tab}
     <button
-      class="cursor-pointer text-lg hover:text-black font-saucebold hover:duration-500 dark:border-b-[#ffffff] dark:hover:text-white"
-      class:border-b-[#000000]={activeTab === tab}
+      class="cursor-pointer text-lg hover:text-black font-saucebold hover:duration-500 dark:border-b-white dark:hover:text-white"
+      class:border-b-black={activeTab === tab}
       class:border-b-2={activeTab === tab}
       class:text-black={activeTab === tab}
       class:text-grey={activeTab !== tab}

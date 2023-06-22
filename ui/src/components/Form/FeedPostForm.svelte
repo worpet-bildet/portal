@@ -178,7 +178,7 @@
       {/if}
       {#each Object.entries(apps) as [path, { title, image, color }]}
         <button
-          class="grid grid-cols-12 dark:border dark:hover:border-[#FFFFFF] hover:duration-500 rounded-lg items-center gap-4 p-1"
+          class="grid grid-cols-12 dark:border dark:hover:border-white hover:duration-500 rounded-lg items-center gap-4 p-1"
           class:hover:bg-panels={!$state.darkmode}
           on:click={() => {
             appModalOpen = false;
@@ -207,7 +207,7 @@
       {/if}
       {#each Object.entries(groups) as [path, { meta: { title, image } }]}
         <button
-          class="grid grid-cols-12 dark:border dark:hover:border-[#FFFFFF] hover:duration-500 rounded-lg items-center gap-4 p-1"
+          class="grid grid-cols-12 dark:border dark:hover:border-white hover:duration-500 rounded-lg items-center gap-4 p-1"
           class:hover:bg-panels={!$state.darkmode}
           on:click={() => {
             groupModalOpen = false;

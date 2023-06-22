@@ -9,6 +9,9 @@ module.exports = {
       grey: '#696969',
       black: '#000000',
       dark: '#00000080',
+      coverPhotoBottom: '#00000000',
+      coverPhotoTop: '#000000aa',
+      purple: '#573c7c',
       gradientdark: '#0c0c0c',
       darkgrey: '#181A1C',
       panels: '#f9f9f940', //#D6D3D6',
@@ -21,6 +24,8 @@ module.exports = {
     extend: {},
     borderColor: {
       DEFAULT: '#80808040',
+      white: '#ffffff',
+      black: '#000000',
       error: 'rgb(220 38 38)',
       spacer: '#696969',
     },

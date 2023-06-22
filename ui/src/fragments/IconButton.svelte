@@ -31,8 +31,8 @@
   class:hover:fill-black={changeColorOnHover && !$state.darkmode && !whiteIcon}
   class:hover:fill-offwhite={changeColorOnHover && !$state.darkmode && (whiteIcon || $state.darkmode)}
   class:dark:hover:fill-white={changeColorOnHover && $state.darkmode}
-  class:dark:hover:border-[#FFFFFF]={!changeColorOnHover && $state.darkmode}
-  class:border-[#FFFFFF]={active && $state.darkmode && !changeColorOnHover}
+  class:dark:hover:border-white={!changeColorOnHover && $state.darkmode}
+  class:border-white={active && $state.darkmode && !changeColorOnHover}
   class:dark:border={$state.darkmode && !changeColorOnHover}
   title={tooltip}
   on:click

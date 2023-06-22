@@ -67,7 +67,7 @@
         <button
           on:click={() => (n.action ? n.action() : push(n.link))}
           class="rounded-xl flex font-saucebold items-center px-4 hover:duration-500 py-2 md:py-0"
-          class:text-[#000000]={$location === n.link}
+          class:text-black={$location === n.link}
           class:text-grey={$location !== n.link &&
             (pagesWithTransparentNav.some((v) => $location.includes(v)) ||
               $location === '/')}

@@ -166,7 +166,7 @@
         <div class="flex flex-col gap-4">
           {#each sortRadioStations($state.radioStations) as { description, viewers, location }}
             <button
-              class="flex flex-col gap-2 rounded-md p-2 hover:bg-hover dark:hover:border-[#FFFFFF] hover:duration-500 text-left"
+              class="flex flex-col gap-2 rounded-md p-2 hover:bg-hover dark:hover:border-white hover:duration-500 text-left"
               on:click={() => tuneRadio(location)}
             >
               <div>{description}</div>
