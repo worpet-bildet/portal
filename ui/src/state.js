@@ -215,7 +215,8 @@ export const getCollectedItemLeaderboard = (excludePatp) => {
         b?.bespoke?.['key-list']
           .filter((k) =>
             k?.struc !== 'collection' &&
-            (k?.name !== 'Portal' || k?.name !== '🪩 Portal')
+            !(k?.cord === 'portal' && k?.ship === '~worpet-bildet' &&
+              (k?.struc === 'app' || k?.struc === 'group'))
           )
           .forEach((k) => {
             if (!a[keyStrFromObj(k)]) return (a[keyStrFromObj(k)] = 1);
@@ -233,13 +234,17 @@ export const getMoreFromThisShip = (patp) => {
         (k) =>
           k?.keyObj?.struc === 'collection' &&
           k?.keyObj?.time !== 'global' &&
-          k?.keyObj?.time !== 'index' &&
-          k?.keyObj?.cord !== 'portal'
+          k?.keyObj?.time !== 'index'
       )
       .reduce((a, b) => {
         b?.bespoke?.['key-list']
-          .filter((k) => k?.struc !== 'collection' && k?.ship === patp &&
-            (k?.cord !== 'portal' || k?.cord !== '🪩 Portal')
+          .filter(
+            (k) =>
+              k?.struc !== 'collection' &&
+              k?.ship === patp &&
+              k?.struc !== 'ship' &&
+              !(k?.cord === 'portal' && k?.ship === '~worpet-bildet' &&
+                (k?.struc === 'app' || k?.struc === 'group'))
           )
           .forEach((k) => {
             if (!a[keyStrFromObj(k)]) return (a[keyStrFromObj(k)] = 1);
