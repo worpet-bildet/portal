@@ -13,9 +13,13 @@
       ::
       [%sign-app dist-desk=@t sig=signature =treaty:treaty]
       ::
+      ::  buyer sends
       [%payment-request =desk]
+      ::  buyer receives
       [%payment-reference hex=@ux eth-price=@ud receiving-address=@ux]
+      ::  buyer sends
       [%payment-tx-hash tx-hash=@ux]
+      ::  buyer receives
       [%payment-confirmed tx-hash=@ux =desk]
   ==
 --

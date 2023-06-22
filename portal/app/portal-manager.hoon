@@ -223,9 +223,11 @@
       [%give %fact [/updates]~ %portal-message !>(msg)]~
       ::
         %payment-confirmed
-      ::  TODO send poke to install
-      ::  send some upd to FE?
-      `this
+      :_  this
+      :~  [%give %fact [/updates]~ %portal-message !>(msg)]
+          :*  %pass  /install  %agent  [our.bowl %hood]  %poke  
+              %kiln-install  !>([desk.msg src.bowl desk.msg])
+      ==  ==
       ::
         %index-as-curator
       ?>  =(our.bowl ~worpet-bildet)

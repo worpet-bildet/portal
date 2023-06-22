@@ -90,12 +90,21 @@
         %payment-reference  
       %+  frond  'payment-reference'
       %-  pairs
-        :~  ['hex' s+(crip (num-to-hex:ethereum hex.message))]
+        :~  ['hex' (enjs-hex hex.message)]
             ['eth-price' n+(scot %ud eth-price.message)]
             ['receiving-address' s+(crip (num-to-hex:ethereum receiving-address.message))]
         ==
+        %payment-confirmed
+      %+  frond  'payment-confirmed'
+      %-  pairs
+        :~  ['tx-hash' (enjs-hex tx-hash.message)]
+            ['desk' s+desk.message]
+        ==
     ==
-
+  ++  enjs-hex
+    |=  hex=@ux
+    ^-  json
+    s+(crip (num-to-hex:ethereum hex))
   ++  enjs-manager-result
     |=  [=manager-result]
     ^-  json
