@@ -166,7 +166,7 @@
         <div class="flex flex-col gap-4">
           {#each sortRadioStations($state.radioStations) as { description, viewers, location }}
             <button
-              class="flex flex-col gap-2 rounded-md p-2 hover:bg-hover dark:hover:border-white hover:duration-500 text-left"
+              class="flex flex-col gap-2 rounded-md p-2 hover:bg-hover dark:hover:border-[#FFFFFF] hover:duration-500 text-left"
               on:click={() => tuneRadio(location)}
             >
               <div>{description}</div>
@@ -190,9 +190,11 @@
           <div class="text-xl font-bold pb-4 px-2">
             Portal is better with %pals
           </div>
-          {#each recommendedApps as key}
-            <ItemVerticalListPreview {key} small/>
-          {/each}
+          <div class="flex flex-col gap-2">
+            {#each recommendedApps as key}
+              <ItemVerticalListPreview {key} small/>
+            {/each}
+          </div>
         </div>
       {:else if sortedPals && sortedPals.length > 0}
         <div class="flex flex-col gap-4 px-2">

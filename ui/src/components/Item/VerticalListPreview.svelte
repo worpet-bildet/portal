@@ -63,7 +63,8 @@
         dispatch('selected', { key, selected });
       }
     }}
-    class="grid grid-cols-6 w-full items-center gap-4 p-1 hover:bg-hover hover:duration-500 cursor-pointer rounded-lg text-sm text-left"
+    class="grid grid-cols-6 w-full items-center gap-4 p-1 dark:border dark:hover:border-[#FFFFFF] hover:duration-500 cursor-pointer rounded-lg text-sm text-left"
+    class:hover:bg-hover={!$state.darkmode}
     class:bg-panels={selected}
   >
     <div
