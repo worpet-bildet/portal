@@ -213,7 +213,10 @@ export const getCollectedItemLeaderboard = (excludePatp) => {
       )
       .reduce((a, b) => {
         b?.bespoke?.['key-list']
-          .filter((k) => k?.struc !== 'collection')
+          .filter((k) =>
+            k?.struc !== 'collection' &&
+            (k?.name !== 'Portal' || k?.name !== '🪩 Portal')
+          )
           .forEach((k) => {
             if (!a[keyStrFromObj(k)]) return (a[keyStrFromObj(k)] = 1);
             a[keyStrFromObj(k)]++;

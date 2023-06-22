@@ -8,7 +8,7 @@
     TextArea,
     IconButton,
     AppIcon,
-    GroupIcon,
+    PeopleIcon,
     ImageIcon,
     Modal,
     ItemImage,
@@ -104,6 +104,7 @@
         <div class="rounded-full overflow-hidden">
           <IconButton
             icon={AppIcon}
+            changeColorOnHover
             on:click={() => {
               appModalOpen = true;
             }}
@@ -112,7 +113,8 @@
         </div>
         <div class="rounded-full overflow-hidden">
           <IconButton
-            icon={GroupIcon}
+            icon={PeopleIcon}
+            changeColorOnHover
             on:click={() => {
               groupModalOpen = true;
             }}
@@ -129,6 +131,7 @@
         <div class="rounded-full overflow-hidden">
           <IconButton
             icon={ImageIcon}
+            changeColorOnHover
             disabled={!$state.s3 || !$state.s3.configuration.currentBucket}
             tooltip="Configure S3 storage for image support"
             on:click={() => {

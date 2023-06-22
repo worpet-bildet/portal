@@ -170,6 +170,7 @@
       <div class="flex justify-between">
         <IconButton
           icon={LeftArrowIcon}
+
           on:click={() => (editModalOpen = false)}>Back</IconButton
         >
         <IconButton icon={CheckIcon} on:click={saveEdits}>Save</IconButton>

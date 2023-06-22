@@ -130,8 +130,8 @@
       </div>
     </div>
     <div class="col-span-12 md:col-span-10 flex flex-col gap-2">
-      <div class="flex gap-2 text-sm">
-        <a href={`/${ship}`} use:link>{nickname || ship}</a>
+      <div class="flex gap-2 text-sm text-grey">
+        <a class="text-black dark:text-white" href={`/${ship}`} use:link>{nickname || ship}</a>
         <span>·</span>
         <span>{format(createdAt)}</span>
       </div>
@@ -191,13 +191,14 @@
             <div class="rounded-full overflow-hidden">
               <IconButton
                 icon={ChatIcon}
+                changeColorOnHover
                 active={showCommentForm}
                 on:click={() => (showCommentForm = !showCommentForm)}
                 transparent
               >
               </IconButton>
             </div>
-            <div class="pt-2 text-sm w-2">
+            <div class="pt-2 text-sm w-2 text-grey">
               {#if replies.length > 0}
                 {replies.length}
               {/if}
@@ -209,17 +210,17 @@
             <div class="w-5 h-5 ml-2 text-error">
               <LikedIcon />
             </div>
-            <span class="p-2 text-sm dark:text-mlight text-error">
+            <span class="p-2 text-sm text-error">
               {#if likeCount > 0}
                 {likeCount}
               {/if}
             </span>
           {:else}
             <div class="rounded-full overflow-hidden">
-              <IconButton icon={LikeIcon} active={false} on:click={likePost} transparent>
+              <IconButton icon={LikeIcon} changeColorOnHover active={false} on:click={likePost} transparent>
               </IconButton>
             </div>
-            <div class="pt-2 pb-2 text-sm">
+            <div class="pt-2 pb-2 text-sm text-grey">
               {#if likeCount > 0}
                 {likeCount}
               {/if}
@@ -229,7 +230,7 @@
       </div>
     </div>
     {#if showCommentForm}
-      <div class="flex flex-col gap-4 col-span-12 pb-4" transition:slide>
+      <div class="flex flex-col gap-4 col-span-12 py-4" transition:slide>
         <FeedPostForm
           replyTo={item.keyObj}
           recommendButtons={false}

@@ -20,8 +20,7 @@
 
   let groups = {};
   let apps = {};
-  let newShip;
-  let newOtherItem;
+  let newShip, newOtherItem;
 
   const collectionContains = (key) => {
     const parts = key.split('/');
@@ -117,6 +116,7 @@
           <div class="flex justify-between">
             <IconButton
               icon={LeftArrowIcon}
+
               on:click={() => (formstep = 'type')}>Back</IconButton
             >
             <div />
@@ -144,6 +144,7 @@
           <div class="flex justify-between">
             <IconButton
               icon={LeftArrowIcon}
+
               on:click={() => (formstep = 'type')}>Back</IconButton
             >
             <div />
@@ -181,6 +182,7 @@
           >
           <IconButton
             icon={CheckIcon}
+
             on:click={lastValidShip !== newShip || !newShip ? null : saveShip}
             disabled={lastValidShip !== newShip || !newShip}>Save</IconButton
           >

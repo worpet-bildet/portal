@@ -15,7 +15,7 @@
     IconButton,
     SparklesIcon,
     AppIcon,
-    GroupIcon,
+    PeopleIcon,
     PersonIcon,
     CollectionIcon,
     SearchIcon,
@@ -118,13 +118,17 @@
   $: filterBySearchString(searchString);
 </script>
 
-<div class="flex flex-col gap-4 mb-4">
-  <div class="text-2xl font-bold">Everything you have ever seen on Portal</div>
-  <p>
-    Items you come across on your travels will accrue here, but it's not yet an
-    exhaustive index of all the things on Portal.
-  </p>
-  <div class="flex gap-4">
+<div class="flex flex-col gap-4 mb-4 items-center">
+  <div class="flex bg-panels dark:bg-darkgrey dark:border p-2 rounded-lg w-7/12">
+    <div class="w-5 text-grey mt-[3px] ml-2"><SearchIcon /></div>
+    <input
+      type="text"
+      class="focus:outline-none placeholder-grey w-full ml-4"
+      placeholder="Search Portal"
+      bind:value={searchString}
+    />
+  </div>
+  <div class="flex gap-8">
     <IconButton
       icon={SparklesIcon}
       active={filters.has('new')}
@@ -132,13 +136,15 @@
     >
     <IconButton
       icon={AppIcon}
+      whiteIcon
       active={filters.has('apps')}
       on:click={() => {
         toggleFilter('apps');
       }}>Apps</IconButton
     >
     <IconButton
-      icon={GroupIcon}
+      icon={PeopleIcon}
+      whiteIcon
       active={filters.has('groups')}
       on:click={() => {
         toggleFilter('groups');
@@ -146,6 +152,7 @@
     >
     <IconButton
       icon={PersonIcon}
+      whiteIcon
       active={filters.has('ships')}
       on:click={() => {
         toggleFilter('ships');
@@ -159,17 +166,12 @@
       }}>Collections</IconButton
     >
   </div>
-  <div class="flex gap-4">
-    <input
-      type="text"
-      class="border-b focus:outline-none placeholder-grey"
-      placeholder="try searching"
-      bind:value={searchString}
-    />
-    <div class="w-5"><SearchIcon /></div>
-  </div>
+  <p class="text-grey text-sm">
+    Items you come across on your travels will accrue here, but it's not yet an
+    exhaustive index of all the things on Portal.
+  </p>
   {#if items}
-    <div class="flex flex-col gap-4 bg-panels dark:bg-darkgrey dark:border p-6 rounded-lg">
+    <div class="flex flex-col gap-4 bg-panels dark:bg-darkgrey dark:border p-6 rounded-lg w-2/3">
       {#if activeItems.length > 0}
         {#each activeItems as key}
           <ItemVerticalListPreview {key} />

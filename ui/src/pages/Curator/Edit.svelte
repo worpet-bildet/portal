@@ -92,7 +92,7 @@
     {#if activeTab === 'Profile'}
       <div class="flex flex-col gap-2">
         <div>Display Name</div>
-        <input type="text" bind:value={nickname} class="p-2 border-b" />
+        <input type="text" bind:value={nickname} class="p-2 border-b focus:outline-none" />
       </div>
       <div class="flex flex-col gap-2">
         <div>Bio</div>
@@ -100,11 +100,11 @@
       </div>
       <div class="flex flex-col gap-2">
         <div>Avatar</div>
-        <input type="text" bind:value={avatar} class="p-2 border-b" />
+        <input type="text" bind:value={avatar} class="p-2 border-b focus:outline-none" />
       </div>
       <div class="flex flex-col gap-2">
         <div>Cover Image</div>
-        <input type="text" bind:value={cover} class="p-2 border-b" />
+        <input type="text" bind:value={cover} class="p-2 border-b focus:outline-none" />
       </div>
     {:else if activeTab === 'Collections'}
       <div class="grid gap-8 grid-cols-4 pb-4">
@@ -155,6 +155,7 @@
     <SidebarGroup>
       <IconButton
         icon={CheckIcon}
+
         on:click={() => {
           switch (activeTab) {
             case 'Profile':

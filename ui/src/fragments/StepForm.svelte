@@ -1,6 +1,9 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import {
+    state,
+  } from '@root/state';
+  import {
     IconButton,
     LeftArrowIcon,
     RightArrowIcon,

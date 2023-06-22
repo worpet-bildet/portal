@@ -25,7 +25,7 @@
   let collection, items, recommendModalOpen;
 
   let sortedRecommendations = [];
-  state.subscribe(() => {
+  state.subscribe((s) => {
     collection = getItem(collectionKey);
     if (!collection) return;
     items = getCollectionItems(collection.keyStr);
@@ -56,11 +56,13 @@
         <IconButton icon={LeftArrowIcon} on:click={pop}>Back</IconButton>
         <IconButton
           icon={ShareIcon}
+
           on:click={() => (recommendModalOpen = true)}>Recommend</IconButton
         >
         {#if me === ship}
           <IconButton
             icon={EditIcon}
+
             on:click={() => push(`/collection-edit/${wild}`)}>Edit</IconButton
           >
         {/if}

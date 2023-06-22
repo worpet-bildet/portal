@@ -119,6 +119,16 @@
       )}`
     );
   };
+
+  const recommendedApps = [
+      { struc: 'app', ship: '~paldev', cord: 'pals', time: '' },
+      { struc: 'app', ship: '~nodmyn-dosrux', cord: 'radio', time: '' }
+  ]
+
+  const events = [
+      { struc: 'app', ship: '~paldev', cord: 'pals', time: '' },
+      { struc: 'app', ship: '~nodmyn-dosrux', cord: 'radio', time: '' }
+  ]
 </script>
 
 <div class="grid grid-cols-9 gap-8 mb-4">
@@ -129,7 +139,7 @@
   <RightSidebar>
     <SidebarGroup>
       <div class="flex flex-col gap-4 mx-2 mb-1 overflow-hidden">
-        <div class="text-xl font-bold">Find a curator</div>
+        <div class="text-xl font-bold">Find a ship</div>
         <div
           class="flex w-full gap-4 items-center rounded-lg p-4 justify-between"
         >
@@ -185,10 +195,9 @@
           <div class="text-xl font-bold pb-4 px-2">
             Portal is better with %pals
           </div>
-          <ItemVerticalListPreview
-            small
-            key={{ struc: 'app', ship: '~paldev', cord: 'pals', time: '' }}
-          />
+          {#each recommendedApps as key}
+            <ItemVerticalListPreview {key} small/>
+          {/each}
         </div>
       {:else if sortedPals && sortedPals.length > 0}
         <div class="flex flex-col gap-4 px-2">

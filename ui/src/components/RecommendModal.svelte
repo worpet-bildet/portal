@@ -50,7 +50,10 @@
         <MySigil />
       </div>
       <div class="col-span-11">
-        <TextArea bind:value={blurb} />
+        <TextArea
+          bind:value={blurb}
+          placeholder="Share a limerick, maybe"
+        />
       </div>
       <div class="col-span-11 col-start-2">
         <ItemVerticalListPreview {key} clickable={false} />

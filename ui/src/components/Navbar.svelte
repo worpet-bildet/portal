@@ -54,13 +54,12 @@
     </a>
 
     <div class="hidden flex-col md:flex gap-4 md:flex-row">
-      <div class="rounded-full overflow-hidden pt-[3px]">
+      <div class="rounded-full overflow-hidden">
         <IconButton
           icon={$state.darkmode ? SunIcon : MoonIcon}
           on:click={toggleDarkmode}
-          noHover
-          whiteIcon={(!pagesWithTransparentNav.some((v) => $location.includes(v)) &&
-            $location !== '/')}
+          changeColorOnHover
+          whiteIcon={(!pagesWithTransparentNav.some((v) => $location.includes(v)) && $location !== '/')}
           transparent
         />
       </div>

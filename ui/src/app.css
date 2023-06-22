@@ -49,3 +49,12 @@ main {
 input {
   background: transparent;
 }
+
+[placeholder]:empty::before {
+  content: attr(placeholder);
+  color: grey;
+}
+
+[placeholder]:empty:focus::before {
+  content: "";
+}

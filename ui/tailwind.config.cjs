@@ -9,7 +9,7 @@ module.exports = {
       grey: '#696969',
       black: '#000000',
       dark: '#00000080',
-      darkBorders: '#80808040',
+      gradientdark: '#0c0c0c',
       darkgrey: '#181A1C',
       panels: '#f9f9f940', //#D6D3D6',
       white: '#ffffff',
@@ -22,7 +22,7 @@ module.exports = {
     },
     extend: {},
     borderColor: {
-      DEFAULT: '#69696940',
+      DEFAULT: '#80808040',
       error: 'rgb(220 38 38)',
       spacer: '#696969',
     },
@@ -32,8 +32,7 @@ module.exports = {
   },
   screens: {},
   variants: {
-    extend: {
-    },
+    extend: {},
   },
   darkMode: 'class',
 };
