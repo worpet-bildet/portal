@@ -34,11 +34,9 @@
       %def
   ==
 ::
-+$  key  
-  $+  key
-  [=struc =ship =cord time=cord]
++$  key  $+  key-2  [=struc =ship =cord time=cord]
 ::
-+$  items  (map key item)
++$  items  $+  items-2  (map key item)
 ::
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -49,12 +47,12 @@
   =<  item
   |%
   +$  item
-    $+  item
-    $:  =key
-        =lens
-        =bespoke
-        =meta
-    ==
+   $+  item-2
+   $:  =key
+       =lens
+       =bespoke
+       =meta
+   ==
   +$  update  item ::  rename to diff? or add +$  diff?
   --
 ::
@@ -77,7 +75,7 @@
 +$  bespoke
   $%  [struc=%ship ~]
       [struc=%group =data:group-preview]
-      [struc=%app screenshots=(list @t) blurb=@t dist-desk=@t sig=signature =treaty eth-price=@ud]
+      [struc=%app screenshots=(list @t) blurb=@t dist-desk=@t sig=signature =treaty]
       [struc=%review blurb=@t rating=@ud]
       [struc=%retweet blurb=@t ref=key]
       [struc=%feed =feed]
