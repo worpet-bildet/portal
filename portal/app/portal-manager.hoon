@@ -187,6 +187,7 @@
     =/  msg  !<(message vase)
     ?+    -.msg  !!
         %sign-app
+      ::  vulnerable to just receiving random apps from people lol
       ?>  (validate-sig dist-desk.msg our.bowl our.bowl now.bowl sig.msg)
       ~&  >  "%portal: sig is valid!"
       =/  dist-desk  (parse-dist-desk:misc dist-desk.msg)
@@ -206,11 +207,11 @@
         %-  ~(act cards [our.bowl %portal-store])
         ?:  %-  ~(item-exists scry our.bowl now.bowl)
             [%app our.bowl '' desk-name.u.dist-desk]
-          ::  TODO edit, not replace
-          :^    %replace
+          ~&  >  "new feat: test edit vs replace"
+          :^    %edit
               [%app our.bowl '' desk-name.u.dist-desk]
-            %def
-          [%app ~ '' dist-desk.msg sig.msg treaty.msg]
+            `%def
+          `[%app ~ ~ `dist-desk.msg `sig.msg `treaty.msg]:: ~] :: TODO add price
         :*  %create  ~  ~  `desk-name.u.dist-desk  `%def
           `[%app ~ '' dist-desk.msg sig.msg treaty.msg]
           ~[[%collection our.bowl '' 'published-apps']]  ~  ~  ==
