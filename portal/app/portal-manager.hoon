@@ -98,6 +98,8 @@
         %7
       old
     ==
+  ::  we are doing init-sequence on-load as well because we have to retain
+  ::  idempotence from across all states to latest state
   =^  cards  state  init-sequence:helper
   [cards this]
 ::
@@ -120,12 +122,20 @@
         ==
       =/  cards
         =+  ~(tap in our-apps.state)
-        %+  turn  -
+        %+  murn  -
         |=  [=ship =desk]
+        ?:  (~(has by wex.bowl) [/our-treaty/(scot %p ship)/[desk] our.bowl %treaty])
+          ~
+        %-  some
         :*  %pass  /our-treaty/(scot %p ship)/[desk]  %agent
             [our.bowl %treaty]  %watch  /treaty/(scot %p ship)/[desk]
         ==
-      [cards this]
+      :_  this  
+      %+  welp  `(list card)`cards
+      ?:  (~(has by wex.bowl) [/our-apps our.bowl %treaty])
+          ~
+      [%pass /our-apps %agent [our.bowl %treaty] %watch /alliance]~
+
       ::
         %sub-to-many
       ::  %def sent to portal-store
@@ -196,6 +206,7 @@
         %-  ~(act cards [our.bowl %portal-store])
         ?:  %-  ~(item-exists scry our.bowl now.bowl)
             [%app our.bowl '' desk-name.u.dist-desk]
+          ::  TODO edit, not replace
           :^    %replace
               [%app our.bowl '' desk-name.u.dist-desk]
             %def
@@ -369,27 +380,48 @@
   ^-  (quip card _this)
   ?+    wire    (on-agent:default wire sign)
       [%our-apps ~]
+    ::  this takes just apps ids
     ?+    -.sign    (on-agent:default wire sign)
         %fact
       =/  upd  !<(update:alliance q.cage.sign)
       =^  cards  our-apps
         ?-  -.upd
+          ::  get treaty, and then add to published-apps
             %add
           :_  (~(put in our-apps) [ship.upd desk.upd])
           :~  :*  %pass  /our-treaty/(scot %p ship.upd)/[desk.upd]  %agent
           [our.bowl %treaty]  %watch  /treaty/(scot %p ship.upd)/[desk.upd]
           ==  ==
           ::
-          %del  `(~(del in our-apps) [ship.upd desk.upd])
-          %ini  `init.upd
+          ::  remove from published-apps
+            %del  
+          :_  (~(del in our-apps) [ship.upd desk.upd])
+          :~  %-  ~(act cards [our.bowl %portal-store])
+            [%remove ~[[%app ship.upd '' desk.upd]] [%collection our.bowl '' 'published-apps']]
+          ==
+          ::
+          ::  never get %ini?
+          %ini  
+          `init.upd
         ==
       [cards this]
     ==
     ::
       [%our-treaty @ @ ~]
+    ::  this takes treaty, which we subbed to in %add, on %our-apps wire
     ?+    -.sign    (on-agent:default wire sign)
         %fact
+      :_  this
       =/  treaty  !<(treaty:treaty q.cage.sign)
+      ::  if exists, edit treaty and append to published-apps
+      =/  key  [%app our.bowl '' `@t`i.t.t.wire]
+      ?:  (~(item-exists scry our.bowl now.bowl) key)
+        :~  %-  ~(act cards [our.bowl %portal-store])
+              [%edit key ~ `[%app ~ ~ ~ ~ `treaty]]
+            %-  ~(act cards [our.bowl %portal-store])
+              [%append [key]~ [%collection our.bowl '' 'published-apps']]
+        ==
+      ::  if doesn't exist, create and append to published-apps
       =/  create-app  ^-  action
         :*  %create
             ~
@@ -401,9 +433,8 @@
             ~
             ~
         ==
-      :_  this
       :~  (~(act cards [our.bowl %portal-store]) create-app)
-          [%pass wire %agent [our.bowl %treaty] %leave ~]  ::  why leave here?
+          [%pass wire %agent [our.bowl %treaty] %leave ~]
       ==
     ==
     ::
@@ -415,6 +446,7 @@
       =/  act  [%replace key %temp [%app ~ '' '' *signature treaty]]
       :_  this
       :~  [(~(act cards [our.bowl %portal-store]) act)]
+          ::  TODO why unsub here, instead of getting updates?
           [%pass wire %agent [ship.key %treaty] %leave ~]
       ==
     ==
@@ -427,6 +459,7 @@
       =/  act  [%replace key %temp [%group meta.preview]]
       :_  this
       :~  [(~(act cards [our.bowl %portal-store]) act)]
+          ::  TODO why unsub here, instead of getting updates?
           [%pass wire %agent [p.flag.preview %groups] %leave ~]
       ==
     ==
@@ -471,8 +504,6 @@
     cards-1
       ::  sub to home page
   :~  [(~(act cards [our.bowl %portal-store]) sub-init)]
-      ::  sub to our published apps
-      [%pass /our-apps %agent [our.bowl %treaty] %watch /alliance]
       ::  scrying should not be done on on-load or on-init
       (~(act cards [our.bowl %portal-manager]) [%manager-init ~])
   ==
