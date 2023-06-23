@@ -1,5 +1,4 @@
 /-  *portal-data
-/+  portal
 ::  SSS item
 |%
 ++  name  %item

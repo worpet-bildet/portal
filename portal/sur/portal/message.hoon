@@ -11,7 +11,7 @@
       [%get-item =key]
       [%item item=(unit item)]
       ::
-      [%sign-app dist-desk=@t sig=signature =treaty:treaty]
+      [%sign-app dist-desk=@t sig=signature =treaty:treaty eth-price=(unit @ud)]
       ::
       ::  buyer sends
       [%payment-request =desk]

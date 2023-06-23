@@ -279,6 +279,7 @@
             (fall dist-desk.u.bespoke.act dist-desk.bespoke.item)
             (fall sig.u.bespoke.act sig.bespoke.item)
             (fall treaty.u.bespoke.act treaty.bespoke.item)
+            (fall eth-price.u.bespoke.act eth-price.bespoke.item)
         ==
         ::
           %collection

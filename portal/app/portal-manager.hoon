@@ -187,6 +187,7 @@
     =/  msg  !<(message vase)
     ?+    -.msg  !!
         %sign-app
+      ::  vulnerable to just receiving random apps from people lol
       ?>  (validate-sig dist-desk.msg our.bowl our.bowl now.bowl sig.msg)
       ~&  >  "%portal: sig is valid!"
       =/  dist-desk  (parse-dist-desk:misc dist-desk.msg)
@@ -206,13 +207,13 @@
         %-  ~(act cards [our.bowl %portal-store])
         ?:  %-  ~(item-exists scry our.bowl now.bowl)
             [%app our.bowl '' desk-name.u.dist-desk]
-          ::  TODO edit, not replace
-          :^    %replace
+          ~&  >  "new feat: test edit vs replace"
+          :^    %edit
               [%app our.bowl '' desk-name.u.dist-desk]
-            %def
-          [%app ~ '' dist-desk.msg sig.msg treaty.msg]
+            `%def
+          `[%app ~ ~ `dist-desk.msg `sig.msg `treaty.msg eth-price.msg]
         :*  %create  ~  ~  `desk-name.u.dist-desk  `%def
-          `[%app ~ '' dist-desk.msg sig.msg treaty.msg]
+          `[%app ~ '' dist-desk.msg sig.msg treaty.msg (fall eth-price.msg 0)]
           ~[[%collection our.bowl '' 'published-apps']]  ~  ~  ==
       :_  this
       (snoc create-my-apps create-app)
@@ -419,7 +420,7 @@
       =/  key  [%app our.bowl '' `@t`i.t.t.wire]
       ?:  (~(item-exists scry our.bowl now.bowl) key)
         :~  %-  ~(act cards [our.bowl %portal-store])
-              [%edit key ~ `[%app ~ ~ ~ ~ `treaty]]
+              [%edit key ~ `[%app ~ ~ ~ ~ `treaty ~]]
             %-  ~(act cards [our.bowl %portal-store])
               [%append [key]~ [%collection our.bowl '' 'published-apps']]
         ==
@@ -430,7 +431,7 @@
             ~
             ``@t`i.t.t.wire
             `%def
-            `[%app ~ '' '' *signature treaty]
+            `[%app ~ '' '' *signature treaty *@ud]
             [%collection our.bowl '' 'published-apps']~
             ~
             ~
@@ -445,7 +446,7 @@
         %fact
       =/  treaty  !<(treaty:treaty q.cage.sign)
       =/  key  (path-to-key:conv +.wire)
-      =/  act  [%replace key %temp [%app ~ '' '' *signature treaty]]
+      =/  act  [%replace key %temp [%app ~ '' '' *signature treaty *@ud]]
       :_  this
       :~  [(~(act cards [our.bowl %portal-store]) act)]
           ::  TODO why unsub here, instead of getting updates?
@@ -601,7 +602,7 @@
     ==
     ::
       %app
-    =.  bespoke  [%app ~ '' '' *signature *treaty:treaty]
+    =.  bespoke  [%app ~ '' '' *signature *treaty:treaty *@ud]
     =/  path  /treaty/(scot %p ship.key.act)/[`@tas`cord.key.act]
     =/  wire  [%treaty (key-to-path:conv key.act)]
     =/  sub-status  (~(gut by wex.bowl) [wire ship.key.act %treaty] ~)
