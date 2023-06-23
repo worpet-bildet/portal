@@ -6,8 +6,11 @@ import { toUrbitTime } from '@root/util';
 export const api = new Urbit('', '', 'portal');
 api.ship = window.ship;
 
-export const poke = (p) => api.poke(p);
+console.log({ api });
+
+export const poke = (s) => api.poke(s);
 export const scry = (s) => api.scry(s);
+
 export const me = `~${api.ship}`;
 
 let subqueue = writable([]);
@@ -128,6 +131,14 @@ export const getStorageConfiguration = () => {
       path: '/credentials',
     }),
   ]);
+};
+
+export const pmPoke = (json) => {
+  return poke({
+    app: 'portal-manager',
+    mark: 'portal-action',
+    json,
+  });
 };
 
 export const uploadImage = async (file, s3) => {
