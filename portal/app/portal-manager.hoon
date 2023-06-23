@@ -84,7 +84,7 @@
   =.  state
     ?-  -.old
         ?(%0 %1 [%2 *] %3)
-      [%7 *(map [ship desk] @t) (mk-subs blog-paths ,[%paths ~]) (mk-subs portal-devs ,[%portal-devs ~]) ~ +:*state-4:portal-config] Stashed changes
+      [%7 *(map [ship desk] @t) (mk-subs blog-paths ,[%paths ~]) (mk-subs portal-devs ,[%portal-devs ~]) ~ +:*state-4:portal-config]
       ::
         %4
       [%7 *(map [ship desk] @t) (mk-subs blog-paths ,[%paths ~]) (mk-subs portal-devs ,[%portal-devs ~]) ~ +.old]  ::  TODO test
