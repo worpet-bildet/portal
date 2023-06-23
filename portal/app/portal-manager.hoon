@@ -83,8 +83,8 @@
   =/  old  !<(versioned-state vase)
   =.  state
     ?-  -.old
-        ?(%0 %1 [%2 *] %3)  
-      [%7 *(map [ship desk] @t) (mk-subs blog-paths ,[%paths ~]) (mk-subs portal-devs ,[%portal-devs ~]) ~ +:*state-4:portal-config]
+        ?(%0 %1 [%2 *] %3)
+      [%7 *(map [ship desk] @t) (mk-subs blog-paths ,[%paths ~]) (mk-subs portal-devs ,[%portal-devs ~]) ~ +:*state-4:portal-config] Stashed changes
       ::
         %4
       [%7 *(map [ship desk] @t) (mk-subs blog-paths ,[%paths ~]) (mk-subs portal-devs ,[%portal-devs ~]) ~ +.old]  ::  TODO test
@@ -130,7 +130,7 @@
         :*  %pass  /our-treaty/(scot %p ship)/[desk]  %agent
             [our.bowl %treaty]  %watch  /treaty/(scot %p ship)/[desk]
         ==
-      :_  this  
+      :_  this
       %+  welp  `(list card)`cards
       ?:  (~(has by wex.bowl) [/our-apps our.bowl %treaty])
           ~
@@ -170,13 +170,13 @@
       ::
         %payment-request
       :_  this
-      :~  :*  %pass  /payment-req  %agent  [seller.act %portal-app-publisher]  %poke  
+      :~  :*  %pass  /payment-req  %agent  [seller.act %portal-app-publisher]  %poke
         %portal-message  !>([%payment-request desk.act])
       ==  ==
       ::
         %payment-tx-hash
       :_  this
-      :~  :*  %pass  /payment-hash  %agent  [seller.act %portal-app-publisher]  %poke  
+      :~  :*  %pass  /payment-hash  %agent  [seller.act %portal-app-publisher]  %poke
         %portal-message  !>([%payment-tx-hash tx-hash.act])
       ==  ==
     ==
@@ -226,12 +226,12 @@
         %payment-confirmed
       :_  this
       :~  [%give %fact [/updates]~ %portal-message !>(msg)]
-          :*  %pass  /install  %agent  [our.bowl %hood]  %poke  
+          :*  %pass  /install  %agent  [our.bowl %hood]  %poke
               %kiln-install  !>([desk.msg src.bowl desk.msg])
       ==  ==
       ::
         %index-as-curator
-      ?>  =(our.bowl ~worpet-bildet)
+      ?>  =(our.bowl ~winpex-widtev-foddur-hodler)
       ?>  =(src.bowl src.msg)
       =/  act  ~(act cards [our.bowl %portal-store])
       =/  index-key  [%collection our.bowl '' 'index']
@@ -397,14 +397,14 @@
           ==  ==
           ::
           ::  remove from published-apps
-            %del  
+            %del
           :_  (~(del in our-apps) [ship.upd desk.upd])
           :~  %-  ~(act cards [our.bowl %portal-store])
             [%remove ~[[%app ship.upd '' desk.upd]] [%collection our.bowl '' 'published-apps']]
           ==
           ::
           ::  never get %ini?
-          %ini  
+          %ini
           `init.upd
         ==
       [cards this]
