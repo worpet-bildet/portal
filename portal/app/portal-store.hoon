@@ -697,7 +697,7 @@
     :^  key
         lens
         ?:  ?=([%app *] bespoke)
-          [%app screenshots blurb dist-desk sig treaty *@ud]:bespoke
+          [%app screenshots blurb dist-desk sig treaty *@t]:bespoke
         bespoke
         meta
   ::

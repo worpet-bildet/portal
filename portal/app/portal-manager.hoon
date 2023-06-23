@@ -18,7 +18,7 @@
   ==
 +$  state-7
   $:  %7
-      bought-apps=(map [ship desk] eth-price=@ud)
+      bought-apps=(map [ship desk] eth-price=@t)
       sub-blog-paths=_(mk-subs:sss-25 blog-paths ,[%paths ~])
       sub-portal-devs=_(mk-subs portal-devs ,[%portal-devs ~])
       =dev-map:portal-config
@@ -84,16 +84,16 @@
   =.  state
     ?-  -.old
         ?(%0 %1 [%2 *] %3)  
-      [%7 *(map [ship desk] @ud) (mk-subs blog-paths ,[%paths ~]) (mk-subs portal-devs ,[%portal-devs ~]) ~ +:*state-4:portal-config]
+      [%7 *(map [ship desk] @t) (mk-subs blog-paths ,[%paths ~]) (mk-subs portal-devs ,[%portal-devs ~]) ~ +:*state-4:portal-config]
       ::
         %4
-      [%7 *(map [ship desk] @ud) (mk-subs blog-paths ,[%paths ~]) (mk-subs portal-devs ,[%portal-devs ~]) ~ +.old]  ::  TODO test
+      [%7 *(map [ship desk] @t) (mk-subs blog-paths ,[%paths ~]) (mk-subs portal-devs ,[%portal-devs ~]) ~ +.old]  ::  TODO test
       ::
         %5
-      [%7 *(map [ship desk] @ud) (mk-subs blog-paths ,[%paths ~]) +.old]
+      [%7 *(map [ship desk] @t) (mk-subs blog-paths ,[%paths ~]) +.old]
       ::
         %6
-      [%7 *(map [ship desk] @ud) +.old]
+      [%7 *(map [ship desk] @t) +.old]
       ::
         %7
       old
@@ -213,7 +213,7 @@
             `%def
           `[%app ~ ~ `dist-desk.msg `sig.msg `treaty.msg eth-price.msg]
         :*  %create  ~  ~  `desk-name.u.dist-desk  `%def
-          `[%app ~ '' dist-desk.msg sig.msg treaty.msg (fall eth-price.msg 0)]
+          `[%app ~ '' dist-desk.msg sig.msg treaty.msg (fall eth-price.msg '')]
           ~[[%collection our.bowl '' 'published-apps']]  ~  ~  ==
       :_  this
       (snoc create-my-apps create-app)
@@ -431,7 +431,7 @@
             ~
             ``@t`i.t.t.wire
             `%def
-            `[%app ~ '' '' *signature treaty *@ud]
+            `[%app ~ '' '' *signature treaty *@t]
             [%collection our.bowl '' 'published-apps']~
             ~
             ~
@@ -446,7 +446,7 @@
         %fact
       =/  treaty  !<(treaty:treaty q.cage.sign)
       =/  key  (path-to-key:conv +.wire)
-      =/  act  [%replace key %temp [%app ~ '' '' *signature treaty *@ud]]
+      =/  act  [%replace key %temp [%app ~ '' '' *signature treaty *@t]]
       :_  this
       :~  [(~(act cards [our.bowl %portal-store]) act)]
           ::  TODO why unsub here, instead of getting updates?
@@ -602,7 +602,7 @@
     ==
     ::
       %app
-    =.  bespoke  [%app ~ '' '' *signature *treaty:treaty *@ud]
+    =.  bespoke  [%app ~ '' '' *signature *treaty:treaty *@t]
     =/  path  /treaty/(scot %p ship.key.act)/[`@tas`cord.key.act]
     =/  wire  [%treaty (key-to-path:conv key.act)]
     =/  sub-status  (~(gut by wex.bowl) [wire ship.key.act %treaty] ~)

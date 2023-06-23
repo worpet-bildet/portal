@@ -90,14 +90,14 @@
         %payment-reference  
       %+  frond  'payment-reference'
       %-  pairs
-        :~  ['hex' (enjs-hex hex.message)]
-            ['eth-price' s+(scot %ud eth-price.message)]
-            ['receiving-address' s+(crip (num-to-hex:ethereum receiving-address.message))]
+        :~  ['hex' s+hex.message]
+            ['eth-price' s+eth-price.message]
+            ['receiving-address' s+receiving-address.message]
         ==
         %payment-confirmed
       %+  frond  'payment-confirmed'
       %-  pairs
-        :~  ['tx-hash' (enjs-hex tx-hash.message)]
+        :~  ['tx-hash' s+tx-hash.message]
             ['desk' s+desk.message]
         ==
     ==
@@ -224,7 +224,7 @@
                              ['distDesk' s+dist-desk.bespoke]
                              ['signature' (enjs-sig sig.bespoke)]
                              ['treaty' (treaty:enjs:treaty treaty.bespoke)]
-                             ['eth-price' s+(scot %ud eth-price.bespoke)]
+                             ['eth-price' s+eth-price.bespoke]
                          ==
       %other         %-  pairs
                          :~  ['title' s+title.bespoke]
@@ -452,7 +452,7 @@
                 [%add-tag-request (ot:dejs ~[our+dejs-key their+dejs-key tag-to+dejs-path tag-from+dejs-path])]
                 [%blog-sub ul:dejs]
                 [%payment-request (ot:dejs ~[seller+dejs-ship desk+so:dejs])]
-                [%payment-tx-hash (ot:dejs ~[seller+dejs-ship tx-hash+dejs-hex])]
+                [%payment-tx-hash (ot:dejs ~[seller+dejs-ship tx-hash+so:dejs])]
             ==
     ?+    -.jn    jn
         %create
