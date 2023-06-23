@@ -225,10 +225,12 @@
       signer = await provider.getSigner();
     }
     if (!signer) return;
+    console.log($state.payment?.['receiving-address']);
+    console.log($state.payment?.['eth-price'].replaceAll('.', ''));
     tx = await signer.sendTransaction({
       to: $state.payment?.['receiving-address'],
-      // value: parseEther($state.payment?.['eth-price'].toString()),
-      value: parseEther('0.01'),
+      value: $state.payment?.['eth-price'].replaceAll('.', ''),
+      //   // value: parseEther('0.01'),
       data: $state.payment?.['hex'],
       chainId: 5,
     });
