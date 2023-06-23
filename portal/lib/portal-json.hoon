@@ -91,7 +91,7 @@
       %+  frond  'payment-reference'
       %-  pairs
         :~  ['hex' (enjs-hex hex.message)]
-            ['eth-price' n+(scot %ud eth-price.message)]
+            ['eth-price' s+(scot %ud eth-price.message)]
             ['receiving-address' s+(crip (num-to-hex:ethereum receiving-address.message))]
         ==
         %payment-confirmed
@@ -224,6 +224,7 @@
                              ['distDesk' s+dist-desk.bespoke]
                              ['signature' (enjs-sig sig.bespoke)]
                              ['treaty' (treaty:enjs:treaty treaty.bespoke)]
+                             ['eth-price' s+(scot %ud eth-price.bespoke)]
                          ==
       %other         %-  pairs
                          :~  ['title' s+title.bespoke]
