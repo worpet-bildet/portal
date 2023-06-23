@@ -77,7 +77,7 @@
 +$  bespoke
   $%  [struc=%ship ~]
       [struc=%group =data:group-preview]
-      [struc=%app screenshots=(list @t) blurb=@t dist-desk=@t sig=signature =treaty eth-price=@ud]
+      [struc=%app screenshots=(list @t) blurb=@t dist-desk=@t sig=signature =treaty eth-price=@t]
       [struc=%review blurb=@t rating=@ud]
       [struc=%retweet blurb=@t ref=key]
       [struc=%feed =feed]

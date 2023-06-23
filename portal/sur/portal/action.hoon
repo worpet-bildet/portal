@@ -21,7 +21,7 @@
             lens=(unit lens)
             $=  bespoke  %-  unit
               $%  [%other title=(unit @t) blurb=(unit @t) link=(unit @t) image=(unit @t)]
-                  [%app screenshots=(unit (list @t)) blurb=(unit @t) dist-desk=(unit @t) sig=(unit signature) treaty=(unit treaty) eth-price=(unit @ud)]
+                  [%app screenshots=(unit (list @t)) blurb=(unit @t) dist-desk=(unit @t) sig=(unit signature) treaty=(unit treaty) eth-price=(unit @t)]
                   [%collection title=(unit @t) blurb=(unit @t) image=(unit @t) key-list=(unit key-list)]  ::does it need link?
                   [%feed feed=(unit feed)]
                   [%retweet blurb=(unit @t) ref=(unit key)]
@@ -57,6 +57,6 @@
       [%purge portal-curator=@p]
       ::
       [%payment-request seller=ship =desk]
-      [%payment-tx-hash seller=ship tx-hash=@ux]
+      [%payment-tx-hash seller=ship tx-hash=@t]
     ==
 --

@@ -11,15 +11,15 @@
       [%get-item =key]
       [%item item=(unit item)]
       ::
-      [%sign-app dist-desk=@t sig=signature =treaty:treaty eth-price=(unit @ud)]
+      [%sign-app dist-desk=@t sig=signature =treaty:treaty eth-price=(unit @t)]
       ::
       ::  buyer sends
       [%payment-request =desk]
       ::  buyer receives
-      [%payment-reference hex=@ux eth-price=@ud receiving-address=@ux]
+      [%payment-reference hex=@t eth-price=@t receiving-address=@t]
       ::  buyer sends
-      [%payment-tx-hash tx-hash=@ux]
+      [%payment-tx-hash tx-hash=@t]
       ::  buyer receives
-      [%payment-confirmed tx-hash=@ux =desk]
+      [%payment-confirmed tx-hash=@t =desk]
   ==
 --
