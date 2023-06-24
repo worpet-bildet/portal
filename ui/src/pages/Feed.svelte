@@ -21,8 +21,9 @@
     SidebarGroup,
     SearchIcon,
     PersonIcon,
+    UpRightArrowIcon
   } from '@fragments';
-  import { fromUrbitTime, isValidPatp } from '@root/util';
+  import { fromUrbitTime, isValidPatp, isHappeningSoon } from '@root/util';
 
   let sortedPals = [];
   let sortedRecommendations = [];
@@ -124,6 +125,15 @@
       { struc: 'app', ship: '~paldev', cord: 'pals', time: '' },
       { struc: 'app', ship: '~nodmyn-dosrux', cord: 'radio', time: '' }
   ]
+
+  const events = [
+      { title: 'On-nomi happy hour', link: 'https://app.gather.town/app/xAYeiPI2XDYhRM9t/urbit-hacker-house', startDate: '2023-06-29T18:30:00-04:00', endDate: '2023-06-29T20:00:00-04:00', frequency: 'every other week', location: 'in the hacker house', happeningSoon: 'false'},
+      { title: 'Core Dev PR Blitz', link: 'https://app.gather.town/app/xAYeiPI2XDYhRM9t/urbit-hacker-house', startDate: '2023-06-19T11:00:00-04:00', endDate: '2023-06-19T12:00:00-04:00', frequency: 'weekdays', location: 'in the hacker house', happeningSoon: 'false'},
+      { title: 'Turf Build Party', link: 'https://app.gather.town/app/xAYeiPI2XDYhRM9t/urbit-hacker-house', startDate: '2023-06-23T12:00:00-04:00', endDate: '2023-06-23T14:00:00-04:00', frequency: '', location: 'in the hacker house', happeningSoon: 'false'}
+  ]
+
+  const happeningSoonTuple = isHappeningSoon(events)
+
 </script>
 
 <div class="grid grid-cols-9 gap-8 mb-4">
@@ -152,6 +162,32 @@
         </div>
       </div>
     </SidebarGroup>
+    {#if happeningSoonTuple[0]}
+      <SidebarGroup>
+        <div class="text-xl font-bold mx-2">Upcoming Events</div>
+        <div class="flex flex-col gap-4">
+          {#each happeningSoonTuple[1] as { title, link, startDate, endDate, frequency, location, happeningSoon, formattedStart }}
+            {#if happeningSoon}
+              <button
+                class="flex flex-col gap-2 rounded-md p-2 hover:bg-hover dark:hover:border-white hover:duration-500 text-left"
+                on:click={() => window.open(`${link}`,'_blank')}
+              >
+                <div>{title}</div>
+                <div
+                  class="flex items-center w-full justify-between gap-2 text-xs text-grey"
+                >
+                  <div>Starts {formattedStart}</div>
+                  <div class="flex items-center gap-1">
+                    <div>{location}</div>
+                    <div class="w-4"><UpRightArrowIcon /></div>
+                  </div>
+                </div>
+              </button>
+            {/if}
+          {/each}
+        </div>
+      </SidebarGroup>
+    {/if}
     {#if sortedRecommendations.length > 0}
       <SidebarGroup>
         <div class="text-xl font-bold mx-2">Most recommended</div>
