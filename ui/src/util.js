@@ -1,5 +1,4 @@
 import * as linkify from 'linkifyjs';
-import moment from 'moment';
 
 export const getMeta = (item) => {
   return {
