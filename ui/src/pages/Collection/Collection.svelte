@@ -53,15 +53,21 @@
     </ItemDetail>
     <RightSidebar>
       <SidebarGroup>
-        <IconButton icon={LeftArrowIcon} on:click={pop}>Back</IconButton>
+        <IconButton icon={LeftArrowIcon} on:click={pop} common darkMode={$state.darkmode}>Back</IconButton>
         <IconButton
           icon={ShareIcon}
-          on:click={() => (recommendModalOpen = true)}>Recommend</IconButton
+          on:click={() => (recommendModalOpen = true)}
+          common
+          darkMode={$state.darkmode}
+        >Recommend</IconButton
         >
         {#if me === ship}
           <IconButton
             icon={EditIcon}
-            on:click={() => push(`/collection-edit/${wild}`)}>Edit</IconButton
+            on:click={() => push(`/collection-edit/${wild}`)}
+            common
+            darkMode={$state.darkmode}
+          >Edit</IconButton
           >
         {/if}
       </SidebarGroup>

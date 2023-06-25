@@ -10,6 +10,7 @@
 
   export let formstep;
   export let formsteps;
+  export let darkMode;
   export let navbuttons = true;
 
   let isLastStep, isFirstStep;
@@ -33,14 +34,14 @@
   {#if navbuttons}
     <div class="flex justify-between w-full">
       {#if !isFirstStep}
-        <IconButton icon={LeftArrowIcon} on:click={back}>Back</IconButton>
+        <IconButton icon={LeftArrowIcon} on:click={back} common darkMode=darkMode>Back</IconButton>
       {:else}
         <div />
       {/if}
       {#if !isLastStep}
-        <IconButton icon={RightArrowIcon} on:click={next}>Next</IconButton>
+        <IconButton icon={RightArrowIcon} on:click={next} common darkMode=darkMode>Next</IconButton>
       {:else}
-        <IconButton icon={CheckIcon} on:click={save}>Save</IconButton>
+        <IconButton icon={CheckIcon} on:click={save} common darkMode=darkMode>Save</IconButton>
       {/if}
     </div>
   {/if}
