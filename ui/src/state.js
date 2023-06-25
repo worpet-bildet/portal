@@ -213,7 +213,11 @@ export const getCollectedItemLeaderboard = (excludePatp) => {
       )
       .reduce((a, b) => {
         b?.bespoke?.['key-list']
-          .filter((k) => k?.struc !== 'collection')
+          .filter((k) =>
+            k?.struc !== 'collection' &&
+            !(k?.cord === 'portal' && k?.ship === '~worpet-bildet' &&
+              (k?.struc === 'app' || k?.struc === 'group'))
+          )
           .forEach((k) => {
             if (!a[keyStrFromObj(k)]) return (a[keyStrFromObj(k)] = 1);
             a[keyStrFromObj(k)]++;
@@ -234,7 +238,14 @@ export const getMoreFromThisShip = (patp) => {
       )
       .reduce((a, b) => {
         b?.bespoke?.['key-list']
-          .filter((k) => k?.struc !== 'collection' && k?.ship === patp)
+          .filter(
+            (k) =>
+              k?.struc !== 'collection' &&
+              k?.ship === patp &&
+              k?.struc !== 'ship' &&
+              !(k?.cord === 'portal' && k?.ship === '~worpet-bildet' &&
+                (k?.struc === 'app' || k?.struc === 'group'))
+          )
           .forEach((k) => {
             if (!a[keyStrFromObj(k)]) return (a[keyStrFromObj(k)] = 1);
             a[keyStrFromObj(k)]++;

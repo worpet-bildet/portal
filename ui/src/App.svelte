@@ -44,7 +44,7 @@
 </script>
 
 <main class:dark={$state.darkmode}>
-  <div class="dark:bg-black dark:text-mlight min-h-screen">
+  <div class="dark:bg-gradient-to-b from-darkgrey to-gradientdark dark:text-white min-h-screen">
     <GoogleAnalytics properties={[config.googleAnalyticsId]} />
     <div class="relative z-10">
       <Navbar />

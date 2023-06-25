@@ -54,10 +54,12 @@
     </a>
 
     <div class="hidden flex-col md:flex gap-4 md:flex-row">
-      <div class="rounded-full overflow-hidden pt-0.5">
+      <div class="rounded-full overflow-hidden">
         <IconButton
           icon={$state.darkmode ? SunIcon : MoonIcon}
           on:click={toggleDarkmode}
+          changeColorOnHover
+          whiteIcon={(!pagesWithTransparentNav.some((v) => $location.includes(v)) && $location !== '/')}
           transparent
         />
       </div>
@@ -65,7 +67,7 @@
         <button
           on:click={() => (n.action ? n.action() : push(n.link))}
           class="rounded-xl flex font-saucebold items-center px-4 hover:duration-500 py-2 md:py-0"
-          class:text-[#000000]={$location === n.link}
+          class:text-black={$location === n.link}
           class:text-grey={$location !== n.link &&
             (pagesWithTransparentNav.some((v) => $location.includes(v)) ||
               $location === '/')}
