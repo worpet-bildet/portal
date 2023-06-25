@@ -56,17 +56,17 @@
     recommendModalOpen;
 
   export let params;
-  $: loadApp($state);
+  $: {
+    let { wild } = params;
+    [ship, cord, time] = wild.split('/');
+    loadApp($state);
+  }
 
   let subscribingTo = {};
 
   const loadApp = (s) => {
-    let { wild } = params;
-    [ship, cord, time] = wild.split('/');
-
     // Here we should get the app devs from our state, and check whether we have
     // a mapping for it at the moment
-
     let actualDev;
     if ((actualDev = s?.appDevs?.[`${ship}/${cord}`])) {
       // This means we definitely have a def item, I think?
@@ -185,6 +185,7 @@
       json: cord,
     }).then(refreshApps);
   };
+
   const install = async () => {
     isInstalling = true;
     let distDesk = item?.bespoke?.distDesk || `${ship}/${cord || time}`;
@@ -265,8 +266,8 @@
     });
   };
 
-  let activeTab = 'Screenshots';
-  let tabs = ['Screenshots', 'Reviews', 'Info'];
+  let activeTab = 'Reviews';
+  let tabs = ['Reviews', 'Screenshots', 'Info'];
 </script>
 
 {#if item}
@@ -285,9 +286,8 @@
         <div class="grid grid-cols-9 gap-4">
           {#if screenshots.length === 0}
             <div class="col-span-9">
-              There are no screenshots for {title} yet. If you know the developer,
-              {ship}, prompt them to get in touch with ~dilryd-mopreg.
-            </div>
+              {ship} needs to download %portal to publish screenshots of {title}. Please prompt them to follow <a href="https://twitter.com/worpet_bildet/status/1668643121813438466?s=20">this guide</a></div>
+
           {/if}
           {#each screenshots as screenshot}
             <div
@@ -312,7 +312,7 @@
           {/each}
         </div>
         {#if me === ship}
-          <div class="grid gap-8 bg-panels p-6 rounded-lg">
+          <div class="grid gap-8 bg-panels dark:bg-darkgrey dark:border p-6 rounded-lg">
             <div class="flex gap-4">
               <input
                 type="file"
@@ -336,7 +336,7 @@
           </div>
         {/if}
       {:else if activeTab === 'Info'}
-        <div class="grid gap-8 bg-panels p-6 rounded-lg">
+        <div class="grid gap-8 bg-panels dark:bg-darkgrey dark:border p-6 rounded-lg">
           <div>
             <div class="text-2xl font-bold">
               Current {title} version
@@ -388,8 +388,9 @@
             </div>
           {/if}
         {:else}
-          It is not yet possible to review {title}. If you know the developer, {ship},
-          prompt them to get in touch with ~dilryd-mopreg.
+          <div class="col-span-9">
+            {ship} needs to download %portal to allow reviews of {title}. Please prompt them to follow <a href="https://twitter.com/worpet_bildet/status/1668643121813438466?s=20">this guide</a>
+          </div>
         {/if}
       {/if}
     </ItemDetail>
@@ -405,7 +406,16 @@
         {:else if isInstalling}
           <IconButton loading>Installing...</IconButton>
         {:else}
-          <IconButton icon={InstallIcon} on:click={install}>Install</IconButton>
+          <IconButton
+            icon={InstallIcon}
+            on:click={() => {
+              // FIXME: stopgap
+              window.open(
+                `${window.location.origin}/apps/grid/search/${ship}/apps`
+              );
+              // install()
+            }}>Install</IconButton
+          >
         {/if}
         {#if website}
           <IconButton icon={GlobeIcon} on:click={() => window.open(website)}

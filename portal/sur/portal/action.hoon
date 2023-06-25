@@ -25,12 +25,15 @@
                   [%collection title=(unit @t) blurb=(unit @t) image=(unit @t) key-list=(unit key-list)]  ::does it need link?
                   [%feed feed=(unit feed)]
                   [%retweet blurb=(unit @t) ref=(unit key)]
+                  [%blog title=(unit @t) blurb=(unit @t) uri=(unit @t) path=(unit @t) image=(unit @t)]
               ==
         ==
       ==
       ::
       [%replace =key =lens =bespoke]  ::  TODO should it act like put or edit?, i.e. can it create a nonexisting item. NO! (?)
       ::
+      [%add-tag-request our=key their=key tag-to=path tag-from=path]
+      ::  
       [%append =key-list col-key=[struc=%collection =ship =cord time=cord]]
       [%prepend =key-list col-key=[struc=%collection =ship =cord time=cord]]
       ::  removes all instances of key from collection
@@ -40,13 +43,16 @@
       [%destroy =key]  :: abolishes the item from the atmosphere
       ::
       [%sub =key]
+      [%sub-to-many =key-list]
       [%sub-to-item =key]
       ::
       ::
       [%prepend-to-feed =feed feed-key=[struc=%feed =ship =cord time=cord]]  ::  TODO rename?
       [%index-as-curator toggle=?]
       [%onboarded toggle=?]
+      [%blog-sub ~]
       ::
+      [%manager-init ~]
       ::  ? purge needs to be defined as action?
       :: TODO make purge have only 'items-to-keep' arg
       [%purge portal-curator=@p]

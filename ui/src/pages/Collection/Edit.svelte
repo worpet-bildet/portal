@@ -111,7 +111,7 @@
 
 {#if collection}
   <div class="grid grid-cols-12 gap-x-8">
-    <div class="grid gap-4 col-span-9 bg-panels p-4 rounded-lg">
+    <div class="grid gap-4 col-span-9 bg-panels dark:bg-darkgrey dark:border p-4 rounded-lg">
       <div class="text-2xl font-bold">Editing {title}</div>
       <div class="flex flex-col gap-2">
         <div>Title</div>

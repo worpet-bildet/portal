@@ -45,7 +45,7 @@
       avatar={image}
       type="collection"
     >
-      <div class="grid gap-y-4  bg-panels p-4 rounded-lg">
+      <div class="grid gap-y-4 bg-panels dark:bg-darkgrey dark:border p-4 rounded-lg">
         {#each items as key}
           <ItemVerticalListPreview {key} />
         {/each}

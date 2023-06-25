@@ -1,6 +1,7 @@
 /-  *portal-data, *portal-message, portal-item, portal-data-0, portal-data-1,
     gr=social-graph
 /+  default-agent, dbug, *portal, sss
+/$  items-to-json  %portal-items  %json
 |%
 +$  versioned-state
   $%  state-0
@@ -92,7 +93,7 @@
     =/  path  [%item (key-to-path:conv key.item)]
     =.  state  state.q
     ?:  =(lens.item %temp)  q                        ::  if %temp, no need
-    ?.  ?=(?(%collection %feed %app) struc.key.item)      ::  if not %col or %feed or %app
+    ?.  ?=(?(%collection %feed %app %blog) struc.key.item)      ::  if not %col or %feed or %app
       q
       :: ?~  (find [path]~ item-paths)
         :: :_  state.q
@@ -110,7 +111,7 @@
     |=  [p=[=ship =dude:gall =path] q=[state=state-2]]
     =/  key  (path-to-key:conv +:path.p)
     =.  state  state.q
-    ?.  ?=(?(%feed %collection %app) struc.key)
+    ?.  ?=(?(%feed %collection %app %blog) struc.key)
       =.  item-sub.state.q  (quit:da-item ship.key %portal-store path.p)
       [p state.q]
     [p state.q]
@@ -128,10 +129,6 @@
       %create   =^(cards state (create:handle-poke:stor act) [cards this])
       %replace  =^(cards state (replace:handle-poke:stor act) [cards this])
       %edit     =^(cards state (edit:handle-poke:stor act) [cards this])
-      %sub      
-      =^  cards  state 
-        (sub:handle-poke:stor act)
-      [cards this]
       %prepend-to-feed   =^(cards state (prepend-to-feed:handle-poke:stor act) [cards this])
       %append  =^(cards state (append:handle-poke:stor act) [cards this])
       %prepend  =^(cards state (prepend:handle-poke:stor act) [cards this])
@@ -139,6 +136,11 @@
       %delete  =^(cards state (delete:handle-poke:stor act) [cards this])
       %purge   =^(cards state (purge:handle-poke:stor act) [cards this])
       %destroy  =^(cards state (destroy:handle-poke:stor act) [cards this])
+      %sub      =^(cards state (sub:handle-poke:stor act) [cards this])
+        %sub-to-many
+      =^(cards state (sub-to-many:handle-poke:stor act) [cards this])
+        %add-tag-request
+      =^(cards state (add-tag-request:handle-poke:stor act) [cards this])
     ==
     ::
       %portal-message
@@ -190,10 +192,18 @@
         =.  item-sub
           (quit:da-item ship.key.item.u.wave.msg %portal-store [%item (key-to-path:conv key.item.u.wave.msg)])
         `this
-      :_  this  (upd:cards-methods:stor item.u.wave.msg)
+      =/  cards
+        ?.  ?&  =('global' time.key.item.u.wave.msg)
+                ?=([%feed *] bespoke.item.u.wave.msg)
+            ==
+          ~
+        [(~(act cards [our.bowl %portal-manager]) [%sub-to-many (feed-to-key-list:conv (scag 20 feed.bespoke.item.u.wave.msg))])]~
+      :_  this  (welp cards (upd:cards-methods:stor item.u.wave.msg))
       ::
         %prepend-to-feed
-      :_  this  (upd:cards-methods:stor rock.msg)
+      :_  this
+      %+  welp  (upd:cards-methods:stor rock.msg)
+      [(~(act cards [our.bowl %portal-manager]) [%sub-to-many (feed-to-key-list:conv feed.u.wave.msg)])]~
     ==
   ==
 ::
@@ -248,6 +258,7 @@
       `key`(path-to-key:conv +.p.k)
     keys+(~(uni in ~(key by items)) -)
     ::
+    ::  TODO what do if time starts with '/', like blog ids '/some-blog-path'
       [%item @ @ @ @ ~]
     :-  %item
     =/  key  (path-to-key:conv t.path)
@@ -366,6 +377,17 @@
                  |=([=key =item] ?=(?(%deleted) lens.item))
       [cards state]
     ::
+    ++  sub-to-many
+      |=  [act=action]
+      ^+  [*(list card) state]
+      ?>  ?=([%sub-to-many *] act)
+      %-  tail  %^  spin  key-list.act  [*(list card) state]
+      |=  [=key q=[cards=(list card) state=state-2]]
+      :-  key
+      =.  state  state.q
+      =^  cards  state.q  (sub [%sub key])
+      [(welp cards.q cards) state.q]
+    ::
     ++  sub
       |=  [act=action]
       ^+  [*(list card) state]
@@ -375,13 +397,19 @@
       =/  path  [%item (key-to-path:conv key.act)]
       ::  note SSS only for feeds and collections is also temporary fix
       ::  because it is not scalable as well
-      ?.  ?=(?(%feed %collection %app) struc.key.act)
+      ?.  ?=(?(%feed %collection %app %blog) struc.key.act)
         ?:  (~(has by items) key.act)  `state
         :_  state
         %+  snoc  `(list card)`(track-gr:cards-methods ship.key.act)
         `card`(~(msg cards [ship.key.act %portal-store]) [%get-item key.act])
       ::  don't subscribe to what you are already subbed to
-      ?:  (~(has by read:da-item) [ship.key.act %portal-store path])  `state
+      ::  stronger fence than the one in %portal-graph
+      ?:  ?&  (~(has by read:da-item) [ship.key.act %portal-store path])
+              !=(key.act [%feed ~worpet-bildet '' 'global'])  ==
+              ::  stupid hack bcs sss sometimes loses the subscriber from the mem pool
+              ::  so we are allowing the global feed sub to go thru if someone was
+              ::  `accidentally` unsubscribed
+          `state
       =^  cards  item-sub.state  (surf:da-item ship.key.act %portal-store path)
       :_  state
       (welp (track-gr:cards-methods ship.key.act) cards)
@@ -486,12 +514,12 @@
       :-  (welp cards cards-1)
       state
     ::
-    ++  append
+    ++  append  ::  deduplicates
       |=  [act=action]
       ^+  [*(list card) state]
       ?>  ?=([%append *] act)
       =/  path  [%item (key-to-path:conv col-key.act)]
-      =/  col  (append-to-col:itm (get-item col-key.act) act)
+      =/  col  (append-no-dupe:itm (get-item col-key.act) act)
       =.  items  (put-item col)
       =^  cards  item-pub  (give:du-item path [%whole col])
       :_  state
@@ -566,6 +594,20 @@
         `state
       =.  item-sub  (quit:da-item ship.key.act %portal-store path)
       `state
+    ::
+    ++  add-tag-request
+    |=  [act=action]
+    ^+  [*(list card) state]
+    ?>  ?=([%add-tag-request *] act)
+    ::  no safeguards built yet
+    =/  our  (key-to-node:conv our.act)
+    =/  their    (key-to-node:conv their.act)
+    :_  state
+    %+  snoc  (gra:cards-methods portal-store+[%add-tag tag-to.act our their])
+    :*  %pass  /tag  %agent  [ship.their.act %portal-store]  %poke
+        %portal-message
+        !>([%add-tag-request our.bowl tag-from.act their our])
+    ==
     --
 ::
 ++  init-sequence

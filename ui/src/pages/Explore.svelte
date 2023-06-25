@@ -1,5 +1,4 @@
 <script>
-  import { onMount } from 'svelte';
   import { me } from '@root/api';
   import {
     state,
@@ -8,18 +7,21 @@
     profileKeyToItemKey,
     collectionKeyToItemKey,
     keyStrFromObj,
+    getItem,
   } from '@root/state';
+  import { getMeta } from '@root/util';
   import { ItemVerticalListPreview } from '@components';
   import {
     IconButton,
     SparklesIcon,
     AppIcon,
-    GroupIcon,
+    PeopleIcon,
     PersonIcon,
     CollectionIcon,
+    SearchIcon,
   } from '@fragments';
 
-  let items, activeItems, myItems, urlQuery;
+  let items, activeItems, myItems, urlQuery, searchString;
 
   const refreshItems = () => {
     activeItems = items;
@@ -103,15 +105,39 @@
 
     refreshItems();
   });
+
+  const filterBySearchString = (str) => {
+    refreshItems();
+    if (!activeItems || !str) return [];
+    activeItems = [
+      ...activeItems.filter((i) => {
+        const { title, blurb, ship } = getMeta(getItem(keyStrFromObj(i)));
+        if (
+          (title && title.toLowerCase().indexOf(str.toLowerCase()) !== -1) ||
+          (blurb && blurb.toLowerCase().indexOf(str.toLowerCase()) !== -1) ||
+          (ship && ship.toLowerCase().indexOf(str.toLowerCase()) !== -1)
+        ) {
+          return true;
+        }
+        return false;
+      }),
+    ];
+  };
+
+  $: filterBySearchString(searchString);
 </script>
 
-<div class="flex flex-col gap-4 mb-4">
-  <div class="text-2xl font-bold">Everything you have ever seen on Portal</div>
-  <p>
-    Items you come across on your travels will accrue here, but it's not yet an
-    exhaustive index of all the things on Portal.
-  </p>
-  <div class="flex gap-4">
+<div class="flex flex-col gap-4 mb-4 items-center">
+  <div class="flex bg-panels dark:bg-darkgrey dark:border p-2 rounded-lg w-2/3">
+    <div class="w-5 text-grey mt-[3px] ml-2"><SearchIcon /></div>
+    <input
+      type="text"
+      class="focus:outline-none placeholder-grey w-full ml-4"
+      placeholder="Search Portal"
+      bind:value={searchString}
+    />
+  </div>
+  <div class="flex gap-8">
     <IconButton
       icon={SparklesIcon}
       active={filters.has('new')}
@@ -119,13 +145,15 @@
     >
     <IconButton
       icon={AppIcon}
+      whiteIcon
       active={filters.has('apps')}
       on:click={() => {
         toggleFilter('apps');
       }}>Apps</IconButton
     >
     <IconButton
-      icon={GroupIcon}
+      icon={PeopleIcon}
+      whiteIcon
       active={filters.has('groups')}
       on:click={() => {
         toggleFilter('groups');
@@ -133,6 +161,7 @@
     >
     <IconButton
       icon={PersonIcon}
+      whiteIcon
       active={filters.has('ships')}
       on:click={() => {
         toggleFilter('ships');
@@ -146,8 +175,12 @@
       }}>Collections</IconButton
     >
   </div>
+  <p class="text-grey text-sm">
+    Items you come across on your travels will accrue here, but it's not yet an
+    exhaustive index of all the things on Portal.
+  </p>
   {#if items}
-    <div class="flex flex-col gap-4 bg-panels p-6 rounded-lg">
+    <div class="flex flex-col gap-4 bg-panels dark:bg-darkgrey dark:border p-6 rounded-lg w-2/3">
       {#if activeItems.length > 0}
         {#each activeItems as key}
           <ItemVerticalListPreview {key} />

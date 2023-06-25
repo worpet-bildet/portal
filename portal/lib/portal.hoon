@@ -7,6 +7,8 @@
 ++  conv
   |%
   ::
+  ::  TODO what if time looks like '/some-blog-path'
+  ::  or '/some/blog/path'
   ++  key-to-path
     |=  [=key]
     ;;  [@ @ @ @ ~]
@@ -22,20 +24,34 @@
     ;;  key
     :^  ;;  struc  -:path
         `ship`(slav %p +<:path)
-        `cord`+>-:path
-        `cord`+>+<:path
+        ?:((gte (lent path) 3) `cord`+>-:path '')
+        ?:((gte (lent path) 4) `cord`+>+<:path '')
   ::
   ++  key-to-node
     |=  [=key]
     ;;  node:gr
     [%entity %portal-store (spat (key-to-path key))]
-  ::
-  :: doesn't work for temp items, because last path element is ''
+  ::  
   ++  node-to-key  
     |=  [=node:gr]
     ;;  key
     ?>  ?=([%entity *] node)
-    (path-to-key (stab name.node))
+    =/  p  (trip name.node)
+    ::  TODO if blog paths allowed to have trailing /, we needs to be fixed
+    =?  p  
+        =('/' (rear p))
+      (snip p)
+    =?  p  
+        =('/' (rear p))
+      (snip p)
+    (path-to-key (stab (crip p)))
+  ::
+  ++  feed-to-key-list
+    |=  =feed
+    ^-  key-list
+    %+  turn  feed
+    |=  [* * =key]
+    key
   --
 ::
 ++  scry
@@ -98,6 +114,10 @@
 ::
 ++  keys
   |%
+  ++  skid-temp
+    |=  [=key-list]
+    ^-  [temp=^key-list def=^key-list]
+    (skid key-list |=([=key] ?~(time.key %.y %.n)))
   ::
   ++  skip-strucs
     |=  [=key-list strucs=(list struc)]
@@ -118,6 +138,15 @@
     |=  [=key-list ships=(list ship)]
     ^-  ^key-list
     (skim key-list |=([=key] ?~((find [ship.key]~ ships) %.n %.y)))
+  ::
+  ++  deduplicate
+    |=  [a=(list key)]
+    %-  flop  %-  tail
+    %^  spin  a  *(list key)  
+    |=  [el=key st=(list key)]
+    ?~  (find [el]~ st)
+      el^[el st]
+    [el st]
   --
 ::
 ++  loob
@@ -214,73 +243,18 @@
       ==
   --
 ::
-++  manager
-  |_  [=bowl:gall cards=_*(list card)]
-  ++  on-poke
-    ::  all arms here should output cards
-    |%
-    ::
-    ++  sub
-      |=  [act=action]
-      ^-  [(list card)]
-      ?>  ?=([%sub *] act)
-      ?.  =(time.key.act '')   ::  branch on whether is %temp (empty time.key)
-        :: if not temp
-        ~[(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(act))]
-      ::  if temp
-      ?:  (~(item-exists scry our.bowl now.bowl) key.act)  ~
-      =|  bespoke=bespoke
-      =*  create-empty-temp  ^-  action  :*  %create
-                                  `ship.key.act
-                                  `cord.key.act
-                                  `''
-                                  `%temp
-                                  `bespoke
-                                  ?:  ?|  =(%app struc.key.act) 
-                                          =(%group struc.key.act)  ==
-                                    [%collection our.bowl '' 'all']~
-                                  ~
-                                  ~
-                                  ~
-                              ==
-      ?+    struc.key.act    !!
-        ::
-          %ship
-        =.  bespoke  [%ship ~]
-        ~[(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(create-empty-temp))]
-        ::
-          %group
-        =.  bespoke  [%group *data:group-preview]
-        =/  path  /groups/(scot %p ship.key.act)/[`@tas`cord.key.act]/preview
-        =/  wire  [%get-group-preview (key-to-path:conv key.act)]
-        =/  sub-status  (~(gut by wex.bowl) [wire ship.key.act %groups] ~)
-        :~  [(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(create-empty-temp))]
-            [%pass wire %agent [ship.key.act %groups] %watch path]
-        ==
-        ::
-          %app
-        =.  bespoke  [%app ~ '' '' *signature *treaty:treaty]
-        =/  path  /treaty/(scot %p ship.key.act)/[`@tas`cord.key.act]
-        =/  wire  [%treaty (key-to-path:conv key.act)]
-        =/  sub-status  (~(gut by wex.bowl) [wire ship.key.act %treaty] ~)
-        :~  [(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(create-empty-temp))]
-            [%pass wire %agent [ship.key.act %treaty] %watch path]
-        ==
-      ==
-    --
-  --
-::
-++  item-methods  ::  all arms here should output item
-  |_  =bowl:gall
+::  so I can use item-methods wherever, without needing bowl
+++  pure
+  |%
   ++  edit
-    |=  [=item act=action]
+    |=  [now=time =item act=action]
     ::  should output item
     ^-  ^item
     ?>  ?=([%edit *] act)
     ?>  =(key.item key.act)
     %=  item
         updated-at.meta
-      `@t`(scot %da now.bowl)
+      `@t`(scot %da now)
       ::
         lens
       (fall lens.act lens.item)
@@ -328,88 +302,121 @@
             (fall blurb.u.bespoke.act blurb.bespoke.item)
             (fall ref.u.bespoke.act ref.bespoke.item)
         ==
+        ::
+          %blog
+        ?>  ?=(%blog -.bespoke.item)
+        :*  %blog
+            (fall title.u.bespoke.act title.bespoke.item)
+            (fall blurb.u.bespoke.act blurb.bespoke.item)
+            (fall uri.u.bespoke.act uri.bespoke.item)
+            (fall path.u.bespoke.act path.bespoke.item)
+            (fall image.u.bespoke.act image.bespoke.item)
+        ==
       ==
     ==
   ::
   ++  replace
-    |=  [=item act=action]
+    |=  [now=time =item act=action]
     ^-  ^item
     ?>  ?=([%replace *] act)
     ?>  =(key.item key.act)
     %=  item
       lens             lens.act
       bespoke          bespoke.act
-      updated-at.meta  `@t`(scot %da now.bowl)
+      updated-at.meta  `@t`(scot %da now)
     ==
   ::
   ++  create
-    |=  [act=action]
+    |=  [[our=ship now=time] act=action]
     ^-  item
     ?>  ?=([%create *] act)     ::  assert that action is %create
     =/  bespoke  (fall bespoke.act *bespoke)
     :^  :^  -.bespoke
-            (fall ship.act our.bowl)
+            (fall ship.act our)
             (fall cord.act '')
-            (fall time.act `@t`(scot %da now.bowl))
+            (fall time.act `@t`(scot %da now))
         (fall lens.act *lens)
         bespoke
-        :^  created-at=`@t`(scot %da now.bowl)
+        :^  created-at=`@t`(scot %da now)
             updated-at=''
-            permissions=~[our.bowl]
+            permissions=~[our]
             reach=[%public ~]
   ::
   ++  prepend-to-feed
-    |=  [feed=item act=action]
+    |=  [now=time feed=item act=action]
     ^-  item
     ?>  ?=([%prepend-to-feed *] act)
     ?>  ?=(%feed -.bespoke.feed)
     ?>  =(key.feed feed-key.act)
     =/  new-feed  %+  oust  [1.000 (lent feed.act)]
       (weld feed.act feed.bespoke.feed)
-    (edit feed [%edit key.feed ~ `[%feed `new-feed]])
+    (edit now feed [%edit key.feed ~ `[%feed `new-feed]])
   ::
-  ::  TODO abstract collection methods?
-  ::  such that it takes in a gate that arbitrarily modifies the key list
+  ++  append-no-dupe
+    |=  [now=time col=item act=action]
+    ^-  item
+    ?>  ?=([%append *] act)
+    ?>  ?=(%collection -.bespoke.col)
+    ?>  =(col-key.act key.col)
+    =+  (welp key-list.bespoke.col key-list.act)
+    %^  edit  now  col
+      [%edit col-key.act ~ `[%collection ~ ~ ~ `(deduplicate:keys -)]]
+  ::
   ++  append-to-col
-    |=  [col=item act=action]
+    |=  [now=time col=item act=action]
     ^-  item
     ?>  ?=([%append *] act)
     ?>  ?=(%collection -.bespoke.col)
     ?>  =(col-key.act key.col)
     =/  new-key-list  (weld key-list.bespoke.col key-list.act)
-    %+  edit  col
+    %^  edit  now  col
       [%edit col-key.act ~ `[%collection ~ ~ ~ `new-key-list]]
   ::
   ++  prepend-to-col
-    |=  [col=item act=action]
+    |=  [now=time col=item act=action]
     ^-  item
     ?>  ?=([%prepend *] act)
     ?>  ?=(%collection -.bespoke.col)
     ?>  =(col-key.act key.col)
     =/  new-key-list  (weld key-list.act key-list.bespoke.col)
-    %+  edit  col
+    %^  edit  now  col
       [%edit col-key.act ~ `[%collection ~ ~ ~ `new-key-list]]
   ::
   ++  remove-from-col
-    |=  [col=item act=action]
+    |=  [now=time col=item act=action]
     ^-  item
     ?>  ?=([%remove *] act)
     ?>  ?=(%collection -.bespoke.col)
     ?>  =(col-key.act key.col)
     =/  new-key-list  %+  skip  key-list.bespoke.col
       |=(=key ?~((find [key]~ key-list.act) %.n %.y))
-    %+  edit  col
+    %^  edit  now  col
       [%edit col-key.act ~ `[%collection ~ ~ ~ `new-key-list]]
+
   ::
   ++  delete
-    |=  [=item act=action]
+    |=  [now=time =item act=action]
     ^-  ^item
     ?>  ?=([%delete *] act)
     ?>  =(key.item key.act)
     %=  item
       lens             %deleted
-      updated-at.meta  `@t`(scot %da now.bowl)
+      updated-at.meta  `@t`(scot %da now)
     ==
+  ::
+  --
+::
+++  item-methods  ::  all arms here should output item
+  |_  =bowl:gall
+  ++  edit             (cury edit:pure now.bowl)
+  ++  replace          (cury replace:pure now.bowl)
+  ++  create           (cury create:pure [our now]:bowl)
+  ++  prepend-to-feed  (cury prepend-to-feed:pure now.bowl)
+  ++  append-no-dupe   (cury append-no-dupe:pure now.bowl)
+  ++  append-to-col    (cury append-to-col:pure now.bowl)
+  ++  prepend-to-col   (cury prepend-to-col:pure now.bowl)
+  ++  remove-from-col  (cury remove-from-col:pure now.bowl)
+  ++  delete           (cury delete:pure now.bowl)
   --
 ::
 ::  OOD
@@ -500,7 +507,9 @@
   ?~  dist-desk  %.n
   ::  note: src is allowed to be different from dist-ship
   ?.  =(ship.sig dist-name.u.dist-desk)  %.n
-  ?:  =((get-ship-type:misc our) %comet)  %.n
+  ?:  =((get-ship-type:misc our) %comet) 
+    ~&  "we are a comet, cannot validate app sigs" 
+    %.y
   ~&  "validating... w/ input:"
   ~&  [%sign-app dev ^dist-desk]
   ~&  "and sig:"

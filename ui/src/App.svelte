@@ -43,13 +43,15 @@
   });
 </script>
 
-<main>
-  <GoogleAnalytics properties={[config.googleAnalyticsId]} />
-  <div class="relative z-10">
-    <Navbar />
+<main class:dark={$state.darkmode}>
+  <div class="dark:bg-gradient-to-b from-darkgrey to-gradientdark dark:text-white min-h-screen">
+    <GoogleAnalytics properties={[config.googleAnalyticsId]} />
+    <div class="relative z-10">
+      <Navbar />
+    </div>
+    <div class="p-2 z-0 md:px-16 lg:px-32 2xl:px-56">
+      <Router {routes} />
+    </div>
+    <Onboard />
   </div>
-  <div class="p-2 z-0 md:px-16 lg:px-32 2xl:px-56">
-    <Router {routes} />
-  </div>
-  <Onboard />
 </main>

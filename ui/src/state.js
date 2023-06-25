@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { get, writable } from 'svelte/store';
 import {
   getPortalItems,
@@ -7,15 +8,25 @@ import {
   getJoinedGroups,
   getInstalledApps,
   getPals,
+  getBlogs,
   getStorageConfiguration,
   subscribeToGroup,
   requestRadioChannels,
 } from '@root/api';
+import { save, load } from '@root/storage';
 import config from '@root/config';
 import { fromUrbitTime } from '@root/util';
 
-export const state = writable({});
+export const state = writable(load() || {});
 export const feed = writable({});
+
+export const toggleDarkmode = () => {
+  state.update((s) => {
+    s.darkmode = !s.darkmode;
+    save({ darkmode: s.darkmode });
+    return s;
+  });
+};
 
 export const refreshPortalItems = () => {
   getPortalItems().then(({ items }) => {
@@ -126,6 +137,15 @@ export const refreshRadioChannels = () => {
   requestRadioChannels();
 };
 
+export const refreshBlogs = () => {
+  getBlogs().then((b) => {
+    state.update((s) => {
+      s.blogs = b;
+      return s;
+    });
+  });
+};
+
 export const getCurator = (patp) => {
   return {
     keyObj: { ship: patp, struc: 'ship', cord: '', time: '' },
@@ -193,7 +213,11 @@ export const getCollectedItemLeaderboard = (excludePatp) => {
       )
       .reduce((a, b) => {
         b?.bespoke?.['key-list']
-          .filter((k) => k?.struc !== 'collection')
+          .filter((k) =>
+            k?.struc !== 'collection' &&
+            !(k?.cord === 'portal' && k?.ship === '~worpet-bildet' &&
+              (k?.struc === 'app' || k?.struc === 'group'))
+          )
           .forEach((k) => {
             if (!a[keyStrFromObj(k)]) return (a[keyStrFromObj(k)] = 1);
             a[keyStrFromObj(k)]++;
@@ -216,7 +240,14 @@ export const getMoreFromThisShip = (patp) => {
       )
       .reduce((a, b) => {
         b?.bespoke?.['key-list']
-          .filter((k) => k?.struc !== 'collection' && k?.ship === patp)
+          .filter(
+            (k) =>
+              k?.struc !== 'collection' &&
+              k?.ship === patp &&
+              k?.struc !== 'ship' &&
+              !(k?.cord === 'portal' && k?.ship === '~worpet-bildet' &&
+                (k?.struc === 'app' || k?.struc === 'group'))
+          )
           .forEach((k) => {
             if (!a[keyStrFromObj(k)]) return (a[keyStrFromObj(k)] = 1);
             a[keyStrFromObj(k)]++;
@@ -231,15 +262,22 @@ export const getMoreFromThisShip = (patp) => {
 // };
 
 export const getAllCollectionsAndItems = (collectionKey) => {
-  return get(state)[collectionKey]?.bespoke?.['key-list'].concat(Object.values(Object.fromEntries(
-    Object.entries(get(state)).filter(
-      ([key]) => key.includes('/collection/')
-      ).filter(
-        ([key]) => !key.includes('published')
-        ).filter(
-          ([key]) => !key.includes('all')
-          )
-      )).map(item => item.keyObj)).concat(Object.keys(get(state)['profiles']).map(profileKeyToItemKey).map(profileStrToObj));
+  return get(state)
+    [collectionKey]?.bespoke?.['key-list'].concat(
+      Object.values(
+        Object.fromEntries(
+          Object.entries(get(state))
+            .filter(([key]) => key.includes('/collection/'))
+            .filter(([key]) => !key.includes('published'))
+            .filter(([key]) => !key.includes('all'))
+        )
+      ).map((item) => item.keyObj)
+    )
+    .concat(
+      Object.keys(get(state)['profiles'])
+        .map(profileKeyToItemKey)
+        .map(profileStrToObj)
+    );
 };
 
 export const getCollectionItems = (collectionKey) => {
@@ -260,6 +298,10 @@ export const getRepliesByTo = (ship, key) => {
       item.find((i) => keyStrFromObj(i) === keyStrFromObj(key))
     )
     .map(([replyKey, _]) => keyStrToObj(replyKey));
+};
+
+export const getLikes = (ship, key) => {
+  return get(state).social?.[`/${ship}/like-from`]?.[keyStrFromObj(key)];
 };
 
 export const getReviews = (ship, key) => {
@@ -291,10 +333,13 @@ export const handleSubscriptionEvent = (event, type) => {
             if (!s.social[socialKey][socialUpdate]) {
               s.social[socialKey][socialUpdate] = [];
             }
-            s.social[socialKey][socialUpdate] = [
-              ...s.social[socialKey][socialUpdate],
-              ...event.app[socialKey][socialUpdate],
-            ];
+            s.social[socialKey][socialUpdate] = _.uniqBy(
+              [
+                ...s.social[socialKey][socialUpdate],
+                ...event.app[socialKey][socialUpdate],
+              ],
+              keyStrFromObj
+            );
           }
         }
         return s;
@@ -348,21 +393,22 @@ export const keyStrFromObj = ({ struc, ship, cord, time }) => {
 
 export const keyStrToObj = (str) => {
   const parts = str.split('/');
+  let time = parts[1] === 'blog' ? parts.slice(4).join('/') : parts[4];
   return {
     struc: parts[1],
     ship: parts[2],
     cord: parts[3],
-    time: parts[4],
+    time: time,
   };
 };
 
 export const profileStrToObj = (str) => {
   const parts = str.split('/');
   return {
-    struc: "ship",
+    struc: 'ship',
     ship: parts[1],
-    cord: "",
-    time: "",
+    cord: '',
+    time: '',
   };
 };
 
@@ -382,6 +428,7 @@ export const refreshAll = () => {
   refreshGroups();
   refreshPals();
   refreshRadioChannels();
+  refreshBlogs();
   // refreshStorageConfiguration();
 };
 refreshAll();

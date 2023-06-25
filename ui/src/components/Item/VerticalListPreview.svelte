@@ -2,7 +2,7 @@
   import { createEventDispatcher } from 'svelte';
   import { push } from 'svelte-spa-router';
   import { state, keyStrFromObj, getItem } from '@root/state';
-  import { subscribeToItem } from '@root/api';
+  import { subscribeToItem, getLinkMetadata } from '@root/api';
   import { getMeta } from '@root/util';
   import { CollectionsSquarePreview, Sigil } from '@components';
   import {
@@ -10,6 +10,7 @@
     TrashIcon,
     EditIcon,
     ExternalDestinationIcon,
+    LinkPreview,
   } from '@fragments';
 
   export let key;
@@ -39,15 +40,6 @@
   const dispatch = createEventDispatcher();
   const remove = () => dispatch('remove', item.keyStr);
   const edit = () => dispatch('edit', item.keyStr);
-  const navigate = () => {
-    if (item.keyObj.struc === 'ship') {
-      push(`/${item.keyObj.ship}`);
-    } else if (item.keyObj.struc === 'other' && item.bespoke.link) {
-      window.open(item.bespoke.link);
-    } else {
-      push(item.keyStr);
-    }
-  };
 </script>
 
 {#if item}
@@ -59,17 +51,25 @@
   <button
     on:click={() => {
       if (clickable) {
-        navigate();
+        if (struc === 'ship') {
+          push(`/${ship}`);
+        } else if ((struc === 'other' || struc === 'blog') && link) {
+          window.open(link);
+        } else {
+          push(item.keyStr);
+        }
       } else if (selectable) {
         selected = !selected;
         dispatch('selected', { key, selected });
       }
     }}
-    class="grid grid-cols-6 w-full items-center gap-4 p-1 hover:bg-hover hover:duration-500 cursor-pointer rounded-lg text-sm text-left"
-    class:bg-mdark={selected}
+    class="grid grid-cols-6 w-full items-center gap-4 p-1 dark:border dark:hover:border-white hover:duration-500 cursor-pointer rounded-lg text-sm text-left"
+    class:hover:bg-hover={!$state.darkmode}
+    class:bg-panels={selected && !$state.darkmode}
+    class:border-white={selected && $state.darkmode}
   >
     <div
-      class="border overflow-hidden h-full rounded-md"
+      class="border overflow-hidden rounded-md"
       class:col-span-1={!small}
       class:col-span-2={small}
     >
@@ -77,6 +77,16 @@
         <Sigil patp={ship} />
       {:else if struc === 'collection' && !image}
         <CollectionsSquarePreview {key} withTitle={false} />
+      {:else if !image && link && struc !== 'app'}
+        {#await getLinkMetadata(link)}
+          <ItemImage {image} {title} {color} />
+        {:then data}
+          {#if !data}
+            <ItemImage {image} {title} {color} />
+          {:else}
+            <ItemImage image={data.image} title={data.title} />
+          {/if}
+        {/await}
       {:else}
         <ItemImage {image} {title} {color} />
       {/if}
@@ -94,9 +104,9 @@
         >
           {title}
         </div>
-        <div>·</div>
-        <div>{struc}</div>
-        {#if struc === 'other' && link}
+        <div class="text-grey">·</div>
+        <div class="text-grey">{struc}</div>
+        {#if (struc === 'other' && link) || struc === 'blog'}
           <div class="w-5">
             <ExternalDestinationIcon />
           </div>

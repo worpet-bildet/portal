@@ -29,9 +29,9 @@
   $?  %deleted
       %temp
       %index
-      %def
       %global
       %personal
+      %def
   ==
 ::
 +$  key  [=struc =ship =cord time=cord]

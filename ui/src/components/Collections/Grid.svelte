@@ -1,13 +1,14 @@
 <script>
+  import { link } from 'svelte-spa-router';
   import {
-    getCuratorCollections,
     state,
+    getCuratorCollections,
     keyStrFromObj,
     getItem,
   } from '@root/state';
-  import { subscribeToItem } from '@root/api';
+  import { me, poke, subscribeToItem } from '@root/api';
   import SquarePreview from './SquarePreview.svelte';
-  import { link } from 'svelte-spa-router';
+  import { ArrowPathIcon } from '@fragments';
   export let patp;
   export let loading;
 
@@ -40,9 +41,31 @@
     if (collections.length > 0) loading = false;
   };
 
-  state.subscribe(() => {
+  let hasBlog, hasBlogCollection, subbingToBlogs;
+  state.subscribe((s) => {
     loadCollections(patp);
+    hasBlog = s?.blogs?.length > 0;
+
+    if (
+      hasBlog &&
+      !collections.find((c) => c?.keyObj.time === 'published-blogs')
+    ) {
+      hasBlogCollection = false;
+    } else {
+      hasBlogCollection = true;
+    }
   });
+
+  const subToBlog = () => {
+    subbingToBlogs = true;
+    poke({
+      app: 'portal-manager',
+      mark: 'portal-action',
+      json: {
+        'blog-sub': null,
+      },
+    });
+  };
 
   $: loadCollections(patp);
 </script>
@@ -60,5 +83,22 @@
         <SquarePreview key={collection.keyObj} />
       </a>
     {/each}
+  {/if}
+  {#if me === patp && hasBlog && !hasBlogCollection && !subbingToBlogs}
+    <button
+      on:click={subToBlog}
+      class="flex flex-col items-center justify-center gap-4 col-span-4 h-full bg-purple text-white border shadow rounded-lg"
+    >
+      <div class="w-5 h-5">
+        <ArrowPathIcon />
+      </div>
+      <div>Sync my %blogs</div>
+    </button>
+  {:else if subbingToBlogs && !hasBlogCollection}
+    <div
+      class="flex items-center justify-center col-span-4 h-full bg-purple text-white border shadow rounded-lg"
+    >
+      Syncing...
+    </div>
   {/if}
 </div>

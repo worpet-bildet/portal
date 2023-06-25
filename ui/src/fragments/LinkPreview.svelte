@@ -1,28 +1,22 @@
 <script>
-  export let url;
+  import { getLinkMetadata } from '@root/api';
 
-  async function getMetadata(url) {
-    const data = await fetch(`${proxyUrl}?url=${url}`)
-      .then((res) => res.json())
-      .then((r) => r.metadata);
-    return data;
-  }
+  export let url;
 
   function clickHandler() {
     window.open(url, '_blank');
   }
 
-  const proxyUrl = 'https://preview.foddur-hodler.one/v2';
   const placeholderImg = 'https://i.imgur.com/UeDNBNQ.jpeg';
 
-  $: metadata = getMetadata(url);
+  $: metadata = getLinkMetadata(url);
 </script>
 
-<div
-  class={`flex flex-col rounded-md border text-left bg-panels cursor-pointer`}
-  on:click={clickHandler}
->
-  {#await metadata then data}
+{#await metadata then data}
+  <div
+    class={`flex flex-col rounded-md border text-left bg-panels dark:bg-darkgrey dark:border cursor-pointer`}
+    on:click={clickHandler}
+  >
     <div
       class="w-full h-64 bg-center bg-cover bg-no-repeat"
       style={`background-image:url(${data.image || placeholderImg});`}
@@ -41,5 +35,7 @@
         <span>{data.hostname || ''}</span>
       </div>
     </div>
-  {/await}
-</div>
+  </div>
+{:catch}
+  <div />
+{/await}

@@ -11,18 +11,28 @@
     getCurator,
     getReplies,
     getRepliesByTo,
+    getLikes,
   } from '@root/state';
   import { getMeta, fromUrbitTime, getAnyLink, isImage } from '@root/util';
   import { ItemVerticalListPreview, Sigil, FeedPostForm } from '@components';
-  import { ChatIcon, IconButton, LinkPreview, StarRating } from '@fragments';
+  import {
+    ChatIcon,
+    LikeIcon,
+    LikedIcon,
+    IconButton,
+    LinkPreview,
+    StarRating,
+  } from '@fragments';
 
   export let key;
   export let allowReplies = true;
+  export let allowLikes = true;
   export let showRating;
 
   let item;
   let subscribingTo = {};
   let replies = [];
+  let likeCount, likedByMe;
   state.subscribe((s) => {
     item = getItem(keyStrFromObj(key));
     if (s.isLoaded && !item && !subscribingTo[keyStrFromObj(key)]) {
@@ -43,13 +53,19 @@
         );
       })
       .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
+
+    let likes = [...(getLikes(key.ship, key) || [])];
+
+    likeCount = likes.length;
+    if (likedByMe && !likes.find((l) => l.ship === me)) likeCount++;
+    likedByMe = likedByMe || likes.find((l) => l.ship === me);
   });
 
   let showCommentForm = false;
 
-  const handlePostComment = ({
+  function handlePostComment({
     detail: { content, uploadedImageUrl, replyTo },
-  }) => {
+  }) {
     return poke({
       app: 'portal-manager',
       mark: 'portal-action',
@@ -73,6 +89,26 @@
         },
       },
     });
+  }
+
+  const likePost = () => {
+    likedByMe = true;
+    likeCount++;
+    poke({
+      app: 'portal-manager',
+      mark: 'portal-action',
+      json: {
+        'add-tag-request': {
+          our: { struc: 'ship', ship: me, cord: '', time: '' },
+          their: key,
+          'tag-to': `/${me}/like-to`,
+          'tag-from': `/${key.ship}/like-from`,
+        },
+      },
+    });
+  };
+  const unlikePost = () => {
+    likedByMe = false;
   };
 </script>
 
@@ -83,7 +119,7 @@
   } = getCurator(ship)}
   {@const blurbLink = getAnyLink(blurb)}
   <div
-    class="grid grid-cols-12 bg-panels rounded-lg p-5 gap-2 lg:gap-4"
+    class="grid grid-cols-12 bg-panels dark:bg-darkgrey dark:border rounded-lg px-5 pt-5 gap-2 lg:gap-4 lg:gap-y-0"
     in:fade
   >
     <div class="col-span-1">
@@ -94,8 +130,8 @@
       </div>
     </div>
     <div class="col-span-12 md:col-span-10 flex flex-col gap-2">
-      <div class="flex gap-2 text-sm">
-        <a href={`/${ship}`} use:link>{nickname || ship}</a>
+      <div class="flex gap-2 text-sm text-grey">
+        <a class="text-black dark:text-white" href={`/${ship}`} use:link>{nickname || ship}</a>
         <span>·</span>
         <span>{format(createdAt)}</span>
       </div>
@@ -103,7 +139,9 @@
         class="whitespace-pre-wrap line-clamp-50 flex flex-col gap-2 break-words"
       >
         <div>
-          {@html linkifyHtml(blurb, { attributes: { class: 'text-link' } })}
+          {@html linkifyHtml(blurb, {
+            attributes: { class: 'text-link', target: '_blank' },
+          })}
         </div>
         {#if blurbLink}
           {#if isImage(blurbLink)}
@@ -146,23 +184,53 @@
         />
       </div>
     {/if}
-    <div class="col-span-12">
-      {#if allowReplies}
-        <div class="pt-4">
-          <IconButton
-            icon={ChatIcon}
-            active={showCommentForm}
-            on:click={() => (showCommentForm = !showCommentForm)}
-          >
-            {#if replies.length > 0}
-              {replies.length}
-            {/if}
-          </IconButton>
+    <div class="col-span-12 col-start-2 py-2">
+      <div class="-ml-2.5 flex gap-8">
+        {#if allowReplies}
+          <div class="flex">
+            <div class="rounded-full overflow-hidden">
+              <IconButton
+                icon={ChatIcon}
+                changeColorOnHover
+                active={showCommentForm}
+                on:click={() => (showCommentForm = !showCommentForm)}
+                transparent
+              >
+              </IconButton>
+            </div>
+            <div class="pt-2 text-sm w-2 text-grey">
+              {#if replies.length > 0}
+                {replies.length}
+              {/if}
+            </div>
+          </div>
+        {/if}
+        <div class="flex items-center">
+          {#if likedByMe}
+            <div class="w-5 h-5 ml-2 text-error">
+              <LikedIcon />
+            </div>
+            <span class="p-2 text-sm text-error">
+              {#if likeCount > 0}
+                {likeCount}
+              {/if}
+            </span>
+          {:else}
+            <div class="rounded-full overflow-hidden">
+              <IconButton icon={LikeIcon} changeColorOnHover active={false} on:click={likePost} transparent>
+              </IconButton>
+            </div>
+            <div class="pt-2 pb-2 text-sm text-grey">
+              {#if likeCount > 0}
+                {likeCount}
+              {/if}
+            </div>
+          {/if}
         </div>
-      {/if}
+      </div>
     </div>
     {#if showCommentForm}
-      <div class="flex flex-col gap-4 col-span-12" transition:slide>
+      <div class="flex flex-col gap-4 col-span-12 py-4" transition:slide>
         <FeedPostForm
           replyTo={item.keyObj}
           recommendButtons={false}

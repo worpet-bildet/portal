@@ -1,9 +1,15 @@
 <script>
   import { push, link, location } from 'svelte-spa-router';
-  import config from '@root/config';
-  import logo from '@assets/logo.svg';
+  import { state, toggleDarkmode } from '@root/state';
   import { me } from '@root/api';
-  import { HamburgerIcon, CrossIcon } from '@fragments';
+  import logo from '@assets/logo.svg';
+  import {
+    HamburgerIcon,
+    CrossIcon,
+    IconButton,
+    SunIcon,
+    MoonIcon,
+  } from '@fragments';
   import MySigil from './MySigil.svelte';
 
   let isMobileNavOpen = false;
@@ -39,32 +45,44 @@
         class:text-grey={pagesWithTransparentNav.some((v) =>
           $location.includes(v)
         ) || $location === '/'}
-        class:text-white={!pagesWithTransparentNav.some((v) =>
-          $location.includes(v)
-        ) && $location !== '/'}
+        class:text-white={$state.darkmode ||
+          (!pagesWithTransparentNav.some((v) => $location.includes(v)) &&
+            $location !== '/')}
       >
         PORTAL
       </div>
     </a>
 
     <div class="hidden flex-col md:flex gap-4 md:flex-row">
+      <div class="rounded-full overflow-hidden">
+        <IconButton
+          icon={$state.darkmode ? SunIcon : MoonIcon}
+          on:click={toggleDarkmode}
+          changeColorOnHover
+          whiteIcon={(!pagesWithTransparentNav.some((v) => $location.includes(v)) && $location !== '/')}
+          transparent
+        />
+      </div>
       {#each nav as n}
         <button
           on:click={() => (n.action ? n.action() : push(n.link))}
           class="rounded-xl flex font-saucebold items-center px-4 hover:duration-500 py-2 md:py-0"
-          class:text-[#000000]={$location === n.link}
+          class:text-black={$location === n.link}
           class:text-grey={$location !== n.link &&
             (pagesWithTransparentNav.some((v) => $location.includes(v)) ||
               $location === '/')}
-          class:hover:text-black={$location !== n.link &&
-            (pagesWithTransparentNav.some((v) => $location.includes(v)) ||
-              $location === '/')}
-          class:text-white={$location !== n.link &&
-            !pagesWithTransparentNav.some((v) => $location.includes(v)) &&
-            $location !== '/'}
-          class:hover:text-offwhite={$location !== n.link &&
-            !pagesWithTransparentNav.some((v) => $location.includes(v)) &&
-            $location !== '/'}>{n.title}</button
+          class:hover:text-black={!$state.darkmode ||
+            ($location !== n.link &&
+              (pagesWithTransparentNav.some((v) => $location.includes(v)) ||
+                $location === '/'))}
+          class:text-white={$state.darkmode ||
+            ($location !== n.link &&
+              !pagesWithTransparentNav.some((v) => $location.includes(v)) &&
+              $location !== '/')}
+          class:hover:text-offwhite={$state.darkmode ||
+            ($location !== n.link &&
+              !pagesWithTransparentNav.some((v) => $location.includes(v)) &&
+              $location !== '/')}>{n.title}</button
         >
       {/each}
       <a
