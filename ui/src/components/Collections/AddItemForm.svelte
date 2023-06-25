@@ -94,19 +94,19 @@
           <div class="text-2xl pb-2">What kind of item?</div>
           <button
             on:click={() => (formstep = 'app')}
-            class="bg-panels dark:bg-darkgrey dark:border hover:bg-hover text-2xl font-bold py-3">App</button
+            class="bg-panels dark:bg-darkgrey dark:border hover:bg-hover dark:hover:border-white text-2xl font-bold py-3">App</button
           >
           <button
             on:click={() => (formstep = 'group')}
-            class="bg-panels dark:bg-darkgrey dark:border hover:bg-hover text-2xl font-bold py-3">Group</button
+            class="bg-panels dark:bg-darkgrey dark:border hover:bg-hover dark:hover:border-white text-2xl font-bold py-3">Group</button
           >
           <button
             on:click={() => (formstep = 'ship')}
-            class="bg-panels dark:bg-darkgrey dark:border hover:bg-hover text-2xl font-bold py-3">Ship</button
+            class="bg-panels dark:bg-darkgrey dark:border hover:bg-hover dark:hover:border-white text-2xl font-bold py-3">Ship</button
           >
           <button
             on:click={() => (formstep = 'other')}
-            class="bg-panels dark:bg-darkgrey dark:border hover:bg-hover text-2xl font-bold py-3"
+            class="bg-panels dark:bg-darkgrey dark:border hover:bg-hover dark:hover:border-white text-2xl font-bold py-3"
             >Other (link etc.)</button
           >
         </div>
@@ -127,7 +127,7 @@
           <div class="flex flex-col gap-4">
             {#each Object.entries(apps) as [path, { title, image }]}
               <button
-                class="grid grid-cols-12 bg-panels dark:bg-darkgrey dark:border items-center gap-4 p-1"
+                class="grid grid-cols-12 bg-panels dark:bg-darkgrey dark:border dark:hover:border-white hover:bg-hover items-center gap-4 p-1"
                 on:click={() => add(`/app/${path}/`)}
               >
                 <div class="col-span-1">
@@ -156,7 +156,7 @@
         {/if}
         {#each Object.entries(groups) as [path, { meta: { title, image } }]}
           <button
-            class="grid grid-cols-12 items-center gap-4 p-1"
+            class="grid grid-cols-12 items-center gap-4 p-1 dark:bg-darkgrey dark:border dark:hover:border-white hover:bg-hover rounded-lg"
             on:click={() => add(`/group/${path}/`)}
           >
             <div class="col-span-1">
