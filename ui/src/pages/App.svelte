@@ -436,8 +436,7 @@
           >Recommend</IconButton
         >
         {#if isInstalled}
-          <IconButton icon={CrossIcon} on:click={uninstall} async common
-          darkMode={$state.darkmode} darkMode={$state.darkmode}>Uninstall</IconButton
+          <IconButton icon={CrossIcon} on:click={uninstall} async common darkMode={$state.darkmode}>Uninstall</IconButton
           >
         {/if}
       </SidebarGroup>
