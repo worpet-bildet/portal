@@ -104,21 +104,20 @@
         <div class="rounded-full overflow-hidden">
           <IconButton
             icon={AppIcon}
-            changeColorOnHover
             on:click={() => {
               appModalOpen = true;
             }}
-            transparent
+            classes="stroke-grey fill-grey {$state.darkmode ? "hover:fill-white" : "hover:fill-black"}"
           />
         </div>
         <div class="rounded-full overflow-hidden">
           <IconButton
             icon={PeopleIcon}
-            changeColorOnHover
             on:click={() => {
               groupModalOpen = true;
             }}
-            transparent
+            classes="stroke-grey fill-grey
+              {$state.darkmode ? "hover:fill-white" : "hover:fill-black"}"
           />
         </div>
         <input
@@ -131,14 +130,13 @@
         <div class="rounded-full overflow-hidden">
           <IconButton
             icon={ImageIcon}
-            changeColorOnHover
             disabled={!$state.s3 || !$state.s3.configuration.currentBucket}
             tooltip="Configure S3 storage for image support"
             on:click={() => {
               if (!$state.s3 || !$state.s3.configuration.currentBucket) return;
               fileInput.click();
             }}
-            transparent
+            classes="stroke-grey fill-grey {$state.darkmode ? "hover:fill-white" : "hover:fill-black"}"
           />
         </div>
       </div>

@@ -167,10 +167,12 @@
               return;
           }
         }}
+        common
+        darkMode={$state.darkmode}
       >
         Save</IconButton
       >
-      <IconButton icon={LeftArrowIcon} on:click={pop}>Back</IconButton>
+      <IconButton icon={LeftArrowIcon} on:click={pop} common darkMode={$state.darkmode}>Back</IconButton>
     </SidebarGroup>
   </RightSidebar>
 </div>

@@ -108,16 +108,16 @@
         {#if me === patp}
           <div class="flex flex-col gap-4">
             <CollectionsAdd on:add={() => (activeTab = 'Collections')} />
-            <IconButton icon={EditIcon} on:click={() => push(`/${patp}/edit`)}
+            <IconButton icon={EditIcon} on:click={() => push(`/${patp}/edit`)} common darkMode={$state.darkmode}
               >Edit Profile</IconButton
             >
           </div>
         {:else if isMyPal}
-          <IconButton icon={RemovePalIcon} on:click={togglePal} async
+          <IconButton icon={RemovePalIcon} on:click={togglePal} async common darkMode={$state.darkmode}
             >Remove Pal</IconButton
           >
         {:else}
-          <IconButton icon={AddPalIcon} on:click={togglePal} async
+          <IconButton icon={AddPalIcon} on:click={togglePal} async common darkMode={$state.darkmode}
             >Add Pal</IconButton
           >
         {/if}
@@ -125,7 +125,7 @@
           <IconButton
             icon={ChatIcon}
             on:click={() =>
-              window.open(`${window.location.origin}/apps/talk/dm/${patp}`)}
+              window.open(`${window.location.origin}/apps/talk/dm/${patp}`)} common darkMode={$state.darkmode}
             >Message</IconButton
           >
         {/if}

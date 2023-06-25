@@ -191,10 +191,11 @@
             <div class="rounded-full overflow-hidden">
               <IconButton
                 icon={ChatIcon}
-                changeColorOnHover
                 active={showCommentForm}
                 on:click={() => (showCommentForm = !showCommentForm)}
-                transparent
+                classes="
+                  {$state.darkmode ? "hover:fill-white" : "hover:fill-black"}
+                  {showCommentForm ? "dark:fill-white fill-black" : "fill-grey"}"
               >
               </IconButton>
             </div>
@@ -217,7 +218,7 @@
             </span>
           {:else}
             <div class="rounded-full overflow-hidden">
-              <IconButton icon={LikeIcon} changeColorOnHover active={false} on:click={likePost} transparent>
+              <IconButton icon={LikeIcon} active={false} on:click={likePost} classes="dark:hover:stroke-white hover:stroke-black stroke-grey dark:hover:stroke-error">
               </IconButton>
             </div>
             <div class="pt-2 pb-2 text-sm text-grey">

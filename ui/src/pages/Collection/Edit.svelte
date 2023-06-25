@@ -149,9 +149,9 @@
     </div>
     <RightSidebar>
       <SidebarGroup>
-        <IconButton icon={PlusIcon} on:click={add}>Add Item</IconButton>
-        <IconButton icon={CheckIcon} on:click={save}>Save</IconButton>
-        <IconButton icon={LeftArrowIcon} on:click={pop}>Back</IconButton>
+        <IconButton icon={PlusIcon} on:click={add} common darkMode={$state.darkmode}>Add Item</IconButton>
+        <IconButton icon={CheckIcon} on:click={save} common darkMode={$state.darkmode}>Save</IconButton>
+        <IconButton icon={LeftArrowIcon} on:click={pop} common darkMode={$state.darkmode}>Back</IconButton>
       </SidebarGroup>
     </RightSidebar>
   </div>

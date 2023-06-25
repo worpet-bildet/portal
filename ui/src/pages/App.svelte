@@ -330,7 +330,9 @@
                     return;
                   fileInput.click();
                 }}
-                transparent>Add Screenshots</IconButton
+                common
+                darkMode={$state.darkmode}
+                >Add Screenshots</IconButton
               >
             </div>
           </div>
@@ -401,10 +403,12 @@
             icon={ExternalDestinationIcon}
             on:click={() =>
               window.open(`${window.location.origin}${servedFrom}/`)}
+            common
+            darkMode={$state.darkmode}
             >Open</IconButton
           >
         {:else if isInstalling}
-          <IconButton loading>Installing...</IconButton>
+          <IconButton loading common darkMode={$state.darkmode}>Installing...</IconButton>
         {:else}
           <IconButton
             icon={InstallIcon}
@@ -414,21 +418,25 @@
                 `${window.location.origin}/apps/grid/search/${ship}/apps`
               );
               // install()
-            }}>Install</IconButton
+            }}
+            common
+            darkMode={$state.darkmode}
+            >Install</IconButton
           >
         {/if}
         {#if website}
-          <IconButton icon={GlobeIcon} on:click={() => window.open(website)}
-            >View Website</IconButton
+          <IconButton icon={GlobeIcon} on:click={() => window.open(website)} common darkMode={$state.darkmode}>View Website</IconButton
           >
         {/if}
         <IconButton
           icon={ShareIcon}
-          on:click={() => (recommendModalOpen = true)}>Recommend</IconButton
+          on:click={() => (recommendModalOpen = true)}
+          common
+          darkMode={$state.darkmode}
+          >Recommend</IconButton
         >
         {#if isInstalled}
-          <IconButton icon={CrossIcon} on:click={uninstall} async
-            >Uninstall</IconButton
+          <IconButton icon={CrossIcon} on:click={uninstall} async common darkMode={$state.darkmode}>Uninstall</IconButton
           >
         {/if}
       </SidebarGroup>
