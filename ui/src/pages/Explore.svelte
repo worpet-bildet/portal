@@ -33,6 +33,15 @@
     if (filters.has('collections')) {
       activeItems = [...activeItems.filter((k) => k?.struc === 'collection')];
     }
+    // activeItems = activeItems.reduce((a, b) => {
+    //       b?.bespoke?.['key-list']
+    //         .forEach((k) => {
+    //           if (!a[keyStrFromObj(k)]) return (a[keyStrFromObj(k)] = 1);
+    //           a[keyStrFromObj(k)]++;
+    //         });
+    //       return a;
+    //     }, {})
+    // ).sort((a, b) => b[1] - a[1]);
   };
 
   let filters = new Set();

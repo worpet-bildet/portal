@@ -204,6 +204,8 @@ export const getCollectedItemLeaderboard = (excludePatp) => {
 };
 
 export const getMoreFromThisShip = (patp) => {
+  console.log("getstate")
+  console.log(get(state))
   return Object.entries(
     Object.values(get(state))
       .filter(
