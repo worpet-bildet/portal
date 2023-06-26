@@ -80,8 +80,6 @@
     let actualDev;
     ship = s?.appDevs?.[`${ship}/${cord}`] || ship;
 
-    console.log({ ship });
-
     if (cord || actualDev) defKey = `/app/${ship}//${cord}`;
     if (time) defKey = `/app/${ship}//${time}`;
 
@@ -140,16 +138,6 @@
 
     if (!s?.social?.[`/${ship}/review-from`] && !subbingToSocialGraph && ship) {
       subbingToSocialGraph = true;
-      console.log({
-        app: 'portal-graph',
-        mark: 'social-graph-track',
-        json: {
-          start: {
-            source: ship,
-            tag: `/${ship}`,
-          },
-        },
-      });
       poke({
         app: 'portal-graph',
         mark: 'social-graph-track',
@@ -181,8 +169,9 @@
     if (!s.isLoaded) return;
     loadApp(s);
     sortedRecommendations = getMoreFromThisShip(ship).slice(0, 4);
-    purchased = s?.payment?.['payment-confirmed'];
-    console.log({ purchased });
+    purchased =
+      s?.payment?.['payment-confirmed'] ||
+      s?.['bought-apps']?.[`${ship ?? '~zod'}/${cord || time}`];
   });
 
   const uninstall = async () => {
@@ -229,7 +218,7 @@
     }
   }
 
-  let tx, receipt;
+  let tx;
   const pay = async () => {
     if (!$state.payment) return;
     let signer, provider;
@@ -243,8 +232,7 @@
     tx = await signer.sendTransaction({
       to: $state.payment?.['receiving-address'],
       value: $state.payment?.['eth-price'],
-      data: $state.payment?.['hex'].replaceAll('.', ''),
-      // chainId: 1, // TODO: mainnet
+      data: $state.payment?.['hex'].replaceAll('.', ''), // why
       chainId: config.chainId,
     });
     pmPoke({
@@ -257,16 +245,23 @@
     window.open(`${window.location.origin}/apps/grid/search/${ship}/apps`);
     isInstalling = true;
     let distDesk = item?.bespoke?.distDesk || `${ship}/${cord || time}`;
-    await poke({
-      app: 'docket',
-      mark: 'docket-install',
-      json: distDesk,
-    });
-    await poke({
-      app: 'hood',
-      mark: 'kiln-revive',
-      json: distDesk.split('/')[1],
-    });
+    await Promise.all([
+      poke({
+        app: 'docket',
+        mark: 'docket-install',
+        json: distDesk,
+      }),
+      poke({
+        app: 'hood',
+        mark: 'kiln-install',
+        json: distDesk.split('/')[1],
+      }),
+      poke({
+        app: 'hood',
+        mark: 'kiln-revive',
+        json: distDesk.split('/')[1],
+      }),
+    ]);
     refreshApps();
   };
 
@@ -473,7 +468,7 @@
           >
         {:else if isInstalling}
           <IconButton loading>Installing...</IconButton>
-        {:else if ethPrice}
+        {:else if ethPrice && !purchased}
           <IconButton icon={EthereumIcon} on:click={purchase}
             >Purchase</IconButton
           >
@@ -549,7 +544,7 @@
           >
         </div>
       {/if}
-      {#if tx && !receipt}
+      {#if tx}
         {#if !purchased}
           <div class="text-2xl">Purchasing...</div>
           <div class="w-full flex justify-center">
@@ -564,7 +559,7 @@
               {title} will be installed automatically.
             </div>
             <div>
-              Receipt: <a href={`https://etherscan.io/tx/${receipt.hash}`}
+              Receipt: <a href={`https://etherscan.io/tx/${tx.hash}`}
                 >Etherscan</a
               >
             </div>

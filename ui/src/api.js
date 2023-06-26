@@ -59,6 +59,13 @@ export const getSocialItems = () => {
   });
 };
 
+export const getBoughtApps = () => {
+  return scry({
+    app: 'portal-manager',
+    path: '/bought-apps',
+  });
+};
+
 export const getContacts = () => {
   return scry({
     app: 'contacts',
