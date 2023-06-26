@@ -231,7 +231,7 @@
       ==  ==
       ::
         %index-as-curator
-      ?>  =(our.bowl ~winpex-widtev-foddur-hodler)
+      ?>  =(our.bowl ~worpet-bildet)
       ?>  =(src.bowl src.msg)
       =/  act  ~(act cards [our.bowl %portal-store])
       =/  index-key  [%collection our.bowl '' 'index']
