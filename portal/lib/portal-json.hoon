@@ -112,7 +112,14 @@
     ?-  -.manager-result
       %portal-devs  %+  frond  'portal-devs'  (enjs-dev-map +.manager-result)
       %bought-apps  %+  frond  'bought-apps'  (enjs-bought-apps +.manager-result)
+      %authorized-ships  %+  frond  'authorized-ships'  (enjs-authorized-ships +.manager-result)
     ==
+  ++  enjs-authorized-ships
+    |=  [ships=(set @p)]
+    ^-  json
+    :-  %a
+    %+  turn  ~(tap in ships)
+    enjs-ship
   ++  enjs-bought-apps
     |=  [bought-apps=(map [ship=@p desk=@tas] @t)]
     ^-  json

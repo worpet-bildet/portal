@@ -161,6 +161,8 @@
   $@  ?
   $%  [%portal-devs (map @t ship)]
       [%bought-apps (map [=ship =desk] @t)]
+      [%authorized-ships (set ship)]
   ==
+::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 --

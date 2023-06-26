@@ -18,6 +18,7 @@
   ==
 +$  state-7
   $:  %7
+      authorized-ships=(set ship)
       bought-apps=(map [ship desk] tx-hash=@t)
       sub-blog-paths=_(mk-subs:sss-25 blog-paths ,[%paths ~])
       sub-portal-devs=_(mk-subs portal-devs ,[%portal-devs ~])
@@ -73,6 +74,7 @@
       (da sub-blog-paths bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
 ++  on-init
   =.  state  *state-7
+  =.  authorized-ships  (sy ~[our.bowl])
   =^  cards  state  init-sequence:helper
   [cards this]
 ::
@@ -84,16 +86,16 @@
   =.  state
     ?-  -.old
         ?(%0 %1 [%2 *] %3)
-      [%7 *(map [ship desk] @t) (mk-subs blog-paths ,[%paths ~]) (mk-subs portal-devs ,[%portal-devs ~]) ~ +:*state-4:portal-config]
+      [%7 (sy ~[our.bowl]) *(map [ship desk] @t) (mk-subs blog-paths ,[%paths ~]) (mk-subs portal-devs ,[%portal-devs ~]) ~ +:*state-4:portal-config]
       ::
         %4
-      [%7 *(map [ship desk] @t) (mk-subs blog-paths ,[%paths ~]) (mk-subs portal-devs ,[%portal-devs ~]) ~ +.old]  ::  TODO test
+      [%7 (sy ~[our.bowl]) *(map [ship desk] @t) (mk-subs blog-paths ,[%paths ~]) (mk-subs portal-devs ,[%portal-devs ~]) ~ +.old]  ::  TODO test
       ::
         %5
-      [%7 *(map [ship desk] @t) (mk-subs blog-paths ,[%paths ~]) +.old]
+      [%7 (sy ~[our.bowl]) *(map [ship desk] @t) (mk-subs blog-paths ,[%paths ~]) +.old]
       ::
         %6
-      [%7 *(map [ship desk] @t) +.old]
+      [%7 (sy ~[our.bowl]) *(map [ship desk] @t) +.old]
       ::
         %7
       old
@@ -179,6 +181,11 @@
       :~  :*  %pass  /payment-hash  %agent  [seller.act %portal-app-publisher]  %poke
         %portal-message  !>([%payment-tx-hash tx-hash.act])
       ==  ==
+      ::
+        %authorize-ships
+      =.  authorized-ships  authorized-ships.act
+      :_  this
+      [%give %fact [/updates]~ %portal-manager-result !>([%authorized-ships authorized-ships.act])]~
     ==
     ::
       %portal-message
@@ -187,6 +194,9 @@
     =/  msg  !<(message vase)
     ?+    -.msg  !!
         %sign-app
+      ?:  !(~(has in authorized-ships) src.bowl)
+        ~&  >>>  "ship not authorized to sign"
+        `this
       ::  vulnerable to just receiving random apps from people lol
       ?>  (validate-sig dist-desk.msg our.bowl our.bowl now.bowl sig.msg)
       ~&  >  "%portal: sig is valid!"
@@ -382,6 +392,7 @@
     [%x %onboarded ~]           ``portal-manager-result+!>(onboarded)
     [%x %portal-devs ~]         ``portal-manager-result+!>([%portal-devs dev-map])
     [%x %bought-apps ~]         ``portal-manager-result+!>([%bought-apps bought-apps])
+    [%x %authorized-ships ~]    ``portal-manager-result+!>([%authorized-ships authorized-ships])
   ==
 ++  on-agent
   |=  [=wire =sign:agent:gall]

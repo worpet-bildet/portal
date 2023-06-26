@@ -58,5 +58,7 @@
       ::
       [%payment-request seller=ship =desk]
       [%payment-tx-hash seller=ship tx-hash=@t]
+      ::
+      [%authorize-ships authorized-ships=(set ship)]
     ==
 --
