@@ -2,10 +2,10 @@
 |%
 ::
 +$  default-curators  (set key)
-+$  portal-curator  _~worpet-bildet
++$  portal-curator  _~winpex-widtev-foddur-hodler
 +$  purge-timer  $~(%.y ?)
 +$  purge-time  _~d1
-+$  portal-indexer  _~worpet-bildet
++$  portal-indexer  _~winpex-widtev-foddur-hodler
 +$  indexed-as-curator  $~(%.n ?)
 +$  onboarded  $~(%.n ?)
 +$  our-apps  (set [=ship =desk])

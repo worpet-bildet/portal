@@ -182,7 +182,7 @@
       ::
         %feed-update
       ?>  =(src.bowl src.msg)
-      ?>  =(our.bowl ~worpet-bildet)
+      ?>  =(our.bowl ~winpex-widtev-foddur-hodler)
       =/  act  [%prepend-to-feed feed.msg [%feed our.bowl '' 'global']]
       =^(cards state (prepend-to-feed:handle-poke:stor act) [cards this])
     ==
@@ -422,10 +422,10 @@
         `card`(~(msg cards [ship.key.act %portal-store]) [%get-item key.act])
       ::  don't subscribe to what you are already subbed to
       ::  stronger fence than the one in %portal-graph
-      ?:  ?&  (~(has by read:da-item) [ship.key.act %portal-store path])  
-              !=(key.act [%feed ~worpet-bildet '' 'global'])  ==  
+      ?:  ?&  (~(has by read:da-item) [ship.key.act %portal-store path])
+              !=(key.act [%feed ~winpex-widtev-foddur-hodler '' 'global'])  ==
               ::  stupid hack bcs sss sometimes loses the subscriber from the mem pool
-              ::  so we are allowing the global feed sub to go thru if someone was 
+              ::  so we are allowing the global feed sub to go thru if someone was
               ::  `accidentally` unsubscribed
           `state
       =^  cards  item-sub.state  (surf:da-item ship.key.act %portal-store path)
@@ -528,7 +528,7 @@
         =/  msg  [%feed-update our.bowl feed.act]
         :_  state
         %+  snoc  (welp cards cards-1)
-        (~(poke pass:io /msg) [~worpet-bildet %portal-store] portal-message+!>(msg))
+        (~(poke pass:io /msg) [~winpex-widtev-foddur-hodler %portal-store] portal-message+!>(msg))
       :-  (welp cards cards-1)
       state
     ::
@@ -630,9 +630,9 @@
 ::
 ++  init-sequence
   ^+  [*(list card) state]
-  =/  feed-path  [%item %feed '~worpet-bildet' '' 'global' ~]
-  =^  cards  item-sub  (surf:da-item ~worpet-bildet %portal-store feed-path)
-  =.  cards  (welp cards (track-gr:cards-methods ~worpet-bildet))
+  =/  feed-path  [%item %feed '~winpex-widtev-foddur-hodler' '' 'global' ~]
+  =^  cards  item-sub  (surf:da-item ~winpex-widtev-foddur-hodler %portal-store feed-path)
+  =.  cards  (welp cards (track-gr:cards-methods ~winpex-widtev-foddur-hodler))
   =^  cards-1  state
     %-  create:handle-poke
     :*  %create  ~  ~  `'~2000.1.1'  `%def
@@ -661,7 +661,7 @@
     `[%collection 'My Apps' 'Collection of all apps I have published.' '' ~]
     [%collection our.bowl '' '~2000.1.1']~  ~  ~  ==
   ::
-  ?:  =(our.bowl ~worpet-bildet)
+  ?:  =(our.bowl ~winpex-widtev-foddur-hodler)
     =^  cards-7  state
       %-  create:handle-poke
       [%create ~ ~ `'global' `%global `[%feed ~] ~ ~ ~]

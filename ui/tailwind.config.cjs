@@ -23,6 +23,8 @@ module.exports = {
       five: '#AEB6BF',
       error: 'rgb(220 38 38)',
       link: 'blue',
+      'payment-gr-start': '#93E486',
+      'payment-gr-end': '#7DCE69',
     },
     extend: {},
     borderColor: {

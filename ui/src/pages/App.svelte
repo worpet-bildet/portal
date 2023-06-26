@@ -1,5 +1,7 @@
 <script>
-  import { me, poke, subscribeToItem, uploadImage } from '@root/api';
+  import { ethers, parseEther } from 'ethers';
+  import { Confetti } from 'svelte-confetti';
+  import { me, poke, pmPoke, subscribeToItem, uploadImage } from '@root/api';
   import {
     state,
     getItem,
@@ -19,6 +21,7 @@
     ItemVerticalListPreview,
   } from '@components';
   import {
+    Modal,
     RightSidebar,
     IconButton,
     ShareIcon,
@@ -28,6 +31,8 @@
     ExternalDestinationIcon,
     SidebarGroup,
     ImageIcon,
+    LoadingIcon,
+    EthereumIcon,
     Tabs,
   } from '@fragments';
 
@@ -53,7 +58,8 @@
     isInstalled,
     servedFrom,
     subbingToSocialGraph,
-    recommendModalOpen;
+    recommendModalOpen,
+    paymentModalOpen;
 
   export let params;
   $: {
@@ -92,7 +98,6 @@
       item = getItem(defKey);
       if (!item && !subscribingTo[defKey]) {
         subscribingTo[defKey] = true;
-        // TODO: Remove this because Jurij is also subscribing to the defitems
         subscribeToItem(keyStrToObj(defKey));
       } else if (item) {
         itemKey = defKey;
@@ -119,10 +124,6 @@
       lens,
     } = getMeta(item));
 
-    // here we want to get the reviews for the app, which we should be able to
-    // do in a similar way as getting comments
-    // TODO: Review what ship and key should be here in the case that host is
-    // not publisher
     reviews = [
       ...(getReviews(ship, keyStrToObj(defKey)) || []),
       ...(getReviewsByTo(me, keyStrToObj(defKey)) || []),
@@ -187,26 +188,11 @@
   };
 
   const install = async () => {
-    console.log({
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        'payment-request': {
-          seller: ship,
-          desk: 'sell-me',
-          // desk: cord || time,
-        },
-      },
-    });
-    poke({
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        'payment-request': {
-          seller: ship,
-          desk: 'sell-me',
-          // desk: cord || time,
-        },
+    paymentModalOpen = true;
+    pmPoke({
+      'payment-request': {
+        seller: ship,
+        desk: 'sell-me',
       },
     });
 
@@ -228,32 +214,55 @@
     // refreshApps();
   };
 
+  let tx, receipt;
+  const pay = async () => {
+    if (!$state.payment) return;
+    let signer, provider;
+    if (window.ethereum == null) {
+      provider = ethers.getDefaultProvider();
+    } else {
+      provider = new ethers.BrowserProvider(window.ethereum);
+      signer = await provider.getSigner();
+    }
+    if (!signer) return;
+    console.log($state.payment?.['receiving-address']);
+    console.log($state.payment?.['eth-price'].replaceAll('.', ''));
+    tx = await signer.sendTransaction({
+      to: $state.payment?.['receiving-address'],
+      value: $state.payment?.['eth-price'].replaceAll('.', ''),
+      //   // value: parseEther('0.01'),
+      data: $state.payment?.['hex'],
+      chainId: 5,
+    });
+    console.log({ tx });
+    pmPoke({
+      'payment-tx-hash': { seller: ship, 'tx-hash': tx.hash },
+    });
+    receipt = await tx.wait();
+  };
+
   const handlePostReview = async ({ detail: { content, rating } }) => {
-    poke({
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        create: {
-          bespoke: {
-            review: {
-              blurb: content,
-              rating: Number(rating), // i hate js
-            },
+    pmPoke({
+      create: {
+        bespoke: {
+          review: {
+            blurb: content,
+            rating: Number(rating), // i hate js
           },
-          'tags-to': [
-            {
-              // this is the DEF item key
-              key: {
-                struc: 'app',
-                ship: ship,
-                time: cord || time,
-                cord: '',
-              },
-              'tag-to': `/${me}/review-to`,
-              'tag-from': `/${ship}/review-from`,
-            },
-          ],
         },
+        'tags-to': [
+          {
+            // this is the DEF item key
+            key: {
+              struc: 'app',
+              ship: ship,
+              time: cord || time,
+              cord: '',
+            },
+            'tag-to': `/${me}/review-to`,
+            'tag-from': `/${ship}/review-from`,
+          },
+        ],
       },
     });
   };
@@ -264,8 +273,6 @@
       ...screenshots,
       await uploadImage(e.target.files[0], $state.s3),
     ];
-    // We want to poke to edit the item - i'm not sure how we do that but I am
-    // going to try!
     poke({
       app: 'portal-manager',
       mark: 'portal-action',
@@ -280,14 +287,10 @@
 
   const deleteScreenshot = (screenshot) => {
     screenshots = screenshots.filter((s) => s !== screenshot);
-    poke({
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        edit: {
-          key: keyStrToObj(defKey),
-          bespoke: { app: { ...item?.bespoke, screenshots } },
-        },
+    pmPoke({
+      edit: {
+        key: keyStrToObj(defKey),
+        bespoke: { app: { ...item?.bespoke, screenshots } },
       },
     });
   };
@@ -470,4 +473,60 @@
     </RightSidebar>
   </div>
   <RecommendModal bind:open={recommendModalOpen} key={keyStrToObj(itemKey)} />
+  <Modal bind:open={paymentModalOpen}>
+    <div class="flex flex-col justify-between gap-4">
+      {#if !tx}
+        <div class="text-2xl">Purchase {title}</div>
+        <div>
+          <div>You can purchase {title} for 0.01 ETH.</div>
+          <div>
+            Make sure you have metamask installed and unlocked, and then click
+            pay.
+          </div>
+        </div>
+        <div class="flex justify-end w-full">
+          <IconButton
+            icon={EthereumIcon}
+            loading={!$state.payment}
+            disabled={!$state.payment}
+            async
+            on:click={pay}>Pay with ETH</IconButton
+          >
+        </div>
+      {/if}
+      {#if tx && !receipt}
+        <div class="text-2xl">Purchasing...</div>
+        <div class="w-full flex justify-center">
+          <div class="w-32 h-32">
+            <LoadingIcon />
+          </div>
+        </div>
+      {:else if receipt}
+        <div class="text-2xl">Purchased!</div>
+        <div class="flex flex-col gap-2">
+          <div>
+            {title} will be installed automatically.
+          </div>
+          <div>
+            Receipt: <a href={`https://etherscan.io/tx/${receipt.hash}`}
+              >Etherscan</a
+            >
+          </div>
+        </div>
+        <div
+          class="fixed -top-8 left-0 h-screen w-screen flex justify-center overflow-hidden pointer-events-none"
+        >
+          <Confetti
+            x={[-5, 5]}
+            y={[0, 0.1]}
+            delay={[500, 2000]}
+            infinite
+            duration="5000"
+            amount="200"
+            fallDistance="100vh"
+          />
+        </div>
+      {/if}
+    </div>
+  </Modal>
 {/if}

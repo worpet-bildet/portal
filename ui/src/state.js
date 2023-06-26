@@ -332,6 +332,12 @@ export const handleSubscriptionEvent = (event, type) => {
         return s;
       });
       break;
+    case 'portal-message':
+      state.update((s) => {
+        s.payment = event?.['payment-reference'];
+        return s;
+      });
+      break;
     case 'contact-news':
       state.update((s) => {
         s.profiles[event.who] = event.con;
