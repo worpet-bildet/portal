@@ -18,6 +18,7 @@ let timeout;
 subqueue.subscribe((q) => {
   const sub = (_q) => {
     if (!_q.length) return;
+    console.log({ ..._q });
     poke({
       app: 'portal-manager',
       mark: 'portal-action',

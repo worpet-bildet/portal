@@ -1,6 +1,7 @@
 <script>
-  import { ethers, parseEther } from 'ethers';
+  import { ethers } from 'ethers';
   import { Confetti } from 'svelte-confetti';
+  import config from '@root/config';
   import { me, poke, pmPoke, subscribeToItem, uploadImage } from '@root/api';
   import {
     state,
@@ -12,7 +13,7 @@
     getReviewsByTo,
     getMoreFromThisShip,
   } from '@root/state';
-  import { getMeta, fromUrbitTime } from '@root/util';
+  import { getMeta, fromUrbitTime, isValidTxHash } from '@root/util';
   import {
     ItemDetail,
     RecommendModal,
@@ -48,7 +49,8 @@
     screenshots,
     title,
     description,
-    website,
+    link,
+    ethPrice,
     color,
     version,
     hash,
@@ -59,7 +61,8 @@
     servedFrom,
     subbingToSocialGraph,
     recommendModalOpen,
-    paymentModalOpen;
+    paymentModalOpen,
+    provePurchaseModalOpen;
 
   export let params;
   $: {
@@ -73,12 +76,11 @@
   const loadApp = (s) => {
     // Here we should get the app devs from our state, and check whether we have
     // a mapping for it at the moment
+    if (!ship) return;
     let actualDev;
-    if ((actualDev = s?.appDevs?.[`${ship}/${cord}`])) {
-      // This means we definitely have a def item, I think?
-      // Is this wise?
-      ship = actualDev;
-    }
+    ship = s?.appDevs?.[`${ship}/${cord}`] || ship;
+
+    console.log({ ship });
 
     if (cord || actualDev) defKey = `/app/${ship}//${cord}`;
     if (time) defKey = `/app/${ship}//${time}`;
@@ -115,7 +117,8 @@
       screenshots,
       title,
       description,
-      website,
+      link,
+      ethPrice,
       color,
       version,
       hash,
@@ -173,21 +176,33 @@
   };
 
   let sortedRecommendations = [];
+  let purchased;
   state.subscribe((s) => {
     if (!s.isLoaded) return;
     loadApp(s);
     sortedRecommendations = getMoreFromThisShip(ship).slice(0, 4);
+    purchased = s?.payment?.['payment-confirmed'];
+    console.log({ purchased });
   });
 
-  const uninstall = () => {
-    poke({
-      app: 'docket',
-      mark: 'docket-uninstall',
-      json: cord,
-    }).then(refreshApps);
+  const uninstall = async () => {
+    await Promise.all([
+      poke({
+        app: 'docket',
+        mark: 'docket-uninstall',
+        json: cord || time,
+      }),
+      poke({
+        app: 'hood',
+        mark: 'kiln-uninstall',
+        json: {
+          desk: cord || time,
+        },
+      }),
+    ]).then(refreshApps);
   };
 
-  const install = async () => {
+  const purchase = async () => {
     paymentModalOpen = true;
     pmPoke({
       'payment-request': {
@@ -195,24 +210,24 @@
         desk: 'sell-me',
       },
     });
-
-    // FIXME: stopgap
-    // window.open(`${window.location.origin}/apps/grid/search/${ship}/apps`);
-
-    // isInstalling = true;
-    // let distDesk = item?.bespoke?.distDesk || `${ship}/${cord || time}`;
-    // await poke({
-    //   app: 'docket',
-    //   mark: 'docket-install',
-    //   json: distDesk,
-    // });
-    // await poke({
-    //   app: 'hood',
-    //   mark: 'kiln-revive',
-    //   json: distDesk.split('/')[1],
-    // });
-    // refreshApps();
   };
+
+  let proofOfPurchaseTxHash;
+  const provePurchase = () => {
+    paymentModalOpen = false;
+    provePurchaseModalOpen = true;
+  };
+
+  $: {
+    if (isValidTxHash(proofOfPurchaseTxHash)) {
+      pmPoke({
+        'payment-tx-hash': { seller: ship, 'tx-hash': proofOfPurchaseTxHash },
+      });
+      provePurchaseModalOpen = false;
+      paymentModalOpen = true;
+      tx = { hash: proofOfPurchaseTxHash };
+    }
+  }
 
   let tx, receipt;
   const pay = async () => {
@@ -225,20 +240,34 @@
       signer = await provider.getSigner();
     }
     if (!signer) return;
-    console.log($state.payment?.['receiving-address']);
-    console.log($state.payment?.['eth-price'].replaceAll('.', ''));
     tx = await signer.sendTransaction({
       to: $state.payment?.['receiving-address'],
-      value: $state.payment?.['eth-price'].replaceAll('.', ''),
-      //   // value: parseEther('0.01'),
-      data: $state.payment?.['hex'],
-      chainId: 5,
+      value: $state.payment?.['eth-price'],
+      data: $state.payment?.['hex'].replaceAll('.', ''),
+      // chainId: 1, // TODO: mainnet
+      chainId: config.chainId,
     });
-    console.log({ tx });
     pmPoke({
       'payment-tx-hash': { seller: ship, 'tx-hash': tx.hash },
     });
-    receipt = await tx.wait();
+  };
+
+  const install = async () => {
+    // FIXME: stopgap
+    window.open(`${window.location.origin}/apps/grid/search/${ship}/apps`);
+    isInstalling = true;
+    let distDesk = item?.bespoke?.distDesk || `${ship}/${cord || time}`;
+    await poke({
+      app: 'docket',
+      mark: 'docket-install',
+      json: distDesk,
+    });
+    await poke({
+      app: 'hood',
+      mark: 'kiln-revive',
+      json: distDesk.split('/')[1],
+    });
+    refreshApps();
   };
 
   const handlePostReview = async ({ detail: { content, rating } }) => {
@@ -444,11 +473,15 @@
           >
         {:else if isInstalling}
           <IconButton loading>Installing...</IconButton>
+        {:else if ethPrice}
+          <IconButton icon={EthereumIcon} on:click={purchase}
+            >Purchase</IconButton
+          >
         {:else}
           <IconButton icon={InstallIcon} on:click={install}>Install</IconButton>
         {/if}
-        {#if website}
-          <IconButton icon={GlobeIcon} on:click={() => window.open(website)}
+        {#if link}
+          <IconButton icon={GlobeIcon} on:click={() => window.open(link)}
             >View Website</IconButton
           >
         {/if}
@@ -473,18 +506,40 @@
     </RightSidebar>
   </div>
   <RecommendModal bind:open={recommendModalOpen} key={keyStrToObj(itemKey)} />
+  <Modal bind:open={provePurchaseModalOpen}>
+    <div class="flex flex-col justify-between gap-4">
+      {#if !tx}
+        <div class="text-2xl">Prove previous purchase of {title}</div>
+        <div>
+          If you have already paid for {title}, you can enter the transaction
+          hash here to download it.
+        </div>
+        <div>
+          If you want to install {title} on multiple ships, you must make a payment
+          from each ship.
+        </div>
+        <input
+          type="text"
+          bind:value={proofOfPurchaseTxHash}
+          class="border p-2"
+          placeholder="0x..."
+        />
+        <div class="p-5" />
+      {/if}
+    </div>
+  </Modal>
   <Modal bind:open={paymentModalOpen}>
     <div class="flex flex-col justify-between gap-4">
       {#if !tx}
         <div class="text-2xl">Purchase {title}</div>
         <div>
           <div>You can purchase {title} for 0.01 ETH.</div>
-          <div>
-            Make sure you have metamask installed and unlocked, and then click
-            pay.
-          </div>
+          <div>Make sure you have metamask installed and unlocked.</div>
         </div>
-        <div class="flex justify-end w-full">
+        <div class="flex justify-end w-full gap-8">
+          <IconButton icon={InstallIcon} on:click={provePurchase}
+            >I already paid!</IconButton
+          >
           <IconButton
             icon={EthereumIcon}
             loading={!$state.payment}
@@ -495,37 +550,39 @@
         </div>
       {/if}
       {#if tx && !receipt}
-        <div class="text-2xl">Purchasing...</div>
-        <div class="w-full flex justify-center">
-          <div class="w-32 h-32">
-            <LoadingIcon />
+        {#if !purchased}
+          <div class="text-2xl">Purchasing...</div>
+          <div class="w-full flex justify-center">
+            <div class="w-32 h-32">
+              <LoadingIcon />
+            </div>
           </div>
-        </div>
-      {:else if receipt}
-        <div class="text-2xl">Purchased!</div>
-        <div class="flex flex-col gap-2">
-          <div>
-            {title} will be installed automatically.
+        {:else}
+          <div class="text-2xl">Purchased!</div>
+          <div class="flex flex-col gap-2">
+            <div>
+              {title} will be installed automatically.
+            </div>
+            <div>
+              Receipt: <a href={`https://etherscan.io/tx/${receipt.hash}`}
+                >Etherscan</a
+              >
+            </div>
           </div>
-          <div>
-            Receipt: <a href={`https://etherscan.io/tx/${receipt.hash}`}
-              >Etherscan</a
-            >
+          <div
+            class="fixed -top-8 left-0 h-screen w-screen flex justify-center overflow-hidden pointer-events-none"
+          >
+            <Confetti
+              x={[-5, 5]}
+              y={[0, 0.1]}
+              delay={[500, 2000]}
+              infinite
+              duration="5000"
+              amount="200"
+              fallDistance="100vh"
+            />
           </div>
-        </div>
-        <div
-          class="fixed -top-8 left-0 h-screen w-screen flex justify-center overflow-hidden pointer-events-none"
-        >
-          <Confetti
-            x={[-5, 5]}
-            y={[0, 0.1]}
-            delay={[500, 2000]}
-            infinite
-            duration="5000"
-            amount="200"
-            fallDistance="100vh"
-          />
-        </div>
+        {/if}
       {/if}
     </div>
   </Modal>

@@ -334,7 +334,10 @@ export const handleSubscriptionEvent = (event, type) => {
       break;
     case 'portal-message':
       state.update((s) => {
-        s.payment = event?.['payment-reference'];
+        s.payment = {
+          ...event?.['payment-reference'],
+          'payment-confirmed': event?.['payment-confirmed'],
+        };
         return s;
       });
       break;
