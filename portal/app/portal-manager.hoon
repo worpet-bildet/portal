@@ -18,7 +18,7 @@
   ==
 +$  state-7
   $:  %7
-      bought-apps=(map [ship desk] eth-price=@t)
+      bought-apps=(map [ship desk] tx-hash=@t)
       sub-blog-paths=_(mk-subs:sss-25 blog-paths ,[%paths ~])
       sub-portal-devs=_(mk-subs portal-devs ,[%portal-devs ~])
       =dev-map:portal-config
@@ -220,10 +220,12 @@
       ::
         %payment-reference
       ~&  >  "got ref"
+      ~&  >  msg
       :_  this
       [%give %fact [/updates]~ %portal-message !>(msg)]~
       ::
         %payment-confirmed
+      =.  bought-apps  (~(put by bought-apps) [src.bowl desk.msg] tx-hash.msg)
       :_  this
       :~  [%give %fact [/updates]~ %portal-message !>(msg)]
           :*  %pass  /install  %agent  [our.bowl %hood]  %poke  
