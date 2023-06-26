@@ -111,8 +111,26 @@
     ?@  manager-result  b+manager-result
     ?-  -.manager-result
       %portal-devs  %+  frond  'portal-devs'  (enjs-dev-map +.manager-result)
+      %bought-apps  %+  frond  'bought-apps'  (enjs-bought-apps +.manager-result)
     ==
-
+  ++  enjs-bought-apps
+    |=  [bought-apps=(map [ship=@p desk=@tas] @t)]
+    ^-  json
+    :-  %o
+    =+  ~(tap by bought-apps)
+    %-  malt  %+  turn  -
+    |=  [k=[ship=@p desk=@tas] v=@t]
+    ^-  [@t json]
+    [(flag-to-string k) s+v]
+  ++  flag-to-string  ::  [~zod %app] -> '~zod/app'
+    |=  [ship=@p desk=@tas]
+    ^-  @t
+    %-  crip
+    ;:  welp
+        (scow %p ship)
+        "/"
+        (trip desk)
+    ==
   ++  enjs-store-result
     |=  [=store-result]
     ^-  json
