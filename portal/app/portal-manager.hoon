@@ -228,8 +228,10 @@
       =.  bought-apps  (~(put by bought-apps) [src.bowl desk.msg] tx-hash.msg)
       :_  this
       :~  [%give %fact [/updates]~ %portal-message !>(msg)]
+          [%give %fact [/updates]~ %portal-manager-result !>([%bought-apps bought-apps])]
           :*  %pass  /install  %agent  [our.bowl %hood]  %poke
               %kiln-install  !>([desk.msg src.bowl desk.msg])
+          ::  TODO revive as well, msg with tom
       ==  ==
       ::
         %index-as-curator
@@ -379,6 +381,7 @@
     [%x %indexed-as-curator ~]  ``portal-manager-result+!>(indexed-as-curator)
     [%x %onboarded ~]           ``portal-manager-result+!>(onboarded)
     [%x %portal-devs ~]         ``portal-manager-result+!>([%portal-devs dev-map])
+    [%x %bought-apps ~]         ``portal-manager-result+!>([%bought-apps bought-apps])
   ==
 ++  on-agent
   |=  [=wire =sign:agent:gall]
