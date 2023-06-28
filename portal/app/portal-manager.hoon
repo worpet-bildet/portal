@@ -246,7 +246,7 @@
       ==  ==
       ::
         %index-as-curator
-      ?>  =(our.bowl ~bus)
+      ?>  =(our.bowl ~worpet-bildet)
       ?>  =(src.bowl src.msg)
       =/  act  ~(act cards [our.bowl %portal-store])
       =/  index-key  [%collection our.bowl '' 'index']
