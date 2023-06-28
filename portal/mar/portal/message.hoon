@@ -4,9 +4,7 @@
 ++  grow
   |%
   ++  noun  msg
-  ++  json
-    ~&  >  (enjs-message:enjs:portal-json msg)
-    (enjs-message:enjs:portal-json msg)
+  ++  json  (enjs-message:enjs:portal-json msg)
   --
 ++  grab
   |%

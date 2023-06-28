@@ -511,10 +511,10 @@
   ?:  =((get-ship-type:misc our) %comet) 
     ~&  "we are a comet, cannot validate app sigs" 
     %.y
-  ~&  "validating... w/ input:"
-  ~&  [%sign-app dev ^dist-desk]
-  ~&  "and sig:"
-  ~&  sig
+  :: ~&  "validating... w/ input:"
+  :: ~&  [%sign-app dev ^dist-desk]
+  :: ~&  "and sig:"
+  :: ~&  sig
   (validate:^sig our sig [%sign-app dev ^dist-desk] now)
 ::
 --
