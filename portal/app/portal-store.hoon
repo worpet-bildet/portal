@@ -688,10 +688,6 @@
   ++  key-item-2-to-3  :: just adding app price lol
     |=  [key-2=key:portal-data-2 item-2=item:portal-data-2]
     ^-  (unit [key item])
-    ?:  !=(our.bowl ship.key-2)
-      ~
-    ?:  ?=(%temp lens.item-2)
-      ~
     :+  ~  key-2
     =>  item-2
     :^  key

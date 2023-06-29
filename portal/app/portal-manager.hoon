@@ -171,6 +171,9 @@
       [(~(msg cards [portal-indexer.state %portal-manager]) msg)]~
       ::
         %payment-request
+      ?:  (~(has by bought-apps) src.bowl desk.act)
+        ~&  >  "already bought the app"
+        `this
       :_  this
       :~  :*  %pass  /payment-req  %agent  [seller.act %portal-app-publisher]  %poke
         %portal-message  !>([%payment-request desk.act])
@@ -229,8 +232,6 @@
       (snoc create-my-apps create-app)
       ::
         %payment-reference
-      ~&  >  "got ref"
-      ~&  >  msg
       :_  this
       [%give %fact [/updates]~ %portal-message !>(msg)]~
       ::
