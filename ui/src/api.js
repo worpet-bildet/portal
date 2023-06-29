@@ -257,6 +257,7 @@ export const subscribeToGroup = (key) => {
 };
 
 export const subscribeToItem = (keyObj) => {
+  if (keyObj.time === 'all') return;
   if (get(subqueue).find((i) => JSON.stringify(i) === JSON.stringify(keyObj))) {
     return;
   }
