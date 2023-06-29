@@ -156,13 +156,19 @@
   resetForm();
 </script>
 
-<IconButton icon={PlusIcon} on:click={addCollection}>New Collection</IconButton>
+<IconButton
+  icon={PlusIcon}
+  on:click={addCollection}
+  common
+  darkMode={$state.darkmode}
+  >New Collection</IconButton>
 <Modal bind:open={showModal}>
   <StepForm
     bind:formstep
     {formsteps}
     on:save={save}
     bind:navbuttons={showFormNav}
+    darkMode={$state.darkmode}
   >
     <div class="flex flex-col gap-4">
       {#if formstep === 'meta'}
@@ -230,7 +236,10 @@
             on:click={() => {
               formstep = 'addship';
               showFormNav = false;
-            }}>Add</IconButton
+            }}
+            common
+            darkMode={$state.darkmode}
+            >Add</IconButton
           >
         </div>
         {#each shipKeys as key}
@@ -244,7 +253,10 @@
             on:click={() => {
               formstep = 'ships';
               showFormNav = true;
-            }}>Cancel</IconButton
+            }}
+            common
+            darkMode={$state.darkmode}
+            >Cancel</IconButton
           >
           <IconButton
             icon={CheckIcon}
@@ -252,7 +264,10 @@
               saveShip();
               formstep = 'ships';
               showFormNav = true;
-            }}>Save</IconButton
+            }}
+            common
+            darkMode={$state.darkmode}
+            >Save</IconButton
           >
         </div>
       {:else if formstep === 'other'}
@@ -263,7 +278,10 @@
             on:click={() => {
               formstep = 'addother';
               showFormNav = false;
-            }}>Add</IconButton
+            }}
+            common
+            darkMode={$state.darkmode}
+            >Add</IconButton
           >
         </div>
         {#each otherKeys as key}
@@ -277,7 +295,10 @@
             on:click={() => {
               formstep = 'other';
               showFormNav = true;
-            }}>Cancel</IconButton
+            }}
+            common
+            darkMode={$state.darkmode}
+            >Cancel</IconButton
           >
           <IconButton
             icon={CheckIcon}
@@ -285,7 +306,10 @@
               saveOtherItem();
               formstep = 'other';
               showFormNav = true;
-            }}>Save</IconButton
+            }}
+            common
+            darkMode={$state.darkmode}
+            >Save</IconButton
           >
         </div>
       {/if}

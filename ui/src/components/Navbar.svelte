@@ -15,7 +15,7 @@
   let isMobileNavOpen = false;
   $: console.log({ isMobileNavOpen });
 
-  const pagesWithTransparentNav = ['/explore', '/edit', '-edit/'];
+  const pagesWithoutCoverPhoto = ['/explore', '/edit', '-edit/'];
 
   const nav = [
     {
@@ -42,11 +42,11 @@
       <img class="w-14 my-2" src={logo} alt="logo" />
       <div
         class="font-logo flex items-center px-2 rounded-xl"
-        class:text-grey={pagesWithTransparentNav.some((v) =>
+        class:text-grey={pagesWithoutCoverPhoto.some((v) =>
           $location.includes(v)
         ) || $location === '/'}
         class:text-white={$state.darkmode ||
-          (!pagesWithTransparentNav.some((v) => $location.includes(v)) &&
+          (!pagesWithoutCoverPhoto.some((v) => $location.includes(v)) &&
             $location !== '/')}
       >
         PORTAL
@@ -54,32 +54,35 @@
     </a>
 
     <div class="hidden flex-col md:flex gap-4 md:flex-row">
-      <div class="rounded-full overflow-hidden pt-0.5">
+      <div class="rounded-full overflow-hidden">
         <IconButton
           icon={$state.darkmode ? SunIcon : MoonIcon}
           on:click={toggleDarkmode}
-          transparent
+          classes="
+            {(!pagesWithoutCoverPhoto.some((v) => $location.includes(v)) && $location !== '/') && !$state.darkmode ? "fill-white" : "fill-grey"}
+            {$state.darkmode ? "hover:fill-white" : ""}
+            {!$state.darkmode && !pagesWithoutCoverPhoto.some((v) => $location.includes(v)) && $location !== '/' ? "hover:fill-offwhite" : "hover:fill-black"}"
         />
       </div>
       {#each nav as n}
         <button
           on:click={() => (n.action ? n.action() : push(n.link))}
           class="rounded-xl flex font-saucebold items-center px-4 hover:duration-500 py-2 md:py-0"
-          class:text-[#000000]={$location === n.link}
+          class:text-black={$location === n.link}
           class:text-grey={$location !== n.link &&
-            (pagesWithTransparentNav.some((v) => $location.includes(v)) ||
+            (pagesWithoutCoverPhoto.some((v) => $location.includes(v)) ||
               $location === '/')}
           class:hover:text-black={!$state.darkmode ||
             ($location !== n.link &&
-              (pagesWithTransparentNav.some((v) => $location.includes(v)) ||
+              (pagesWithoutCoverPhoto.some((v) => $location.includes(v)) ||
                 $location === '/'))}
           class:text-white={$state.darkmode ||
             ($location !== n.link &&
-              !pagesWithTransparentNav.some((v) => $location.includes(v)) &&
+              !pagesWithoutCoverPhoto.some((v) => $location.includes(v)) &&
               $location !== '/')}
           class:hover:text-offwhite={$state.darkmode ||
             ($location !== n.link &&
-              !pagesWithTransparentNav.some((v) => $location.includes(v)) &&
+              !pagesWithoutCoverPhoto.some((v) => $location.includes(v)) &&
               $location !== '/')}>{n.title}</button
         >
       {/each}

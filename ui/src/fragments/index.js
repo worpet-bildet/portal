@@ -35,7 +35,7 @@ export { default as CrossIcon } from './Icons/Cross.svelte';
 export { default as InstallIcon } from './Icons/Install.svelte';
 export { default as LoadingIcon } from './Icons/Loading.svelte';
 export { default as SearchIcon } from './Icons/Search.svelte';
-export { default as GroupIcon } from './Icons/Group.svelte';
+export { default as PeopleIcon } from './Icons/People.svelte';
 export { default as HamburgerIcon } from './Icons/Hamburger.svelte';
 export { default as SparklesIcon } from './Icons/Sparkles.svelte';
 export { default as ImageIcon } from './Icons/Image.svelte';

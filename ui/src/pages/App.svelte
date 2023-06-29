@@ -370,7 +370,7 @@
           {/each}
         </div>
         {#if me === ship}
-          <div class="grid gap-8 bg-panels p-6 rounded-lg">
+          <div class="grid gap-8 bg-panels dark:bg-darkgrey dark:border p-6 rounded-lg">
             <div class="flex gap-4">
               <input
                 type="file"
@@ -388,13 +388,15 @@
                     return;
                   fileInput.click();
                 }}
-                transparent>Add Screenshots</IconButton
+                common
+                darkMode={$state.darkmode}
+                >Add Screenshots</IconButton
               >
             </div>
           </div>
         {/if}
       {:else if activeTab === 'Info'}
-        <div class="grid gap-8 bg-panels p-6 rounded-lg">
+        <div class="grid gap-8 bg-panels dark:bg-darkgrey dark:border p-6 rounded-lg">
           <div>
             <div class="text-2xl font-bold">
               Current {title} version
@@ -464,29 +466,33 @@
             icon={ExternalDestinationIcon}
             on:click={() =>
               window.open(`${window.location.origin}${servedFrom}/`)}
+            common
+            darkMode={$state.darkmode}
             >Open</IconButton
           >
         {:else if isInstalling}
-          <IconButton loading>Installing...</IconButton>
+          <IconButton loading common darkMode={$state.darkmode}>Installing...</IconButton>
         {:else if ethPrice && !purchased}
           <IconButton icon={EthereumIcon} on:click={purchase}
             >Purchase</IconButton
           >
         {:else}
-          <IconButton icon={InstallIcon} on:click={install}>Install</IconButton>
+          <IconButton icon={InstallIcon} on:click={install} common darkMode={$state.darkmode}>Install</IconButton>
         {/if}
         {#if link}
           <IconButton icon={GlobeIcon} on:click={() => window.open(link)}
-            >View Website</IconButton
+            common darkMode={$state.darkmode}>View Website</IconButton
           >
         {/if}
         <IconButton
           icon={ShareIcon}
-          on:click={() => (recommendModalOpen = true)}>Recommend</IconButton
+          on:click={() => (recommendModalOpen = true)}
+          common
+          darkMode={$state.darkmode}
+          >Recommend</IconButton
         >
         {#if isInstalled}
-          <IconButton icon={CrossIcon} on:click={uninstall} async
-            >Uninstall</IconButton
+          <IconButton icon={CrossIcon} on:click={uninstall} async common darkMode={$state.darkmode}>Uninstall</IconButton
           >
         {/if}
       </SidebarGroup>

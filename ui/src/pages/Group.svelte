@@ -63,7 +63,7 @@
   {@const { cover, image, description, title } = getMeta(group)}
   <div class="grid grid-cols-12 gap-x-8 mb-4">
     <ItemDetail {cover} avatar={image} {title} {description} patp={host} type="group">
-      <div class="col-span-12 md:col-span-9 bg-panels p-6 rounded-lg">
+      <div class="col-span-12 md:col-span-9 bg-panels dark:bg-darkgrey dark:border p-6 rounded-lg">
         {#if !joinedDetails}
           <div>Join the group to see more information</div>
         {:else if !joinedDetails.joining}
@@ -95,7 +95,7 @@
                           target="_blank"
                           class="grid grid-cols-12 gap-4 items-center"
                         >
-                          <div class="col-span-1">
+                          <div class="col-span-1 dark:fill-white">
                             {#if type === 'chat'}
                               <ChatIcon />
                             {:else if type === 'diary'}
@@ -122,11 +122,10 @@
     <RightSidebar>
       <SidebarGroup>
         {#if !joinedDetails}
-          <IconButton icon={PlusIcon} on:click={join} async
-            >Join Group</IconButton
+          <IconButton icon={PlusIcon} on:click={join} async common darkMode={$state.darkmode}>Join Group</IconButton
           >
         {:else if joinedDetails.joining}
-          <IconButton loading async>Joining...</IconButton>
+          <IconButton loading async common darkMode={$state.darkmode}>Joining...</IconButton>
         {:else}
           <div class="flex flex-col gap-1">
             <div class="font-bold">Members</div>
@@ -137,11 +136,14 @@
               {Object.keys(joinedDetails.fleet).length}
             </div>
           </div>
-          <IconButton icon={CrossIcon} on:click={leave} async>Leave</IconButton>
+          <IconButton icon={CrossIcon} on:click={leave} async common darkMode={$state.darkmode}>Leave</IconButton>
         {/if}
         <IconButton
           icon={ShareIcon}
-          on:click={() => (recommendModalOpen = true)}>Recommend</IconButton
+          on:click={() => (recommendModalOpen = true)}
+          common
+          darkMode={$state.darkmode}
+          >Recommend</IconButton
         >
       </SidebarGroup>
       {#if sortedRecommendations.length > 0}
