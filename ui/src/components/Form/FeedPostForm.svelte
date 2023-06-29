@@ -8,7 +8,7 @@
     TextArea,
     IconButton,
     AppIcon,
-    GroupIcon,
+    PeopleIcon,
     ImageIcon,
     Modal,
     ItemImage,
@@ -75,7 +75,7 @@
 </script>
 
 <div
-  class="grid grid-cols-12 bg-panels py-3 pl-3 rounded-lg pr-3"
+  class="grid grid-cols-12 bg-panels dark:bg-darkgrey dark:border py-3 pl-3 rounded-lg pr-3"
   class:border={error}
   class:border-error={error}
 >
@@ -85,7 +85,10 @@
     </div>
   </div>
   <div class="col-span-11 pb-2">
-    <TextArea placeholder="Share a limerick, maybe" bind:value={content} />
+    <TextArea
+      placeholder="Share a limerick, maybe"
+      bind:value={content}
+    />
     {#if uploadedImageUrl}
       <div class="flex">
         <img src={uploadedImageUrl} class="object-cover" alt="uploaded" />
@@ -104,16 +107,17 @@
             on:click={() => {
               appModalOpen = true;
             }}
-            transparent
+            classes="stroke-grey fill-grey {$state.darkmode ? "hover:fill-white" : "hover:fill-black"}"
           />
         </div>
         <div class="rounded-full overflow-hidden">
           <IconButton
-            icon={GroupIcon}
+            icon={PeopleIcon}
             on:click={() => {
               groupModalOpen = true;
             }}
-            transparent
+            classes="stroke-grey fill-grey
+              {$state.darkmode ? "hover:fill-white" : "hover:fill-black"}"
           />
         </div>
         <input
@@ -132,7 +136,7 @@
               if (!$state.s3 || !$state.s3.configuration.currentBucket) return;
               fileInput.click();
             }}
-            transparent
+            classes="stroke-grey fill-grey {$state.darkmode ? "hover:fill-white" : "hover:fill-black"}"
           />
         </div>
       </div>
@@ -154,7 +158,7 @@
       <div />
     {/if}
     <button
-      class="bg-hover text-grey dark:text-white dark:hover:bg-black hover:bg-mdark hover:duration-500 font-saucebold rounded-lg px-3 py-1 self-end"
+      class="bg-hover dark:bg-white text-grey dark:text-black hover:bg-white dark:hover:bg-offwhite hover:duration-500 font-saucebold rounded-lg px-3 py-1 self-end"
       on:click={post}>Post</button
     >
   </div>
@@ -172,7 +176,8 @@
       {/if}
       {#each Object.entries(apps) as [path, { title, image, color }]}
         <button
-          class="grid grid-cols-12 hover:bg-panels rounded-lg items-center gap-4 p-1"
+          class="grid grid-cols-12 dark:border dark:hover:border-white hover:duration-500 rounded-lg items-center gap-4 p-1"
+          class:hover:bg-panels={!$state.darkmode}
           on:click={() => {
             appModalOpen = false;
             recommendModalOpen = true;
@@ -200,7 +205,8 @@
       {/if}
       {#each Object.entries(groups) as [path, { meta: { title, image } }]}
         <button
-          class="grid grid-cols-12 hover:bg-panels rounded-lg items-center gap-4 p-1"
+          class="grid grid-cols-12 dark:border dark:hover:border-white hover:duration-500 rounded-lg items-center gap-4 p-1"
+          class:hover:bg-panels={!$state.darkmode}
           on:click={() => {
             groupModalOpen = false;
             recommendModalOpen = true;

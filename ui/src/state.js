@@ -4,6 +4,7 @@ import {
   getPortalItems,
   getPortalAppDevs,
   getSocialItems,
+  getBoughtApps,
   getContacts,
   getJoinedGroups,
   getInstalledApps,
@@ -59,6 +60,14 @@ export const refreshSocialItems = () => {
   });
 };
 
+export const refreshBoughtApps = () => {
+  getBoughtApps().then((items) => {
+    state.update((s) => {
+      return { ...s, ...items };
+    });
+  });
+};
+
 export const refreshContacts = () => {
   getContacts().then((contacts) => {
     state.update((s) => {
@@ -101,14 +110,13 @@ export const refreshApps = () => {
     'webterm',
   ];
   getInstalledApps().then(([{ initial }, kiln]) => {
+    console.log({ initial, kiln });
     let apps = {};
     state.update((s) => {
       Object.entries(initial).forEach(([key, data]) => {
         if (EXCLUDE_APPS.includes(key)) return;
         data.ship = kiln[key]?.sync?.ship;
-        if (!data.ship) return;
         apps[key] = data;
-        // TODO: subscribe to the app here
       });
       s.apps = apps;
       return s;
@@ -213,7 +221,11 @@ export const getCollectedItemLeaderboard = (excludePatp) => {
       )
       .reduce((a, b) => {
         b?.bespoke?.['key-list']
-          .filter((k) => k?.struc !== 'collection')
+          .filter((k) =>
+            k?.struc !== 'collection' &&
+            !(k?.cord === 'portal' && k?.ship === '~worpet-bildet' &&
+              (k?.struc === 'app' || k?.struc === 'group'))
+          )
           .forEach((k) => {
             if (!a[keyStrFromObj(k)]) return (a[keyStrFromObj(k)] = 1);
             a[keyStrFromObj(k)]++;
@@ -234,7 +246,14 @@ export const getMoreFromThisShip = (patp) => {
       )
       .reduce((a, b) => {
         b?.bespoke?.['key-list']
-          .filter((k) => k?.struc !== 'collection' && k?.ship === patp)
+          .filter(
+            (k) =>
+              k?.struc !== 'collection' &&
+              k?.ship === patp &&
+              k?.struc !== 'ship' &&
+              !(k?.cord === 'portal' && k?.ship === '~worpet-bildet' &&
+                (k?.struc === 'app' || k?.struc === 'group'))
+          )
           .forEach((k) => {
             if (!a[keyStrFromObj(k)]) return (a[keyStrFromObj(k)] = 1);
             a[keyStrFromObj(k)]++;
@@ -332,6 +351,20 @@ export const handleSubscriptionEvent = (event, type) => {
         return s;
       });
       break;
+    case 'portal-message':
+      state.update((s) => {
+        s.payment = {
+          ...event?.['payment-reference'],
+          'payment-confirmed': event?.['payment-confirmed'],
+        };
+        return s;
+      });
+      break;
+    case 'portal-manager-result':
+      state.update((s) => {
+        return { ...s, ...event };
+      });
+      break;
     case 'contact-news':
       state.update((s) => {
         s.profiles[event.who] = event.con;
@@ -409,6 +442,7 @@ export const refreshAll = () => {
   refreshPortalItems();
   refreshPortalAppDevs();
   refreshSocialItems();
+  refreshBoughtApps();
   refreshContacts();
   // refreshProfile(me);
   refreshApps();

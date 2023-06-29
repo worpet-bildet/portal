@@ -49,7 +49,7 @@
       alt="Profile banner"
     />
     <div
-      class="absolute top-0 left-0 object-cover cover h-80 w-full z-0 bg-gradient-to-t from-[#00000000] to-[#000000aa]"
+      class="absolute top-0 left-0 object-cover cover h-80 w-full z-0 bg-gradient-to-t from-coverPhotoBottom to-coverPhotoTop"
     />
   {:else}
     <div

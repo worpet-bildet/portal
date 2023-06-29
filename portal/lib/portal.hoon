@@ -279,6 +279,7 @@
             (fall dist-desk.u.bespoke.act dist-desk.bespoke.item)
             (fall sig.u.bespoke.act sig.bespoke.item)
             (fall treaty.u.bespoke.act treaty.bespoke.item)
+            (fall eth-price.u.bespoke.act eth-price.bespoke.item)
         ==
         ::
           %collection
@@ -510,10 +511,10 @@
   ?:  =((get-ship-type:misc our) %comet) 
     ~&  "we are a comet, cannot validate app sigs" 
     %.y
-  ~&  "validating... w/ input:"
-  ~&  [%sign-app dev ^dist-desk]
-  ~&  "and sig:"
-  ~&  sig
+  :: ~&  "validating... w/ input:"
+  :: ~&  [%sign-app dev ^dist-desk]
+  :: ~&  "and sig:"
+  :: ~&  sig
   (validate:^sig our sig [%sign-app dev ^dist-desk] now)
 ::
 --

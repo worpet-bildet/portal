@@ -1,13 +1,3 @@
-<svg
-  xmlns="http://www.w3.org/2000/svg"
-  fill="none"
-  viewBox="0 0 24 24"
-  stroke-width="1.5"
-  stroke="currentColor"
->
-  <path
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
-  />
-</svg>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="current" xmlns="http://www.w3.org/2000/svg">
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M12 12.4615C13.6569 12.4615 15 11.6098 15 9.23077C15 6.8517 13.6569 6 12 6C10.3431 6 9 6.8517 9 9.23077C9 11.6098 10.3431 12.4615 12 12.4615ZM12 12.4615C15.3137 12.4615 18 13.9216 18 18H6C6 13.9216 8.68629 12.4615 12 12.4615Z"/>
+  </svg>

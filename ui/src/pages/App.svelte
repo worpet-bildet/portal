@@ -1,5 +1,8 @@
 <script>
-  import { me, poke, subscribeToItem, uploadImage } from '@root/api';
+  import { ethers } from 'ethers';
+  import { Confetti } from 'svelte-confetti';
+  import config from '@root/config';
+  import { me, poke, pmPoke, subscribeToItem, uploadImage } from '@root/api';
   import {
     state,
     getItem,
@@ -10,7 +13,7 @@
     getReviewsByTo,
     getMoreFromThisShip,
   } from '@root/state';
-  import { getMeta, fromUrbitTime } from '@root/util';
+  import { getMeta, fromUrbitTime, isValidTxHash } from '@root/util';
   import {
     ItemDetail,
     RecommendModal,
@@ -19,6 +22,7 @@
     ItemVerticalListPreview,
   } from '@components';
   import {
+    Modal,
     RightSidebar,
     IconButton,
     ShareIcon,
@@ -28,6 +32,8 @@
     ExternalDestinationIcon,
     SidebarGroup,
     ImageIcon,
+    LoadingIcon,
+    EthereumIcon,
     Tabs,
   } from '@fragments';
 
@@ -43,7 +49,8 @@
     screenshots,
     title,
     description,
-    website,
+    link,
+    ethPrice,
     color,
     version,
     hash,
@@ -53,7 +60,9 @@
     isInstalled,
     servedFrom,
     subbingToSocialGraph,
-    recommendModalOpen;
+    recommendModalOpen,
+    paymentModalOpen,
+    provePurchaseModalOpen;
 
   export let params;
   $: {
@@ -67,12 +76,9 @@
   const loadApp = (s) => {
     // Here we should get the app devs from our state, and check whether we have
     // a mapping for it at the moment
+    if (!ship) return;
     let actualDev;
-    if ((actualDev = s?.appDevs?.[`${ship}/${cord}`])) {
-      // This means we definitely have a def item, I think?
-      // Is this wise?
-      ship = actualDev;
-    }
+    ship = s?.appDevs?.[`${ship}/${cord}`] || ship;
 
     if (cord || actualDev) defKey = `/app/${ship}//${cord}`;
     if (time) defKey = `/app/${ship}//${time}`;
@@ -92,7 +98,6 @@
       item = getItem(defKey);
       if (!item && !subscribingTo[defKey]) {
         subscribingTo[defKey] = true;
-        // TODO: Remove this because Jurij is also subscribing to the defitems
         subscribeToItem(keyStrToObj(defKey));
       } else if (item) {
         itemKey = defKey;
@@ -110,7 +115,8 @@
       screenshots,
       title,
       description,
-      website,
+      link,
+      ethPrice,
       color,
       version,
       hash,
@@ -119,10 +125,6 @@
       lens,
     } = getMeta(item));
 
-    // here we want to get the reviews for the app, which we should be able to
-    // do in a similar way as getting comments
-    // TODO: Review what ship and key should be here in the case that host is
-    // not publisher
     reviews = [
       ...(getReviews(ship, keyStrToObj(defKey)) || []),
       ...(getReviewsByTo(me, keyStrToObj(defKey)) || []),
@@ -136,16 +138,6 @@
 
     if (!s?.social?.[`/${ship}/review-from`] && !subbingToSocialGraph && ship) {
       subbingToSocialGraph = true;
-      console.log({
-        app: 'portal-graph',
-        mark: 'social-graph-track',
-        json: {
-          start: {
-            source: ship,
-            tag: `/${ship}`,
-          },
-        },
-      });
       poke({
         app: 'portal-graph',
         mark: 'social-graph-track',
@@ -172,62 +164,129 @@
   };
 
   let sortedRecommendations = [];
+  let purchased;
   state.subscribe((s) => {
     if (!s.isLoaded) return;
     loadApp(s);
     sortedRecommendations = getMoreFromThisShip(ship).slice(0, 4);
+    purchased =
+      s?.payment?.['payment-confirmed'] ||
+      s?.['bought-apps']?.[`${ship ?? '~zod'}/${cord || time}`];
   });
 
-  const uninstall = () => {
-    poke({
-      app: 'docket',
-      mark: 'docket-uninstall',
-      json: cord,
-    }).then(refreshApps);
+  const uninstall = async () => {
+    await Promise.all([
+      poke({
+        app: 'docket',
+        mark: 'docket-uninstall',
+        json: cord || time,
+      }),
+      poke({
+        app: 'hood',
+        mark: 'kiln-uninstall',
+        json: {
+          desk: cord || time,
+        },
+      }),
+    ]).then(refreshApps);
+  };
+
+  const purchase = async () => {
+    paymentModalOpen = true;
+    pmPoke({
+      'payment-request': {
+        seller: ship,
+        desk: 'sell-me',
+      },
+    });
+  };
+
+  let proofOfPurchaseTxHash;
+  const provePurchase = () => {
+    paymentModalOpen = false;
+    provePurchaseModalOpen = true;
+  };
+
+  $: {
+    if (isValidTxHash(proofOfPurchaseTxHash)) {
+      pmPoke({
+        'payment-tx-hash': { seller: ship, 'tx-hash': proofOfPurchaseTxHash },
+      });
+      provePurchaseModalOpen = false;
+      paymentModalOpen = true;
+      tx = { hash: proofOfPurchaseTxHash };
+    }
+  }
+
+  let tx;
+  const pay = async () => {
+    if (!$state.payment) return;
+    let signer, provider;
+    if (window.ethereum == null) {
+      provider = ethers.getDefaultProvider();
+    } else {
+      provider = new ethers.BrowserProvider(window.ethereum);
+      signer = await provider.getSigner();
+    }
+    if (!signer) return;
+    tx = await signer.sendTransaction({
+      to: $state.payment?.['receiving-address'],
+      value: $state.payment?.['eth-price'],
+      data: $state.payment?.['hex'].replaceAll('.', ''), // why
+      chainId: config.chainId,
+    });
+    pmPoke({
+      'payment-tx-hash': { seller: ship, 'tx-hash': tx.hash },
+    });
   };
 
   const install = async () => {
+    // FIXME: stopgap
+    window.open(`${window.location.origin}/apps/grid/search/${ship}/apps`);
     isInstalling = true;
     let distDesk = item?.bespoke?.distDesk || `${ship}/${cord || time}`;
-    await poke({
-      app: 'docket',
-      mark: 'docket-install',
-      json: distDesk,
-    });
-    await poke({
-      app: 'hood',
-      mark: 'kiln-revive',
-      json: distDesk.split('/')[1],
-    });
+    await Promise.all([
+      poke({
+        app: 'docket',
+        mark: 'docket-install',
+        json: distDesk,
+      }),
+      poke({
+        app: 'hood',
+        mark: 'kiln-install',
+        json: distDesk.split('/')[1],
+      }),
+      poke({
+        app: 'hood',
+        mark: 'kiln-revive',
+        json: distDesk.split('/')[1],
+      }),
+    ]);
     refreshApps();
   };
 
   const handlePostReview = async ({ detail: { content, rating } }) => {
-    poke({
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        create: {
-          bespoke: {
-            review: {
-              blurb: content,
-              rating: Number(rating), // i hate js
-            },
+    pmPoke({
+      create: {
+        bespoke: {
+          review: {
+            blurb: content,
+            rating: Number(rating), // i hate js
           },
-          'tags-to': [
-            {
-              // this is the DEF item key
-              key: {
-                struc: 'app',
-                ship: ship,
-                time: cord || time,
-                cord: '',
-              },
-              'tag-to': `/${me}/review-to`,
-              'tag-from': `/${ship}/review-from`,
-            },
-          ],
         },
+        'tags-to': [
+          {
+            // this is the DEF item key
+            key: {
+              struc: 'app',
+              ship: ship,
+              time: cord || time,
+              cord: '',
+            },
+            'tag-to': `/${me}/review-to`,
+            'tag-from': `/${ship}/review-from`,
+          },
+        ],
       },
     });
   };
@@ -238,8 +297,6 @@
       ...screenshots,
       await uploadImage(e.target.files[0], $state.s3),
     ];
-    // We want to poke to edit the item - i'm not sure how we do that but I am
-    // going to try!
     poke({
       app: 'portal-manager',
       mark: 'portal-action',
@@ -254,14 +311,10 @@
 
   const deleteScreenshot = (screenshot) => {
     screenshots = screenshots.filter((s) => s !== screenshot);
-    poke({
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        edit: {
-          key: keyStrToObj(defKey),
-          bespoke: { app: { ...item?.bespoke, screenshots } },
-        },
+    pmPoke({
+      edit: {
+        key: keyStrToObj(defKey),
+        bespoke: { app: { ...item?.bespoke, screenshots } },
       },
     });
   };
@@ -286,8 +339,13 @@
         <div class="grid grid-cols-9 gap-4">
           {#if screenshots.length === 0}
             <div class="col-span-9">
-              {ship} needs to download %portal to publish screenshots of {title}. Please prompt them to follow <a href="https://twitter.com/worpet_bildet/status/1668643121813438466?s=20">this guide</a></div>
-
+              {ship} needs to download %portal to publish screenshots of {title}.
+              Please prompt them to follow
+              <a
+                href="https://twitter.com/worpet_bildet/status/1668643121813438466?s=20"
+                >this guide</a
+              >
+            </div>
           {/if}
           {#each screenshots as screenshot}
             <div
@@ -312,7 +370,7 @@
           {/each}
         </div>
         {#if me === ship}
-          <div class="grid gap-8 bg-panels p-6 rounded-lg">
+          <div class="grid gap-8 bg-panels dark:bg-darkgrey dark:border p-6 rounded-lg">
             <div class="flex gap-4">
               <input
                 type="file"
@@ -330,13 +388,15 @@
                     return;
                   fileInput.click();
                 }}
-                transparent>Add Screenshots</IconButton
+                common
+                darkMode={$state.darkmode}
+                >Add Screenshots</IconButton
               >
             </div>
           </div>
         {/if}
       {:else if activeTab === 'Info'}
-        <div class="grid gap-8 bg-panels p-6 rounded-lg">
+        <div class="grid gap-8 bg-panels dark:bg-darkgrey dark:border p-6 rounded-lg">
           <div>
             <div class="text-2xl font-bold">
               Current {title} version
@@ -389,7 +449,12 @@
           {/if}
         {:else}
           <div class="col-span-9">
-            {ship} needs to download %portal to allow reviews of {title}. Please prompt them to follow <a href="https://twitter.com/worpet_bildet/status/1668643121813438466?s=20">this guide</a>
+            {ship} needs to download %portal to allow reviews of {title}. Please
+            prompt them to follow
+            <a
+              href="https://twitter.com/worpet_bildet/status/1668643121813438466?s=20"
+              >this guide</a
+            >
           </div>
         {/if}
       {/if}
@@ -401,34 +466,33 @@
             icon={ExternalDestinationIcon}
             on:click={() =>
               window.open(`${window.location.origin}${servedFrom}/`)}
+            common
+            darkMode={$state.darkmode}
             >Open</IconButton
           >
         {:else if isInstalling}
-          <IconButton loading>Installing...</IconButton>
-        {:else}
-          <IconButton
-            icon={InstallIcon}
-            on:click={() => {
-              // FIXME: stopgap
-              window.open(
-                `${window.location.origin}/apps/grid/search/${ship}/apps`
-              );
-              // install()
-            }}>Install</IconButton
+          <IconButton loading common darkMode={$state.darkmode}>Installing...</IconButton>
+        {:else if ethPrice && !purchased}
+          <IconButton icon={EthereumIcon} on:click={purchase}
+            >Purchase</IconButton
           >
+        {:else}
+          <IconButton icon={InstallIcon} on:click={install} common darkMode={$state.darkmode}>Install</IconButton>
         {/if}
-        {#if website}
-          <IconButton icon={GlobeIcon} on:click={() => window.open(website)}
-            >View Website</IconButton
+        {#if link}
+          <IconButton icon={GlobeIcon} on:click={() => window.open(link)}
+            common darkMode={$state.darkmode}>View Website</IconButton
           >
         {/if}
         <IconButton
           icon={ShareIcon}
-          on:click={() => (recommendModalOpen = true)}>Recommend</IconButton
+          on:click={() => (recommendModalOpen = true)}
+          common
+          darkMode={$state.darkmode}
+          >Recommend</IconButton
         >
         {#if isInstalled}
-          <IconButton icon={CrossIcon} on:click={uninstall} async
-            >Uninstall</IconButton
+          <IconButton icon={CrossIcon} on:click={uninstall} async common darkMode={$state.darkmode}>Uninstall</IconButton
           >
         {/if}
       </SidebarGroup>
@@ -443,4 +507,84 @@
     </RightSidebar>
   </div>
   <RecommendModal bind:open={recommendModalOpen} key={keyStrToObj(itemKey)} />
+  <Modal bind:open={provePurchaseModalOpen}>
+    <div class="flex flex-col justify-between gap-4">
+      {#if !tx}
+        <div class="text-2xl">Prove previous purchase of {title}</div>
+        <div>
+          If you have already paid for {title}, you can enter the transaction
+          hash here to download it.
+        </div>
+        <div>
+          If you want to install {title} on multiple ships, you must make a payment
+          from each ship.
+        </div>
+        <input
+          type="text"
+          bind:value={proofOfPurchaseTxHash}
+          class="border p-2"
+          placeholder="0x..."
+        />
+        <div class="p-5" />
+      {/if}
+    </div>
+  </Modal>
+  <Modal bind:open={paymentModalOpen}>
+    <div class="flex flex-col justify-between gap-4">
+      {#if !tx}
+        <div class="text-2xl">Purchase {title}</div>
+        <div>
+          <div>You can purchase {title} for 0.01 ETH.</div>
+          <div>Make sure you have metamask installed and unlocked.</div>
+        </div>
+        <div class="flex justify-end w-full gap-8">
+          <IconButton icon={InstallIcon} on:click={provePurchase}
+            >I already paid!</IconButton
+          >
+          <IconButton
+            icon={EthereumIcon}
+            loading={!$state.payment}
+            disabled={!$state.payment}
+            async
+            on:click={pay}>Pay with ETH</IconButton
+          >
+        </div>
+      {/if}
+      {#if tx}
+        {#if !purchased}
+          <div class="text-2xl">Purchasing...</div>
+          <div class="w-full flex justify-center">
+            <div class="w-32 h-32">
+              <LoadingIcon />
+            </div>
+          </div>
+        {:else}
+          <div class="text-2xl">Purchased!</div>
+          <div class="flex flex-col gap-2">
+            <div>
+              {title} will be installed automatically.
+            </div>
+            <div>
+              Receipt: <a href={`https://etherscan.io/tx/${tx.hash}`}
+                >Etherscan</a
+              >
+            </div>
+          </div>
+          <div
+            class="fixed -top-8 left-0 h-screen w-screen flex justify-center overflow-hidden pointer-events-none"
+          >
+            <Confetti
+              x={[-5, 5]}
+              y={[0, 0.1]}
+              delay={[500, 2000]}
+              infinite
+              duration="5000"
+              amount="200"
+              fallDistance="100vh"
+            />
+          </div>
+        {/if}
+      {/if}
+    </div>
+  </Modal>
 {/if}

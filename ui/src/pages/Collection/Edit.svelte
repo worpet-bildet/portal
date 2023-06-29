@@ -111,7 +111,7 @@
 
 {#if collection}
   <div class="grid grid-cols-12 gap-x-8">
-    <div class="grid gap-4 col-span-9 bg-panels p-4 rounded-lg">
+    <div class="grid gap-4 col-span-9 bg-panels dark:bg-darkgrey dark:border p-4 rounded-lg">
       <div class="text-2xl font-bold">Editing {title}</div>
       <div class="flex flex-col gap-2">
         <div>Title</div>
@@ -149,9 +149,9 @@
     </div>
     <RightSidebar>
       <SidebarGroup>
-        <IconButton icon={PlusIcon} on:click={add}>Add Item</IconButton>
-        <IconButton icon={CheckIcon} on:click={save}>Save</IconButton>
-        <IconButton icon={LeftArrowIcon} on:click={pop}>Back</IconButton>
+        <IconButton icon={PlusIcon} on:click={add} common darkMode={$state.darkmode}>Add Item</IconButton>
+        <IconButton icon={CheckIcon} on:click={save} common darkMode={$state.darkmode}>Save</IconButton>
+        <IconButton icon={LeftArrowIcon} on:click={pop} common darkMode={$state.darkmode}>Back</IconButton>
       </SidebarGroup>
     </RightSidebar>
   </div>

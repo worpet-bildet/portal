@@ -15,7 +15,7 @@
     IconButton,
     SparklesIcon,
     AppIcon,
-    GroupIcon,
+    PeopleIcon,
     PersonIcon,
     CollectionIcon,
     SearchIcon,
@@ -118,58 +118,76 @@
   $: filterBySearchString(searchString);
 </script>
 
-<div class="flex flex-col gap-4 mb-4">
-  <div class="text-2xl font-bold">Everything you have ever seen on Portal</div>
-  <p>
-    Items you come across on your travels will accrue here, but it's not yet an
-    exhaustive index of all the things on Portal.
-  </p>
-  <div class="flex gap-4">
+<div class="flex flex-col gap-4 mb-4 items-center">
+  <div class="flex bg-panels dark:bg-darkgrey dark:border p-2 rounded-lg w-2/3">
+    <div class="w-5 text-grey mt-[3px] ml-2"><SearchIcon /></div>
+    <input
+      type="text"
+      class="focus:outline-none placeholder-grey w-full ml-4"
+      placeholder="Search Portal"
+      bind:value={searchString}
+    />
+  </div>
+  <div class="flex gap-8">
     <IconButton
       icon={SparklesIcon}
       active={filters.has('new')}
-      on:click={() => toggleFilter('new')}>New to me</IconButton
-    >
+      on:click={() => toggleFilter('new')}
+      common
+      darkMode={$state.darkmode}
+      >New to me
+    </IconButton>
     <IconButton
       icon={AppIcon}
       active={filters.has('apps')}
       on:click={() => {
         toggleFilter('apps');
-      }}>Apps</IconButton
+      }}
+      classes="dark:stroke-white dark:fill-white"
+      common
+      darkMode={$state.darkmode}
+      >Apps</IconButton
     >
     <IconButton
-      icon={GroupIcon}
+      icon={PeopleIcon}
       active={filters.has('groups')}
       on:click={() => {
         toggleFilter('groups');
-      }}>Groups</IconButton
+      }}
+      classes="stroke-grey fill-grey
+        {$state.darkmode ? "fill-white hover:fill-white" : "hover:fill-black"}"
+      common
+      darkMode={$state.darkmode}
+      >Groups</IconButton
     >
     <IconButton
       icon={PersonIcon}
       active={filters.has('ships')}
       on:click={() => {
         toggleFilter('ships');
-      }}>People</IconButton
+      }}
+      classes="dark:stroke-white dark:fill-white"
+      common
+      darkMode={$state.darkmode}
+      >People</IconButton
     >
     <IconButton
       icon={CollectionIcon}
       active={filters.has('collections')}
       on:click={() => {
         toggleFilter('collections');
-      }}>Collections</IconButton
+      }}
+      common
+      darkMode={$state.darkmode}
+      >Collections</IconButton
     >
   </div>
-  <div class="flex gap-4">
-    <input
-      type="text"
-      class="border-b focus:outline-none placeholder-grey"
-      placeholder="try searching"
-      bind:value={searchString}
-    />
-    <div class="w-5"><SearchIcon /></div>
-  </div>
+  <p class="text-grey text-sm">
+    Items you come across on your travels will accrue here, but it's not yet an
+    exhaustive index of all the things on Portal.
+  </p>
   {#if items}
-    <div class="flex flex-col gap-4 bg-panels p-6 rounded-lg">
+    <div class="flex flex-col gap-4 bg-panels dark:bg-darkgrey dark:border p-6 rounded-lg w-2/3">
       {#if activeItems.length > 0}
         {#each activeItems as key}
           <ItemVerticalListPreview {key} />
