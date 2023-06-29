@@ -2,6 +2,9 @@
     groups, treaty, portal-devs, blog-paths
 /+  default-agent, dbug, *portal, io=agentio, *sig, *sss, sss-25
 /$  json-to-action  %json  %portal-action
+/$  msg-to-json  %portal-message  %json
+/$  dev-map-to-json  %portal-dev-map  %json
+/$  portal-manager-result-to-json  %portal-manager-result  %json
 |%
 +$  versioned-state
   $%  state-0:portal-config
@@ -11,6 +14,22 @@
       state-4:portal-config
       state-5
       state-6
+      state-7
+  ==
++$  state-7
+  $:  %7
+      authorized-ships=(set ship)
+      bought-apps=(map [ship desk] tx-hash=@t)
+      sub-blog-paths=_(mk-subs:sss-25 blog-paths ,[%paths ~])
+      sub-portal-devs=_(mk-subs portal-devs ,[%portal-devs ~])
+      =dev-map:portal-config
+      =portal-curator:portal-config
+      =portal-indexer:portal-config
+      =purge-timer:portal-config
+      =purge-time:portal-config
+      =indexed-as-curator:portal-config
+      =onboarded:portal-config
+      =our-apps:portal-config
   ==
 +$  state-6
   $:  %6
@@ -40,7 +59,7 @@
 +$  card  card:agent:gall
 --
 %-  agent:dbug
-=|  state-6
+=|  state-7
 =*  state  -
 ^-  agent:gall
 =<
@@ -54,7 +73,8 @@
     da-blog-paths   =/  da  (da:sss-25 blog-paths ,[%paths ~])
       (da sub-blog-paths bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
 ++  on-init
-  =.  state  *state-6
+  =.  state  *state-7
+  =.  authorized-ships  (sy ~[our.bowl])
   =^  cards  state  init-sequence:helper
   [cards this]
 ::
@@ -65,11 +85,23 @@
   =/  old  !<(versioned-state vase)
   =.  state
     ?-  -.old
-      ?(%0 %1 [%2 *] %3)  [%6 (mk-subs blog-paths ,[%paths ~]) (mk-subs portal-devs ,[%portal-devs ~]) ~ +:*state-4:portal-config]
-      %4                  [%6 (mk-subs blog-paths ,[%paths ~]) (mk-subs portal-devs ,[%portal-devs ~]) ~ +.old]  ::  TODO test
-      %5                  [%6 (mk-subs blog-paths ,[%paths ~]) +.old]
-      %6                  old
+        ?(%0 %1 [%2 *] %3)
+      [%7 (sy ~[our.bowl]) *(map [ship desk] @t) (mk-subs blog-paths ,[%paths ~]) (mk-subs portal-devs ,[%portal-devs ~]) ~ +:*state-4:portal-config]
+      ::
+        %4
+      [%7 (sy ~[our.bowl]) *(map [ship desk] @t) (mk-subs blog-paths ,[%paths ~]) (mk-subs portal-devs ,[%portal-devs ~]) ~ +.old]  ::  TODO test
+      ::
+        %5
+      [%7 (sy ~[our.bowl]) *(map [ship desk] @t) (mk-subs blog-paths ,[%paths ~]) +.old]
+      ::
+        %6
+      [%7 (sy ~[our.bowl]) *(map [ship desk] @t) +.old]
+      ::
+        %7
+      old
     ==
+  ::  we are doing init-sequence on-load as well because we have to retain
+  ::  idempotence from across all states to latest state
   =^  cards  state  init-sequence:helper
   [cards this]
 ::
@@ -92,12 +124,20 @@
         ==
       =/  cards
         =+  ~(tap in our-apps.state)
-        %+  turn  -
+        %+  murn  -
         |=  [=ship =desk]
+        ?:  (~(has by wex.bowl) [/our-treaty/(scot %p ship)/[desk] our.bowl %treaty])
+          ~
+        %-  some
         :*  %pass  /our-treaty/(scot %p ship)/[desk]  %agent
             [our.bowl %treaty]  %watch  /treaty/(scot %p ship)/[desk]
         ==
-      [cards this]
+      :_  this
+      %+  welp  `(list card)`cards
+      ?:  (~(has by wex.bowl) [/our-apps our.bowl %treaty])
+          ~
+      [%pass /our-apps %agent [our.bowl %treaty] %watch /alliance]~
+
       ::
         %sub-to-many
       ::  %def sent to portal-store
@@ -105,7 +145,7 @@
       =/  keys=[temp=key-list def=key-list]  (skid-temp:keys key-list.act)
       =^  cards  state
         %-  tail  %^  spin  temp.keys  [*(list card) state]
-        |=  [=key q=[cards=(list card) state=state-6]]
+        |=  [=key q=[cards=(list card) state=state-7]]
         :-  key
         =.  state  state.q
         =^  cards  state.q  (sub:helper [%sub key])
@@ -129,6 +169,26 @@
       =/  msg  [%index-as-curator src.bowl toggle.act]
       :_  this(indexed-as-curator toggle.act)
       [(~(msg cards [portal-indexer.state %portal-manager]) msg)]~
+      ::
+        %payment-request
+      ?:  (~(has by bought-apps) src.bowl desk.act)
+        ~&  >  "already bought the app"
+        `this
+      :_  this
+      :~  :*  %pass  /payment-req  %agent  [seller.act %portal-app-publisher]  %poke
+        %portal-message  !>([%payment-request desk.act])
+      ==  ==
+      ::
+        %payment-tx-hash
+      :_  this
+      :~  :*  %pass  /payment-hash  %agent  [seller.act %portal-app-publisher]  %poke
+        %portal-message  !>([%payment-tx-hash tx-hash.act])
+      ==  ==
+      ::
+        %authorize-ships
+      =.  authorized-ships  authorized-ships.act
+      :_  this
+      [%give %fact [/updates]~ %portal-manager-result !>([%authorized-ships authorized-ships.act])]~
     ==
     ::
       %portal-message
@@ -137,6 +197,10 @@
     =/  msg  !<(message vase)
     ?+    -.msg  !!
         %sign-app
+      ?:  !(~(has in authorized-ships) src.bowl)
+        ~&  >>>  "ship not authorized to sign"
+        `this
+      ::  vulnerable to just receiving random apps from people lol
       ?>  (validate-sig dist-desk.msg our.bowl our.bowl now.bowl sig.msg)
       ~&  >  "%portal: sig is valid!"
       =/  dist-desk  (parse-dist-desk:misc dist-desk.msg)
@@ -156,17 +220,30 @@
         %-  ~(act cards [our.bowl %portal-store])
         ?:  %-  ~(item-exists scry our.bowl now.bowl)
             [%app our.bowl '' desk-name.u.dist-desk]
-          :^    %replace
+          ~&  >  "new feat: test edit vs replace"
+          :^    %edit
               [%app our.bowl '' desk-name.u.dist-desk]
-            %def
-          [%app ~ '' dist-desk.msg sig.msg treaty.msg]
+            `%def
+          `[%app ~ ~ `dist-desk.msg `sig.msg `treaty.msg eth-price.msg]
         :*  %create  ~  ~  `desk-name.u.dist-desk  `%def
-          `[%app ~ '' dist-desk.msg sig.msg treaty.msg]
+          `[%app ~ '' dist-desk.msg sig.msg treaty.msg (fall eth-price.msg '')]
           ~[[%collection our.bowl '' 'published-apps']]  ~  ~  ==
       :_  this
       (snoc create-my-apps create-app)
       ::
+        %payment-reference
+      :_  this
+      [%give %fact [/updates]~ %portal-message !>(msg)]~
       ::
+        %payment-confirmed
+      =.  bought-apps  (~(put by bought-apps) [src.bowl desk.msg] tx-hash.msg)
+      :_  this
+      :~  [%give %fact [/updates]~ %portal-message !>(msg)]
+          [%give %fact [/updates]~ %portal-manager-result !>([%bought-apps bought-apps])]
+          :*  %pass  /install  %agent  [our.bowl %hood]  %poke
+              %kiln-install  !>([desk.msg src.bowl desk.msg])
+          ::  TODO revive as well, msg with tom
+      ==  ==
       ::
         %index-as-curator
       ?>  =(our.bowl ~worpet-bildet)
@@ -315,47 +392,69 @@
     [%x %indexed-as-curator ~]  ``portal-manager-result+!>(indexed-as-curator)
     [%x %onboarded ~]           ``portal-manager-result+!>(onboarded)
     [%x %portal-devs ~]         ``portal-manager-result+!>([%portal-devs dev-map])
+    [%x %bought-apps ~]         ``portal-manager-result+!>([%bought-apps bought-apps])
+    [%x %authorized-ships ~]    ``portal-manager-result+!>([%authorized-ships authorized-ships])
   ==
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
   ?+    wire    (on-agent:default wire sign)
       [%our-apps ~]
+    ::  this takes just apps ids
     ?+    -.sign    (on-agent:default wire sign)
         %fact
       =/  upd  !<(update:alliance q.cage.sign)
       =^  cards  our-apps
         ?-  -.upd
+          ::  get treaty, and then add to published-apps
             %add
           :_  (~(put in our-apps) [ship.upd desk.upd])
           :~  :*  %pass  /our-treaty/(scot %p ship.upd)/[desk.upd]  %agent
           [our.bowl %treaty]  %watch  /treaty/(scot %p ship.upd)/[desk.upd]
           ==  ==
           ::
-          %del  `(~(del in our-apps) [ship.upd desk.upd])
-          %ini  `init.upd
+          ::  remove from published-apps
+            %del
+          :_  (~(del in our-apps) [ship.upd desk.upd])
+          :~  %-  ~(act cards [our.bowl %portal-store])
+            [%remove ~[[%app ship.upd '' desk.upd]] [%collection our.bowl '' 'published-apps']]
+          ==
+          ::
+          ::  never get %ini?
+          %ini
+          `init.upd
         ==
       [cards this]
     ==
     ::
       [%our-treaty @ @ ~]
+    ::  this takes treaty, which we subbed to in %add, on %our-apps wire
     ?+    -.sign    (on-agent:default wire sign)
         %fact
+      :_  this
       =/  treaty  !<(treaty:treaty q.cage.sign)
+      ::  if exists, edit treaty and append to published-apps
+      =/  key  [%app our.bowl '' `@t`i.t.t.wire]
+      ?:  (~(item-exists scry our.bowl now.bowl) key)
+        :~  %-  ~(act cards [our.bowl %portal-store])
+              [%edit key ~ `[%app ~ ~ ~ ~ `treaty ~]]
+            %-  ~(act cards [our.bowl %portal-store])
+              [%append [key]~ [%collection our.bowl '' 'published-apps']]
+        ==
+      ::  if doesn't exist, create and append to published-apps
       =/  create-app  ^-  action
         :*  %create
             ~
             ~
             ``@t`i.t.t.wire
             `%def
-            `[%app ~ '' '' *signature treaty]
+            `[%app ~ '' '' *signature treaty *@t]
             [%collection our.bowl '' 'published-apps']~
             ~
             ~
         ==
-      :_  this
       :~  (~(act cards [our.bowl %portal-store]) create-app)
-          [%pass wire %agent [our.bowl %treaty] %leave ~]  ::  why leave here?
+          [%pass wire %agent [our.bowl %treaty] %leave ~]
       ==
     ==
     ::
@@ -364,9 +463,10 @@
         %fact
       =/  treaty  !<(treaty:treaty q.cage.sign)
       =/  key  (path-to-key:conv +.wire)
-      =/  act  [%replace key %temp [%app ~ '' '' *signature treaty]]
+      =/  act  [%replace key %temp [%app ~ '' '' *signature treaty *@t]]
       :_  this
       :~  [(~(act cards [our.bowl %portal-store]) act)]
+          ::  TODO why unsub here, instead of getting updates?
           [%pass wire %agent [ship.key %treaty] %leave ~]
       ==
     ==
@@ -379,6 +479,7 @@
       =/  act  [%replace key %temp [%group meta.preview]]
       :_  this
       :~  [(~(act cards [our.bowl %portal-store]) act)]
+          ::  TODO why unsub here, instead of getting updates?
           [%pass wire %agent [p.flag.preview %groups] %leave ~]
       ==
     ==
@@ -423,8 +524,6 @@
     cards-1
       ::  sub to home page
   :~  [(~(act cards [our.bowl %portal-store]) sub-init)]
-      ::  sub to our published apps
-      [%pass /our-apps %agent [our.bowl %treaty] %watch /alliance]
       ::  scrying should not be done on on-load or on-init
       (~(act cards [our.bowl %portal-manager]) [%manager-init ~])
   ==
@@ -520,7 +619,7 @@
     ==
     ::
       %app
-    =.  bespoke  [%app ~ '' '' *signature *treaty:treaty]
+    =.  bespoke  [%app ~ '' '' *signature *treaty:treaty *@t]
     =/  path  /treaty/(scot %p ship.key.act)/[`@tas`cord.key.act]
     =/  wire  [%treaty (key-to-path:conv key.act)]
     =/  sub-status  (~(gut by wex.bowl) [wire ship.key.act %treaty] ~)

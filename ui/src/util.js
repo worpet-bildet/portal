@@ -11,6 +11,7 @@ export const getMeta = (item) => {
     cover: getCover(item),
     ship: getShip(item),
     link: getLink(item),
+    ethPrice: getEthPrice(item),
     color: getColor(item),
     version: getVersion(item),
     hash: getHash(item),
@@ -99,6 +100,14 @@ export const getLink = (item) => {
       return `${item?.bespoke?.uri}${item?.bespoke?.path}`;
     default:
       return item?.bespoke?.link;
+  }
+};
+export const getEthPrice = (item) => {
+  switch (item?.keyObj?.struc) {
+    case 'app':
+      return item?.bespoke?.['eth-price'];
+    default:
+      return '';
   }
 };
 export const getShip = (item) => {
@@ -213,6 +222,10 @@ export const fromUrbitTime = (timestring) => {
 export const formatColor = (c) => {
   if (!c || c === '0x0') return '000000';
   return c.replace('.', '').replace('0x', '');
+};
+
+export const isValidTxHash = (hash) => {
+  return /^(0x){1}[0-9a-fA-F]{64}$/i.test(hash);
 };
 
 export const isLightColor = (hex) => {

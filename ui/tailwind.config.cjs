@@ -20,6 +20,8 @@ module.exports = {
       offwhite: '#c5c5c5',
       error: 'rgb(220 38 38)',
       link: 'blue',
+      'payment-gr-start': '#93E486',
+      'payment-gr-end': '#7DCE69',
     },
     extend: {},
     borderColor: {

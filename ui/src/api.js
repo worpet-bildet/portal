@@ -6,8 +6,11 @@ import { toUrbitTime } from '@root/util';
 export const api = new Urbit('', '', 'portal');
 api.ship = window.ship;
 
-export const poke = (p) => api.poke(p);
+console.log({ api });
+
+export const poke = (s) => api.poke(s);
 export const scry = (s) => api.scry(s);
+
 export const me = `~${api.ship}`;
 
 let subqueue = writable([]);
@@ -15,6 +18,7 @@ let timeout;
 subqueue.subscribe((q) => {
   const sub = (_q) => {
     if (!_q.length) return;
+    console.log({ ..._q });
     poke({
       app: 'portal-manager',
       mark: 'portal-action',
@@ -52,6 +56,13 @@ export const getSocialItems = () => {
   return scry({
     app: 'portal-graph',
     path: '/app/portal-store',
+  });
+};
+
+export const getBoughtApps = () => {
+  return scry({
+    app: 'portal-manager',
+    path: '/bought-apps',
   });
 };
 
@@ -128,6 +139,14 @@ export const getStorageConfiguration = () => {
       path: '/credentials',
     }),
   ]);
+};
+
+export const pmPoke = (json) => {
+  return poke({
+    app: 'portal-manager',
+    mark: 'portal-action',
+    json,
+  });
 };
 
 export const uploadImage = async (file, s3) => {
@@ -238,6 +257,7 @@ export const subscribeToGroup = (key) => {
 };
 
 export const subscribeToItem = (keyObj) => {
+  if (keyObj.time === 'all') return;
   if (get(subqueue).find((i) => JSON.stringify(i) === JSON.stringify(keyObj))) {
     return;
   }

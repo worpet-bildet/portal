@@ -8,11 +8,10 @@
   export let active;
   export let common;
   export let darkMode;
-  export let classes;
 </script>
 
 <button
-  class="py-2 px-2 flex items-center gap-4 hover:duration-500 overflow-hidden rounded-lg ${$$props.classes}"
+  class="py-2 px-2 flex hover:bg-hover items-center gap-4 hover:duration-500 overflow-hidden rounded-lg dark:fill-white ${$$props.classes}"
   class:pointer-events-none={disabled}
   class:opacity-50={disabled}
   class:cursor-not-allowed={disabled}
