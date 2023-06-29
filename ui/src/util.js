@@ -247,6 +247,8 @@ export const isHappeningSoon = (events) => {
     // Check if the event or a future one happens in the next 24 hours
     if (paddedStartDate <= currentTime && currentTime <= endDate) {
       happeningSoon = true;
+      actualStartDate = new Date(startDate)
+
     } else if (frequency === 'every other week') {
       const nextStartDate = new Date(paddedStartDate);
       nextStartDate.setDate(nextStartDate.getDate() + 14);
