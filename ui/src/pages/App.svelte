@@ -477,8 +477,11 @@
             >Installing...</IconButton
           >
         {:else if ethPrice && !purchased}
-          <IconButton icon={EthereumIcon} on:click={purchase}
-            >Purchase</IconButton
+          <IconButton
+            icon={EthereumIcon}
+            on:click={purchase}
+            darkMode={$state.darkmode}
+            common>Purchase</IconButton
           >
         {:else}
           <IconButton
@@ -554,14 +557,19 @@
           <div>Make sure you have metamask installed and unlocked.</div>
         </div>
         <div class="flex justify-end w-full gap-8">
-          <IconButton icon={InstallIcon} on:click={provePurchase}
-            >I already paid!</IconButton
+          <IconButton
+            icon={InstallIcon}
+            on:click={provePurchase}
+            darkMode={$state.darkmode}
+            common>I already paid!</IconButton
           >
           <IconButton
             icon={EthereumIcon}
             loading={!$state.payment}
             disabled={!$state.payment}
             async
+            darkMode={$state.darkmode}
+            common
             on:click={pay}>Pay with ETH</IconButton
           >
         </div>
