@@ -518,7 +518,6 @@
 ++  init-sequence
   ^+  [*(list card) state]
   =^  cards-1  sub-blog-paths  (surf:da-blog-paths our.bowl %blog [%paths ~])
-  ~&  >  portal-indexer
   =/  sub-init  [%sub [%collection portal-indexer '' '~2000.1.1']]
   :_  state
   %+  welp
