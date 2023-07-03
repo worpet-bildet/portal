@@ -246,7 +246,7 @@
       ==  ==
       ::
         %index-as-curator
-      ?>  =(our.bowl ~worpet-bildet)
+      ?>  =(our.bowl portal-indexer)
       ?>  =(src.bowl src.msg)
       =/  act  ~(act cards [our.bowl %portal-store])
       =/  index-key  [%collection our.bowl '' 'index']
@@ -518,6 +518,7 @@
 ++  init-sequence
   ^+  [*(list card) state]
   =^  cards-1  sub-blog-paths  (surf:da-blog-paths our.bowl %blog [%paths ~])
+  ~&  >  portal-indexer
   =/  sub-init  [%sub [%collection portal-indexer '' '~2000.1.1']]
   :_  state
   %+  welp
