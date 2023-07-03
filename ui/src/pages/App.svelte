@@ -555,6 +555,10 @@
         <div>
           <div>You can purchase {title} for 0.01 ETH.</div>
           <div>Make sure you have metamask installed and unlocked.</div>
+          <div>
+            Disclaimer: Portal cannot guarantee this purchase. Transactions are
+            peer-to-peer.
+          </div>
         </div>
         <div class="flex justify-end w-full gap-8">
           <IconButton
