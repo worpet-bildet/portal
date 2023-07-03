@@ -13,7 +13,7 @@
     getReviewsByTo,
     getMoreFromThisShip,
   } from '@root/state';
-  import { getMeta, fromUrbitTime, isValidTxHash } from '@root/util';
+  import { getMeta, fromUrbitTime, isValidTxHash, weiToEth } from '@root/util';
   import {
     ItemDetail,
     RecommendModal,
@@ -553,7 +553,9 @@
       {#if !tx}
         <div class="text-2xl">Purchase {title}</div>
         <div>
-          <div>You can purchase {title} for 0.01 ETH.</div>
+          <div>
+            You can purchase {title} for {weiToEth(Number(ethPrice))} ETH.
+          </div>
           <div>Make sure you have metamask installed and unlocked.</div>
           <div>
             Disclaimer: Portal cannot guarantee this purchase. Transactions are

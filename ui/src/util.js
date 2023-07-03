@@ -228,6 +228,10 @@ export const isValidTxHash = (hash) => {
   return /^(0x){1}[0-9a-fA-F]{64}$/i.test(hash);
 };
 
+export const weiToEth = (wei) => {
+  return new BigNumber(wei).dividedBy(new BigNumber(10).pow(18)).toString();
+};
+
 export const isLightColor = (hex) => {
   let rgb = parseInt(hex, 16); // convert rrggbb to decimal
   let r = (rgb >> 16) & 0xff; // extract red
@@ -246,12 +250,12 @@ export const isLightColor = (hex) => {
 export const isHappeningSoon = (events) => {
   const currentTime = new Date();
 
-  const updatedEvents = events.map(event => {
+  const updatedEvents = events.map((event) => {
     var startDate = new Date(event.startDate);
     let happeningSoon = false;
     const endDate = new Date(event.endDate);
     const frequency = event.frequency;
-    var actualStartDate = new Date()
+    var actualStartDate = new Date();
 
     // pad to translate "happening now" into "happening in next 24 hours"
     const paddedStartDate = new Date(event.startDate);
@@ -260,8 +264,7 @@ export const isHappeningSoon = (events) => {
     // Check if the event or a future one happens in the next 24 hours
     if (paddedStartDate <= currentTime && currentTime <= endDate) {
       happeningSoon = true;
-      actualStartDate = new Date(startDate)
-
+      actualStartDate = new Date(startDate);
     } else if (frequency === 'every other week') {
       const nextStartDate = new Date(paddedStartDate);
       nextStartDate.setDate(nextStartDate.getDate() + 14);
@@ -270,7 +273,7 @@ export const isHappeningSoon = (events) => {
 
       // increment to next event and check again
       while (nextStartDate <= currentTime) {
-        actualStartDate = new Date(nextStartDate)
+        actualStartDate = new Date(nextStartDate);
         actualStartDate.setDate(actualStartDate.getDate() + 1);
 
         if (nextStartDate <= currentTime && currentTime <= nextEndDate) {
@@ -279,29 +282,53 @@ export const isHappeningSoon = (events) => {
         nextStartDate.setDate(nextStartDate.getDate() + 14);
         nextEndDate.setDate(nextEndDate.getDate() + 14);
       }
-
     } else if (frequency === 'weekdays') {
       const currentDayOfWeek = currentTime.getDay();
 
       // strip times to compare times w/o dates
-      const currentTimeStripped = new Date(0, 0, 0, currentTime.getHours(), currentTime.getMinutes(), currentTime.getSeconds());
-      const endDateStripped = new Date(0, 0, 0, endDate.getHours(), endDate.getMinutes(), endDate.getSeconds());
-      const startDateStripped = new Date(0, 0, 0, startDate.getHours(), startDate.getMinutes(), startDate.getSeconds());
+      const currentTimeStripped = new Date(
+        0,
+        0,
+        0,
+        currentTime.getHours(),
+        currentTime.getMinutes(),
+        currentTime.getSeconds()
+      );
+      const endDateStripped = new Date(
+        0,
+        0,
+        0,
+        endDate.getHours(),
+        endDate.getMinutes(),
+        endDate.getSeconds()
+      );
+      const startDateStripped = new Date(
+        0,
+        0,
+        0,
+        startDate.getHours(),
+        startDate.getMinutes(),
+        startDate.getSeconds()
+      );
 
       // from sunday after startTime until friday after endTime, it's happening within the next 24 hours
-      if ((currentDayOfWeek >= 1 && currentDayOfWeek <= 4) ||
+      if (
+        (currentDayOfWeek >= 1 && currentDayOfWeek <= 4) ||
         (currentDayOfWeek === 5 && currentTimeStripped <= endDateStripped) ||
-        (currentDayOfWeek === 0 && currentTimeStripped >= startDateStripped)) {
+        (currentDayOfWeek === 0 && currentTimeStripped >= startDateStripped)
+      ) {
         happeningSoon = true;
       }
 
       // figure out which event is happeningSoon
-      actualStartDate = new Date(startDate)
+      actualStartDate = new Date(startDate);
 
       if (currentTimeStripped <= endDateStripped && currentDayOfWeek !== 0) {
-        actualStartDate.setDate(actualStartDate.getDate() + currentDayOfWeek - 1);
+        actualStartDate.setDate(
+          actualStartDate.getDate() + currentDayOfWeek - 1
+        );
       } else {
-        actualStartDate.setDate(actualStartDate.getDate() + currentDayOfWeek)
+        actualStartDate.setDate(actualStartDate.getDate() + currentDayOfWeek);
       }
     }
 
@@ -309,13 +336,13 @@ export const isHappeningSoon = (events) => {
   });
 
   // format for display
-  const formattedEvents = updatedEvents.map(event => {
+  const formattedEvents = updatedEvents.map((event) => {
     const date = new Date(event.actualStartDate);
     const options = {
       weekday: 'short',
       hour: 'numeric',
       minute: 'numeric',
-      timeZoneName: 'short'
+      timeZoneName: 'short',
     };
     const formattedStart = date.toLocaleString('en-US', options);
 
@@ -323,10 +350,10 @@ export const isHappeningSoon = (events) => {
   });
 
   return [
-    formattedEvents.some(event => event.happeningSoon),
-    formattedEvents
+    formattedEvents.some((event) => event.happeningSoon),
+    formattedEvents,
   ];
-}
+};
 
 // Reference: https://github.com/mirtyl-wacdec/urbit_ex/blob/master/lib/api/utils.ex#LL260C14-L260C14
 export const isValidPatp = (patp) => {
