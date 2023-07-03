@@ -220,7 +220,6 @@
         %-  ~(act cards [our.bowl %portal-store])
         ?:  %-  ~(item-exists scry our.bowl now.bowl)
             [%app our.bowl '' desk-name.u.dist-desk]
-          ~&  >  "new feat: test edit vs replace"
           :^    %edit
               [%app our.bowl '' desk-name.u.dist-desk]
             `%def
