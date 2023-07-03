@@ -85,10 +85,7 @@
     </div>
   </div>
   <div class="col-span-11 pb-2">
-    <TextArea
-      placeholder="Share a limerick, maybe"
-      bind:value={content}
-    />
+    <TextArea placeholder="Share a limerick, maybe" bind:value={content} />
     {#if uploadedImageUrl}
       <div class="flex">
         <img src={uploadedImageUrl} class="object-cover" alt="uploaded" />
@@ -107,7 +104,9 @@
             on:click={() => {
               appModalOpen = true;
             }}
-            classes="stroke-grey fill-grey {$state.darkmode ? "hover:fill-white" : "hover:fill-black"}"
+            classes="stroke-grey fill-grey {$state.darkmode
+              ? 'hover:fill-white'
+              : 'hover:fill-black'}"
           />
         </div>
         <div class="rounded-full overflow-hidden">
@@ -117,7 +116,7 @@
               groupModalOpen = true;
             }}
             classes="stroke-grey fill-grey
-              {$state.darkmode ? "hover:fill-white" : "hover:fill-black"}"
+              {$state.darkmode ? 'hover:fill-white' : 'hover:fill-black'}"
           />
         </div>
         <input
@@ -130,13 +129,15 @@
         <div class="rounded-full overflow-hidden">
           <IconButton
             icon={ImageIcon}
-            disabled={!$state.s3 || !$state.s3.configuration.currentBucket}
+            disabled={!$state.s3 || !$state.s3.configuration?.currentBucket}
             tooltip="Configure S3 storage for image support"
             on:click={() => {
-              if (!$state.s3 || !$state.s3.configuration.currentBucket) return;
+              if (!$state.s3 || !$state.s3.configuration?.currentBucket) return;
               fileInput.click();
             }}
-            classes="stroke-grey fill-grey {$state.darkmode ? "hover:fill-white" : "hover:fill-black"}"
+            classes="stroke-grey fill-grey {$state.darkmode
+              ? 'hover:fill-white'
+              : 'hover:fill-black'}"
           />
         </div>
       </div>
