@@ -218,6 +218,7 @@
           'tx-hash': proofOfPurchaseTxHash,
         },
       });
+      isInstalling = true;
       provePurchaseModalOpen = false;
       paymentModalOpen = true;
       tx = { hash: proofOfPurchaseTxHash };
@@ -244,6 +245,7 @@
     pmPoke({
       'payment-tx-hash': { seller: distShip, 'tx-hash': tx.hash },
     });
+    isInstalling = true;
   };
 
   const install = async () => {

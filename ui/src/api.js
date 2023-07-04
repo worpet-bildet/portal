@@ -1,12 +1,10 @@
-import { writable, get } from 'svelte/store';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import Urbit from '@urbit/http-api';
+import { writable, get } from 'svelte/store';
 import { toUrbitTime } from '@root/util';
 
 export const api = new Urbit('', '', 'portal');
 api.ship = window.ship;
-
-console.log({ api });
 
 export const poke = (s) => api.poke(s);
 export const scry = (s) => api.scry(s);
@@ -18,7 +16,6 @@ let timeout;
 subqueue.subscribe((q) => {
   const sub = (_q) => {
     if (!_q.length) return;
-    console.log({ ..._q });
     poke({
       app: 'portal-manager',
       mark: 'portal-action',

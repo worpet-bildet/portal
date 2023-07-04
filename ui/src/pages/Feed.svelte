@@ -21,7 +21,7 @@
     SidebarGroup,
     SearchIcon,
     PersonIcon,
-    UpRightArrowIcon
+    UpRightArrowIcon,
   } from '@fragments';
   import { fromUrbitTime, isValidPatp, isHappeningSoon } from '@root/util';
 
@@ -48,7 +48,6 @@
       })
       .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
 
-    // TODO
     // Get the latest post, if it was more than six hours ago, send another sub
     if (
       feed[0] &&
@@ -136,19 +135,50 @@
   };
 
   const recommendedApps = [
-      { struc: 'app', ship: '~paldev', cord: 'pals', time: '' },
-      { struc: 'app', ship: '~nodmyn-dosrux', cord: 'radio', time: '' }
-  ]
+    { struc: 'app', ship: '~paldev', cord: 'pals', time: '' },
+    { struc: 'app', ship: '~nodmyn-dosrux', cord: 'radio', time: '' },
+  ];
 
   const events = [
-      { title: 'On-nomi happy hour', link: 'https://app.gather.town/app/xAYeiPI2XDYhRM9t/urbit-hacker-house', startDate: '2023-06-29T18:30:00-04:00', endDate: '2023-06-29T20:00:00-04:00', frequency: 'every other week', location: 'in the hacker house', happeningSoon: 'false'},
-      { title: 'Core Dev PR Blitz', link: 'https://app.gather.town/app/xAYeiPI2XDYhRM9t/urbit-hacker-house', startDate: '2023-06-19T11:00:00-04:00', endDate: '2023-06-19T12:00:00-04:00', frequency: 'weekdays', location: 'in the hacker house', happeningSoon: 'false'},
-      { title: 'Turf Build Party', link: 'https://app.gather.town/app/xAYeiPI2XDYhRM9t/urbit-hacker-house', startDate: '2023-06-23T12:00:00-04:00', endDate: '2023-06-23T14:00:00-04:00', frequency: '', location: 'in the hacker house', happeningSoon: 'false'},
-      { title: 'Build Party', link: 'https://app.gather.town/app/xAYeiPI2XDYhRM9t/urbit-hacker-house', startDate: '2023-06-27T14:00:00-04:00', endDate: '2023-06-27T17:00:00-04:00', frequency: '', location: 'in the hacker house', happeningSoon: 'false'}
-  ]
+    {
+      title: 'On-nomi happy hour',
+      link: 'https://app.gather.town/app/xAYeiPI2XDYhRM9t/urbit-hacker-house',
+      startDate: '2023-06-29T18:30:00-04:00',
+      endDate: '2023-06-29T20:00:00-04:00',
+      frequency: 'every other week',
+      location: 'in the hacker house',
+      happeningSoon: 'false',
+    },
+    {
+      title: 'Core Dev PR Blitz',
+      link: 'https://app.gather.town/app/xAYeiPI2XDYhRM9t/urbit-hacker-house',
+      startDate: '2023-06-19T11:00:00-04:00',
+      endDate: '2023-06-19T12:00:00-04:00',
+      frequency: 'weekdays',
+      location: 'in the hacker house',
+      happeningSoon: 'false',
+    },
+    {
+      title: 'Turf Build Party',
+      link: 'https://app.gather.town/app/xAYeiPI2XDYhRM9t/urbit-hacker-house',
+      startDate: '2023-06-23T12:00:00-04:00',
+      endDate: '2023-06-23T14:00:00-04:00',
+      frequency: '',
+      location: 'in the hacker house',
+      happeningSoon: 'false',
+    },
+    {
+      title: 'Build Party',
+      link: 'https://app.gather.town/app/xAYeiPI2XDYhRM9t/urbit-hacker-house',
+      startDate: '2023-06-27T14:00:00-04:00',
+      endDate: '2023-06-27T17:00:00-04:00',
+      frequency: '',
+      location: 'in the hacker house',
+      happeningSoon: 'false',
+    },
+  ];
 
-  const happeningSoonTuple = isHappeningSoon(events)
-
+  const happeningSoonTuple = isHappeningSoon(events);
 </script>
 
 <div class="grid grid-cols-9 gap-8 mb-4">
@@ -185,7 +215,7 @@
             {#if happeningSoon}
               <button
                 class="flex flex-col gap-2 rounded-md p-2 hover:bg-hover dark:hover:border-white hover:duration-500 text-left"
-                on:click={() => window.open(`${link}`,'_blank')}
+                on:click={() => window.open(`${link}`, '_blank')}
               >
                 <div>{title}</div>
                 <div
@@ -243,7 +273,7 @@
           </div>
           <div class="flex flex-col gap-2">
             {#each recommendedApps as key}
-              <ItemVerticalListPreview {key} small/>
+              <ItemVerticalListPreview {key} small />
             {/each}
           </div>
         </div>

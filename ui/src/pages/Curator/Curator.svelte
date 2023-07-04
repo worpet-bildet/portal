@@ -5,7 +5,6 @@
     getCurator,
     getCuratorFeed,
     refreshPals,
-    getCuratorFeaturedCollection,
     keyStrToObj,
     getMoreFromThisShip,
   } from '@root/state';
@@ -34,10 +33,9 @@
   let { patp } = params;
 
   let feed = [];
-  let curator, isMyPal, subscribingToCurator, featuredCollection;
+  let curator, isMyPal, subscribingToCurator;
   const loadCurator = async () => {
     curator = getCurator(patp);
-    // featuredCollection = getCuratorFeaturedCollection(patp);
     feed = getCuratorFeed(patp);
     isMyPal = !!$state.pals?.[patp.slice(1)];
     if (!feed && $state.isLoaded && !subscribingToCurator) {
@@ -108,25 +106,37 @@
         {#if me === patp}
           <div class="flex flex-col gap-4">
             <CollectionsAdd on:add={() => (activeTab = 'Collections')} />
-            <IconButton icon={EditIcon} on:click={() => push(`/${patp}/edit`)} common darkMode={$state.darkmode}
-              >Edit Profile</IconButton
+            <IconButton
+              icon={EditIcon}
+              on:click={() => push(`/${patp}/edit`)}
+              common
+              darkMode={$state.darkmode}>Edit Profile</IconButton
             >
           </div>
         {:else if isMyPal}
-          <IconButton icon={RemovePalIcon} on:click={togglePal} async common darkMode={$state.darkmode}
-            >Remove Pal</IconButton
+          <IconButton
+            icon={RemovePalIcon}
+            on:click={togglePal}
+            async
+            common
+            darkMode={$state.darkmode}>Remove Pal</IconButton
           >
         {:else}
-          <IconButton icon={AddPalIcon} on:click={togglePal} async common darkMode={$state.darkmode}
-            >Add Pal</IconButton
+          <IconButton
+            icon={AddPalIcon}
+            on:click={togglePal}
+            async
+            common
+            darkMode={$state.darkmode}>Add Pal</IconButton
           >
         {/if}
         {#if me !== patp}
           <IconButton
             icon={ChatIcon}
             on:click={() =>
-              window.open(`${window.location.origin}/apps/talk/dm/${patp}`)} common darkMode={$state.darkmode}
-            >Message</IconButton
+              window.open(`${window.location.origin}/apps/talk/dm/${patp}`)}
+            common
+            darkMode={$state.darkmode}>Message</IconButton
           >
         {/if}
       </SidebarGroup>
