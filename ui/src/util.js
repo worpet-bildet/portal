@@ -1,4 +1,5 @@
 import * as linkify from 'linkifyjs';
+import BigNumber from 'bignumber.js';
 
 export const getMeta = (item) => {
   return {

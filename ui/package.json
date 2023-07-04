@@ -14,6 +14,7 @@
     "@tlon/sigil-js": "^1.4.5",
     "@urbit/api": "^2.3.0",
     "@urbit/http-api": "^2.3.0",
+    "bignumber.js": "^9.1.1",
     "ethers": "^6.6.0",
     "linkify-html": "^4.1.1",
     "linkifyjs": "^4.1.1",
