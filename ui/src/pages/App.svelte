@@ -50,6 +50,7 @@
     title,
     description,
     link,
+    distShip,
     ethPrice,
     color,
     version,
@@ -122,6 +123,7 @@
       hash,
       servedFrom,
       ship,
+      distShip,
       lens,
     } = getMeta(item));
 
@@ -193,9 +195,10 @@
 
   const purchase = async () => {
     paymentModalOpen = true;
+
     pmPoke({
       'payment-request': {
-        seller: ship,
+        seller: distShip,
         desk: cord || time,
       },
     });
@@ -210,7 +213,10 @@
   $: {
     if (isValidTxHash(proofOfPurchaseTxHash)) {
       pmPoke({
-        'payment-tx-hash': { seller: ship, 'tx-hash': proofOfPurchaseTxHash },
+        'payment-tx-hash': {
+          seller: distShip,
+          'tx-hash': proofOfPurchaseTxHash,
+        },
       });
       provePurchaseModalOpen = false;
       paymentModalOpen = true;
@@ -236,7 +242,7 @@
       chainId: config.chainId,
     });
     pmPoke({
-      'payment-tx-hash': { seller: ship, 'tx-hash': tx.hash },
+      'payment-tx-hash': { seller: distShip, 'tx-hash': tx.hash },
     });
   };
 
