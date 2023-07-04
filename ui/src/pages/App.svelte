@@ -13,7 +13,7 @@
     getReviewsByTo,
     getMoreFromThisShip,
   } from '@root/state';
-  import { getMeta, fromUrbitTime, isValidTxHash } from '@root/util';
+  import { getMeta, fromUrbitTime, isValidTxHash, weiToEth } from '@root/util';
   import {
     ItemDetail,
     RecommendModal,
@@ -50,6 +50,7 @@
     title,
     description,
     link,
+    distShip,
     ethPrice,
     color,
     version,
@@ -122,6 +123,7 @@
       hash,
       servedFrom,
       ship,
+      distShip,
       lens,
     } = getMeta(item));
 
@@ -193,10 +195,11 @@
 
   const purchase = async () => {
     paymentModalOpen = true;
+
     pmPoke({
       'payment-request': {
-        seller: ship,
-        desk: 'sell-me',
+        seller: distShip,
+        desk: cord || time,
       },
     });
   };
@@ -210,7 +213,10 @@
   $: {
     if (isValidTxHash(proofOfPurchaseTxHash)) {
       pmPoke({
-        'payment-tx-hash': { seller: ship, 'tx-hash': proofOfPurchaseTxHash },
+        'payment-tx-hash': {
+          seller: distShip,
+          'tx-hash': proofOfPurchaseTxHash,
+        },
       });
       provePurchaseModalOpen = false;
       paymentModalOpen = true;
@@ -236,7 +242,7 @@
       chainId: config.chainId,
     });
     pmPoke({
-      'payment-tx-hash': { seller: ship, 'tx-hash': tx.hash },
+      'payment-tx-hash': { seller: distShip, 'tx-hash': tx.hash },
     });
   };
 
@@ -370,7 +376,9 @@
           {/each}
         </div>
         {#if me === ship}
-          <div class="grid gap-8 bg-panels dark:bg-darkgrey dark:border p-6 rounded-lg">
+          <div
+            class="grid gap-8 bg-panels dark:bg-darkgrey dark:border p-6 rounded-lg"
+          >
             <div class="flex gap-4">
               <input
                 type="file"
@@ -389,14 +397,15 @@
                   fileInput.click();
                 }}
                 common
-                darkMode={$state.darkmode}
-                >Add Screenshots</IconButton
+                darkMode={$state.darkmode}>Add Screenshots</IconButton
               >
             </div>
           </div>
         {/if}
       {:else if activeTab === 'Info'}
-        <div class="grid gap-8 bg-panels dark:bg-darkgrey dark:border p-6 rounded-lg">
+        <div
+          class="grid gap-8 bg-panels dark:bg-darkgrey dark:border p-6 rounded-lg"
+        >
           <div>
             <div class="text-2xl font-bold">
               Current {title} version
@@ -467,32 +476,48 @@
             on:click={() =>
               window.open(`${window.location.origin}${servedFrom}/`)}
             common
-            darkMode={$state.darkmode}
-            >Open</IconButton
+            darkMode={$state.darkmode}>Open</IconButton
           >
         {:else if isInstalling}
-          <IconButton loading common darkMode={$state.darkmode}>Installing...</IconButton>
+          <IconButton loading common darkMode={$state.darkmode}
+            >Installing...</IconButton
+          >
         {:else if ethPrice && !purchased}
-          <IconButton icon={EthereumIcon} on:click={purchase}
-            >Purchase</IconButton
+          <IconButton
+            icon={EthereumIcon}
+            on:click={purchase}
+            darkMode={$state.darkmode}
+            common>Purchase</IconButton
           >
         {:else}
-          <IconButton icon={InstallIcon} on:click={install} common darkMode={$state.darkmode}>Install</IconButton>
+          <IconButton
+            icon={InstallIcon}
+            on:click={install}
+            common
+            darkMode={$state.darkmode}>Install</IconButton
+          >
         {/if}
         {#if link}
-          <IconButton icon={GlobeIcon} on:click={() => window.open(link)}
-            common darkMode={$state.darkmode}>View Website</IconButton
+          <IconButton
+            icon={GlobeIcon}
+            on:click={() => window.open(link)}
+            common
+            darkMode={$state.darkmode}>View Website</IconButton
           >
         {/if}
         <IconButton
           icon={ShareIcon}
           on:click={() => (recommendModalOpen = true)}
           common
-          darkMode={$state.darkmode}
-          >Recommend</IconButton
+          darkMode={$state.darkmode}>Recommend</IconButton
         >
         {#if isInstalled}
-          <IconButton icon={CrossIcon} on:click={uninstall} async common darkMode={$state.darkmode}>Uninstall</IconButton
+          <IconButton
+            icon={CrossIcon}
+            on:click={uninstall}
+            async
+            common
+            darkMode={$state.darkmode}>Uninstall</IconButton
           >
         {/if}
       </SidebarGroup>
@@ -534,18 +559,29 @@
       {#if !tx}
         <div class="text-2xl">Purchase {title}</div>
         <div>
-          <div>You can purchase {title} for 0.01 ETH.</div>
+          <div>
+            You can purchase {title} for {weiToEth(Number(ethPrice))} ETH.
+          </div>
           <div>Make sure you have metamask installed and unlocked.</div>
+          <div>
+            Disclaimer: Portal cannot guarantee this purchase. Transactions are
+            peer-to-peer.
+          </div>
         </div>
         <div class="flex justify-end w-full gap-8">
-          <IconButton icon={InstallIcon} on:click={provePurchase}
-            >I already paid!</IconButton
+          <IconButton
+            icon={InstallIcon}
+            on:click={provePurchase}
+            darkMode={$state.darkmode}
+            common>I already paid!</IconButton
           >
           <IconButton
             icon={EthereumIcon}
             loading={!$state.payment}
             disabled={!$state.payment}
             async
+            darkMode={$state.darkmode}
+            common
             on:click={pay}>Pay with ETH</IconButton
           >
         </div>
