@@ -8,7 +8,6 @@
 /ui/.vercel
 
 /portal/desk.ship
-/portal/desk.docket-0
 
 .DS_Store
 *.code-workspace
