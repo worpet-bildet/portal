@@ -3,7 +3,7 @@
   import { link } from 'svelte-spa-router';
   import { fade, slide } from 'svelte/transition';
   import { format } from 'timeago.js';
-  import { poke, me, subscribeToItem } from '@root/api';
+  import { api, me } from '@root/api';
   import {
     state,
     getItem,
@@ -26,18 +26,15 @@
 
   export let key;
   export let allowReplies = true;
-  export let allowLikes = true;
   export let showRating;
 
   let item;
-  let subscribingTo = {};
   let replies = [];
   let likeCount, likedByMe;
   state.subscribe((s) => {
     item = getItem(keyStrFromObj(key));
-    if (s.isLoaded && !item && !subscribingTo[keyStrFromObj(key)]) {
-      subscribingTo[keyStrFromObj(key)] = true;
-      return subscribeToItem(key);
+    if (s.isLoaded && !item) {
+      return api.portal.do.subscribe(key);
     }
     // This is a little confusing but we're merging the global list of comments
     // with any comments that we have made ourselves on the post, which should
@@ -66,49 +63,29 @@
   function handlePostComment({
     detail: { content, uploadedImageUrl, replyTo },
   }) {
-    return poke({
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        create: {
-          bespoke: {
-            other: {
-              title: '',
-              blurb: content,
-              link: '',
-              image: uploadedImageUrl,
-            },
-          },
-          'tags-to': [
-            {
-              key: replyTo,
-              'tag-to': `/${me}/reply-to`,
-              'tag-from': `/${replyTo.ship}/reply-from`,
-            },
-          ],
-        },
+    return api.portal.do.create({
+      bespoke: {
+        other: { title: '', blurb: content, link: '', image: uploadedImageUrl },
       },
+      'tags-to': [
+        {
+          key: replyTo,
+          'tag-to': `/${me}/reply-to`,
+          'tag-from': `/${replyTo.ship}/reply-from`,
+        },
+      ],
     });
   }
 
   const likePost = () => {
     likedByMe = true;
     likeCount++;
-    poke({
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        'add-tag-request': {
-          our: { struc: 'ship', ship: me, cord: '', time: '' },
-          their: key,
-          'tag-to': `/${me}/like-to`,
-          'tag-from': `/${key.ship}/like-from`,
-        },
-      },
+    return api.portal.do.addTag({
+      our: { struc: 'ship', ship: me, cord: '', time: '' },
+      their: key,
+      'tag-to': `/${me}/like-to`,
+      'tag-from': `/${key.ship}/like-from`,
     });
-  };
-  const unlikePost = () => {
-    likedByMe = false;
   };
 </script>
 
@@ -131,7 +108,9 @@
     </div>
     <div class="col-span-12 md:col-span-10 flex flex-col gap-2">
       <div class="flex gap-2 text-sm text-grey">
-        <a class="text-black dark:text-white" href={`/${ship}`} use:link>{nickname || ship}</a>
+        <a class="text-black dark:text-white" href={`/${ship}`} use:link
+          >{nickname || ship}</a
+        >
         <span>·</span>
         <span>{format(createdAt)}</span>
       </div>
@@ -194,10 +173,11 @@
                 active={showCommentForm}
                 on:click={() => (showCommentForm = !showCommentForm)}
                 classes="
-                  {$state.darkmode ? "hover:fill-white" : "hover:fill-black"}
-                  {showCommentForm ? "dark:fill-white fill-black" : "fill-grey"}"
-              >
-              </IconButton>
+                  {$state.darkmode ? 'hover:fill-white' : 'hover:fill-black'}
+                  {showCommentForm
+                  ? 'dark:fill-white fill-black'
+                  : 'fill-grey'}"
+              />
             </div>
             <div class="pt-2 text-sm w-2 text-grey">
               {#if replies.length > 0}
@@ -218,8 +198,12 @@
             </span>
           {:else}
             <div class="rounded-full overflow-hidden">
-              <IconButton icon={LikeIcon} active={false} on:click={likePost} classes="dark:hover:stroke-white hover:stroke-black stroke-grey dark:hover:stroke-error">
-              </IconButton>
+              <IconButton
+                icon={LikeIcon}
+                active={false}
+                on:click={likePost}
+                classes="dark:hover:stroke-white hover:stroke-black stroke-grey dark:hover:stroke-error"
+              />
             </div>
             <div class="pt-2 pb-2 text-sm text-grey">
               {#if likeCount > 0}

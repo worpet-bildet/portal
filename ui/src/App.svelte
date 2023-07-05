@@ -4,22 +4,13 @@
   import { state } from '@root/state';
   import config from '@root/config';
 
-  import {
-    CuratorIndex,
-    Feed,
-    Item,
-    Group,
-    App,
-    Other,
-    Explore,
-  } from './pages';
+  import { Feed, Item, Group, App, Other, Explore, Api } from './pages';
   import { Curator, EditCurator } from './pages/Curator';
   import { Collection, EditCollection } from './pages/Collection';
   import { Navbar, Onboard } from '@components';
 
   const routes = {
     '/': Feed,
-    '/index': CuratorIndex,
     '/feed': Feed,
     '/explore': Explore,
     '/item/:itemkey': Item,
@@ -32,6 +23,11 @@
     '/:patp/edit': EditCurator,
   };
 
+  console.log('ENV', config.env);
+  if (config.env === 'development') {
+    routes['/dev/api'] = Api;
+  }
+
   state.subscribe((s) => {
     console.log({ state: s });
   });
@@ -39,12 +35,13 @@
   location.subscribe((loc) => {
     window.scrollTo(0, 0);
     ga.addEvent('pageview', { location: loc });
-    console.log({ location: loc });
   });
 </script>
 
 <main class:dark={$state.darkmode}>
-  <div class="dark:bg-gradient-to-b from-darkgrey to-gradientdark dark:text-white min-h-screen">
+  <div
+    class="dark:bg-gradient-to-b from-darkgrey to-gradientdark dark:text-white min-h-screen"
+  >
     <GoogleAnalytics properties={[config.googleAnalyticsId]} />
     <div class="relative z-10">
       <Navbar />

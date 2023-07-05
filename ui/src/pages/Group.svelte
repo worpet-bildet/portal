@@ -7,9 +7,13 @@
     keyStrToObj,
     getMoreFromThisShip,
   } from '@root/state';
-  import { joinGroup, leaveGroup, subscribeToItem } from '@root/api';
+  import { api } from '@root/api';
   import { getMeta } from '@root/util';
-  import { ItemDetail, RecommendModal, ItemVerticalListPreview } from '@components';
+  import {
+    ItemDetail,
+    RecommendModal,
+    ItemVerticalListPreview,
+  } from '@components';
   import {
     ChatIcon,
     DiaryIcon,
@@ -29,7 +33,7 @@
     if (!groupKey) return;
     group = getGroup(groupKey);
     if ($state.isLoaded && !group) {
-      return subscribeToItem(keyStrToObj(`/group/${groupKey}/`));
+      return api.portal.do.subscribe(keyStrToObj(`/group/${groupKey}/`));
     }
     joinedDetails = getJoinedGroupDetails(groupKey);
   };
@@ -49,8 +53,8 @@
     sortedRecommendations = getMoreFromThisShip(host).slice(0, 4);
   });
 
-  const join = () => joinGroup(groupKey).then(refreshGroups);
-  const leave = () => leaveGroup(groupKey).then(refreshGroups);
+  const join = () => api.urbit.do.joinGroup(groupKey).then(refreshGroups);
+  const leave = () => api.urbit.do.leaveGroup(groupKey).then(refreshGroups);
 
   const channelLink = (channelKey) => {
     return `${window.location.origin}/apps/groups/groups/${groupKey}/channels/${channelKey}`;
@@ -62,8 +66,17 @@
 {#if group}
   {@const { cover, image, description, title } = getMeta(group)}
   <div class="grid grid-cols-12 gap-x-8 mb-4">
-    <ItemDetail {cover} avatar={image} {title} {description} patp={host} type="group">
-      <div class="col-span-12 md:col-span-9 bg-panels dark:bg-darkgrey dark:border p-6 rounded-lg">
+    <ItemDetail
+      {cover}
+      avatar={image}
+      {title}
+      {description}
+      patp={host}
+      type="group"
+    >
+      <div
+        class="col-span-12 md:col-span-9 bg-panels dark:bg-darkgrey dark:border p-6 rounded-lg"
+      >
         {#if !joinedDetails}
           <div>Join the group to see more information</div>
         {:else if !joinedDetails.joining}
@@ -122,10 +135,17 @@
     <RightSidebar>
       <SidebarGroup>
         {#if !joinedDetails}
-          <IconButton icon={PlusIcon} on:click={join} async common darkMode={$state.darkmode}>Join Group</IconButton
+          <IconButton
+            icon={PlusIcon}
+            on:click={join}
+            async
+            common
+            darkMode={$state.darkmode}>Join Group</IconButton
           >
         {:else if joinedDetails.joining}
-          <IconButton loading async common darkMode={$state.darkmode}>Joining...</IconButton>
+          <IconButton loading async common darkMode={$state.darkmode}
+            >Joining...</IconButton
+          >
         {:else}
           <div class="flex flex-col gap-1">
             <div class="font-bold">Members</div>
@@ -136,14 +156,19 @@
               {Object.keys(joinedDetails.fleet).length}
             </div>
           </div>
-          <IconButton icon={CrossIcon} on:click={leave} async common darkMode={$state.darkmode}>Leave</IconButton>
+          <IconButton
+            icon={CrossIcon}
+            on:click={leave}
+            async
+            common
+            darkMode={$state.darkmode}>Leave</IconButton
+          >
         {/if}
         <IconButton
           icon={ShareIcon}
           on:click={() => (recommendModalOpen = true)}
           common
-          darkMode={$state.darkmode}
-          >Recommend</IconButton
+          darkMode={$state.darkmode}>Recommend</IconButton
         >
       </SidebarGroup>
       {#if sortedRecommendations.length > 0}

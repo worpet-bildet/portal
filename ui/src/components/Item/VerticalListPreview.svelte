@@ -2,7 +2,7 @@
   import { createEventDispatcher } from 'svelte';
   import { push } from 'svelte-spa-router';
   import { state, keyStrFromObj, getItem } from '@root/state';
-  import { subscribeToItem, getLinkMetadata } from '@root/api';
+  import { api } from '@root/api';
   import { getMeta } from '@root/util';
   import { CollectionsSquarePreview, Sigil } from '@components';
   import {
@@ -10,7 +10,6 @@
     TrashIcon,
     EditIcon,
     ExternalDestinationIcon,
-    LinkPreview,
   } from '@fragments';
 
   export let key;
@@ -21,15 +20,14 @@
   export let selected = false;
   export let small = false;
 
-  let item, isSubscribing;
+  let item;
 
   $: loadItem(key);
 
   const loadItem = (key) => {
     item = getItem(keyStrFromObj(key));
-    if ($state.isLoaded && !item && !isSubscribing) {
-      isSubscribing = true;
-      return subscribeToItem(key);
+    if ($state.isLoaded && !item) {
+      return api.portal.do.subscribe(key);
     }
   };
 
@@ -78,7 +76,7 @@
       {:else if struc === 'collection' && !image}
         <CollectionsSquarePreview {key} withTitle={false} />
       {:else if !image && link && struc !== 'app'}
-        {#await getLinkMetadata(link)}
+        {#await api.link.get.metadata(link)}
           <ItemImage {image} {title} {color} />
         {:then data}
           {#if !data}

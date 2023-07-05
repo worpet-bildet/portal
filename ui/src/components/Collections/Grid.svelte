@@ -6,34 +6,23 @@
     keyStrFromObj,
     getItem,
   } from '@root/state';
-  import { me, poke, subscribeToItem } from '@root/api';
+  import { api, me } from '@root/api';
   import SquarePreview from './SquarePreview.svelte';
   import { ArrowPathIcon } from '@fragments';
   export let patp;
-  export let loading;
 
+  let loading = true;
   let collections, curatorCollections;
-  let subscribingTo = {};
   const loadCollections = (patp) => {
     curatorCollections = getCuratorCollections(patp) || [];
     curatorCollections.forEach((c) => {
-      if (
-        $state.isLoaded &&
-        !getItem(keyStrFromObj(c)) &&
-        !subscribingTo[keyStrFromObj(c)] &&
-        c.time !== 'all'
-      ) {
-        subscribingTo[keyStrFromObj(c)] = true;
-        subscribeToItem(c);
+      if ($state.isLoaded && !getItem(keyStrFromObj(c)) && c.time !== 'all') {
+        api.portal.do.subscribe(c);
       }
     });
     collections = (getCuratorCollections(patp) || [])
       .map((c) => getItem(keyStrFromObj(c)))
       .filter((c) => !!c)
-      .map((c) => {
-        delete subscribingTo[keyStrFromObj(c.keyObj)];
-        return c;
-      })
       .filter((c) => !!c.keyStr)
       .filter((c) => c?.bespoke?.['key-list']?.length > 0)
       .filter((c) => c?.keyObj?.time !== 'all');
@@ -58,13 +47,7 @@
 
   const subToBlog = () => {
     subbingToBlogs = true;
-    poke({
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        'blog-sub': null,
-      },
-    });
+    api.portal.do.subscribeToBlog();
   };
 
   $: loadCollections(patp);

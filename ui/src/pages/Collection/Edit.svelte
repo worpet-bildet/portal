@@ -8,7 +8,7 @@
     keyStrToObj,
     keyStrFromObj,
   } from '@root/state';
-  import { poke } from '@root/api';
+  import { api } from '@root/api';
   import { ItemVerticalListPreview, CollectionsAddItemForm } from '@components';
   import {
     TextArea,
@@ -45,22 +45,9 @@
   });
 
   const save = () => {
-    poke({
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        edit: {
-          key: keyStrToObj(collectionKey),
-          bespoke: {
-            collection: {
-              title,
-              blurb,
-              image,
-              'key-list': items,
-            },
-          },
-        },
-      },
+    api.portal.do.edit({
+      key: keyStrToObj(collectionKey),
+      bespoke: { collection: { title, blurb, image, 'key-list': items } },
     });
   };
 
@@ -81,17 +68,9 @@
   };
 
   const saveEdits = () => {
-    poke({
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        edit: {
-          key: item.keyObj,
-          bespoke: {
-            other: { ...item.bespoke },
-          },
-        },
-      },
+    api.portal.do.edit({
+      key: item.keyObj,
+      bespoke: { other: { ...item.bespoke } },
     });
     editModalOpen = false;
   };
@@ -111,7 +90,9 @@
 
 {#if collection}
   <div class="grid grid-cols-12 gap-x-8">
-    <div class="grid gap-4 col-span-9 bg-panels dark:bg-darkgrey dark:border p-4 rounded-lg">
+    <div
+      class="grid gap-4 col-span-9 bg-panels dark:bg-darkgrey dark:border p-4 rounded-lg"
+    >
       <div class="text-2xl font-bold">Editing {title}</div>
       <div class="flex flex-col gap-2">
         <div>Title</div>
@@ -149,9 +130,24 @@
     </div>
     <RightSidebar>
       <SidebarGroup>
-        <IconButton icon={PlusIcon} on:click={add} common darkMode={$state.darkmode}>Add Item</IconButton>
-        <IconButton icon={CheckIcon} on:click={save} common darkMode={$state.darkmode}>Save</IconButton>
-        <IconButton icon={LeftArrowIcon} on:click={pop} common darkMode={$state.darkmode}>Back</IconButton>
+        <IconButton
+          icon={PlusIcon}
+          on:click={add}
+          common
+          darkMode={$state.darkmode}>Add Item</IconButton
+        >
+        <IconButton
+          icon={CheckIcon}
+          on:click={save}
+          common
+          darkMode={$state.darkmode}>Save</IconButton
+        >
+        <IconButton
+          icon={LeftArrowIcon}
+          on:click={pop}
+          common
+          darkMode={$state.darkmode}>Back</IconButton
+        >
       </SidebarGroup>
     </RightSidebar>
   </div>

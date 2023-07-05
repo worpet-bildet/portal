@@ -1,6 +1,6 @@
 <script>
   import { createEventDispatcher } from 'svelte';
-  import { me, uploadImage } from '@root/api';
+  import { api, me } from '@root/api';
   import { state, keyStrToObj } from '@root/state';
   import { getAnyLink } from '@root/util';
   import { RecommendModal, Sigil } from '@components';
@@ -65,7 +65,10 @@
   });
 
   const handleImageSelect = async (e) => {
-    uploadedImageUrl = await uploadImage(e.target.files[0], $state.s3);
+    uploadedImageUrl = await api.s3.do.uploadImage(
+      e.target.files[0],
+      $state.s3
+    );
   };
 
   const handleRate = ({ target: { value } }) => {

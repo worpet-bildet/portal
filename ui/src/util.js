@@ -1,4 +1,5 @@
 import * as linkify from 'linkifyjs';
+import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 
 export const getMeta = (item) => {
@@ -225,6 +226,18 @@ export const fromUrbitTime = (timestring) => {
 export const formatColor = (c) => {
   if (!c || c === '0x0') return '000000';
   return c.replace('.', '').replace('0x', '');
+};
+
+export const sendTransaction = async (to, value, data, chainId) => {
+  let signer, provider;
+  if (window.ethereum == null) {
+    provider = ethers.getDefaultProvider();
+  } else {
+    provider = new ethers.BrowserProvider(window.ethereum);
+    signer = await provider.getSigner();
+  }
+  if (!signer) return;
+  return signer.sendTransaction({ to, value, data, chainId });
 };
 
 export const isValidTxHash = (hash) => {

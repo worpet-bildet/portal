@@ -1,5 +1,5 @@
 <script>
-  import { subscribeToItem } from '@root/api';
+  import { api } from '@root/api';
   import { state, getItem, keyStrFromObj } from '@root/state';
   import { getMeta } from '@root/util';
   import { Sigil } from '@components';
@@ -10,7 +10,6 @@
   export let withTitle = true;
 
   let collection, title, image, previewItems;
-
   $: {
     collection = getItem(keyStrFromObj(key));
     ({ title, image } = getMeta(collection));
@@ -20,7 +19,7 @@
       ?.map((keyObj) => {
         let i = getItem(keyStrFromObj(keyObj));
         if ($state.isLoaded && !i) {
-          subscribeToItem(keyObj);
+          api.portal.do.subscribe(keyObj);
           return;
         }
         return getMeta(i);

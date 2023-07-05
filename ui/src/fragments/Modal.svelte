@@ -1,9 +1,11 @@
 <script>
+  import { CrossIcon, IconButton } from '@fragments';
   export let open = false;
 
   // this feels suboptimal but it does the job
   $: {
     if (open) {
+      window.scrollTo(0, 0);
       document.body.classList.add('overflow-hidden');
       document.getElementById('app').classList.add('overflow-hidden');
     } else {
@@ -26,6 +28,11 @@
       on:click|stopPropagation
     >
       <div class="w-full h-full p-4 relative">
+        <IconButton
+          icon={CrossIcon}
+          on:click={() => (open = false)}
+          classes="absolute right-5 top-5"
+        />
         <slot />
       </div>
     </div>
