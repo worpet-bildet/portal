@@ -1,5 +1,5 @@
 <script>
-  import { poke, me } from '@root/api';
+  import { api, me } from '@root/api';
   import { getItem, keyStrFromObj } from '@root/state';
   import { getMeta } from '@root/util';
   import { MySigil, ItemVerticalListPreview } from '@components';
@@ -15,27 +15,11 @@
   let blurb;
 
   const recommend = () => {
-    poke({
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        create: {
-          'prepend-to-feed': [
-            {
-              ship: me,
-              struc: 'feed',
-              time: '~2000.1.1',
-              cord: '',
-            },
-          ],
-          bespoke: {
-            retweet: {
-              blurb,
-              ref: key,
-            },
-          },
-        },
-      },
+    api.portal.do.create({
+      'prepend-to-feed': [
+        { ship: me, struc: 'feed', time: '~2000.1.1', cord: '' },
+      ],
+      bespoke: { retweet: { blurb, ref: key } },
     });
     open = false;
     blurb = '';
@@ -50,10 +34,7 @@
         <MySigil />
       </div>
       <div class="col-span-11">
-        <TextArea
-          bind:value={blurb}
-          placeholder="Share a limerick, maybe"
-        />
+        <TextArea bind:value={blurb} placeholder="Share a limerick, maybe" />
       </div>
       <div class="col-span-11 col-start-2">
         <ItemVerticalListPreview {key} clickable={false} />

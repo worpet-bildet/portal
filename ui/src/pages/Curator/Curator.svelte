@@ -8,7 +8,7 @@
     keyStrToObj,
     getMoreFromThisShip,
   } from '@root/state';
-  import { subscribeToCurator, addPal, removePal, me } from '@root/api';
+  import { api, me } from '@root/api';
   import { getMeta } from '@root/util';
   import {
     CollectionsGrid,
@@ -40,7 +40,8 @@
     isMyPal = !!$state.pals?.[patp.slice(1)];
     if (!feed && $state.isLoaded && !subscribingToCurator) {
       subscribingToCurator = true;
-      return subscribeToCurator(patp);
+      api.portal.do.subscribeToFeed(patp);
+      api.portal.do.subscribeToMainCollection(patp);
     }
   };
 
@@ -58,8 +59,8 @@
 
   const togglePal = () => {
     let ship = patp.slice(1);
-    if (isMyPal) return removePal(ship).then(refreshPals);
-    addPal(ship).then(refreshPals);
+    if (isMyPal) return api.pals.do.remove(ship).then(refreshPals);
+    api.pals.do.add(ship).then(refreshPals);
   };
 
   let activeTab = 'Collections';

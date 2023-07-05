@@ -4,14 +4,13 @@
   import { state } from '@root/state';
   import config from '@root/config';
 
-  import { Feed, Item, Group, App, Other, Explore } from './pages';
+  import { Feed, Item, Group, App, Other, Explore, Api } from './pages';
   import { Curator, EditCurator } from './pages/Curator';
   import { Collection, EditCollection } from './pages/Collection';
   import { Navbar, Onboard } from '@components';
 
   const routes = {
     '/': Feed,
-    '/index': CuratorIndex,
     '/feed': Feed,
     '/explore': Explore,
     '/item/:itemkey': Item,
@@ -23,6 +22,11 @@
     '/:patp': Curator,
     '/:patp/edit': EditCurator,
   };
+
+  console.log('ENV', config.env);
+  if (config.env === 'development') {
+    routes['/dev/api'] = Api;
+  }
 
   state.subscribe((s) => {
     console.log({ state: s });

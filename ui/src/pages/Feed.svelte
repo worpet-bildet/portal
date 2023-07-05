@@ -1,7 +1,7 @@
 <script>
   import { push } from 'svelte-spa-router';
   import config from '@root/config';
-  import { me, subscribeToItem, poke } from '@root/api';
+  import { api, me } from '@root/api';
   import {
     state,
     getGlobalFeed,
@@ -29,16 +29,21 @@
   let sortedRecommendations = [];
   let patpItemCount = {};
   let feed;
+
+  const subToGlobalFeed = () => {
+    return api.portal.do.subscribe({
+      struc: 'feed',
+      ship: config.indexer,
+      cord: '',
+      time: 'global',
+    });
+  };
+
   state.subscribe((s) => {
     let { pals } = s;
     if (!s.isLoaded) return;
     if (s.isLoaded && !getGlobalFeed()) {
-      return subscribeToItem({
-        struc: 'feed',
-        ship: config.indexer,
-        cord: '',
-        time: 'global',
-      });
+      return subToGlobalFeed();
     }
     let mergedFeed = getGlobalFeed().concat(getCuratorFeed(me));
     feed = mergedFeed
@@ -53,12 +58,7 @@
       feed[0] &&
       fromUrbitTime(feed[0].time) < Date.now() - 1000 * 60 * 60 * 6
     ) {
-      subscribeToItem({
-        struc: 'feed',
-        ship: config.indexer,
-        cord: '',
-        time: 'global',
-      });
+      subToGlobalFeed();
     }
 
     // We also want to sort the pals here by how many posts they have made
@@ -82,29 +82,23 @@
   });
 
   const handlePost = ({ detail: { content, uploadedImageUrl } }) => {
-    poke({
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        create: {
-          bespoke: {
-            other: {
-              title: '',
-              blurb: content || '',
-              link: '',
-              image: uploadedImageUrl || '',
-            },
-          },
-          'prepend-to-feed': [
-            {
-              ship: me,
-              struc: 'feed',
-              time: '~2000.1.1',
-              cord: '',
-            },
-          ],
+    api.portal.do.create({
+      bespoke: {
+        other: {
+          title: '',
+          blurb: content || '',
+          link: '',
+          image: uploadedImageUrl || '',
         },
       },
+      'prepend-to-feed': [
+        {
+          ship: me,
+          struc: 'feed',
+          time: '~2000.1.1',
+          cord: '',
+        },
+      ],
     });
   };
 

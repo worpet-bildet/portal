@@ -22,13 +22,10 @@
   } from '@fragments';
 
   let items, activeItems, myItems, urlQuery, searchString;
-
   const refreshItems = () => {
     activeItems = items;
     if (filters.has('new')) {
-      activeItems = [
-        ...items.filter((k) => !myItems.includes(keyStrFromObj(k))),
-      ];
+      activeItems = [...items.filter((k) => !myItems.has(keyStrFromObj(k)))];
     }
     if (filters.has('apps')) {
       activeItems = activeItems.filter((k) => k?.struc === 'app');
@@ -64,7 +61,6 @@
     }
 
     window.location.href = `${window.location.origin}${window.location.pathname}#/explore${urlQuery}`;
-
     filters = _filters;
     refreshItems();
   };
@@ -73,7 +69,7 @@
     if (!s.apps || !s.groups) return;
     items = getCuratorAllCollectionItems(me);
 
-    myItems = [
+    myItems = new Set([
       ...Object.keys(s.groups).map(groupKeyToItemKey),
       ...Object.entries(s.apps).map(
         ([cord, { ship }]) => `/app/${ship}/${cord}/`
@@ -84,7 +80,7 @@
           Object.entries(s).filter(([key]) => key.includes('/collection/'))
         )
       ).map(collectionKeyToItemKey),
-    ];
+    ]);
 
     let url = window.location.href;
     if (url.includes('filters=')) {
@@ -145,8 +141,7 @@
       }}
       classes="dark:stroke-white dark:fill-white"
       common
-      darkMode={$state.darkmode}
-      >Apps</IconButton
+      darkMode={$state.darkmode}>Apps</IconButton
     >
     <IconButton
       icon={PeopleIcon}
@@ -155,10 +150,9 @@
         toggleFilter('groups');
       }}
       classes="stroke-grey fill-grey
-        {$state.darkmode ? "fill-white hover:fill-white" : "hover:fill-black"}"
+        {$state.darkmode ? 'fill-white hover:fill-white' : 'hover:fill-black'}"
       common
-      darkMode={$state.darkmode}
-      >Groups</IconButton
+      darkMode={$state.darkmode}>Groups</IconButton
     >
     <IconButton
       icon={PersonIcon}
@@ -168,8 +162,7 @@
       }}
       classes="dark:stroke-white dark:fill-white"
       common
-      darkMode={$state.darkmode}
-      >People</IconButton
+      darkMode={$state.darkmode}>People</IconButton
     >
     <IconButton
       icon={CollectionIcon}
@@ -178,8 +171,7 @@
         toggleFilter('collections');
       }}
       common
-      darkMode={$state.darkmode}
-      >Collections</IconButton
+      darkMode={$state.darkmode}>Collections</IconButton
     >
   </div>
   <p class="text-grey text-sm">
@@ -187,7 +179,9 @@
     exhaustive index of all the things on Portal.
   </p>
   {#if items}
-    <div class="flex flex-col gap-4 bg-panels dark:bg-darkgrey dark:border p-6 rounded-lg w-2/3">
+    <div
+      class="flex flex-col gap-4 bg-panels dark:bg-darkgrey dark:border p-6 rounded-lg w-2/3"
+    >
       {#if activeItems.length > 0}
         {#each activeItems as key}
           <ItemVerticalListPreview {key} />

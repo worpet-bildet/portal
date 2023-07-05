@@ -1,5 +1,5 @@
 <script>
-  import { getLinkMetadata } from '@root/api';
+  import { api } from '@root/api';
 
   export let url;
 
@@ -9,7 +9,7 @@
 
   const placeholderImg = 'https://i.imgur.com/UeDNBNQ.jpeg';
 
-  $: metadata = getLinkMetadata(url);
+  $: metadata = api.link.get.metadata(url);
 </script>
 
 {#await metadata then data}

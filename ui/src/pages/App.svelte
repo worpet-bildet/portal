@@ -2,7 +2,7 @@
   import { ethers } from 'ethers';
   import { Confetti } from 'svelte-confetti';
   import config from '@root/config';
-  import { me, poke, pmPoke, subscribeToItem, uploadImage } from '@root/api';
+  import { api, me } from '@root/api';
   import {
     state,
     getItem,
@@ -40,6 +40,7 @@
   let cord,
     ship,
     time,
+    desk,
     defKey,
     itemKey,
     isDefItem,
@@ -72,8 +73,6 @@
     loadApp($state);
   }
 
-  let subscribingTo = {};
-
   const loadApp = (s) => {
     // Here we should get the app devs from our state, and check whether we have
     // a mapping for it at the moment
@@ -93,14 +92,14 @@
     }
 
     if (!itemKey) return;
+    desk = cord || time;
 
     // Try to load the defItem if we already have one in state
     if (!isDefItem) {
       item = getItem(defKey);
-      if (!item && !subscribingTo[defKey]) {
-        subscribingTo[defKey] = true;
-        subscribeToItem(keyStrToObj(defKey));
-      } else if (item) {
+      if (!item) {
+        api.portal.do.subscribe(keyStrToObj(defKey));
+      } else {
         itemKey = defKey;
       }
     }
@@ -108,7 +107,7 @@
     item = getItem(itemKey);
 
     if (s.isLoaded && !item) {
-      return subscribeToItem(keyStrToObj(itemKey));
+      return api.portal.do.subscribe(keyStrToObj(itemKey));
     }
 
     ({
@@ -140,25 +139,20 @@
 
     if (!s?.social?.[`/${ship}/review-from`] && !subbingToSocialGraph && ship) {
       subbingToSocialGraph = true;
-      poke({
-        app: 'portal-graph',
-        mark: 'social-graph-track',
-        json: {
-          start: {
-            source: ship,
-            tag: `/${ship}`,
-          },
-        },
+      api.portal.do.trackSocialGraph({
+        source: ship,
+        tag: `/${ship}`,
       });
     }
 
     isInstalling =
-      s.apps?.[cord]?.chad?.hasOwnProperty('install') || isInstalling;
+      s.apps?.[cord]?.chad?.hasOwnProperty('install') ||
+      s.apps?.[cord]?.chad?.hasOwnProperty('hung') ||
+      isInstalling;
 
     isInstalled =
-      (!isInstalling && !!s.apps?.[cord || time]) ||
-      (s.apps?.[cord]?.chad?.hasOwnProperty('site') &&
-        !!s.apps?.[cord || time]);
+      (!isInstalling && !!s.apps?.[desk]) ||
+      (s.apps?.[cord]?.chad?.hasOwnProperty('site') && !!s.apps?.[desk]);
 
     if (isInstalled) isInstalling = false;
 
@@ -171,37 +165,23 @@
     if (!s.isLoaded) return;
     loadApp(s);
     sortedRecommendations = getMoreFromThisShip(ship).slice(0, 4);
-    purchased =
-      s?.payment?.['payment-confirmed'] ||
-      s?.['bought-apps']?.[`${ship ?? '~zod'}/${cord || time}`];
+    purchased = s?.['bought-apps']?.[`${ship ?? '~zod'}/${desk}`];
   });
 
-  const uninstall = async () => {
-    await Promise.all([
-      poke({
-        app: 'docket',
-        mark: 'docket-uninstall',
-        json: cord || time,
-      }),
-      poke({
-        app: 'hood',
-        mark: 'kiln-uninstall',
-        json: {
-          desk: cord || time,
-        },
-      }),
-    ]).then(refreshApps);
+  const install = () => {
+    // FIXME: stopgap
+    window.open(`${window.location.origin}/apps/grid/search/${ship}/apps`);
+    isInstalling = true;
+    api.urbit.do.installApp(distShip || ship, desk).then(refreshApps);
   };
 
-  const purchase = async () => {
-    paymentModalOpen = true;
+  const uninstall = () => {
+    api.urbit.do.uninstallApp(desk).then(refreshApps);
+  };
 
-    pmPoke({
-      'payment-request': {
-        seller: distShip,
-        desk: cord || time,
-      },
-    });
+  const purchase = () => {
+    paymentModalOpen = true;
+    api.portal.do.requestPayment(distShip, desk);
   };
 
   let proofOfPurchaseTxHash;
@@ -212,12 +192,7 @@
 
   $: {
     if (isValidTxHash(proofOfPurchaseTxHash)) {
-      pmPoke({
-        'payment-tx-hash': {
-          seller: distShip,
-          'tx-hash': proofOfPurchaseTxHash,
-        },
-      });
+      api.portal.do.confirmPayment(distShip, proofOfPurchaseTxHash);
       isInstalling = true;
       provePurchaseModalOpen = false;
       paymentModalOpen = true;
@@ -239,79 +214,38 @@
     tx = await signer.sendTransaction({
       to: $state.payment?.['receiving-address'],
       value: $state.payment?.['eth-price'],
-      data: $state.payment?.['hex'].replaceAll('.', ''), // why
+      data: $state.payment?.['hex'], // why
       chainId: config.chainId,
     });
-    pmPoke({
-      'payment-tx-hash': { seller: distShip, 'tx-hash': tx.hash },
-    });
+    api.portal.do.confirmPayment(distShip, tx.hash);
     isInstalling = true;
-  };
-
-  const install = async () => {
-    // FIXME: stopgap
-    window.open(`${window.location.origin}/apps/grid/search/${ship}/apps`);
-    isInstalling = true;
-    let distDesk = item?.bespoke?.distDesk || `${ship}/${cord || time}`;
-    await Promise.all([
-      poke({
-        app: 'docket',
-        mark: 'docket-install',
-        json: distDesk,
-      }),
-      poke({
-        app: 'hood',
-        mark: 'kiln-install',
-        json: distDesk.split('/')[1],
-      }),
-      poke({
-        app: 'hood',
-        mark: 'kiln-revive',
-        json: distDesk.split('/')[1],
-      }),
-    ]);
-    refreshApps();
   };
 
   const handlePostReview = async ({ detail: { content, rating } }) => {
-    pmPoke({
-      create: {
-        bespoke: {
-          review: {
-            blurb: content,
-            rating: Number(rating), // i hate js
-          },
+    api.portal.do.create({
+      bespoke: { review: { blurb: content, rating: Number(rating) } },
+      'tags-to': [
+        {
+          // this is the DEF item key
+          key: { struc: 'app', ship, cord: '', time: desk },
+          'tag-to': `/${me}/review-to`,
+          'tag-from': `/${ship}/review-from`,
         },
-        'tags-to': [
-          {
-            // this is the DEF item key
-            key: {
-              struc: 'app',
-              ship: ship,
-              time: cord || time,
-              cord: '',
-            },
-            'tag-to': `/${me}/review-to`,
-            'tag-from': `/${ship}/review-from`,
-          },
-        ],
-      },
+      ],
     });
   };
 
   let fileInput;
-  const handleImageSelect = async (e) => {
-    let newScreenshots = [
-      ...screenshots,
-      await uploadImage(e.target.files[0], $state.s3),
-    ];
-    poke({
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        edit: {
-          key: keyStrToObj(defKey),
-          bespoke: { app: { ...item?.bespoke, screenshots: newScreenshots } },
+  const handleImageSelect = async ({ target: { files } }) => {
+    api.portal.do.edit({
+      key: keyStrToObj(defKey),
+      bespoke: {
+        app: {
+          ...item?.bespoke,
+          screenshots: [
+            ...screenshots,
+            await api.s3.do.uploadImage(files[0], $state.s3),
+          ],
         },
       },
     });
@@ -319,11 +253,9 @@
 
   const deleteScreenshot = (screenshot) => {
     screenshots = screenshots.filter((s) => s !== screenshot);
-    pmPoke({
-      edit: {
-        key: keyStrToObj(defKey),
-        bespoke: { app: { ...item?.bespoke, screenshots } },
-      },
+    api.portal.do.edit({
+      key: keyStrToObj(defKey),
+      bespoke: { app: { ...item?.bespoke, screenshots } },
     });
   };
 

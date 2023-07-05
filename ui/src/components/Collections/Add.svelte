@@ -1,7 +1,7 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import { state, keyStrToObj, keyStrFromObj } from '@root/state';
-  import { poke, me } from '@root/api';
+  import { api, me } from '@root/api';
   import { ItemVerticalListPreview, ShipForm } from '@components';
   import {
     Modal,
@@ -74,32 +74,21 @@
   // OTHER FORMSTEPS = ['addship', 'addother']
 
   const save = () => {
-    poke({
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        create: {
-          'append-to': [
-            {
-              ship: me,
-              time: '~2000.1.1',
-              struc: 'collection',
-              cord: '',
-            },
+    api.portal.do.create({
+      'append-to': [
+        { ship: me, time: '~2000.1.1', struc: 'collection', cord: '' },
+      ],
+      bespoke: {
+        collection: {
+          title: name,
+          blurb: description,
+          image: '',
+          'key-list': [
+            ...groupKeys.map((i) => keyStrToObj(i)),
+            ...appKeys.map((i) => keyStrToObj(i)),
+            ...shipKeys,
+            ...otherKeys,
           ],
-          bespoke: {
-            collection: {
-              title: name,
-              blurb: description,
-              image: '',
-              'key-list': [
-                ...groupKeys.map((i) => keyStrToObj(i)),
-                ...appKeys.map((i) => keyStrToObj(i)),
-                ...shipKeys,
-                ...otherKeys,
-              ],
-            },
-          },
         },
       },
     });
@@ -113,29 +102,13 @@
     // the key to our list of other items so that it will show up in the list
     let time = toUrbitTime(Date.now());
     let key = { struc: 'other', ship: me, cord: '', time };
-    poke({
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        create: {
-          time,
-          bespoke: {
-            other: newOtherItem,
-          },
-        },
-      },
-    });
+    api.portal.do.create({ time, bespoke: { other: newOtherItem } });
     otherKeys.push(key);
     newOtherItem = {};
   };
 
   const saveShip = async () => {
-    let key = {
-      struc: 'ship',
-      ship: newShip,
-      time: '',
-      cord: '',
-    };
+    let key = { struc: 'ship', ship: newShip, time: '', cord: '' };
     shipKeys.push(key);
     newShip = '';
   };
@@ -160,8 +133,8 @@
   icon={PlusIcon}
   on:click={addCollection}
   common
-  darkMode={$state.darkmode}
-  >New Collection</IconButton>
+  darkMode={$state.darkmode}>New Collection</IconButton
+>
 <Modal bind:open={showModal}>
   <StepForm
     bind:formstep
@@ -238,8 +211,7 @@
               showFormNav = false;
             }}
             common
-            darkMode={$state.darkmode}
-            >Add</IconButton
+            darkMode={$state.darkmode}>Add</IconButton
           >
         </div>
         {#each shipKeys as key}
@@ -255,8 +227,7 @@
               showFormNav = true;
             }}
             common
-            darkMode={$state.darkmode}
-            >Cancel</IconButton
+            darkMode={$state.darkmode}>Cancel</IconButton
           >
           <IconButton
             icon={CheckIcon}
@@ -266,8 +237,7 @@
               showFormNav = true;
             }}
             common
-            darkMode={$state.darkmode}
-            >Save</IconButton
+            darkMode={$state.darkmode}>Save</IconButton
           >
         </div>
       {:else if formstep === 'other'}
@@ -280,8 +250,7 @@
               showFormNav = false;
             }}
             common
-            darkMode={$state.darkmode}
-            >Add</IconButton
+            darkMode={$state.darkmode}>Add</IconButton
           >
         </div>
         {#each otherKeys as key}
@@ -297,8 +266,7 @@
               showFormNav = true;
             }}
             common
-            darkMode={$state.darkmode}
-            >Cancel</IconButton
+            darkMode={$state.darkmode}>Cancel</IconButton
           >
           <IconButton
             icon={CheckIcon}
@@ -308,8 +276,7 @@
               showFormNav = true;
             }}
             common
-            darkMode={$state.darkmode}
-            >Save</IconButton
+            darkMode={$state.darkmode}>Save</IconButton
           >
         </div>
       {/if}
