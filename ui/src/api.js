@@ -137,17 +137,6 @@ export const api = {
       subscribe: (keyObj) => subscribeToItem(keyObj),
       subscribeToMany: (keys) =>
         pmPoke({ 'sub-to-many': { 'key-list': keys } }),
-      subscribeToFeed: (ship) =>
-        subscribeToItem({ struc: 'feed', ship, time: '~2000.1.1', cord: '' }),
-      subscribeToMainCollection: (ship) =>
-        subscribeToItem({
-          struc: 'collection',
-          ship,
-          time: '~2000.1.1',
-          cord: '',
-        }),
-      subscribeToGroup: (ship, cord) =>
-        subscribeToItem({ struc: 'group', ship, cord, time: '' }),
       subscribeToBlog: () => pmPoke({ 'blog-sub': null }),
       requestPayment: (seller, desk) =>
         pmPoke({ 'payment-request': { seller, desk } }),
