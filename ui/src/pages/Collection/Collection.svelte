@@ -65,18 +65,21 @@
         <IconButton
           icon={LeftArrowIcon}
           on:click={pop}
-          class="dark:hover:border-white dark:border">Back</IconButton
+          class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+          >Back</IconButton
         >
         <IconButton
           icon={ShareIcon}
           on:click={() => (recommendModalOpen = true)}
-          class="dark:hover:border-white dark:border">Recommend</IconButton
+          class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+          >Recommend</IconButton
         >
         {#if me === ship}
           <IconButton
             icon={EditIcon}
             on:click={() => push(`/collection-edit/${wild}`)}
-            class="dark:hover:border-white dark:border">Edit</IconButton
+            class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+            >Edit</IconButton
           >
         {/if}
       </SidebarGroup>

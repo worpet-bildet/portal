@@ -104,7 +104,6 @@
         <div class="rounded-full overflow-hidden">
           <IconButton
             icon={AppIcon}
-            active={appModalOpen}
             on:click={() => {
               appModalOpen = true;
             }}

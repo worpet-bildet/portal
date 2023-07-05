@@ -4,7 +4,7 @@
   import { state } from '@root/state';
   import config from '@root/config';
 
-  import { Feed, Item, Group, App, Other, Explore, Api } from './pages';
+  import { Feed, Group, App, Explore, Api } from './pages';
   import { Curator, EditCurator } from './pages/Curator';
   import { Collection, EditCollection } from './pages/Collection';
   import { Navbar, Onboard } from '@components';
@@ -13,10 +13,8 @@
     '/': Feed,
     '/feed': Feed,
     '/explore': Explore,
-    '/item/:itemkey': Item,
     '/group/:host/:cord': Group,
     '/app/*': App,
-    '/other/*': Other,
     '/collection/*': Collection,
     '/collection-edit/*': EditCollection,
     '/:patp': Curator,

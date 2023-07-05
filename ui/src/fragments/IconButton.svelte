@@ -16,12 +16,15 @@
   class="
     py-2 px-2 flex hover:bg-hover items-center gap-4 duration-500
     overflow-hidden rounded-lg dark:fill-white dark:hover:border-white
+    stroke-grey fill-grey hover:fill-black hover:stroke-black
     {$$props.class}
   "
   class:pointer-events-none={disabled}
   class:opacity-50={disabled}
   class:cursor-not-allowed={disabled}
   class:bg-hover={active}
+  class:fill-black={active}
+  class:stroke-black={active}
   class:dark:hover:bg-transparent={!active}
   title={tooltip}
   on:click

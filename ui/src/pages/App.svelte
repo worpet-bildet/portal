@@ -401,28 +401,50 @@
             icon={ExternalDestinationIcon}
             on:click={() =>
               window.open(`${window.location.origin}${servedFrom}/`)}
+            class="bg-panels dark:bg-transparent dark:border dark:hover:border-white"
             >Open</IconButton
           >
         {:else if isInstalling}
-          <IconButton loading>Installing...</IconButton>
+          <IconButton
+            loading
+            class="bg-panels dark:bg-transparent dark:border dark:hover:border-white"
+            >Installing...</IconButton
+          >
         {:else if ethPrice && !purchased}
-          <IconButton icon={EthereumIcon} on:click={purchase}
+          <IconButton
+            icon={EthereumIcon}
+            on:click={purchase}
+            class="bg-panels dark:bg-transparent dark:border dark:hover:border-white"
             >Purchase</IconButton
           >
         {:else}
-          <IconButton icon={InstallIcon} on:click={install}>Install</IconButton>
+          <IconButton
+            icon={InstallIcon}
+            on:click={install}
+            class="bg-panels dark:bg-transparent dark:border dark:hover:border-white"
+            >Install</IconButton
+          >
         {/if}
         {#if link}
-          <IconButton icon={GlobeIcon} on:click={() => window.open(link)}
+          <IconButton
+            icon={GlobeIcon}
+            on:click={() => window.open(link)}
+            class="bg-panels dark:bg-transparent dark:border dark:hover:border-white"
             >View Website</IconButton
           >
         {/if}
         <IconButton
           icon={ShareIcon}
-          on:click={() => (recommendModalOpen = true)}>Recommend</IconButton
+          on:click={() => (recommendModalOpen = true)}
+          class="bg-panels dark:bg-transparent dark:border dark:hover:border-white"
+          >Recommend</IconButton
         >
         {#if isInstalled}
-          <IconButton icon={CrossIcon} on:click={uninstall} async
+          <IconButton
+            icon={CrossIcon}
+            on:click={uninstall}
+            async
+            class="bg-panels dark:bg-transparent dark:border dark:hover:border-white"
             >Uninstall</IconButton
           >
         {/if}

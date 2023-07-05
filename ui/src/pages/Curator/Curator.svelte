@@ -119,7 +119,7 @@
             <IconButton
               icon={EditIcon}
               on:click={() => push(`/${patp}/edit`)}
-              class="dark:border dark:hover:border-white dark:hover:bg-transparent"
+              class="bg-panels dark:bg-transparent dark:border dark:hover:border-white dark:hover:bg-transparent"
               >Edit Profile</IconButton
             >
           </div>
@@ -128,7 +128,7 @@
             icon={RemovePalIcon}
             on:click={togglePal}
             async
-            class="dark:border dark:hover:border-white dark:hover:bg-transparent"
+            class="bg-panels dark:bg-transparent dark:border dark:hover:border-white dark:hover:bg-transparent"
             >Remove Pal</IconButton
           >
         {:else}
@@ -136,7 +136,7 @@
             icon={AddPalIcon}
             on:click={togglePal}
             async
-            class="dark:border dark:hover:border-white dark:hover:bg-transparent"
+            class="bg-panels dark:bg-transparent dark:border dark:hover:border-white dark:hover:bg-transparent"
             >Add Pal</IconButton
           >
         {/if}
@@ -145,7 +145,7 @@
             icon={ChatIcon}
             on:click={() =>
               window.open(`${window.location.origin}/apps/talk/dm/${patp}`)}
-            class="dark:border dark:hover:border-white dark:hover:bg-transparent"
+            class="bg-panels dark:bg-transparent dark:border dark:hover:border-white dark:hover:bg-transparent"
             >Message</IconButton
           >
         {/if}

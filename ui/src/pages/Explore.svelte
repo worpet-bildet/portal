@@ -129,7 +129,7 @@
       icon={SparklesIcon}
       active={filters.has('new')}
       on:click={() => toggleFilter('new')}
-      class="dark:hover:border-white dark:border"
+      class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
       >New to me
     </IconButton>
     <IconButton
@@ -138,7 +138,8 @@
       on:click={() => {
         toggleFilter('apps');
       }}
-      class="dark:hover:border-white dark:border">Apps</IconButton
+      class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+      >Apps</IconButton
     >
     <IconButton
       icon={PeopleIcon}
@@ -146,7 +147,8 @@
       on:click={() => {
         toggleFilter('groups');
       }}
-      class="dark:hover:border-white dark:border">Groups</IconButton
+      class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+      >Groups</IconButton
     >
     <IconButton
       icon={PersonIcon}
@@ -154,7 +156,8 @@
       on:click={() => {
         toggleFilter('ships');
       }}
-      class="dark:hover:border-white dark:border">People</IconButton
+      class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+      >People</IconButton
     >
     <IconButton
       icon={CollectionIcon}
@@ -162,7 +165,8 @@
       on:click={() => {
         toggleFilter('collections');
       }}
-      class="dark:hover:border-white dark:border">Collections</IconButton
+      class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+      >Collections</IconButton
     >
   </div>
   <p class="text-grey text-sm">

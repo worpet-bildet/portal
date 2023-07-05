@@ -139,10 +139,14 @@
             icon={PlusIcon}
             on:click={join}
             async
-            class="dark:hover:border-white dark:border">Join Group</IconButton
+            class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+            >Join Group</IconButton
           >
         {:else if joinedDetails.joining}
-          <IconButton loading async class="dark:hover:border-white dark:border"
+          <IconButton
+            loading
+            async
+            class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
             >Joining...</IconButton
           >
         {:else}
@@ -159,13 +163,15 @@
             icon={CrossIcon}
             on:click={leave}
             async
-            class="dark:hover:border-white dark:border">Leave</IconButton
+            class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+            >Leave</IconButton
           >
         {/if}
         <IconButton
           icon={ShareIcon}
           on:click={() => (recommendModalOpen = true)}
-          class="dark:hover:border-white dark:border">Recommend</IconButton
+          class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+          >Recommend</IconButton
         >
       </SidebarGroup>
       {#if sortedRecommendations.length > 0}

@@ -160,14 +160,15 @@
               return;
           }
         }}
-        class="dark:hover:border-white dark:border"
+        class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
       >
         Save</IconButton
       >
       <IconButton
         icon={LeftArrowIcon}
         on:click={pop}
-        class="dark:hover:border-white dark:border">Back</IconButton
+        class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+        >Back</IconButton
       >
     </SidebarGroup>
   </RightSidebar>

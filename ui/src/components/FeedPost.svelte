@@ -166,8 +166,8 @@
             <div class="rounded-full overflow-hidden">
               <IconButton
                 icon={ChatIcon}
-                active={showCommentForm}
                 on:click={() => (showCommentForm = !showCommentForm)}
+                class="dark:hover:stroke-white hover:stroke-black hover:bg-transparent stroke-grey"
               />
             </div>
             <div class="pt-2 text-sm w-2 text-grey">
