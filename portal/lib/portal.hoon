@@ -503,6 +503,11 @@
 ::
 ++  validate-sig
   |=  [dist-desk=@t dev=ship our=ship now=time sig=signature]
+  :: ~&  "dist-desk: {<dist-desk>}"
+  :: ~&  "dev: {<dev>}"
+  :: ~&  "our: {<our>}"
+  :: ~&  "now: {<now>}"
+  :: ~&  "sig: {<sig>}"  
   ?~  dist-desk  %.y
   =/  dist-desk  (parse-dist-desk:misc dist-desk)
   ?~  dist-desk  %.n

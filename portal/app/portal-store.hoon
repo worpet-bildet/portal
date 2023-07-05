@@ -205,12 +205,11 @@
         %whole
       ?:  ?&  ?=(%app -.bespoke.item.u.wave.msg)
               ?=(%def lens.item.u.wave.msg)
-              !(validate-sig dist-desk.bespoke.item.u.wave.msg src.msg our.bowl now.bowl sig.bespoke.item.u.wave.msg)
           ==
-        ~&  >>>  "Bad sig on app! Malicious!"
-        =.  item-sub
-          (quit:da-item ship.key.item.u.wave.msg %portal-store [%item (key-to-path:conv key.item.u.wave.msg)])
-        `this
+          :_  this  :_  ~
+          :*  %pass  /validate-sig  %arvo  %k  %fard  %portal  %validate-sig  %noun
+             !>([dist-desk.bespoke.item.u.wave.msg src.msg our.bowl now.bowl sig.bespoke.item.u.wave.msg item.u.wave.msg])
+          ==
       =/  cards
         ?.  ?&  =('global' time.key.item.u.wave.msg)
                 ?=([%feed *] bespoke.item.u.wave.msg)
@@ -231,6 +230,29 @@
   ^-  (quip card:agent:gall _this)
   ?+  wire  `this
     [~ %sss %behn @ @ @ %item @ @ @ @ ~]  [(behn:da-item |3:wire) this]
+    ::
+    [%validate-sig ~]
+  ?>  ?=([%khan %arow *] sign)
+  ?.  ?=(%.y -.p.sign)
+    ~&  >>  "app validation thread failed"
+    `this
+  =+  !<  $:  result=?
+              dist-desk=@t
+              src=@p
+              our=@p 
+              now=@da 
+              sig=signature
+              =item
+          ==
+      q.p.p.sign
+  ?:  result
+    ~&  >  "app sig valid"
+    :_  this
+    (upd:cards-methods:stor item)
+  ~&  >>>  "Bad sig on app! Malicious!"
+  =.  item-sub
+    (quit:da-item ship.key.item %portal-store [%item (key-to-path:conv key.item)])
+  `this
   ==
 ::
 ++  on-watch  _`this
