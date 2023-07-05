@@ -1,5 +1,4 @@
 <script>
-  import { ethers } from 'ethers';
   import { Confetti } from 'svelte-confetti';
   import config from '@root/config';
   import { api, me } from '@root/api';
@@ -37,6 +36,7 @@
     Tabs,
   } from '@fragments';
 
+  // TODO: there must be a better way
   let cord,
     ship,
     time,
@@ -73,39 +73,43 @@
     loadApp($state);
   }
 
+  // It's valuable to know a few things before reading this function:
+  // Portal has the concept of "temp" items and "def" items. A temp item is one
+  // that is local to the ship using Portal. The item is created by the user's
+  // Portal instance and usually mandates fetching some data from an external
+  // source, such as an App's treaty data.
+  // A "def" item on the other hand, is one that is hosted by the creator of the
+  // item. We use this for apps such that the developer of the application can
+  // add screenshots. It's also the item against which we tag all reviews.
   const loadApp = (s) => {
-    // Here we should get the app devs from our state, and check whether we have
-    // a mapping for it at the moment
     if (!ship) return;
-    let actualDev;
+    // we re-assign `ship` here to the "actual dev"
     ship = s?.appDevs?.[`${ship}/${cord}`] || ship;
-
-    if (cord || actualDev) defKey = `/app/${ship}//${cord}`;
-    if (time) defKey = `/app/${ship}//${time}`;
-
-    // don't ask
     if (cord) {
       itemKey = `/app/${ship}/${cord}/`;
-    } else if (time) {
+      defKey = `/app/${ship}//${cord}`;
+      desk = cord;
+    }
+    if (time) {
       isDefItem = true;
+      defKey = `/app/${ship}//${time}`;
       itemKey = defKey;
+      desk = time;
     }
-
     if (!itemKey) return;
-    desk = cord || time;
 
-    // Try to load the defItem if we already have one in state
-    if (!isDefItem) {
-      item = getItem(defKey);
-      if (!item) {
-        api.portal.do.subscribe(keyStrToObj(defKey));
-      } else {
-        itemKey = defKey;
-      }
+    // Try to load the defItem regardless
+    item = getItem(defKey);
+    if (item) {
+      // we know that this is a defitem now
+      itemKey = defKey;
+    } else {
+      // subscribe to the def item, just in case
+      api.portal.do.subscribe(keyStrToObj(defKey));
+      item = getItem(itemKey);
     }
 
-    item = getItem(itemKey);
-
+    // if we don't have a temp OR def item in state, just subscribe and wait
     if (s.isLoaded && !item) {
       return api.portal.do.subscribe(keyStrToObj(itemKey));
     }
@@ -190,33 +194,23 @@
     provePurchaseModalOpen = true;
   };
 
-  $: {
-    if (isValidTxHash(proofOfPurchaseTxHash)) {
-      api.portal.do.confirmPayment(distShip, proofOfPurchaseTxHash);
-      isInstalling = true;
-      provePurchaseModalOpen = false;
-      paymentModalOpen = true;
-      tx = { hash: proofOfPurchaseTxHash };
-    }
+  let tx;
+  $: if (isValidTxHash(proofOfPurchaseTxHash)) {
+    api.portal.do.confirmPayment(distShip, proofOfPurchaseTxHash);
+    isInstalling = true;
+    provePurchaseModalOpen = false;
+    paymentModalOpen = true;
+    tx = { hash: proofOfPurchaseTxHash };
   }
 
-  let tx;
   const pay = async () => {
     if (!$state.payment) return;
-    let signer, provider;
-    if (window.ethereum == null) {
-      provider = ethers.getDefaultProvider();
-    } else {
-      provider = new ethers.BrowserProvider(window.ethereum);
-      signer = await provider.getSigner();
-    }
-    if (!signer) return;
-    tx = await signer.sendTransaction({
-      to: $state.payment?.['receiving-address'],
-      value: $state.payment?.['eth-price'],
-      data: $state.payment?.['hex'], // why
-      chainId: config.chainId,
-    });
+    tx = await sendTransaction(
+      $state.payment?.['receiving-address'],
+      $state.payment?.['eth-price'],
+      $state.payment?.['hex'],
+      config.chainId
+    );
     api.portal.do.confirmPayment(distShip, tx.hash);
     isInstalling = true;
   };

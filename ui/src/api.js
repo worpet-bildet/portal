@@ -1,6 +1,6 @@
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import Urbit from '@urbit/http-api';
-import { writable, get } from 'svelte/store';
+import { writable } from 'svelte/store';
 import { toUrbitTime } from '@root/util';
 
 export const urbit = new Urbit('', '', 'portal');
@@ -12,17 +12,15 @@ export const scry = (s) => urbit.scry(s);
 export const me = `~${urbit.ship}`;
 
 // we use this a lot
-export const pmPoke = (json) => {
-  return poke({
+export const pmPoke = (json) =>
+  poke({
     app: 'portal-manager',
     mark: 'portal-action',
     json,
   });
-};
 
 let subqueue = writable([]);
 let subscribingTo = {};
-
 export const subscribeToItem = (keyObj) => {
   if (keyObj.time === 'all') return; // FIXME a bit hacky
   if (subscribingTo[JSON.stringify(keyObj)]) return;
@@ -151,7 +149,6 @@ export const api = {
         const fileName = fileParts.slice(0, -1);
         const fileExtension = fileParts.pop();
         const timestamp = toUrbitTime(new Date()).slice(1);
-
         const params = {
           Bucket: s3.configuration.currentBucket,
           Key: `${me}/${timestamp}-${fileName}.${fileExtension}`,
@@ -159,7 +156,6 @@ export const api = {
           ACL: 'public-read',
           ContentType: file.type,
         };
-
         let client = new S3Client({
           credentials: s3.credentials,
           endpoint: s3.credentials.endpoint,
@@ -167,7 +163,6 @@ export const api = {
         });
         const command = new PutObjectCommand(params);
         await client.send(command);
-
         return `${s3.credentials.endpoint}/${params.Bucket}/${params.Key}`;
       },
     },
@@ -202,98 +197,37 @@ subqueue.subscribe((q) => {
   }
 });
 
-export const usePortalStoreSubscription = (onEvent) => {
-  const portalStoreSub = urbit.subscribe({
-    app: 'portal-store',
-    path: '/updates',
+export const useSubscription = (app, path, onEvent) => {
+  const sub = urbit.subscribe({
+    app,
+    path,
     event: onEvent,
     err: console.error,
     quit: console.error,
   });
-
-  return () => api?.unsubscribe(portalStoreSub);
+  return () => urbit.unsubscribe(sub);
 };
 
-export const usePortalManagerSubscription = (onEvent) => {
-  const portalManagerSub = urbit.subscribe({
-    app: 'portal-manager',
-    path: '/updates',
-    event: onEvent,
-    err: console.error,
-    quit: console.error,
-  });
+export const usePortalStoreSubscription = (onEvent) =>
+  useSubscription('portal-store', '/updates', onEvent);
 
-  return () => api?.unsubscribe(portalManagerSub);
-};
+export const usePortalManagerSubscription = (onEvent) =>
+  useSubscription('portal-manager', '/updates', onEvent);
 
-export const useSocialSubscription = (onEvent) => {
-  const socialSub = urbit.subscribe({
-    app: 'portal-graph',
-    path: '/updates',
-    event: onEvent,
-    err: console.error,
-    quit: console.error,
-  });
+export const useSocialSubscription = (onEvent) =>
+  useSubscription('portal-graph', '/updates', onEvent);
 
-  return () => api?.unsubscribe(socialSub);
-};
+export const useContactsSubscription = (onEvent) =>
+  useSubscription('contacts', '/news', onEvent);
 
-export const useContactsSubscription = (onEvent) => {
-  const contactsSub = urbit.subscribe({
-    app: 'contacts',
-    path: '/news',
-    event: onEvent,
-    err: console.error,
-    quit: console.error,
-  });
+export const useGroupsSubscription = (onEvent) =>
+  useSubscription('groups', '/groups', onEvent);
 
-  return () => api?.unsubscribe(contactsSub);
-};
+export const useDocketSubscription = (onEvent) =>
+  useSubscription('docket', '/charges', onEvent);
 
-export const useGroupsSubscription = (onEvent) => {
-  const groupsSub = urbit.subscribe({
-    app: 'groups',
-    path: '/groups',
-    event: onEvent,
-    err: console.error,
-    quit: console.error,
-  });
+export const useRadioSubscription = (onEvent) =>
+  useSubscription('tower', '/greg/local', onEvent);
 
-  return () => api?.unsubscribe(groupsSub);
-};
-
-export const useDocketSubscription = (onEvent) => {
-  const docketSub = urbit.subscribe({
-    app: 'docket',
-    path: '/charges',
-    event: onEvent,
-    err: console.error,
-    quit: console.error,
-  });
-
-  return () => api?.unsubscribe(docketSub);
-};
-
-export const useRadioSubscription = (onEvent) => {
-  const radioSub = urbit.subscribe({
-    app: 'tower',
-    path: '/greg/local',
-    event: onEvent,
-    err: console.error,
-    quit: console.error,
-  });
-
-  return () => api?.unsubscribe(radioSub);
-};
-
-export const useStorageSubscription = (onEvent) => {
-  const storageSub = urbit.subscribe({
-    app: 'storage',
-    path: '/all',
-    event: onEvent,
-    err: console.error,
-    quit: console.error,
-  });
-
-  return () => api?.unsubscribe(storageSub);
-};
+export const useStorageSubscription = (onEvent) =>
+  useSubscription('storage', '/all', onEvent);
