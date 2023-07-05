@@ -10,10 +10,9 @@
   import SquarePreview from './SquarePreview.svelte';
   import { ArrowPathIcon } from '@fragments';
   export let patp;
-  export let loading;
 
+  let loading = true;
   let collections, curatorCollections;
-  let subscribingTo = {};
   const loadCollections = (patp) => {
     curatorCollections = getCuratorCollections(patp) || [];
     curatorCollections.forEach((c) => {

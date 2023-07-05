@@ -33,15 +33,24 @@
   let { patp } = params;
 
   let feed = [];
-  let curator, isMyPal, subscribingToCurator;
+  let curator, isMyPal;
   const loadCurator = async () => {
     curator = getCurator(patp);
     feed = getCuratorFeed(patp);
     isMyPal = !!$state.pals?.[patp.slice(1)];
-    if (!feed && $state.isLoaded && !subscribingToCurator) {
-      subscribingToCurator = true;
-      api.portal.do.subscribeToFeed(patp);
-      api.portal.do.subscribeToMainCollection(patp);
+    if (!feed && $state.isLoaded) {
+      api.portal.do.subscribe({
+        struc: 'feed',
+        ship: patp,
+        time: '~2000.1.1',
+        cord: '',
+      });
+      api.portal.do.subscribe({
+        struc: 'collection',
+        ship: patp,
+        time: '~2000.1.1',
+        cord: '',
+      });
     }
   };
 
@@ -97,7 +106,7 @@
               </div>
             {/if}
           {:else if activeTab === 'Collections'}
-            <CollectionsGrid {patp} bind:loading={subscribingToCurator} />
+            <CollectionsGrid {patp} />
           {/if}
         </div>
       </div>
