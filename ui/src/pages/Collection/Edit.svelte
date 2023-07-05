@@ -133,20 +133,17 @@
         <IconButton
           icon={PlusIcon}
           on:click={add}
-          common
-          darkMode={$state.darkmode}>Add Item</IconButton
+          class="dark:hover:border-white dark:border">Add Item</IconButton
         >
         <IconButton
           icon={CheckIcon}
           on:click={save}
-          common
-          darkMode={$state.darkmode}>Save</IconButton
+          class="dark:hover:border-white dark:border">Save</IconButton
         >
         <IconButton
           icon={LeftArrowIcon}
           on:click={pop}
-          common
-          darkMode={$state.darkmode}>Back</IconButton
+          class="dark:hover:border-white dark:border">Back</IconButton
         >
       </SidebarGroup>
     </RightSidebar>

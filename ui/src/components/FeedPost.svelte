@@ -153,11 +153,7 @@
           config={{
             readOnly: true,
             countStars: 5,
-            range: {
-              min: 0,
-              max: 5,
-              step: 1,
-            },
+            range: { min: 0, max: 5, step: 1 },
             score: rating,
           }}
         />
@@ -172,11 +168,6 @@
                 icon={ChatIcon}
                 active={showCommentForm}
                 on:click={() => (showCommentForm = !showCommentForm)}
-                classes="
-                  {$state.darkmode ? 'hover:fill-white' : 'hover:fill-black'}
-                  {showCommentForm
-                  ? 'dark:fill-white fill-black'
-                  : 'fill-grey'}"
               />
             </div>
             <div class="pt-2 text-sm w-2 text-grey">
@@ -200,9 +191,8 @@
             <div class="rounded-full overflow-hidden">
               <IconButton
                 icon={LikeIcon}
-                active={false}
                 on:click={likePost}
-                classes="dark:hover:stroke-white hover:stroke-black stroke-grey dark:hover:stroke-error"
+                class="dark:hover:stroke-white hover:stroke-black stroke-grey dark:hover:stroke-error"
               />
             </div>
             <div class="pt-2 pb-2 text-sm text-grey">

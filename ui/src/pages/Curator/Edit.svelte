@@ -160,16 +160,14 @@
               return;
           }
         }}
-        common
-        darkMode={$state.darkmode}
+        class="dark:hover:border-white dark:border"
       >
         Save</IconButton
       >
       <IconButton
         icon={LeftArrowIcon}
         on:click={pop}
-        common
-        darkMode={$state.darkmode}>Back</IconButton
+        class="dark:hover:border-white dark:border">Back</IconButton
       >
     </SidebarGroup>
   </RightSidebar>

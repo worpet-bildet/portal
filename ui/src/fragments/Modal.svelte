@@ -31,7 +31,7 @@
         <IconButton
           icon={CrossIcon}
           on:click={() => (open = false)}
-          classes="absolute right-5 top-5"
+          class="absolute right-5 top-5"
         />
         <slot />
       </div>

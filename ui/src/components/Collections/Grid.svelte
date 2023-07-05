@@ -70,7 +70,7 @@
   {#if me === patp && hasBlog && !hasBlogCollection && !subbingToBlogs}
     <button
       on:click={subToBlog}
-      class="flex flex-col items-center justify-center gap-4 col-span-4 h-full bg-purple text-white border shadow rounded-lg"
+      class="flex flex-col items-center justify-center gap-4 col-span-4 h-full bg-purple text-white border dark:hover:border-white shadow rounded-lg"
     >
       <div class="w-5 h-5">
         <ArrowPathIcon />
@@ -79,7 +79,7 @@
     </button>
   {:else if subbingToBlogs && !hasBlogCollection}
     <div
-      class="flex items-center justify-center col-span-4 h-full bg-purple text-white border shadow rounded-lg"
+      class="flex items-center justify-center col-span-4 h-full bg-purple text-white border dark:hover:border-white shadow rounded-lg"
     >
       Syncing...
     </div>

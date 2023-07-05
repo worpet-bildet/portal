@@ -6,21 +6,23 @@
   export let tooltip = '';
   export let icon;
   export let active;
-  export let common;
   export let darkMode;
+
+  //class:dark:border={common && darkMode}
+  //class:dark:border-white={common && darkMode && active}
 </script>
 
 <button
-  class="py-2 px-2 flex hover:bg-hover items-center gap-4 hover:duration-500 overflow-hidden rounded-lg dark:fill-white {$$props.classes}"
+  class="
+    py-2 px-2 flex hover:bg-hover items-center gap-4 duration-500
+    overflow-hidden rounded-lg dark:fill-white dark:hover:border-white
+    {$$props.class}
+  "
   class:pointer-events-none={disabled}
   class:opacity-50={disabled}
   class:cursor-not-allowed={disabled}
-  class:dark:border={common && darkMode}
-  class:dark:border-white={common && darkMode && active}
-  class:dark:hover:border-white={common && darkMode}
-  class:hover:bg-hover={common && !darkMode}
-  class:bg-hover={common && !darkMode && active}
-  class:bg-panels={common && !darkMode && !active}
+  class:bg-hover={active}
+  class:dark:hover:bg-transparent={!active}
   title={tooltip}
   on:click
   on:click={() => (async && !disabled ? (loading = true) : null)}

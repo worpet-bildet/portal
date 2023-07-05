@@ -58,10 +58,18 @@
         <IconButton
           icon={$state.darkmode ? SunIcon : MoonIcon}
           on:click={toggleDarkmode}
-          classes="
-            {(!pagesWithoutCoverPhoto.some((v) => $location.includes(v)) && $location !== '/') && !$state.darkmode ? "fill-white" : "fill-grey"}
-            {$state.darkmode ? "hover:fill-white" : ""}
-            {!$state.darkmode && !pagesWithoutCoverPhoto.some((v) => $location.includes(v)) && $location !== '/' ? "hover:fill-offwhite" : "hover:fill-black"}"
+          class="hover:bg-transparent
+            {!pagesWithoutCoverPhoto.some((v) => $location.includes(v)) &&
+          $location !== '/' &&
+          !$state.darkmode
+            ? 'fill-white'
+            : 'fill-grey'}
+            {$state.darkmode ? 'hover:fill-white' : ''}
+            {!$state.darkmode &&
+          !pagesWithoutCoverPhoto.some((v) => $location.includes(v)) &&
+          $location !== '/'
+            ? 'hover:fill-offwhite'
+            : 'hover:fill-black'}"
         />
       </div>
       {#each nav as n}

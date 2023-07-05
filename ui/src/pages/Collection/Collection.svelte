@@ -1,7 +1,14 @@
 <script>
   import { push, pop } from 'svelte-spa-router';
   import { me } from '@root/api';
-  import { state, getItem, getCollectionItems, getCurator, keyStrToObj, getMoreFromThisShip } from '@root/state';
+  import {
+    state,
+    getItem,
+    getCollectionItems,
+    getCurator,
+    keyStrToObj,
+    getMoreFromThisShip,
+  } from '@root/state';
   import { getMeta } from '@root/util';
   import {
     ItemDetail,
@@ -45,7 +52,9 @@
       avatar={image}
       type="collection"
     >
-      <div class="grid gap-y-4 bg-panels dark:bg-darkgrey dark:border p-4 rounded-lg">
+      <div
+        class="grid gap-y-4 bg-panels dark:bg-darkgrey dark:border p-4 rounded-lg"
+      >
         {#each items as key}
           <ItemVerticalListPreview {key} />
         {/each}
@@ -53,21 +62,21 @@
     </ItemDetail>
     <RightSidebar>
       <SidebarGroup>
-        <IconButton icon={LeftArrowIcon} on:click={pop} common darkMode={$state.darkmode}>Back</IconButton>
+        <IconButton
+          icon={LeftArrowIcon}
+          on:click={pop}
+          class="dark:hover:border-white dark:border">Back</IconButton
+        >
         <IconButton
           icon={ShareIcon}
           on:click={() => (recommendModalOpen = true)}
-          common
-          darkMode={$state.darkmode}
-        >Recommend</IconButton
+          class="dark:hover:border-white dark:border">Recommend</IconButton
         >
         {#if me === ship}
           <IconButton
             icon={EditIcon}
             on:click={() => push(`/collection-edit/${wild}`)}
-            common
-            darkMode={$state.darkmode}
-          >Edit</IconButton
+            class="dark:hover:border-white dark:border">Edit</IconButton
           >
         {/if}
       </SidebarGroup>

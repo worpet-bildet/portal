@@ -18,7 +18,7 @@
 </script>
 
 <Modal open={false}>
-  <StepForm bind:formstep {formsteps} darkMode={$state.darkmode}>
+  <StepForm bind:formstep {formsteps}>
     <div class="flex flex-col gap-4">
       {#if formstep === 'welcome'}
         <div class="text-2xl">Welcome to Portal</div>

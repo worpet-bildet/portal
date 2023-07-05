@@ -100,16 +100,15 @@
   </div>
   <div class="col-span-12 col-start-2 flex justify-between">
     {#if recommendButtons}
-      <div class="flex gap-1">
+      <div class="flex gap-1 items-center">
         <div class="rounded-full overflow-hidden">
           <IconButton
             icon={AppIcon}
+            active={appModalOpen}
             on:click={() => {
               appModalOpen = true;
             }}
-            classes="stroke-grey fill-grey {$state.darkmode
-              ? 'hover:fill-white'
-              : 'hover:fill-black'}"
+            class="stroke-grey fill-grey hover:fill-black dark:hover:fill-white"
           />
         </div>
         <div class="rounded-full overflow-hidden">
@@ -118,8 +117,7 @@
             on:click={() => {
               groupModalOpen = true;
             }}
-            classes="stroke-grey fill-grey
-              {$state.darkmode ? 'hover:fill-white' : 'hover:fill-black'}"
+            class="stroke-grey fill-grey hover:fill-black dark:hover:fill-white"
           />
         </div>
         <input
@@ -138,9 +136,7 @@
               if (!$state.s3 || !$state.s3.configuration?.currentBucket) return;
               fileInput.click();
             }}
-            classes="stroke-grey fill-grey {$state.darkmode
-              ? 'hover:fill-white'
-              : 'hover:fill-black'}"
+            class="stroke-grey fill-grey hover:fill-black dark:hover:fill-white"
           />
         </div>
       </div>
@@ -150,11 +146,7 @@
         config={{
           readOnly: false,
           countStars: 5,
-          range: {
-            min: 0,
-            max: 5,
-            step: 1,
-          },
+          range: { min: 0, max: 5, step: 1 },
           score: rating,
         }}
       />
@@ -180,8 +172,7 @@
       {/if}
       {#each Object.entries(apps) as [path, { title, image, color }]}
         <button
-          class="grid grid-cols-12 dark:border dark:hover:border-white hover:duration-500 rounded-lg items-center gap-4 p-1"
-          class:hover:bg-panels={!$state.darkmode}
+          class="grid grid-cols-12 dark:border dark:hover:border-white hover:duration-500 rounded-lg items-center gap-4 p-1 hover:bg-panels dark:hover:bg-transparent"
           on:click={() => {
             appModalOpen = false;
             recommendModalOpen = true;
@@ -209,8 +200,7 @@
       {/if}
       {#each Object.entries(groups) as [path, { meta: { title, image } }]}
         <button
-          class="grid grid-cols-12 dark:border dark:hover:border-white hover:duration-500 rounded-lg items-center gap-4 p-1"
-          class:hover:bg-panels={!$state.darkmode}
+          class="grid grid-cols-12 dark:border dark:hover:border-white hover:duration-500 rounded-lg items-center gap-4 p-1 hover:bg-panels dark:hover:bg-transparent"
           on:click={() => {
             groupModalOpen = false;
             recommendModalOpen = true;

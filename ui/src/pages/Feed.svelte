@@ -208,7 +208,7 @@
           {#each happeningSoonTuple[1] as { title, link, startDate, endDate, frequency, location, happeningSoon, formattedStart }}
             {#if happeningSoon}
               <button
-                class="flex flex-col gap-2 rounded-md p-2 hover:bg-hover dark:hover:border-white hover:duration-500 text-left"
+                class="flex flex-col gap-2 rounded-md p-2 hover:bg-hover dark:hover:bg-transparent dark:border dark:hover:border-white hover:duration-500 text-left"
                 on:click={() => window.open(`${link}`, '_blank')}
               >
                 <div>{title}</div>
@@ -241,7 +241,7 @@
         <div class="flex flex-col gap-4">
           {#each sortRadioStations($state.radioStations) as { description, viewers, location }}
             <button
-              class="flex flex-col gap-2 rounded-md p-2 hover:bg-hover dark:hover:border-white hover:duration-500 text-left"
+              class="flex flex-col gap-2 rounded-md p-2 hover:bg-hover dark:hover:bg-transparent dark:border dark:hover:border-white hover:duration-500 text-left"
               on:click={() => tuneRadio(location)}
             >
               <div>{description}</div>
@@ -250,7 +250,7 @@
               >
                 <div>by {location}</div>
                 <div class="flex items-center gap-1">
-                  <div class="w-4"><PersonIcon /></div>
+                  <div class="w-4 dark:fill-white"><PersonIcon /></div>
                   <div>{viewers}</div>
                 </div>
               </div>

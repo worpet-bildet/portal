@@ -323,9 +323,7 @@
                   if (!$state.s3 || !$state.s3.configuration.currentBucket)
                     return;
                   fileInput.click();
-                }}
-                common
-                darkMode={$state.darkmode}>Add Screenshots</IconButton
+                }}>Add Screenshots</IconButton
               >
             </div>
           </div>
@@ -403,49 +401,29 @@
             icon={ExternalDestinationIcon}
             on:click={() =>
               window.open(`${window.location.origin}${servedFrom}/`)}
-            common
-            darkMode={$state.darkmode}>Open</IconButton
+            >Open</IconButton
           >
         {:else if isInstalling}
-          <IconButton loading common darkMode={$state.darkmode}
-            >Installing...</IconButton
-          >
+          <IconButton loading>Installing...</IconButton>
         {:else if ethPrice && !purchased}
-          <IconButton
-            icon={EthereumIcon}
-            on:click={purchase}
-            darkMode={$state.darkmode}
-            common>Purchase</IconButton
+          <IconButton icon={EthereumIcon} on:click={purchase}
+            >Purchase</IconButton
           >
         {:else}
-          <IconButton
-            icon={InstallIcon}
-            on:click={install}
-            common
-            darkMode={$state.darkmode}>Install</IconButton
-          >
+          <IconButton icon={InstallIcon} on:click={install}>Install</IconButton>
         {/if}
         {#if link}
-          <IconButton
-            icon={GlobeIcon}
-            on:click={() => window.open(link)}
-            common
-            darkMode={$state.darkmode}>View Website</IconButton
+          <IconButton icon={GlobeIcon} on:click={() => window.open(link)}
+            >View Website</IconButton
           >
         {/if}
         <IconButton
           icon={ShareIcon}
-          on:click={() => (recommendModalOpen = true)}
-          common
-          darkMode={$state.darkmode}>Recommend</IconButton
+          on:click={() => (recommendModalOpen = true)}>Recommend</IconButton
         >
         {#if isInstalled}
-          <IconButton
-            icon={CrossIcon}
-            on:click={uninstall}
-            async
-            common
-            darkMode={$state.darkmode}>Uninstall</IconButton
+          <IconButton icon={CrossIcon} on:click={uninstall} async
+            >Uninstall</IconButton
           >
         {/if}
       </SidebarGroup>
@@ -497,19 +475,14 @@
           </div>
         </div>
         <div class="flex justify-end w-full gap-8">
-          <IconButton
-            icon={InstallIcon}
-            on:click={provePurchase}
-            darkMode={$state.darkmode}
-            common>I already paid!</IconButton
+          <IconButton icon={InstallIcon} on:click={provePurchase}
+            >I already paid!</IconButton
           >
           <IconButton
             icon={EthereumIcon}
             loading={!$state.payment}
             disabled={!$state.payment}
             async
-            darkMode={$state.darkmode}
-            common
             on:click={pay}>Pay with ETH</IconButton
           >
         </div>

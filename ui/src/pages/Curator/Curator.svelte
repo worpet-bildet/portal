@@ -119,8 +119,8 @@
             <IconButton
               icon={EditIcon}
               on:click={() => push(`/${patp}/edit`)}
-              common
-              darkMode={$state.darkmode}>Edit Profile</IconButton
+              class="dark:border dark:hover:border-white dark:hover:bg-transparent"
+              >Edit Profile</IconButton
             >
           </div>
         {:else if isMyPal}
@@ -128,16 +128,16 @@
             icon={RemovePalIcon}
             on:click={togglePal}
             async
-            common
-            darkMode={$state.darkmode}>Remove Pal</IconButton
+            class="dark:border dark:hover:border-white dark:hover:bg-transparent"
+            >Remove Pal</IconButton
           >
         {:else}
           <IconButton
             icon={AddPalIcon}
             on:click={togglePal}
             async
-            common
-            darkMode={$state.darkmode}>Add Pal</IconButton
+            class="dark:border dark:hover:border-white dark:hover:bg-transparent"
+            >Add Pal</IconButton
           >
         {/if}
         {#if me !== patp}
@@ -145,8 +145,8 @@
             icon={ChatIcon}
             on:click={() =>
               window.open(`${window.location.origin}/apps/talk/dm/${patp}`)}
-            common
-            darkMode={$state.darkmode}>Message</IconButton
+            class="dark:border dark:hover:border-white dark:hover:bg-transparent"
+            >Message</IconButton
           >
         {/if}
       </SidebarGroup>

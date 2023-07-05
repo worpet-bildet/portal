@@ -45,7 +45,9 @@
 </script>
 
 {#if previewItems && previewItems.length > 0}
-  <div class="rounded-lg overflow-hidden">
+  <div
+    class="rounded-lg overflow-hidden dark:border dark:hover:border-white duration-500"
+  >
     <div class="grid grid-cols-2 grid-rows-2" bind:this={container}>
       {#if image}
         <div class="row-span-2 col-span-2">

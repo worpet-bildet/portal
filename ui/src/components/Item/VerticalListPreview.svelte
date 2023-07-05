@@ -61,10 +61,9 @@
         dispatch('selected', { key, selected });
       }
     }}
-    class="grid grid-cols-6 w-full items-center gap-4 p-1 dark:border dark:hover:border-white hover:duration-500 cursor-pointer rounded-lg text-sm text-left"
-    class:hover:bg-hover={!$state.darkmode}
-    class:bg-panels={selected && !$state.darkmode}
-    class:border-white={selected && $state.darkmode}
+    class="grid grid-cols-6 w-full items-center gap-4 p-1 dark:border dark:hover:border-white hover:duration-500 cursor-pointer rounded-lg text-sm text-left hover:bg-hover dark:hover:bg-transparent"
+    class:bg-panels={selected}
+    class:dark:border-white={selected}
   >
     <div
       class="border overflow-hidden rounded-md"

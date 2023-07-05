@@ -129,8 +129,6 @@
       icon={SparklesIcon}
       active={filters.has('new')}
       on:click={() => toggleFilter('new')}
-      common
-      darkMode={$state.darkmode}
       >New to me
     </IconButton>
     <IconButton
@@ -139,9 +137,8 @@
       on:click={() => {
         toggleFilter('apps');
       }}
-      classes="dark:stroke-white dark:fill-white"
-      common
-      darkMode={$state.darkmode}>Apps</IconButton
+      class="dark:stroke-white dark:fill-white dark:hover:bg-transparent dark:hover:border-white dark:border"
+      >Apps</IconButton
     >
     <IconButton
       icon={PeopleIcon}
@@ -149,10 +146,8 @@
       on:click={() => {
         toggleFilter('groups');
       }}
-      classes="stroke-grey fill-grey
-        {$state.darkmode ? 'fill-white hover:fill-white' : 'hover:fill-black'}"
-      common
-      darkMode={$state.darkmode}>Groups</IconButton
+      class="dark:stroke-white dark:fill-white dark:hover:bg-transparent dark:hover:border-white dark:border"
+      >Groups</IconButton
     >
     <IconButton
       icon={PersonIcon}
@@ -160,9 +155,8 @@
       on:click={() => {
         toggleFilter('ships');
       }}
-      classes="dark:stroke-white dark:fill-white"
-      common
-      darkMode={$state.darkmode}>People</IconButton
+      class="dark:stroke-white dark:fill-white dark:hover:bg-transparent dark:hover:border-white dark:border"
+      >People</IconButton
     >
     <IconButton
       icon={CollectionIcon}
@@ -170,8 +164,8 @@
       on:click={() => {
         toggleFilter('collections');
       }}
-      common
-      darkMode={$state.darkmode}>Collections</IconButton
+      class="dark:stroke-white dark:fill-white dark:hover:bg-transparent dark:hover:border-white dark:border"
+      >Collections</IconButton
     >
   </div>
   <p class="text-grey text-sm">
