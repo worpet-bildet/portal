@@ -10,11 +10,7 @@
     getMoreFromThisShip,
   } from '@root/state';
   import { getMeta } from '@root/util';
-  import {
-    ItemDetail,
-    ItemVerticalListPreview,
-    RecommendModal,
-  } from '@components';
+  import { ItemDetail, ItemPreview, RecommendModal } from '@components';
   import {
     EditIcon,
     RightSidebar,
@@ -56,7 +52,7 @@
         class="grid gap-y-4 bg-panels dark:bg-darkgrey dark:border p-4 rounded-lg"
       >
         {#each items as key}
-          <ItemVerticalListPreview {key} />
+          <ItemPreview {key} />
         {/each}
       </div>
     </ItemDetail>
@@ -87,7 +83,7 @@
         <SidebarGroup>
           <div class="text-lg mx-1">More from {ship}</div>
           {#each sortedRecommendations as [recommendation, count]}
-            <ItemVerticalListPreview key={keyStrToObj(recommendation)} small />
+            <ItemPreview key={keyStrToObj(recommendation)} small />
           {/each}
         </SidebarGroup>
       {/if}

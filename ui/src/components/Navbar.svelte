@@ -2,7 +2,7 @@
   import { push, link, location } from 'svelte-spa-router';
   import { state, toggleDarkmode } from '@root/state';
   import { me } from '@root/api';
-  import logo from '@assets/logo.svg';
+  import { Sigil } from '@components';
   import {
     HamburgerIcon,
     CrossIcon,
@@ -10,10 +10,9 @@
     SunIcon,
     MoonIcon,
   } from '@fragments';
-  import MySigil from './MySigil.svelte';
+  import logo from '@assets/logo.svg';
 
   let isMobileNavOpen = false;
-  $: console.log({ isMobileNavOpen });
 
   const pagesWithoutCoverPhoto = ['/explore', '/edit', '-edit/'];
 
@@ -99,7 +98,7 @@
         href={`/${me}`}
         class="w-10 h-10 ml-4 rounded-md overflow-hidden"
       >
-        <MySigil />
+        <Sigil patp={me} />
       </a>
     </div>
 
@@ -137,7 +136,7 @@
         >
           <div class="text-grey">Profile</div>
           <div class="w-10 h-10 rounded-md overflow-hidden">
-            <MySigil />
+            <Sigil patp={me} />
           </div>
         </a>
       </div>

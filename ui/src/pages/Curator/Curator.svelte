@@ -14,7 +14,7 @@
     CollectionsGrid,
     Feed,
     ItemDetail,
-    ItemVerticalListPreview,
+    ItemPreview,
     CollectionsAdd,
     FeedPostForm,
   } from '@components';
@@ -155,7 +155,7 @@
           <div class="grid gap-y-4">
             <div class="text-lg mx-1">{nickname || patp} recommends</div>
             {#each curator.bespoke.groups as key}
-              <ItemVerticalListPreview
+              <ItemPreview
                 small
                 key={{
                   struc: 'group',
@@ -172,7 +172,7 @@
         <SidebarGroup>
           <div class="text-lg mx-1">More from {nickname || patp}</div>
           {#each sortedRecommendations as [recommendation]}
-            <ItemVerticalListPreview key={keyStrToObj(recommendation)} small />
+            <ItemPreview key={keyStrToObj(recommendation)} small />
           {/each}
         </SidebarGroup>
       {/if}

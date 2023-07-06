@@ -18,7 +18,7 @@
     RecommendModal,
     FeedPost,
     FeedPostForm,
-    ItemVerticalListPreview,
+    ItemPreview,
   } from '@components';
   import {
     Modal,
@@ -453,7 +453,7 @@
         <SidebarGroup>
           <div class="text-lg mx-1">More from {ship}</div>
           {#each sortedRecommendations as [recommendation, count]}
-            <ItemVerticalListPreview key={keyStrToObj(recommendation)} small />
+            <ItemPreview key={keyStrToObj(recommendation)} small />
           {/each}
         </SidebarGroup>
       {/if}

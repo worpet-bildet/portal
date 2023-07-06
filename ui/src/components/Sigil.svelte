@@ -11,11 +11,9 @@
 
   $: primaryColor = formatColor(color);
   $: secondaryColor = isLightColor(primaryColor) ? '000000' : 'ffffff';
-  $: {
-    if (primaryColor.length < 6) {
-      primaryColor = '000000';
-      secondaryColor = 'ffffff';
-    }
+  $: if (primaryColor.length < 6) {
+    primaryColor = '000000';
+    secondaryColor = 'ffffff';
   }
 
   // TODO: change to ~zod

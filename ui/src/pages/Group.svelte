@@ -9,11 +9,7 @@
   } from '@root/state';
   import { api } from '@root/api';
   import { getMeta } from '@root/util';
-  import {
-    ItemDetail,
-    RecommendModal,
-    ItemVerticalListPreview,
-  } from '@components';
+  import { ItemDetail, RecommendModal, ItemPreview } from '@components';
   import {
     ChatIcon,
     DiaryIcon,
@@ -178,7 +174,7 @@
         <SidebarGroup>
           <div class="text-lg mx-1">More from {host}</div>
           {#each sortedRecommendations as [recommendation, count]}
-            <ItemVerticalListPreview key={keyStrToObj(recommendation)} small />
+            <ItemPreview key={keyStrToObj(recommendation)} small />
           {/each}
         </SidebarGroup>
       {/if}

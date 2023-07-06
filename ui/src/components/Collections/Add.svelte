@@ -2,7 +2,7 @@
   import { createEventDispatcher } from 'svelte';
   import { state, keyStrToObj, keyStrFromObj } from '@root/state';
   import { api, me } from '@root/api';
-  import { ItemVerticalListPreview, ShipForm } from '@components';
+  import { ItemPreview, ShipForm } from '@components';
   import {
     Modal,
     StepForm,
@@ -170,7 +170,7 @@
             }}
             <div class="flex justify-between">
               <div class="w-full">
-                <ItemVerticalListPreview
+                <ItemPreview
                   {key}
                   clickable={false}
                   selectable
@@ -191,7 +191,7 @@
           {@const key = { struc: 'app', ship, cord: path, time: '' }}
           <div class="flex justify-between">
             <div class="w-full">
-              <ItemVerticalListPreview
+              <ItemPreview
                 {key}
                 clickable={false}
                 selectable
@@ -212,7 +212,7 @@
           >
         </div>
         {#each shipKeys as key}
-          <ItemVerticalListPreview {key} clickable={false} />
+          <ItemPreview {key} clickable={false} />
         {/each}
       {:else if formstep === 'addship'}
         <ShipForm bind:ship={newShip} />
@@ -245,7 +245,7 @@
           >
         </div>
         {#each otherKeys as key}
-          <ItemVerticalListPreview {key} clickable={false} />
+          <ItemPreview {key} clickable={false} />
         {/each}
       {:else if formstep === 'addother'}
         <OtherItemForm bind:item={newOtherItem} />

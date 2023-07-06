@@ -7,7 +7,7 @@
   import { Feed, Group, App, Explore, Api } from './pages';
   import { Curator, EditCurator } from './pages/Curator';
   import { Collection, EditCollection } from './pages/Collection';
-  import { Navbar, Onboard } from '@components';
+  import { Navbar } from '@components';
 
   const routes = {
     '/': Feed,
@@ -47,6 +47,5 @@
     <div class="p-2 z-0 md:px-16 lg:px-32 2xl:px-56">
       <Router {routes} />
     </div>
-    <Onboard />
   </div>
 </main>

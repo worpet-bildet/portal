@@ -10,7 +10,7 @@
     getItem,
   } from '@root/state';
   import { getMeta } from '@root/util';
-  import { ItemVerticalListPreview } from '@components';
+  import { ItemPreview } from '@components';
   import {
     IconButton,
     SparklesIcon,
@@ -179,7 +179,7 @@
     >
       {#if activeItems.length > 0}
         {#each activeItems as key}
-          <ItemVerticalListPreview {key} />
+          <ItemPreview {key} />
         {/each}
       {:else}
         <div class="p-10">

@@ -11,7 +11,7 @@
   } from '@root/state';
   import {
     Feed,
-    ItemVerticalListPreview,
+    ItemPreview,
     SidebarPal,
     FeedPostForm,
     Sigil,
@@ -231,7 +231,7 @@
       <SidebarGroup>
         <div class="text-xl font-bold mx-2">Most recommended</div>
         {#each sortedRecommendations as [recommendation, count]}
-          <ItemVerticalListPreview key={keyStrToObj(recommendation)} small />
+          <ItemPreview key={keyStrToObj(recommendation)} small />
         {/each}
       </SidebarGroup>
     {/if}
@@ -267,7 +267,7 @@
           </div>
           <div class="flex flex-col gap-2">
             {#each recommendedApps as key}
-              <ItemVerticalListPreview {key} small />
+              <ItemPreview {key} small />
             {/each}
           </div>
         </div>

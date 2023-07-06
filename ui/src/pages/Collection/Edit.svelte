@@ -9,7 +9,7 @@
     keyStrFromObj,
   } from '@root/state';
   import { api } from '@root/api';
-  import { ItemVerticalListPreview, CollectionsAddItemForm } from '@components';
+  import { ItemPreview, CollectionsAddItemForm } from '@components';
   import {
     TextArea,
     SortableList,
@@ -117,7 +117,7 @@
       <div class="flex flex-col gap-2">
         <div class="py-2">Items (drag to reorder)</div>
         <SortableList bind:list={items} key="keyStr" let:item>
-          <ItemVerticalListPreview
+          <ItemPreview
             key={item}
             clickable={false}
             removable={true}

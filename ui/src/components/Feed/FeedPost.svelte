@@ -14,7 +14,7 @@
     getLikes,
   } from '@root/state';
   import { getMeta, fromUrbitTime, getAnyLink, isImage } from '@root/util';
-  import { ItemVerticalListPreview, Sigil, FeedPostForm } from '@components';
+  import { ItemPreview, Sigil, FeedPostForm } from '@components';
   import {
     ChatIcon,
     LikeIcon,
@@ -143,7 +143,7 @@
       {/if}
       {#if ref}
         <div class="rounded-lg">
-          <ItemVerticalListPreview key={ref} />
+          <ItemPreview key={ref} />
         </div>
       {/if}
     </div>
