@@ -34,6 +34,12 @@ jobs:
     name: 'Make a glob'
     needs: build-frontend
     steps:
+      - name: Set up S3cmd cli tool
+        uses: s3-actions/s3cmd@v1.5.0
+        with:
+          provider: digitalocean
+          access_key: ${{ secrets.S3_ACCESS_KEY }}
+          secret_key: ${{ secrets.S3_SECRET_KEY }}
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.inputs.tag }}
@@ -56,12 +62,6 @@ jobs:
           BRANCH=${INPUT:-"feat/ci"}
           git pull origin $BRANCH --rebase --autostash
           git push
-      - name: Set up S3cmd cli tool
-        uses: s3-actions/s3cmd@v1.5.0
-        with:
-          provider: digitalocean
-          access_key: ${{ secrets.S3_ACCESS_KEY }}
-          secret_key: ${{ secrets.S3_SECRET_KEY }}
   # deploy:
   #   runs-on: ubuntu-latest
   #   needs: glob
