@@ -52,6 +52,9 @@ jobs:
         with:
           folder: 'ui/dist/*'
           docket: 'portal/desk.docket-0'
+      - name: 'Upload Glob'
+        run: |
+          s3cmd put zod/.urb/put/*.glob s3://portal-glob/
       - name: Commit and Push Glob
         run: |
           git config --global user.name github-actions
