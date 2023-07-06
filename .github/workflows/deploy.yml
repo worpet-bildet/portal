@@ -22,7 +22,9 @@ jobs:
         with:
           node-version-file: ./ui/.nvmrc
       - working-directory: ./ui
-        run: npm run build
+        run: |
+          npm i
+          npm run build
       - uses: actions/upload-artifact@v3
         with:
           name: 'ui-dist'
