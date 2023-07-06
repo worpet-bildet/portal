@@ -1,4 +1,4 @@
-name: Deploy Groups
+name: Glob Portal
 on:
   workflow_dispatch:
     inputs:
