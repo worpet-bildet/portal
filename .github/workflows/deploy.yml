@@ -23,7 +23,7 @@ jobs:
           node-version-file: ./ui/.nvmrc
       - working-directory: ./ui
         run: |
-          npm i
+          npm ci
           npm run build
       - uses: actions/upload-artifact@v3
         with:
