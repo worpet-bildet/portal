@@ -38,6 +38,7 @@ jobs:
         uses: s3-actions/s3cmd@v1.5.0
         with:
           provider: digitalocean
+          region: nyc3
           access_key: ${{ secrets.S3_ACCESS_KEY }}
           secret_key: ${{ secrets.S3_SECRET_KEY }}
       - uses: actions/checkout@v3
@@ -52,9 +53,6 @@ jobs:
         with:
           folder: 'ui/dist/*'
           docket: 'portal/desk.docket-0'
-      - name: 'Upload Glob'
-        run: |
-          s3cmd put zod/.urb/put/*.glob s3://portal-glob/
       - name: Commit and Push Glob
         run: |
           git config --global user.name github-actions
