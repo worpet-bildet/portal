@@ -23,7 +23,7 @@ rsync -avL $1 zod/work/glob
 hood "commit %work"
 dojo "-garden!make-glob %work /glob"
 
-s3cmd put zod/.urb/put/*.glob s3://portal-glob.nyc3.digitaloceanspaces.com/
+s3cmd put zod/.urb/put/*.glob s3://portal-glob.nyc3.digitaloceanspaces.com
 hash=$(ls -1 -c zod/.urb/put | head -1 | sed "s/glob-\([a-z0-9\.]*\).glob/\1/")
 sed -i "s/glob\-[a-z0-9\.]*glob' *[a-z0-9\.]*\]/glob-$hash.glob' $hash]/g" $2
 
