@@ -28,8 +28,6 @@ hash=$(ls -1 -c zod/.urb/put | head -1 | sed "s/glob-\([a-z0-9\.]*\).glob/\1/")
 sed -i "s/glob\-[a-z0-9\.]*glob' *[a-z0-9\.]*\]/glob-$hash.glob' $hash]/g" $2
 
 echo "hash=$(echo $hash)" >> $GITHUB_OUTPUT
-echo "hash=$(echo $hash)"
-echo "$(cat $2)"
 
 hood "exit"
 sleep 5s
