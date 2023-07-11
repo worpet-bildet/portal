@@ -343,7 +343,10 @@ export const handleSubscriptionEvent = (event, type) => {
       state.update((s) => ({ ...s, radioStations: event.response }));
       break;
     case 'storage-update':
-      state.update((s) => ({ ...s, s3: { ...s.s3, ...event['s3-update'] } }));
+      state.update((s) => ({
+        ...s,
+        s3: { ...s.s3, ...event['storage-update'] },
+      }));
       break;
     default:
       break;
