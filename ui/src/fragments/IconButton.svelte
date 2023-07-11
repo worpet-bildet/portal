@@ -6,10 +6,6 @@
   export let tooltip = '';
   export let icon;
   export let active;
-  export let darkMode;
-
-  //class:dark:border={common && darkMode}
-  //class:dark:border-white={common && darkMode && active}
 </script>
 
 <button

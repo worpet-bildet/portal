@@ -4,17 +4,17 @@
 
 @font-face {
   font-family: sauce-medium;
-  src: url("./assets/opensaucesans-medium.woff");
+  src: url("./assets/opensaucesans-medium.woff2");
 }
 
 @font-face {
   font-family: sauce-bold;
-  src: url("./assets/opensaucesans-black.woff");
+  src: url("./assets/opensaucesans-black.woff2");
 }
 
 @font-face {
   font-family: krona;
-  src: url("./assets/kronaone-regular.woff");
+  src: url("./assets/kronaone-regular.woff2");
 }
 
 :root {
