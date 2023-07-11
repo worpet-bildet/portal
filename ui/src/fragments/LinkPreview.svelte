@@ -13,29 +13,33 @@
 </script>
 
 {#await metadata then data}
-  <div
-    class={`flex flex-col rounded-md border text-left bg-panels dark:bg-darkgrey dark:border cursor-pointer`}
-    on:click={clickHandler}
-  >
+  {#if data}
     <div
-      class="w-full h-64 bg-center bg-cover bg-no-repeat"
-      style={`background-image:url(${data.image || placeholderImg});`}
-    />
-    <div class="p-4 flex flex-col gap-4">
-      <div>{data.title || ''}</div>
-      {#if data.description}
-        <span class="hidden md:block whitespace-unset text-grey"
-          >{data.description}</span
-        >
-      {/if}
-      <div>
-        {#if data.siteName}
-          <span>{data.siteName} • </span>
+      class={`flex flex-col rounded-md border text-left bg-panels dark:bg-darkgrey dark:border cursor-pointer`}
+      on:click={clickHandler}
+    >
+      <div
+        class="w-full h-64 bg-center bg-cover bg-no-repeat"
+        style={`background-image:url(${data.image || placeholderImg});`}
+      />
+      <div class="p-4 flex flex-col gap-4">
+        <div>{data.title || ''}</div>
+        {#if data.description}
+          <span class="hidden md:block whitespace-unset text-grey"
+            >{data.description}</span
+          >
         {/if}
-        <span>{data.hostname || ''}</span>
+        <div>
+          {#if data.siteName}
+            <span>{data.siteName} • </span>
+          {/if}
+          <span>{data.hostname || ''}</span>
+        </div>
       </div>
     </div>
-  </div>
+  {:else}
+    <div />
+  {/if}
 {:catch}
   <div />
 {/await}
