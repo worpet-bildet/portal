@@ -236,7 +236,12 @@ export const sendTransaction = async (to, value, data, chainId) => {
     provider = new ethers.BrowserProvider(window.ethereum);
     signer = await provider.getSigner();
   }
-  if (!signer) return;
+  if (!signer) {
+    alert(
+      'Make sure that you have an Ethereum browser wallet installed and unlocked'
+    );
+    return;
+  }
   return signer.sendTransaction({ to, value, data, chainId });
 };
 

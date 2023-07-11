@@ -12,7 +12,13 @@
     getReviewsByTo,
     getMoreFromThisShip,
   } from '@root/state';
-  import { getMeta, fromUrbitTime, isValidTxHash, weiToEth } from '@root/util';
+  import {
+    getMeta,
+    fromUrbitTime,
+    isValidTxHash,
+    weiToEth,
+    sendTransaction,
+  } from '@root/util';
   import {
     ItemDetail,
     RecommendModal,
@@ -205,14 +211,18 @@
 
   const pay = async () => {
     if (!$state.payment) return;
-    tx = await sendTransaction(
-      $state.payment?.['receiving-address'],
-      $state.payment?.['eth-price'],
-      $state.payment?.['hex'],
-      config.chainId
-    );
-    api.portal.do.confirmPayment(distShip, tx.hash);
-    isInstalling = true;
+    try {
+      tx = await sendTransaction(
+        $state.payment?.['receiving-address'],
+        $state.payment?.['eth-price'],
+        $state.payment?.['hex'],
+        config.chainId
+      );
+      api.portal.do.confirmPayment(distShip, tx.hash);
+      isInstalling = true;
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const handlePostReview = async ({ detail: { content, rating } }) => {
