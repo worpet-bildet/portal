@@ -1,18 +1,6 @@
 import _ from 'lodash';
 import { get, writable } from 'svelte/store';
-import {
-  getPortalItems,
-  getPortalAppDevs,
-  getSocialItems,
-  getContacts,
-  getJoinedGroups,
-  getInstalledApps,
-  getPals,
-  getBlogs,
-  getStorageConfiguration,
-  subscribeToGroup,
-  requestRadioChannels,
-} from '@root/api';
+import { api } from '@root/api';
 import { save, load } from '@root/storage';
 import config from '@root/config';
 import { fromUrbitTime } from '@root/util';
@@ -29,7 +17,7 @@ export const toggleDarkmode = () => {
 };
 
 export const refreshPortalItems = () => {
-  getPortalItems().then(({ items }) => {
+  api.portal.get.items().then(({ items }) => {
     state.update((s) => {
       items.forEach((i) => {
         s[i.keyStr] = i;
@@ -41,37 +29,31 @@ export const refreshPortalItems = () => {
 };
 
 export const refreshPortalAppDevs = () => {
-  getPortalAppDevs().then((appDevs) => {
-    state.update((s) => {
-      s.appDevs = appDevs?.['portal-devs'];
-      return s;
-    });
+  api.portal.get.appDevs().then((appDevs) => {
+    state.update((s) => ({ ...s, appDevs: appDevs?.['portal-devs'] }));
   });
 };
 
 export const refreshSocialItems = () => {
-  getSocialItems().then((items) => {
-    console.log({ social: items.app });
-    state.update((s) => {
-      s.social = items.app;
-      return s;
-    });
+  api.portal.get.socialItems().then((items) => {
+    state.update((s) => ({ ...s, social: items.app }));
+  });
+};
+
+export const refreshBoughtApps = () => {
+  api.portal.get.boughtApps().then((items) => {
+    state.update((s) => ({ ...s, ...items }));
   });
 };
 
 export const refreshContacts = () => {
-  getContacts().then((contacts) => {
-    state.update((s) => {
-      s.profiles = contacts;
-      return s;
-    });
+  api.urbit.get.contacts().then((contacts) => {
+    state.update((s) => ({ ...s, profiles: contacts }));
   });
 };
 
 export const refreshGroups = () => {
-  getJoinedGroups().then((groups) => {
-    // for some reasons it's possible to get groups that don't have a title
-    // so we filter them here to avoid showing useless info
+  api.urbit.get.joinedGroups().then((groups) => {
     let _groups = {};
     state.update((s) => {
       Object.entries(groups || {}).forEach((g) => {
@@ -79,10 +61,10 @@ export const refreshGroups = () => {
         let {
           meta: { title },
         } = data;
+        // weirdly, groups that we're joining are in our state without a title
         if (!title) {
           g[1].joining = true;
         }
-        if (!s[`/group/${key}/`]) subscribeToGroup(key);
         _groups[key] = data;
       });
       s.groups = _groups;
@@ -100,15 +82,13 @@ export const refreshApps = () => {
     'landscape',
     'webterm',
   ];
-  getInstalledApps().then(([{ initial }, kiln]) => {
-    let apps = {};
+  api.urbit.get.installedApps().then(([{ initial }, kiln]) => {
     state.update((s) => {
+      let apps = {};
       Object.entries(initial).forEach(([key, data]) => {
         if (EXCLUDE_APPS.includes(key)) return;
         data.ship = kiln[key]?.sync?.ship;
-        if (!data.ship) return;
         apps[key] = data;
-        // TODO: subscribe to the app here
       });
       s.apps = apps;
       return s;
@@ -117,32 +97,23 @@ export const refreshApps = () => {
 };
 
 export const refreshPals = async () => {
-  try {
-    const pals = await getPals();
-    state.update((s) => {
-      s.pals = pals.outgoing;
-      s.palsLoaded = true;
-      return s;
+  api.pals.get
+    .all()
+    .then(({ outgoing }) => {
+      state.update((s) => ({ ...s, pals: outgoing, palsLoaded: true }));
+    })
+    .catch(() => {
+      state.update((s) => ({ ...s, palsLoaded: true }));
     });
-  } catch (e) {
-    state.update((s) => {
-      s.palsLoaded = true;
-      return s;
-    });
-  }
 };
 
 export const refreshRadioChannels = () => {
-  // we receive the response to this in teh subscription handler below
-  requestRadioChannels();
+  api.radio.do.requestChannels();
 };
 
 export const refreshBlogs = () => {
-  getBlogs().then((b) => {
-    state.update((s) => {
-      s.blogs = b;
-      return s;
-    });
+  api.blog.get.all().then((blogs) => {
+    state.update((s) => ({ ...s, blogs }));
   });
 };
 
@@ -213,10 +184,14 @@ export const getCollectedItemLeaderboard = (excludePatp) => {
       )
       .reduce((a, b) => {
         b?.bespoke?.['key-list']
-          .filter((k) =>
-            k?.struc !== 'collection' &&
-            !(k?.cord === 'portal' && k?.ship === '~mister-toptyr-bilder' &&
-              (k?.struc === 'app' || k?.struc === 'group'))
+          .filter(
+            (k) =>
+              k?.struc !== 'collection' &&
+              !(
+                k?.cord === 'portal' &&
+                k?.ship === '~mister-toptyr-bilder' &&
+                (k?.struc === 'app' || k?.struc === 'group')
+              )
           )
           .forEach((k) => {
             if (!a[keyStrFromObj(k)]) return (a[keyStrFromObj(k)] = 1);
@@ -243,8 +218,11 @@ export const getMoreFromThisShip = (patp) => {
               k?.struc !== 'collection' &&
               k?.ship === patp &&
               k?.struc !== 'ship' &&
-              !(k?.cord === 'portal' && k?.ship === '~mister-toptyr-bilder' &&
-                (k?.struc === 'app' || k?.struc === 'group'))
+              !(
+                k?.cord === 'portal' &&
+                k?.ship === '~mister-toptyr-bilder' &&
+                (k?.struc === 'app' || k?.struc === 'group')
+              )
           )
           .forEach((k) => {
             if (!a[keyStrFromObj(k)]) return (a[keyStrFromObj(k)] = 1);
@@ -254,10 +232,6 @@ export const getMoreFromThisShip = (patp) => {
       }, {})
   ).sort((a, b) => b[1] - a[1]);
 };
-
-// export const getProfile = (ship) => {
-//   return get(state).profiles?.[ship];
-// };
 
 export const getAllCollectionsAndItems = (collectionKey) => {
   return get(state)
@@ -318,10 +292,7 @@ export const handleSubscriptionEvent = (event, type) => {
   console.log({ event, type });
   switch (type) {
     case 'portal-update':
-      state.update((s) => {
-        s[event.keyStr] = event;
-        return s;
-      });
+      state.update((s) => ({ ...s, [event.keyStr]: event }));
       break;
     case 'social-graph-result':
       state.update((s) => {
@@ -343,11 +314,24 @@ export const handleSubscriptionEvent = (event, type) => {
         return s;
       });
       break;
+    case 'portal-message':
+      state.update((s) => ({
+        ...s,
+        payment: {
+          ...event?.['payment-reference'],
+          'payment-confirmed': event?.['payment-confirmed'],
+        },
+      }));
+      refreshBoughtApps();
+      break;
+    case 'portal-manager-result':
+      state.update((s) => ({ ...s, ...event }));
+      break;
     case 'contact-news':
-      state.update((s) => {
-        s.profiles[event.who] = event.con;
-        return s;
-      });
+      state.update((s) => ({
+        ...s,
+        profiles: { ...s.profiles, [event.who]: event.con },
+      }));
       break;
     case 'charge-update':
       refreshApps();
@@ -356,16 +340,13 @@ export const handleSubscriptionEvent = (event, type) => {
       refreshGroups();
       break;
     case 'greg-event':
-      state.update((s) => {
-        s.radioStations = event.response;
-        return s;
-      });
+      state.update((s) => ({ ...s, radioStations: event.response }));
       break;
     case 'storage-update':
-      state.update((s) => {
-        s.s3 = { ...s.s3, ...event['s3-update'] };
-        return s;
-      });
+      state.update((s) => ({
+        ...s,
+        s3: { ...s.s3, ...event['storage-update'] },
+      }));
       break;
     default:
       break;
@@ -420,13 +401,12 @@ export const refreshAll = () => {
   refreshPortalItems();
   refreshPortalAppDevs();
   refreshSocialItems();
+  refreshBoughtApps();
   refreshContacts();
-  // refreshProfile(me);
   refreshApps();
   refreshGroups();
   refreshPals();
   refreshRadioChannels();
   refreshBlogs();
-  // refreshStorageConfiguration();
 };
 refreshAll();

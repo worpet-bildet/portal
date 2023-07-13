@@ -1,7 +1,7 @@
 <script>
   import { push } from 'svelte-spa-router';
   import config from '@root/config';
-  import { me, subscribeToItem, poke } from '@root/api';
+  import { api, me } from '@root/api';
   import {
     state,
     getGlobalFeed,
@@ -11,7 +11,7 @@
   } from '@root/state';
   import {
     Feed,
-    ItemVerticalListPreview,
+    ItemPreview,
     SidebarPal,
     FeedPostForm,
     Sigil,
@@ -21,7 +21,7 @@
     SidebarGroup,
     SearchIcon,
     PersonIcon,
-    UpRightArrowIcon
+    UpRightArrowIcon,
   } from '@fragments';
   import { fromUrbitTime, isValidPatp, isHappeningSoon } from '@root/util';
 
@@ -29,16 +29,21 @@
   let sortedRecommendations = [];
   let patpItemCount = {};
   let feed;
+
+  const subToGlobalFeed = () => {
+    return api.portal.do.subscribe({
+      struc: 'feed',
+      ship: config.indexer,
+      cord: '',
+      time: 'global',
+    });
+  };
+
   state.subscribe((s) => {
     let { pals } = s;
     if (!s.isLoaded) return;
     if (s.isLoaded && !getGlobalFeed()) {
-      return subscribeToItem({
-        struc: 'feed',
-        ship: config.indexer,
-        cord: '',
-        time: 'global',
-      });
+      return subToGlobalFeed();
     }
     let mergedFeed = getGlobalFeed().concat(getCuratorFeed(me));
     feed = mergedFeed
@@ -47,6 +52,14 @@
         return mergedFeed.findIndex((b) => b.time === a.time) === idx;
       })
       .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
+
+    // Get the latest post, if it was more than six hours ago, send another sub
+    if (
+      feed[0] &&
+      fromUrbitTime(feed[0].time) < Date.now() - 1000 * 60 * 60 * 6
+    ) {
+      subToGlobalFeed();
+    }
 
     // We also want to sort the pals here by how many posts they have made
     if (pals) {
@@ -69,29 +82,23 @@
   });
 
   const handlePost = ({ detail: { content, uploadedImageUrl } }) => {
-    poke({
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        create: {
-          bespoke: {
-            other: {
-              title: '',
-              blurb: content || '',
-              link: '',
-              image: uploadedImageUrl || '',
-            },
-          },
-          'prepend-to-feed': [
-            {
-              ship: me,
-              struc: 'feed',
-              time: '~2000.1.1',
-              cord: '',
-            },
-          ],
+    api.portal.do.create({
+      bespoke: {
+        other: {
+          title: '',
+          blurb: content || '',
+          link: '',
+          image: uploadedImageUrl || '',
         },
       },
+      'prepend-to-feed': [
+        {
+          ship: me,
+          struc: 'feed',
+          time: '~2000.1.1',
+          cord: '',
+        },
+      ],
     });
   };
 
@@ -122,19 +129,50 @@
   };
 
   const recommendedApps = [
-      { struc: 'app', ship: '~paldev', cord: 'pals', time: '' },
-      { struc: 'app', ship: '~nodmyn-dosrux', cord: 'radio', time: '' }
-  ]
+    { struc: 'app', ship: '~paldev', cord: 'pals', time: '' },
+    { struc: 'app', ship: '~nodmyn-dosrux', cord: 'radio', time: '' },
+  ];
 
   const events = [
-      { title: 'On-nomi happy hour', link: 'https://app.gather.town/app/xAYeiPI2XDYhRM9t/urbit-hacker-house', startDate: '2023-06-29T18:30:00-04:00', endDate: '2023-06-29T20:00:00-04:00', frequency: 'every other week', location: 'in the hacker house', happeningSoon: 'false'},
-      { title: 'Core Dev PR Blitz', link: 'https://app.gather.town/app/xAYeiPI2XDYhRM9t/urbit-hacker-house', startDate: '2023-06-19T11:00:00-04:00', endDate: '2023-06-19T12:00:00-04:00', frequency: 'weekdays', location: 'in the hacker house', happeningSoon: 'false'},
-      { title: 'Turf Build Party', link: 'https://app.gather.town/app/xAYeiPI2XDYhRM9t/urbit-hacker-house', startDate: '2023-06-23T12:00:00-04:00', endDate: '2023-06-23T14:00:00-04:00', frequency: '', location: 'in the hacker house', happeningSoon: 'false'},
-      { title: 'Build Party', link: 'https://app.gather.town/app/xAYeiPI2XDYhRM9t/urbit-hacker-house', startDate: '2023-06-27T14:00:00-04:00', endDate: '2023-06-27T17:00:00-04:00', frequency: '', location: 'in the hacker house', happeningSoon: 'false'}
-  ]
+    {
+      title: 'On-nomi happy hour',
+      link: 'https://app.gather.town/app/xAYeiPI2XDYhRM9t/urbit-hacker-house',
+      startDate: '2023-06-29T18:30:00-04:00',
+      endDate: '2023-06-29T20:00:00-04:00',
+      frequency: 'every other week',
+      location: 'in the hacker house',
+      happeningSoon: 'false',
+    },
+    {
+      title: 'Core Dev PR Blitz',
+      link: 'https://app.gather.town/app/xAYeiPI2XDYhRM9t/urbit-hacker-house',
+      startDate: '2023-06-19T11:00:00-04:00',
+      endDate: '2023-06-19T12:00:00-04:00',
+      frequency: 'weekdays',
+      location: 'in the hacker house',
+      happeningSoon: 'false',
+    },
+    {
+      title: 'Turf Build Party',
+      link: 'https://app.gather.town/app/xAYeiPI2XDYhRM9t/urbit-hacker-house',
+      startDate: '2023-06-23T12:00:00-04:00',
+      endDate: '2023-06-23T14:00:00-04:00',
+      frequency: '',
+      location: 'in the hacker house',
+      happeningSoon: 'false',
+    },
+    {
+      title: 'Build Party',
+      link: 'https://app.gather.town/app/xAYeiPI2XDYhRM9t/urbit-hacker-house',
+      startDate: '2023-06-27T14:00:00-04:00',
+      endDate: '2023-06-27T17:00:00-04:00',
+      frequency: '',
+      location: 'in the hacker house',
+      happeningSoon: 'false',
+    },
+  ];
 
-  const happeningSoonTuple = isHappeningSoon(events)
-
+  const happeningSoonTuple = isHappeningSoon(events);
 </script>
 
 <div class="grid grid-cols-9 gap-8 mb-4">
@@ -170,8 +208,8 @@
           {#each happeningSoonTuple[1] as { title, link, startDate, endDate, frequency, location, happeningSoon, formattedStart }}
             {#if happeningSoon}
               <button
-                class="flex flex-col gap-2 rounded-md p-2 hover:bg-hover dark:hover:border-white hover:duration-500 text-left"
-                on:click={() => window.open(`${link}`,'_blank')}
+                class="flex flex-col gap-2 rounded-md p-2 hover:bg-hover dark:hover:bg-transparent dark:border dark:hover:border-white hover:duration-500 text-left"
+                on:click={() => window.open(`${link}`, '_blank')}
               >
                 <div>{title}</div>
                 <div
@@ -193,7 +231,7 @@
       <SidebarGroup>
         <div class="text-xl font-bold mx-2">Most recommended</div>
         {#each sortedRecommendations as [recommendation, count]}
-          <ItemVerticalListPreview key={keyStrToObj(recommendation)} small />
+          <ItemPreview key={keyStrToObj(recommendation)} small />
         {/each}
       </SidebarGroup>
     {/if}
@@ -203,7 +241,7 @@
         <div class="flex flex-col gap-4">
           {#each sortRadioStations($state.radioStations) as { description, viewers, location }}
             <button
-              class="flex flex-col gap-2 rounded-md p-2 hover:bg-hover dark:hover:border-white hover:duration-500 text-left"
+              class="flex flex-col gap-2 rounded-md p-2 hover:bg-hover dark:hover:bg-transparent dark:border dark:hover:border-white hover:duration-500 text-left"
               on:click={() => tuneRadio(location)}
             >
               <div>{description}</div>
@@ -212,7 +250,7 @@
               >
                 <div>by {location}</div>
                 <div class="flex items-center gap-1">
-                  <div class="w-4"><PersonIcon /></div>
+                  <div class="w-4 dark:fill-white"><PersonIcon /></div>
                   <div>{viewers}</div>
                 </div>
               </div>
@@ -229,7 +267,7 @@
           </div>
           <div class="flex flex-col gap-2">
             {#each recommendedApps as key}
-              <ItemVerticalListPreview {key} small/>
+              <ItemPreview {key} small />
             {/each}
           </div>
         </div>

@@ -1,12 +1,17 @@
-/-  *portal-data, *portal-message, portal-item, portal-data-0, portal-data-1,
-    gr=social-graph
+/-  *portal-data, portal-config, *portal-message, portal-item, gr=social-graph
+/-  portal-data-0, portal-data-1, portal-data-2
 /+  default-agent, dbug, *portal, sss
 /$  items-to-json  %portal-items  %json
+/$  item-to-json  %portal-item  %json
+/$  store-result-to-json  %portal-store-result  %json
+/$  portal-update-to-json  %portal-update  %json
+=/  indexer  *portal-indexer:portal-config
 |%
 +$  versioned-state
   $%  state-0
       state-1
       state-2
+      state-3
   ==
 +$  state-0
   $:  %0
@@ -20,6 +25,12 @@
   ==
 +$  state-2
   $:  %2
+      =items:portal-data-2
+      item-sub=*
+      item-pub=*
+  ==
++$  state-3
+  $:  %3
       =items
       item-sub=_(mk-subs:sss portal-item ,[%item @ @ @ @ ~])
       item-pub=_(mk-pubs:sss portal-item ,[%item @ @ @ @ ~])
@@ -27,7 +38,7 @@
 +$  card  card:agent:gall
 --
 %-  agent:dbug
-=|  state-2
+=|  state-3
 =*  state  -
 ^-  agent:gall
 =<
@@ -41,7 +52,7 @@
               (da item-sub bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
 ++  on-init
   ^-  (quip card _this)
-  =.  state  *state-2
+  =.  state  *state-3
   =^  cards  state  init-sequence:stor
   [cards this]
 ::
@@ -51,18 +62,26 @@
   ^-  (quip card _this)
   =/  old  !<(versioned-state vase)
   ::  -  get state up to date!
-  =.  state
-    ?-  -.old
-      %0  %-  state-1-to-2:state-transition:stor
-             (state-0-to-1:state-transition:stor old)
-      %1  (state-1-to-2:state-transition:stor old)  ::  gets rid of temp items
-      %2  old
-    ==
+  =/  old
+    ?:  ?=(%0 -.old)
+      (state-0-to-1:state-transition:stor old)
+    old
+  =/  old
+    ?:  ?=(%1 -.old)
+      (state-1-to-2:state-transition:stor old)
+    old
+  =/  old
+    ?:  ?=(%2 -.old)
+      (state-2-to-3:state-transition:stor old)
+    old
+  ?>  ?=(%3 -.old)
+  =.  state  old
+  ::
   ::  -  destroy empty collections
   =/  output
     =+  ~(tap by items.state)
     %-  tail  %^  spin  -  [*key-list *(list card) state]
-    |=  [p=[=key =item] q=[to-remove=key-list cards=(list card) state=state-2]]
+    |=  [p=[=key =item] q=[to-remove=key-list cards=(list card) state=state-3]]
     :-  p
     =.  state  state.q
     ?:  ?=([%collection *] bespoke.item.p)
@@ -88,7 +107,7 @@
   =+  ~(val by items.state)
   =^  cards-4  state
     %-  tail  %^  spin  -  [*(list card) state]
-    |=  [=item q=[cards=(list card) state=state-2]]
+    |=  [=item q=[cards=(list card) state=state-3]]
     :-  item
     =/  path  [%item (key-to-path:conv key.item)]
     =.  state  state.q
@@ -108,7 +127,7 @@
     =+  ~(tap in ~(key by read:da-item))
     %-  tail
     %^  spin  -  state
-    |=  [p=[=ship =dude:gall =path] q=[state=state-2]]
+    |=  [p=[=ship =dude:gall =path] q=[state=state-3]]
     =/  key  (path-to-key:conv +:path.p)
     =.  state  state.q
     ?.  ?=(?(%feed %collection %app %blog) struc.key)
@@ -164,7 +183,7 @@
       ::
         %feed-update
       ?>  =(src.bowl src.msg)
-      ?>  =(our.bowl ~worpet-bildet)
+      ?>  =(our.bowl indexer)
       =/  act  [%prepend-to-feed feed.msg [%feed our.bowl '' 'global']]
       =^(cards state (prepend-to-feed:handle-poke:stor act) [cards this])
     ==
@@ -186,12 +205,11 @@
         %whole
       ?:  ?&  ?=(%app -.bespoke.item.u.wave.msg)
               ?=(%def lens.item.u.wave.msg)
-              !(validate-sig dist-desk.bespoke.item.u.wave.msg src.msg our.bowl now.bowl sig.bespoke.item.u.wave.msg)
           ==
-        ~&  >>>  "Bad sig on app! Malicious!"
-        =.  item-sub
-          (quit:da-item ship.key.item.u.wave.msg %portal-store [%item (key-to-path:conv key.item.u.wave.msg)])
-        `this
+          :_  this  :_  ~
+          :*  %pass  /validate-sig  %arvo  %k  %fard  %portal  %validate-sig  %noun
+             !>([dist-desk.bespoke.item.u.wave.msg src.msg our.bowl now.bowl sig.bespoke.item.u.wave.msg item.u.wave.msg])
+          ==
       =/  cards
         ?.  ?&  =('global' time.key.item.u.wave.msg)
                 ?=([%feed *] bespoke.item.u.wave.msg)
@@ -212,6 +230,29 @@
   ^-  (quip card:agent:gall _this)
   ?+  wire  `this
     [~ %sss %behn @ @ @ %item @ @ @ @ ~]  [(behn:da-item |3:wire) this]
+    ::
+    [%validate-sig ~]
+  ?>  ?=([%khan %arow *] sign)
+  ?.  ?=(%.y -.p.sign)
+    ~&  >>  "app validation thread failed"
+    `this
+  =+  !<  $:  result=?
+              dist-desk=@t
+              src=@p
+              our=@p 
+              now=@da 
+              sig=signature
+              =item
+          ==
+      q.p.p.sign
+  ?:  result
+    ~&  >  "app sig valid"
+    :_  this
+    (upd:cards-methods:stor item)
+  ~&  >>>  "Bad sig on app! Malicious!"
+  =.  item-sub
+    (quit:da-item ship.key.item %portal-store [%item (key-to-path:conv key.item)])
+  `this
   ==
 ::
 ++  on-watch  _`this
@@ -363,7 +404,7 @@
       =+  ~(tap in ~(key by items))
       =^  cards  state
         %-  tail  %^  spin  -  [*(list card) state]
-        |=  [=key q=[cards=(list card) state=state-2]]
+        |=  [=key q=[cards=(list card) state=state-3]]
         :-  key
         =.  state  state.q
         ?:  ?|  =(lens.item %temp)
@@ -382,7 +423,7 @@
       ^+  [*(list card) state]
       ?>  ?=([%sub-to-many *] act)
       %-  tail  %^  spin  key-list.act  [*(list card) state]
-      |=  [=key q=[cards=(list card) state=state-2]]
+      |=  [=key q=[cards=(list card) state=state-3]]
       :-  key
       =.  state  state.q
       =^  cards  state.q  (sub [%sub key])
@@ -405,7 +446,7 @@
       ::  don't subscribe to what you are already subbed to
       ::  stronger fence than the one in %portal-graph
       ?:  ?&  (~(has by read:da-item) [ship.key.act %portal-store path])
-              !=(key.act [%feed ~worpet-bildet '' 'global'])  ==
+              !=(key.act [%feed indexer '' 'global'])  ==
               ::  stupid hack bcs sss sometimes loses the subscriber from the mem pool
               ::  so we are allowing the global feed sub to go thru if someone was
               ::  `accidentally` unsubscribed
@@ -449,7 +490,7 @@
       ::  add to collections
       =^  cards-1  state
         %-  tail  %^  spin  `key-list`append-to.act  [cards state]
-        |=  [col-key=key q=[cards=(list card) state=state-2]]
+        |=  [col-key=key q=[cards=(list card) state=state-3]]
         :-  col-key
         ?>  ?=(%collection struc.col-key)
         =.  state  state.q  ::  append takes state from subj, so it is modified
@@ -458,7 +499,7 @@
       ::  add to feeds
       =^  cards-2  state
         %-  tail  %^  spin  `key-list`prepend-to-feed.act  [cards state]
-        |=  [feed-key=key q=[cards=(list card) state=state-2]]
+        |=  [feed-key=key q=[cards=(list card) state=state-3]]
         :-  feed-key
         ?>  ?=(%feed struc.feed-key)
         =.  state  state.q
@@ -470,7 +511,7 @@
       =^  cards-3  state
         %-  tail  %^  spin
         `(list [=key tag-to=^path tag-from=^path])`tags-to.act  [cards state]
-        |=  [[=key tag-to=^path tag-from=^path] q=[cards=(list card) state=state-2]]
+        |=  [[=key tag-to=^path tag-from=^path] q=[cards=(list card) state=state-3]]
         :-  [key tag-to tag-from]
         =/  our  (key-to-node:conv key.item)
         =/  their    (key-to-node:conv key)
@@ -510,7 +551,7 @@
         =/  msg  [%feed-update our.bowl feed.act]
         :_  state
         %+  snoc  (welp cards cards-1)
-        (~(poke pass:io /msg) [~worpet-bildet %portal-store] portal-message+!>(msg))
+        (~(poke pass:io /msg) [indexer %portal-store] portal-message+!>(msg))
       :-  (welp cards cards-1)
       state
     ::
@@ -612,9 +653,9 @@
 ::
 ++  init-sequence
   ^+  [*(list card) state]
-  =/  feed-path  [%item %feed '~worpet-bildet' '' 'global' ~]
-  =^  cards  item-sub  (surf:da-item ~worpet-bildet %portal-store feed-path)
-  =.  cards  (welp cards (track-gr:cards-methods ~worpet-bildet))
+  =/  feed-path  [%item %feed (scot %p indexer) '' 'global' ~]
+  =^  cards  item-sub  (surf:da-item indexer %portal-store feed-path)
+  =.  cards  (welp cards (track-gr:cards-methods indexer))
   =^  cards-1  state
     %-  create:handle-poke
     :*  %create  ~  ~  `'~2000.1.1'  `%def
@@ -643,7 +684,7 @@
     `[%collection 'My Apps' 'Collection of all apps I have published.' '' ~]
     [%collection our.bowl '' '~2000.1.1']~  ~  ~  ==
   ::
-  ?:  =(our.bowl ~worpet-bildet)
+  ?:  =(our.bowl indexer)
     =^  cards-7  state
       %-  create:handle-poke
       [%create ~ ~ `'global' `%global `[%feed ~] ~ ~ ~]
@@ -657,19 +698,41 @@
 ::
 ++  state-transition
   |%
+  ++  state-2-to-3
+    |=  =state-2
+    ^-  state-3
+    =+  ~(tap by items.state-2)
+    =/  new-items  ^-  ^items  %-  malt  %+  murn  -
+      |=  [key-2=key:portal-data-2 item-2=item:portal-data-2]
+      (key-item-2-to-3 key-2 item-2)
+    =/  s3  *state-3
+    s3(items new-items)
+  ::
+  ++  key-item-2-to-3  :: just adding app price lol
+    |=  [key-2=key:portal-data-2 item-2=item:portal-data-2]
+    ^-  (unit [key item])
+    :+  ~  key-2
+    =>  item-2
+    :^  key
+        lens
+        ?:  ?=([%app *] bespoke)
+          [%app screenshots blurb dist-desk sig treaty *@t]:bespoke
+        bespoke
+        meta
+  ::
   ++  state-1-to-2
     |=  =state-1
     ^-  state-2
     =+  ~(tap by items.state-1)
-    =/  new-items  ^-  ^items  %-  malt  %+  murn  -
+    =/  new-items  ^-  items:portal-data-2  %-  malt  %+  murn  -
       |=  [key-1=key:portal-data-1 item-1=item:portal-data-1]
       (key-item-1-to-2 key-1 item-1)
     =/  s2  *state-2
     s2(items new-items)
   ::
   ++  key-item-1-to-2
-      |=  [key-1=key:portal-data-1 item-1=item:portal-data-1]
-    ^-  (unit [key item])
+    |=  [key-1=key:portal-data-1 item-1=item:portal-data-1]
+    ^-  (unit [key:portal-data-2 item:portal-data-2])
     ?:  !=(our.bowl ship.key-1)
       ~
     ?:  ?=(%temp lens.item-1)

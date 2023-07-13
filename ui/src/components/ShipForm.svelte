@@ -5,11 +5,7 @@
   export let ship;
 
   let lastValidShip = ship;
-  $: {
-    if (isValidPatp(ship)) {
-      lastValidShip = ship;
-    }
-  }
+  $: if (isValidPatp(ship)) lastValidShip = ship;
 </script>
 
 <div class="flex flex-col gap-4">

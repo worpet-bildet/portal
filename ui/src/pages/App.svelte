@@ -1,5 +1,7 @@
 <script>
-  import { me, poke, subscribeToItem, uploadImage } from '@root/api';
+  import { Confetti } from 'svelte-confetti';
+  import config from '@root/config';
+  import { api, me } from '@root/api';
   import {
     state,
     getItem,
@@ -10,15 +12,22 @@
     getReviewsByTo,
     getMoreFromThisShip,
   } from '@root/state';
-  import { getMeta, fromUrbitTime } from '@root/util';
+  import {
+    getMeta,
+    fromUrbitTime,
+    isValidTxHash,
+    weiToEth,
+    sendTransaction,
+  } from '@root/util';
   import {
     ItemDetail,
     RecommendModal,
     FeedPost,
     FeedPostForm,
-    ItemVerticalListPreview,
+    ItemPreview,
   } from '@components';
   import {
+    Modal,
     RightSidebar,
     IconButton,
     ShareIcon,
@@ -28,12 +37,16 @@
     ExternalDestinationIcon,
     SidebarGroup,
     ImageIcon,
+    LoadingIcon,
+    EthereumIcon,
     Tabs,
   } from '@fragments';
 
+  // TODO: there must be a better way
   let cord,
     ship,
     time,
+    desk,
     defKey,
     itemKey,
     isDefItem,
@@ -43,7 +56,9 @@
     screenshots,
     title,
     description,
-    website,
+    link,
+    distShip,
+    ethPrice,
     color,
     version,
     hash,
@@ -53,7 +68,9 @@
     isInstalled,
     servedFrom,
     subbingToSocialGraph,
-    recommendModalOpen;
+    recommendModalOpen,
+    paymentModalOpen,
+    provePurchaseModalOpen;
 
   export let params;
   $: {
@@ -62,47 +79,45 @@
     loadApp($state);
   }
 
-  let subscribingTo = {};
-
+  // It's valuable to know a few things before reading this function:
+  // Portal has the concept of "temp" items and "def" items. A temp item is one
+  // that is local to the ship using Portal. The item is created by the user's
+  // Portal instance and usually mandates fetching some data from an external
+  // source, such as an App's treaty data.
+  // A "def" item on the other hand, is one that is hosted by the creator of the
+  // item. We use this for apps such that the developer of the application can
+  // add screenshots. It's also the item against which we tag all reviews.
   const loadApp = (s) => {
-    // Here we should get the app devs from our state, and check whether we have
-    // a mapping for it at the moment
-    let actualDev;
-    if ((actualDev = s?.appDevs?.[`${ship}/${cord}`])) {
-      // This means we definitely have a def item, I think?
-      // Is this wise?
-      ship = actualDev;
-    }
-
-    if (cord || actualDev) defKey = `/app/${ship}//${cord}`;
-    if (time) defKey = `/app/${ship}//${time}`;
-
-    // don't ask
+    if (!ship) return;
+    // we re-assign `ship` here to the "actual dev"
+    ship = s?.appDevs?.[`${ship}/${cord}`] || ship;
     if (cord) {
       itemKey = `/app/${ship}/${cord}/`;
-    } else if (time) {
-      isDefItem = true;
-      itemKey = defKey;
+      defKey = `/app/${ship}//${cord}`;
+      desk = cord;
     }
-
+    if (time) {
+      isDefItem = true;
+      defKey = `/app/${ship}//${time}`;
+      itemKey = defKey;
+      desk = time;
+    }
     if (!itemKey) return;
 
-    // Try to load the defItem if we already have one in state
-    if (!isDefItem) {
-      item = getItem(defKey);
-      if (!item && !subscribingTo[defKey]) {
-        subscribingTo[defKey] = true;
-        // TODO: Remove this because Jurij is also subscribing to the defitems
-        subscribeToItem(keyStrToObj(defKey));
-      } else if (item) {
-        itemKey = defKey;
-      }
+    // Try to load the defItem regardless
+    item = getItem(defKey);
+    if (item) {
+      // we know that this is a defitem now
+      itemKey = defKey;
+    } else {
+      // subscribe to the def item, just in case
+      api.portal.do.subscribe(keyStrToObj(defKey));
+      item = getItem(itemKey);
     }
 
-    item = getItem(itemKey);
-
+    // if we don't have a temp OR def item in state, just subscribe and wait
     if (s.isLoaded && !item) {
-      return subscribeToItem(keyStrToObj(itemKey));
+      return api.portal.do.subscribe(keyStrToObj(itemKey));
     }
 
     ({
@@ -110,19 +125,17 @@
       screenshots,
       title,
       description,
-      website,
+      link,
+      ethPrice,
       color,
       version,
       hash,
       servedFrom,
       ship,
+      distShip,
       lens,
     } = getMeta(item));
 
-    // here we want to get the reviews for the app, which we should be able to
-    // do in a similar way as getting comments
-    // TODO: Review what ship and key should be here in the case that host is
-    // not publisher
     reviews = [
       ...(getReviews(ship, keyStrToObj(defKey)) || []),
       ...(getReviewsByTo(me, keyStrToObj(defKey)) || []),
@@ -136,35 +149,20 @@
 
     if (!s?.social?.[`/${ship}/review-from`] && !subbingToSocialGraph && ship) {
       subbingToSocialGraph = true;
-      console.log({
-        app: 'portal-graph',
-        mark: 'social-graph-track',
-        json: {
-          start: {
-            source: ship,
-            tag: `/${ship}`,
-          },
-        },
-      });
-      poke({
-        app: 'portal-graph',
-        mark: 'social-graph-track',
-        json: {
-          start: {
-            source: ship,
-            tag: `/${ship}`,
-          },
-        },
+      api.portal.do.trackSocialGraph({
+        source: ship,
+        tag: `/${ship}`,
       });
     }
 
     isInstalling =
-      s.apps?.[cord]?.chad?.hasOwnProperty('install') || isInstalling;
+      s.apps?.[cord]?.chad?.hasOwnProperty('install') ||
+      s.apps?.[cord]?.chad?.hasOwnProperty('hung') ||
+      isInstalling;
 
     isInstalled =
-      (!isInstalling && !!s.apps?.[cord || time]) ||
-      (s.apps?.[cord]?.chad?.hasOwnProperty('site') &&
-        !!s.apps?.[cord || time]);
+      (!isInstalling && !!s.apps?.[desk]) ||
+      (s.apps?.[cord]?.chad?.hasOwnProperty('site') && !!s.apps?.[desk]);
 
     if (isInstalled) isInstalling = false;
 
@@ -172,81 +170,86 @@
   };
 
   let sortedRecommendations = [];
+  let purchased;
   state.subscribe((s) => {
     if (!s.isLoaded) return;
     loadApp(s);
     sortedRecommendations = getMoreFromThisShip(ship).slice(0, 4);
+    purchased = s?.['bought-apps']?.[`${ship ?? '~zod'}/${desk}`];
   });
 
-  const uninstall = () => {
-    poke({
-      app: 'docket',
-      mark: 'docket-uninstall',
-      json: cord,
-    }).then(refreshApps);
+  const install = () => {
+    // FIXME: stopgap
+    window.open(`${window.location.origin}/apps/grid/search/${ship}/apps`);
+    isInstalling = true;
+    api.urbit.do.installApp(distShip || ship, desk).then(refreshApps);
   };
 
-  const install = async () => {
+  const uninstall = () => {
+    api.urbit.do.uninstallApp(desk).then(refreshApps);
+  };
+
+  const purchase = () => {
+    paymentModalOpen = true;
+    api.portal.do.requestPayment(distShip, desk);
+  };
+
+  let proofOfPurchaseTxHash;
+  const provePurchase = () => {
+    paymentModalOpen = false;
+    provePurchaseModalOpen = true;
+  };
+
+  let tx;
+  $: if (isValidTxHash(proofOfPurchaseTxHash)) {
+    api.portal.do.confirmPayment(distShip, proofOfPurchaseTxHash);
     isInstalling = true;
-    let distDesk = item?.bespoke?.distDesk || `${ship}/${cord || time}`;
-    await poke({
-      app: 'docket',
-      mark: 'docket-install',
-      json: distDesk,
-    });
-    await poke({
-      app: 'hood',
-      mark: 'kiln-revive',
-      json: distDesk.split('/')[1],
-    });
-    refreshApps();
+    provePurchaseModalOpen = false;
+    paymentModalOpen = true;
+    tx = { hash: proofOfPurchaseTxHash };
+  }
+
+  const pay = async () => {
+    if (!$state.payment) return;
+    try {
+      tx = await sendTransaction(
+        $state.payment?.['receiving-address'],
+        $state.payment?.['eth-price'],
+        $state.payment?.['hex'],
+        config.chainId
+      );
+      api.portal.do.confirmPayment(distShip, tx.hash);
+      isInstalling = true;
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const handlePostReview = async ({ detail: { content, rating } }) => {
-    poke({
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        create: {
-          bespoke: {
-            review: {
-              blurb: content,
-              rating: Number(rating), // i hate js
-            },
-          },
-          'tags-to': [
-            {
-              // this is the DEF item key
-              key: {
-                struc: 'app',
-                ship: ship,
-                time: cord || time,
-                cord: '',
-              },
-              'tag-to': `/${me}/review-to`,
-              'tag-from': `/${ship}/review-from`,
-            },
-          ],
+    api.portal.do.create({
+      bespoke: { review: { blurb: content, rating: Number(rating) } },
+      'tags-to': [
+        {
+          // this is the DEF item key
+          key: { struc: 'app', ship, cord: '', time: desk },
+          'tag-to': `/${me}/review-to`,
+          'tag-from': `/${ship}/review-from`,
         },
-      },
+      ],
     });
   };
 
   let fileInput;
-  const handleImageSelect = async (e) => {
-    let newScreenshots = [
-      ...screenshots,
-      await uploadImage(e.target.files[0], $state.s3),
-    ];
-    // We want to poke to edit the item - i'm not sure how we do that but I am
-    // going to try!
-    poke({
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        edit: {
-          key: keyStrToObj(defKey),
-          bespoke: { app: { ...item?.bespoke, screenshots: newScreenshots } },
+  const handleImageSelect = async ({ target: { files } }) => {
+    api.portal.do.edit({
+      key: keyStrToObj(defKey),
+      bespoke: {
+        app: {
+          ...item?.bespoke,
+          screenshots: [
+            ...screenshots,
+            await api.s3.do.uploadImage(files[0], $state.s3),
+          ],
         },
       },
     });
@@ -254,15 +257,9 @@
 
   const deleteScreenshot = (screenshot) => {
     screenshots = screenshots.filter((s) => s !== screenshot);
-    poke({
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        edit: {
-          key: keyStrToObj(defKey),
-          bespoke: { app: { ...item?.bespoke, screenshots } },
-        },
-      },
+    api.portal.do.edit({
+      key: keyStrToObj(defKey),
+      bespoke: { app: { ...item?.bespoke, screenshots } },
     });
   };
 
@@ -286,8 +283,13 @@
         <div class="grid grid-cols-9 gap-4">
           {#if screenshots.length === 0}
             <div class="col-span-9">
-              {ship} needs to download %portal to publish screenshots of {title}. Please prompt them to follow <a href="https://twitter.com/worpet_bildet/status/1668643121813438466?s=20">this guide</a></div>
-
+              {ship} needs to download %portal to publish screenshots of {title}.
+              Please prompt them to follow
+              <a
+                href="https://twitter.com/worpet_bildet/status/1668643121813438466?s=20"
+                >this guide</a
+              >
+            </div>
           {/if}
           {#each screenshots as screenshot}
             <div
@@ -312,7 +314,9 @@
           {/each}
         </div>
         {#if me === ship}
-          <div class="grid gap-8 bg-panels dark:bg-darkgrey border p-6 rounded-lg">
+          <div
+            class="grid gap-8 bg-panels dark:bg-darkgrey border p-6 rounded-lg"
+          >
             <div class="flex gap-4">
               <input
                 type="file"
@@ -329,16 +333,15 @@
                   if (!$state.s3 || !$state.s3.configuration.currentBucket)
                     return;
                   fileInput.click();
-                }}
-                common
-                darkMode={$state.darkmode}
-                >Add Screenshots</IconButton
+                }}>Add Screenshots</IconButton
               >
             </div>
           </div>
         {/if}
       {:else if activeTab === 'Info'}
-        <div class="grid gap-8 bg-panels dark:bg-darkgrey border p-6 rounded-lg">
+        <div
+          class="grid gap-8 bg-panels dark:bg-darkgrey border p-6 rounded-lg"
+        >
           <div>
             <div class="text-2xl font-bold">
               Current {title} version
@@ -391,7 +394,12 @@
           {/if}
         {:else}
           <div class="col-span-9">
-            {ship} needs to download %portal to allow reviews of {title}. Please prompt them to follow <a href="https://twitter.com/worpet_bildet/status/1668643121813438466?s=20">this guide</a>
+            {ship} needs to download %portal to allow reviews of {title}. Please
+            prompt them to follow
+            <a
+              href="https://twitter.com/worpet_bildet/status/1668643121813438466?s=20"
+              >this guide</a
+            >
           </div>
         {/if}
       {/if}
@@ -403,40 +411,51 @@
             icon={ExternalDestinationIcon}
             on:click={() =>
               window.open(`${window.location.origin}${servedFrom}/`)}
-            common
-            darkMode={$state.darkmode}
+            class="bg-panels dark:bg-transparent dark:border dark:hover:border-white"
             >Open</IconButton
           >
         {:else if isInstalling}
-          <IconButton loading common darkMode={$state.darkmode}>Installing...</IconButton>
+          <IconButton
+            loading
+            class="bg-panels dark:bg-transparent dark:border dark:hover:border-white"
+            >Installing...</IconButton
+          >
+        {:else if ethPrice && !purchased}
+          <IconButton
+            icon={EthereumIcon}
+            on:click={purchase}
+            class="bg-panels dark:bg-transparent dark:border dark:hover:border-white"
+            >Purchase</IconButton
+          >
         {:else}
           <IconButton
             icon={InstallIcon}
-            on:click={() => {
-              // FIXME: stopgap
-              window.open(
-                `${window.location.origin}/apps/grid/search/${ship}/apps`
-              );
-              // install()
-            }}
-            common
-            darkMode={$state.darkmode}
+            on:click={install}
+            class="bg-panels dark:bg-transparent dark:border dark:hover:border-white"
             >Install</IconButton
           >
         {/if}
-        {#if website}
-          <IconButton icon={GlobeIcon} on:click={() => window.open(website)} common darkMode={$state.darkmode}>View Website</IconButton
+        {#if link}
+          <IconButton
+            icon={GlobeIcon}
+            on:click={() => window.open(link)}
+            class="bg-panels dark:bg-transparent dark:border dark:hover:border-white"
+            >View Website</IconButton
           >
         {/if}
         <IconButton
           icon={ShareIcon}
           on:click={() => (recommendModalOpen = true)}
-          common
-          darkMode={$state.darkmode}
+          class="bg-panels dark:bg-transparent dark:border dark:hover:border-white"
           >Recommend</IconButton
         >
         {#if isInstalled}
-          <IconButton icon={CrossIcon} on:click={uninstall} async common darkMode={$state.darkmode}>Uninstall</IconButton
+          <IconButton
+            icon={CrossIcon}
+            on:click={uninstall}
+            async
+            class="bg-panels dark:bg-transparent dark:border dark:hover:border-white"
+            >Uninstall</IconButton
           >
         {/if}
       </SidebarGroup>
@@ -444,11 +463,97 @@
         <SidebarGroup>
           <div class="text-lg mx-1">More from {ship}</div>
           {#each sortedRecommendations as [recommendation, count]}
-            <ItemVerticalListPreview key={keyStrToObj(recommendation)} small />
+            <ItemPreview key={keyStrToObj(recommendation)} small />
           {/each}
         </SidebarGroup>
       {/if}
     </RightSidebar>
   </div>
   <RecommendModal bind:open={recommendModalOpen} key={keyStrToObj(itemKey)} />
+  <Modal bind:open={provePurchaseModalOpen}>
+    <div class="flex flex-col justify-between gap-4">
+      {#if !tx}
+        <div class="text-2xl">Prove previous purchase of {title}</div>
+        <div>
+          If you have already paid for {title}, you can enter the transaction
+          hash here to download it.
+        </div>
+        <div>
+          If you want to install {title} on multiple ships, you must make a payment
+          from each ship.
+        </div>
+        <input
+          type="text"
+          bind:value={proofOfPurchaseTxHash}
+          class="border p-2"
+          placeholder="0x..."
+        />
+        <div class="p-5" />
+      {/if}
+    </div>
+  </Modal>
+  <Modal bind:open={paymentModalOpen}>
+    <div class="flex flex-col justify-between gap-4">
+      {#if !tx}
+        <div class="text-2xl">Purchase {title}</div>
+        <div>
+          <div>
+            You can purchase {title} for {weiToEth(Number(ethPrice))} ETH.
+          </div>
+          <div>Make sure you have metamask installed and unlocked.</div>
+          <div>
+            Disclaimer: Portal cannot guarantee this purchase. Transactions are
+            peer-to-peer.
+          </div>
+        </div>
+        <div class="flex justify-end w-full gap-8">
+          <IconButton icon={InstallIcon} on:click={provePurchase}
+            >I already paid!</IconButton
+          >
+          <IconButton
+            icon={EthereumIcon}
+            loading={!$state.payment}
+            disabled={!$state.payment}
+            async
+            on:click={pay}>Pay with ETH</IconButton
+          >
+        </div>
+      {/if}
+      {#if tx}
+        {#if !purchased}
+          <div class="text-2xl">Purchasing...</div>
+          <div class="w-full flex justify-center">
+            <div class="w-32 h-32">
+              <LoadingIcon />
+            </div>
+          </div>
+        {:else}
+          <div class="text-2xl">Purchased!</div>
+          <div class="flex flex-col gap-2">
+            <div>
+              {title} will be installed automatically.
+            </div>
+            <div>
+              Receipt: <a href={`https://etherscan.io/tx/${tx.hash}`}
+                >Etherscan</a
+              >
+            </div>
+          </div>
+          <div
+            class="fixed -top-8 left-0 h-screen w-screen flex justify-center overflow-hidden pointer-events-none"
+          >
+            <Confetti
+              x={[-5, 5]}
+              y={[0, 0.1]}
+              delay={[500, 2000]}
+              infinite
+              duration="5000"
+              amount="200"
+              fallDistance="100vh"
+            />
+          </div>
+        {/if}
+      {/if}
+    </div>
+  </Modal>
 {/if}

@@ -1,5 +1,5 @@
 /-  *portal-data, *portal-action, gr=social-graph, portal-config
-/+  *portal, docket, treaty
+/+  *portal, docket, treaty, ethereum
 |%
 ++  enjs
   =,  enjs:format
@@ -83,14 +83,61 @@
     ::     [%keys =key-set]  
     ::     [%valid =valid]
     :: ==
+  ++  enjs-message
+    |=  [=message]
+    ^-  json
+    ?+    -.message    s+''
+        %payment-reference  
+      %+  frond  'payment-reference'
+      %-  pairs
+        :~  ['hex' s+hex.message]
+            ['eth-price' s+eth-price.message]
+            ['receiving-address' s+receiving-address.message]
+        ==
+        %payment-confirmed
+      %+  frond  'payment-confirmed'
+      %-  pairs
+        :~  ['tx-hash' s+tx-hash.message]
+            ['desk' s+desk.message]
+        ==
+    ==
+  ++  enjs-hex
+    |=  hex=@ux
+    ^-  json
+    s+(crip (num-to-hex:ethereum hex))
   ++  enjs-manager-result
     |=  [=manager-result]
     ^-  json
     ?@  manager-result  b+manager-result
     ?-  -.manager-result
       %portal-devs  %+  frond  'portal-devs'  (enjs-dev-map +.manager-result)
+      %bought-apps  %+  frond  'bought-apps'  (enjs-bought-apps +.manager-result)
+      %authorized-ships  %+  frond  'authorized-ships'  (enjs-authorized-ships +.manager-result)
     ==
-
+  ++  enjs-authorized-ships
+    |=  [ships=(set @p)]
+    ^-  json
+    :-  %a
+    %+  turn  ~(tap in ships)
+    enjs-ship
+  ++  enjs-bought-apps
+    |=  [bought-apps=(map [ship=@p desk=@tas] @t)]
+    ^-  json
+    :-  %o
+    =+  ~(tap by bought-apps)
+    %-  malt  %+  turn  -
+    |=  [k=[ship=@p desk=@tas] v=@t]
+    ^-  [@t json]
+    [(flag-to-string k) s+v]
+  ++  flag-to-string  ::  [~zod %app] -> '~zod/app'
+    |=  [ship=@p desk=@tas]
+    ^-  @t
+    %-  crip
+    ;:  welp
+        (scow %p ship)
+        "/"
+        (trip desk)
+    ==
   ++  enjs-store-result
     |=  [=store-result]
     ^-  json
@@ -202,6 +249,7 @@
                              ['distDesk' s+dist-desk.bespoke]
                              ['signature' (enjs-sig sig.bespoke)]
                              ['treaty' (treaty:enjs:treaty treaty.bespoke)]
+                             ['eth-price' s+eth-price.bespoke]
                          ==
       %other         %-  pairs
                          :~  ['title' s+title.bespoke]
@@ -395,6 +443,12 @@
 ++  dejs
   =,  format
   |%
+  ++  dejs-hex
+    |=  jon=json
+    ;;  @ux
+    ?>  ?=([%s *] jon)
+    (hex-to-num:ethereum +.jon)
+
   ++  dejs-social-graph-track
     |=  jon=json
     ;;  track:gr
@@ -422,6 +476,8 @@
                 [%prepend-to-feed (ot:dejs ~[key+dejs-key feed+dejs-feed])]
                 [%add-tag-request (ot:dejs ~[our+dejs-key their+dejs-key tag-to+dejs-path tag-from+dejs-path])]
                 [%blog-sub ul:dejs]
+                [%payment-request (ot:dejs ~[seller+dejs-ship desk+so:dejs])]
+                [%payment-tx-hash (ot:dejs ~[seller+dejs-ship tx-hash+so:dejs])]
             ==
     ?+    -.jn    jn
         %create

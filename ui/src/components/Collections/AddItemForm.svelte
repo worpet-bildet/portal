@@ -1,7 +1,7 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import { state, keyStrFromObj, getItem } from '@root/state';
-  import { poke, subscribeToItem } from '@root/api';
+  import { api } from '@root/api';
   import { Sigil } from '@components';
   import {
     StepForm,
@@ -49,44 +49,25 @@
     dispatch('add', path);
   };
   const saveOtherItem = () => {
-    poke({
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        create: {
-          'append-to': [collection.keyObj],
-          bespoke: {
-            other: newOtherItem,
-          },
-        },
-      },
+    api.portal.do.create({
+      'append-to': [collection.keyObj],
+      bespoke: { other: newOtherItem },
     });
     dispatch('saved');
   };
   const saveShip = async () => {
-    const key = {
-      struc: 'ship',
-      ship: newShip,
-      time: '',
-      cord: '',
-    };
+    const key = { struc: 'ship', ship: newShip, time: '', cord: '' };
     if (!getItem(keyStrFromObj(key))) {
-      await subscribeToItem(key);
+      api.portal.do.subscribe(key);
     }
     add(keyStrFromObj(key));
   };
 
   let lastValidShip = newShip;
-  $: {
-    // test the value of new ship to check whether it meets the requirements
-    // of a patp
-    if (isValidPatp(newShip)) {
-      lastValidShip = newShip;
-    }
-  }
+  $: if (isValidPatp(newShip)) lastValidShip = newShip;
 </script>
 
-<StepForm {formsteps} bind:formstep navbuttons={false} darkMode={$state.darkmode}>
+<StepForm {formsteps} bind:formstep navbuttons={false}>
   <div class="grid gap-4 grid-cols-12 h-full">
     <div class="flex flex-col col-span-12 gap-4 justify-between">
       {#if formstep === 'type'}
@@ -94,15 +75,18 @@
           <div class="text-2xl pb-2">What kind of item?</div>
           <button
             on:click={() => (formstep = 'app')}
-            class="bg-panels dark:bg-darkgrey border hover:bg-hover dark:hover:border-white text-2xl font-bold py-3">App</button
+            class="bg-panels dark:bg-darkgrey border hover:bg-hover dark:hover:border-white text-2xl font-bold py-3"
+            >App</button
           >
           <button
             on:click={() => (formstep = 'group')}
-            class="bg-panels dark:bg-darkgrey border hover:bg-hover dark:hover:border-white text-2xl font-bold py-3">Group</button
+            class="bg-panels dark:bg-darkgrey border hover:bg-hover dark:hover:border-white text-2xl font-bold py-3"
+            >Group</button
           >
           <button
             on:click={() => (formstep = 'ship')}
-            class="bg-panels dark:bg-darkgrey border hover:bg-hover dark:hover:border-white text-2xl font-bold py-3">Ship</button
+            class="bg-panels dark:bg-darkgrey border hover:bg-hover dark:hover:border-white text-2xl font-bold py-3"
+            >Ship</button
           >
           <button
             on:click={() => (formstep = 'other')}
@@ -116,10 +100,7 @@
           <div class="flex justify-between">
             <IconButton
               icon={LeftArrowIcon}
-              on:click={() => (formstep = 'type')}
-              common
-              darkMode={$state.darkmode}
-              >Back</IconButton
+              on:click={() => (formstep = 'type')}>Back</IconButton
             >
             <div />
           </div>
@@ -146,10 +127,7 @@
           <div class="flex justify-between">
             <IconButton
               icon={LeftArrowIcon}
-              on:click={() => (formstep = 'type')}
-              common
-              darkMode={$state.darkmode}
-              >Back</IconButton
+              on:click={() => (formstep = 'type')}>Back</IconButton
             >
             <div />
           </div>
@@ -181,25 +159,22 @@
           </div>
         </div>
         <div class="col-span-12 flex justify-between">
-          <IconButton icon={LeftArrowIcon} on:click={() => (formstep = 'type')} common darkMode={$state.darkmode}
+          <IconButton icon={LeftArrowIcon} on:click={() => (formstep = 'type')}
             >Back</IconButton
           >
           <IconButton
             icon={CheckIcon}
             on:click={lastValidShip !== newShip || !newShip ? null : saveShip}
-            disabled={lastValidShip !== newShip || !newShip}
-            common
-            darkMode={$state.darkmode}
-            >Save</IconButton
+            disabled={lastValidShip !== newShip || !newShip}>Save</IconButton
           >
         </div>
       {:else if formstep === 'other'}
         <OtherItemForm bind:item={newOtherItem} />
         <div class="col-span-12 flex justify-between">
-          <IconButton icon={LeftArrowIcon} on:click={() => (formstep = 'type')} common darkMode={$state.darkmode}
+          <IconButton icon={LeftArrowIcon} on:click={() => (formstep = 'type')}
             >Back</IconButton
           >
-          <IconButton icon={CheckIcon} on:click={() => saveOtherItem()} common darkMode={$state.darkmode}
+          <IconButton icon={CheckIcon} on:click={() => saveOtherItem()}
             >Save</IconButton
           >
         </div>

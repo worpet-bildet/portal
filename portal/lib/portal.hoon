@@ -279,6 +279,7 @@
             (fall dist-desk.u.bespoke.act dist-desk.bespoke.item)
             (fall sig.u.bespoke.act sig.bespoke.item)
             (fall treaty.u.bespoke.act treaty.bespoke.item)
+            (fall eth-price.u.bespoke.act eth-price.bespoke.item)
         ==
         ::
           %collection
@@ -502,6 +503,11 @@
 ::
 ++  validate-sig
   |=  [dist-desk=@t dev=ship our=ship now=time sig=signature]
+  :: ~&  "dist-desk: {<dist-desk>}"
+  :: ~&  "dev: {<dev>}"
+  :: ~&  "our: {<our>}"
+  :: ~&  "now: {<now>}"
+  :: ~&  "sig: {<sig>}"  
   ?~  dist-desk  %.y
   =/  dist-desk  (parse-dist-desk:misc dist-desk)
   ?~  dist-desk  %.n
@@ -510,10 +516,10 @@
   ?:  =((get-ship-type:misc our) %comet) 
     ~&  "we are a comet, cannot validate app sigs" 
     %.y
-  ~&  "validating... w/ input:"
-  ~&  [%sign-app dev ^dist-desk]
-  ~&  "and sig:"
-  ~&  sig
+  :: ~&  "validating... w/ input:"
+  :: ~&  [%sign-app dev ^dist-desk]
+  :: ~&  "and sig:"
+  :: ~&  sig
   (validate:^sig our sig [%sign-app dev ^dist-desk] now)
 ::
 --

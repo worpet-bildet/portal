@@ -34,7 +34,9 @@
       %def
   ==
 ::
-+$  key  [=struc =ship =cord time=cord]
++$  key  
+  $+  key
+  [=struc =ship =cord time=cord]
 ::
 +$  items  (map key item)
 ::
@@ -47,11 +49,12 @@
   =<  item
   |%
   +$  item
-   $:  =key
-       =lens
-       =bespoke
-       =meta
-   ==
+    $+  item
+    $:  =key
+        =lens
+        =bespoke
+        =meta
+    ==
   +$  update  item ::  rename to diff? or add +$  diff?
   --
 ::
@@ -74,7 +77,7 @@
 +$  bespoke
   $%  [struc=%ship ~]
       [struc=%group =data:group-preview]
-      [struc=%app screenshots=(list @t) blurb=@t dist-desk=@t sig=signature =treaty]
+      [struc=%app screenshots=(list @t) blurb=@t dist-desk=@t sig=signature =treaty eth-price=@t]
       [struc=%review blurb=@t rating=@ud]
       [struc=%retweet blurb=@t ref=key]
       [struc=%feed =feed]
@@ -157,6 +160,9 @@
 +$  manager-result
   $@  ?
   $%  [%portal-devs (map @t ship)]
+      [%bought-apps (map [=ship =desk] @t)]
+      [%authorized-ships (set ship)]
   ==
+::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 --

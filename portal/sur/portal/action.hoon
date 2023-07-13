@@ -21,7 +21,7 @@
             lens=(unit lens)
             $=  bespoke  %-  unit
               $%  [%other title=(unit @t) blurb=(unit @t) link=(unit @t) image=(unit @t)]
-                  [%app screenshots=(unit (list @t)) blurb=(unit @t) dist-desk=(unit @t) sig=(unit signature) treaty=(unit treaty)]
+                  [%app screenshots=(unit (list @t)) blurb=(unit @t) dist-desk=(unit @t) sig=(unit signature) treaty=(unit treaty) eth-price=(unit @t)]
                   [%collection title=(unit @t) blurb=(unit @t) image=(unit @t) key-list=(unit key-list)]  ::does it need link?
                   [%feed feed=(unit feed)]
                   [%retweet blurb=(unit @t) ref=(unit key)]
@@ -44,7 +44,6 @@
       ::
       [%sub =key]
       [%sub-to-many =key-list]
-      [%sub-to-item =key]
       ::
       ::
       [%prepend-to-feed =feed feed-key=[struc=%feed =ship =cord time=cord]]  ::  TODO rename?
@@ -56,5 +55,10 @@
       ::  ? purge needs to be defined as action?
       :: TODO make purge have only 'items-to-keep' arg
       [%purge portal-curator=@p]
+      ::
+      [%payment-request seller=ship =desk]
+      [%payment-tx-hash seller=ship tx-hash=@t]
+      ::
+      [%authorize-ships authorized-ships=(set ship)]
     ==
 --

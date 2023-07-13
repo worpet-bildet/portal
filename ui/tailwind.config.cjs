@@ -7,6 +7,7 @@ module.exports = {
     },
     extend: {
       colors: {
+        transparent: '#00000000',
         grey: '#696969',
         black: '#000000',
         dark: '#00000080',
@@ -21,6 +22,8 @@ module.exports = {
         offwhite: '#c5c5c5',
         error: 'rgb(220 38 38)',
         link: 'blue',
+        'payment-gr-start': '#93E486',
+        'payment-gr-end': '#7DCE69',
       },
     },
     borderColor: {

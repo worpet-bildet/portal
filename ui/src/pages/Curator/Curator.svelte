@@ -5,17 +5,16 @@
     getCurator,
     getCuratorFeed,
     refreshPals,
-    getCuratorFeaturedCollection,
     keyStrToObj,
     getMoreFromThisShip,
   } from '@root/state';
-  import { subscribeToCurator, addPal, removePal, me } from '@root/api';
+  import { api, me } from '@root/api';
   import { getMeta } from '@root/util';
   import {
     CollectionsGrid,
     Feed,
     ItemDetail,
-    ItemVerticalListPreview,
+    ItemPreview,
     CollectionsAdd,
     FeedPostForm,
   } from '@components';
@@ -34,15 +33,24 @@
   let { patp } = params;
 
   let feed = [];
-  let curator, isMyPal, subscribingToCurator, featuredCollection;
+  let curator, isMyPal;
   const loadCurator = async () => {
     curator = getCurator(patp);
-    // featuredCollection = getCuratorFeaturedCollection(patp);
     feed = getCuratorFeed(patp);
     isMyPal = !!$state.pals?.[patp.slice(1)];
-    if (!feed && $state.isLoaded && !subscribingToCurator) {
-      subscribingToCurator = true;
-      return subscribeToCurator(patp);
+    if (!feed && $state.isLoaded) {
+      api.portal.do.subscribe({
+        struc: 'feed',
+        ship: patp,
+        time: '~2000.1.1',
+        cord: '',
+      });
+      api.portal.do.subscribe({
+        struc: 'collection',
+        ship: patp,
+        time: '~2000.1.1',
+        cord: '',
+      });
     }
   };
 
@@ -60,8 +68,8 @@
 
   const togglePal = () => {
     let ship = patp.slice(1);
-    if (isMyPal) return removePal(ship).then(refreshPals);
-    addPal(ship).then(refreshPals);
+    if (isMyPal) return api.pals.do.remove(ship).then(refreshPals);
+    api.pals.do.add(ship).then(refreshPals);
   };
 
   let activeTab = 'Collections';
@@ -98,7 +106,7 @@
               </div>
             {/if}
           {:else if activeTab === 'Collections'}
-            <CollectionsGrid {patp} bind:loading={subscribingToCurator} />
+            <CollectionsGrid {patp} />
           {/if}
         </div>
       </div>
@@ -108,16 +116,27 @@
         {#if me === patp}
           <div class="flex flex-col gap-4">
             <CollectionsAdd on:add={() => (activeTab = 'Collections')} />
-            <IconButton icon={EditIcon} on:click={() => push(`/${patp}/edit`)} common darkMode={$state.darkmode}
+            <IconButton
+              icon={EditIcon}
+              on:click={() => push(`/${patp}/edit`)}
+              class="bg-panels dark:bg-transparent dark:border dark:hover:border-white dark:hover:bg-transparent"
               >Edit Profile</IconButton
             >
           </div>
         {:else if isMyPal}
-          <IconButton icon={RemovePalIcon} on:click={togglePal} async common darkMode={$state.darkmode}
+          <IconButton
+            icon={RemovePalIcon}
+            on:click={togglePal}
+            async
+            class="bg-panels dark:bg-transparent dark:border dark:hover:border-white dark:hover:bg-transparent"
             >Remove Pal</IconButton
           >
         {:else}
-          <IconButton icon={AddPalIcon} on:click={togglePal} async common darkMode={$state.darkmode}
+          <IconButton
+            icon={AddPalIcon}
+            on:click={togglePal}
+            async
+            class="bg-panels dark:bg-transparent dark:border dark:hover:border-white dark:hover:bg-transparent"
             >Add Pal</IconButton
           >
         {/if}
@@ -125,7 +144,8 @@
           <IconButton
             icon={ChatIcon}
             on:click={() =>
-              window.open(`${window.location.origin}/apps/talk/dm/${patp}`)} common darkMode={$state.darkmode}
+              window.open(`${window.location.origin}/apps/talk/dm/${patp}`)}
+            class="bg-panels dark:bg-transparent dark:border dark:hover:border-white dark:hover:bg-transparent"
             >Message</IconButton
           >
         {/if}
@@ -135,7 +155,7 @@
           <div class="grid gap-y-4">
             <div class="text-lg mx-1">{nickname || patp} recommends</div>
             {#each curator.bespoke.groups as key}
-              <ItemVerticalListPreview
+              <ItemPreview
                 small
                 key={{
                   struc: 'group',
@@ -152,7 +172,7 @@
         <SidebarGroup>
           <div class="text-lg mx-1">More from {nickname || patp}</div>
           {#each sortedRecommendations as [recommendation]}
-            <ItemVerticalListPreview key={keyStrToObj(recommendation)} small />
+            <ItemPreview key={keyStrToObj(recommendation)} small />
           {/each}
         </SidebarGroup>
       {/if}

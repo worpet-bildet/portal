@@ -50,49 +50,34 @@
 
   // this info is saved in tlon's contact store, not portal
   const saveProfile = () => {
-    poke({
-      app: 'contacts',
-      mark: 'contact-action',
-      json: {
-        edit: [
-          { nickname: nickname ?? '' },
-          { cover: cover ?? '' },
-          { avatar: avatar ?? '' },
-          { bio: bio ?? '' },
-        ],
-      },
-    });
+    api.urbit.do.editProfile([
+      { nickname: nickname ?? '' },
+      { cover: cover ?? '' },
+      { avatar: avatar ?? '' },
+      { bio: bio ?? '' },
+    ]);
   };
   const saveCollections = () => {
-    poke({
-      app: 'portal-manager',
-      mark: 'portal-action',
-      json: {
-        edit: {
-          key: {
-            struc: 'collection',
-            ship: patp,
-            cord: '',
-            time: '~2000.1.1',
-          },
-          bespoke: {
-            collection: {
-              'key-list': collections,
-            },
-          },
-        },
-      },
+    api.portal.do.edit({
+      key: { struc: 'collection', ship: patp, cord: '', time: '~2000.1.1' },
+      bespoke: { collection: { 'key-list': collections } },
     });
   };
 </script>
 
 <div class="grid grid-cols-12 gap-x-8">
-  <div class="grid gap-y-4 col-span-9 bg-panels dark:bg-darkgrey border p-6 rounded-lg">
+  <div
+    class="grid gap-y-4 col-span-9 bg-panels dark:bg-darkgrey border p-6 rounded-lg"
+  >
     <Tabs {tabs} bind:activeTab />
     {#if activeTab === 'Profile'}
       <div class="flex flex-col gap-2">
         <div>Display Name</div>
-        <input type="text" bind:value={nickname} class="p-2 border-b focus:outline-none" />
+        <input
+          type="text"
+          bind:value={nickname}
+          class="p-2 border-b focus:outline-none"
+        />
       </div>
       <div class="flex flex-col gap-2">
         <div>Bio</div>
@@ -100,11 +85,19 @@
       </div>
       <div class="flex flex-col gap-2">
         <div>Avatar</div>
-        <input type="text" bind:value={avatar} class="p-2 border-b focus:outline-none" />
+        <input
+          type="text"
+          bind:value={avatar}
+          class="p-2 border-b focus:outline-none"
+        />
       </div>
       <div class="flex flex-col gap-2">
         <div>Cover Image</div>
-        <input type="text" bind:value={cover} class="p-2 border-b focus:outline-none" />
+        <input
+          type="text"
+          bind:value={cover}
+          class="p-2 border-b focus:outline-none"
+        />
       </div>
     {:else if activeTab === 'Collections'}
       <div class="grid gap-8 grid-cols-4 pb-4">
@@ -167,12 +160,16 @@
               return;
           }
         }}
-        common
-        darkMode={$state.darkmode}
+        class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
       >
         Save</IconButton
       >
-      <IconButton icon={LeftArrowIcon} on:click={pop} common darkMode={$state.darkmode}>Back</IconButton>
+      <IconButton
+        icon={LeftArrowIcon}
+        on:click={pop}
+        class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+        >Back</IconButton
+      >
     </SidebarGroup>
   </RightSidebar>
 </div>
