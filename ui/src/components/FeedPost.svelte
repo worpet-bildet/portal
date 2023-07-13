@@ -119,7 +119,7 @@
   } = getCurator(ship)}
   {@const blurbLink = getAnyLink(blurb)}
   <div
-    class="grid grid-cols-12 bg-panels dark:bg-darkgrey dark:border rounded-lg px-5 pt-5 gap-2 lg:gap-4 lg:gap-y-0"
+    class="grid grid-cols-12 bg-panels dark:bg-darkgrey border rounded-lg px-5 pt-5 gap-2 lg:gap-4 lg:gap-y-0"
     in:fade
   >
     <div class="col-span-1">

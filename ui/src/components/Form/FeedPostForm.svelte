@@ -75,8 +75,7 @@
 </script>
 
 <div
-  class="grid grid-cols-12 bg-panels dark:bg-darkgrey dark:border py-3 pl-3 rounded-lg pr-3"
-  class:border={error}
+  class="grid grid-cols-12 bg-panels dark:bg-darkgrey border py-3 pl-3 rounded-lg pr-3"
   class:border-error={error}
 >
   <div class="col-span-1 pr-2">

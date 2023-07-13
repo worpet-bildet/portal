@@ -154,7 +154,7 @@
             <input
               type="text"
               class="border-b focus:outline-none placeholder-grey"
-              placeholder="~worpet-bildet"
+              placeholder="~mister-toptyr-bilder"
               bind:value={searchShip}
               on:keydown={(e) => (e.key === 'Enter' ? search() : null)}
             />

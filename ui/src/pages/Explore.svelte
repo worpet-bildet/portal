@@ -119,7 +119,7 @@
 </script>
 
 <div class="flex flex-col gap-4 mb-4 items-center">
-  <div class="flex bg-panels dark:bg-darkgrey dark:border p-2 rounded-lg w-2/3">
+  <div class="flex bg-panels dark:bg-darkgrey border p-2 rounded-lg w-2/3">
     <div class="w-5 text-grey mt-[3px] ml-2"><SearchIcon /></div>
     <input
       type="text"
@@ -187,7 +187,7 @@
     exhaustive index of all the things on Portal.
   </p>
   {#if items}
-    <div class="flex flex-col gap-4 bg-panels dark:bg-darkgrey dark:border p-6 rounded-lg w-2/3">
+    <div class="flex flex-col gap-4 bg-panels dark:bg-darkgrey border p-6 rounded-lg w-2/3">
       {#if activeItems.length > 0}
         {#each activeItems as key}
           <ItemVerticalListPreview {key} />

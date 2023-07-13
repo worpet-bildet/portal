@@ -215,7 +215,7 @@ export const getCollectedItemLeaderboard = (excludePatp) => {
         b?.bespoke?.['key-list']
           .filter((k) =>
             k?.struc !== 'collection' &&
-            !(k?.cord === 'portal' && k?.ship === '~worpet-bildet' &&
+            !(k?.cord === 'portal' && k?.ship === '~mister-toptyr-bilder' &&
               (k?.struc === 'app' || k?.struc === 'group'))
           )
           .forEach((k) => {
@@ -243,7 +243,7 @@ export const getMoreFromThisShip = (patp) => {
               k?.struc !== 'collection' &&
               k?.ship === patp &&
               k?.struc !== 'ship' &&
-              !(k?.cord === 'portal' && k?.ship === '~worpet-bildet' &&
+              !(k?.cord === 'portal' && k?.ship === '~mister-toptyr-bilder' &&
                 (k?.struc === 'app' || k?.struc === 'group'))
           )
           .forEach((k) => {

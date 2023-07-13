@@ -14,7 +14,7 @@
 
 {#await metadata then data}
   <div
-    class={`flex flex-col rounded-md border text-left bg-panels dark:bg-darkgrey dark:border cursor-pointer`}
+    class={`flex flex-col rounded-md border text-left bg-panels dark:bg-darkgrey border cursor-pointer`}
     on:click={clickHandler}
   >
     <div
