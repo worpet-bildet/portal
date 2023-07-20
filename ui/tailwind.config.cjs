@@ -17,6 +17,7 @@ module.exports = {
         gradientdark: '#0c0c0c',
         darkgrey: '#181A1C',
         panels: '#f9f9f940', //#D6D3D6',
+        'panels-hover': '#00000008',
         white: '#ffffff',
         hover: '#ffffff60',
         offwhite: '#c5c5c5',
@@ -28,6 +29,8 @@ module.exports = {
     },
     borderColor: {
       DEFAULT: '#80808040',
+      transparent: '#00000000',
+      grey: '#80808040',
       white: '#ffffff',
       black: '#000000',
       error: 'rgb(220 38 38)',

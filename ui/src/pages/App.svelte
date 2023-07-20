@@ -287,6 +287,7 @@
               Please prompt them to follow
               <a
                 href="https://twitter.com/worpet_bildet/status/1668643121813438466?s=20"
+                target="_blank"
                 >this guide</a
               >
             </div>
@@ -398,6 +399,7 @@
             prompt them to follow
             <a
               href="https://twitter.com/worpet_bildet/status/1668643121813438466?s=20"
+              target="_blank"
               >this guide</a
             >
           </div>
@@ -411,27 +413,27 @@
             icon={ExternalDestinationIcon}
             on:click={() =>
               window.open(`${window.location.origin}${servedFrom}/`)}
-            class="bg-panels dark:bg-transparent dark:border dark:hover:border-white"
+            class="bg-panels dark:bg-transparent dark:border hover:bg-panels-hover dark:hover:border-white"
             >Open</IconButton
           >
         {:else if isInstalling}
           <IconButton
             loading
-            class="bg-panels dark:bg-transparent dark:border dark:hover:border-white"
+            class="bg-panels dark:bg-transparent dark:border"
             >Installing...</IconButton
           >
         {:else if ethPrice && !purchased}
           <IconButton
             icon={EthereumIcon}
             on:click={purchase}
-            class="bg-panels dark:bg-transparent dark:border dark:hover:border-white"
+            class="bg-panels dark:bg-transparent dark:border hover:bg-panels-hover dark:hover:border-white"
             >Purchase</IconButton
           >
         {:else}
           <IconButton
             icon={InstallIcon}
             on:click={install}
-            class="bg-panels dark:bg-transparent dark:border dark:hover:border-white"
+            class="bg-panels dark:bg-transparent dark:border hover:bg-panels-hover dark:hover:border-white"
             >Install</IconButton
           >
         {/if}
@@ -439,14 +441,14 @@
           <IconButton
             icon={GlobeIcon}
             on:click={() => window.open(link)}
-            class="bg-panels dark:bg-transparent dark:border dark:hover:border-white"
+            class="bg-panels dark:bg-transparent dark:border hover:bg-panels-hover dark:hover:border-white"
             >View Website</IconButton
           >
         {/if}
         <IconButton
           icon={ShareIcon}
           on:click={() => (recommendModalOpen = true)}
-          class="bg-panels dark:bg-transparent dark:border dark:hover:border-white"
+          class="bg-panels dark:bg-transparent dark:border hover:bg-panels-hover dark:hover:border-white"
           >Recommend</IconButton
         >
         {#if isInstalled}
@@ -454,7 +456,7 @@
             icon={CrossIcon}
             on:click={uninstall}
             async
-            class="bg-panels dark:bg-transparent dark:border dark:hover:border-white"
+            class="bg-panels dark:bg-transparent dark:border hover:bg-panels-hover dark:hover:border-white"
             >Uninstall</IconButton
           >
         {/if}

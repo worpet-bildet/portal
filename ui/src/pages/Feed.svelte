@@ -144,15 +144,6 @@
       happeningSoon: 'false',
     },
     {
-      title: 'Core Dev PR Blitz',
-      link: 'https://app.gather.town/app/xAYeiPI2XDYhRM9t/urbit-hacker-house',
-      startDate: '2023-06-19T11:00:00-04:00',
-      endDate: '2023-06-19T12:00:00-04:00',
-      frequency: 'weekdays',
-      location: 'in the hacker house',
-      happeningSoon: 'false',
-    },
-    {
       title: 'Turf Build Party',
       link: 'https://app.gather.town/app/xAYeiPI2XDYhRM9t/urbit-hacker-house',
       startDate: '2023-06-23T12:00:00-04:00',
@@ -208,7 +199,7 @@
           {#each happeningSoonTuple[1] as { title, link, startDate, endDate, frequency, location, happeningSoon, formattedStart }}
             {#if happeningSoon}
               <button
-                class="flex flex-col gap-2 rounded-md p-2 hover:bg-hover dark:hover:bg-transparent dark:border dark:hover:border-white hover:duration-500 text-left"
+                class="flex flex-col gap-2 rounded-md p-2 border border-transparent dark:hover:border-white dark:hover:bg-transparent hover:bg-panels-hover hover:duration-500 text-left"
                 on:click={() => window.open(`${link}`, '_blank')}
               >
                 <div>{title}</div>

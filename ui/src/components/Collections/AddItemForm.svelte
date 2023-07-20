@@ -100,7 +100,9 @@
           <div class="flex justify-between">
             <IconButton
               icon={LeftArrowIcon}
-              on:click={() => (formstep = 'type')}>Back</IconButton
+              on:click={() => (formstep = 'type')}
+              class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
+              >Back</IconButton
             >
             <div />
           </div>
@@ -127,7 +129,9 @@
           <div class="flex justify-between">
             <IconButton
               icon={LeftArrowIcon}
-              on:click={() => (formstep = 'type')}>Back</IconButton
+              on:click={() => (formstep = 'type')}
+              class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
+              >Back</IconButton
             >
             <div />
           </div>
@@ -160,21 +164,26 @@
         </div>
         <div class="col-span-12 flex justify-between">
           <IconButton icon={LeftArrowIcon} on:click={() => (formstep = 'type')}
+            class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
             >Back</IconButton
           >
           <IconButton
             icon={CheckIcon}
             on:click={lastValidShip !== newShip || !newShip ? null : saveShip}
-            disabled={lastValidShip !== newShip || !newShip}>Save</IconButton
+            disabled={lastValidShip !== newShip || !newShip}
+            class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
+            >Save</IconButton
           >
         </div>
       {:else if formstep === 'other'}
         <OtherItemForm bind:item={newOtherItem} />
         <div class="col-span-12 flex justify-between">
           <IconButton icon={LeftArrowIcon} on:click={() => (formstep = 'type')}
+            class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
             >Back</IconButton
           >
           <IconButton icon={CheckIcon} on:click={() => saveOtherItem()}
+            class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
             >Save</IconButton
           >
         </div>

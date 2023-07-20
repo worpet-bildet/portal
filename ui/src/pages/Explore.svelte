@@ -129,7 +129,7 @@
       icon={SparklesIcon}
       active={filters.has('new')}
       on:click={() => toggleFilter('new')}
-      class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+      class="bg-transparent dark:hover:border-white hover:bg-panels-hover border"
       >New to me
     </IconButton>
     <IconButton
@@ -138,7 +138,7 @@
       on:click={() => {
         toggleFilter('apps');
       }}
-      class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+      class="bg-panels dark:fill-white dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
       >Apps</IconButton
     >
     <IconButton
@@ -147,7 +147,7 @@
       on:click={() => {
         toggleFilter('groups');
       }}
-      class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+      class="bg-panels dark:fill-grey fill-white dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
       >Groups</IconButton
     >
     <IconButton
@@ -156,7 +156,7 @@
       on:click={() => {
         toggleFilter('ships');
       }}
-      class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+      class="bg-panels dark:bg-transparent dark:fill-white dark:hover:border-white hover:bg-panels-hover border"
       >People</IconButton
     >
     <IconButton
@@ -165,7 +165,7 @@
       on:click={() => {
         toggleFilter('collections');
       }}
-      class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+      class="bg-panels dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
       >Collections</IconButton
     >
   </div>

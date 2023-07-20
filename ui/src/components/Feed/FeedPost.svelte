@@ -167,7 +167,7 @@
               <IconButton
                 icon={ChatIcon}
                 on:click={() => (showCommentForm = !showCommentForm)}
-                class="dark:hover:stroke-white hover:stroke-black hover:bg-transparent stroke-grey"
+                class="fill-grey hover:fill-black dark:hover:fill-white"
               />
             </div>
             <div class="pt-2 text-sm w-2 text-grey">
@@ -192,7 +192,7 @@
               <IconButton
                 icon={LikeIcon}
                 on:click={likePost}
-                class="dark:hover:stroke-white hover:stroke-black stroke-grey dark:hover:stroke-error"
+                class="stroke-grey hover:stroke-error dark:hover:stroke-error"
               />
             </div>
             <div class="pt-2 pb-2 text-sm text-grey">

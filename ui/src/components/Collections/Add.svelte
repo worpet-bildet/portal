@@ -132,7 +132,7 @@
 <IconButton
   icon={PlusIcon}
   on:click={addCollection}
-  class="bg-panels dark:bg-transparent dark:border dark:hover:border-white dark:hover:bg-transparent"
+  class="bg-panels hover:bg-panels-hover dark:bg-transparent dark:border dark:hover:border-white"
   >New Collection</IconButton
 >
 <Modal bind:open={showModal}>
@@ -142,7 +142,7 @@
     on:save={save}
     bind:navbuttons={showFormNav}
   >
-    <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-4 p-4">
       {#if formstep === 'meta'}
         <div class="text-2xl font-bold">Give your collection a name</div>
         <input
@@ -208,7 +208,9 @@
             on:click={() => {
               formstep = 'addship';
               showFormNav = false;
-            }}>Add</IconButton
+            }}
+            class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
+            >Add</IconButton
           >
         </div>
         {#each shipKeys as key}
@@ -222,7 +224,9 @@
             on:click={() => {
               formstep = 'ships';
               showFormNav = true;
-            }}>Cancel</IconButton
+            }}
+            class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
+            >Cancel</IconButton
           >
           <IconButton
             icon={CheckIcon}
@@ -230,7 +234,9 @@
               saveShip();
               formstep = 'ships';
               showFormNav = true;
-            }}>Save</IconButton
+            }}
+            class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
+            >Save</IconButton
           >
         </div>
       {:else if formstep === 'other'}
@@ -241,7 +247,9 @@
             on:click={() => {
               formstep = 'addother';
               showFormNav = false;
-            }}>Add</IconButton
+            }}
+            class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
+            >Add</IconButton
           >
         </div>
         {#each otherKeys as key}
@@ -255,7 +263,9 @@
             on:click={() => {
               formstep = 'other';
               showFormNav = true;
-            }}>Cancel</IconButton
+            }}
+            class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
+            >Cancel</IconButton
           >
           <IconButton
             icon={CheckIcon}
@@ -263,7 +273,9 @@
               saveOtherItem();
               formstep = 'other';
               showFormNav = true;
-            }}>Save</IconButton
+            }}
+            class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
+            >Save</IconButton
           >
         </div>
       {/if}
