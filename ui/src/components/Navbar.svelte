@@ -57,7 +57,7 @@
         <IconButton
           icon={$state.darkmode ? SunIcon : MoonIcon}
           on:click={toggleDarkmode}
-          class="hover:bg-transparent
+          class="hover:bg-transparent border-transparent
             {!pagesWithoutCoverPhoto.some((v) => $location.includes(v)) &&
           $location !== '/' &&
           !$state.darkmode

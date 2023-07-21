@@ -67,7 +67,7 @@
 
 <div class="grid grid-cols-12 gap-x-8">
   <div
-    class="grid gap-y-4 col-span-9 bg-panels dark:bg-darkgrey dark:border p-6 rounded-lg"
+    class="grid gap-y-4 col-span-9 bg-panels dark:bg-darkgrey border p-6 rounded-lg"
   >
     <Tabs {tabs} bind:activeTab />
     {#if activeTab === 'Profile'}
@@ -160,14 +160,14 @@
               return;
           }
         }}
-        class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+        class="bg-panels dark:bg-transparent dark:hover:border-white dark:border hover:bg-panels-hover"
       >
         Save</IconButton
       >
       <IconButton
         icon={LeftArrowIcon}
         on:click={pop}
-        class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+        class="bg-panels dark:bg-transparent dark:hover:border-white dark:border hover:bg-panels-hover"
         >Back</IconButton
       >
     </SidebarGroup>

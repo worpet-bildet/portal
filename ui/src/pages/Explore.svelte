@@ -115,7 +115,7 @@
 </script>
 
 <div class="flex flex-col gap-4 mb-4 items-center">
-  <div class="flex bg-panels dark:bg-darkgrey dark:border p-2 rounded-lg w-2/3">
+  <div class="flex bg-panels dark:bg-darkgrey border p-2 rounded-lg w-2/3">
     <div class="w-5 text-grey mt-[3px] ml-2"><SearchIcon /></div>
     <input
       type="text"
@@ -129,7 +129,7 @@
       icon={SparklesIcon}
       active={filters.has('new')}
       on:click={() => toggleFilter('new')}
-      class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+      class="bg-transparent dark:hover:border-white hover:bg-panels-hover border"
       >New to me
     </IconButton>
     <IconButton
@@ -138,7 +138,7 @@
       on:click={() => {
         toggleFilter('apps');
       }}
-      class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+      class="bg-panels dark:fill-white dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
       >Apps</IconButton
     >
     <IconButton
@@ -147,7 +147,7 @@
       on:click={() => {
         toggleFilter('groups');
       }}
-      class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+      class="bg-panels dark:fill-grey fill-white dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
       >Groups</IconButton
     >
     <IconButton
@@ -156,7 +156,7 @@
       on:click={() => {
         toggleFilter('ships');
       }}
-      class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+      class="bg-panels dark:bg-transparent dark:fill-white dark:hover:border-white hover:bg-panels-hover border"
       >People</IconButton
     >
     <IconButton
@@ -165,7 +165,7 @@
       on:click={() => {
         toggleFilter('collections');
       }}
-      class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+      class="bg-panels dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
       >Collections</IconButton
     >
   </div>
@@ -175,7 +175,7 @@
   </p>
   {#if items}
     <div
-      class="flex flex-col gap-4 bg-panels dark:bg-darkgrey dark:border p-6 rounded-lg w-2/3"
+      class="flex flex-col gap-4 bg-panels dark:bg-darkgrey border p-6 rounded-lg w-2/3"
     >
       {#if activeItems.length > 0}
         {#each activeItems as key}

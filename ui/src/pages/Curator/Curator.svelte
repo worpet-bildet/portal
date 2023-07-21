@@ -91,7 +91,7 @@
     >
       <div class="col-span-12 lg:col-span-9">
         <Tabs {tabs} bind:activeTab />
-        <div class="pt-4 flex flex-col gap-4">
+        <div class="pt-4 flex flex-col">
           {#if activeTab === 'Activity'}
             {#if me === patp}
               <FeedPostForm />
@@ -101,7 +101,7 @@
                 {patp} hasn't made any posts on Portal yet.
               </div>
             {:else}
-              <div class="grid gap-y-4">
+              <div class="grid border-t rounded-lg">
                 <Feed feed={feed || []} />
               </div>
             {/if}
@@ -119,7 +119,7 @@
             <IconButton
               icon={EditIcon}
               on:click={() => push(`/${patp}/edit`)}
-              class="bg-panels dark:bg-transparent dark:border dark:hover:border-white dark:hover:bg-transparent"
+              class="bg-panels hover:bg-panels-hover dark:fill-white dark:bg-transparent dark:border dark:hover:border-white dark:hover:bg-transparent"
               >Edit Profile</IconButton
             >
           </div>
@@ -128,7 +128,7 @@
             icon={RemovePalIcon}
             on:click={togglePal}
             async
-            class="bg-panels dark:bg-transparent dark:border dark:hover:border-white dark:hover:bg-transparent"
+            class="bg-panels hover:bg-panels-hover dark:fill-white dark:bg-transparent dark:border dark:hover:border-white dark:hover:bg-transparent"
             >Remove Pal</IconButton
           >
         {:else}
@@ -136,7 +136,7 @@
             icon={AddPalIcon}
             on:click={togglePal}
             async
-            class="bg-panels dark:bg-transparent dark:border dark:hover:border-white dark:hover:bg-transparent"
+            class="bg-panels hover:bg-panels-hover dark:fill-white dark:bg-transparent dark:border dark:hover:border-white dark:hover:bg-transparent"
             >Add Pal</IconButton
           >
         {/if}
@@ -145,7 +145,7 @@
             icon={ChatIcon}
             on:click={() =>
               window.open(`${window.location.origin}/apps/talk/dm/${patp}`)}
-            class="bg-panels dark:bg-transparent dark:border dark:hover:border-white dark:hover:bg-transparent"
+            class="bg-panels hover:bg-panels-hover dark:fill-white dark:bg-transparent dark:border dark:hover:border-white dark:hover:bg-transparent"
             >Message</IconButton
           >
         {/if}
