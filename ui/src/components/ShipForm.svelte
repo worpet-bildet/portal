@@ -18,7 +18,7 @@
       class="p-2 col-span-7 col-start-2 md:col-span-3 md:col-start-4 bg-panels dark:bg-darkgrey border focus:outline-none placeholder-grey"
       class:border-rose-500={lastValidShip !== ship}
       bind:value={ship}
-      placeholder="~mister-toptyr-bilder"
+      placeholder="~worpet-bildet"
     />
   </div>
 </div>

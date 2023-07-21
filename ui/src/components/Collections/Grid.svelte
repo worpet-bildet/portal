@@ -54,6 +54,23 @@
 </script>
 
 <div class="grid grid-cols-12 gap-4 items-start">
+  {#if me === patp && hasBlog && !hasBlogCollection && !subbingToBlogs}
+    <button
+      on:click={subToBlog}
+      class="flex flex-col items-center justify-center gap-4 col-span-4 h-full bg-purple text-white border dark:hover:border-white rounded-lg"
+    >
+      <div class="w-5 h-5">
+        <ArrowPathIcon />
+      </div>
+      <div>Sync my %blogs</div>
+    </button>
+  {:else if subbingToBlogs && !hasBlogCollection}
+    <div
+      class="flex items-center justify-center col-span-4 h-full bg-purple text-white border dark:hover:border-white rounded-lg"
+    >
+      Syncing...
+    </div>
+  {/if}
   {#if loading || (curatorCollections.length > 0 && collections.length === 0)}
     <div class="col-span-12">Loading...</div>
   {:else if collections.length === 0}
@@ -66,22 +83,5 @@
         <SquarePreview key={collection.keyObj} />
       </a>
     {/each}
-  {/if}
-  {#if me === patp && hasBlog && !hasBlogCollection && !subbingToBlogs}
-    <button
-      on:click={subToBlog}
-      class="flex flex-col items-center justify-center gap-4 col-span-4 h-full bg-purple text-white border dark:hover:border-white shadow rounded-lg"
-    >
-      <div class="w-5 h-5">
-        <ArrowPathIcon />
-      </div>
-      <div>Sync my %blogs</div>
-    </button>
-  {:else if subbingToBlogs && !hasBlogCollection}
-    <div
-      class="flex items-center justify-center col-span-4 h-full bg-purple text-white border dark:hover:border-white shadow rounded-lg"
-    >
-      Syncing...
-    </div>
   {/if}
 </div>

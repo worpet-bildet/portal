@@ -26,7 +26,7 @@
 >
   <span class="w-5">
     {#if loading}
-      <svelte:component this={LoadingIcon} class="w-5" />
+      <svelte:component this={LoadingIcon} class="w-5 dark:stroke-white" />
     {:else}
       <svelte:component this={icon} />
     {/if}

@@ -149,7 +149,7 @@
           <div class="flex flex-col gap-1">
             <div class="font-bold">Members</div>
             <div class="flex items-center gap-2">
-              <div class="w-5 h-5">
+              <div class="w-5 h-5 mb-1 dark:fill-white">
                 <PersonIcon />
               </div>
               {Object.keys(joinedDetails.fleet).length}

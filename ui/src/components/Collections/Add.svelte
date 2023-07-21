@@ -132,7 +132,7 @@
 <IconButton
   icon={PlusIcon}
   on:click={addCollection}
-  class="bg-panels hover:bg-panels-hover dark:bg-transparent dark:border dark:hover:border-white"
+  class="bg-panels hover:bg-panels-hover dark:fill-white dark:bg-transparent dark:border dark:hover:border-white"
   >New Collection</IconButton
 >
 <Modal bind:open={showModal}>

@@ -189,7 +189,7 @@ export const getCollectedItemLeaderboard = (excludePatp) => {
               k?.struc !== 'collection' &&
               !(
                 k?.cord === 'portal' &&
-                k?.ship === '~mister-toptyr-bilder' &&
+                k?.ship === '~worpet-bildet' &&
                 (k?.struc === 'app' || k?.struc === 'group')
               )
           )
@@ -220,7 +220,7 @@ export const getMoreFromThisShip = (patp) => {
               k?.struc !== 'ship' &&
               !(
                 k?.cord === 'portal' &&
-                k?.ship === '~mister-toptyr-bilder' &&
+                k?.ship === '~worpet-bildet' &&
                 (k?.struc === 'app' || k?.struc === 'group')
               )
           )

@@ -167,7 +167,7 @@
 </script>
 
 <div class="grid grid-cols-9 gap-8 mb-4">
-  <div class="flex flex-col gap-4 col-span-12 md:col-span-6">
+  <div class="flex flex-col col-span-12 md:col-span-6">
     <FeedPostForm on:post={handlePost} />
     <Feed {feed} />
   </div>
@@ -183,7 +183,7 @@
             <input
               type="text"
               class="border-b focus:outline-none placeholder-grey"
-              placeholder="~mister-toptyr-bilder"
+              placeholder="~worpet-bildet"
               bind:value={searchShip}
               on:keydown={(e) => (e.key === 'Enter' ? search() : null)}
             />
@@ -232,7 +232,7 @@
         <div class="flex flex-col gap-4">
           {#each sortRadioStations($state.radioStations) as { description, viewers, location }}
             <button
-              class="flex flex-col gap-2 rounded-md p-2 hover:bg-hover dark:hover:bg-transparent dark:border dark:hover:border-white hover:duration-500 text-left"
+              class="flex flex-col gap-2 rounded-md p-2 hover:bg-panels-hover dark:hover:bg-transparent dark:border dark:border-transparent dark:hover:border-white hover:duration-500 text-left"
               on:click={() => tuneRadio(location)}
             >
               <div>{description}</div>

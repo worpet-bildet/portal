@@ -46,7 +46,7 @@
 
 {#if previewItems && previewItems.length > 0}
   <div
-    class="rounded-lg overflow-hidden dark:border dark:hover:border-white hover:duration-500"
+    class="rounded-lg overflow-hidden hover:bg-panels-hover dark:border dark:hover:border-white hover:duration-500"
   >
     <div class="grid grid-cols-2 grid-rows-2" bind:this={container}>
       {#if image}
@@ -74,13 +74,13 @@
       {/if}
     </div>
     {#if withTitle}
-      <div class="bg-panels dark:bg-darkgrey border p-2">
+      <div class="rounded-bl-lg rounded-br-lg bg-panels dark:bg-darkgrey border p-2">
         <div>{title}</div>
       </div>
     {/if}
   </div>
 {:else}
   <div class="flex justify-center items-center p-10 w-full h-full">
-    <LoadingIcon class="w-16 h-16" />
+    <LoadingIcon class="w-16 h-16 dark:stroke-white" />
   </div>
 {/if}

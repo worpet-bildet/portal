@@ -294,7 +294,7 @@
           {/if}
           {#each screenshots as screenshot}
             <div
-              class="relative border shadow rounded-lg overflow-hidden h-full col-span-3"
+              class="relative border rounded-lg overflow-hidden h-full col-span-3"
             >
               <a href={screenshot} target="_blank" class="">
                 <img
@@ -413,7 +413,7 @@
             icon={ExternalDestinationIcon}
             on:click={() =>
               window.open(`${window.location.origin}${servedFrom}/`)}
-            class="bg-panels dark:bg-transparent dark:border hover:bg-panels-hover dark:hover:border-white"
+            class="bg-panels dark:fill-white dark:bg-transparent dark:border hover:bg-panels-hover dark:hover:border-white"
             >Open</IconButton
           >
         {:else if isInstalling}
@@ -526,7 +526,7 @@
           <div class="text-2xl">Purchasing...</div>
           <div class="w-full flex justify-center">
             <div class="w-32 h-32">
-              <LoadingIcon />
+              <LoadingIcon class="dark:stroke-white"/>
             </div>
           </div>
         {:else}
