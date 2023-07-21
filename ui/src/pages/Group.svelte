@@ -71,7 +71,7 @@
       type="group"
     >
       <div
-        class="col-span-12 md:col-span-9 bg-panels dark:bg-darkgrey dark:border p-6 rounded-lg"
+        class="col-span-12 md:col-span-9 bg-panels dark:bg-darkgrey border p-6 rounded-lg"
       >
         {#if !joinedDetails}
           <div>Join the group to see more information</div>
@@ -97,7 +97,7 @@
                         meta: { title, description },
                       } = joinedDetails.channels[channelKey]}
                       <div
-                        class="rounded-lg p-2 hover:bg-hover hover:duration-500"
+                        class="rounded-lg p-2 hover:bg-panels-hover dark:border dark:border-transparent dark:hover:border-white hover:duration-500"
                       >
                         <a
                           href={channelLink(channelKey)}
@@ -135,21 +135,21 @@
             icon={PlusIcon}
             on:click={join}
             async
-            class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+            class="bg-panels dark:bg-transparent hover:bg-panels-hover dark:hover:border-white dark:border"
             >Join Group</IconButton
           >
         {:else if joinedDetails.joining}
           <IconButton
             loading
             async
-            class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+            class="bg-panels dark:bg-transparent hover:bg-panels-hover dark:hover:border-white dark:border"
             >Joining...</IconButton
           >
         {:else}
           <div class="flex flex-col gap-1">
             <div class="font-bold">Members</div>
             <div class="flex items-center gap-2">
-              <div class="w-5 h-5">
+              <div class="w-5 h-5 mb-1 dark:fill-white">
                 <PersonIcon />
               </div>
               {Object.keys(joinedDetails.fleet).length}
@@ -159,14 +159,14 @@
             icon={CrossIcon}
             on:click={leave}
             async
-            class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+            class="bg-panels dark:bg-transparent hover:bg-panels-hover dark:hover:border-white dark:border"
             >Leave</IconButton
           >
         {/if}
         <IconButton
           icon={ShareIcon}
           on:click={() => (recommendModalOpen = true)}
-          class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+          class="bg-panels dark:bg-transparent hover:bg-panels-hover dark:hover:border-white dark:border"
           >Recommend</IconButton
         >
       </SidebarGroup>

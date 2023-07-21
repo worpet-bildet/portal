@@ -96,7 +96,7 @@
   } = getCurator(ship)}
   {@const blurbLink = getAnyLink(blurb)}
   <div
-    class="grid grid-cols-12 bg-panels dark:bg-darkgrey dark:border rounded-lg px-5 pt-5 gap-2 lg:gap-4 lg:gap-y-0"
+    class="grid grid-cols-12 bg-panels dark:bg-darkgrey border-b border-x px-5 pt-5 gap-2 lg:gap-4 lg:gap-y-0"
     in:fade
   >
     <div class="col-span-1">
@@ -135,7 +135,7 @@
       {#if image}
         <a href={image} target="_blank">
           <div
-            class="flex justify-center border shadow rounded-lg overflow-hidden"
+            class="flex justify-center border rounded-lg overflow-hidden"
           >
             <img src={image} class="object-cover" alt={blurb} />
           </div>
@@ -167,7 +167,7 @@
               <IconButton
                 icon={ChatIcon}
                 on:click={() => (showCommentForm = !showCommentForm)}
-                class="dark:hover:stroke-white hover:stroke-black hover:bg-transparent stroke-grey"
+                class="fill-grey hover:fill-black dark:hover:fill-white"
               />
             </div>
             <div class="pt-2 text-sm w-2 text-grey">
@@ -192,7 +192,7 @@
               <IconButton
                 icon={LikeIcon}
                 on:click={likePost}
-                class="dark:hover:stroke-white hover:stroke-black stroke-grey dark:hover:stroke-error"
+                class="stroke-grey hover:stroke-error dark:hover:stroke-error"
               />
             </div>
             <div class="pt-2 pb-2 text-sm text-grey">
@@ -205,7 +205,7 @@
       </div>
     </div>
     {#if showCommentForm}
-      <div class="flex flex-col gap-4 col-span-12 py-4" transition:slide>
+      <div class="flex flex-col col-span-12 py-4" transition:slide>
         <FeedPostForm
           replyTo={item.keyObj}
           recommendButtons={false}
@@ -218,5 +218,5 @@
     {/if}
   </div>
 {:else}
-  <div class="rounded-lg p-5" in:fade>Loading...</div>
+  <div class="p-5 border-b border-x text-grey" in:fade>Contacting {key.ship}...</div>
 {/if}

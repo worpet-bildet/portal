@@ -38,6 +38,7 @@
     on:drop|preventDefault={(event) => drop(event, index)}
     ondragover="return false"
     on:dragenter={() => (hovering = index)}
+    class="hover:bg-panels-hover"
     class:bg-grey={hovering === index}
     class:text-white={hovering === index}
   >

@@ -78,8 +78,7 @@
 </script>
 
 <div
-  class="grid grid-cols-12 bg-panels dark:bg-darkgrey dark:border py-3 pl-3 rounded-lg pr-3"
-  class:border={error}
+  class="grid grid-cols-12 bg-panels dark:bg-darkgrey border py-3 pl-3 rounded-tl-lg rounded-tr-lg pr-3"
   class:border-error={error}
 >
   <div class="col-span-1 pr-2">
@@ -107,7 +106,7 @@
             on:click={() => {
               appModalOpen = true;
             }}
-            class="stroke-grey fill-grey hover:fill-black dark:hover:fill-white"
+            class="fill-black dark:fill-white hover:fill-grey dark:hover:fill-grey"
           />
         </div>
         <div class="rounded-full overflow-hidden">
@@ -116,7 +115,7 @@
             on:click={() => {
               groupModalOpen = true;
             }}
-            class="stroke-grey fill-grey hover:fill-black dark:hover:fill-white"
+            class="fill-white dark:fill-grey hover:fill-grey dark:hover:fill-black"
           />
         </div>
         <input
@@ -135,7 +134,7 @@
               if (!$state.s3 || !$state.s3.configuration?.currentBucket) return;
               fileInput.click();
             }}
-            class="stroke-grey fill-grey hover:fill-black dark:hover:fill-white"
+            class="stroke-grey fill-grey hover:fill-black dark:hover:fill-grey"
           />
         </div>
       </div>
@@ -153,7 +152,7 @@
       <div />
     {/if}
     <button
-      class="bg-hover dark:bg-white text-grey dark:text-black hover:bg-white dark:hover:bg-offwhite hover:duration-500 font-saucebold rounded-lg px-3 py-1 self-end"
+      class="bg-black dark:bg-white text-white dark:text-darkgrey hover:bg-grey dark:hover:bg-offwhite hover:duration-500 font-saucebold rounded-lg px-3 py-1 self-end"
       on:click={post}>Post</button
     >
   </div>
@@ -171,7 +170,7 @@
       {/if}
       {#each Object.entries(apps) as [path, { title, image, color }]}
         <button
-          class="grid grid-cols-12 dark:border dark:hover:border-white hover:duration-500 rounded-lg items-center gap-4 p-1 hover:bg-panels dark:hover:bg-transparent"
+          class="grid grid-cols-12 dark:border dark:hover:border-white hover:duration-500 rounded-lg items-center gap-4 p-1 hover:bg-panels-hover dark:hover:bg-transparent"
           on:click={() => {
             appModalOpen = false;
             recommendModalOpen = true;
@@ -199,7 +198,7 @@
       {/if}
       {#each Object.entries(groups) as [path, { meta: { title, image } }]}
         <button
-          class="grid grid-cols-12 dark:border dark:hover:border-white hover:duration-500 rounded-lg items-center gap-4 p-1 hover:bg-panels dark:hover:bg-transparent"
+          class="grid grid-cols-12 dark:border dark:hover:border-white hover:duration-500 hover:bg-panels-hover rounded-lg items-center gap-4 p-1 hover:bg-panels dark:hover:bg-transparent"
           on:click={() => {
             groupModalOpen = false;
             recommendModalOpen = true;

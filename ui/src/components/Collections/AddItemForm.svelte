@@ -75,22 +75,22 @@
           <div class="text-2xl pb-2">What kind of item?</div>
           <button
             on:click={() => (formstep = 'app')}
-            class="bg-panels dark:bg-darkgrey dark:border hover:bg-hover dark:hover:border-white text-2xl font-bold py-3"
+            class="bg-panels dark:bg-darkgrey border hover:bg-hover dark:hover:border-white text-2xl font-bold py-3"
             >App</button
           >
           <button
             on:click={() => (formstep = 'group')}
-            class="bg-panels dark:bg-darkgrey dark:border hover:bg-hover dark:hover:border-white text-2xl font-bold py-3"
+            class="bg-panels dark:bg-darkgrey border hover:bg-hover dark:hover:border-white text-2xl font-bold py-3"
             >Group</button
           >
           <button
             on:click={() => (formstep = 'ship')}
-            class="bg-panels dark:bg-darkgrey dark:border hover:bg-hover dark:hover:border-white text-2xl font-bold py-3"
+            class="bg-panels dark:bg-darkgrey border hover:bg-hover dark:hover:border-white text-2xl font-bold py-3"
             >Ship</button
           >
           <button
             on:click={() => (formstep = 'other')}
-            class="bg-panels dark:bg-darkgrey dark:border hover:bg-hover dark:hover:border-white text-2xl font-bold py-3"
+            class="bg-panels dark:bg-darkgrey border hover:bg-hover dark:hover:border-white text-2xl font-bold py-3"
             >Other (link etc.)</button
           >
         </div>
@@ -100,7 +100,9 @@
           <div class="flex justify-between">
             <IconButton
               icon={LeftArrowIcon}
-              on:click={() => (formstep = 'type')}>Back</IconButton
+              on:click={() => (formstep = 'type')}
+              class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
+              >Back</IconButton
             >
             <div />
           </div>
@@ -108,7 +110,7 @@
           <div class="flex flex-col gap-4">
             {#each Object.entries(apps) as [path, { title, image }]}
               <button
-                class="grid grid-cols-12 bg-panels dark:bg-darkgrey dark:border dark:hover:border-white hover:bg-hover items-center gap-4 p-1"
+                class="grid grid-cols-12 bg-panels dark:bg-darkgrey border dark:hover:border-white hover:bg-hover items-center gap-4 p-1"
                 on:click={() => add(`/app/${path}/`)}
               >
                 <div class="col-span-1">
@@ -127,14 +129,16 @@
           <div class="flex justify-between">
             <IconButton
               icon={LeftArrowIcon}
-              on:click={() => (formstep = 'type')}>Back</IconButton
+              on:click={() => (formstep = 'type')}
+              class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
+              >Back</IconButton
             >
             <div />
           </div>
         {/if}
         {#each Object.entries(groups) as [path, { meta: { title, image } }]}
           <button
-            class="grid grid-cols-12 items-center gap-4 p-1 dark:bg-darkgrey dark:border dark:hover:border-white hover:bg-hover rounded-lg"
+            class="grid grid-cols-12 items-center gap-4 p-1 dark:bg-darkgrey border dark:hover:border-white hover:bg-hover rounded-lg"
             on:click={() => add(`/group/${path}/`)}
           >
             <div class="col-span-1">
@@ -160,21 +164,26 @@
         </div>
         <div class="col-span-12 flex justify-between">
           <IconButton icon={LeftArrowIcon} on:click={() => (formstep = 'type')}
+            class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
             >Back</IconButton
           >
           <IconButton
             icon={CheckIcon}
             on:click={lastValidShip !== newShip || !newShip ? null : saveShip}
-            disabled={lastValidShip !== newShip || !newShip}>Save</IconButton
+            disabled={lastValidShip !== newShip || !newShip}
+            class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
+            >Save</IconButton
           >
         </div>
       {:else if formstep === 'other'}
         <OtherItemForm bind:item={newOtherItem} />
         <div class="col-span-12 flex justify-between">
           <IconButton icon={LeftArrowIcon} on:click={() => (formstep = 'type')}
+            class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
             >Back</IconButton
           >
           <IconButton icon={CheckIcon} on:click={() => saveOtherItem()}
+            class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
             >Save</IconButton
           >
         </div>

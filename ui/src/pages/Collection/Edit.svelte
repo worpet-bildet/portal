@@ -91,7 +91,7 @@
 {#if collection}
   <div class="grid grid-cols-12 gap-x-8">
     <div
-      class="grid gap-4 col-span-9 bg-panels dark:bg-darkgrey dark:border p-4 rounded-lg"
+      class="grid gap-4 col-span-9 bg-panels dark:bg-darkgrey border p-4 rounded-lg"
     >
       <div class="text-2xl font-bold">Editing {title}</div>
       <div class="flex flex-col gap-2">
@@ -133,17 +133,17 @@
         <IconButton
           icon={PlusIcon}
           on:click={add}
-          class="dark:hover:border-white dark:border">Add Item</IconButton
+          class="dark:hover:border-white dark:border hover:bg-panels-hover">Add Item</IconButton
         >
         <IconButton
           icon={CheckIcon}
           on:click={save}
-          class="dark:hover:border-white dark:border">Save</IconButton
+          class="dark:hover:border-white dark:border hover:bg-panels-hover">Save</IconButton
         >
         <IconButton
           icon={LeftArrowIcon}
           on:click={pop}
-          class="dark:hover:border-white dark:border">Back</IconButton
+          class="dark:hover:border-white dark:border hover:bg-panels-hover">Back</IconButton
         >
       </SidebarGroup>
     </RightSidebar>

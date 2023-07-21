@@ -23,7 +23,8 @@
   line-height: 24px;
   font-weight: 400;
   color: #000000;
-  background: linear-gradient(rgba(206,204,208,1) 0%, rgba(165,170,178,1) 100%);
+  background: #f9f9f9;
+  height: 100%;
   min-height: 100vh;
   overflow: auto;
   font-synthesis: none;
@@ -35,7 +36,6 @@
 
 body {
   margin: 0;
-  background-color: #69696940;
   backdrop-filter: blur(50px);
   height: 100%;
 }

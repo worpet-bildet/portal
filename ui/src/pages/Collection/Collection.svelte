@@ -49,7 +49,7 @@
       type="collection"
     >
       <div
-        class="grid gap-y-4 bg-panels dark:bg-darkgrey dark:border p-4 rounded-lg"
+        class="grid gap-y-4 bg-panels dark:bg-darkgrey border p-4 rounded-lg"
       >
         {#each items as key}
           <ItemPreview {key} />
@@ -61,20 +61,20 @@
         <IconButton
           icon={LeftArrowIcon}
           on:click={pop}
-          class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+          class="bg-panels dark:bg-transparent hover:bg-panels-hover dark:hover:bg-transparent dark:hover:border-white dark:border"
           >Back</IconButton
         >
         <IconButton
           icon={ShareIcon}
           on:click={() => (recommendModalOpen = true)}
-          class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+          class="bg-panels dark:bg-transparent hover:bg-panels-hover dark:hover:bg-transparent dark:hover:border-white dark:border"
           >Recommend</IconButton
         >
         {#if me === ship}
           <IconButton
             icon={EditIcon}
             on:click={() => push(`/collection-edit/${wild}`)}
-            class="bg-panels dark:bg-transparent dark:hover:border-white dark:border"
+            class="bg-panels dark:bg-transparent hover:bg-panels-hover dark:hover:bg-transparent dark:hover:border-white dark:border"
             >Edit</IconButton
           >
         {/if}
