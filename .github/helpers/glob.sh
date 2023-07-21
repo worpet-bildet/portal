@@ -24,7 +24,7 @@ hood "commit %work"
 dojo "-garden!make-glob %work /glob"
 
 s3cmd del s3://portal-glob/glob-*
-s3cmd sync --delete-removed zod/.urb/put/*.glob --acl-public s3://portal-glob
+s3cmd sync --delete-removed --recursive zod/.urb/put/*.glob --acl-public s3://portal-glob
 hash=$(ls -1 -c zod/.urb/put | head -1 | sed "s/glob-\([a-z0-9\.]*\).glob/\1/")
 sed -i "s/glob\-[a-z0-9\.]*glob' *[a-z0-9\.]*\]/glob-$hash.glob' $hash]/g" $2
 
