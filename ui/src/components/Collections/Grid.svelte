@@ -54,6 +54,19 @@
 </script>
 
 <div class="grid grid-cols-12 gap-4 items-start">
+  {#if loading || (curatorCollections.length > 0 && collections.length === 0)}
+    <div class="col-span-12">Loading...</div>
+  {:else if collections.length === 0}
+    <div class="col-span-12">
+      {patp} hasn't created any collections on Portal yet.
+    </div>
+  {:else}
+    {#each collections as collection (collection.keyStr)}
+      <a use:link href={collection.keyStr} class="col-span-4 h-full">
+        <SquarePreview key={collection.keyObj} />
+      </a>
+    {/each}
+  {/if}
   {#if me === patp && hasBlog && !hasBlogCollection && !subbingToBlogs}
     <button
       on:click={subToBlog}
@@ -70,18 +83,5 @@
     >
       Syncing...
     </div>
-  {/if}
-  {#if loading || (curatorCollections.length > 0 && collections.length === 0)}
-    <div class="col-span-12">Loading...</div>
-  {:else if collections.length === 0}
-    <div class="col-span-12">
-      {patp} hasn't created any collections on Portal yet.
-    </div>
-  {:else}
-    {#each collections as collection (collection.keyStr)}
-      <a use:link href={collection.keyStr} class="col-span-4 h-full">
-        <SquarePreview key={collection.keyObj} />
-      </a>
-    {/each}
   {/if}
 </div>
