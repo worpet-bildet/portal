@@ -61,7 +61,7 @@
         dispatch('selected', { key, selected });
       }
     }}
-    class="grid grid-cols-6 w-full items-center gap-4 p-1 border border-transparent dark:hover:border-white dark:hover:bg-transparent hover:bg-panels-hover hover:duration-500 cursor-pointer rounded-lg text-sm text-left"
+    class="grid grid-cols-6 w-full items-start gap-4 p-1 border border-transparent dark:hover:border-white dark:hover:bg-transparent hover:bg-panels-hover hover:duration-500 cursor-pointer rounded-lg text-sm text-left"
     class:bg-panels-hover={selected}
     class:dark:border-white={selected}
   >
@@ -109,7 +109,10 @@
           </div>
         {/if}
       </div>
-      <div class="line-clamp-2" class:line-clamp-1={small}>
+      <div
+        class:line-clamp-1={small}
+        class="line-clamp-2 hover:line-clamp-none"
+      >
         {blurb || description || ''}
       </div>
     </div>
