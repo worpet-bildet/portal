@@ -33,7 +33,7 @@
     bind:innerText={value}
     on:input={handleInput}
     {...$$props}
-    class="p-2 pb-4 w-full text-lg placeholder-grey resize-none leading-tight box-border break-words border-b focus:outline-none z-10 text-transparent"
+    class="p-2 pb-4 w-full text-lg placeholder-grey resize-none leading-tight box-border break-words border-b focus:outline-none z-10 text-transparent caret-black dark:caret-white"
   />
   <div
     bind:this={target}
