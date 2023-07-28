@@ -92,7 +92,7 @@
 {#if item}
   {@const { blurb, ship, createdAt, ref, image, rating } = getMeta(item)}
   {@const {
-    bespoke: { nickname },
+    bespoke: { nickname, avatar },
   } = getCurator(ship)}
   {@const blurbLink = getAnyLink(blurb)}
   <div
@@ -102,7 +102,11 @@
     <div class="col-span-1">
       <div class="rounded-md overflow-hidden">
         <a href={`/${ship}`} use:link>
-          <Sigil patp={ship} />
+          {#if avatar}
+            <img src={avatar} alt="custom avatar" />
+          {:else}
+            <Sigil patp={ship} />
+          {/if}
         </a>
       </div>
     </div>
@@ -134,9 +138,7 @@
       </div>
       {#if image}
         <a href={image} target="_blank">
-          <div
-            class="flex justify-center border rounded-lg overflow-hidden"
-          >
+          <div class="flex justify-center border rounded-lg overflow-hidden">
             <img src={image} class="object-cover" alt={blurb} />
           </div>
         </a>
@@ -218,5 +220,7 @@
     {/if}
   </div>
 {:else}
-  <div class="p-5 border-b border-x text-grey" in:fade>Contacting {key.ship}...</div>
+  <div class="p-5 border-b border-x text-grey" in:fade>
+    Contacting {key.ship}...
+  </div>
 {/if}
