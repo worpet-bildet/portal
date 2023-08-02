@@ -234,22 +234,16 @@ export const getMoreFromThisShip = (patp) => {
 };
 
 export const getAllCollectionsAndItems = (collectionKey) => {
-  return get(state)
-    [collectionKey]?.bespoke?.['key-list'].concat(
-      Object.values(
-        Object.fromEntries(
-          Object.entries(get(state))
-            .filter(([key]) => key.includes('/collection/'))
-            .filter(([key]) => !key.includes('published'))
-            .filter(([key]) => !key.includes('all'))
-        )
-      ).map((item) => item.keyObj)
-    )
-    .concat(
-      Object.keys(get(state)['profiles'])
-        .map(profileKeyToItemKey)
-        .map(profileStrToObj)
-    );
+  return get(state)[collectionKey]?.bespoke?.['key-list'].concat(
+    Object.values(
+      Object.fromEntries(
+        Object.entries(get(state))
+          .filter(([key]) => key.includes('/collection/'))
+          .filter(([key]) => !key.includes('published'))
+          .filter(([key]) => !key.includes('all'))
+      )
+    ).map((item) => item.keyObj)
+  );
 };
 
 export const getCollectionItems = (collectionKey) => {
