@@ -18,6 +18,7 @@
   class:opacity-50={disabled}
   class:cursor-not-allowed={disabled}
   class:bg-panels-hover={active}
+  class:border-black={active}
   class:dark:border-white={active}
   class:dark:hover:bg-transparent={!active}
   title={tooltip}
