@@ -33,9 +33,6 @@
     if (filters.has('groups')) {
       activeItems = activeItems.filter((k) => k?.struc === 'group');
     }
-    if (filters.has('ships')) {
-      activeItems = activeItems.filter((k) => k?.struc === 'ship');
-    }
     if (filters.has('collections')) {
       activeItems = activeItems.filter((k) => k?.struc === 'collection');
     }
@@ -74,7 +71,6 @@
       ...Object.entries(s.apps).map(
         ([cord, { ship }]) => `/app/${ship}/${cord}/`
       ),
-      ...Object.keys(s.profiles).map(profileKeyToItemKey),
       ...Object.keys(
         Object.fromEntries(
           Object.entries(s).filter(([key]) => key.includes('/collection/'))
@@ -129,7 +125,7 @@
       icon={SparklesIcon}
       active={filters.has('new')}
       on:click={() => toggleFilter('new')}
-      class="bg-transparent dark:hover:border-white hover:bg-panels-hover border"
+      class="bg-panels dark:fill-white dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
       >New to me
     </IconButton>
     <IconButton
@@ -151,21 +147,12 @@
       >Groups</IconButton
     >
     <IconButton
-      icon={PersonIcon}
-      active={filters.has('ships')}
-      on:click={() => {
-        toggleFilter('ships');
-      }}
-      class="bg-panels dark:bg-transparent dark:fill-white dark:hover:border-white hover:bg-panels-hover border"
-      >People</IconButton
-    >
-    <IconButton
       icon={CollectionIcon}
       active={filters.has('collections')}
       on:click={() => {
         toggleFilter('collections');
       }}
-      class="bg-panels dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
+      class="bg-panels dark:fill-white dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
       >Collections</IconButton
     >
   </div>
@@ -175,7 +162,7 @@
   </p>
   {#if items}
     <div
-      class="flex flex-col gap-4 bg-panels dark:bg-darkgrey border p-6 rounded-lg w-2/3"
+      class="flex flex-col gap-4 bg-panels dark:bg-darkgrey border p-6 rounded-lg"
     >
       {#if activeItems.length > 0}
         {#each activeItems as key}
