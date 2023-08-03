@@ -1,6 +1,7 @@
 <script>
   import { push, link, location } from 'svelte-spa-router';
-  import { state, toggleDarkmode } from '@root/state';
+  import { format } from 'timeago.js';
+  import { state, toggleDarkmode, getNotifications } from '@root/state';
   import { me } from '@root/api';
   import { Sigil } from '@components';
   import {
@@ -9,7 +10,9 @@
     IconButton,
     SunIcon,
     MoonIcon,
+    BellIcon,
   } from '@fragments';
+  import { fromUrbitTime } from '@root/util';
   import logo from '@assets/logo.svg';
 
   let isMobileNavOpen = false;
@@ -31,6 +34,12 @@
         window.open(`${window.location.origin}/apps/talk/dm/~foddur-hodler`),
     },
   ];
+
+  let notifications = [];
+  let notificationsOpen = false;
+  state.subscribe(() => {
+    notifications = getNotifications(me);
+  });
 </script>
 
 <div class="mb-10">
@@ -52,7 +61,39 @@
       </div>
     </a>
 
-    <div class="hidden flex-col md:flex gap-4 md:flex-row">
+    <div class="hidden flex-col md:flex gap-4 md:flex-row items-center">
+      <div class="relative">
+        <div class="rounded-full overflow-hidden">
+          <IconButton
+            icon={BellIcon}
+            on:click={() => (notificationsOpen = !notificationsOpen)}
+          />
+        </div>
+        {#if notificationsOpen}
+          <div
+            class="absolute top-10 w-96 flex flex-col gap-4 bg-white dark:bg-black rounded-xl border border-white overflow-hidden"
+          >
+            {#if notifications.length > 0}
+              {#each notifications as [reply, op]}
+                <a
+                  class="flex items-center justify-between hover:bg-offwhite dark:hover:bg-darkgrey cursor-pointer p-2"
+                  href={`#${fromUrbitTime(op.time)}`}
+                >
+                  <div class="flex gap-2">
+                    <div class="w-5"><Sigil patp={reply.ship} /></div>
+                    <div class="text-sm">{reply.ship} replied to you</div>
+                  </div>
+                  <div class="text-xs text-right">
+                    {format(fromUrbitTime(reply.time))}
+                  </div>
+                </a>
+              {/each}
+            {:else}
+              <div class="p-2">No notifications</div>
+            {/if}
+          </div>
+        {/if}
+      </div>
       <div class="rounded-full overflow-hidden">
         <IconButton
           icon={$state.darkmode ? SunIcon : MoonIcon}
