@@ -62,38 +62,40 @@
     </a>
 
     <div class="hidden flex-col md:flex gap-4 md:flex-row items-center">
-      <div class="relative">
-        <div class="rounded-full overflow-hidden">
-          <IconButton
-            icon={BellIcon}
-            on:click={() => (notificationsOpen = !notificationsOpen)}
-          />
-        </div>
-        {#if notificationsOpen}
-          <div
-            class="absolute top-10 w-96 flex flex-col gap-4 bg-white dark:bg-black rounded-xl border border-white overflow-hidden"
-          >
-            {#if notifications.length > 0}
-              {#each notifications as [reply, op]}
-                <a
-                  class="flex items-center justify-between hover:bg-offwhite dark:hover:bg-darkgrey cursor-pointer p-2"
-                  href={`#${fromUrbitTime(op.time)}`}
-                >
-                  <div class="flex gap-2">
-                    <div class="w-5"><Sigil patp={reply.ship} /></div>
-                    <div class="text-sm">{reply.ship} replied to you</div>
-                  </div>
-                  <div class="text-xs text-right">
-                    {format(fromUrbitTime(reply.time))}
-                  </div>
-                </a>
-              {/each}
-            {:else}
-              <div class="p-2">No notifications</div>
-            {/if}
+      {#if $location === '/'}
+        <div class="relative">
+          <div class="rounded-full overflow-hidden">
+            <IconButton
+              icon={BellIcon}
+              on:click={() => (notificationsOpen = !notificationsOpen)}
+            />
           </div>
-        {/if}
-      </div>
+          {#if notificationsOpen}
+            <div
+              class="absolute top-10 w-96 flex flex-col gap-4 bg-white dark:bg-black rounded-xl border border-white overflow-hidden"
+            >
+              {#if notifications.length > 0}
+                {#each notifications as [reply, op]}
+                  <a
+                    class="flex items-center justify-between hover:bg-offwhite dark:hover:bg-darkgrey cursor-pointer p-2"
+                    href={`#${fromUrbitTime(op.time)}`}
+                  >
+                    <div class="flex gap-2">
+                      <div class="w-5"><Sigil patp={reply.ship} /></div>
+                      <div class="text-sm">{reply.ship} replied to you</div>
+                    </div>
+                    <div class="text-xs text-right">
+                      {format(fromUrbitTime(reply.time))}
+                    </div>
+                  </a>
+                {/each}
+              {:else}
+                <div class="p-2">No notifications</div>
+              {/if}
+            </div>
+          {/if}
+        </div>
+      {/if}
       <div class="rounded-full overflow-hidden">
         <IconButton
           icon={$state.darkmode ? SunIcon : MoonIcon}
