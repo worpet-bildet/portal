@@ -282,6 +282,23 @@ export const getReviewsByTo = (ship, key) => {
     .map(([reviewKey, _]) => keyStrToObj(reviewKey));
 };
 
+// go through the social items, sort the replies by time, and ensure that they
+// are alongside a reference to the original item
+export const getNotifications = (ship) => {
+  let q = [];
+  let feed = getGlobalFeed();
+  Object.entries(get(state).social?.[`/${ship}/reply-from`] || {})?.forEach(
+    ([op, replies]) => {
+      // don't show notifications for items which are no longer in the feed
+      if (!feed.find((f) => keyStrFromObj(f.key) === op)) return;
+      replies.forEach((reply) => {
+        q.push([reply, keyStrToObj(op)]);
+      });
+    }
+  );
+  return q.sort((a, b) => fromUrbitTime(b[0].time) - fromUrbitTime(a[0].time));
+};
+
 export const handleSubscriptionEvent = (event, type) => {
   console.log({ event, type });
   switch (type) {

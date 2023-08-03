@@ -96,6 +96,7 @@
   } = getCurator(ship)}
   {@const blurbLink = getAnyLink(blurb)}
   <div
+    id={createdAt}
     class="grid grid-cols-12 bg-panels dark:bg-darkgrey border-b border-x px-5 pt-5 gap-2 lg:gap-4 lg:gap-y-0"
     in:fade
   >
