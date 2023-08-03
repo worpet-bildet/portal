@@ -35,11 +35,10 @@
     },
   ];
 
-  let notifs;
+  let notifications = [];
   let notificationsOpen = false;
   state.subscribe(() => {
-    // notifs = getNotifications(me);
-    notifs = getNotifications('~foddur-hodler');
+    notifications = getNotifications(me);
   });
 </script>
 
@@ -62,7 +61,7 @@
       </div>
     </a>
 
-    <div class="hidden flex-col md:flex gap-4 md:flex-row">
+    <div class="hidden flex-col md:flex gap-4 md:flex-row items-center">
       <div class="relative">
         <div class="rounded-full overflow-hidden">
           <IconButton
@@ -71,11 +70,13 @@
           />
         </div>
         {#if notificationsOpen}
-          <div class="absolute top-10 w-96 flex flex-col gap-4 bg-white">
-            {#if notifs}
-              {#each notifs as [reply, op]}
+          <div
+            class="absolute top-10 w-96 flex flex-col gap-4 bg-white dark:bg-black rounded-xl border border-white overflow-hidden"
+          >
+            {#if notifications.length > 0}
+              {#each notifications as [reply, op]}
                 <a
-                  class="flex items-center justify-between hover:bg-offwhite cursor-pointer p-2"
+                  class="flex items-center justify-between hover:bg-offwhite dark:hover:bg-darkgrey cursor-pointer p-2"
                   href={`#${fromUrbitTime(op.time)}`}
                 >
                   <div class="flex gap-2">
@@ -88,7 +89,7 @@
                 </a>
               {/each}
             {:else}
-              <div>No notifications</div>
+              <div class="p-2">No notifications</div>
             {/if}
           </div>
         {/if}
