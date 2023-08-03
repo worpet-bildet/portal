@@ -286,11 +286,11 @@ export const getReviewsByTo = (ship, key) => {
 // are alongside a reference to the original item
 export const getNotifications = (ship) => {
   let q = [];
-  let feed = getGlobalFeed();
+  let feed = getGlobalFeed() || [];
   Object.entries(get(state).social?.[`/${ship}/reply-from`] || {})?.forEach(
     ([op, replies]) => {
       // don't show notifications for items which are no longer in the feed
-      if (!feed.find((f) => keyStrFromObj(f.key) === op)) return;
+      if (!feed?.find((f) => keyStrFromObj(f.key) === op)) return;
       replies.forEach((reply) => {
         q.push([reply, keyStrToObj(op)]);
       });
