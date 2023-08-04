@@ -17,8 +17,6 @@
 
   let isMobileNavOpen = false;
 
-  const pagesWithoutCoverPhoto = ['/explore', '/edit', '-edit/'];
-
   const nav = [
     {
       title: 'Feed',
@@ -40,6 +38,12 @@
   state.subscribe(() => {
     notifications = getNotifications(me);
   });
+
+  const pagesWithoutCoverPhoto = ['/explore', '/edit', '-edit/', '/'];
+  let highContrast = false;
+  location.subscribe((l) => {
+    highContrast = !pagesWithoutCoverPhoto.includes(l);
+  });
 </script>
 
 <div class="mb-10">
@@ -49,13 +53,9 @@
     <a use:link href="/" class="flex items-center text-2xl font-bold gap-2">
       <img class="w-14 my-2" src={logo} alt="logo" />
       <div
-        class="font-logo flex items-center px-2 rounded-xl"
-        class:text-grey={pagesWithoutCoverPhoto.some((v) =>
-          $location.includes(v)
-        ) || $location === '/'}
-        class:text-white={$state.darkmode ||
-          (!pagesWithoutCoverPhoto.some((v) => $location.includes(v)) &&
-            $location !== '/')}
+        class="font-logo flex items-center px-2 rounded-xl dark:text-white"
+        class:text-grey={!highContrast}
+        class:text-white={highContrast}
       >
         PORTAL
       </div>
@@ -100,40 +100,17 @@
         <IconButton
           icon={$state.darkmode ? SunIcon : MoonIcon}
           on:click={toggleDarkmode}
-          class="hover:bg-transparent border-transparent
-            {!pagesWithoutCoverPhoto.some((v) => $location.includes(v)) &&
-          $location !== '/' &&
-          !$state.darkmode
+          class="hover:bg-transparent border-transparent dark:fill-white {highContrast
             ? 'fill-white'
-            : 'fill-grey'}
-            {$state.darkmode ? 'hover:fill-white' : ''}
-            {!$state.darkmode &&
-          !pagesWithoutCoverPhoto.some((v) => $location.includes(v)) &&
-          $location !== '/'
-            ? 'hover:fill-offwhite'
-            : 'hover:fill-black'}"
+            : ''}"
         />
       </div>
       {#each nav as n}
         <button
           on:click={() => (n.action ? n.action() : push(n.link))}
           class="rounded-xl flex font-saucebold items-center px-4 hover:duration-500 py-2 md:py-0"
-          class:text-black={$location === n.link}
-          class:text-grey={$location !== n.link &&
-            (pagesWithoutCoverPhoto.some((v) => $location.includes(v)) ||
-              $location === '/')}
-          class:hover:text-black={!$state.darkmode ||
-            ($location !== n.link &&
-              (pagesWithoutCoverPhoto.some((v) => $location.includes(v)) ||
-                $location === '/'))}
-          class:text-white={$state.darkmode ||
-            ($location !== n.link &&
-              !pagesWithoutCoverPhoto.some((v) => $location.includes(v)) &&
-              $location !== '/')}
-          class:hover:text-offwhite={$state.darkmode ||
-            ($location !== n.link &&
-              !pagesWithoutCoverPhoto.some((v) => $location.includes(v)) &&
-              $location !== '/')}>{n.title}</button
+          class:text-grey={$location === n.link && highContrast}
+          class:text-white={highContrast}>{n.title}</button
         >
       {/each}
       <a
