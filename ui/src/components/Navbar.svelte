@@ -1,7 +1,12 @@
 <script>
   import { push, link, location } from 'svelte-spa-router';
   import { format } from 'timeago.js';
-  import { state, toggleDarkmode, getNotifications } from '@root/state';
+  import {
+    state,
+    toggleDarkmode,
+    getNotifications,
+    getItem,
+  } from '@root/state';
   import { me } from '@root/api';
   import { Sigil } from '@components';
   import {
@@ -12,7 +17,7 @@
     MoonIcon,
     BellIcon,
   } from '@fragments';
-  import { fromUrbitTime } from '@root/util';
+  import { getMeta, fromUrbitTime } from '@root/util';
   import logo from '@assets/logo.svg';
 
   let isMobileNavOpen = false;
@@ -72,22 +77,36 @@
           </div>
           {#if notificationsOpen}
             <div
-              class="absolute top-10 w-96 flex flex-col gap-4 bg-white dark:bg-black rounded-xl border border-white overflow-hidden"
+              class="absolute top-10 w-max flex flex-col gap-4 bg-white dark:bg-black rounded-xl border border-white overflow-hidden"
             >
               {#if notifications.length > 0}
                 {#each notifications as [reply, op]}
-                  <a
-                    class="flex items-center justify-between hover:bg-offwhite dark:hover:bg-darkgrey cursor-pointer p-2"
-                    href={`#${fromUrbitTime(op.time)}`}
+                  <button
+                    class="flex items-center justify-between gap-4 hover:bg-offwhite dark:hover:bg-darkgrey cursor-pointer p-2"
+                    on:click={() => {
+                      switch (reply.struc) {
+                        case 'other':
+                          window.location.href = `#${fromUrbitTime(op.time)}`;
+                          break;
+                        case 'review':
+                          push(`/app/${op.ship}/${op.cord || op.time}`);
+                          break;
+                      }
+                    }}
                   >
                     <div class="flex gap-2">
                       <div class="w-5"><Sigil patp={reply.ship} /></div>
-                      <div class="text-sm">{reply.ship} replied to you</div>
+                      {#if reply.struc === 'review'}
+                        {@const { title } = getMeta(getItem(op))}
+                        <div class="text-sm">{reply.ship} reviewed {title}</div>
+                      {:else if reply.struc === 'other'}
+                        <div class="text-sm">{reply.ship} replied to you</div>
+                      {/if}
                     </div>
                     <div class="text-xs text-right">
                       {format(fromUrbitTime(reply.time))}
                     </div>
-                  </a>
+                  </button>
                 {/each}
               {:else}
                 <div class="p-2">No notifications</div>

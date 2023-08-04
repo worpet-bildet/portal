@@ -169,6 +169,7 @@ export const getGroup = (groupKey) => {
 };
 
 export const getItem = (listKey) => {
+  if (typeof listKey === 'object') return get(state)[keyStrFromObj(listKey)];
   return get(state)[listKey];
 };
 
@@ -293,6 +294,14 @@ export const getNotifications = (ship) => {
       if (!feed?.find((f) => keyStrFromObj(f.key) === op)) return;
       replies.forEach((reply) => {
         q.push([reply, keyStrToObj(op)]);
+      });
+    }
+  );
+  Object.entries(get(state).social?.[`/${ship}/review-from`] || {})?.forEach(
+    ([op, reviews]) => {
+      // reviews are permanent so we don't care about the feed
+      reviews.forEach((review) => {
+        q.push([review, keyStrToObj(op)]);
       });
     }
   );
