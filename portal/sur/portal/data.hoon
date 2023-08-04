@@ -156,13 +156,5 @@
       [%valid =valid]
   ==
 ::
-::  comes from %portal-manager
-+$  manager-result
-  $@  ?
-  $%  [%portal-devs (map @t ship)]
-      [%bought-apps (map [=ship =desk] @t)]
-      [%authorized-ships (set ship)]
-  ==
-::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 --

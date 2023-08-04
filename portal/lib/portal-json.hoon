@@ -1,4 +1,4 @@
-/-  *portal-data, *portal-action, gr=social-graph, portal-config
+/-  *portal-data, *portal-action, gr=social-graph, config=portal-config
 /+  *portal, docket, treaty, ethereum
 |%
 ++  enjs
@@ -25,7 +25,7 @@
   ::     [%o `(map @t json)`(malt l)]
   ::   --
   ++  enjs-dev-map
-    |=  =dev-map:portal-config
+    |=  =dev-map:config
     ^-  json
     :-  %o
     %-  ~(run by dev-map)
@@ -106,14 +106,54 @@
     ^-  json
     s+(crip (num-to-hex:ethereum hex))
   ++  enjs-manager-result
-    |=  [=manager-result]
+    |=  [=manager-result:config]
     ^-  json
     ?@  manager-result  b+manager-result
     ?-  -.manager-result
       %portal-devs  %+  frond  'portal-devs'  (enjs-dev-map +.manager-result)
       %bought-apps  %+  frond  'bought-apps'  (enjs-bought-apps +.manager-result)
       %authorized-ships  %+  frond  'authorized-ships'  (enjs-authorized-ships +.manager-result)
+        %processing-payments  
+      %+  frond  'processing-payments'  (enjs-processing-payments +.manager-result)
+        %processed-payments
+      %+  frond  'processed-payments'  (enjs-processed-payments +.manager-result)
+        %rpc-endpoint
+      %+  frond  'rpc-endpoint'  s++.manager-result
+        %receiving-address
+      %+  frond  'receiving-address'  s++.manager-result
+
     ==
+  ::
+  ++  enjs-processing-payments
+    |=  [=processing-payments:config]
+    ^-  json
+    :-  %o
+    =+  ~(tap by processing-payments)
+    %-  malt  %+  turn  -
+    |=  [hex=@t [=buyer:config =key =eth-price =receiving-address]]
+    ^-  [@t json]
+    :-  hex
+    %-  pairs
+    :~  ['buyer' (enjs-ship buyer)]
+        ['desk' (enjs-key key)]
+        ['eth-price' s+eth-price]
+        ['receiving-address' s+receiving-address]
+    ==
+  ::
+  ++  enjs-processed-payments
+    |=  [=processed-payments:config]
+    ^-  json
+    :-  %a
+    %+  turn  processed-payments
+    |=  [=buyer:config =key tx-hash=@t time=@da]
+    ^-  json
+    %-  pairs
+    :~  ['buyer' `json`(enjs-ship buyer)]
+        ['desk' `json`(enjs-key key)]
+        ['tx-hash' s+tx-hash]
+        ['time' `json`(^time time)]
+    ==
+  ::
   ++  enjs-authorized-ships
     |=  [ships=(set @p)]
     ^-  json

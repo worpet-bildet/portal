@@ -60,5 +60,8 @@
       [%payment-tx-hash seller=ship tx-hash=@t]
       ::
       [%authorize-ships authorized-ships=(set ship)]
+      ::
+      [%set-rpc-endpoint rpc-endpoint=@ta]
+      [%set-receiving-address =receiving-address]
     ==
 --

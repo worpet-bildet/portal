@@ -1,4 +1,4 @@
-/-  *portal-data, *portal-action, *portal-message, portal-config,
+/-  *portal-data, *portal-action, *portal-message, config=portal-config,
     groups, treaty, portal-devs, blog-paths
 /+  default-agent, dbug, *portal, io=agentio, *sig, *sss, sss-25
 /$  json-to-action  %json  %portal-action
@@ -7,14 +7,34 @@
 /$  portal-manager-result-to-json  %portal-manager-result  %json
 |%
 +$  versioned-state
-  $%  state-0:portal-config
-      state-1:portal-config
-      state-2:portal-config
-      state-3:portal-config
-      state-4:portal-config
+  $%  state-0:config
+      state-1:config
+      state-2:config
+      state-3:config
+      state-4:config
       state-5
       state-6
       state-7
+      state-8
+  ==
++$  state-8
+  $:  %8
+      =processing-payments:config
+      =processed-payments:config
+      rpc-endpoint=@ta
+      =receiving-address:config
+      authorized-ships=(set ship)
+      bought-apps=(map [ship desk] tx-hash=@t)
+      sub-blog-paths=_(mk-subs:sss-25 blog-paths ,[%paths ~])
+      sub-portal-devs=_(mk-subs portal-devs ,[%portal-devs ~])
+      =dev-map:config
+      =portal-curator:config
+      =portal-indexer:config
+      =purge-timer:config
+      =purge-time:config
+      =indexed-as-curator:config
+      =onboarded:config
+      =our-apps:config
   ==
 +$  state-7
   $:  %7
@@ -22,44 +42,44 @@
       bought-apps=(map [ship desk] tx-hash=@t)
       sub-blog-paths=_(mk-subs:sss-25 blog-paths ,[%paths ~])
       sub-portal-devs=_(mk-subs portal-devs ,[%portal-devs ~])
-      =dev-map:portal-config
-      =portal-curator:portal-config
-      =portal-indexer:portal-config
-      =purge-timer:portal-config
-      =purge-time:portal-config
-      =indexed-as-curator:portal-config
-      =onboarded:portal-config
-      =our-apps:portal-config
+      =dev-map:config
+      =portal-curator:config
+      =portal-indexer:config
+      =purge-timer:config
+      =purge-time:config
+      =indexed-as-curator:config
+      =onboarded:config
+      =our-apps:config
   ==
 +$  state-6
   $:  %6
       sub-blog-paths=_(mk-subs:sss-25 blog-paths ,[%paths ~])
       sub-portal-devs=_(mk-subs portal-devs ,[%portal-devs ~])
-      =dev-map:portal-config
-      =portal-curator:portal-config
-      =portal-indexer:portal-config
-      =purge-timer:portal-config
-      =purge-time:portal-config
-      =indexed-as-curator:portal-config
-      =onboarded:portal-config
-      =our-apps:portal-config
+      =dev-map:config
+      =portal-curator:config
+      =portal-indexer:config
+      =purge-timer:config
+      =purge-time:config
+      =indexed-as-curator:config
+      =onboarded:config
+      =our-apps:config
   ==
 +$  state-5
   $:  %5
       sub-portal-devs=_(mk-subs portal-devs ,[%portal-devs ~])
-      =dev-map:portal-config
-      =portal-curator:portal-config
-      =portal-indexer:portal-config
-      =purge-timer:portal-config
-      =purge-time:portal-config
-      =indexed-as-curator:portal-config
-      =onboarded:portal-config
-      =our-apps:portal-config
+      =dev-map:config
+      =portal-curator:config
+      =portal-indexer:config
+      =purge-timer:config
+      =purge-time:config
+      =indexed-as-curator:config
+      =onboarded:config
+      =our-apps:config
   ==
 +$  card  card:agent:gall
 --
 %-  agent:dbug
-=|  state-7
+=|  state-8
 =*  state  -
 ^-  agent:gall
 =<
@@ -73,7 +93,7 @@
     da-blog-paths   =/  da  (da:sss-25 blog-paths ,[%paths ~])
       (da sub-blog-paths bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
 ++  on-init
-  =.  state  *state-7
+  =.  state  *state-8
   =.  authorized-ships  (sy ~[our.bowl])
   =^  cards  state  init-sequence:helper
   [cards this]
@@ -86,18 +106,45 @@
   =.  state
     ?-  -.old
         ?(%0 %1 [%2 *] %3)
-      [%7 (sy ~[our.bowl]) *(map [ship desk] @t) (mk-subs blog-paths ,[%paths ~]) (mk-subs portal-devs ,[%portal-devs ~]) ~ +:*state-4:portal-config]
+      ^-  state-8
+      :*  %8  *processing-payments:config  *processed-payments:config
+              *@ta  *receiving-address:config
+              (sy ~[our.bowl])  *(map [ship desk] @t)
+              (mk-subs blog-paths ,[%paths ~])  
+              (mk-subs portal-devs ,[%portal-devs ~])  ~ 
+              +:*state-4:config
+      ==
       ::
         %4
-      [%7 (sy ~[our.bowl]) *(map [ship desk] @t) (mk-subs blog-paths ,[%paths ~]) (mk-subs portal-devs ,[%portal-devs ~]) ~ +.old]  ::  TODO test
+      :*  %8  *processing-payments:config  *processed-payments:config
+              *@ta  *receiving-address:config
+              (sy ~[our.bowl])  *(map [ship desk] @t)  
+              (mk-subs blog-paths ,[%paths ~]) 
+              (mk-subs portal-devs ,[%portal-devs ~])  ~
+              +.old
+      ==
       ::
         %5
-      [%7 (sy ~[our.bowl]) *(map [ship desk] @t) (mk-subs blog-paths ,[%paths ~]) +.old]
+      :*  %8  *processing-payments:config  *processed-payments:config
+              *@ta  *receiving-address:config
+              (sy ~[our.bowl])  *(map [ship desk] @t) 
+              (mk-subs blog-paths ,[%paths ~]) 
+              +.old
+      ==
       ::
         %6
-      [%7 (sy ~[our.bowl]) *(map [ship desk] @t) +.old]
+      :*  %8  *processing-payments:config  *processed-payments:config
+              *@ta  *receiving-address:config
+              (sy ~[our.bowl])  *(map [ship desk] @t)  +.old
+      ==
       ::
         %7
+      :*  %8  *processing-payments:config  *processed-payments:config
+              *@ta  *receiving-address:config
+              +.old
+      ==
+      ::
+        %8
       old
     ==
   ::  we are doing init-sequence on-load as well because we have to retain
@@ -117,7 +164,7 @@
       :_  this  [(~(act cards [our.bowl %portal-store]) act)]~
       ::
         %manager-init
-      =.  our-apps.state  ;;  our-apps:portal-config
+      =.  our-apps.state  ;;  our-apps:config
         %-  tail
         .^  update:alliance:treaty  %gx
             /(scot %p our.bowl)/treaty/(scot %da now.bowl)/alliance/noun
@@ -137,7 +184,6 @@
       ?:  (~(has by wex.bowl) [/our-apps our.bowl %treaty])
           ~
       [%pass /our-apps %agent [our.bowl %treaty] %watch /alliance]~
-
       ::
         %sub-to-many
       ::  %def sent to portal-store
@@ -145,7 +191,7 @@
       =/  keys=[temp=key-list def=key-list]  (skid-temp:keys key-list.act)
       =^  cards  state
         %-  tail  %^  spin  temp.keys  [*(list card) state]
-        |=  [=key q=[cards=(list card) state=state-7]]
+        |=  [=key q=[cards=(list card) state=state-8]]
         :-  key
         =.  state  state.q
         =^  cards  state.q  (sub:helper [%sub key])
@@ -189,6 +235,16 @@
       =.  authorized-ships  authorized-ships.act
       :_  this
       [%give %fact [/updates]~ %portal-manager-result !>([%authorized-ships authorized-ships.act])]~
+      ::
+        %set-receiving-address
+      =.  receiving-address  receiving-address.act
+      :_  this
+      [%give %fact [/updates]~ %portal-manager-result !>([%receiving-address receiving-address.act])]~
+      ::
+        %set-rpc-endpoint
+      =.  rpc-endpoint  rpc-endpoint.act
+      :_  this
+      [%give %fact [/updates]~ %portal-manager-result !>([%rpc-endpoint rpc-endpoint.act])]~
     ==
     ::
       %portal-message
@@ -393,6 +449,11 @@
     [%x %portal-devs ~]         ``portal-manager-result+!>([%portal-devs dev-map])
     [%x %bought-apps ~]         ``portal-manager-result+!>([%bought-apps bought-apps])
     [%x %authorized-ships ~]    ``portal-manager-result+!>([%authorized-ships authorized-ships])
+    [%x %rpc-endpoint ~]        ``portal-manager-result+!>([%rpc-endpoint rpc-endpoint])
+    [%x %receiving-address ~]   ``portal-manager-result+!>([%receiving-address receiving-address])
+    :: [%processing-payments =processing-payments] ``portal-manager-result+!>([%processing-payments])
+    :: [%processed-payments =processed-payments]
+
   ==
 ++  on-agent
   |=  [=wire =sign:agent:gall]

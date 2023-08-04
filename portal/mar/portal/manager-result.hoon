@@ -1,6 +1,6 @@
-/-  *portal-data
+/-  config=portal-config
 /+  portal-json
-|_  mng=manager-result
+|_  mng=manager-result:config
 ++  grow
   |%
   ++  noun  mng
@@ -8,7 +8,7 @@
   --
 ++  grab
   |%
-  ++  noun  manager-result
+  ++  noun  manager-result:config
   --
 ++  grad  %noun
 --
