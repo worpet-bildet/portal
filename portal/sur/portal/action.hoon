@@ -59,6 +59,9 @@
       [%payment-request seller=ship =desk]
       [%payment-tx-hash seller=ship tx-hash=@t]
       ::
+      [%tip-request =key eth-price=@t note=@t]
+      [%tip-tx-hash seller=ship tx-hash=@t]
+      ::
       [%authorize-ships authorized-ships=(set ship)]
       ::
       [%set-rpc-endpoint rpc-endpoint=@ta]

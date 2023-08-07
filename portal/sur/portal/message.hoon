@@ -21,5 +21,9 @@
       [%payment-tx-hash tx-hash=@t]
       ::  buyer receives
       [%payment-confirmed tx-hash=@t =desk]
+      ::
+      [%tip-request =key eth-price=@t note=@t]
+      [%tip-tx-hash tx-hash=@t]
+      [%tip-confirmed tx-hash=@t =key]
   ==
 --

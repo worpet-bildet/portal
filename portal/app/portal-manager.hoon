@@ -1,6 +1,6 @@
 /-  *portal-data, *portal-action, *portal-message, config=portal-config,
     groups, treaty, portal-devs, blog-paths
-/+  default-agent, dbug, *portal, io=agentio, *sig, *sss, sss-25
+/+  default-agent, dbug, *portal, io=agentio, *sig, *sss, sss-25, ethereum
 /$  json-to-action  %json  %portal-action
 /$  msg-to-json  %portal-message  %json
 /$  dev-map-to-json  %portal-dev-map  %json
@@ -149,7 +149,7 @@
     ==
   ::  we are doing init-sequence on-load as well because we have to retain
   ::  idempotence from across all states to latest state
-  =^  cards  state  init-sequence:helper
+   =^  cards  state  init-sequence:helper
   [cards this]
 ::
 ++  on-poke
@@ -221,7 +221,7 @@
         ~&  >  "already bought the app"
         `this
       :_  this
-      :~  :*  %pass  /payment-req  %agent  [seller.act %portal-app-publisher]  %poke
+      :~  :*  %pass  /payment-req  %agent  [seller.act %portal-manager]  %poke
         %portal-message  !>([%payment-request desk.act])
       ==  ==
       ::
@@ -237,14 +237,26 @@
       [%give %fact [/updates]~ %portal-manager-result !>([%authorized-ships authorized-ships.act])]~
       ::
         %set-receiving-address
-      =.  receiving-address  receiving-address.act
+      =.  receiving-address  (crip (cass (trip receiving-address.act)))
       :_  this
-      [%give %fact [/updates]~ %portal-manager-result !>([%receiving-address receiving-address.act])]~
+      [%give %fact [/updates]~ %portal-manager-result !>([%receiving-address receiving-address])]~
       ::
         %set-rpc-endpoint
       =.  rpc-endpoint  rpc-endpoint.act
       :_  this
       [%give %fact [/updates]~ %portal-manager-result !>([%rpc-endpoint rpc-endpoint.act])]~
+      ::
+        %tip-request
+      :_  this
+      :~  :*  %pass  /tip-req  %agent  [ship.key.act %portal-manager]  %poke
+              %portal-message  !>([%tip-request key.act (crip (cass (trip eth-price.act))) note.act])
+      ==  ==
+      ::
+        %tip-tx-hash
+      :_  this
+      :~  :*  %pass  /tip-hash  %agent  [seller.act %portal-manager]  %poke
+              %portal-message  !>([%tip-tx-hash tx-hash.act])
+      ==  ==
     ==
     ::
       %portal-message
@@ -287,6 +299,7 @@
       (snoc create-my-apps create-app)
       ::
         %payment-reference
+      ~&  msg
       :_  this
       [%give %fact [/updates]~ %portal-message !>(msg)]~
       ::
@@ -299,6 +312,43 @@
               %kiln-install  !>([desk.msg src.bowl desk.msg])
           ::  TODO revive as well, msg with tom
       ==  ==
+      ::
+        %tip-request
+      =/  hex  (crip (cass (num-to-hex:ethereum (mod eny.bowl (pow 4 16)))))
+      =.  processing-payments
+        (~(put by processing-payments) hex [src.bowl key.msg eth-price.msg receiving-address note.msg])
+      :_  this
+      :~  :*  %give  %fact  [/updates]~  %manager-result  !>
+          [%processing-payments processing-payments]  
+          ==
+          :*  %pass  /payment-ref  %agent  [src.bowl %portal-manager]  %poke  
+          %portal-message  !>([%payment-reference hex eth-price.msg receiving-address])
+      ==  ==
+      ::
+        %tip-tx-hash
+      :_  this
+      ~&  >  "received hash"
+      ::  check if in processed payments
+      =/  processed  ^-  ^processed-payments  %+  skim  
+          processed-payments
+        |=  [=buyer =key tx-hash=@t =time note=@t]
+        ?&  =(buyer src.bowl)
+            =(tx-hash tx-hash.msg)
+        ==
+      ^-  (list card)
+      ?~  processed 
+        ::  if not in processed payments, validate transaction
+        ::  dap.bowl should be desk
+        [%pass /get-tx %arvo %k %fard q.byk.bowl %get-tx-by-hash %noun !>([rpc-endpoint src.bowl tx-hash.msg])]~
+      ::  if in processed payments
+      :~  :*  %pass  /tip-confirm  %agent  [src.bowl %portal-manager]  %poke  
+              %portal-message  !>([%tip-confirmed tx-hash.msg key:(snag 0 `^processed-payments`processed)])
+      ==  ==
+      ::
+        %tip-confirmed
+      :_  this
+      [%give %fact [/updates]~ %portal-message !>(msg)]~
+
       ::
         %index-as-curator
       ?>  =(our.bowl portal-indexer)
@@ -424,6 +474,54 @@
   ?+  wire  `this
     [~ %sss %behn @ @ @ %portal-devs ~]  [(behn:da-portal-devs |3:wire) this]
     [~ %sss %behn @ @ @ %paths ~]  [(behn:da-blog-paths |3:wire) this]
+      [%get-tx ~]
+    ?>  ?=([%khan %arow *] sign)
+    ?.  ?=(%.y -.p.sign)
+      ~&  >>  "fetching data failed"
+      `this
+    =+  !<([tx-hash=@t src=@p result=?(~ transaction-result:eth)] q.p.p.sign)
+    ?~  result
+      ~&  >>  "transaction wasn't made over last 24 hr"
+      `this
+    =/  hex                (crip (cass (trip input.result)))
+    =/  receiving-address  (crip (cass (trip (fall to.result ''))))
+    =/  eth-paid           (crip (skip (scow %ud (hex-to-num:ethereum (need value.result))) |=(a=@t =(a '.'))))
+    ?~  processing-data=(~(get by processing-payments) hex)
+      ~&  >>  "payment with this hex ({<hex>}) not in processing payments"
+      `this
+    ?:  !=(receiving-address receiving-address.u.processing-data)
+      ~&  >>  "tx receiving address: {<(fall to.result '')>}"
+      ~&  >>  "our receiving address: {<receiving-address.u.processing-data>}"
+      `this
+    ?:  !=(src buyer.u.processing-data)
+      ~&  >>  "malicious actor!"
+      ~&  >>  "{<src>} asked for install, but buyer is actually {<buyer.u.processing-data>}"
+      `this
+    ~&  >  "success!"
+    =.  processing-payments  (~(del by processing-payments) hex)
+    =.  processed-payments  %+  snoc  processed-payments
+      [buyer.u.processing-data key.u.processing-data (crip (cass (trip tx-hash))) now.bowl note.u.processing-data]
+    :_  this
+    ::  TODO add fence
+    :~  :*  %pass  /payment-confirm  %agent  [buyer.u.processing-data %portal-manager]  %poke  
+            %portal-message  !>([%tip-confirmed tx-hash key.u.processing-data])
+        ==
+        :*  %give  %fact  [/updates]~  %manager-result  !>
+            [%processing-payments processing-payments]  
+        ==
+        :*  %give  %fact  [/updates]~  %manager-result  !>
+            [%processed-payments processed-payments]  
+        ==
+        :*  %pass  /tip-to-graph  %agent  [our.bowl %portal-manager]  %poke  
+            %portal-action  !>
+            :*  %add-tag-request 
+                key.u.processing-data
+                [%ship buyer.u.processing-data '' '']
+                /(scot %p ship.key.u.processing-data)/tip-from/(scot %da now.bowl)/[eth-paid]/[note.u.processing-data]
+                /(scot %p buyer.u.processing-data)/tip-to/(scot %da now.bowl)/[eth-paid]/[note.u.processing-data]
+            ==
+        ==
+    ==
   ==
   :: |=  [=wire sign=sign-arvo]
   :: ^-  (quip card:agent:gall _this)
@@ -437,7 +535,7 @@
   :: =+  ;;  item  q.u.q.dat.u.roar.sign
   :: :_  this
   :: [%give %fact [/updates]~ %portal-update !>(-)]~  ::  FE update
-
+::
 ++  on-watch  _`this
 ++  on-leave  on-leave:default
 ++  on-peek

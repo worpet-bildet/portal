@@ -130,7 +130,7 @@
     :-  %o
     =+  ~(tap by processing-payments)
     %-  malt  %+  turn  -
-    |=  [hex=@t [=buyer:config =key =eth-price =receiving-address]]
+    |=  [hex=@t [=buyer:config =key =eth-price =receiving-address note=@t]]
     ^-  [@t json]
     :-  hex
     %-  pairs
@@ -138,6 +138,7 @@
         ['desk' (enjs-key key)]
         ['eth-price' s+eth-price]
         ['receiving-address' s+receiving-address]
+        ['note' s+note]
     ==
   ::
   ++  enjs-processed-payments
@@ -145,13 +146,14 @@
     ^-  json
     :-  %a
     %+  turn  processed-payments
-    |=  [=buyer:config =key tx-hash=@t time=@da]
+    |=  [=buyer:config =key tx-hash=@t time=@da note=@t]
     ^-  json
     %-  pairs
     :~  ['buyer' `json`(enjs-ship buyer)]
         ['desk' `json`(enjs-key key)]
         ['tx-hash' s+tx-hash]
         ['time' `json`(^time time)]
+        ['note' s+note]
     ==
   ::
   ++  enjs-authorized-ships
