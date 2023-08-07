@@ -1,10 +1,11 @@
 <script>
   import { api, mockData } from '@root/api';
   let scries = Object.entries(api.portal.get);
+  let newPokes = Object.entries(api.portal.newDo);
 </script>
 
 <div class="flex flex-col gap-8">
-  {#each scries as [name, fn]}
+  {#each newPokes.concat(scries) as [name, fn]}
     {@const data = mockData[name] || []}
     <div class="flex w-full justify-between">
       <div>{name}</div>

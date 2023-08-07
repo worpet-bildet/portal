@@ -45,7 +45,7 @@ export const api = {
         ]),
     },
     do: {
-      installApp: (ship, desk) =>
+      installApp: (desk) =>
         Promise.all([
           poke({
             app: 'docket',
@@ -121,6 +121,10 @@ export const api = {
       socialItems: () =>
         scry({ app: 'portal-graph', path: '/app/portal-store' }),
       boughtApps: () => scry({ app: 'portal-manager', path: '/bought-apps' }),
+      rpcEndpoint: () => scry({app: 'portal-manager', path: '/rpc-endpoint'}),
+      receivingAddress: () => scry({app: 'portal-manager', path: '/receiving-address'}),
+      processingPayments: () => scry({app: 'portal-manager', path: '/processing-payments'}),
+      processedPayments: () => scry({app: 'portal-manager', path: '/processed-payments'}),      
     },
     do: {
       create: (json) => pmPoke({ create: json }),
@@ -141,6 +145,16 @@ export const api = {
       confirmPayment: (seller, txHash) =>
         pmPoke({ 'payment-tx-hash': { seller, 'tx-hash': txHash } }),
     },
+    newDo: {
+      setRpcEndpoint: () =>  
+        pmPoke({'set-rpc-endpoint': {'rpc-endpoint': 'https://goerli.infura.io/v3/2599df54929b47099bda360958d75aaf'}}),
+      setReceivingAddress: () =>  
+        pmPoke({'set-receiving-address': {'receiving-address': '0x2D074f4CEC98abb895f3928D5876e8A0daCea8EF'}}),
+      tipRequest: () =>  
+        pmPoke({'tip-request': {key: { ship: '~sampel-dilryd-mopreg', struc: 'collection', cord: '', time: '~2000.1.1' }, 'eth-price': '10000000000000000', note: 'note taken!'}}),
+      tipTxHash: () =>  
+        pmPoke({'tip-tx-hash': {'seller': '~sampel-dilryd-mopreg', 'tx-hash': '0xd762c9029a413f064aa448eb5ff73d498014532c819a7bc56d44121e431fdca3'}}),
+      },
   },
   s3: {
     do: {

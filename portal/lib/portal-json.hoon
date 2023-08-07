@@ -100,6 +100,13 @@
         :~  ['tx-hash' s+tx-hash.message]
             ['desk' s+desk.message]
         ==
+        %tip-confirmed
+      %+  frond  'tip-confirmed'
+      %-  pairs
+        :~  ['tx-hash' s+tx-hash.message]
+            ['key' (enjs-key key.message)]
+        ==
+        
     ==
   ++  enjs-hex
     |=  hex=@ux
@@ -520,6 +527,10 @@
                 [%blog-sub ul:dejs]
                 [%payment-request (ot:dejs ~[seller+dejs-ship desk+so:dejs])]
                 [%payment-tx-hash (ot:dejs ~[seller+dejs-ship tx-hash+so:dejs])]
+                [%tip-request (ot:dejs ~[key+dejs-key eth-price+so:dejs note+so:dejs])]
+                [%tip-tx-hash (ot:dejs ~[seller+dejs-ship tx-hash+so:dejs])]
+                [%set-rpc-endpoint (ot:dejs ~[rpc-endpoint+so:dejs])]
+                [%set-receiving-address (ot:dejs ~[receiving-address+so:dejs])]
             ==
     ?+    -.jn    jn
         %create

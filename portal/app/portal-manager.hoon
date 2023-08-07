@@ -542,16 +542,15 @@
   |=  =path
   ^-  (unit (unit cage))
   ?+    path    (on-peek:default path)
-    [%x %indexed-as-curator ~]  ``portal-manager-result+!>(indexed-as-curator)
-    [%x %onboarded ~]           ``portal-manager-result+!>(onboarded)
-    [%x %portal-devs ~]         ``portal-manager-result+!>([%portal-devs dev-map])
-    [%x %bought-apps ~]         ``portal-manager-result+!>([%bought-apps bought-apps])
-    [%x %authorized-ships ~]    ``portal-manager-result+!>([%authorized-ships authorized-ships])
-    [%x %rpc-endpoint ~]        ``portal-manager-result+!>([%rpc-endpoint rpc-endpoint])
-    [%x %receiving-address ~]   ``portal-manager-result+!>([%receiving-address receiving-address])
-    :: [%processing-payments =processing-payments] ``portal-manager-result+!>([%processing-payments])
-    :: [%processed-payments =processed-payments]
-
+    [%x %indexed-as-curator ~]   ``portal-manager-result+!>(indexed-as-curator)
+    [%x %onboarded ~]            ``portal-manager-result+!>(onboarded)
+    [%x %portal-devs ~]          ``portal-manager-result+!>([%portal-devs dev-map])
+    [%x %bought-apps ~]          ``portal-manager-result+!>([%bought-apps bought-apps])
+    [%x %authorized-ships ~]     ``portal-manager-result+!>([%authorized-ships authorized-ships])
+    [%x %rpc-endpoint ~]         ``portal-manager-result+!>([%rpc-endpoint rpc-endpoint])
+    [%x %receiving-address ~]    ``portal-manager-result+!>([%receiving-address receiving-address])
+    [%x %processing-payments ~]  ``portal-manager-result+!>([%processing-payments processing-payments])
+    [%x %processed-payments ~]   ``portal-manager-result+!>([%processed-payments processed-payments])
   ==
 ++  on-agent
   |=  [=wire =sign:agent:gall]
