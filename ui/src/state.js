@@ -169,6 +169,7 @@ export const getGroup = (groupKey) => {
 };
 
 export const getItem = (listKey) => {
+  if (typeof listKey === 'object') return get(state)[keyStrFromObj(listKey)];
   return get(state)[listKey];
 };
 
@@ -280,6 +281,31 @@ export const getReviewsByTo = (ship, key) => {
       item.find((i) => keyStrFromObj(i) === keyStrFromObj(key))
     )
     .map(([reviewKey, _]) => keyStrToObj(reviewKey));
+};
+
+// go through the social items, sort the replies by time, and ensure that they
+// are alongside a reference to the original item
+export const getNotifications = (ship) => {
+  let q = [];
+  let feed = getGlobalFeed() || [];
+  Object.entries(get(state).social?.[`/${ship}/reply-from`] || {})?.forEach(
+    ([op, replies]) => {
+      // don't show notifications for items which are no longer in the feed
+      if (!feed?.find((f) => keyStrFromObj(f.key) === op)) return;
+      replies.forEach((reply) => {
+        q.push([reply, keyStrToObj(op)]);
+      });
+    }
+  );
+  Object.entries(get(state).social?.[`/${ship}/review-from`] || {})?.forEach(
+    ([op, reviews]) => {
+      // reviews are permanent so we don't care about the feed
+      reviews.forEach((review) => {
+        q.push([review, keyStrToObj(op)]);
+      });
+    }
+  );
+  return q.sort((a, b) => fromUrbitTime(b[0].time) - fromUrbitTime(a[0].time));
 };
 
 export const handleSubscriptionEvent = (event, type) => {

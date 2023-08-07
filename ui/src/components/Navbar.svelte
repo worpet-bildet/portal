@@ -1,6 +1,12 @@
 <script>
   import { push, link, location } from 'svelte-spa-router';
-  import { state, toggleDarkmode } from '@root/state';
+  import { format } from 'timeago.js';
+  import {
+    state,
+    toggleDarkmode,
+    getNotifications,
+    getItem,
+  } from '@root/state';
   import { me } from '@root/api';
   import { Sigil } from '@components';
   import {
@@ -9,12 +15,12 @@
     IconButton,
     SunIcon,
     MoonIcon,
+    BellIcon,
   } from '@fragments';
+  import { getMeta, fromUrbitTime } from '@root/util';
   import logo from '@assets/logo.svg';
 
   let isMobileNavOpen = false;
-
-  const pagesWithoutCoverPhoto = ['/explore', '/edit', '-edit/'];
 
   const nav = [
     {
@@ -31,6 +37,18 @@
         window.open(`${window.location.origin}/apps/talk/dm/~foddur-hodler`),
     },
   ];
+
+  let notifications = [];
+  let notificationsOpen = false;
+  state.subscribe(() => {
+    notifications = getNotifications(me);
+  });
+
+  const pagesWithoutCoverPhoto = ['/explore', '/edit', '-edit/', '/'];
+  let highContrast = false;
+  location.subscribe((l) => {
+    highContrast = !pagesWithoutCoverPhoto.includes(l);
+  });
 </script>
 
 <div class="mb-10">
@@ -40,57 +58,78 @@
     <a use:link href="/" class="flex items-center text-2xl font-bold gap-2">
       <img class="w-14 my-2" src={logo} alt="logo" />
       <div
-        class="font-logo flex items-center px-2 rounded-xl"
-        class:text-grey={pagesWithoutCoverPhoto.some((v) =>
-          $location.includes(v)
-        ) || $location === '/'}
-        class:text-white={$state.darkmode ||
-          (!pagesWithoutCoverPhoto.some((v) => $location.includes(v)) &&
-            $location !== '/')}
+        class="font-logo flex items-center px-2 rounded-xl dark:text-white"
+        class:text-grey={!highContrast}
+        class:text-white={highContrast}
       >
         PORTAL
       </div>
     </a>
 
-    <div class="hidden flex-col md:flex gap-4 md:flex-row">
+    <div class="hidden flex-col md:flex gap-4 md:flex-row items-center">
+      {#if $location === '/'}
+        <div class="relative">
+          <div class="rounded-full overflow-hidden">
+            <IconButton
+              icon={BellIcon}
+              on:click={() => (notificationsOpen = !notificationsOpen)}
+            />
+          </div>
+          {#if notificationsOpen}
+            <div
+              class="absolute top-10 w-max flex flex-col gap-4 bg-white dark:bg-black rounded-xl border border-white overflow-hidden"
+            >
+              {#if notifications.length > 0}
+                {#each notifications as [reply, op]}
+                  <button
+                    class="flex items-center justify-between gap-4 hover:bg-offwhite dark:hover:bg-darkgrey cursor-pointer p-2"
+                    on:click={() => {
+                      switch (reply.struc) {
+                        case 'other':
+                          window.location.href = `#${fromUrbitTime(op.time)}`;
+                          break;
+                        case 'review':
+                          push(`/app/${op.ship}/${op.cord || op.time}`);
+                          break;
+                      }
+                    }}
+                  >
+                    <div class="flex gap-2">
+                      <div class="w-5"><Sigil patp={reply.ship} /></div>
+                      {#if reply.struc === 'review'}
+                        {@const { title } = getMeta(getItem(op))}
+                        <div class="text-sm">{reply.ship} reviewed {title}</div>
+                      {:else if reply.struc === 'other'}
+                        <div class="text-sm">{reply.ship} replied to you</div>
+                      {/if}
+                    </div>
+                    <div class="text-xs text-right">
+                      {format(fromUrbitTime(reply.time))}
+                    </div>
+                  </button>
+                {/each}
+              {:else}
+                <div class="p-2">No notifications</div>
+              {/if}
+            </div>
+          {/if}
+        </div>
+      {/if}
       <div class="rounded-full overflow-hidden">
         <IconButton
           icon={$state.darkmode ? SunIcon : MoonIcon}
           on:click={toggleDarkmode}
-          class="hover:bg-transparent border-transparent
-            {!pagesWithoutCoverPhoto.some((v) => $location.includes(v)) &&
-          $location !== '/' &&
-          !$state.darkmode
+          class="hover:bg-transparent border-transparent dark:fill-white {highContrast
             ? 'fill-white'
-            : 'fill-grey'}
-            {$state.darkmode ? 'hover:fill-white' : ''}
-            {!$state.darkmode &&
-          !pagesWithoutCoverPhoto.some((v) => $location.includes(v)) &&
-          $location !== '/'
-            ? 'hover:fill-offwhite'
-            : 'hover:fill-black'}"
+            : ''}"
         />
       </div>
       {#each nav as n}
         <button
           on:click={() => (n.action ? n.action() : push(n.link))}
           class="rounded-xl flex font-saucebold items-center px-4 hover:duration-500 py-2 md:py-0"
-          class:text-black={$location === n.link}
-          class:text-grey={$location !== n.link &&
-            (pagesWithoutCoverPhoto.some((v) => $location.includes(v)) ||
-              $location === '/')}
-          class:hover:text-black={!$state.darkmode ||
-            ($location !== n.link &&
-              (pagesWithoutCoverPhoto.some((v) => $location.includes(v)) ||
-                $location === '/'))}
-          class:text-white={$state.darkmode ||
-            ($location !== n.link &&
-              !pagesWithoutCoverPhoto.some((v) => $location.includes(v)) &&
-              $location !== '/')}
-          class:hover:text-offwhite={$state.darkmode ||
-            ($location !== n.link &&
-              !pagesWithoutCoverPhoto.some((v) => $location.includes(v)) &&
-              $location !== '/')}>{n.title}</button
+          class:text-grey={$location === n.link && highContrast}
+          class:text-white={highContrast}>{n.title}</button
         >
       {/each}
       <a
