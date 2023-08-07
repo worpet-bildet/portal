@@ -6,7 +6,7 @@ For details see:
 https://github.com/urbit/urbit.org/blob/master/content/grants/app-store.md
 
 For discussion, visit on Urbit:
-~worpet-bildet/portal
+~hadzod-toptyr-bilder/portal
 
 ## Setup
 
