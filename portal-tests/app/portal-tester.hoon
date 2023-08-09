@@ -1,5 +1,5 @@
-/-  *tests-action, portal-action, portal-data
-/+  default-agent, dbug
+/-  *tests-action, portal-action, portal-data, social-graph
+/+  default-agent, dbug, portal
 |%
 +$  versioned-state
   $%  state-0
@@ -48,7 +48,8 @@
                     ^-  cage
                     :-  %portal-action
                     !>  [%tip-request [%collection ~sampel-dilryd-mopreg '' '~2000.1.1'] '10000000000000000' 'test note']
-                ~
+              ~
+              ::
               :-
                 ::  sub-to-seller-grpah
                 %-  some  
@@ -60,23 +61,22 @@
               ::
               :: TODO
               :: -  check seller graph
-              :: -  write timers
               ::  we should meanwhile do the transaction with the payment-reference!
               ::  check-seller-graph
-              ~
-              :: %-  some 
-              :: :^    `mold`store-result:portal-data
-              ::     `path`/gx/portal-store/item/other/(scot %p our.bowl)/'use_as_empty_path_slot'/(scot %da now.bowl)/portal-store-result
-              ::   ^-  $-(* ?)  
-              ::   |=  item=*
-              ::   =/  result  ;;(store-result:portal-data item)  
-              ::   ?~  result  !!
-              ::   ?>  ?=([%item *] result)
-              ::   ?~  +.result  %.n
-              ::   ?:  .=  %deleted  =<  lens  ;;(item:portal-data +.result)
-              ::     %.y
-              ::   %.n
-              :: `(unit (list @dr))`~
+              %-  some 
+              :^    `mold`graph-result:social-graph
+                  `path`/gx/portal-graph/tags/portal-store/entity/portal-store/'/collection/~sampel-dilryd-mopreg//~2000.1.1'/entity/portal-store/'/ship/~sampel-dozzod-dilryd-mopreg//'/social-graph-result
+                ^-  $-(* ?)  
+                |=  graph-result=*
+                =/  result  ;;  graph-result:social-graph  graph-result
+                ?>  ?=([%tags *] result)
+                =(+.result /~sampel-dilryd-mopreg/tip-from/(scot %da now.bowl)/'10000000000000000'/'test note')
+              ^-  (unit (list @dr))
+              :-  ~
+              :~  ~s0  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5       
+                  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5
+                  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5
+              ==
           ==
       ==
       ::  mold and path used like this in scry

@@ -14,7 +14,10 @@
 ::  - enjs (app tag nodeset), (set node)
 ::  - subscription updates for adding tags, on-rock and on-poke
 ::  %social-graph agent state
-::
+::  -  scry paths separated
+::   [%tags @ %entity @ @ ?(%ship %address) @ ~]
+::   [%tags @ %entity @ @ %entity @ @ ~]
+
 +$  state-2
   $:  %2
       graph=social-graph:g
@@ -433,10 +436,8 @@
       ==
     =-  tags+?~(- ~ (~(get ju u.-) app))
     (~(get-edge sg:g graph.state) n1 n2)
-  ::
-      $%  [%tags @ %entity @ @ ?(%ship %address) @ ~]
-          [%tags @ %entity @ @ %entity @ @ ~]
-      ==
+  ::     
+      [%tags @ %entity @ @ ?(%ship %address) @ ~]
     =/  =app:g  `@tas`i.t.path
     =/  n1=node:g
       [i `@tas`i.t `@t`i.t.t]:t.t.path
@@ -445,8 +446,16 @@
       ?-  -
         %ship     [- (slav %p i.t.t.t.t.t.t.path)]
         %address  [- (slav %ux i.t.t.t.t.t.t.path)]
-        %entity   [%entity `@tas`i `@t`i.t]:t.t.t.t.t.path
       ==
+    =-  tags+?~(- ~ (~(get ju u.-) app))
+    (~(get-edge sg:g graph.state) n1 n2)
+  ::
+      [%tags @ %entity @ @ %entity @ @ ~]
+    =/  =app:g  `@tas`i.t.path
+    =/  n1=node:g
+      [i `@tas`i.t `@t`i.t.t]:t.t.path
+    =/  n2=node:g
+      [%entity `@tas`i.t `@t`i.t.t]:t.t.t.t.t.path
     =-  tags+?~(- ~ (~(get ju u.-) app))
     (~(get-edge sg:g graph.state) n1 n2)
   ::
