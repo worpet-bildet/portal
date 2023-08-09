@@ -7,8 +7,6 @@
 /ui/.eslintcache
 /ui/.vercel
 
-/portal/desk.ship
-
 .DS_Store
 *.code-workspace
 /archive
