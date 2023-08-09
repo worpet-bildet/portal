@@ -1,4 +1,4 @@
-/-  *tests-action
+/-  *tests-action, portal-action, portal-data
 /+  default-agent, dbug
 |%
 +$  versioned-state
@@ -24,32 +24,119 @@
   |=  [=mark =vase]
   ^-  (quip card _this)
   ?+    mark    (on-poke:default mark vase)
+    ::  default:
+    ::  sampel-dozzod, sampel
       %tests-action
     =/  tst  !<(tests vase)
     ?+    -.tst    `this
-        %sub
-      `this
-      :: test thread should take
-      :: - action
-      :: - scry
-      :: - list of timers before scries
-      :: should output
-      :: - bool
-      :: :_  this  :_  ~
-      :: :*  %pass  /validate-sig  %arvo  %k  %fard  %portal  %validate-sig  %noun
-      ::     !>([dist-desk.bespoke.item.u.wave.msg src.msg our.bowl now.bowl sig.bespoke.item.u.wave.msg item.u.wave.msg])
-      :: ==
+        :: action tip-request
+        :: action sub to seller graph
+        :: dobri timeri da imam vremena manualno action tip-tx-hash kad dobijem payment-reference
+        :: scry portal graph za tip edge, confirmat tocnost
 
-        %sub-to-many  `this
-        %create  `this
-        %edit  `this
-        %add-tag-request  `this
+        :: koji su edge caseovi? tj koje sve slucajeve treba testirat
+      
+        ::  from tipper perspective
+        %tip
+      :_  this  :_  ~
+      :*  %pass  /tests  %arvo  %k  %fard  %portal-tests  %test  %noun
+          !>  
+          :~  ::  tip-request
+              :-  
+                %-  some  
+                :-  `dude:agent:gall`%portal-manager
+                    ^-  cage
+                    :-  %portal-action
+                    !>  [%tip-request [%collection ~sampel-dilryd-mopreg '' '~2000.1.1'] '10000000000000000' 'test note']
+                ~
+              :-
+                ::  sub-to-seller-grpah
+                %-  some  
+                :-  `dude:agent:gall`%portal-graph
+                ^-  cage
+                :-  %social-graph-track
+                !>(portal-store+[%start ~sampel-dilryd-mopreg /(scot %p ~sampel-dilryd-mopreg)])
+              
+              ::
+              :: TODO
+              :: -  check seller graph
+              :: -  write timers
+              ::  we should meanwhile do the transaction with the payment-reference!
+              ::  check-seller-graph
+              ~
+              :: %-  some 
+              :: :^    `mold`store-result:portal-data
+              ::     `path`/gx/portal-store/item/other/(scot %p our.bowl)/'use_as_empty_path_slot'/(scot %da now.bowl)/portal-store-result
+              ::   ^-  $-(* ?)  
+              ::   |=  item=*
+              ::   =/  result  ;;(store-result:portal-data item)  
+              ::   ?~  result  !!
+              ::   ?>  ?=([%item *] result)
+              ::   ?~  +.result  %.n
+              ::   ?:  .=  %deleted  =<  lens  ;;(item:portal-data +.result)
+              ::     %.y
+              ::   %.n
+              :: `(unit (list @dr))`~
+          ==
+      ==
+      ::  mold and path used like this in scry
+      ::  .^(mold i.path (scot %p our.bowl) i.t.path (scot %da now.bowl) t.t.path)
+        %create-edit
+      :_  this  :_  ~
+      :*  %pass  /tests  %arvo  %k  %fard  %portal-tests  %test  %noun
+          !>  
+          :~  ::  create
+              :-  
+                %-  some  
+                :-  `dude:agent:gall`%portal-manager
+                    ^-  cage
+                    :-  %portal-action
+                    !>  [%create ~ ~ `(scot %da now.bowl) ~ ~ ~ ~ ~]
+              %-  some 
+              :^    `mold`store-result:portal-data
+                  `path`/gx/portal-store/item-exists/other/(scot %p our.bowl)/'use_as_empty_path_slot'/(scot %da now.bowl)/portal-store-result
+                `$-(* ?)`|=(a=* ?>(?=(? a) a))
+              `(unit (list @dr))`~
+              ::  edit
+              :-
+                %-  some  
+                :-  `dude:agent:gall`%portal-manager
+                    ^-  cage
+                    :-  %portal-action
+                    !>  [%edit [%other our.bowl '' (scot %da now.bowl)] `%deleted ~]
+              %-  some 
+              :^    `mold`store-result:portal-data
+                  `path`/gx/portal-store/item/other/(scot %p our.bowl)/'use_as_empty_path_slot'/(scot %da now.bowl)/portal-store-result
+                ^-  $-(* ?)  
+                |=  item=*
+                =/  result  ;;(store-result:portal-data item)  
+                ?~  result  !!
+                ?>  ?=([%item *] result)
+                ?~  +.result  %.n
+                ?:  .=  %deleted  =<  lens  ;;(item:portal-data +.result)
+                  %.y
+                %.n
+              `(unit (list @dr))`~
+          ==
+      ==
     ==
-==
+  ==
 ++  on-watch  on-watch:default
 ++  on-leave  on-leave:default
 ++  on-peek   on-peek:default
 ++  on-agent  on-agent:default
-++  on-arvo   on-arvo:default
+++  on-arvo
+  |=  [=wire sign=sign-arvo]
+  ^-  (quip card:agent:gall _this)
+  ?:  !?=([%tests ~] wire)
+    `this
+  ?>  ?=([%khan %arow *] sign)
+  ~&  sign
+  ?.  ?=(%.y -.p.sign)
+    ~&  >>  "fetching data failed"
+    `this
+  ~&  >  !<(? q.p.p.sign)
+  `this
+
 ++  on-fail   on-fail:default
 --

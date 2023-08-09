@@ -1,7 +1,9 @@
 /-  *portal-data, *portal-config
 |%
 +$  tests
-  $%  $:  %create
+  $%  [%create-edit ~]
+      [%tip ~]
+      $:  %create
          ship=(unit ship)
          cord=(unit cord)
          time=(unit cord)
