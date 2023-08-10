@@ -33,7 +33,7 @@
 --
 |^
 |=  args=vase
-=+  !<([url=@ta src=@p tx-hash=@t] args)
+=+  !<([url=@ta src=@p tx-hash=@t note=@t] args)
 =/  m  (strand ,vase)
 ^-  form:m
 ::   time based fetching, try again after x time if you don't get data
@@ -54,7 +54,7 @@
   ==
 ?^  jon
   %-  pure:m 
-  !>  [tx-hash src (parse-transaction-result jon)]
+  !>  [tx-hash src (parse-transaction-result jon) note]
 ;<  ~  bind:m  (sleep time.tracker)
 %=  $
     tracker

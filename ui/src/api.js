@@ -151,9 +151,9 @@ export const api = {
       setReceivingAddress: () =>  
         pmPoke({'set-receiving-address': {'receiving-address': '0x2D074f4CEC98abb895f3928D5876e8A0daCea8EF'}}),
       tipRequest: () =>  
-        pmPoke({'tip-request': {key: { ship: '~sampel-dilryd-mopreg', struc: 'collection', cord: '', time: '~2000.1.1' }, 'eth-price': '10000000000000000', note: 'note taken!'}}),
+        pmPoke({'tip-request': {key: { ship: '~sampel-dilryd-mopreg', struc: 'collection', cord: '', time: '~2000.1.1' }}}),
       tipTxHash: () =>  
-        pmPoke({'tip-tx-hash': {'seller': '~sampel-dilryd-mopreg', 'tx-hash': '0xd762c9029a413f064aa448eb5ff73d498014532c819a7bc56d44121e431fdca3'}}),
+        pmPoke({'tip-tx-hash': {'beneficiary': '~sampel-dilryd-mopreg', 'tx-hash': '0xd762c9029a413f064aa448eb5ff73d498014532c819a7bc56d44121e431fdca3', note: 'take note of this'}}),
       },
   },
   s3: {
