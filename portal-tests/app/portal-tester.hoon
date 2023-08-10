@@ -28,43 +28,30 @@
     ::  sampel-dozzod, sampel
       %tests-action
     =/  tst  !<(tests vase)
-    ?+    -.tst    `this
-        :: action tip-request
-        :: action sub to seller graph
-        :: dobri timeri da imam vremena manualno action tip-tx-hash kad dobijem payment-reference
-        :: scry portal graph za tip edge, confirmat tocnost
-
-        :: koji su edge caseovi? tj koje sve slucajeve treba testirat
-      
+    ?+    -.tst    `this      
         ::  from tipper perspective
-      TODO 
-      write test for after receiving the tip-reference?
-        %tip
-      :: =/  amount  '10000000000000000'
-      :: =/  note  'pls work'
+      :: this assumes you sent the tip-request, received the tip-reference
+      :: and have made the transaction
+      ::  TODO assert that the tip edge wasnt there previously
+        %tip-tx-hash
       :_  this  :_  ~
       :*  %pass  /tests  %arvo  %k  %fard  %portal-tests  %test  %noun
           !>  
-          :~  ::  tip-request
-              :-  
-                %-  some  
-                :-  `dude:agent:gall`%portal-manager
-                    ^-  cage
-                    :-  %portal-action
-                    !>  :*  %tip-request
-                            [%collection ~sampel-dilryd-mopreg '' '~2000.1.1']
-                        ==
+          :~  :-  ::  sub-to-seller-grpah
+                  %-  some  
+                  :-  `dude:agent:gall`%portal-graph
+                  ^-  cage
+                  :-  %social-graph-track
+                  !>  :-  %portal-store
+                  [%start ~sampel-dilryd-mopreg /(scot %p ~sampel-dilryd-mopreg)]
               ~
               ::
               :-
-                ::  sub-to-seller-grpah
+                ::  tip-tx-hash
                 %-  some  
-                :-  `dude:agent:gall`%portal-graph
-                ^-  cage
-                :-  %social-graph-track
-                !>(portal-store+[%start ~sampel-dilryd-mopreg /(scot %p ~sampel-dilryd-mopreg)])
+                :-  `dude:agent:gall`%portal-manager
+                `cage`portal-action+!>(tst)
               ::
-              ::  we should meanwhile do the transaction with the payment-reference!
               ::  check-seller-graph
               %-  some 
               :^    `mold`graph-result:social-graph
@@ -73,13 +60,12 @@
                 |=  graph-result=*
                 =/  result  ;;  graph-result:social-graph  graph-result
                 ?>  ?=([%tags *] result)
-                =(+.result /~sampel-dilryd-mopreg/tip-from/(scot %da now.bowl)/'10000000000000000'/'pls work')
-              ^-  (unit (list @dr))
-              :-  ~
-              :~  ~s0  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5       
-                  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5
-                  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5
-              ==
+                ~&  result
+                %-  %~  any  in  +.result
+                |=  =path
+                ?=  [_(scot %p ~sampel-dilryd-mopreg) %tip-from @ @ _note.tst ~]
+                path 
+              ^-  (unit (list @dr))  ~
           ==
       ==
       ::  mold and path used like this in scry
