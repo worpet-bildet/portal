@@ -1,10 +1,23 @@
 <script>
   import { link } from 'svelte-spa-router';
+  import { api } from '@root/api';
   import { getItem, keyStrFromObj } from '@root/state';
   import { isUrl } from '@root/util';
   import { Sigil } from '@components';
-  import { ItemImage, StarRating } from '@fragments';
-  export let cover, avatar, title, description, patp, color, type, reviews;
+  import {
+    ItemImage,
+    StarRating,
+    IconButton,
+    EthereumIcon,
+    Modal,
+  } from '@fragments';
+  export let cover, avatar, title, description, patp, color, type, reviews, key;
+
+  let tipModalOpen = false;
+  const handleTipRequest = () => {
+    // pop a modal to allow the user to select how much they would like to tip
+    tipModalOpen = true;
+  };
 
   let reviewCount, reviewAverageRating;
   $: {
@@ -35,8 +48,7 @@
     }
   };
   $: if (!cover || !isUrl(cover)) {
-    cover =
-      'https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/hills.jpg';
+    cover = 'https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/hills.jpg';
   }
 </script>
 
@@ -97,6 +109,15 @@
             by {patp}
           </a>{/if}
       </div>
+      {#if window.ethereum}
+        <div class="flex">
+          <IconButton
+            icon={EthereumIcon}
+            class="border"
+            on:click={handleTipRequest}>Tip</IconButton
+          >
+        </div>
+      {/if}
     </div>
     {#if reviews && reviewAverageRating}
       <div class="col-span-12 flex justify-end gap-8">
@@ -127,10 +148,32 @@
     {/if}
   </div>
   <slot />
+  <Modal bind:open={tipModalOpen}>
+    <!-- Show the user an input for the tip amount, along with a confirm button -->
+    <div class="flex flex-col gap-8">
+      <div class="text-2xl font-bold text-left">Tip</div>
+      {#await api.portal.do.tipRequest(key, '1', 'thing')}
+        Loading...
+      {:then res}
+        {@debug res}
+        <div>You can tip {patp} in ETH to thank them.</div>
+        <div class="flex justify-center items-center gap-2">
+          <div>Amount (ETH):</div>
+          <input
+            type="number"
+            min="0.001"
+            max="100"
+            step="0.001"
+            placeholder="0.001"
+            class="text-2xl"
+          />
+        </div>
+        <div class="flex justify-end">
+          <button>Confirm</button>
+        </div>
+      {:catch err}
+        <div>Something went wrong.</div>
+      {/await}
+    </div>
+  </Modal>
 </div>
-
-<style>
-  .cover {
-    /* mask-image: linear-gradient(to top, transparent 2%, black 30%); */
-  }
-</style>
