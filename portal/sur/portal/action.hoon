@@ -59,8 +59,8 @@
       [%payment-request seller=ship =desk]
       [%payment-tx-hash seller=ship tx-hash=@t]
       ::
-      [%tip-request =key eth-price=@t note=@t]
-      [%tip-tx-hash seller=ship tx-hash=@t]
+      [%tip-request =key]
+      [%tip-tx-hash beneficiary=ship tx-hash=@t note=@t]
       ::
       [%authorize-ships authorized-ships=(set ship)]
       ::

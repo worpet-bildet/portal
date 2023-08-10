@@ -5,12 +5,11 @@
 +$  portal-curator  indexer
 +$  portal-indexer  indexer
 ::
-+$  processing-payments  (map hex [=buyer =key =eth-price =receiving-address note=@t])
++$  processing-payments  (map hex [=buyer =key =receiving-address])
 +$  processed-payments  (list [=buyer =key tx-hash=@t =time note=@t])
-+$  desks-for-sale  (map desk [=eth-price =receiving-address])  :: doesn't remember if eth-price changes
 ::
 +$  receiving-address  @t
-+$  eth-price  @t
++$  eth-amount  @t
 +$  buyer  ship
 +$  hex  @t
 +$  group  [name=@ta ships=(set ship)]

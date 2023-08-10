@@ -37,7 +37,11 @@
         :: koji su edge caseovi? tj koje sve slucajeve treba testirat
       
         ::  from tipper perspective
+      TODO 
+      write test for after receiving the tip-reference?
         %tip
+      :: =/  amount  '10000000000000000'
+      :: =/  note  'pls work'
       :_  this  :_  ~
       :*  %pass  /tests  %arvo  %k  %fard  %portal-tests  %test  %noun
           !>  
@@ -47,7 +51,9 @@
                 :-  `dude:agent:gall`%portal-manager
                     ^-  cage
                     :-  %portal-action
-                    !>  [%tip-request [%collection ~sampel-dilryd-mopreg '' '~2000.1.1'] '10000000000000000' 'test note']
+                    !>  :*  %tip-request
+                            [%collection ~sampel-dilryd-mopreg '' '~2000.1.1']
+                        ==
               ~
               ::
               :-
@@ -57,10 +63,7 @@
                 ^-  cage
                 :-  %social-graph-track
                 !>(portal-store+[%start ~sampel-dilryd-mopreg /(scot %p ~sampel-dilryd-mopreg)])
-              
               ::
-              :: TODO
-              :: -  check seller graph
               ::  we should meanwhile do the transaction with the payment-reference!
               ::  check-seller-graph
               %-  some 
@@ -70,7 +73,7 @@
                 |=  graph-result=*
                 =/  result  ;;  graph-result:social-graph  graph-result
                 ?>  ?=([%tags *] result)
-                =(+.result /~sampel-dilryd-mopreg/tip-from/(scot %da now.bowl)/'10000000000000000'/'test note')
+                =(+.result /~sampel-dilryd-mopreg/tip-from/(scot %da now.bowl)/'10000000000000000'/'pls work')
               ^-  (unit (list @dr))
               :-  ~
               :~  ~s0  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5  ~s5       
