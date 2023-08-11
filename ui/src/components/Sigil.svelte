@@ -1,12 +1,13 @@
 <script>
   import { sigil, stringRenderer } from '@tlon/sigil-js';
   import { state, getCurator } from '@root/state';
-  import { formatColor, isLightColor } from '@root/util';
+  import { formatColor, isLightColor, isUrl } from '@root/util';
   export let patp, size;
   export let color = '0x0';
 
+  let avatar;
   state.subscribe(() => {
-    ({ color } = getCurator(patp).bespoke || {});
+    ({ color, avatar } = getCurator(patp).bespoke || {});
   });
 
   $: primaryColor = formatColor(color);
@@ -16,13 +17,21 @@
     secondaryColor = 'ffffff';
   }
 
-  // TODO: change to ~zod
-  $: if (!patp || patp.length > 14) patp = '~zod';
+  let replacementPatp;
+  $: if ((!patp || patp.length > 14) && !avatar) replacementPatp = '~zod';
 </script>
 
-{@html sigil({
-  patp,
-  renderer: stringRenderer,
-  size: size || 50,
-  colors: [`#${primaryColor}`, `#${secondaryColor}`],
-})}
+{#if isUrl(avatar)}
+  <img
+    src={avatar}
+    alt="avatar"
+    class="aspect-square object-cover overflow-hidden"
+  />
+{:else}
+  {@html sigil({
+    patp: replacementPatp || patp,
+    renderer: stringRenderer,
+    size: size || 50,
+    colors: [`#${primaryColor}`, `#${secondaryColor}`],
+  })}
+{/if}

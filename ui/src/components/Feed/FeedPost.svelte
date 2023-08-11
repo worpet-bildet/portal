@@ -103,11 +103,7 @@
     <div class="col-span-1">
       <div class="rounded-md overflow-hidden">
         <a href={`/${ship}`} use:link>
-          {#if avatar}
-            <img src={avatar} alt="custom avatar" />
-          {:else}
-            <Sigil patp={ship} />
-          {/if}
+          <Sigil patp={ship} />
         </a>
       </div>
     </div>
