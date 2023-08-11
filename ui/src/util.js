@@ -1,4 +1,5 @@
 import * as linkify from 'linkifyjs';
+import linkifyHtml from 'linkify-html';
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 
@@ -412,6 +413,7 @@ export const isValidPatp = (patp) => {
     _stripped.length % 3 === 0
   ) {
     let _syllables = _stripped.match(/(.{3})/g);
+    if (!_syllables) return false;
     if (_syllables.length === 1 && syllables.p.includes(_syllables[0]))
       return _patp;
     if (_syllables.length === 2 && checkPair(_syllables)) return _patp;

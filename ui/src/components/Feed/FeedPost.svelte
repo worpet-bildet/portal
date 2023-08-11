@@ -13,7 +13,13 @@
     getRepliesByTo,
     getLikes,
   } from '@root/state';
-  import { getMeta, fromUrbitTime, getAnyLink, isImage } from '@root/util';
+  import {
+    getMeta,
+    fromUrbitTime,
+    getAnyLink,
+    isImage,
+    isValidPatp,
+  } from '@root/util';
   import { ItemPreview, Sigil, FeedPostForm } from '@components';
   import {
     ChatIcon,
@@ -87,12 +93,25 @@
       'tag-from': `/${key.ship}/like-from`,
     });
   };
+
+  // TODO: this is quite not good
+  const linkifyMentions = (html) => {
+    return html
+      .split(' ')
+      .map((word) => {
+        if (word.substr(0, 1) === '~' && isValidPatp(word)) {
+          return `<a href="#/${word}" use:link class="text-link">${word}</a>`;
+        }
+        return word;
+      })
+      .join(' ');
+  };
 </script>
 
 {#if item}
   {@const { blurb, ship, createdAt, ref, image, rating } = getMeta(item)}
   {@const {
-    bespoke: { nickname, avatar },
+    bespoke: { nickname },
   } = getCurator(ship)}
   {@const blurbLink = getAnyLink(blurb)}
   <div
@@ -119,9 +138,11 @@
         class="whitespace-pre-wrap line-clamp-50 flex flex-col gap-2 break-words"
       >
         <div>
-          {@html linkifyHtml(blurb, {
-            attributes: { class: 'text-link', target: '_blank' },
-          })}
+          {@html linkifyMentions(
+            linkifyHtml(blurb, {
+              attributes: { class: 'text-link', target: '_blank' },
+            })
+          )}
         </div>
         {#if blurbLink}
           {#if isImage(blurbLink)}
