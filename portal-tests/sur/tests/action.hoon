@@ -2,7 +2,7 @@
 |%
 +$  tests
   $%  [%create-edit ~]
-      [%tip ~]
+      [%tip-tx-hash beneficiary=ship tx-hash=@t note=@t]
       $:  %create
          ship=(unit ship)
          cord=(unit cord)
