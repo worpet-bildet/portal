@@ -21,5 +21,11 @@
       [%payment-tx-hash tx-hash=@t]
       ::  buyer receives
       [%payment-confirmed tx-hash=@t =desk]
+      ::
+      [%tip-request =key]
+      [%tip-reference hex=@t receiving-address=@t]
+      [%tip-tx-hash tx-hash=@t note=@t]
+      [%tip-confirmed tx-hash=@t =key]
+
   ==
 --

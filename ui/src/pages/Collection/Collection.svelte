@@ -46,6 +46,7 @@
       {title}
       description={blurb}
       avatar={image}
+      key={collection.keyObj}
       type="collection"
     >
       <div

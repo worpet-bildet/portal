@@ -178,6 +178,7 @@
       ::
         %add-tag-request
       ?>  =(src.bowl src.msg)
+      ?>  !=('tip-from' (snag 1 tag.msg))
       :_  this
       (gra:cards-methods:stor portal-store+[%add-tag [tag from to]:msg])
       ::
