@@ -23,7 +23,7 @@
   (pure:m !>(%.y))
 =/  item=item-mold  -:acts
 ~&  >  "handling new item:"
-~&  item
+::~&  item
 ;<  ~  bind:m  
   ?~  p.item  ignore  ::  is this okay?
   %-  send-raw-card
@@ -48,7 +48,7 @@
   ;<  scry-output=scry-mold  bind:m  (scry [scry-mold scry-path])
   ?:  (criterion scry-output)
     (pure:m !>(%.y))
-  $(timers +:timers)
+  $(timers +:^timers)
 ?:  !<(? passed)
   ~&  >  "item passed"
   $(acts +:acts)

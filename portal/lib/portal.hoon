@@ -1,6 +1,6 @@
 /-  *portal-data, portal-config, *portal-action, *portal-message,
     portal-data-0, gr=social-graph, treaty
-/+  sig, io=agentio, mip, sss
+/+  sig, io=agentio, mip, sss, ethereum
 |%
 +$  card  card:agent:gall
 ::
@@ -420,6 +420,48 @@
   ++  delete           (cury delete:pure now.bowl)
   --
 ::
+::
+++  eth
+  |%
+  ::  we modify some things from ethereum.hoon
+  ++  parse-transaction-result
+    =,  dejs:format
+    |=  jon=json
+    ~|  jon=jon
+    ^-  transaction-result
+    =-  ((ot -) jon)
+    ::  why are some of these units and some not?
+    ::  doesn't seem to correspond to (non)required values in eth schemas
+    :~  'blockHash'^_~  :: TODO: fails if maybe-num?
+        'blockNumber'^maybe-num:rpc:ethereum
+        'transactionIndex'^maybe-num:rpc:ethereum
+        from+so::(cu hex-to-num:ethereum so)
+        to+so:dejs-soft:format:: maybe-num:rpc:ethereum
+        input+so
+        value+so:dejs-soft:format ::maybe-num:rpc:ethereum
+    ==
+  ::
+  ++  transaction-result
+    $:  block-hash=(unit @ux)
+        block-number=(unit @ud)
+        transaction-index=(unit @ud)
+        from=@t
+        to=(unit @t)
+        input=@t
+        value=(unit @t)  ::  assuming this will always be hex!
+    ==
+  ::
+  ::  paid is hex
+  ::  price is decimal integer
+  ++  paid-enough
+    |=  [paid=@t price=@t]
+    ^-  ?
+    %+  gte
+    `@ud`(hex-to-num:ethereum paid)
+    `@ud`(scan (trip price) dem)
+  ::
+  --
+
 ::  OOD
 ::  includes arms which are used to validate data
 ++  validator

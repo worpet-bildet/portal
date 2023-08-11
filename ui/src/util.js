@@ -253,6 +253,10 @@ export const weiToEth = (wei) => {
   return new BigNumber(wei).dividedBy(new BigNumber(10).pow(18)).toString();
 };
 
+export const ethToWei = (eth) => {
+  return new BigNumber(eth).multipliedBy(new BigNumber(10).pow(18)).toString();
+};
+
 export const isLightColor = (hex) => {
   let rgb = parseInt(hex, 16); // convert rrggbb to decimal
   let r = (rgb >> 16) & 0xff; // extract red
