@@ -28,9 +28,8 @@
   let nickname, cover, avatar, bio, ethAddress, collections;
   state.subscribe(async () => {
     curator = getCurator(patp);
-    console.log({ curator });
     ({ nickname, cover, avatar, bio } = curator.bespoke || {});
-    ethAddress = (await api.portal.get.receivingAddress())['receiving-address'];
+    ethAddress = await api.portal.get.receivingAddress();
     // TODO: extremely dumb and convoluted
     collections = (getCuratorCollections(patp) || []).filter((c) => {
       let _col = getItem(keyStrFromObj(c));

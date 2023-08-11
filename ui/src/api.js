@@ -147,6 +147,8 @@ export const api = {
         pmPoke({ 'payment-request': { seller, desk } }),
       confirmPayment: (seller, txHash) =>
         pmPoke({ 'payment-tx-hash': { seller, 'tx-hash': txHash } }),
+      setRpcEndpoint: (endpoint) =>
+        pmPoke({ 'set-rpc-endpoint': { 'rpc-endpoint': endpoint } }),
       setReceivingAddress: (addr) =>
         pmPoke({ 'set-receiving-address': { 'receiving-address': addr } }),
       tipRequest: (keyObj) =>
