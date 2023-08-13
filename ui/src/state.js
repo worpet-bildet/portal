@@ -44,9 +44,7 @@ export const refreshPortalItems = async () => {
 
     if (useLLM) {
 
-      // console.log(JSON.stringify(items))
       const itemStrings = extractStrings(items).concat(actualPositivePrompts).concat(actualNegativePrompts);
-      // console.log(itemStrings);
 
       let positivePromptEmbeddings = [];
       let negativePromptEmbeddings = [];
@@ -61,19 +59,12 @@ export const refreshPortalItems = async () => {
           input: itemStrings,
         }),
       })
-      .then(response => response.json(response.data.data.map((item) => item.embedding)))
+      .then(response => response.json())
       .then(data => console.log(data))
       .catch((error) => {
         console.error('Error:', error);
       });
 
-      // const embeddings = await embeddingsResponse.json();
-
-      // if (embeddingsResponse.status === 200) {
-      //   embeddingsResponse.status(200).json(embeddingsResponse.data.data.map((item) => item.embedding));
-      // } else {
-      //   throw new Error("OpenAI returned " + embeddingsResponse.status);
-      // }
       console.log(embeddingsResponse);
 
       items = items.map((item, index) => {
@@ -90,7 +81,6 @@ export const refreshPortalItems = async () => {
           actualNegativePrompts.length
       );
 
-      // score by LLM embedding
       items = items.map((item) => {
         const positiveScore = max(
           positivePromptEmbeddings.map((e, i) =>
@@ -120,33 +110,7 @@ export const refreshPortalItems = async () => {
       return s;
     });
 
-    // const llm = new OpenAI({ model: "gpt-3.5-turbo", temperature: 0.0 });
-
-    // // complete api
-    // //   const response1 = await llm.complete("How are you?");
-    // //   console.log(response1.message.content);
-
-    // // const fs = require('fs');
-    // const text = JSON.stringify(items);
   });
-  // chat api
-  // const response2 = await llm.chat([{ content:`the following is a list of social media posts. the body of the post lives in the attribute "blurb". the post type, author, and date are encoded in "keyStr". here are the posts:
-
-  // `+ text +`
-
-  // for each post in this list, calculate a single floating-point relevance score from 0-1 that indicates how relevant each post is to the following goal: "I want to see posts that make me more productive"
-
-  // you should not create any code for this task.
-  // simply assess the post and the given rules/goals and give the post a relevance score based on your judgement.
-  // the output should be a list of scores, with one score per post.
-  // be sure to output a score for every post given.
-  // the scores should be in the same order as the posts in the original list.
-  // output only the list. output no other text.`, role: "user" }]);
-  // //each entry in the object should have 2 attributes: "originalText", which is the text from the post, and "relevanceScore", which is your calculated score for that post.
-  // console.log(response2.message.content);
-
-
-  console.log("ahhhhh");
 
 };
 
@@ -183,7 +147,6 @@ export const refreshGroups = () => {
         let {
           meta: { title },
         } = data;
-        // weirdly, groups that we're joining are in our state without a title
         if (!title) {
           g[1].joining = true;
         }
@@ -405,14 +368,11 @@ export const getReviewsByTo = (ship, key) => {
     .map(([reviewKey, _]) => keyStrToObj(reviewKey));
 };
 
-// go through the social items, sort the replies by time, and ensure that they
-// are alongside a reference to the original item
 export const getNotifications = (ship) => {
   let q = [];
   let feed = getGlobalFeed() || [];
   Object.entries(get(state).social?.[`/${ship}/reply-from`] || {})?.forEach(
     ([op, replies]) => {
-      // don't show notifications for items which are no longer in the feed
       if (!feed?.find((f) => keyStrFromObj(f.key) === op)) return;
       replies.forEach((reply) => {
         q.push([reply, keyStrToObj(op)]);
@@ -421,7 +381,6 @@ export const getNotifications = (ship) => {
   );
   Object.entries(get(state).social?.[`/${ship}/review-from`] || {})?.forEach(
     ([op, reviews]) => {
-      // reviews are permanent so we don't care about the feed
       reviews.forEach((review) => {
         q.push([review, keyStrToObj(op)]);
       });
