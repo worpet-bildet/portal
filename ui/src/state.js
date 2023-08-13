@@ -15,28 +15,7 @@ export const toggleDarkmode = () => {
     return s;
   });
 };
-
-const DEFAULT_PROMPT = ["says"];
-const positivePrompts = ["Wholesome tweet, kindness, love, fun banter"];
-const negativePrompts = ["Angry tweets, with politics, people talking about gender & dating, etc."];
-
-const useLLM = positivePrompts?.length || negativePrompts?.length;
-const actualPositivePrompts = positivePrompts?.length
-  ? positivePrompts
-  : DEFAULT_PROMPT;
-const actualNegativePrompts = negativePrompts?.length
-  ? negativePrompts
-  : DEFAULT_PROMPT;
-
-function extractStrings(items) {
-  return items.map(item => {
-    const ship = item.keyObj.ship;
-    const time = item.keyObj.time.replace(/\.\.[^\.]*$/, '');
-    const blurb = item.bespoke.blurb;
-
-    return `${ship} said this at ${time}: ${blurb}`;
-  });
-}
+import { OpenAI } from "llamaindex";
 
 export const refreshPortalItems = async () => {
 
@@ -113,5 +92,3 @@ export const refreshPortalItems = async () => {
   });
 
 };
-
-// ... rest of the code ...
