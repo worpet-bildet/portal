@@ -15,11 +15,102 @@ export const toggleDarkmode = () => {
     return s;
   });
 };
-import { OpenAI } from "llamaindex";
+
+const DEFAULT_PROMPT = ["says"];
+const positivePrompts = ["Wholesome tweet, kindness, love, fun banter"];
+const negativePrompts = ["Angry tweets, with politics, people talking about gender & dating, etc."];
+
+const useLLM = positivePrompts?.length || negativePrompts?.length;
+const actualPositivePrompts = positivePrompts?.length
+  ? positivePrompts
+  : DEFAULT_PROMPT;
+const actualNegativePrompts = negativePrompts?.length
+  ? negativePrompts
+  : DEFAULT_PROMPT;
+
+function extractStrings(items) {
+  return items.map(item => {
+    const ship = item.keyObj.ship;
+    const time = item.keyObj.time.replace(/\.\.[^\.]*$/, '');
+    const blurb = item.bespoke.blurb;
+
+    return `${ship} said this at ${time}: ${blurb}`;
+  });
+}
 
 export const refreshPortalItems = async () => {
 
-  api.portal.get.items().then(({ items }) => {
+  api.portal.get.items().then(async ({ items }) => {
+
+    if (useLLM) {
+
+      // console.log(JSON.stringify(items))
+      const itemStrings = extractStrings(items).concat(actualPositivePrompts).concat(actualNegativePrompts);
+      // console.log(itemStrings);
+
+      let positivePromptEmbeddings = [];
+      let negativePromptEmbeddings = [];
+      const embeddingsResponse = await fetch("https://api.openai.com/v1/embeddings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer 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"
+        },
+        body: JSON.stringify({
+          model: "text-embedding-ada-002",
+          input: itemStrings,
+        }),
+      })
+      .then(response => response.json(response.data.data.map((item) => item.embedding)))
+      .then(data => console.log(data))
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+
+      // const embeddings = await embeddingsResponse.json();
+
+      // if (embeddingsResponse.status === 200) {
+      //   embeddingsResponse.status(200).json(embeddingsResponse.data.data.map((item) => item.embedding));
+      // } else {
+      //   throw new Error("OpenAI returned " + embeddingsResponse.status);
+      // }
+      console.log(embeddingsResponse);
+
+      items = items.map((item, index) => {
+        return { ...item, embedding: embeddingsResponse[index] };
+      });
+      positivePromptEmbeddings = embeddingsResponse.slice(
+        items.length,
+        items.length + actualPositivePrompts.length
+      );
+      negativePromptEmbeddings = embeddingsResponse.slice(
+        items.length + actualPositivePrompts.length,
+        items.length +
+          actualPositivePrompts.length +
+          actualNegativePrompts.length
+      );
+
+      // score by LLM embedding
+      items = items.map((item) => {
+        const positiveScore = max(
+          positivePromptEmbeddings.map((e, i) =>
+            cosineSimilarity(item.embedding, e)
+          )
+        );
+        const negativeScore = max(
+          negativePromptEmbeddings.map((e, i) =>
+            cosineSimilarity(item.embedding, e)
+          )
+        );
+        const score = positiveScore - negativeScore;
+
+        return { ...item, score };
+      });
+      items = items.filter((item) => !item.score > minimumScore);
+      if (sorting === "score") {
+        items.sort((a, b) => !b.score - !a.score);
+      }
+    }
 
     state.update((s) => {
       items.forEach((i) => {
@@ -29,34 +120,34 @@ export const refreshPortalItems = async () => {
       return s;
     });
 
-    const llm = new OpenAI({ model: "gpt-3.5-turbo", temperature: 0.0 });
+    // const llm = new OpenAI({ model: "gpt-3.5-turbo", temperature: 0.0 });
 
-    // complete api
-    //   const response1 = await llm.complete("How are you?");
-    //   console.log(response1.message.content);
+    // // complete api
+    // //   const response1 = await llm.complete("How are you?");
+    // //   console.log(response1.message.content);
 
-    const fs = require('fs');
-    const text = JSON.stringify(items);
-
-    // chat api
-    const response2 = await llm.chat([{ content:`the following is a list of social media posts. the body of the post lives in the attribute "blurb". the post type, author, and date are encoded in "keyStr". here are the posts:
-
-    `+text+`
-
-    for each post in this list, calculate a single floating-point relevance score from 0-1 that indicates how relevant each post is to the following goal: "I want to see posts that make me more productive"
-
-    you should not create any code for this task.
-    simply assess the post and the given rules/goals and give the post a relevance score based on your judgement.
-    the output should be a list of scores, with one score per post.
-    be sure to output a score for every post given.
-    the scores should be in the same order as the posts in the original list.
-    output only the list. output no other text.`, role: "user" }]);
-    //each entry in the object should have 2 attributes: "originalText", which is the text from the post, and "relevanceScore", which is your calculated score for that post.
-    console.log(response2.message.content);
-
-
-    console.log("ahhhhh");
+    // // const fs = require('fs');
+    // const text = JSON.stringify(items);
   });
+  // chat api
+  // const response2 = await llm.chat([{ content:`the following is a list of social media posts. the body of the post lives in the attribute "blurb". the post type, author, and date are encoded in "keyStr". here are the posts:
+
+  // `+ text +`
+
+  // for each post in this list, calculate a single floating-point relevance score from 0-1 that indicates how relevant each post is to the following goal: "I want to see posts that make me more productive"
+
+  // you should not create any code for this task.
+  // simply assess the post and the given rules/goals and give the post a relevance score based on your judgement.
+  // the output should be a list of scores, with one score per post.
+  // be sure to output a score for every post given.
+  // the scores should be in the same order as the posts in the original list.
+  // output only the list. output no other text.`, role: "user" }]);
+  // //each entry in the object should have 2 attributes: "originalText", which is the text from the post, and "relevanceScore", which is your calculated score for that post.
+  // console.log(response2.message.content);
+
+
+  console.log("ahhhhh");
+
 };
 
 export const refreshPortalAppDevs = () => {
