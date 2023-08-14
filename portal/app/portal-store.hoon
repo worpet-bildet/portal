@@ -224,6 +224,9 @@
       %+  welp  (upd:cards-methods:stor rock.msg)
       [(~(act cards [our.bowl %portal-manager]) [%sub-to-many (feed-to-key-list:conv feed.u.wave.msg)])]~
     ==
+      %sss-fake-on-rock
+    =/  msg  !<(from:da-item (fled:sss vase))
+    :_  this  (handle-fake-on-rock:da-item msg)
   ==
 ::
 ++  on-arvo
