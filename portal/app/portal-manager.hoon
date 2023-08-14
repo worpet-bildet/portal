@@ -1,6 +1,6 @@
 /-  *portal-data, *portal-action, *portal-message, config=portal-config,
     groups, treaty, portal-devs, blog-paths
-/+  default-agent, dbug, *portal, io=agentio, *sig, *sss, sss-25, ethereum, verb
+/+  default-agent, dbug, *portal, io=agentio, *sig, *sss, ethereum, verb
 /$  json-to-action  %json  %portal-action
 /$  msg-to-json  %portal-message  %json
 /$  dev-map-to-json  %portal-dev-map  %json
@@ -25,7 +25,7 @@
       =receiving-address:config
       authorized-ships=(set ship)
       bought-apps=(map [ship desk] tx-hash=@t)
-      sub-blog-paths=_(mk-subs:sss-25 blog-paths ,[%paths ~])
+      sub-blog-paths=_(mk-subs blog-paths ,[%paths ~])
       sub-portal-devs=_(mk-subs portal-devs ,[%portal-devs ~])
       =dev-map:config
       =portal-curator:config
@@ -40,7 +40,7 @@
   $:  %7
       authorized-ships=(set ship)
       bought-apps=(map [ship desk] tx-hash=@t)
-      sub-blog-paths=_(mk-subs:sss-25 blog-paths ,[%paths ~])
+      sub-blog-paths=_(mk-subs blog-paths ,[%paths ~])
       sub-portal-devs=_(mk-subs portal-devs ,[%portal-devs ~])
       =dev-map:config
       =portal-curator:config
@@ -53,7 +53,7 @@
   ==
 +$  state-6
   $:  %6
-      sub-blog-paths=_(mk-subs:sss-25 blog-paths ,[%paths ~])
+      sub-blog-paths=_(mk-subs blog-paths ,[%paths ~])
       sub-portal-devs=_(mk-subs portal-devs ,[%portal-devs ~])
       =dev-map:config
       =portal-curator:config
@@ -91,7 +91,7 @@
     helper      ~(. +> bowl)
     da-portal-devs  =/  da  (da portal-devs ,[%portal-devs ~])
       (da sub-portal-devs bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
-    da-blog-paths   =/  da  (da:sss-25 blog-paths ,[%paths ~])
+    da-blog-paths   =/  da  (da blog-paths ,[%paths ~])
       (da sub-blog-paths bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
 ++  on-init
   =.  state  *state-8
@@ -477,8 +477,6 @@
   |=  [=wire sign=sign-arvo]
   ^-  (quip card:agent:gall _this)
   ?+  wire  `this
-    [~ %sss %behn @ @ @ %portal-devs ~]  [(behn:da-portal-devs |3:wire) this]
-    [~ %sss %behn @ @ @ %paths ~]  [(behn:da-blog-paths |3:wire) this]
       [%get-tx ~]
     ?>  ?=([%khan %arow *] sign)
     ?.  ?=(%.y -.p.sign)
@@ -671,7 +669,7 @@
 --
 |_  [=bowl:gall]
 +*  this      .
-    da-blog-paths   =/  da  (da:sss-25 blog-paths ,[%paths ~])
+    da-blog-paths   =/  da  (da blog-paths ,[%paths ~])
       (da sub-blog-paths bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
     da-portal-devs  =/  da  (da portal-devs ,[%portal-devs ~])
       (da sub-portal-devs bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))

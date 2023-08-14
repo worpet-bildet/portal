@@ -1,6 +1,6 @@
 /-  subgraph
 /+  verb, dbug, default-agent, io=agentio,
-    g=social-graph, *mip, *sss
+    g=social-graph, *mip, *sss-old
 /$  social-graph-result-to-json  %social-graph-result  %json
 /$  json-to-social-graph-track  %json  %social-graph-track
 |%

@@ -230,8 +230,6 @@
   |=  [=wire sign=sign-arvo]
   ^-  (quip card:agent:gall _this)
   ?+  wire  `this
-    [~ %sss %behn @ @ @ %item @ @ @ @ ~]  [(behn:da-item |3:wire) this]
-    ::
     [%validate-sig ~]
   ?>  ?=([%khan %arow *] sign)
   ?.  ?=(%.y -.p.sign)
