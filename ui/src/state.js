@@ -162,6 +162,9 @@ export const getTips = () => {
           ...s,
           [keyStrFromObj(key)]: {
             keyObj: key,
+            meta: {
+              createdAt: time,
+            },
             bespoke: {
               blurb: `I just tipped ${weiToEth(amount)} ETH to ${
                 itemKeyObj.ship
@@ -317,6 +320,14 @@ export const getReviewsByTo = (ship, key) => {
       item.find((i) => keyStrFromObj(i) === keyStrFromObj(key))
     )
     .map(([reviewKey, _]) => keyStrToObj(reviewKey));
+};
+
+export const resetTip = () => {
+  state.update((s) => ({
+    ...s,
+    tip: null,
+    payment: null,
+  }));
 };
 
 // go through the social items, sort the replies by time, and ensure that they
