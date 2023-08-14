@@ -26,7 +26,7 @@ const extractStrings = (items) => {
   });
 };
 
-export const scoreAndSortItems = async (items) => {
+export const scoreItems = async (items) => {
   const itemStrings = extractStrings(items)
     .concat(actualPositivePrompts)
     .concat(actualNegativePrompts);

@@ -4,7 +4,7 @@ import { api } from '@root/api';
 import { save, load } from '@root/storage';
 import config from '@root/config';
 import { fromUrbitTime } from '@root/util';
-import { scoreAndSortItems } from './ai';
+import { scoreItems } from './ai';
 
 export const state = writable(load() || {});
 export const feed = writable({});
@@ -19,7 +19,7 @@ export const toggleDarkmode = () => {
 
 export const refreshPortalItems = () => {
   api.portal.get.items().then(async ({ items }) => {
-    if (true) items = await scoreAndSortItems(items);
+    if (true) items = await scoreItems(items);
     state.update((s) => {
       items.forEach((i) => {
         s[i.keyStr] = i;
