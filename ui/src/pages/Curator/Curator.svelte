@@ -87,6 +87,7 @@
       {description}
       {color}
       {patp}
+      key={curator.keyObj}
       type="ship"
     >
       <div class="col-span-12 lg:col-span-9">

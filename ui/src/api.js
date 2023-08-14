@@ -45,7 +45,7 @@ export const api = {
         ]),
     },
     do: {
-      installApp: (ship, desk) =>
+      installApp: (desk) =>
         Promise.all([
           poke({
             app: 'docket',
@@ -121,6 +121,13 @@ export const api = {
       socialItems: () =>
         scry({ app: 'portal-graph', path: '/app/portal-store' }),
       boughtApps: () => scry({ app: 'portal-manager', path: '/bought-apps' }),
+      rpcEndpoint: () => scry({ app: 'portal-manager', path: '/rpc-endpoint' }),
+      receivingAddress: () =>
+        scry({ app: 'portal-manager', path: '/receiving-address' }),
+      processingPayments: () =>
+        scry({ app: 'portal-manager', path: '/processing-payments' }),
+      processedPayments: () =>
+        scry({ app: 'portal-manager', path: '/processed-payments' }),
     },
     do: {
       create: (json) => pmPoke({ create: json }),
@@ -140,8 +147,27 @@ export const api = {
         pmPoke({ 'payment-request': { seller, desk } }),
       confirmPayment: (seller, txHash) =>
         pmPoke({ 'payment-tx-hash': { seller, 'tx-hash': txHash } }),
+      setRpcEndpoint: (endpoint) =>
+        pmPoke({ 'set-rpc-endpoint': { 'rpc-endpoint': endpoint } }),
+      setReceivingAddress: (addr) =>
+        pmPoke({ 'set-receiving-address': { 'receiving-address': addr } }),
+      tipRequest: (keyObj) =>
+        pmPoke({
+          'tip-request': {
+            key: keyObj,
+          },
+        }),
+      tipTxHash: (beneficiary, txHash, note) =>
+        pmPoke({
+          'tip-tx-hash': {
+            beneficiary: beneficiary,
+            'tx-hash': txHash,
+            note,
+          },
+        }),
     },
   },
+  newDo: {},
   s3: {
     do: {
       uploadImage: async (file, s3) => {

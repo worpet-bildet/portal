@@ -78,10 +78,10 @@
 </script>
 
 <div
-  class="grid grid-cols-12 bg-panels dark:bg-darkgrey border py-3 pl-3 rounded-tl-lg rounded-tr-lg pr-3"
+  class="grid grid-cols-12 bg-panels dark:bg-darkgrey border py-3 pl-3 rounded-tl-lg rounded-tr-lg pr-3 gap-2"
   class:border-error={error}
 >
-  <div class="col-span-1 pr-2">
+  <div class="col-span-1">
     <div class="rounded-md overflow-hidden align-middle">
       <Sigil patp={me} />
     </div>

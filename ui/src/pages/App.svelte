@@ -276,6 +276,7 @@
       {color}
       avatar={image}
       {reviews}
+      key={item.keyObj}
       type="app"
     >
       <Tabs bind:activeTab {tabs} />
@@ -287,8 +288,7 @@
               Please prompt them to follow
               <a
                 href="https://twitter.com/worpet_bildet/status/1668643121813438466?s=20"
-                target="_blank"
-                >this guide</a
+                target="_blank">this guide</a
               >
             </div>
           {/if}
@@ -399,8 +399,7 @@
             prompt them to follow
             <a
               href="https://twitter.com/worpet_bildet/status/1668643121813438466?s=20"
-              target="_blank"
-              >this guide</a
+              target="_blank">this guide</a
             >
           </div>
         {/if}
@@ -417,9 +416,7 @@
             >Open</IconButton
           >
         {:else if isInstalling}
-          <IconButton
-            loading
-            class="bg-panels dark:bg-transparent dark:border"
+          <IconButton loading class="bg-panels dark:bg-transparent dark:border"
             >Installing...</IconButton
           >
         {:else if ethPrice && !purchased}
@@ -526,7 +523,7 @@
           <div class="text-2xl">Purchasing...</div>
           <div class="w-full flex justify-center">
             <div class="w-32 h-32">
-              <LoadingIcon class="dark:stroke-white"/>
+              <LoadingIcon class="dark:stroke-white" />
             </div>
           </div>
         {:else}
