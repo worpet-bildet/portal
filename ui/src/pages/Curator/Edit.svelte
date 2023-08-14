@@ -1,6 +1,6 @@
 <script>
   import { link, pop } from 'svelte-spa-router';
-  import { poke } from '@root/api';
+  import { api } from '@root/api';
   import {
     state,
     getCurator,
@@ -25,10 +25,11 @@
   const { patp } = params;
 
   let curator;
-  let nickname, cover, avatar, bio, collections;
-  state.subscribe(() => {
+  let nickname, cover, avatar, bio, ethAddress, collections;
+  state.subscribe(async () => {
     curator = getCurator(patp);
     ({ nickname, cover, avatar, bio } = curator.bespoke || {});
+    ethAddress = await api.portal.get.receivingAddress();
     // TODO: extremely dumb and convoluted
     collections = (getCuratorCollections(patp) || []).filter((c) => {
       let _col = getItem(keyStrFromObj(c));
@@ -56,6 +57,7 @@
       { avatar: avatar ?? '' },
       { bio: bio ?? '' },
     ]);
+    api.portal.do.setReceivingAddress(ethAddress ?? '');
   };
   const saveCollections = () => {
     api.portal.do.edit({
@@ -96,6 +98,14 @@
         <input
           type="text"
           bind:value={cover}
+          class="p-2 border-b focus:outline-none"
+        />
+      </div>
+      <div class="flex flex-col gap-2">
+        <div>ETH Address (for receiving tips)</div>
+        <input
+          type="text"
+          bind:value={ethAddress}
           class="p-2 border-b focus:outline-none"
         />
       </div>
