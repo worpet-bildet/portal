@@ -61,7 +61,7 @@ export const refreshPortalItems = async () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer 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"
+          "Authorization": "Bearer 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"
         },
         body: JSON.stringify({
           model: "text-embedding-ada-002",
@@ -77,12 +77,6 @@ export const refreshPortalItems = async () => {
       .catch((error) => {
         console.error('Error:', error);
       });
-
-      // .then(response => response.json())
-      // .then(data => console.log(data))
-      // .catch((error) => {
-      //   console.error('Error:', error);
-      // });
 
       // const embeddings = await embeddingsResponse.json();
 
