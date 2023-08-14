@@ -17,7 +17,8 @@
 ::  -  scry paths separated
 ::   [%tags @ %entity @ @ ?(%ship %address) @ ~]
 ::   [%tags @ %entity @ @ %entity @ @ ~]
-
+::  - update to work with new sss
+::  =^  cards  subgraph-pub, instead of =.  subgraph-pub
 +$  state-2
   $:  %2
       graph=social-graph:g
@@ -98,7 +99,7 @@
     ?:  ?=(%set-perms -.q.edit)
       ::  change permissions for a subgraph publication
       =/  paths  [%track app i.tag ~]^~
-      =.  subgraph-pub
+      =^  cards  subgraph-pub
         ?-  level.q.edit
           %public   (public:du-pub paths)
           %private  (secret:du-pub paths)
@@ -112,7 +113,8 @@
             (nodeset-to-set:g (~(get-nodeset sg:g graph.state) app i.tag^~))
           paths
         ==
-      `this(perms.state (~(put by perms.state) [app i.tag^~] level.q.edit))
+      :-  cards
+      this(perms.state (~(put by perms.state) [app i.tag^~] level.q.edit))
     ::  reject edits to graph if we are tracking
     ::  someone else's on the given app+tag
     ?:  (~(has by tracking.state) [app i.tag^~])
@@ -134,9 +136,11 @@
       ==
     ::  allow/block edited ships on top-level tags, if subgraph is
     ::  permissioned to %only-tagged
-    =?    subgraph-pub
-        ?=(%only-tagged (~(gut by perms.state) [app i.tag^~] %private))
-      ?.  ?=(?(%add-tag %del-tag) -.q.edit)  subgraph-pub
+    =^  cards  subgraph-pub
+      ?.  ?=(%only-tagged (~(gut by perms.state) [app i.tag^~] %private))
+        `subgraph-pub
+      ?.  ?=(?(%add-tag %del-tag) -.q.edit)  
+        `subgraph-pub
       =/  new=(set @p)
         ?:  &(?=(%ship -.from.q.edit) ?=(%ship -.to.q.edit))
           (silt ~[+.from +.to]:q.edit)
@@ -147,8 +151,10 @@
         ~
       ::  only remove the ship(s) that were untagged if they no longer
       ::  appear in the top-level-tag nodeset!
-      =?    new
-          ?=(%del-tag -.q.edit)
+      =^  cards  new
+        ?.  ?=(%del-tag -.q.edit)
+          `new
+        :-  ~
         %-  silt
         %+  skip  ~(tap in new)
         |=  p=@p
@@ -203,7 +209,7 @@
           ?=(^ prev)
         (quit:da-sub u.prev %portal-graph path)
       ::  kill our path if we were serving this content previously
-      =.  subgraph-pub  (kill:du-pub path^~)
+      =^  cards  subgraph-pub  (kill:du-pub path^~)
       ::  start watching the chosen publisher
       =^  cards  subgraph-sub
         (surf:da-sub source.q %portal-graph path)
@@ -260,6 +266,10 @@
       [cards this]
     ==
   ::
+      %sss-fake-on-rock
+  =/  msg  !<(from:da-sub (fled vase))
+  :_  this  (handle-fake-on-rock:da-sub msg)
+  ::
       %sss-on-rock
     =/  msg  !<(from:da-sub (fled vase))
     ?-    -.msg
@@ -312,8 +322,6 @@
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
-  ?>  ?=(%poke-ack -.sign)
-  ?~  p.sign  `this
   ?+    wire   `this
       [~ %sss %on-rock @ @ @ %track @ @ ~]
     =.  subgraph-sub  (chit:da-sub |3:wire sign)
@@ -329,15 +337,13 @@
       tracking.state  (~(del by tracking.state) [app top^~])
       graph.state     (~(nuke-top-level-tag sg:g graph.state) app top)
     ==
+  ::
+      [~ %sss %scry-response @ @ @ %track @ @ ~]
+    =^  cards  subgraph-pub  (tell:du-pub |3:wire sign)
+    [cards this]
   ==
 ::
-++  on-arvo
-  |=  [=wire sign=sign-arvo]
-  ^-  (quip card _this)
-  ?+  wire  `this
-    [~ %sss %behn @ @ @ %track @ @ ~]  [(behn:da-sub |3:wire) this]
-  ==
-::
+++  on-arvo   _`this
 ++  on-watch  _`this
 ++  on-leave  on-leave:def
 ++  on-fail   on-fail:def

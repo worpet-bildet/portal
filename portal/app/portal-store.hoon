@@ -265,15 +265,15 @@
   ^-  (quip card _this)
   ?+    wire    (on-agent:default wire sign)
         [~ %sss *]
-    ?>  ?=(%poke-ack -.sign)
-    ?~  p.sign  `this
-    %-  (slog u.p.sign)
     ?+    wire   `this
         [~ %sss %on-rock @ @ @ %item @ @ @ @ ~]
       =.  item-sub  (chit:da-item |3:wire sign)
       `this
         [~ %sss %scry-request @ @ @ %item @ @ @ @ ~]
       =^  cards  item-sub  (tell:da-item |3:wire sign)
+      [cards this]
+        [~ %sss %scry-response @ @ @ %item @ @ @ @ ~]
+      =^  cards  item-pub  (tell:du-item |3:wire sign)
       [cards this]
     ==
   ==

@@ -78,7 +78,7 @@
   ==
 +$  card  card:agent:gall
 --
-%+  verb  %.y
+::  %+  verb  %.y
 %-  agent:dbug
 =|  state-8
 =*  state  -
@@ -462,6 +462,13 @@
       ==
     ==
     ::
+      %sss-fake-on-rock
+    :_  this
+    ?-  msg=!<($%(from:da-portal-devs from:da-blog-paths) (fled vase))
+      [[%paths ~] *]        (handle-fake-on-rock:da-blog-paths msg)
+      [[%portal-devs ~] *]  (handle-fake-on-rock:da-portal-devs msg)
+    ==
+    ::
       %sss-portal-devs
     =^  cards  sub-portal-devs
       (apply:da-portal-devs !<(into:da-portal-devs (fled vase)))
@@ -644,9 +651,6 @@
     ==
     ::
       [~ %sss *]
-    ?>  ?=(%poke-ack -.sign)
-    ?~  p.sign  `this
-    %-  (slog u.p.sign)
     ?+    wire   `this
         [~ %sss %on-rock @ @ @ %portal-devs ~]
       =.  sub-portal-devs  (chit:da-portal-devs |3:wire sign)
@@ -661,7 +665,6 @@
         [~ %sss %scry-request @ @ @ %paths ~]
       =^  cards  sub-blog-paths  (tell:da-blog-paths |3:wire sign)
       [cards this]
-
     ==
   ==
 ::
