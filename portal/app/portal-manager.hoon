@@ -222,7 +222,7 @@
         ~&  >  "already bought the app"
         `this
       :_  this
-      :~  :*  %pass  /payment-req  %agent  [seller.act %portal-manager]  %poke
+      :~  :*  %pass  /payment-req  %agent  [seller.act %portal-app-publisher]  %poke
         %portal-message  !>([%payment-request desk.act])
       ==  ==
       ::
