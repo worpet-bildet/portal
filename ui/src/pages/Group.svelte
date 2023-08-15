@@ -68,6 +68,7 @@
       {title}
       {description}
       patp={host}
+      key={group.keyObj}
       type="group"
     >
       <div

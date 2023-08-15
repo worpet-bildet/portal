@@ -178,6 +178,7 @@
       ::
         %add-tag-request
       ?>  =(src.bowl src.msg)
+      ?>  !=('tip-from' (snag 1 tag.msg))
       :_  this
       (gra:cards-methods:stor portal-store+[%add-tag [tag from to]:msg])
       ::
@@ -301,6 +302,11 @@
     ::
     ::  TODO what do if time starts with '/', like blog ids '/some-blog-path'
       [%item @ @ @ @ ~]
+    ::  because scries from threads cut off the path after empty slot
+    =?  path  =('use_as_empty_path_slot' i.t.t.t.path)
+      path(t.t.t ['' t.t.t.t.path])
+    =?  path  =('use_as_empty_path_slot' i.t.t.t.t.path)
+      path(t.t.t.t ['' t.t.t.t.t.path])
     :-  %item
     =/  key  (path-to-key:conv t.path)
     ?:  |(=(our.bowl ship.key) =(time.key ''))
@@ -310,6 +316,10 @@
     rock:item
     ::
       [%item-exists @ @ @ @ ~]
+    =?  path  =('use_as_empty_path_slot' i.t.t.t.path)
+      path(t.t.t ['' t.t.t.t.path])
+    =?  path  =('use_as_empty_path_slot' i.t.t.t.t.path)
+      path(t.t.t.t ['' t.t.t.t.t.path])
     =/  key  (path-to-key:conv t.path)
     ?:  |(=(our.bowl ship.key) =(time.key ''))
       (~(has by items) key)

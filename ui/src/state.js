@@ -158,6 +158,42 @@ export const getGlobalFeed = () => {
   );
 };
 
+// get all incoming tips from the social graph and mould them into the shape
+// of feed posts so that they can be displayed in the feed
+export const getTips = () => {
+  let q = [];
+  Object.entries(get(state).social || {})
+    .filter(([tipKey]) => tipKey.includes('tip-from'))
+    .forEach(([tipKey, itemKey]) => {
+      const [, , , time, amount] = tipKey.split('/');
+      const itemKeyObj = keyStrToObj(Object.entries(itemKey)[0][0]);
+      const from = Object.entries(itemKey)[0][1][0].ship;
+      // then we're going to make a feed item of the type "retweet"
+      const key = {
+        struc: 'retweet',
+        ship: from,
+        cord: '',
+        time: time,
+      };
+      if (!get(state)[keyStrFromObj(key)]) {
+        state.update((s) => ({
+          ...s,
+          [keyStrFromObj(key)]: {
+            keyObj: key,
+            bespoke: {
+              blurb: `I just tipped ${weiToEth(amount)} ETH to ${
+                itemKeyObj.ship
+              }:`,
+              ref: itemKeyObj,
+            },
+          },
+        }));
+      }
+      q.push({ key, ship: from, time });
+    });
+  return q;
+};
+
 export const getCuratorCollections = (patp) => {
   return get(state)
     [mainCollectionKey(patp)]?.bespoke?.['key-list']?.filter((k) => {
@@ -353,14 +389,21 @@ export const handleSubscriptionEvent = (event, type) => {
       });
       break;
     case 'portal-message':
-      state.update((s) => ({
-        ...s,
-        payment: {
-          ...event?.['payment-reference'],
-          'payment-confirmed': event?.['payment-confirmed'],
-        },
-      }));
-      refreshBoughtApps();
+      if (event?.['tip-reference']) {
+        state.update((s) => ({
+          ...s,
+          tip: { ...event?.['tip-reference'] },
+        }));
+      } else {
+        state.update((s) => ({
+          ...s,
+          payment: {
+            ...event?.['payment-reference'],
+            'payment-confirmed': event?.['payment-confirmed'],
+          },
+        }));
+        refreshBoughtApps();
+      }
       break;
     case 'portal-manager-result':
       state.update((s) => ({ ...s, ...event }));

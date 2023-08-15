@@ -56,7 +56,9 @@
     if (s.isLoaded && !getGlobalFeed()) {
       return subToGlobalFeed();
     }
-    let mergedFeed = getGlobalFeed().concat(getCuratorFeed(me));
+    let mergedFeed = getGlobalFeed()
+      .concat(getCuratorFeed(me))
+      .concat(getTips());
     feed = mergedFeed
       .filter((a) => !!a)
       .filter((a, idx) => {
