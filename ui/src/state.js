@@ -17,9 +17,25 @@ export const toggleDarkmode = () => {
   });
 };
 
+export const reScoreItems = async (prompt) => {
+  return new Promise((resolve) => {
+    api.portal.get.items().then(({ items }) => {
+      scoreItems(items, prompt).then((items) => {
+        state.update((s) => {
+          items.forEach((i) => {
+            s[i.keyStr] = i;
+          });
+          return s;
+        });
+        resolve();
+      });
+    });
+  });
+};
+
 export const refreshPortalItems = () => {
-  api.portal.get.items().then(async ({ items }) => {
-    if (true) items = await scoreItems(items);
+  api.portal.get.items().then(({ items }) => {
+    // if (true) items = await scoreItems(items);
     state.update((s) => {
       items.forEach((i) => {
         s[i.keyStr] = i;

@@ -1,20 +1,7 @@
 import cosineSimilarity from 'compute-cosine-similarity';
 import config from '@root/config';
 
-const DEFAULT_PROMPT = ['says'];
-const positivePrompts = ['Wholesome tweet, kindness, love, fun banter'];
-const negativePrompts = [
-  'Angry messages, politics, people talking about gender & dating, etc.',
-];
 const minimumScore = -1;
-const sorting = 'score';
-
-const actualPositivePrompts = positivePrompts?.length
-  ? positivePrompts
-  : DEFAULT_PROMPT;
-const actualNegativePrompts = negativePrompts?.length
-  ? negativePrompts
-  : DEFAULT_PROMPT;
 
 const extractStrings = (items) => {
   return items.map((item) => {
@@ -26,13 +13,11 @@ const extractStrings = (items) => {
   });
 };
 
-export const scoreItems = async (items) => {
-  const itemStrings = extractStrings(items)
-    .concat(actualPositivePrompts)
-    .concat(actualNegativePrompts);
+export const scoreItems = async (items, prompt) => {
+  if (!prompt) prompt = 'Wholesome tweet, kindness, love, fun banter';
+  const itemStrings = extractStrings(items).concat([prompt]);
 
   let positivePromptEmbeddings = [];
-  let negativePromptEmbeddings = [];
   const embeddingsResponse = await fetch(
     'https://api.openai.com/v1/embeddings',
     {
@@ -63,12 +48,7 @@ export const scoreItems = async (items) => {
 
   positivePromptEmbeddings = embeddingsResponse.slice(
     items.length,
-    items.length + actualPositivePrompts.length
-  );
-
-  negativePromptEmbeddings = embeddingsResponse.slice(
-    items.length + actualPositivePrompts.length,
-    items.length + actualPositivePrompts.length + actualNegativePrompts.length
+    items.length + 1
   );
 
   // score by LLM embedding
@@ -78,18 +58,11 @@ export const scoreItems = async (items) => {
         cosineSimilarity(item.embedding.embedding, e.embedding)
       )
     );
-    const negativeScore = Math.max(
-      negativePromptEmbeddings.map((e, i) =>
-        cosineSimilarity(item.embedding.embedding, e.embedding)
-      )
-    );
-    const score = positiveScore - negativeScore;
+
+    const score = positiveScore;
 
     return { ...item, score };
   });
   items = items.filter((item) => !item.score > minimumScore);
-  if (sorting === 'score') {
-    items.sort((a, b) => !b.score - !a.score);
-  }
   return items;
 };

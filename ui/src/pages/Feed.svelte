@@ -4,6 +4,7 @@
   import { api, me } from '@root/api';
   import {
     state,
+    reScoreItems,
     getGlobalFeed,
     getCuratorFeed,
     keyStrToObj,
@@ -23,6 +24,8 @@
     SearchIcon,
     PersonIcon,
     UpRightArrowIcon,
+    TextArea,
+    LoadingIcon,
   } from '@fragments';
   import { fromUrbitTime, isValidPatp, isHappeningSoon } from '@root/util';
 
@@ -38,6 +41,13 @@
       cord: '',
       time: 'global',
     });
+  };
+
+  let feedPrompt, loading;
+  const handlePromptFeed = async () => {
+    loading = true;
+    await reScoreItems(feedPrompt);
+    loading = false;
   };
 
   state.subscribe((s) => {
@@ -171,7 +181,54 @@
 <div class="grid grid-cols-9 gap-8 mb-4">
   <div class="flex flex-col col-span-12 md:col-span-6">
     <FeedPostForm on:post={handlePost} />
-    <Feed {feed} />
+    <div class="p-4 border flex flex-col gap-2">
+      <TextArea
+        class="focus:outline-none placeholder-grey text-black dark:text-white"
+        placeholder="New! Prompt your feed"
+        bind:value={feedPrompt}
+      />
+      <div class="flex justify-end">
+        <button
+          class="bg-black dark:bg-white text-white dark:text-darkgrey hover:bg-grey dark:hover:bg-offwhite hover:duration-500 font-saucebold rounded-lg px-3 py-1 self-end"
+          on:click={handlePromptFeed}>Go</button
+        >
+      </div>
+      <div class="flex flex-col">
+        <div>Or try out one of these prompts</div>
+        <div class="flex gap-4">
+          <button
+            class="border rounded-lg p-2"
+            on:click={() => {
+              feedPrompt = 'Love, happiness, hippy shit';
+              handlePromptFeed();
+            }}>Love & Happiness</button
+          >
+          <button
+            class="border rounded-lg p-2"
+            on:click={() => {
+              feedPrompt = 'Global news and current events';
+              handlePromptFeed();
+            }}>World News</button
+          >
+          <button
+            class="border rounded-lg p-2"
+            on:click={() => {
+              feedPrompt = 'Joke, intention of shock or laughter';
+              handlePromptFeed();
+            }}>Shitposts</button
+          >
+        </div>
+      </div>
+    </div>
+    {#if loading}
+      <div class="flex justify-center">
+        <div class="w-1/2">
+          <LoadingIcon />
+        </div>
+      </div>
+    {:else}
+      <Feed {feed} />
+    {/if}
   </div>
   <RightSidebar>
     <SidebarGroup>
