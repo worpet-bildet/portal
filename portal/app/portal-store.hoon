@@ -224,14 +224,15 @@
       %+  welp  (upd:cards-methods:stor rock.msg)
       [(~(act cards [our.bowl %portal-manager]) [%sub-to-many (feed-to-key-list:conv feed.u.wave.msg)])]~
     ==
+      %sss-fake-on-rock
+    =/  msg  !<(from:da-item (fled:sss vase))
+    :_  this  (handle-fake-on-rock:da-item msg)
   ==
 ::
 ++  on-arvo
   |=  [=wire sign=sign-arvo]
   ^-  (quip card:agent:gall _this)
   ?+  wire  `this
-    [~ %sss %behn @ @ @ %item @ @ @ @ ~]  [(behn:da-item |3:wire) this]
-    ::
     [%validate-sig ~]
   ?>  ?=([%khan %arow *] sign)
   ?.  ?=(%.y -.p.sign)
@@ -264,15 +265,15 @@
   ^-  (quip card _this)
   ?+    wire    (on-agent:default wire sign)
         [~ %sss *]
-    ?>  ?=(%poke-ack -.sign)
-    ?~  p.sign  `this
-    %-  (slog u.p.sign)
     ?+    wire   `this
         [~ %sss %on-rock @ @ @ %item @ @ @ @ ~]
       =.  item-sub  (chit:da-item |3:wire sign)
       `this
         [~ %sss %scry-request @ @ @ %item @ @ @ @ ~]
       =^  cards  item-sub  (tell:da-item |3:wire sign)
+      [cards this]
+        [~ %sss %scry-response @ @ @ %item @ @ @ @ ~]
+      =^  cards  item-pub  (tell:du-item |3:wire sign)
       [cards this]
     ==
   ==
