@@ -10,6 +10,7 @@
     keyStrToObj,
     getCollectedItemLeaderboard,
     getItem,
+    getTips
   } from '@root/state';
   import {
     Feed,
@@ -25,6 +26,7 @@
     PersonIcon,
     UpRightArrowIcon,
     TextArea,
+    OpenAIIcon,
     LoadingIcon,
   } from '@fragments';
   import { fromUrbitTime, isValidPatp, isHappeningSoon } from '@root/util';
@@ -43,10 +45,10 @@
     });
   };
 
-  let feedPrompt, loading;
+  let positiveFeedPrompt, negativeFeedPrompt, loading;
   const handlePromptFeed = async () => {
     loading = true;
-    await reScoreItems(feedPrompt);
+    await reScoreItems(positiveFeedPrompt, negativeFeedPrompt);
     loading = false;
   };
 
@@ -56,7 +58,7 @@
     if (s.isLoaded && !getGlobalFeed()) {
       return subToGlobalFeed();
     }
-    let mergedFeed = getGlobalFeed()
+    let mergedFeed = getGlobalFeed() //.concat(getFarcasterFeed)
       .concat(getCuratorFeed(me))
       .concat(getTips());
     feed = mergedFeed
@@ -176,57 +178,155 @@
       happeningSoon: 'false',
     },
   ];
+  let showExpandedForm = true;
 
   const happeningSoonTuple = isHappeningSoon(events);
 </script>
 
 <div class="grid grid-cols-9 gap-8 mb-4">
-  <div class="flex flex-col col-span-12 md:col-span-6">
-    <FeedPostForm on:post={handlePost} />
-    <div class="p-4 border flex flex-col gap-2">
-      <TextArea
-        class="focus:outline-none placeholder-grey text-black dark:text-white"
-        placeholder="New! Prompt your feed"
-        bind:value={feedPrompt}
-      />
-      <div class="flex justify-end">
-        <button
-          class="bg-black dark:bg-white text-white dark:text-darkgrey hover:bg-grey dark:hover:bg-offwhite hover:duration-500 font-saucebold rounded-lg px-3 py-1 self-end"
-          on:click={handlePromptFeed}>Go</button
-        >
-      </div>
-      <div class="flex flex-col">
-        <div>Or try out one of these prompts</div>
-        <div class="flex gap-4">
-          <button
-            class="border rounded-lg p-2"
-            on:click={() => {
-              feedPrompt = 'Love, happiness, hippy shit';
-              handlePromptFeed();
-            }}>Love & Happiness</button
-          >
-          <button
-            class="border rounded-lg p-2"
-            on:click={() => {
-              feedPrompt = 'Global news and current events';
-              handlePromptFeed();
-            }}>World News</button
-          >
-          <button
-            class="border rounded-lg p-2"
-            on:click={() => {
-              feedPrompt = 'Joke, intention of shock or laughter';
-              handlePromptFeed();
-            }}>Shitposts</button
+  <div class="flex border p-4 flex-col rounded-2xl col-span-12 md:col-span-6">
+    <div class="flex gap-2">
+      <div class="border rounded-2xl bg-panels-hover flex w-full justify-between items-center">
+        <div class="flex items-center justify-center w-full">
+          <div class="w-9 h-9 ml-3 p-1.5 rounded-xl bg-gradient-to-b from-ai-purple to-ai-blue">
+            <OpenAIIcon />
+          </div>
+          <input
+            type="text"
+            class="focus:outline-none p-3 placeholder-grey text-black text-lg dark:text-white flex-grow"
+            placeholder="What do you want to see?"
+            bind:value={positiveFeedPrompt}
+            on:keydown={(e) => {
+              if (e.key === 'Enter') {
+                handlePromptFeed();
+              }
+            }}
           >
         </div>
+        <button
+          class="bg-panels-hover rounded-md w-7 h-7 mr-2 flex items-center justify-center"
+          on:click={() => showExpandedForm = !showExpandedForm}
+        >
+          {#if showExpandedForm}
+            <svg class="w-3 h-3 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 8">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7 7.674 1.3a.91.91 0 0 0-1.348 0L1 7"/>
+            </svg>
+          {:else}
+            <svg class="w-3 h-3 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 8">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 5.326 5.7a.909.909 0 0 0 1.348 0L13 1"/>
+            </svg>
+          {/if}
+        </button>
       </div>
     </div>
-    {#if loading}
-      <div class="flex justify-center">
-        <div class="w-1/2">
-          <LoadingIcon />
+    <div class="flex flex-col mt-4">
+      <div class="flex gap-4">
+        <button
+          class="rounded-lg bg-panels-hover hover:bg-blueish text-grey p-2 px-4"
+          on:click={() => {
+            positiveFeedPrompt = 'Love, happiness, positivity';
+            negativeFeedPrompt = 'anger, negativity';
+            handlePromptFeed();
+          }}>Positivity</button
+        >
+        <button
+          class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
+          on:click={() => {
+            positiveFeedPrompt = 'Jokes, funny, sarcasm, amusement';
+            negativeFeedPrompt = 'seriousness, work, productivity';
+            handlePromptFeed();
+          }}>Shitposts</button
+        >
+        <button
+          class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
+          on:click={() => {
+            positiveFeedPrompt = 'poetry';
+            negativeFeedPrompt = '';
+            handlePromptFeed();
+          }}>Poetry</button
+        >
+        <button
+          class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
+          on:click={() => {
+            positiveFeedPrompt = 'link, https://';
+            negativeFeedPrompt = '';
+            handlePromptFeed();
+          }}>Links</button
+        >
+        <button
+          class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
+          on:click={() => {
+            positiveFeedPrompt = 'productivity, work, learning, life hacks';
+            negativeFeedPrompt = '';
+            handlePromptFeed();
+          }}>Productivity</button
+        >
+        <button
+          class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
+          on:click={() => {
+            positiveFeedPrompt = 'long string of text, longform, paragraphs';
+            negativeFeedPrompt = 'brief post, few words';
+            handlePromptFeed();
+          }}>Longform posts</button
+        >
+      </div>
+    </div>
+    <div>
+      {#if showExpandedForm}
+        <div class="border rounded-2xl bg-panels-hover flex w-full justify-between items-center mt-4">
+          <div class="flex items-center justify-center w-full">
+            <div class="w-9 h-9 ml-3 p-1.5 rounded-xl bg-gradient-to-b from-ai-purple to-ai-blue">
+              <OpenAIIcon />
+            </div>
+            <input
+              type="text"
+              class="focus:outline-none p-3 placeholder-grey text-black text-lg dark:text-white flex-grow"
+              placeholder="Show me less ..."
+              bind:value={negativeFeedPrompt}
+              on:keydown={(e) => {
+                if (e.key === 'Enter') {
+                  handlePromptFeed();
+                }
+              }}
+            >
+          </div>
         </div>
+        <div class="flex flex-col mt-4">
+          <div class="flex gap-4">
+            <button
+              class="rounded-lg bg-panels-hover hover:bg-blueish text-grey p-2 px-4"
+              on:click={() => {
+                positiveFeedPrompt = '';
+                negativeFeedPrompt = 'hapdec-rittyp';
+                handlePromptFeed();
+              }}>hapdec-rittyp</button
+            >
+            <button
+              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
+              on:click={() => {
+                positiveFeedPrompt = '';
+                negativeFeedPrompt = '';
+                handlePromptFeed();
+              }}>World News</button
+            >
+            <button
+              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
+              on:click={() => {
+                 negativeFeedPrompt = 'Jokes, funny, sarcasm, amusement';
+                 positiveFeedPrompt = '';
+                handlePromptFeed();
+              }}>Shitposts</button
+            >
+          </div>
+        </div>
+      {/if}
+    </div>
+  </div>
+  <div class="flex flex-col rounded-t-2xl col-span-12 md:col-span-6">
+    <FeedPostForm on:post={handlePost} />
+    {#if loading}
+      <div class="flex justify-center items-center py-20">
+        <LoadingIcon />
       </div>
     {:else}
       <Feed {feed} />

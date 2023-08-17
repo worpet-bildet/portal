@@ -13,11 +13,13 @@ const extractStrings = (items) => {
   });
 };
 
-export const scoreItems = async (items, prompt) => {
-  if (!prompt) prompt = 'Wholesome tweet, kindness, love, fun banter';
-  const itemStrings = extractStrings(items).concat([prompt]);
+export const scoreItems = async (items, positivePrompt, negativePrompt) => {
+  if (!positivePrompt) positivePrompt = 'Wholesome tweet, kindness, love, fun banter';
+  if (!negativePrompt) negativePrompt = 'anger, negativity';
+  const itemStrings = extractStrings(items).concat([positivePrompt]).concat([negativePrompt]);
 
   let positivePromptEmbeddings = [];
+  let negativePromptEmbeddings = [];
   const embeddingsResponse = await fetch(
     'https://api.openai.com/v1/embeddings',
     {
@@ -39,9 +41,10 @@ export const scoreItems = async (items, prompt) => {
     .catch((error) => {
       console.error('Error:', error);
     });
-
-  if (!embeddingsResponse) return items;
-
+  console.log('fail:', embeddingsResponse);
+  if (!embeddingsResponse) {
+    return items;
+  }
   items = items.map((item, index) => {
     return { ...item, embedding: embeddingsResponse[index] };
   });
@@ -49,6 +52,10 @@ export const scoreItems = async (items, prompt) => {
   positivePromptEmbeddings = embeddingsResponse.slice(
     items.length,
     items.length + 1
+  );
+  negativePromptEmbeddings = embeddingsResponse.slice(
+    items.length + 1,
+    items.length + 2
   );
 
   // score by LLM embedding
@@ -58,8 +65,13 @@ export const scoreItems = async (items, prompt) => {
         cosineSimilarity(item.embedding.embedding, e.embedding)
       )
     );
+    const negativeScore = Math.max(
+      negativePromptEmbeddings.map((e, i) =>
+        cosineSimilarity(item.embedding.embedding, e.embedding)
+      )
+    );
 
-    const score = positiveScore;
+    const score = positiveScore - negativeScore;
 
     return { ...item, score };
   });
