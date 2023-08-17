@@ -25,7 +25,6 @@
     SearchIcon,
     PersonIcon,
     UpRightArrowIcon,
-    TextArea,
     OpenAIIcon,
     LoadingIcon,
   } from '@fragments';
