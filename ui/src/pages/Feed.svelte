@@ -247,7 +247,7 @@
           </button>
         </div>
       </div>
-      <div class="flex flex-col mt-4 overflow-x-scroll">
+      <div class="flex flex-col mt-4 overflow-x-scroll scrollbar-hide">
         <div class="flex gap-4">
           <button
             class="rounded-lg bg-panels-hover hover:bg-blueish text-grey p-2 px-4"
@@ -276,7 +276,7 @@
           <button
             class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
             on:click={() => {
-              positiveFeedPrompt = 'web link, URL, https:// www. .org .com';
+              positiveFeedPrompt = 'https://';
               negativeFeedPrompt = '';
               handlePromptFeed();
             }}>Links</button
@@ -296,6 +296,22 @@
               negativeFeedPrompt = '';
               handlePromptFeed();
             }}>Longform</button
+          >
+          <button
+            class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
+            on:click={() => {
+              positiveFeedPrompt = 'politics';
+              negativeFeedPrompt = '';
+              handlePromptFeed();
+            }}>Politics</button
+          >
+          <button
+            class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
+            on:click={() => {
+              positiveFeedPrompt = 'crypto';
+              negativeFeedPrompt = '';
+              handlePromptFeed();
+            }}>Crypto</button
           >
         </div>
       </div>
@@ -326,28 +342,28 @@
           <div class="flex flex-col mt-4">
             <div class="flex gap-4">
               <button
-                class="rounded-lg bg-panels-hover hover:bg-blueish text-grey p-2 px-4"
+                class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
                 on:click={() => {
                   positiveFeedPrompt = '';
-                  negativeFeedPrompt = 'hapdec-rittyp';
+                  negativeFeedPrompt = 'abortion, trans, lgbt rights';
                   handlePromptFeed();
-                }}>hapdec-rittyp</button
+                }}>Culture wars</button
               >
               <button
                 class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
                 on:click={() => {
                   positiveFeedPrompt = '';
-                  negativeFeedPrompt = '';
-                  handlePromptFeed();
-                }}>World News</button
-              >
-              <button
-                class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
-                on:click={() => {
                   negativeFeedPrompt = 'Jokes, funny, sarcasm, amusement';
-                  positiveFeedPrompt = '';
                   handlePromptFeed();
                 }}>Shitposts</button
+              >
+              <button
+                class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
+                on:click={() => {
+                  positiveFeedPrompt = '';
+                  negativeFeedPrompt = 'politics';
+                  handlePromptFeed();
+                }}>Politics</button
               >
             </div>
           </div>
@@ -367,7 +383,7 @@
   </div>
   <RightSidebar>
     <SidebarGroup>
-      <div class="flex flex-col gap-4 mx-2 mb-1 overflow-hidden">
+      <div class="flex flex-col gap-4 mx-2 mb-2 overflow-hidden">
         <div class="text-xl font-bold">Find a ship</div>
         <div
           class="flex w-full gap-4 items-center rounded-lg p-4 justify-between"
