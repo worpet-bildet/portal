@@ -3,7 +3,7 @@ import { get, writable } from 'svelte/store';
 import { api } from '@root/api';
 import { save, load } from '@root/storage';
 import config from '@root/config';
-import { fromUrbitTime } from '@root/util';
+import { fromUrbitTime, weiToEth } from '@root/util';
 import { scoreItems } from './ai';
 
 export const state = writable(load() || {});
