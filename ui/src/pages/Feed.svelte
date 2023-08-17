@@ -10,7 +10,7 @@
     keyStrToObj,
     getCollectedItemLeaderboard,
     getItem,
-    getTips
+    getTips,
   } from '@root/state';
   import {
     Feed,
@@ -183,153 +183,187 @@
 </script>
 
 <div class="grid grid-cols-9 gap-8 mb-4">
-  <div class="flex border p-4 flex-col rounded-2xl col-span-12 md:col-span-6">
-    <div class="flex gap-2">
-      <div class="border rounded-2xl bg-panels-hover flex w-full justify-between items-center">
-        <div class="flex items-center justify-center w-full">
-          <div class="w-9 h-9 ml-3 p-1.5 rounded-xl bg-gradient-to-b from-ai-purple to-ai-blue">
-            <OpenAIIcon />
-          </div>
-          <input
-            type="text"
-            class="focus:outline-none p-3 placeholder-grey text-black text-lg dark:text-white flex-grow"
-            placeholder="What do you want to see?"
-            bind:value={positiveFeedPrompt}
-            on:keydown={(e) => {
-              if (e.key === 'Enter') {
-                handlePromptFeed();
-              }
-            }}
-          >
-        </div>
-        <button
-          class="bg-panels-hover rounded-md w-7 h-7 mr-2 flex items-center justify-center"
-          on:click={() => showExpandedForm = !showExpandedForm}
+  <div class="flex flex-col gap-8 rounded-t-2xl col-span-12 md:col-span-6">
+    <div class="flex border p-4 flex-col rounded-2xl col-span-12 md:col-span-6">
+      <div class="flex gap-2">
+        <div
+          class="border rounded-2xl bg-panels-hover flex w-full justify-between items-center"
         >
-          {#if showExpandedForm}
-            <svg class="w-3 h-3 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 8">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7 7.674 1.3a.91.91 0 0 0-1.348 0L1 7"/>
-            </svg>
-          {:else}
-            <svg class="w-3 h-3 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 8">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 5.326 5.7a.909.909 0 0 0 1.348 0L13 1"/>
-            </svg>
-          {/if}
-        </button>
-      </div>
-    </div>
-    <div class="flex flex-col mt-4">
-      <div class="flex gap-4">
-        <button
-          class="rounded-lg bg-panels-hover hover:bg-blueish text-grey p-2 px-4"
-          on:click={() => {
-            positiveFeedPrompt = 'retweet';
-            negativeFeedPrompt = '';
-            handlePromptFeed();
-          }}>Recommended</button
-        >
-        <button
-          class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
-          on:click={() => {
-            positiveFeedPrompt = 'Jokes, funny, sarcasm, amusement';
-            negativeFeedPrompt = 'seriousness, work, productivity';
-            handlePromptFeed();
-          }}>Shitposts</button
-        >
-        <button
-          class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
-          on:click={() => {
-            positiveFeedPrompt = 'poetry';
-            negativeFeedPrompt = '';
-            handlePromptFeed();
-          }}>Poetry</button
-        >
-        <button
-          class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
-          on:click={() => {
-            positiveFeedPrompt = 'web link, URL, https:// www. .org .com';
-            negativeFeedPrompt = '';
-            handlePromptFeed();
-          }}>Links</button
-        >
-        <button
-          class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
-          on:click={() => {
-            positiveFeedPrompt = 'productivity, work, learning';
-            negativeFeedPrompt = '';
-            handlePromptFeed();
-          }}>Productivity</button
-        >
-        <button
-          class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
-          on:click={() => {
-            positiveFeedPrompt = 'high wordCount';
-            negativeFeedPrompt = '';
-            handlePromptFeed();
-          }}>Longform</button
-        >
-      </div>
-    </div>
-    <div>
-      {#if showExpandedForm}
-        <div class="border rounded-2xl bg-panels-hover flex w-full justify-between items-center mt-4">
           <div class="flex items-center justify-center w-full">
-            <div class="w-9 h-9 ml-3 p-1.5 rounded-xl bg-gradient-to-b from-ai-purple to-ai-blue">
+            <div
+              class="w-9 h-9 ml-3 p-1.5 rounded-xl bg-gradient-to-b from-ai-purple to-ai-blue"
+            >
               <OpenAIIcon />
             </div>
             <input
               type="text"
               class="focus:outline-none p-3 placeholder-grey text-black text-lg dark:text-white flex-grow"
-              placeholder="Show me less ..."
-              bind:value={negativeFeedPrompt}
+              placeholder="What do you want to see?"
+              bind:value={positiveFeedPrompt}
               on:keydown={(e) => {
                 if (e.key === 'Enter') {
                   handlePromptFeed();
                 }
               }}
-            >
+            />
           </div>
+          <button
+            class="bg-panels-hover rounded-md w-7 h-7 mr-2 flex items-center justify-center"
+            on:click={() => (showExpandedForm = !showExpandedForm)}
+          >
+            {#if showExpandedForm}
+              <svg
+                class="w-3 h-3 text-gray-800 dark:text-white"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 14 8"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 7 7.674 1.3a.91.91 0 0 0-1.348 0L1 7"
+                />
+              </svg>
+            {:else}
+              <svg
+                class="w-3 h-3 text-gray-800 dark:text-white"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 14 8"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="m1 1 5.326 5.7a.909.909 0 0 0 1.348 0L13 1"
+                />
+              </svg>
+            {/if}
+          </button>
         </div>
-        <div class="flex flex-col mt-4">
-          <div class="flex gap-4">
-            <button
-              class="rounded-lg bg-panels-hover hover:bg-blueish text-grey p-2 px-4"
-              on:click={() => {
-                positiveFeedPrompt = '';
-                negativeFeedPrompt = 'hapdec-rittyp';
-                handlePromptFeed();
-              }}>hapdec-rittyp</button
-            >
-            <button
-              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
-              on:click={() => {
-                positiveFeedPrompt = '';
-                negativeFeedPrompt = '';
-                handlePromptFeed();
-              }}>World News</button
-            >
-            <button
-              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
-              on:click={() => {
-                 negativeFeedPrompt = 'Jokes, funny, sarcasm, amusement';
-                 positiveFeedPrompt = '';
-                handlePromptFeed();
-              }}>Shitposts</button
-            >
+      </div>
+      <div class="flex flex-col mt-4 overflow-x-scroll">
+        <div class="flex gap-4">
+          <button
+            class="rounded-lg bg-panels-hover hover:bg-blueish text-grey p-2 px-4"
+            on:click={() => {
+              positiveFeedPrompt = 'retweet';
+              negativeFeedPrompt = '';
+              handlePromptFeed();
+            }}>Recommended</button
+          >
+          <button
+            class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
+            on:click={() => {
+              positiveFeedPrompt = 'Jokes, funny, sarcasm, amusement';
+              negativeFeedPrompt = 'seriousness, work, productivity';
+              handlePromptFeed();
+            }}>Shitposts</button
+          >
+          <button
+            class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
+            on:click={() => {
+              positiveFeedPrompt = 'poetry';
+              negativeFeedPrompt = '';
+              handlePromptFeed();
+            }}>Poetry</button
+          >
+          <button
+            class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
+            on:click={() => {
+              positiveFeedPrompt = 'web link, URL, https:// www. .org .com';
+              negativeFeedPrompt = '';
+              handlePromptFeed();
+            }}>Links</button
+          >
+          <button
+            class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
+            on:click={() => {
+              positiveFeedPrompt = 'productivity, work, learning';
+              negativeFeedPrompt = '';
+              handlePromptFeed();
+            }}>Productivity</button
+          >
+          <button
+            class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
+            on:click={() => {
+              positiveFeedPrompt = 'high wordCount';
+              negativeFeedPrompt = '';
+              handlePromptFeed();
+            }}>Longform</button
+          >
+        </div>
+      </div>
+      <div>
+        {#if showExpandedForm}
+          <div
+            class="border rounded-2xl bg-panels-hover flex w-full justify-between items-center mt-4"
+          >
+            <div class="flex items-center justify-center w-full">
+              <div
+                class="w-9 h-9 ml-3 p-1.5 rounded-xl bg-gradient-to-b from-ai-purple to-ai-blue"
+              >
+                <OpenAIIcon />
+              </div>
+              <input
+                type="text"
+                class="focus:outline-none p-3 placeholder-grey text-black text-lg dark:text-white flex-grow"
+                placeholder="Show me less ..."
+                bind:value={negativeFeedPrompt}
+                on:keydown={(e) => {
+                  if (e.key === 'Enter') {
+                    handlePromptFeed();
+                  }
+                }}
+              />
+            </div>
           </div>
+          <div class="flex flex-col mt-4">
+            <div class="flex gap-4">
+              <button
+                class="rounded-lg bg-panels-hover hover:bg-blueish text-grey p-2 px-4"
+                on:click={() => {
+                  positiveFeedPrompt = '';
+                  negativeFeedPrompt = 'hapdec-rittyp';
+                  handlePromptFeed();
+                }}>hapdec-rittyp</button
+              >
+              <button
+                class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
+                on:click={() => {
+                  positiveFeedPrompt = '';
+                  negativeFeedPrompt = '';
+                  handlePromptFeed();
+                }}>World News</button
+              >
+              <button
+                class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
+                on:click={() => {
+                  negativeFeedPrompt = 'Jokes, funny, sarcasm, amusement';
+                  positiveFeedPrompt = '';
+                  handlePromptFeed();
+                }}>Shitposts</button
+              >
+            </div>
+          </div>
+        {/if}
+      </div>
+    </div>
+    <div>
+      <FeedPostForm on:post={handlePost} />
+      {#if loading}
+        <div class="flex justify-center items-center py-20">
+          <LoadingIcon />
         </div>
+      {:else}
+        <Feed {feed} />
       {/if}
     </div>
-  </div>
-  <div class="flex flex-col rounded-t-2xl col-span-12 md:col-span-6">
-    <FeedPostForm on:post={handlePost} />
-    {#if loading}
-      <div class="flex justify-center items-center py-20">
-        <LoadingIcon />
-      </div>
-    {:else}
-      <Feed {feed} />
-    {/if}
   </div>
   <RightSidebar>
     <SidebarGroup>
