@@ -17,10 +17,10 @@ export const toggleDarkmode = () => {
   });
 };
 
-export const reScoreItems = async (prompt) => {
+export const reScoreItems = async (positivePrompt, negativePrompt) => {
   return new Promise((resolve) => {
     api.portal.get.items().then(({ items }) => {
-      scoreItems(items, prompt).then((items) => {
+      scoreItems(items, positivePrompt, negativePrompt).then((items) => {
         state.update((s) => {
           items.forEach((i) => {
             s[i.keyStr] = i;

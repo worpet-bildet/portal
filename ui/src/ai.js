@@ -8,16 +8,24 @@ const extractStrings = (items) => {
     const ship = item.keyObj.ship;
     const time = item.keyObj.time.replace(/\.\.[^\.]*$/, '');
     const blurb = item.bespoke.blurb;
+    const type = item.keyObj.struc;
+    const reference = item.bespoke.ref ? item.bespoke.ref : null;
 
-    return `${ship} said this at ${time}: ${blurb}`;
+    let referenceString = '';
+    if (reference) {
+      referenceString = `\nreference: ${JSON.stringify(reference, null, 2)}`;
+    }
+    return `user: ${ship}\ndatetime: ${time}\ntext: ${blurb}\ntype: ${type}${referenceString}`;
   });
 };
 
-export const scoreItems = async (items, prompt) => {
-  if (!prompt) prompt = 'Wholesome tweet, kindness, love, fun banter';
-  const itemStrings = extractStrings(items).concat([prompt]);
+export const scoreItems = async (items, positivePrompt, negativePrompt) => {
+  if (!positivePrompt) positivePrompt = 'Wholesome tweet, kindness, love, fun banter';
+  if (!negativePrompt) negativePrompt = 'anger, negativity';
+  const itemStrings = extractStrings(items).concat([positivePrompt]).concat([negativePrompt]);
 
   let positivePromptEmbeddings = [];
+  let negativePromptEmbeddings = [];
   const embeddingsResponse = await fetch(
     'https://api.openai.com/v1/embeddings',
     {
@@ -40,8 +48,9 @@ export const scoreItems = async (items, prompt) => {
       console.error('Error:', error);
     });
 
-  if (!embeddingsResponse) return items;
-
+  if (!embeddingsResponse) {
+    return items;
+  }
   items = items.map((item, index) => {
     return { ...item, embedding: embeddingsResponse[index] };
   });
@@ -49,6 +58,10 @@ export const scoreItems = async (items, prompt) => {
   positivePromptEmbeddings = embeddingsResponse.slice(
     items.length,
     items.length + 1
+  );
+  negativePromptEmbeddings = embeddingsResponse.slice(
+    items.length + 1,
+    items.length + 2
   );
 
   // score by LLM embedding
@@ -58,8 +71,17 @@ export const scoreItems = async (items, prompt) => {
         cosineSimilarity(item.embedding.embedding, e.embedding)
       )
     );
+    const negativeScore = Math.max(
+      negativePromptEmbeddings.map((e, i) =>
+        cosineSimilarity(item.embedding.embedding, e.embedding)
+      )
+    );
 
-    const score = positiveScore;
+    const wordCount = item.bespoke.blurb ? item.bespoke.blurb.split(' ').length : null;
+    var score = positiveScore - negativeScore;
+    if (wordCount > 50 && positivePrompt.includes("high wordCount")) {
+      score++;
+    }
 
     return { ...item, score };
   });

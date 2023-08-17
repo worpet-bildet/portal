@@ -162,7 +162,7 @@
   </p>
   {#if items}
     <div
-      class="flex flex-col gap-4 bg-panels dark:bg-darkgrey border p-6 rounded-lg"
+      class="flex flex-col gap-4 bg-panels dark:bg-darkgrey w-2/3 border p-6 rounded-lg"
     >
       {#if activeItems.length > 0}
         {#each activeItems as key}
