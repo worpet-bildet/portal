@@ -178,7 +178,7 @@
       happeningSoon: 'false',
     },
   ];
-  let showExpandedForm = true;
+  let showExpandedForm = false;
 
   const happeningSoonTuple = isHappeningSoon(events);
 </script>
@@ -224,10 +224,10 @@
         <button
           class="rounded-lg bg-panels-hover hover:bg-blueish text-grey p-2 px-4"
           on:click={() => {
-            positiveFeedPrompt = 'Love, happiness, positivity';
-            negativeFeedPrompt = 'anger, negativity';
+            positiveFeedPrompt = 'retweet';
+            negativeFeedPrompt = '';
             handlePromptFeed();
-          }}>Positivity</button
+          }}>Recommended</button
         >
         <button
           class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
@@ -248,7 +248,7 @@
         <button
           class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
           on:click={() => {
-            positiveFeedPrompt = 'link, https://';
+            positiveFeedPrompt = 'web link, URL, https:// www. .org .com';
             negativeFeedPrompt = '';
             handlePromptFeed();
           }}>Links</button
@@ -256,7 +256,7 @@
         <button
           class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
           on:click={() => {
-            positiveFeedPrompt = 'productivity, work, learning, life hacks';
+            positiveFeedPrompt = 'productivity, work, learning';
             negativeFeedPrompt = '';
             handlePromptFeed();
           }}>Productivity</button
@@ -264,10 +264,10 @@
         <button
           class="rounded-lg bg-panels-hover text-grey hover:bg-blueish p-2 px-4"
           on:click={() => {
-            positiveFeedPrompt = 'long string of text, longform, paragraphs';
-            negativeFeedPrompt = 'brief post, few words';
+            positiveFeedPrompt = 'high wordCount';
+            negativeFeedPrompt = '';
             handlePromptFeed();
-          }}>Longform posts</button
+          }}>Longform</button
         >
       </div>
     </div>

@@ -8,8 +8,14 @@ const extractStrings = (items) => {
     const ship = item.keyObj.ship;
     const time = item.keyObj.time.replace(/\.\.[^\.]*$/, '');
     const blurb = item.bespoke.blurb;
+    const type = item.keyObj.struc;
+    const reference = item.bespoke.ref ? item.bespoke.ref : null;
 
-    return `${ship} said this at ${time}: ${blurb}`;
+    let referenceString = '';
+    if (reference) {
+      referenceString = `\nreference: ${JSON.stringify(reference, null, 2)}`;
+    }
+    return `user: ${ship}\ndatetime: ${time}\ntext: ${blurb}\ntype: ${type}${referenceString}`;
   });
 };
 
@@ -41,7 +47,7 @@ export const scoreItems = async (items, positivePrompt, negativePrompt) => {
     .catch((error) => {
       console.error('Error:', error);
     });
-  console.log('fail:', embeddingsResponse);
+
   if (!embeddingsResponse) {
     return items;
   }
@@ -71,7 +77,11 @@ export const scoreItems = async (items, positivePrompt, negativePrompt) => {
       )
     );
 
-    const score = positiveScore - negativeScore;
+    const wordCount = item.bespoke.blurb ? item.bespoke.blurb.split(' ').length : null;
+    var score = positiveScore - negativeScore;
+    if (wordCount > 50 && positivePrompt.includes("high wordCount")) {
+      score++;
+    }
 
     return { ...item, score };
   });
