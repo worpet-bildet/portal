@@ -21,7 +21,7 @@
     target.innerHTML = linkifyHtml(
       value.replace(/\n/g, '<br />').replaceAll('<br /><br />', '<br />'),
       {
-        attributes: { class: 'text-link' },
+        attributes: { class: 'text-link dark:text-link-dark' },
       }
     );
   };
