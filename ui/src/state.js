@@ -20,6 +20,11 @@ export const toggleDarkmode = () => {
 export const reScoreItems = async (positivePrompt, negativePrompt) => {
   return new Promise((resolve) => {
     api.portal.get.items().then(({ items }) => {
+      const feed = getGlobalFeed() || [];
+      // only score items which are in the feed
+      items = items.filter((i) =>
+        feed.find((f) => keyStrFromObj(f.key) === keyStrFromObj(i.keyObj))
+      );
       scoreItems(items, positivePrompt, negativePrompt).then((items) => {
         state.update((s) => {
           items.forEach((i) => {
