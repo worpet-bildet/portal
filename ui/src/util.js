@@ -385,6 +385,18 @@ export const isChatPath = (path) => {
   return path.substring(0, 13) === '/1/chan/chat/';
 };
 
+//  /1/chan/chat/~sampel-dilryd-mopreg/new-channel/msg/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749
+export const getChatDetails = (path) => {
+  const splut = path.split('/');
+  console.log({ splut });
+  return {
+    host: splut[4],
+    channel: splut[5],
+    poster: splut[7],
+    id: splut[8],
+  };
+};
+
 // FROM
 //  /1/chan/chat/~sampel-dilryd-mopreg/new-channel/msg/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749
 // TO

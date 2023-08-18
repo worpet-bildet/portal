@@ -2,7 +2,12 @@
   import { createEventDispatcher } from 'svelte';
   import { api, me } from '@root/api';
   import { state, keyStrToObj } from '@root/state';
-  import { getAnyLink, isChatPath, formatChatPath } from '@root/util';
+  import {
+    getAnyLink,
+    isChatPath,
+    formatChatPath,
+    getChatDetails,
+  } from '@root/util';
   import { RecommendModal, Sigil } from '@components';
   import {
     TextArea,
@@ -80,7 +85,7 @@
 
   $: linkToPreview = getAnyLink(content || '');
 
-  let chatData, chatPathToSave;
+  let chatData, chatDetails;
   const getChatData = async (chatPath) => {
     chatData = await api.portal.get.chatMessage(formatChatPath(chatPath));
     console.log({ chatData });
@@ -88,7 +93,8 @@
     // in the proposed input with an empty character, but we still want to save
     // the chat link somewhere, presumably, so that we can eventually send it to
     // the backend
-    chatPathToSave = chatPath;
+    let { host, channel, poster, id } = getChatDetails(chatPath);
+    console.log({ host, channel, poster, id });
     content = content.replace(chatPath, '');
   };
 
