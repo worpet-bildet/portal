@@ -35,7 +35,6 @@ export const reScoreItems = async (positivePrompt, negativePrompt) => {
 
 export const refreshPortalItems = () => {
   api.portal.get.items().then(({ items }) => {
-    // if (true) items = await scoreItems(items);
     state.update((s) => {
       items.forEach((i) => {
         s[i.keyStr] = i;
