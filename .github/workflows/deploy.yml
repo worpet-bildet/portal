@@ -26,7 +26,7 @@ jobs:
         #       is a way for a user to enter their own
         run: |
           npm ci
-          VITE_OPENAI_KEY="${{ secrets.VITE_OPENAI_KEY }}" npm run build
+          VITE_OPENAI_API_KEY="${{ secrets.VITE_OPENAI_KEY }}" npm run build
       - uses: actions/upload-artifact@v3
         with:
           name: 'ui-dist'
