@@ -36,7 +36,7 @@
     uploadedImageUrl = '';
     rating = '';
     error = '';
-    rating = 0;
+    rating = undefined;
   };
 
   // TODO: Factor out the selection of groups/apps into its own component
