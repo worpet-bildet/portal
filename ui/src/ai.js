@@ -20,9 +20,12 @@ const extractStrings = (items) => {
 };
 
 export const scoreItems = async (items, positivePrompt, negativePrompt) => {
-  if (!positivePrompt) positivePrompt = 'Wholesome tweet, kindness, love, fun banter';
+  if (!positivePrompt)
+    positivePrompt = 'Wholesome tweet, kindness, love, fun banter';
   if (!negativePrompt) negativePrompt = 'anger, negativity';
-  const itemStrings = extractStrings(items).concat([positivePrompt]).concat([negativePrompt]);
+  const itemStrings = extractStrings(items)
+    .concat([positivePrompt])
+    .concat([negativePrompt]);
 
   let positivePromptEmbeddings = [];
   let negativePromptEmbeddings = [];
@@ -77,11 +80,18 @@ export const scoreItems = async (items, positivePrompt, negativePrompt) => {
       )
     );
 
-    const wordCount = item.bespoke.blurb ? item.bespoke.blurb.split(' ').length : null;
-    const containsLink = item.bespoke.blurb ? item.bespoke.blurb.includes('http') : null;
+    const wordCount = item.bespoke.blurb
+      ? item.bespoke.blurb.split(' ').length
+      : null;
+    const containsLink = item.bespoke.blurb
+      ? item.bespoke.blurb.includes('http')
+      : null;
     var score = positiveScore - negativeScore;
 
-    if ((wordCount > 50 && positivePrompt.includes("high wordCount")) || (containsLink && positivePrompt.includes("https://"))) {
+    if (
+      (wordCount > 50 && positivePrompt.includes('high wordCount')) ||
+      (containsLink && positivePrompt.includes('https://'))
+    ) {
       score++;
     }
 

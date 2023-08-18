@@ -65,7 +65,7 @@
       .filter((a, idx) => {
         return mergedFeed.findIndex((b) => b.time === a.time) === idx;
       })
-      .sort((a, b) => getItem(b.key).score - getItem(a.key).score);
+      .sort((a, b) => getItem(b.key)?.score - getItem(a.key)?.score);
     // .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
 
     // Get the latest post, if it was more than six hours ago, send another sub
