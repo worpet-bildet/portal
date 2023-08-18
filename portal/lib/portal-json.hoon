@@ -1,4 +1,4 @@
-/-  *portal-data, *portal-action, gr=social-graph, config=portal-config
+/-  *portal-data, *portal-action, gr=social-graph, config=portal-config, c=writ
 /+  *portal, docket, treaty, ethereum
 |%
 ++  enjs
@@ -43,17 +43,6 @@
     :~  ['valid' b++.valid]
         ['noResult' b+%.n]
     ==
-  :: ++  enjs-front-end-update
-  ::   |=  =front-end-update
-  ::   ^-  json
-  ::   %-  pairs
-  ::   :~  ['srcIsOur' b+src-is-our.front-end-update]
-  ::       ['action' s+`@t`update.front-end-update]
-  ::       ['keyObj' (enjs-key key.front-end-update)]
-  ::       ['keyStr' (enjs-jam-key key.front-end-update)]
-  ::       ['item' ?~(item.front-end-update ~ (enjs-item-or-null item.front-end-update))]
-  ::       ['face' s+(crip (weld (trip update.front-end-update) (spud type.key.front-end-update)))]
-  ::   ==
   ++  enjs-item-or-null
     |=  [item=?(~ item)]
     ^-  json
@@ -76,13 +65,6 @@
         ['meta' (enjs-meta meta.item)]
     ==
   ::
-      :: +$  store-result
-    :: $@  ?
-    :: $%  [%items =items]
-    ::     [%item item=?(~ item)]
-    ::     [%keys =key-set]  
-    ::     [%valid =valid]
-    :: ==
   ++  enjs-message
     |=  [=message]
     ^-  json
@@ -130,7 +112,6 @@
       %processed-payments  (enjs-processed-payments +.manager-result)
       %rpc-endpoint  s++.manager-result
       %receiving-address  s++.manager-result
-
     ==
   ::
   ++  enjs-processing-payments
@@ -329,6 +310,14 @@
                              ['path' s+path.bespoke]
                              ['image' s+image.bespoke]
                          ==
+      %groups-chat-msg   %-  pairs
+                         :~  ['group' s+(flag:enjs-writ group.bespoke)]
+                             ['channel' s+(flag:enjs-writ channel.bespoke)]
+                             ['id' (id:enjs-writ id.bespoke)]
+                             ['content' (content:enjs-writ content.bespoke)]
+                             ['feels' n+(scot %ud feels.bespoke)]
+                             ['replies' n+(scot %ud replies.bespoke)]
+                         ==
       %validity-store  s+''
     ==
   ::   --
@@ -486,7 +475,149 @@
     |=  ship=@p
     ^-  json
     s+`@t`(scot %p ship)
+  ::
+  ++  enjs-writ
+  =,  enjs:format
+  |%
+  ++  id 
+    |=  =id:c
+    n+(rap 3 '"' (scot %p p.id) '/' (scot %ud q.id) '"' ~)
+
+  ++  writ
+    |=  =writ:c
+    %-  pairs
+    :~  seal+(seal -.writ)
+        memo+(memo +.writ)
+    ==
+  ++  seal
+    |=  =seal:c
+    %-  pairs
+    :~  id+(id id.seal)
+    ::
+        :-  %feels
+        %-  pairs
+        %+  turn  ~(tap by feels.seal)
+        |=  [her=@p =feel:c]
+        [(scot %p her) s+feel]
+    ::
+        :-  %replied
+        :-  %a
+        (turn ~(tap in replied.seal) |=(i=id:c (id i)))
+    ==
+  ++  memo 
+    |=  =memo:c
+    %-  pairs
+    :~  replying+?~(replying.memo ~ (id u.replying.memo))
+        author+(ship author.memo)
+        sent+(time sent.memo)
+        content+(content content.memo)
+    ==
+
+
+  ++  notice
+    |=  n=notice:c
+    %-  pairs
+    :~  pfix/s/pfix.n
+        sfix/s/sfix.n
+    ==
+  ::
+  ++  content
+    |=  c=content:c
+    %+  frond  -.c
+    ?-  -.c
+      %story   (story p.c)
+      %notice  (notice p.c)
+    ==
+  ::
+  ++  story
+    |=  s=story:c
+    ^-  json
+    %-  pairs
+    :~  :-  %block  a+(turn p.s block)
+        :-  %inline  a+(turn q.s inline)
+    ==
+  ::
+  ++  inline
+    |=  i=inline:c
+    ^-  json
+    ?@  i  s+i
+    %+  frond  -.i
+    ?-  -.i
+        %break
+      ~
+    ::
+        %ship  s/(scot %p p.i)
+    ::
+        ?(%code %tag %inline-code)
+      s+p.i
+    ::
+        ?(%italics %bold %strike %blockquote)
+      :-  %a
+      (turn p.i inline)
+    ::
+        %block
+      %-  pairs
+      :~  index+(numb p.i)
+          text+s+q.i
+      ==
+    ::
+        %link
+      %-  pairs
+      :~  href+s+p.i
+          content+s+q.i
+      ==
+    ==
+  ::
+    ++  block
+    |=  b=block:c
+    ^-  json
+    %+  frond  -.b
+    ?-  -.b
+        %cite  (cite cite.b)
+        %image
+      %-  pairs
+      :~  src+s+src.b
+          height+(numb height.b)
+          width+(numb width.b)
+          alt+s+alt.b
+      ==
+      
+    ==
+  ::
+  ++  cite
+    |=  =cite:c
+    %+  frond  -.cite
+    ?-    -.cite
+        %group  s+(flag flag.cite)
+    ::
+        %desk
+      %-  pairs
+      :~  ['flag' s+(flag flag.cite)]
+          ['where' s+(spat wer.cite)]
+      ==
+    ::
+        %chan
+      %-  pairs
+      :~  nest/s/(nest nest.cite)
+          where/s/(spat wer.cite)
+      ==
+    ::
+        %bait
+      %-  pairs
+      :~  group/s/(flag grp.cite)
+          graph/s/(flag gra.cite)
+          where/s/(spat wer.cite)
+      ==
+    ==
+  ++  nest
+    |=  n=nest:c
+    (rap 3 p.n '/' (^flag q.n) ~)
+
+  ++  flag
+    |=  f=flag:c
+    (rap 3 (scot %p p.f) '/' q.f ~)
   --
+--
 ::
 ::
 ++  dejs
@@ -591,6 +722,7 @@
             [%retweet json]
             [%review json]
             [%blog json]
+            [%groups-chat-msg json]
         ==
     ?-    -.jn
         %other
@@ -643,7 +775,19 @@
                       image+so
                   ==
       =+  (turn `(list (unit))`raw |=(a=(unit *) (fall a ~)))
-      (some blog+(pole-to-cell raw))
+      (some blog+(pole-to-cell -))
+        %groups-chat-msg
+      =/  raw  %.  ;;((map @t json) +>:jn)
+      %-  ot-raw  :~  group+dejs-soft-null-flag
+                      channel+dejs-soft-flag:dejs-writ
+                      id+dejs-soft-id:dejs-writ
+                      content+dejs-soft-null-content
+                      feels+dejs-soft-null-num
+                      replies+dejs-soft-null-num
+                  ==
+      =+  (turn `(list (unit))`raw |=(a=(unit *) (fall a ~)))
+      ;;  (unit bespoke)
+      (some groups-chat-msg+(pole-to-cell -))
     ==
   ::
   ++  dejs-soft-bespoke-edit  ::use ot-raw
@@ -726,6 +870,18 @@
         key+dejs-key
     ==
   ::
+  ++  dejs-soft-null-flag
+    |=  jon=json
+    ^-  (unit flag:c)
+    `[~zod '']
+  ++  dejs-soft-null-content
+    |=  jon=json
+    ^-  (unit content:c)
+    `[%notice ['' '']]
+  ++  dejs-soft-null-num
+    |=  jon=json
+    ^-  (unit @ud)
+    ~
   ++  dejs-soft-s-list
     |=  jon=json
     ^-  (unit (list @t))
@@ -795,5 +951,33 @@
     %-  silt
     %.  jon
     (ar:dejs dejs-key)
+  
+  ++  dejs-writ
+    =,  dejs-soft
+    |%
+    ++  dejs-soft-flag
+      |=  jon=json
+      ;;  (unit flag:c)
+      ?~  jon  ~
+      %.  jon
+      %-  ot
+      :~  p+dejs-soft-ship
+          q+so
+      ==
+    ++  dejs-soft-time
+      |=  jon=json
+      ;;  (unit time)
+      ?~  jon  ~
+      (slaw %ud ;;(@t +:jon))
+    ++  dejs-soft-id
+      |=  jon=json
+      ;;  (unit id:c)
+      ?~  jon  ~
+      %.  jon
+      %-  ot
+      :~  p+dejs-soft-ship
+          q+dejs-soft-time
+      ==
+    --
   --
 --
