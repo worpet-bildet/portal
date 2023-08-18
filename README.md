@@ -66,9 +66,10 @@ when you finish booting, the stdout should tell you the port where the ship is h
 
 Run:
 
+You should add a desk.ship file to portal desk with the ship which represents you local indexer used in development.
+
 ```
-|mount %base
-|merge %portal our %base
+|new-desk %portal
 |mount %portal
 ```
 
