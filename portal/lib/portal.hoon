@@ -348,10 +348,14 @@
             /chat/(scot %p p.channel)/[q.channel]/writs/writ/id/(scot %p p.id)/(scot %ud `@`q.id)/writ
           =/  writ
             .^(writ:w (~(construct scry [our now]) %gx %portal-manager path))
-          =/  group-flag
-            
+          =/  chatmap
+            .^  (map flag:w [* * * perm=[* group=flag:w] *])
+                %gx
+                /(scot %p our)/chat/(scot %da now)/chats/noun
+            ==
+          =/  group-flag  group:perm:(~(got by chatmap) channel.bespoke)
           :*  %groups-chat-msg
-            group-flag::  TODO scry for group (check out how its done in june/chronicle)
+            group-flag
             channel:bespoke
             id:bespoke
             content:writ
