@@ -346,10 +346,12 @@
           =/  =path
             =,  bespoke
             /chat/(scot %p p.channel)/[q.channel]/writs/writ/id/(scot %p p.id)/(scot %ud `@`q.id)/writ
-          =/  writ  ;;  writ:w
-            .^(* (~(construct scry [our now]) %gx %portal-manager path))
+          =/  writ
+            .^(writ:w (~(construct scry [our now]) %gx %portal-manager path))
+          =/  group-flag
+            
           :*  %groups-chat-msg
-            *flag:w::  TODO scry for group (check out how its done in june/chronicle)
+            group-flag::  TODO scry for group (check out how its done in june/chronicle)
             channel:bespoke
             id:bespoke
             content:writ
