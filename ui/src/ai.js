@@ -78,8 +78,10 @@ export const scoreItems = async (items, positivePrompt, negativePrompt) => {
     );
 
     const wordCount = item.bespoke.blurb ? item.bespoke.blurb.split(' ').length : null;
+    const containsLink = item.bespoke.blurb ? item.bespoke.blurb.includes('http') : null;
     var score = positiveScore - negativeScore;
-    if (wordCount > 50 && positivePrompt.includes("high wordCount")) {
+
+    if ((wordCount > 50 && positivePrompt.includes("high wordCount")) || (containsLink && positivePrompt.includes("https://"))) {
       score++;
     }
 

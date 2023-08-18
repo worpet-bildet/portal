@@ -6,6 +6,10 @@ module.exports = {
       saucebold: ['sauce-bold'],
     },
     extend: {
+      scrollbarHide: {
+        '-ms-overflow-style': 'none',
+        'scrollbar-width': 'none',
+      },
       colors: {
         transparent: '#00000000',
         grey: '#696969',
@@ -47,5 +51,14 @@ module.exports = {
   variants: {
     extend: {},
   },
+  plugins: [
+    function ({ addUtilities }) {
+      addUtilities({
+        '.scrollbar-hide::-webkit-scrollbar': {
+          display: 'none',
+        },
+      });
+    },
+  ],
   darkMode: 'class',
 };

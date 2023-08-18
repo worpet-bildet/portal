@@ -35,7 +35,6 @@ export const reScoreItems = async (positivePrompt, negativePrompt) => {
 
 export const refreshPortalItems = () => {
   api.portal.get.items().then(({ items }) => {
-    // if (true) items = await scoreItems(items);
     state.update((s) => {
       items.forEach((i) => {
         s[i.keyStr] = i;
@@ -244,7 +243,7 @@ export const getCollectedItemLeaderboard = (excludePatp) => {
               k?.struc !== 'collection' &&
               !(
                 k?.cord === 'portal' &&
-                k?.ship === '~hadzod-toptyr-bilder' &&
+                k?.ship === '~worpet-bildet' &&
                 (k?.struc === 'app' || k?.struc === 'group')
               )
           )
@@ -275,7 +274,7 @@ export const getMoreFromThisShip = (patp) => {
               k?.struc !== 'ship' &&
               !(
                 k?.cord === 'portal' &&
-                k?.ship === '~hadzod-toptyr-bilder' &&
+                k?.ship === '~worpet-bildet' &&
                 (k?.struc === 'app' || k?.struc === 'group')
               )
           )
