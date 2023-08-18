@@ -380,6 +380,20 @@ export const isHappeningSoon = (events) => {
   ];
 };
 
+//  /1/chan/chat/~sampel-dilryd-mopreg/new-channel/msg/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749
+export const isChatPath = (path) => {
+  return path.substring(0, 13) === '/1/chan/chat/';
+};
+
+// FROM
+//  /1/chan/chat/~sampel-dilryd-mopreg/new-channel/msg/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749
+// TO
+//  /chat/~sampel-dilryd-mopreg/new-channel/writs/writ/id/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749
+//  /chat/~nocsyx-lassul/log/writs/writ/id/~sogrum-savluc/170.141.184.506.358.567.219.567.224.823.002.068.680
+export const formatChatPath = (path) => {
+  return path.replace('/1/chan', '').replace('/msg/', '/writs/writ/id/');
+};
+
 // Reference: https://github.com/mirtyl-wacdec/urbit_ex/blob/master/lib/api/utils.ex#LL260C14-L260C14
 export const isValidPatp = (patp) => {
   if (!patp) return false;

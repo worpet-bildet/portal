@@ -128,13 +128,7 @@ export const api = {
         scry({ app: 'portal-manager', path: '/processing-payments' }),
       processedPayments: () =>
         scry({ app: 'portal-manager', path: '/processed-payments' }),
-      //  link from groups we are scrying for:
-      //  /1/chan/chat/~sampel-dilryd-mopreg/new-channel/msg/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749
-      chatMessage: () =>
-        scry({ 
-          app: 'portal-manager', 
-          path: '/chat/~sampel-dilryd-mopreg/new-channel/writs/writ/id/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749'
-      }),
+      chatMessage: (path) => scry({ app: 'portal-manager', path }),
     },
     do: {
       create: (json) => pmPoke({ create: json }),
@@ -174,7 +168,6 @@ export const api = {
         }),
     },
   },
-  newDo: {},
   s3: {
     do: {
       uploadImage: async (file, s3) => {
