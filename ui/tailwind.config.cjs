@@ -6,6 +6,10 @@ module.exports = {
       saucebold: ['sauce-bold'],
     },
     extend: {
+      scrollbarHide: {
+        '-ms-overflow-style': 'none',
+        'scrollbar-width': 'none',
+      },
       colors: {
         transparent: '#00000000',
         grey: '#696969',
@@ -14,6 +18,9 @@ module.exports = {
         coverPhotoBottom: '#00000000',
         coverPhotoTop: '#000000aa',
         purple: '#573c7c',
+        blueish: '#ac6baf2a',
+        'ai-blue': '#77a1f3',
+        'ai-purple': '#ac6baf',
         gradientdark: '#0c0c0c',
         darkgrey: '#181A1C',
         panels: '#f9f9f940', //#D6D3D6',
@@ -44,5 +51,14 @@ module.exports = {
   variants: {
     extend: {},
   },
+  plugins: [
+    function ({ addUtilities }) {
+      addUtilities({
+        '.scrollbar-hide::-webkit-scrollbar': {
+          display: 'none',
+        },
+      });
+    },
+  ],
   darkMode: 'class',
 };

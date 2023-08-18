@@ -11,6 +11,7 @@ export { default as StarRating } from './StarRating/StarRating.svelte';
 export { default as IconButton } from './IconButton.svelte';
 export { default as LinkPreview } from './LinkPreview.svelte';
 export { default as CollectIcon } from './Icons/Collect.svelte';
+export { default as OpenAIIcon } from './Icons/OpenAI.svelte';
 export { default as LikeIcon } from './Icons/Like.svelte';
 export { default as LikedIcon } from './Icons/Liked.svelte';
 export { default as ShareIcon } from './Icons/Share.svelte';

@@ -13,6 +13,8 @@
 
   $: if (value === '') {
     reset();
+  } else {
+    handleInput();
   }
 
   const handleInput = () => {
