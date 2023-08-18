@@ -4,19 +4,21 @@ import config from '@root/config';
 const minimumScore = -1;
 
 const extractStrings = (items) => {
-  return items.map((item) => {
-    const ship = item.keyObj.ship;
-    const time = item.keyObj.time.replace(/\.\.[^\.]*$/, '');
-    const blurb = item.bespoke.blurb;
-    const type = item.keyObj.struc;
-    const reference = item.bespoke.ref ? item.bespoke.ref : null;
+  return items
+    .map((item) => {
+      const ship = item.keyObj.ship;
+      const time = item.keyObj.time.replace(/\.\.[^\.]*$/, '');
+      const blurb = item.bespoke.blurb;
+      const type = item.keyObj.struc;
+      const reference = item.bespoke.ref ? item.bespoke.ref : null;
 
-    let referenceString = '';
-    if (reference) {
-      referenceString = `\nreference: ${JSON.stringify(reference, null, 2)}`;
-    }
-    return `user: ${ship}\ndatetime: ${time}\ntext: ${blurb}\ntype: ${type}${referenceString}`;
-  });
+      let referenceString = '';
+      if (reference) {
+        referenceString = `\nreference: ${JSON.stringify(reference, null, 2)}`;
+      }
+      return `user: ${ship}\ndatetime: ${time}\ntext: ${blurb}\ntype: ${type}${referenceString}`;
+    })
+    .filter((i) => !!i);
 };
 
 export const scoreItems = async (items, positivePrompt, negativePrompt) => {
