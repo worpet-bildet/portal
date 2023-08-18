@@ -563,10 +563,7 @@
     [%x %processed-payments ~]   portal-manager-result+!>([%processed-payments processed-payments])
     ::
       [%x %chat @ @ %writs %writ %id @ @ ~]
-    =/  scry 
-      |=  [care=@tas =dude:gall =^path]
-      [care (scot %p our.bowl) dude (scot %da now.bowl) path]
-    =+  new-writ=.^(* (scry %gx %chat (snoc `(list @ta)`t.path %writ)))
+    =+  new-writ=.^(* (~(construct scry [our now]:bowl) %gx %chat (snoc `(list @ta)`t.path %writ)))
     writ+!>(;;(writ:writ +:new-writ))
   ==
 ++  on-agent

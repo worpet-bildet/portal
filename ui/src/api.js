@@ -167,6 +167,27 @@ export const api = {
           },
         }),
     },
+    newDo: {
+      //  here use 'create' in the following way:
+      //  bespoke should specify channel and id, and other args should be empty
+      //  everything else can be done as usual with create
+      //  this example creates the message which is scried for in the `chatMessage` scry
+      createGroupsChatMsg: () =>
+        pmPoke({
+          'create': {
+            bespoke: {
+              'groups-chat-msg': {
+                group: "",
+                channel: {p: "~sampel-dilryd-mopreg", q: "new-channel"},
+                id: {p: "~sampel-dilryd-mopreg", q: "170.141.184.506.367.604.306.531.861.944.396.949.749"},
+                content: "",
+                feels: 0,
+                replies: 0
+              }
+            }
+          },
+        }),
+    },
   },
   s3: {
     do: {

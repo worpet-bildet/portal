@@ -1,5 +1,5 @@
 /-  *portal-data, portal-config, *portal-action, *portal-message,
-    portal-data-0, gr=social-graph, treaty
+    portal-data-0, gr=social-graph, treaty, w=writ
 /+  sig, io=agentio, mip, sss, ethereum
 |%
 +$  card  card:agent:gall
@@ -56,6 +56,10 @@
 ::
 ++  scry
   |_  [our=ship now=time]
+  ++  construct
+    |=  [care=@tas =dude:gall =^path]
+    [care (scot %p our) dude (scot %da now) path]
+  ::
   ::  gets item, and if doesn't exist returns ~
   ++  item-exists
     |=  [=key]
@@ -337,7 +341,22 @@
             (fall cord.act '')
             (fall time.act `@t`(scot %da now))
         (fall lens.act *lens)
-        bespoke
+        ?+    -.bespoke    bespoke
+            %groups-chat-msg  :: path: '/chat/~sampel-dilryd-mopreg/new-channel/writs/writ/id/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749'
+          =/  =path
+            =,  bespoke
+            /chat/(scot %p p.channel)/[q.channel]/writs/writ/id/(scot %p p.id)/(scot %ud `@`q.id)/writ
+          =/  writ  ;;  writ:w
+            .^(* (~(construct scry [our now]) %gx %portal-manager path))
+          :*  %groups-chat-msg
+            *flag:w::  TODO scry for group (check out how its done in june/chronicle)
+            channel:bespoke
+            id:bespoke
+            content:writ
+            ~(wyt by feels:writ)
+            ~(wyt in replied:writ)
+          ==
+        ==
         :^  created-at=`@t`(scot %da now)
             updated-at=''
             permissions=~[our]

@@ -1,4 +1,4 @@
-/-   *treaty, group-preview=meta, *portal-signature
+/-   *treaty, group-preview=meta, *portal-signature, w=writ
 |%
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
@@ -19,7 +19,7 @@
       %retweet
       %review
       %blog
-      ::  studio
+      %groups-chat-msg
       %other
   ==
 ::
@@ -84,7 +84,14 @@
       [struc=%collection title=@t blurb=@t image=@t =key-list]
       [struc=%validity-store =validity-records]
       [struc=%blog title=@t blurb=@t uri=@t path=@t image=@t]
-      ::  TODO %studio
+      $:  struc=%groups-chat-msg 
+          group=flag:w
+          channel=flag:w
+          =id:w
+          content=content:w
+          feels=@ud :: number of reacts at the time of sharing
+          replies=@ud :: number of replies at the time of sharing
+      ==
       [struc=%other title=@t blurb=@t link=@t image=@t]
   ==
 ::
