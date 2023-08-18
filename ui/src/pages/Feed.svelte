@@ -353,7 +353,7 @@
                 class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
                 on:click={() => {
                   positiveFeedPrompt = '';
-                  negativeFeedPrompt = 'abortion, trans, lgbt';
+                  negativeFeedPrompt = 'abortion, racism, sexism, classism';
                   handlePromptFeed();
                 }}>Culture wars</button
               >
