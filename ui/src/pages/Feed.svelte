@@ -44,11 +44,19 @@
     });
   };
 
-  let positiveFeedPrompt, negativeFeedPrompt, loading;
+  let positiveFeedPrompt, negativeFeedPrompt, loading, canResetFeed;
   const handlePromptFeed = async () => {
     loading = true;
     await reScoreItems(positiveFeedPrompt, negativeFeedPrompt);
+    feed = feed.sort((a, b) => getItem(b.key)?.score - getItem(a.key)?.score);
+    canResetFeed = true;
     loading = false;
+  };
+
+  const handleResetFeed = () => {
+    feed = feed.sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
+    positiveFeedPrompt = '';
+    negativeFeedPrompt = '';
   };
 
   state.subscribe((s) => {
@@ -64,8 +72,8 @@
       .filter((a) => !!a)
       .filter((a, idx) => {
         return mergedFeed.findIndex((b) => b.time === a.time) === idx;
-      })
-      .sort((a, b) => getItem(b.key)?.score - getItem(a.key)?.score);
+      });
+    // .sort((a, b) => getItem(b.key)?.score - getItem(a.key)?.score);
     // .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
 
     // Get the latest post, if it was more than six hours ago, send another sub
@@ -184,7 +192,9 @@
 
 <div class="grid grid-cols-9 gap-8 mb-4">
   <div class="flex flex-col gap-8 rounded-t-2xl col-span-12 md:col-span-6">
-    <div class="flex border p-4 flex-col rounded-2xl col-span-12 md:col-span-6">
+    <div
+      class="flex gap-2 border p-4 flex-col rounded-2xl col-span-12 md:col-span-6"
+    >
       <div class="flex gap-2">
         <div
           class="border rounded-2xl bg-panels-hover flex w-full justify-between items-center"
@@ -247,7 +257,7 @@
           </button>
         </div>
       </div>
-      <div class="flex flex-col mt-4 overflow-x-scroll scrollbar-hide">
+      <div class="flex flex-col overflow-x-scroll scrollbar-hide">
         <div class="flex gap-4">
           <button
             class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
@@ -385,6 +395,11 @@
           </div>
         {/if}
       </div>
+      {#if canResetFeed}
+        <div class="flex justify-end">
+          <button class="underline" on:click={handleResetFeed}>Reset</button>
+        </div>
+      {/if}
     </div>
     <div>
       <FeedPostForm on:post={handlePost} />
