@@ -48,7 +48,19 @@
   let highContrast = false;
   location.subscribe((l) => {
     highContrast = !pagesWithoutCoverPhoto.includes(l);
+    for (let page of pagesWithoutCoverPhoto) {
+      if (l.includes(page) && page !== '/') highContrast = false;
+    }
   });
+
+  const handleNotificationsOpen = () => {
+    notificationsOpen = true;
+    document.body.addEventListener('click', handleNotificationsClose);
+  };
+  const handleNotificationsClose = () => {
+    notificationsOpen = false;
+    document.body.removeEventListener('click', handleNotificationsClose);
+  };
 </script>
 
 <div class="mb-10">
@@ -70,10 +82,10 @@
       {#if $location === '/'}
         <div class="relative">
           <div class="rounded-full overflow-hidden">
-            <IconButton
-              icon={BellIcon}
-              on:click={() => (notificationsOpen = !notificationsOpen)}
-            />
+            <button
+              on:click|stopPropagation={handleNotificationsOpen}
+              class="w-5 flex items-center"><BellIcon /></button
+            >
           </div>
           {#if notificationsOpen}
             <div

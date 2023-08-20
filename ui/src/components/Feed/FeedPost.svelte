@@ -123,7 +123,10 @@
       >
         <div>
           {@html linkifyHtml(blurb, {
-            attributes: { class: 'text-link', target: '_blank' },
+            attributes: {
+              class: 'text-link dark:text-link-dark',
+              target: '_blank',
+            },
           })}
         </div>
         {#if blurbLink}

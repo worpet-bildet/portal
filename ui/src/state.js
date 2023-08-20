@@ -4,6 +4,7 @@ import { api } from '@root/api';
 import { save, load } from '@root/storage';
 import config from '@root/config';
 import { fromUrbitTime, weiToEth } from '@root/util';
+import { scoreItems } from './ai';
 
 export const state = writable(load() || {});
 export const feed = writable({});
@@ -13,6 +14,27 @@ export const toggleDarkmode = () => {
     s.darkmode = !s.darkmode;
     save({ darkmode: s.darkmode });
     return s;
+  });
+};
+
+export const reScoreItems = async (positivePrompt, negativePrompt) => {
+  return new Promise((resolve) => {
+    api.portal.get.items().then(({ items }) => {
+      const feed = (getGlobalFeed() || []).slice(0, 200);
+      // only score items which are in the feed
+      items = items.filter((i) =>
+        feed.find((f) => keyStrFromObj(f.key) === keyStrFromObj(i.keyObj))
+      );
+      scoreItems(items, positivePrompt, negativePrompt).then((items) => {
+        state.update((s) => {
+          items.forEach((i) => {
+            s[i.keyStr] = i;
+          });
+          return s;
+        });
+        resolve();
+      });
+    });
   });
 };
 
