@@ -14,7 +14,7 @@
     getLikes,
   } from '@root/state';
   import { getMeta, fromUrbitTime, getAnyLink, isImage } from '@root/util';
-  import { ItemPreview, Sigil, FeedPostForm } from '@components';
+  import { ItemPreview, Sigil, FeedPostForm, TipModal } from '@components';
   import {
     ChatIcon,
     LikeIcon,
@@ -22,6 +22,7 @@
     IconButton,
     LinkPreview,
     StarRating,
+    EthereumIcon,
   } from '@fragments';
 
   export let key;
@@ -87,12 +88,14 @@
       'tag-from': `/${key.ship}/like-from`,
     });
   };
+
+  let handleTipRequest;
 </script>
 
 {#if item}
   {@const { blurb, ship, createdAt, ref, image, rating } = getMeta(item)}
   {@const {
-    bespoke: { nickname, avatar },
+    bespoke: { nickname },
   } = getCurator(ship)}
   {@const blurbLink = getAnyLink(blurb)}
   <div
@@ -204,6 +207,15 @@
             </div>
           {/if}
         </div>
+        {#if me !== item.keyObj.ship}
+          <div class="flex items-center">
+            <IconButton
+              icon={EthereumIcon}
+              on:click={() => handleTipRequest(item.keyObj)}
+              class="text-grey stroke-grey"
+            />
+          </div>
+        {/if}
       </div>
     </div>
     {#if showCommentForm}
@@ -219,6 +231,7 @@
       </div>
     {/if}
   </div>
+  <TipModal bind:handleTipRequest />
 {:else}
   <div class="p-5 border-b border-x text-grey" in:fade>
     Contacting {key.ship}...
