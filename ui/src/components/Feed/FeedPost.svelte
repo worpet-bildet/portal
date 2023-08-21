@@ -1,8 +1,9 @@
 <script>
   import linkifyHtml from 'linkify-html';
   import { link } from 'svelte-spa-router';
-  import { fade, slide } from 'svelte/transition';
   import { format } from 'timeago.js';
+  import { fade, slide } from 'svelte/transition';
+  import { createEventDispatcher } from 'svelte';
   import { api, me } from '@root/api';
   import {
     state,
@@ -14,7 +15,7 @@
     getLikes,
   } from '@root/state';
   import { getMeta, fromUrbitTime, getAnyLink, isImage } from '@root/util';
-  import { ItemPreview, Sigil, FeedPostForm, TipModal } from '@components';
+  import { ItemPreview, Sigil, FeedPostForm } from '@components';
   import {
     ChatIcon,
     LikeIcon,
@@ -89,7 +90,11 @@
     });
   };
 
-  let handleTipRequest;
+  const dispatch = createEventDispatcher();
+  const handleTipRequest = (key) => {
+    console.log('woooooo');
+    dispatch('tipRequest', { key });
+  };
 </script>
 
 {#if item}
@@ -231,7 +236,6 @@
       </div>
     {/if}
   </div>
-  <TipModal bind:handleTipRequest />
 {:else}
   <div class="p-5 border-b border-x text-grey" in:fade>
     Contacting {key.ship}...
