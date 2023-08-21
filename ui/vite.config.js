@@ -2,6 +2,7 @@ import path from 'path';
 import { loadEnv, defineConfig } from 'vite';
 import { urbitPlugin } from '@urbit/vite-plugin-urbit';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
+import { viteCommonjs } from '@originjs/vite-plugin-commonjs'
 
 // https://vitejs.dev/config/
 export default ({ mode }) => {
@@ -19,6 +20,7 @@ export default ({ mode }) => {
   return defineConfig({
     plugins: [
       svelte(),
+      viteCommonjs(),
       urbitPlugin({
         base: 'portal',
         target: SHIP_URL,

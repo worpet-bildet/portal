@@ -22,9 +22,11 @@ jobs:
         with:
           node-version-file: ./ui/.nvmrc
       - working-directory: ./ui
+        # TODO: Remove the OPENAI_KEY from the deployment here as soon as there
+        #       is a way for a user to enter their own
         run: |
           npm ci
-          npm run build
+          VITE_OPENAI_API_KEY="${{ secrets.VITE_OPENAI_KEY }}" npm run build
       - uses: actions/upload-artifact@v3
         with:
           name: 'ui-dist'

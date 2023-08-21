@@ -64,19 +64,20 @@
 
   state.subscribe((s) => {
     if (!s.apps || !s.groups) return;
-    items = getCuratorAllCollectionItems(me);
+    items = getCuratorAllCollectionItems(me) || [];
 
-    myItems = new Set([
-      ...Object.keys(s.groups).map(groupKeyToItemKey),
-      ...Object.entries(s.apps).map(
-        ([cord, { ship }]) => `/app/${ship}/${cord}/`
-      ),
-      ...Object.keys(
-        Object.fromEntries(
-          Object.entries(s).filter(([key]) => key.includes('/collection/'))
-        )
-      ).map(collectionKeyToItemKey),
-    ]);
+    myItems =
+      new Set([
+        ...Object.keys(s.groups).map(groupKeyToItemKey),
+        ...Object.entries(s.apps).map(
+          ([cord, { ship }]) => `/app/${ship}/${cord}/`
+        ),
+        ...Object.keys(
+          Object.fromEntries(
+            Object.entries(s).filter(([key]) => key.includes('/collection/'))
+          )
+        ).map(collectionKeyToItemKey),
+      ]) || [];
 
     let url = window.location.href;
     if (url.includes('filters=')) {
@@ -162,7 +163,7 @@
   </p>
   {#if items}
     <div
-      class="flex flex-col gap-4 bg-panels dark:bg-darkgrey border p-6 rounded-lg"
+      class="flex flex-col gap-4 bg-panels dark:bg-darkgrey w-2/3 border p-6 rounded-lg"
     >
       {#if activeItems.length > 0}
         {#each activeItems as key}
