@@ -1,5 +1,5 @@
 /-  *portal-data, portal-config, *portal-action, *portal-message,
-    portal-data-0, gr=social-graph, treaty, w=writ
+    portal-data-0, gr=social-graph, treaty, w=writ, n=note
 /+  sig, io=agentio, mip, sss, ethereum
 |%
 +$  card  card:agent:gall
@@ -340,7 +340,9 @@
             (fall ship.act our)
             (fall cord.act '')
             (fall time.act `@t`(scot %da now))
+        ::
         (fall lens.act *lens)
+        ::
         ?+    -.bespoke    bespoke
             %groups-chat-msg  :: path: '/chat/~sampel-dilryd-mopreg/new-channel/writs/writ/id/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749'
           =/  =path
@@ -362,7 +364,29 @@
             ~(wyt by feels:writ)
             ~(wyt in replied:writ)
           ==
+          ::
+            %groups-diary-note  :: path: '/diary/~worpet-bildet/announcements/notes/note/170.141.184.506.311.745.994.155.289.567.817.629.696'
+          =/  =path
+            =,  bespoke
+            /diary/(scot %p p.channel)/[q.channel]/notes/note/(scot %ud `@`time)/diary-note
+          =/  note
+            .^(note:n (~(construct scry [our now]) %gx %diary path))
+          =/  diarymap
+            .^  (map flag:n [* * * perm=[* group=flag:w] *])
+                %gx
+                /(scot %p our)/diary/(scot %da now)/shelf/noun
+            ==
+          =/  group-flag  group:perm:(~(got by diarymap) channel.bespoke)
+          :*  %groups-diary-note
+            group-flag
+            channel:bespoke
+            time:bespoke
+            essay:note
+            ~(wyt by feels:note)
+            (wyt:on:quips:n quips:note)
+          ==
         ==
+        ::
         :^  created-at=`@t`(scot %da now)
             updated-at=''
             permissions=~[our]

@@ -140,6 +140,13 @@ export const api = {
           app: 'portal-manager', 
           path: '/chat/~worpet-bildet/feedback---support/writs/writ/id/~novmec-hiltux/170.141.184.506.366.058.491.440.790.996.128.152.682'
       }),
+      //  link from groups we are scrying for:
+      //  /1/chan/diary/~worpet-bildet/announcements/note/170141184506311745994155289567817629696
+      diaryNote: () =>
+        scry({
+          app: 'diary',
+          path: '/diary/~worpet-bildet/announcements/notes/note/170.141.184.506.311.745.994.155.289.567.817.629.696'
+        }),
     },
     do: {
       create: (json) => pmPoke({ create: json }),
@@ -198,8 +205,24 @@ export const api = {
             }
           },
         }),
-    },
-  },
+      //  /1/chan/diary/~worpet-bildet/announcements/note/170141184506311745994155289567817629696
+      createGroupsDiaryNote: () =>
+        pmPoke({
+          'create': {
+            bespoke: {
+              'groups-diary-note': {
+                group: "",
+                channel: {p: "~worpet-bildet", q: "announcements"},
+                time: "170.141.184.506.311.745.994.155.289.567.817.629.696",
+                essay: "",
+                feels: 0,
+                replies: 0
+              }
+            }
+          },
+        }),
+},
+},
   s3: {
     do: {
       uploadImage: async (file, s3) => {
