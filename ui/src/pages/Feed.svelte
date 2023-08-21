@@ -211,7 +211,7 @@
               placeholder="What do you want to see?"
               bind:value={positiveFeedPrompt}
               on:keydown={(e) => {
-                if (e.key === 'Enter') {
+                if (e.key === 'Enter' && e.metaKey) {
                   handlePromptFeed();
                 }
               }}
@@ -350,7 +350,7 @@
                 placeholder="Show me less ..."
                 bind:value={negativeFeedPrompt}
                 on:keydown={(e) => {
-                  if (e.key === 'Enter') {
+                  if (e.key === 'Enter' && e.metaKey) {
                     handlePromptFeed();
                   }
                 }}
@@ -426,7 +426,7 @@
               class="border-b focus:outline-none placeholder-grey"
               placeholder="~worpet-bildet"
               bind:value={searchShip}
-              on:keydown={(e) => (e.key === 'Enter' ? search() : null)}
+              on:keydown={(e) => (e.key === 'Enter' && e.metaKey ? search() : null)}
             />
           </div>
           <button class="w-5" on:click={search}><SearchIcon /></button>

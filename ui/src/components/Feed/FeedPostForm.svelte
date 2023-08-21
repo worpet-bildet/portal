@@ -87,7 +87,11 @@
     </div>
   </div>
   <div class="col-span-11 pb-2">
-    <TextArea placeholder="Share a limerick, maybe" bind:value={content} />
+    <TextArea placeholder="Share a limerick, maybe" bind:value={content} on:keydown={(e) => {
+      if (e.key === 'Enter' && e.metaKey) {
+        handler();
+      }
+    }}/>
     {#if uploadedImageUrl}
       <div class="flex">
         <img src={uploadedImageUrl} class="object-cover" alt="uploaded" />
