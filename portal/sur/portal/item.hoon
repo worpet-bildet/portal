@@ -19,7 +19,7 @@
       %prepend-to-feed
     ?>  ?=([%feed *] bespoke.rock)
     %=  rock
-      feed.bespoke  (oust [200 (lent wave)] (weld feed.wave feed.bespoke.rock))  
+      feed.bespoke  (weld feed.wave feed.bespoke.rock) 
     ==
   ==
 --
