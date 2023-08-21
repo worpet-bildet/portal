@@ -1,5 +1,6 @@
 <script>
   import { FeedPost, TipModal } from '@components';
+  import { LoadingIcon } from '@fragments';
 
   let handleTipRequest;
   export let feed;
@@ -14,5 +15,7 @@
   {/each}
   <TipModal bind:handleTipRequest />
 {:else}
-  <div>Loading...</div>
+  <div class="flex justify-center mt-4">
+    <LoadingIcon />
+  </div>
 {/if}
