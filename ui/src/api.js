@@ -135,6 +135,11 @@ export const api = {
           app: 'portal-manager', 
           path: '/chat/~sampel-dilryd-mopreg/new-channel/writs/writ/id/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749'
       }),
+      chatMessage2: () =>
+        scry({ 
+          app: 'portal-manager', 
+          path: '/chat/~worpet-bildet/feedback---support/writs/writ/id/~novmec-hiltux/170.141.184.506.366.058.491.440.790.996.128.152.682'
+      }),
     },
     do: {
       create: (json) => pmPoke({ create: json }),

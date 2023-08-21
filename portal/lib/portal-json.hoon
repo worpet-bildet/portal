@@ -611,7 +611,7 @@
     ==
   ++  nest
     |=  n=nest:c
-    (rap 3 p.n '/' (^flag q.n) ~)
+    (rap 3 p.n '/' (flag q.n) ~)
 
   ++  flag
     |=  f=flag:c
