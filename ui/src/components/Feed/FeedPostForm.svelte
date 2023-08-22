@@ -89,7 +89,7 @@
   <div class="col-span-11 pb-2">
     <TextArea placeholder="Share a limerick, maybe" bind:value={content} on:keydown={(e) => {
       if (e.key === 'Enter' && e.metaKey) {
-        handler();
+        post();
       }
     }}/>
     {#if uploadedImageUrl}

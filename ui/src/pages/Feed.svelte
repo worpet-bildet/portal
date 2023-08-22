@@ -35,6 +35,13 @@
   let patpItemCount = {};
   let feed;
 
+  document.addEventListener('keydown', function(event) {
+    if (event.key === '/') {
+      event.preventDefault();
+      document.getElementById('feedGenerator').focus();
+    }
+  });
+
   const subToGlobalFeed = () => {
     return api.portal.do.subscribe({
       struc: 'feed',
@@ -195,7 +202,7 @@
     <div
       class="flex gap-2 border p-4 flex-col rounded-2xl col-span-12 md:col-span-6"
     >
-      <div class="flex gap-2">
+      <div class="flex justify-center items-center">
         <div
           class="border rounded-2xl bg-panels-hover flex w-full justify-between items-center"
         >
@@ -207,6 +214,7 @@
             </div>
             <input
               type="text"
+              id="feedGenerator"
               class="focus:outline-none p-3 placeholder-grey text-black text-lg dark:text-white flex-grow"
               placeholder="What do you want to see?"
               bind:value={positiveFeedPrompt}
@@ -216,45 +224,13 @@
                 }
               }}
             />
+            <div class="flex justify-center">
+              <button
+              class="bg-panels-hover rounded-md w-7 h-7 mr-2 flex items-center justify-center"
+              on:click={() => (showExpandedForm = !showExpandedForm)}
+              >/</button>
+            </div>
           </div>
-          <button
-            class="bg-panels-hover rounded-md w-7 h-7 mr-2 flex items-center justify-center"
-            on:click={() => (showExpandedForm = !showExpandedForm)}
-          >
-            {#if showExpandedForm}
-              <svg
-                class="w-3 h-3 text-gray-800 dark:text-white"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 14 8"
-              >
-                <path
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13 7 7.674 1.3a.91.91 0 0 0-1.348 0L1 7"
-                />
-              </svg>
-            {:else}
-              <svg
-                class="w-3 h-3 text-gray-800 dark:text-white"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 14 8"
-              >
-                <path
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="m1 1 5.326 5.7a.909.909 0 0 0 1.348 0L13 1"
-                />
-              </svg>
-            {/if}
-          </button>
         </div>
       </div>
       <div class="flex flex-col overflow-x-scroll scrollbar-hide">
@@ -395,14 +371,54 @@
           </div>
         {/if}
       </div>
-      {#if canResetFeed}
-        <div class="flex justify-end">
-          <button class="underline" on:click={handleResetFeed}>Reset</button>
-        </div>
-      {/if}
+      <div class="flex justify-center">
+        <button
+        class="bg-[#f9f9f9] rounded-md w-7 h-7 mr-2 border flex items-center justify-center mb-[-30px]"
+        on:click={() => (showExpandedForm = !showExpandedForm)}
+        >
+          {#if showExpandedForm}
+            <svg
+              class="w-3 h-3 text-gray-800 dark:text-white"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 14 8"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 7 7.674 1.3a.91.91 0 0 0-1.348 0L1 7"
+              />
+            </svg>
+          {:else}
+            <svg
+              class="w-3 h-3 text-gray-800 dark:text-white"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 14 8"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="m1 1 5.326 5.7a.909.909 0 0 0 1.348 0L13 1"
+              />
+            </svg>
+          {/if}
+        </button>
+      </div>
     </div>
+    {#if canResetFeed}
+      <div class="flex justify-end">
+        <button class="underline" on:click={handleResetFeed}>Reset</button>
+      </div>
+    {/if}
     <div>
-      <FeedPostForm on:post={handlePost} />
+      <FeedPostForm on:post={handlePost}/>
       {#if loading}
         <div class="flex justify-center items-center py-20">
           <LoadingIcon />
