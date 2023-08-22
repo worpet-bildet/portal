@@ -1,24 +1,19 @@
 |%
-+$  writ   [seal memo]
++$  curio  [seal =heart]
 +$  seal
-  $:  =id
+  $:  =time
       feels=(map ship feel)
-      replied=(set id)
+      replied=(set time)
   ==
-+$  id     (pair ship time)
-+$  feel   @ta
-+$  memo  
-  $:  replying=(unit id)
++$  feel  @ta
++$  heart
+  $:  title=(unit @t)
+      =content
       author=ship
       sent=time
-      =content
+      replying=(unit time)
   ==
 +$  content
-  $%  [%story p=story]
-      [%notice p=notice]
-  ==
-+$  notice  [pfix=@t sfix=@t]
-+$  story
   (pair (list block) (list inline))
 +$  block
   $%  [%image src=cord height=@ud width=@ud alt=cord]
@@ -32,8 +27,8 @@
       [%blockquote p=(list inline)]
       [%inline-code p=cord]
       [%ship p=ship]
-      [%block p=@ud q=cord]
       [%code p=cord]
+      [%block p=@ud q=cord]
       [%tag p=cord]
       [%link p=cord q=cord]
       [%break ~]

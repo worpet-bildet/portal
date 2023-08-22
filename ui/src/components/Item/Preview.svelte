@@ -45,7 +45,8 @@
     keyObj: { struc, ship },
     keyStr,
   } = item}
-  {@const { title, blurb, description, image, color, link } = getMeta(item)}
+  {@const { title, blurb, description, image, color, link, createdAt } =
+    getMeta(item)}
   <button
     on:click={() => {
       if (clickable) {
@@ -53,6 +54,8 @@
           push(`/${ship}`);
         } else if ((struc === 'other' || struc === 'blog') && link) {
           window.open(link);
+        } else if (struc === 'retweet') {
+          window.location.href = `#${createdAt}`;
         } else {
           push(item.keyStr);
         }
@@ -70,7 +73,7 @@
       class:col-span-1={!small}
       class:col-span-2={small}
     >
-      {#if struc === 'ship' && !image}
+      {#if (struc === 'ship' || struc === 'retweet') && !image}
         <Sigil patp={ship} />
       {:else if struc === 'collection' && !image}
         <CollectionsSquarePreview {key} withTitle={false} />
@@ -99,7 +102,7 @@
           class:text-sm={small}
           class:text-xl={!small}
         >
-          {title}
+          {title || ship}
         </div>
         <div class="text-grey">·</div>
         <div class="text-grey">{struc}</div>

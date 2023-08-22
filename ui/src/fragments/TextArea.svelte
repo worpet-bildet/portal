@@ -1,7 +1,7 @@
 <script>
   import linkifyHtml from 'linkify-html';
   import autosize from 'svelte-autosize';
-  import { tick } from 'svelte';
+  import { tick, onMount } from 'svelte';
   export let value = '';
 
   let textarea, target;
@@ -13,13 +13,23 @@
 
   $: if (value === '') {
     reset();
+  } else {
+    handleInput();
   }
+
+  onMount(() => {
+    textarea.addEventListener('paste', function (e) {
+      e.preventDefault();
+      var text = e.clipboardData.getData('text/plain');
+      document.execCommand('insertHTML', false, text);
+    });
+  });
 
   const handleInput = () => {
     target.innerHTML = linkifyHtml(
       value.replace(/\n/g, '<br />').replaceAll('<br /><br />', '<br />'),
       {
-        attributes: { class: 'text-link' },
+        attributes: { class: 'text-link dark:text-link-dark' },
       }
     );
   };

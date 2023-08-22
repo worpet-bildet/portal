@@ -56,9 +56,12 @@
   =^  cards  state  init-sequence:stor
   [cards this]
 ::
-++  on-save  !>(state)
+++  on-save  
+  ~>  %bout.[0 '%portal-store +on-save']
+  !>(state)
 ++  on-load
   |=  =vase
+  ~>  %bout.[0 '%portal-store +on-load']
   ^-  (quip card _this)
   =/  old  !<(versioned-state vase)
   ::  -  get state up to date!

@@ -36,7 +36,7 @@
     uploadedImageUrl = '';
     rating = '';
     error = '';
-    rating = 0;
+    rating = undefined;
   };
 
   // TODO: Factor out the selection of groups/apps into its own component
@@ -78,7 +78,7 @@
 </script>
 
 <div
-  class="grid grid-cols-12 bg-panels dark:bg-darkgrey border py-3 pl-3 rounded-tl-lg rounded-tr-lg pr-3 gap-2"
+  class="grid grid-cols-12 bg-panels dark:bg-darkgrey border py-5 pl-5 rounded-tl-lg rounded-tr-lg pr-3 gap-2"
   class:border-error={error}
 >
   <div class="col-span-1">
