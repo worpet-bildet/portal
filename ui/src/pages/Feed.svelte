@@ -233,10 +233,15 @@
               }}
             />
             <div class="flex justify-center">
-              <button
-              class="bg-panels-hover rounded-md w-7 h-7 mr-2 flex items-center justify-center"
-              on:click={() => (showExpandedForm = !showExpandedForm)}
-              >/</button>
+              {#if canResetFeed}
+                <button on:click={handleResetFeed} class="bg-panels-hover text-grey rounded-md px-2 py-1 mr-2 flex items-center justify-center"
+                  >Reset</button>
+              {:else}
+                <button
+                class="bg-panels-hover rounded-md w-7 h-7 mr-2 flex items-center justify-center"
+                on:click={() => (showExpandedForm = !showExpandedForm)}
+                >/</button>
+              {/if}
             </div>
           </div>
         </div>
@@ -250,14 +255,6 @@
               negativeFeedPrompt = 'seriousness, work, productivity';
               handlePromptFeed();
             }}>Shitposts</button
-          >
-          <button
-            class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
-            on:click={() => {
-              positiveFeedPrompt = 'poetry';
-              negativeFeedPrompt = '';
-              handlePromptFeed();
-            }}>Poetry</button
           >
           <button
             class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
@@ -392,11 +389,6 @@
         </button>
       </div>
     </div>
-    {#if canResetFeed}
-      <div class="flex justify-end">
-        <button class="underline" on:click={handleResetFeed}>Reset</button>
-      </div>
-    {/if}
     <div>
       <FeedPostForm on:post={handlePost}/>
       {#if loading}
