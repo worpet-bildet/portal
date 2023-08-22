@@ -27,6 +27,8 @@
     UpRightArrowIcon,
     OpenAIIcon,
     LoadingIcon,
+    VerticalExpandIcon,
+    VerticalCollapseIcon,
   } from '@fragments';
   import { fromUrbitTime, isValidPatp, isHappeningSoon } from '@root/util';
 
@@ -54,14 +56,14 @@
   let positiveFeedPrompt, negativeFeedPrompt, loading, canResetFeed;
   const handlePromptFeed = async () => {
     loading = true;
-    await reScoreItems(positiveFeedPrompt, negativeFeedPrompt);
-    feed = feed.sort((a, b) => getItem(b.key)?.score - getItem(a.key)?.score);
     canResetFeed = true;
+    await reScoreItems(positiveFeedPrompt, negativeFeedPrompt);
     loading = false;
   };
 
   const handleResetFeed = () => {
     feed = feed.sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
+    canResetFeed = false;
     positiveFeedPrompt = '';
     negativeFeedPrompt = '';
   };
@@ -80,6 +82,12 @@
       .filter((a, idx) => {
         return mergedFeed.findIndex((b) => b.time === a.time) === idx;
       });
+
+    if (canResetFeed) {
+      feed = feed.sort((a, b) => getItem(b.key)?.score - getItem(a.key)?.score);
+    } else {
+      feed = feed.sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
+    }
     // .sort((a, b) => getItem(b.key)?.score - getItem(a.key)?.score);
     // .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
 
@@ -373,41 +381,13 @@
       </div>
       <div class="flex justify-center">
         <button
-        class="bg-[#f9f9f9] rounded-md w-7 h-7 mr-2 border flex items-center justify-center mb-[-30px]"
-        on:click={() => (showExpandedForm = !showExpandedForm)}
-        >
+            class="bg-panels-solid rounded-md w-7 h-7 mr-2 border flex items-center justify-center mb-[-30px]"
+            on:click={() => (showExpandedForm = !showExpandedForm)}
+          >
           {#if showExpandedForm}
-            <svg
-              class="w-3 h-3 text-gray-800 dark:text-white"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 14 8"
-            >
-              <path
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M13 7 7.674 1.3a.91.91 0 0 0-1.348 0L1 7"
-              />
-            </svg>
+            <VerticalCollapseIcon />
           {:else}
-            <svg
-              class="w-3 h-3 text-gray-800 dark:text-white"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 14 8"
-            >
-              <path
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="m1 1 5.326 5.7a.909.909 0 0 0 1.348 0L13 1"
-              />
-            </svg>
+            <VerticalExpandIcon />
           {/if}
         </button>
       </div>

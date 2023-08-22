@@ -24,6 +24,7 @@ module.exports = {
         gradientdark: '#0c0c0c',
         darkgrey: '#181A1C',
         panels: '#f9f9f940', //#D6D3D6',
+        'panels-solid': '#f9f9f9',
         'panels-hover': '#00000008',
         white: '#ffffff',
         hover: '#ffffff60',

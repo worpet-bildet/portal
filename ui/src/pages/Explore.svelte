@@ -4,7 +4,6 @@
     state,
     getCuratorAllCollectionItems,
     groupKeyToItemKey,
-    profileKeyToItemKey,
     collectionKeyToItemKey,
     keyStrFromObj,
     getItem,
@@ -12,11 +11,11 @@
   import { getMeta } from '@root/util';
   import { ItemPreview } from '@components';
   import {
+    LoadingIcon,
     IconButton,
     SparklesIcon,
     AppIcon,
     PeopleIcon,
-    PersonIcon,
     CollectionIcon,
     SearchIcon,
   } from '@fragments';
@@ -63,20 +62,20 @@
   };
 
   state.subscribe((s) => {
-    if (!s.apps || !s.groups) return;
     items = getCuratorAllCollectionItems(me);
 
-    myItems = new Set([
-      ...Object.keys(s.groups).map(groupKeyToItemKey),
-      ...Object.entries(s.apps).map(
-        ([cord, { ship }]) => `/app/${ship}/${cord}/`
-      ),
-      ...Object.keys(
-        Object.fromEntries(
-          Object.entries(s).filter(([key]) => key.includes('/collection/'))
-        )
-      ).map(collectionKeyToItemKey),
-    ]);
+    myItems =
+      new Set([
+        ...Object.keys(s.groups || {}).map(groupKeyToItemKey),
+        ...Object.entries(s.apps || {}).map(
+          ([cord, { ship }]) => `/app/${ship}/${cord}/`
+        ),
+        ...Object.keys(
+          Object.fromEntries(
+            Object.entries(s).filter(([key]) => key.includes('/collection/'))
+          )
+        ).map(collectionKeyToItemKey),
+      ]) || [];
 
     let url = window.location.href;
     if (url.includes('filters=')) {
@@ -169,7 +168,7 @@
           <ItemPreview {key} />
         {/each}
       {:else}
-        <div class="p-10">
+        <div class="p-10 text-xs">
           <pre>
  _   _  ____ _______ _    _ _____ _   _  _____   _______ ____
 | \ | |/ __ \__   __| |  | |_   _| \ | |/ ____| |__   __/ __ \
@@ -187,6 +186,10 @@
         </pre>
         </div>
       {/if}
+    </div>
+  {:else}
+    <div class="flex justify-center">
+      <LoadingIcon />
     </div>
   {/if}
 </div>

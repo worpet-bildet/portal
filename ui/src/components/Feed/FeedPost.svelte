@@ -1,8 +1,9 @@
 <script>
   import linkifyHtml from 'linkify-html';
   import { link } from 'svelte-spa-router';
-  import { fade, slide } from 'svelte/transition';
   import { format } from 'timeago.js';
+  import { fade, slide } from 'svelte/transition';
+  import { createEventDispatcher } from 'svelte';
   import { api, me } from '@root/api';
   import {
     state,
@@ -22,6 +23,7 @@
     IconButton,
     LinkPreview,
     StarRating,
+    EthereumIcon,
   } from '@fragments';
 
   export let key;
@@ -87,12 +89,17 @@
       'tag-from': `/${key.ship}/like-from`,
     });
   };
+
+  const dispatch = createEventDispatcher();
+  const handleTipRequest = (key) => {
+    dispatch('tipRequest', { key });
+  };
 </script>
 
 {#if item}
   {@const { blurb, ship, createdAt, ref, image, rating } = getMeta(item)}
   {@const {
-    bespoke: { nickname, avatar },
+    bespoke: { nickname },
   } = getCurator(ship)}
   {@const blurbLink = getAnyLink(blurb)}
   <div
@@ -204,6 +211,15 @@
             </div>
           {/if}
         </div>
+        {#if me !== item.keyObj.ship}
+          <div class="flex items-center">
+            <IconButton
+              icon={EthereumIcon}
+              on:click={() => handleTipRequest(item.keyObj)}
+              class="text-grey stroke-grey"
+            />
+          </div>
+        {/if}
       </div>
     </div>
     {#if showCommentForm}
