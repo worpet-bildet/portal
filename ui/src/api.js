@@ -179,13 +179,11 @@ export const api = {
             note,
           },
         }),
-    },
-    newDo: {
       //  here use 'create' in the following way:
       //  bespoke should specify channel and id, and other args should be empty
       //  everything else can be done as usual with create
       //  this example creates the message which is scried for in the `chatMessage` scry
-      createGroupsChatMsg: (host, channel, poster, id) =>
+      createGroupsChatMsg: (host, channel, poster, id, time) =>
         pmPoke({
           create: {
             bespoke: {
@@ -198,8 +196,11 @@ export const api = {
                 replies: 0,
               },
             },
+            time,
           },
         }),
+    },
+    newDo: {
       //  /1/chan/diary/~worpet-bildet/announcements/note/170141184506311745994155289567817629696
       createGroupsDiaryNote: () =>
         pmPoke({

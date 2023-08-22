@@ -75,6 +75,7 @@
       .filter((a, idx) => {
         return mergedFeed.findIndex((b) => b.time === a.time) === idx;
       });
+    console.log({ feed });
     // .sort((a, b) => getItem(b.key)?.score - getItem(a.key)?.score);
     // .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
 
@@ -106,16 +107,35 @@
     sortedRecommendations = getCollectedItemLeaderboard(me).slice(0, 4);
   });
 
-  const handlePost = ({ detail: { content, uploadedImageUrl } }) => {
-    api.portal.do.create({
-      bespoke: {
-        other: {
-          title: '',
-          blurb: content || '',
-          link: '',
-          image: uploadedImageUrl || '',
+  const handlePost = ({ detail: { content, uploadedImageUrl, ref } }) => {
+    let post = {};
+    console.log({ ref });
+    if (ref) {
+      // Here we need to create the retweet post instead of the type "other"
+      post = {
+        ...post,
+        bespoke: {
+          retweet: {
+            ref: ref,
+            blurb: content || '',
+          },
         },
-      },
+      };
+    } else {
+      post = {
+        ...post,
+        bespoke: {
+          other: {
+            title: '',
+            blurb: content || '',
+            link: '',
+            image: uploadedImageUrl || '',
+          },
+        },
+      };
+    }
+    post = {
+      ...post,
       'prepend-to-feed': [
         {
           ship: me,
@@ -124,7 +144,8 @@
           cord: '',
         },
       ],
-    });
+    };
+    api.portal.do.create(post);
   };
 
   let searchShip;

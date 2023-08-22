@@ -7,6 +7,7 @@
     isChatPath,
     formatChatPath,
     getChatDetails,
+    toUrbitTime,
   } from '@root/util';
   import { RecommendModal, Sigil } from '@components';
   import {
@@ -37,7 +38,22 @@
     if ((ratingStars && !rating) || Number(rating) === 0) {
       return (error = 'Please give a score.');
     }
-    dispatch('post', { content, uploadedImageUrl, replyTo, rating });
+    // If we have some chat details here, we should generate the reference and
+    // then send the reference back up with the post, so it can decide whether
+    // to make a retweet or not
+    let ref;
+    if (chatDetails) {
+      const { host, channel, poster, id } = chatDetails;
+      const time = toUrbitTime(Date.now());
+      ref = {
+        struc: 'groups-chat-msg',
+        ship: me,
+        cord: '',
+        time,
+      };
+      api.portal.do.createGroupsChatMsg(host, channel, poster, id, time);
+    }
+    dispatch('post', { content, uploadedImageUrl, replyTo, rating, ref });
     content = '';
     uploadedImageUrl = '';
     rating = '';
@@ -88,13 +104,11 @@
   let chatData, chatDetails;
   const getChatData = async (chatPath) => {
     chatData = await api.portal.get.chatMessage(formatChatPath(chatPath));
-    console.log({ chatData });
     // If there is some chatData here we probably want to replace the chat link
     // in the proposed input with an empty character, but we still want to save
     // the chat link somewhere, presumably, so that we can eventually send it to
     // the backend
-    let { host, channel, poster, id } = getChatDetails(chatPath);
-    console.log({ host, channel, poster, id });
+    chatDetails = getChatDetails(chatPath);
     content = content.replace(chatPath, '');
   };
 
