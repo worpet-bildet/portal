@@ -11,7 +11,7 @@
     if (target) target.innerHTML = '';
   };
 
-  $: if (value === '') {
+  $: if (!value || value === '') {
     reset();
   } else {
     handleInput();
@@ -29,6 +29,7 @@
   });
 
   const handleInput = () => {
+    if (!target) return setTimeout(handleInput, 100);
     target.innerHTML = linkifyHtml(
       value.replace(/\n/g, '<br />').replaceAll('<br /><br />', '<br />'),
       {
