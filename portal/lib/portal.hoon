@@ -1,5 +1,5 @@
 /-  *portal-data, portal-config, *portal-action, *portal-message,
-    portal-data-0, gr=social-graph, treaty, w=writ, n=note
+    portal-data-0, gr=social-graph, treaty, w=writ, n=note, cur=curio
 /+  sig, io=agentio, mip, sss, ethereum
 |%
 +$  card  card:agent:gall
@@ -384,6 +384,27 @@
             essay:note
             ~(wyt by feels:note)
             (wyt:on:quips:n quips:note)
+          ==
+          ::
+            %groups-heap-curio  :: path: '/heap/~toptyr-bilder/links/curios/curio/id/170.141.184.506.270.899.144.208.463.636.562.182.144
+          =/  =path
+            =,  bespoke
+            /heap/(scot %p p.channel)/[q.channel]/curios/curio/id/(scot %ud `@`time)/curio
+          =/  curio
+            .^(curio:cur (~(construct scry [our now]) %gx %heap path))
+          =/  heapmap
+            .^  (map flag:n [* * perm=[* group=flag:w] *])
+                %gx
+                /(scot %p our)/heap/(scot %da now)/stash/noun
+            ==
+          =/  group-flag  group:perm:(~(got by heapmap) channel.bespoke)
+          :*  %groups-heap-curio
+            group-flag
+            channel:bespoke
+            time:bespoke
+            heart:curio
+            ~(wyt by feels:curio)
+            ~(wyt in replied:curio)
           ==
         ==
         ::

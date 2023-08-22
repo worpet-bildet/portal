@@ -55,8 +55,6 @@
       [%group =flag]
       [%desk =flag wer=path]
       [%bait grp=flag gra=flag wer=path]
-      :: scry into groups when you receive a bait for a chat that doesn't exist yet
-      :: work out what app
   ==
 +$  flag  (pair ship term)
 +$  nest  (pair dude:gall flag)

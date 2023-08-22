@@ -1,4 +1,4 @@
-/-   *treaty, group-preview=meta, *portal-signature, w=writ, n=note
+/-   *treaty, group-preview=meta, *portal-signature, w=writ, n=note, cur=curio
 |%
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
@@ -21,6 +21,7 @@
       %blog
       %groups-chat-msg
       %groups-diary-note
+      %groups-heap-curio
       %other
   ==
 ::
@@ -97,7 +98,15 @@
           group=flag:n
           channel=flag:n
           =time
-          essay=essay:n
+          =essay:n
+          feels=@ud
+          replies=@ud
+      ==
+      $:  struc=%groups-heap-curio
+          group=flag:cur
+          channel=flag:cur
+          =time
+          =heart:cur
           feels=@ud
           replies=@ud
       ==

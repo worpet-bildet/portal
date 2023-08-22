@@ -1,5 +1,5 @@
 /-  *portal-data, *portal-action, gr=social-graph, config=portal-config, c=writ,
-    d=note
+    d=note, h=curio
 /+  *portal, docket, treaty, ethereum
 |%
 ++  enjs
@@ -328,6 +328,15 @@
                               ['feels' n+(scot %ud feels.bespoke)]
                               ['replies' n+(scot %ud replies.bespoke)]
                           ==
+      %groups-heap-curio
+                          %-  pairs
+                          :~  ['group' s+(flag:enjs-curio group.bespoke)]
+                              ['channel' s+(flag:enjs-curio channel.bespoke)]
+                              ['time' s+(scot %ud time.bespoke)]
+                              ['heart' (heart:enjs-curio heart.bespoke)]
+                              ['feels' n+(scot %ud feels.bespoke)]
+                              ['replies' n+(scot %ud replies.bespoke)]
+                          ==
       %validity-store  s+''
     ==
   :: ++  enjs-jammed-key-list
@@ -409,14 +418,120 @@
     ^-  json
     s+`@t`(scot %p ship)
   ::
-++  enjs-note
-          :: group=flag:n DONE 
-          :: channel=flag:n DONE
-          :: =time DONE
-          :: essay=essay:n DONE
-          :: feels=@ud DONE 
-          :: replies=@ud DONE
+++  enjs-curio
+  =,  enjs:format
+  |%
+  ++  curio
+    |=  =curio:h
+    %-  pairs
+    :~  seal+(seal -.curio)
+        heart+(heart +.curio)
+    ==
+  ++  seal
+    |=  =seal:h
+    %-  pairs
+    :~  time+(time time.seal)
+    ::
+        :-  %feels
+        %-  pairs
+        %+  turn  ~(tap by feels.seal)
+        |=  [her=@p =feel:h]
+        [(scot %p her) s+feel]
+    ::
+        :-  %replied
+        :-  %a
+        (turn ~(tap in replied.seal) (cork (cury scot %ud) (lead %s)))
+    ==
+  ++  heart
+    |=  =heart:h
+    %-  pairs
+    :~  title+?~(title.heart ~ s+u.title.heart)
+        content+(content content.heart)
+        author+(ship author.heart)
+        sent+(time sent.heart)
+        replying+?~(replying.heart ~ s/(scot %ud u.replying.heart))
+    ==
+  ++  content
+    |=  =content:h
+    %-  pairs
+    :~  block+a+(turn p.content block)
+        inline+a+(turn q.content inline)
+    ==
+  ++  block
+    |=  b=block:h
+    ^-  json
+    %+  frond  -.b
+    ?-  -.b
+        %cite  (cite cite.b)
+        %image
+      %-  pairs
+      :~  src+s+src.b
+          height+(numb height.b)
+          width+(numb width.b)
+          alt+s+alt.b
+      ==
+    ==
+  ++  inline
+    |=  i=inline:h
+    ^-  json
+    ?@  i  s+i
+    %+  frond  -.i
+    ?-  -.i
+        %break
+      ~
+    ::
+        ?(%code %tag %inline-code)
+      s+p.i
+    ::
+        %ship  s/(scot %p p.i)
+    ::
+        %block  ~
+    ::
+        ?(%italics %bold %strike %blockquote)
+      :-  %a
+      (turn p.i inline)
+    ::
+        %link
+      %-  pairs
+      :~  href+s+p.i
+          content+s+q.i
+      ==
+    ==
+  ::
+  ++  cite
+    |=  =cite:h
+    %+  frond  -.cite
+    ?-    -.cite
+        %group  s+(flag flag.cite)
+    ::
+        %desk
+      %-  pairs
+      :~  ['flag' s+(flag flag.cite)]
+          ['where' s+(spat wer.cite)]
+      ==
+    ::
+        %chan
+      %-  pairs
+      :~  nest/s/(nest nest.cite)
+          where/s/(spat wer.cite)
+      ==
+    ::
+        %bait
+      %-  pairs
+      :~  group/s/(flag grp.cite)
+          graph/s/(flag gra.cite)
+          where/s/(spat wer.cite)
+      ==
+    ==
+  ++  flag
+    |=  f=flag:h
+    (rap 3 (scot %p p.f) '/' q.f ~)
+  ++  nest
+    |=  n=nest:h
+    (rap 3 p.n '/' (flag q.n) ~)
 
+  --
+++  enjs-note
   =,  enjs:format
   |%
   ++  essay
@@ -790,6 +905,7 @@
             [%blog json]
             [%groups-chat-msg json]
             [%groups-diary-note json]
+            [%groups-heap-curio json]
         ==
     ?-    -.jn
         %other
@@ -867,6 +983,18 @@
       =+  (turn `(list (unit))`raw |=(a=(unit *) (fall a ~)))
       ;;  (unit bespoke)
       (some groups-diary-note+(pole-to-cell -))
+        %groups-heap-curio
+      =/  raw  %.  ;;((map @t json) +>:jn)
+      %-  ot-raw  :~  group+dejs-soft-null-flag
+                      channel+dejs-soft-flag:dejs-writ
+                      time+dejs-soft-time:dejs-writ
+                      heart+dejs-soft-null-heart
+                      feels+dejs-soft-null-num
+                      replies+dejs-soft-null-num
+                  ==
+      =+  (turn `(list (unit))`raw |=(a=(unit *) (fall a ~)))
+      ;;  (unit bespoke)
+      (some groups-heap-curio+(pole-to-cell -))
     ==
   ::
   ++  dejs-soft-bespoke-edit  ::use ot-raw
@@ -961,6 +1089,10 @@
     |=  jon=json
     ^-  (unit essay:d)
     `*essay:d
+  ++  dejs-soft-null-heart
+    |=  jon=json
+    ^-  (unit heart:h)
+    `*heart:h
   ++  dejs-soft-null-num
     |=  jon=json
     ^-  (unit @ud)
