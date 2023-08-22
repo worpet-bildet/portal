@@ -94,12 +94,11 @@
           </div>
         </div>
         <div class="col-span-11 flex flex-col">
-          <div class="flex gap-2">
-            <span class="text-sm">{author}</span><span>in</span><span
-              >{group}</span
-            >
+          <div class="flex gap-1 text-grey">
+            <a class="text-sm" href={`#/${author}`}>{author}</a><span>in</span
+            ><a href={`#/group/${group}/`}>{group}</a>
           </div>
-          <div>
+          <div class="text-base">
             {#if content?.story?.inline}
               {#each content.story.inline as chat}
                 <InlineChat {chat} />
