@@ -8,7 +8,7 @@
   const reset = async () => {
     await tick();
     autosize.update(textarea);
-    target.innerHTML = '';
+    if (target) target.innerHTML = '';
   };
 
   $: if (value === '') {
@@ -20,8 +20,11 @@
   onMount(() => {
     textarea.addEventListener('paste', function (e) {
       e.preventDefault();
-      var text = e.clipboardData.getData('text/plain');
-      document.execCommand('insertHTML', false, text);
+      document.execCommand(
+        'insertHTML',
+        false,
+        e.clipboardData.getData('text/plain')
+      );
     });
   });
 
