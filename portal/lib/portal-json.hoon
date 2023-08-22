@@ -311,6 +311,7 @@
                              ['path' s+path.bespoke]
                              ['image' s+image.bespoke]
                          ==
+      %tip  s+''
       %groups-chat-msg   %-  pairs
                          :~  ['group' s+(flag:enjs-writ group.bespoke)]
                              ['channel' s+(flag:enjs-writ channel.bespoke)]
