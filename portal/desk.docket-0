@@ -7,5 +7,5 @@
   license+''
   image+'https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/tile2.svg'
   base+'portal'
-  glob-http+['https://portal-glob.nyc3.cdn.digitaloceanspaces.com/glob-0v2.35ioi.8l9c9.ke7lg.9h0je.s7q1t.glob' 0v2.35ioi.8l9c9.ke7lg.9h0je.s7q1t]
+  glob-http+['https://portal-glob.nyc3.cdn.digitaloceanspaces.com/glob-0v7.tr5iv.1r2nl.b1a68.iodv1.f64rc.glob' 0v7.tr5iv.1r2nl.b1a68.iodv1.f64rc]
 ==
