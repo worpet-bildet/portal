@@ -27,6 +27,8 @@
     UpRightArrowIcon,
     OpenAIIcon,
     LoadingIcon,
+    VerticalExpandIcon,
+    VerticalCollapseIcon,
   } from '@fragments';
   import { fromUrbitTime, isValidPatp, isHappeningSoon } from '@root/util';
 
@@ -44,11 +46,19 @@
     });
   };
 
-  let positiveFeedPrompt, negativeFeedPrompt, loading;
+  let positiveFeedPrompt, negativeFeedPrompt, loading, canResetFeed;
   const handlePromptFeed = async () => {
     loading = true;
     await reScoreItems(positiveFeedPrompt, negativeFeedPrompt);
+    feed = feed.sort((a, b) => getItem(b.key)?.score - getItem(a.key)?.score);
+    canResetFeed = true;
     loading = false;
+  };
+
+  const handleResetFeed = () => {
+    feed = feed.sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
+    positiveFeedPrompt = '';
+    negativeFeedPrompt = '';
   };
 
   state.subscribe((s) => {
@@ -64,8 +74,8 @@
       .filter((a) => !!a)
       .filter((a, idx) => {
         return mergedFeed.findIndex((b) => b.time === a.time) === idx;
-      })
-      .sort((a, b) => getItem(b.key)?.score - getItem(a.key)?.score);
+      });
+    // .sort((a, b) => getItem(b.key)?.score - getItem(a.key)?.score);
     // .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
 
     // Get the latest post, if it was more than six hours ago, send another sub
@@ -186,7 +196,7 @@
   <div class="flex flex-col gap-8 rounded-t-2xl col-span-12 md:col-span-6">
     {#if config.aiEnabled !== 'false'}
       <div
-        class="flex border p-4 flex-col rounded-2xl col-span-12 md:col-span-6"
+        class="flex gap-2 border p-4 flex-col rounded-2xl col-span-12 md:col-span-6"
       >
         <div class="flex gap-2">
           <div
@@ -215,40 +225,124 @@
               on:click={() => (showExpandedForm = !showExpandedForm)}
             >
               {#if showExpandedForm}
-                <svg
-                  class="w-3 h-3 text-gray-800 dark:text-white"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 14 8"
-                >
-                  <path
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M13 7 7.674 1.3a.91.91 0 0 0-1.348 0L1 7"
-                  />
-                </svg>
+                <VerticalCollapseIcon />
               {:else}
-                <svg
-                  class="w-3 h-3 text-gray-800 dark:text-white"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 14 8"
-                >
-                  <path
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="m1 1 5.326 5.7a.909.909 0 0 0 1.348 0L13 1"
-                  />
-                </svg>
+                <VerticalExpandIcon />
               {/if}
             </button>
           </div>
+        </div>
+        <div class="flex flex-col overflow-x-scroll scrollbar-hide">
+          <div class="flex gap-4">
+            <button
+              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+              on:click={() => {
+                positiveFeedPrompt = 'Jokes, funny, sarcasm, amusement';
+                negativeFeedPrompt = 'seriousness, work, productivity';
+                handlePromptFeed();
+              }}>Shitposts</button
+            >
+            <button
+              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+              on:click={() => {
+                positiveFeedPrompt = 'poetry';
+                negativeFeedPrompt = '';
+                handlePromptFeed();
+              }}>Poetry</button
+            >
+            <button
+              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+              on:click={() => {
+                positiveFeedPrompt = 'https://';
+                negativeFeedPrompt = '';
+                handlePromptFeed();
+              }}>Links</button
+            >
+            <button
+              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+              on:click={() => {
+                positiveFeedPrompt = 'productivity, work, learning';
+                negativeFeedPrompt = '';
+                handlePromptFeed();
+              }}>Productivity</button
+            >
+            <button
+              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+              on:click={() => {
+                positiveFeedPrompt = 'high wordCount';
+                negativeFeedPrompt = '';
+                handlePromptFeed();
+              }}>Longform</button
+            >
+            <button
+              class="rounded-lg bg-panels-hover hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white text-grey p-2 px-4"
+              on:click={() => {
+                positiveFeedPrompt = 'retweet';
+                negativeFeedPrompt = '';
+                handlePromptFeed();
+              }}>Recommendations</button
+            >
+            <button
+              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+              on:click={() => {
+                positiveFeedPrompt = 'tech, programming, hoon';
+                negativeFeedPrompt = '';
+                handlePromptFeed();
+              }}>Tech</button
+            >
+            <button
+              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+              on:click={() => {
+                positiveFeedPrompt = 'politics';
+                negativeFeedPrompt = '';
+                handlePromptFeed();
+              }}>Politics</button
+            >
+            <button
+              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+              on:click={() => {
+                positiveFeedPrompt = 'crypto';
+                negativeFeedPrompt = '';
+                handlePromptFeed();
+              }}>Crypto</button
+            >
+          </div>
+        </div>
+        <div>
+          {#if showExpandedForm}
+            <div
+              class="border rounded-2xl bg-panels-hover flex w-full justify-between items-center"
+            >
+              <div class="flex items-center justify-center w-full">
+                <div
+                  class="w-9 h-9 ml-3 p-1.5 rounded-xl bg-gradient-to-b from-ai-purple to-ai-blue"
+                >
+                  <OpenAIIcon />
+                </div>
+                <input
+                  type="text"
+                  class="focus:outline-none p-3 placeholder-grey text-black text-lg dark:text-white flex-grow"
+                  placeholder="What do you want to see?"
+                  bind:value={positiveFeedPrompt}
+                  on:keydown={(e) => {
+                    if (e.key === 'Enter') {
+                      handlePromptFeed();
+                    }
+                  }}
+                />
+              </div>
+              <button
+                class="bg-panels-hover rounded-md w-7 h-7 mr-2 flex items-center justify-center"
+                on:click={() => (showExpandedForm = !showExpandedForm)}
+              >
+                {#if showExpandedForm}
+                  <VerticalCollapseIcon />
+                {:else}
+                  <VerticalCollapseIcon />
+                {/if}
+              </button>
+            </div>
+          {/if}
         </div>
         <div class="flex flex-col mt-4 overflow-x-scroll scrollbar-hide">
           <div class="flex gap-4">
@@ -388,6 +482,11 @@
             </div>
           {/if}
         </div>
+        {#if canResetFeed}
+          <div class="flex justify-end">
+            <button class="underline" on:click={handleResetFeed}>Reset</button>
+          </div>
+        {/if}
       </div>
     {/if}
     <div>

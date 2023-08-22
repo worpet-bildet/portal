@@ -12,3 +12,4 @@ export { default as ItemDetail } from './Item/Detail.svelte';
 export { default as ItemPreview } from './Item/Preview.svelte';
 export { default as Sigil } from './Sigil.svelte';
 export { default as ShipForm } from './ShipForm.svelte';
+export { default as TipModal } from './TipModal.svelte';

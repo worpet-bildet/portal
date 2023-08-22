@@ -42,7 +42,7 @@
     uploadedImageUrl = '';
     rating = '';
     error = '';
-    rating = 0;
+    rating = undefined;
   };
 
   // TODO: Factor out the selection of groups/apps into its own component
@@ -107,7 +107,7 @@
   class:border-error={error}
 >
   <div class="col-span-1">
-    <div class="rounded-md overflow-hidden align-middle w-[47px] h-[47px]">
+    <div class="rounded-md overflow-hidden align-middle">
       <Sigil patp={me} />
     </div>
   </div>

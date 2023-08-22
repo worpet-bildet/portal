@@ -47,3 +47,5 @@ export { default as MoonIcon } from './Icons/Moon.svelte';
 export { default as BanknoteIcon } from './Icons/Banknote.svelte';
 export { default as EthereumIcon } from './Icons/Ethereum.svelte';
 export { default as BellIcon } from './Icons/Bell.svelte';
+export { default as VerticalExpandIcon } from './Icons/VerticalExpand.svelte';
+export { default as VerticalCollapseIcon } from './Icons/VerticalCollapse.svelte';

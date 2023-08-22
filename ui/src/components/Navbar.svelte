@@ -48,6 +48,9 @@
   let highContrast = false;
   location.subscribe((l) => {
     highContrast = !pagesWithoutCoverPhoto.includes(l);
+    for (let page of pagesWithoutCoverPhoto) {
+      if (l.includes(page) && page !== '/') highContrast = false;
+    }
   });
 
   const handleNotificationsOpen = () => {
