@@ -87,7 +87,7 @@
       [struc=%collection title=@t blurb=@t image=@t =key-list]
       [struc=%validity-store =validity-records]
       [struc=%blog title=@t blurb=@t uri=@t path=@t image=@t]
-      [struc=%tip tipper=@p beneficiary=@p eth-amount=@t =time note=@t tx-hash=@t]
+      [struc=%tip tipper=@p beneficiary=@p eth-amount=@t time=@t note=@t tx-hash=@t]
       $:  struc=%groups-chat-msg 
           group=flag:w
           channel=flag:w

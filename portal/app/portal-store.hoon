@@ -175,6 +175,10 @@
       ::
         %item
       ?~  item.msg  `this
+      ?:  ?&  ?=(%tip -.bespoke.u.item.msg)
+          !=(beneficiary.bespoke.u.item.msg src.bowl)
+      ==
+        `this
       =.  items  (~(put by items) key.u.item.msg u.item.msg)
       :_  this
       (upd:cards-methods:stor u.item.msg)
