@@ -128,6 +128,20 @@ export const api = {
         scry({ app: 'portal-manager', path: '/processing-payments' }),
       processedPayments: () =>
         scry({ app: 'portal-manager', path: '/processed-payments' }),
+      chatMessage: (path) => scry({ app: 'portal-manager', path }),
+      //  link from groups we are scrying for:
+      //  /1/chan/diary/~worpet-bildet/announcements/note/170141184506311745994155289567817629696
+      // diaryNote: () =>
+      //   scry({
+      //     app: 'diary',
+      //     path: '/diary/~worpet-bildet/announcements/notes/note/170.141.184.506.311.745.994.155.289.567.817.629.696',
+      //   }),
+      // // /1/chan/heap/~toptyr-bilder/links/curio/170141184506270899144208463636562182144
+      // heapCurio: () =>
+      //   scry({
+      //     app: 'heap',
+      //     path: '/heap/~toptyr-bilder/links/curios/curio/id/170.141.184.506.270.899.144.208.463.636.562.182.144',
+      //   }),
     },
     do: {
       create: (json) => pmPoke({ create: json }),
@@ -165,9 +179,62 @@ export const api = {
             note,
           },
         }),
+      //  here use 'create' in the following way:
+      //  bespoke should specify channel and id, and other args should be empty
+      //  everything else can be done as usual with create
+      //  this example creates the message which is scried for in the `chatMessage` scry
+      createGroupsChatMsg: (host, channel, poster, id, time) =>
+        pmPoke({
+          create: {
+            bespoke: {
+              'groups-chat-msg': {
+                group: '',
+                channel: { p: host, q: channel },
+                id: { p: poster, q: id },
+                content: '',
+                feels: 0,
+                replies: 0,
+              },
+            },
+            time,
+          },
+        }),
+    },
+    newDo: {
+      //  /1/chan/diary/~worpet-bildet/announcements/note/170141184506311745994155289567817629696
+      createGroupsDiaryNote: () =>
+        pmPoke({
+          create: {
+            bespoke: {
+              'groups-diary-note': {
+                group: '',
+                channel: { p: '~worpet-bildet', q: 'announcements' },
+                time: '170.141.184.506.311.745.994.155.289.567.817.629.696',
+                essay: '',
+                feels: 0,
+                replies: 0,
+              },
+            },
+          },
+        }),
+      // /1/chan/heap/~toptyr-bilder/links/curio/170141184506270899144208463636562182144
+      createGroupsHeapCurio: () =>
+        pmPoke({
+          create: {
+            bespoke: {
+              'groups-heap-curio': {
+                group: '',
+                channel: { p: '~toptyr-bilder', q: 'links' },
+                time: '170.141.184.506.270.899.144.208.463.636.562.182.144',
+                heart: '',
+                feels: 0,
+                replies: 0,
+              },
+            },
+          },
+        }),
     },
   },
-  newDo: {},
   s3: {
     do: {
       uploadImage: async (file, s3) => {

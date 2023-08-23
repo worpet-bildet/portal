@@ -1,5 +1,5 @@
 /-  subgraph
-/+  verb, dbug, default-agent, io=agentio,
+/+  verb, dbug, default-agent, io=agentio, portal,
     g=social-graph, *mip, *sss
 /$  social-graph-result-to-json  %social-graph-result  %json
 /$  json-to-social-graph-track  %json  %social-graph-track
@@ -19,13 +19,15 @@
 ::   [%tags @ %entity @ @ %entity @ @ ~]
 ::  - update to work with new sss
 ::  =^  cards  subgraph-pub, instead of =.  subgraph-pub
+::  - autosub to comments on receiving %new-edge
 +$  state-2
+  $+  graph-state-2
   $:  %2
       graph=social-graph:g
       perms=(map [app:g tag:g] permission-level:g)
       tracking=(map [app:g tag:g] ship)
   ==
-+$  card  card:agent:gall
++$  card  $+  gall-card  card:agent:gall
 ::
 ::  scry paths
 ::
@@ -297,10 +299,27 @@
             %new-edge
           :_  %-  ~(add-tag sg:g graph.state)
               [from.u.wave.msg to.u.wave.msg app tag.u.wave.msg]
-          :~  :*  %give  %fact  [/updates]~  %social-graph-result
-              !>  :-  %app  %-  my
+          %+  welp
+            ::  autosubbing to comments
+            ?:  ?&  =(+:tag.u.wave.msg /reply-to)
+                    =(our.bowl ship:(node-to-key:conv:portal to.u.wave.msg))
+                ==
+                :_  ~
+                :*  %pass  /sub  %agent  [our.bowl %portal-manager]  %poke
+                    %portal-action  !>([%sub (node-to-key:conv:portal from.u.wave.msg)])
+                ==
+            ?:  ?&  =(+:tag.u.wave.msg /reply-from)
+                    !=(our.bowl ship:(node-to-key:conv:portal from.u.wave.msg))
+                ==
+                :_  ~
+                :*  %pass  /sub  %agent  [our.bowl %portal-manager]  %poke
+                    %portal-action  !>([%sub (node-to-key:conv:portal to.u.wave.msg)])
+                ==
+            ~
+          :_  ~
+          :*  %give  %fact  [/updates]~  %social-graph-result  !>  :-  %app  %-  my
               [tag:u.wave.msg (my [[from:u.wave.msg (sy [to:u.wave.msg]~)]]~)]~
-          ==  ==
+          ==
           ::
             %gone-edge
           :-  ~

@@ -1,11 +1,11 @@
 module.exports = {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx,svelte}'],
   theme: {
-    fontFamily: {
-      logo: ['krona'],
-      saucebold: ['sauce-bold'],
-    },
     extend: {
+      fontFamily: {
+        logo: ['krona'],
+        saucebold: ['sauce-bold'],
+      },
       scrollbarHide: {
         '-ms-overflow-style': 'none',
         'scrollbar-width': 'none',

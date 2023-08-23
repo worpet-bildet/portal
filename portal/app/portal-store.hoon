@@ -8,34 +8,39 @@
 =/  indexer  *portal-indexer:portal-config
 |%
 +$  versioned-state
+  $+  store-versioned-state
   $%  state-0
       state-1
       state-2
       state-3
   ==
 +$  state-0
+  $+  store-state-0
   $:  %0
       =all-items:portal-data-0
   ==
 +$  state-1
+  $+  store-state-1
   $:  %1
       =items:portal-data-1
       item-sub=*
       item-pub=*
   ==
 +$  state-2
+  $+  store-state-2
   $:  %2
       =items:portal-data-2
       item-sub=*
       item-pub=*
   ==
 +$  state-3
+  $+  store-state-3
   $:  %3
       =items
       item-sub=_(mk-subs:sss portal-item ,[%item @ @ @ @ ~])
       item-pub=_(mk-pubs:sss portal-item ,[%item @ @ @ @ ~])
   ==
-+$  card  card:agent:gall
++$  card  $+  gall-card  card:agent:gall
 --
 %-  agent:dbug
 =|  state-3
@@ -56,9 +61,12 @@
   =^  cards  state  init-sequence:stor
   [cards this]
 ::
-++  on-save  !>(state)
+++  on-save  
+  ~>  %bout.[0 '%portal-store +on-save']
+  !>(state)
 ++  on-load
   |=  =vase
+  ~>  %bout.[0 '%portal-store +on-load']
   ^-  (quip card _this)
   =/  old  !<(versioned-state vase)
   ::  -  get state up to date!

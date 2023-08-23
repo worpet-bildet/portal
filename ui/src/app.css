@@ -3,13 +3,31 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: sauce-medium;
+  font-family: opensaucesans;
   src: url("./assets/opensaucesans-medium.woff2");
+  font-weight: normal;
+  font-style: normal;
 }
 
 @font-face {
-  font-family: sauce-bold;
+  font-family: opensaucesans;
   src: url("./assets/opensaucesans-black.woff2");
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: opensaucesans;
+  src: url("./assets/opensaucesans-mediumitalic.woff2");
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: opensaucesans;
+  src: url("./assets/opensaucesans-blackitalic.woff2");
+  font-weight: bold;
+  font-style: italic;
 }
 
 @font-face {
@@ -18,7 +36,7 @@
 }
 
 :root {
-  font-family: sauce-medium, Inter, Avenir, Helvetica, Arial, sans-serif;
+  font-family: opensaucesans, Inter, Avenir, Helvetica, Arial, sans-serif;
   font-size: 16px;
   line-height: 24px;
   font-weight: 400;

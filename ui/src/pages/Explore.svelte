@@ -11,11 +11,11 @@
   import { getMeta } from '@root/util';
   import { ItemPreview } from '@components';
   import {
-    LoadingIcon,
     IconButton,
     SparklesIcon,
     AppIcon,
     PeopleIcon,
+    LoadingIcon,
     CollectionIcon,
     SearchIcon,
   } from '@fragments';

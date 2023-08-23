@@ -5,8 +5,12 @@
 +$  portal-curator  indexer
 +$  portal-indexer  indexer
 ::
-+$  processing-payments  (map hex [=buyer =key =receiving-address])
-+$  processed-payments  (list [=buyer =key tx-hash=@t =time note=@t])
++$  processing-payments  
+  $+  processing-payments
+  (map hex [=buyer =key =receiving-address])
++$  processed-payments
+  $+  processed-payments
+  (list [=buyer =key tx-hash=@t =time note=@t])
 ::
 +$  receiving-address  @t
 +$  eth-amount  @t
@@ -23,6 +27,7 @@
 +$  dev-map   (map @t ship)
 ::
 +$  manager-result
+  $+  manager-result
   $@  ?
   $%  [%portal-devs (map @t ship)]
       [%bought-apps (map [=ship =desk] @t)]
@@ -33,11 +38,12 @@
       [%receiving-address =receiving-address]
   ==
 ::
-+$  state-0  [%0 *]
-+$  state-1  [%1 *]
-+$  state-2  [[%2 *] *]  :: state-2 had feed SSS stuff next to it
++$  state-0  $+  manager-state-0  [%0 *]
++$  state-1  $+  manager-state-1  [%1 *]
++$  state-2  $+  manager-state-2  [[%2 *] *]  :: state-2 had feed SSS stuff next to it
 ::
 +$  state-3
+  $+  manager-state-3
   $:  %3
       =portal-curator
       =portal-indexer
@@ -48,6 +54,7 @@
   ==
 ::
 +$  state-4
+  $+  manager-state-4
   $:  %4
       =portal-curator
       =portal-indexer

@@ -4,4 +4,5 @@ export default {
   chainId: import.meta.env.VITE_ETH_CHAIN_ID,
   env: import.meta.env.VITE_ENV,
   openai: import.meta.env.VITE_OPENAI_API_KEY,
+  aiEnabled: import.meta.env.VITE_AI_ENABLED,
 };

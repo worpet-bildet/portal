@@ -1,5 +1,5 @@
 /-  *portal-data, *portal-action, *portal-message, config=portal-config,
-    groups, treaty, portal-devs, blog-paths
+    groups, treaty, portal-devs, blog-paths, writ
 /+  default-agent, dbug, *portal, io=agentio, *sig, *sss, ethereum, verb
 /$  json-to-action  %json  %portal-action
 /$  msg-to-json  %portal-message  %json
@@ -7,6 +7,7 @@
 /$  portal-manager-result-to-json  %portal-manager-result  %json
 |%
 +$  versioned-state
+  $+  manager-versioned-state
   $%  state-0:config
       state-1:config
       state-2:config
@@ -18,6 +19,7 @@
       state-8
   ==
 +$  state-8
+  $+  manager-state-8
   $:  %8
       =processing-payments:config
       =processed-payments:config
@@ -37,6 +39,7 @@
       =our-apps:config
   ==
 +$  state-7
+  $+  manager-state-7
   $:  %7
       authorized-ships=(set ship)
       bought-apps=(map [ship desk] tx-hash=@t)
@@ -52,6 +55,7 @@
       =our-apps:config
   ==
 +$  state-6
+  $+  manager-state-6
   $:  %6
       sub-blog-paths=_(mk-subs blog-paths ,[%paths ~])
       sub-portal-devs=_(mk-subs portal-devs ,[%portal-devs ~])
@@ -65,6 +69,7 @@
       =our-apps:config
   ==
 +$  state-5
+  $+  manager-state-5
   $:  %5
       sub-portal-devs=_(mk-subs portal-devs ,[%portal-devs ~])
       =dev-map:config
@@ -76,7 +81,7 @@
       =onboarded:config
       =our-apps:config
   ==
-+$  card  card:agent:gall
++$  card  $+  gall-card  card:agent:gall
 --
 ::  %+  verb  %.y
 %-  agent:dbug
@@ -211,11 +216,6 @@
 
         %onboarded
       `this(onboarded toggle.act)
-      ::
-        %index-as-curator
-      =/  msg  [%index-as-curator src.bowl toggle.act]
-      :_  this(indexed-as-curator toggle.act)
-      [(~(msg cards [portal-indexer.state %portal-manager]) msg)]~
       ::
         %payment-request
       ?:  (~(has by bought-apps) src.bowl desk.act)
@@ -354,16 +354,6 @@
         %tip-confirmed
       :_  this
       [%give %fact [/updates]~ %portal-message !>(msg)]~
-      ::
-        %index-as-curator
-      ?>  =(our.bowl portal-indexer)
-      ?>  =(src.bowl src.msg)
-      =/  act  ~(act cards [our.bowl %portal-store])
-      =/  index-key  [%collection our.bowl '' 'index']
-      =/  ship-key   [%ship src.msg '' '']
-      =/  cards  `(list card)`~[(act [%remove ~[ship-key] index-key])]
-      =?  cards  toggle.msg  (snoc cards (act [%prepend ~[ship-key] index-key]))
-      [cards this]
     ==
     ::
       %sss-on-rock
@@ -550,16 +540,21 @@
 ++  on-peek
   |=  =path
   ^-  (unit (unit cage))
+  :+  ~  ~
   ?+    path    (on-peek:default path)
-    [%x %indexed-as-curator ~]   ``portal-manager-result+!>(indexed-as-curator)
-    [%x %onboarded ~]            ``portal-manager-result+!>(onboarded)
-    [%x %portal-devs ~]          ``portal-manager-result+!>([%portal-devs dev-map])
-    [%x %bought-apps ~]          ``portal-manager-result+!>([%bought-apps bought-apps])
-    [%x %authorized-ships ~]     ``portal-manager-result+!>([%authorized-ships authorized-ships])
-    [%x %rpc-endpoint ~]         ``portal-manager-result+!>([%rpc-endpoint rpc-endpoint])
-    [%x %receiving-address ~]    ``portal-manager-result+!>([%receiving-address receiving-address])
-    [%x %processing-payments ~]  ``portal-manager-result+!>([%processing-payments processing-payments])
-    [%x %processed-payments ~]   ``portal-manager-result+!>([%processed-payments processed-payments])
+    [%x %indexed-as-curator ~]   portal-manager-result+!>(indexed-as-curator)
+    [%x %onboarded ~]            portal-manager-result+!>(onboarded)
+    [%x %portal-devs ~]          portal-manager-result+!>([%portal-devs dev-map])
+    [%x %bought-apps ~]          portal-manager-result+!>([%bought-apps bought-apps])
+    [%x %authorized-ships ~]     portal-manager-result+!>([%authorized-ships authorized-ships])
+    [%x %rpc-endpoint ~]         portal-manager-result+!>([%rpc-endpoint rpc-endpoint])
+    [%x %receiving-address ~]    portal-manager-result+!>([%receiving-address receiving-address])
+    [%x %processing-payments ~]  portal-manager-result+!>([%processing-payments processing-payments])
+    [%x %processed-payments ~]   portal-manager-result+!>([%processed-payments processed-payments])
+    ::
+      [%x %chat @ @ %writs %writ %id @ @ ~]
+    =+  new-writ=.^(* (~(construct scry [our now]:bowl) %gx %chat (snoc `(list @ta)`t.path %writ)))
+    writ+!>(;;(writ:writ +:new-writ))
   ==
 ++  on-agent
   |=  [=wire =sign:agent:gall]
