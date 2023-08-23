@@ -3,7 +3,9 @@
 ::
 ::  units are optional args
 +$  action
-  $%  $:  %create
+  $+  action
+  $%  $+  create
+      $:  %create
          ship=(unit ship)
          cord=(unit cord)
          time=(unit cord)
@@ -16,6 +18,7 @@
          tags-to=(list [=key tag-to=path tag-from=path])
       ==
       ::
+      $+  edit
       $:  %edit
         $:  =key
             lens=(unit lens)
@@ -30,22 +33,32 @@
         ==
       ==
       ::
+      $+  replace
       [%replace =key =lens =bespoke]  ::  TODO should it act like put or edit?, i.e. can it create a nonexisting item. NO! (?)
       ::
+      $+  add-tag-request
       [%add-tag-request our=key their=key tag-to=path tag-from=path]
       ::  
+      $+  append
       [%append =key-list col-key=[struc=%collection =ship =cord time=cord]]
+      $+  prepend
       [%prepend =key-list col-key=[struc=%collection =ship =cord time=cord]]
       ::  removes all instances of key from collection
+      $+  remove
       [%remove =key-list col-key=[struc=%collection =ship =cord time=cord]]
       ::
+      $+  delete
       [%delete =key]  ::  adds [%deleted ~] lens
+      $+  destroy
       [%destroy =key]  :: abolishes the item from the atmosphere
       ::
+      $+  sub
       [%sub =key]
+      $+  sub-to-many
       [%sub-to-many =key-list]
       ::
       ::
+      $+  prepend-to-feed
       [%prepend-to-feed =feed feed-key=[struc=%feed =ship =cord time=cord]]  ::  TODO rename?
       [%index-as-curator toggle=?]
       [%onboarded toggle=?]
@@ -59,9 +72,11 @@
       [%payment-request seller=ship =desk]
       [%payment-tx-hash seller=ship tx-hash=@t]
       ::
+      $+  tip-request
       [%tip-request =key]
       [%tip-tx-hash beneficiary=ship tx-hash=@t note=@t]
       ::
+      $+  authorize-ships
       [%authorize-ships authorized-ships=(set ship)]
       ::
       [%set-rpc-endpoint rpc-endpoint=@ta]
