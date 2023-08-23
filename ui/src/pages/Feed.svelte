@@ -49,14 +49,14 @@
   let positiveFeedPrompt, negativeFeedPrompt, loading, canResetFeed;
   const handlePromptFeed = async () => {
     loading = true;
-    canResetFeed = true;
     await reScoreItems(positiveFeedPrompt, negativeFeedPrompt);
+    feed = feed.sort((a, b) => getItem(b.key)?.score - getItem(a.key)?.score);
+    canResetFeed = true;
     loading = false;
   };
 
   const handleResetFeed = () => {
     feed = feed.sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
-    canResetFeed = false;
     positiveFeedPrompt = '';
     negativeFeedPrompt = '';
   };
@@ -75,12 +75,6 @@
       .filter((a, idx) => {
         return mergedFeed.findIndex((b) => b.time === a.time) === idx;
       });
-
-    if (canResetFeed) {
-      feed = feed.sort((a, b) => getItem(b.key)?.score - getItem(a.key)?.score);
-    } else {
-      feed = feed.sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
-    }
     // .sort((a, b) => getItem(b.key)?.score - getItem(a.key)?.score);
     // .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
 

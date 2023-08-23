@@ -92,6 +92,7 @@
 
   const dispatch = createEventDispatcher();
   const handleTipRequest = (key) => {
+    console.log('woooooo');
     dispatch('tipRequest', { key });
   };
 </script>
