@@ -20,12 +20,13 @@
 ::  - update to work with new sss
 ::  =^  cards  subgraph-pub, instead of =.  subgraph-pub
 +$  state-2
+  $+  graph-state-2
   $:  %2
       graph=social-graph:g
       perms=(map [app:g tag:g] permission-level:g)
       tracking=(map [app:g tag:g] ship)
   ==
-+$  card  card:agent:gall
++$  card  $+  gall-card  card:agent:gall
 ::
 ::  scry paths
 ::
