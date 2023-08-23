@@ -1,5 +1,5 @@
 /-  *portal-data, *portal-action, *portal-message, config=portal-config,
-    groups, treaty, portal-devs, blog-paths
+    groups, treaty, portal-devs, blog-paths, writ
 /+  default-agent, dbug, *portal, io=agentio, *sig, *sss, ethereum, verb
 /$  json-to-action  %json  %portal-action
 /$  msg-to-json  %portal-message  %json
@@ -550,16 +550,21 @@
 ++  on-peek
   |=  =path
   ^-  (unit (unit cage))
+  :+  ~  ~
   ?+    path    (on-peek:default path)
-    [%x %indexed-as-curator ~]   ``portal-manager-result+!>(indexed-as-curator)
-    [%x %onboarded ~]            ``portal-manager-result+!>(onboarded)
-    [%x %portal-devs ~]          ``portal-manager-result+!>([%portal-devs dev-map])
-    [%x %bought-apps ~]          ``portal-manager-result+!>([%bought-apps bought-apps])
-    [%x %authorized-ships ~]     ``portal-manager-result+!>([%authorized-ships authorized-ships])
-    [%x %rpc-endpoint ~]         ``portal-manager-result+!>([%rpc-endpoint rpc-endpoint])
-    [%x %receiving-address ~]    ``portal-manager-result+!>([%receiving-address receiving-address])
-    [%x %processing-payments ~]  ``portal-manager-result+!>([%processing-payments processing-payments])
-    [%x %processed-payments ~]   ``portal-manager-result+!>([%processed-payments processed-payments])
+    [%x %indexed-as-curator ~]   portal-manager-result+!>(indexed-as-curator)
+    [%x %onboarded ~]            portal-manager-result+!>(onboarded)
+    [%x %portal-devs ~]          portal-manager-result+!>([%portal-devs dev-map])
+    [%x %bought-apps ~]          portal-manager-result+!>([%bought-apps bought-apps])
+    [%x %authorized-ships ~]     portal-manager-result+!>([%authorized-ships authorized-ships])
+    [%x %rpc-endpoint ~]         portal-manager-result+!>([%rpc-endpoint rpc-endpoint])
+    [%x %receiving-address ~]    portal-manager-result+!>([%receiving-address receiving-address])
+    [%x %processing-payments ~]  portal-manager-result+!>([%processing-payments processing-payments])
+    [%x %processed-payments ~]   portal-manager-result+!>([%processed-payments processed-payments])
+    ::
+      [%x %chat @ @ %writs %writ %id @ @ ~]
+    =+  new-writ=.^(* (~(construct scry [our now]:bowl) %gx %chat (snoc `(list @ta)`t.path %writ)))
+    writ+!>(;;(writ:writ +:new-writ))
   ==
 ++  on-agent
   |=  [=wire =sign:agent:gall]
