@@ -256,11 +256,11 @@
               />
               <div class="flex justify-center">
                 {#if canResetFeed}
-                  <button on:click={handleResetFeed} class="bg-panels-hover text-grey rounded-md px-2 mr-2 flex items-center justify-center"
+                  <button on:click={handleResetFeed} class="bg-panels-hover text-grey dark:border rounded-md px-2 mr-2 flex items-center justify-center"
                     >x</button>
                 {:else}
                   <button
-                  class="bg-panels-hover rounded-md w-7 h-7 mr-2 flex items-center justify-center"
+                  class="bg-panels-hover dark:border dark:text-grey rounded-md w-7 h-7 mr-2 flex items-center justify-center"
                   >/</button>
                 {/if}
               </div>
@@ -399,7 +399,7 @@
         </div>
         <div class="flex justify-center">
           <button
-              class="bg-panels-solid rounded-md w-7 h-7 mr-2 border flex items-center justify-center mb-[-30px]"
+              class="bg-panels-solid dark:bg-darkgrey rounded-md w-7 h-7 mr-2 border flex items-center justify-center mb-[-30px]"
               on:click={() => (showExpandedForm = !showExpandedForm)}
             >
             {#if showExpandedForm}
