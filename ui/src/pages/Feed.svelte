@@ -49,14 +49,14 @@
   let positiveFeedPrompt, negativeFeedPrompt, loading, canResetFeed;
   const handlePromptFeed = async () => {
     loading = true;
-    canResetFeed = true;
     await reScoreItems(positiveFeedPrompt, negativeFeedPrompt);
+    feed = feed.sort((a, b) => getItem(b.key)?.score - getItem(a.key)?.score);
+    canResetFeed = true;
     loading = false;
   };
 
   const handleResetFeed = () => {
     feed = feed.sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
-    canResetFeed = false;
     positiveFeedPrompt = '';
     negativeFeedPrompt = '';
   };
@@ -75,7 +75,6 @@
       .filter((a, idx) => {
         return mergedFeed.findIndex((b) => b.time === a.time) === idx;
       });
-
     if (canResetFeed) {
       feed = feed.sort((a, b) => getItem(b.key)?.score - getItem(a.key)?.score);
     } else {
@@ -112,16 +111,35 @@
     sortedRecommendations = getCollectedItemLeaderboard(me).slice(0, 4);
   });
 
-  const handlePost = ({ detail: { content, uploadedImageUrl } }) => {
-    api.portal.do.create({
-      bespoke: {
-        other: {
-          title: '',
-          blurb: content || '',
-          link: '',
-          image: uploadedImageUrl || '',
+  const handlePost = ({ detail: { content, uploadedImageUrl, ref } }) => {
+    let post = {};
+    console.log({ ref });
+    if (ref) {
+      // Here we need to create the retweet post instead of the type "other"
+      post = {
+        ...post,
+        bespoke: {
+          retweet: {
+            ref: ref,
+            blurb: content || '',
+          },
         },
-      },
+      };
+    } else {
+      post = {
+        ...post,
+        bespoke: {
+          other: {
+            title: '',
+            blurb: content || '',
+            link: '',
+            image: uploadedImageUrl || '',
+          },
+        },
+      };
+    }
+    post = {
+      ...post,
       'prepend-to-feed': [
         {
           ship: me,
@@ -130,7 +148,8 @@
           cord: '',
         },
       ],
-    });
+    };
+    api.portal.do.create(post);
   };
 
   let searchShip;
@@ -200,123 +219,13 @@
 
 <div class="grid grid-cols-9 gap-8 mb-4">
   <div class="flex flex-col gap-8 rounded-t-2xl col-span-12 md:col-span-6">
-    <div
-      class="flex gap-2 border p-4 flex-col rounded-2xl col-span-12 md:col-span-6"
-    >
-      <div class="flex gap-2">
-        <div
-          class="border rounded-2xl bg-panels-hover flex w-full justify-between items-center"
-        >
-          <div class="flex items-center justify-center w-full">
-            <div
-              class="w-9 h-9 ml-3 p-1.5 rounded-xl bg-gradient-to-b from-ai-purple to-ai-blue"
-            >
-              <OpenAIIcon />
-            </div>
-            <input
-              type="text"
-              class="focus:outline-none p-3 placeholder-grey text-black text-lg dark:text-white flex-grow"
-              placeholder="What do you want to see?"
-              bind:value={positiveFeedPrompt}
-              on:keydown={(e) => {
-                if (e.key === 'Enter') {
-                  handlePromptFeed();
-                }
-              }}
-            />
-          </div>
-          <button
-            class="bg-panels-hover rounded-md w-7 h-7 mr-2 flex items-center justify-center"
-            on:click={() => (showExpandedForm = !showExpandedForm)}
-          >
-            {#if showExpandedForm}
-              <VerticalCollapseIcon />
-            {:else}
-              <VerticalExpandIcon />
-            {/if}
-          </button>
-        </div>
-      </div>
-      <div class="flex flex-col overflow-x-scroll scrollbar-hide">
-        <div class="flex gap-4">
-          <button
-            class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
-            on:click={() => {
-              positiveFeedPrompt = 'Jokes, funny, sarcasm, amusement';
-              negativeFeedPrompt = 'seriousness, work, productivity';
-              handlePromptFeed();
-            }}>Shitposts</button
-          >
-          <button
-            class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
-            on:click={() => {
-              positiveFeedPrompt = 'poetry';
-              negativeFeedPrompt = '';
-              handlePromptFeed();
-            }}>Poetry</button
-          >
-          <button
-            class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
-            on:click={() => {
-              positiveFeedPrompt = 'https://';
-              negativeFeedPrompt = '';
-              handlePromptFeed();
-            }}>Links</button
-          >
-          <button
-            class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
-            on:click={() => {
-              positiveFeedPrompt = 'productivity, work, learning';
-              negativeFeedPrompt = '';
-              handlePromptFeed();
-            }}>Productivity</button
-          >
-          <button
-            class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
-            on:click={() => {
-              positiveFeedPrompt = 'high wordCount';
-              negativeFeedPrompt = '';
-              handlePromptFeed();
-            }}>Longform</button
-          >
-          <button
-            class="rounded-lg bg-panels-hover hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white text-grey p-2 px-4"
-            on:click={() => {
-              positiveFeedPrompt = 'retweet';
-              negativeFeedPrompt = '';
-              handlePromptFeed();
-            }}>Recommendations</button
-          >
-          <button
-            class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
-            on:click={() => {
-              positiveFeedPrompt = 'tech, programming, hoon';
-              negativeFeedPrompt = '';
-              handlePromptFeed();
-            }}>Tech</button
-          >
-          <button
-            class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
-            on:click={() => {
-              positiveFeedPrompt = 'politics';
-              negativeFeedPrompt = '';
-              handlePromptFeed();
-            }}>Politics</button
-          >
-          <button
-            class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
-            on:click={() => {
-              positiveFeedPrompt = 'crypto';
-              negativeFeedPrompt = '';
-              handlePromptFeed();
-            }}>Crypto</button
-          >
-        </div>
-      </div>
-      <div>
-        {#if showExpandedForm}
+    {#if config.aiEnabled !== 'false'}
+      <div
+        class="flex gap-2 border p-4 flex-col rounded-2xl col-span-12 md:col-span-6"
+      >
+        <div class="flex gap-2">
           <div
-            class="border rounded-2xl bg-panels-hover flex w-full justify-between items-center mt-4"
+            class="border rounded-2xl bg-panels-hover flex w-full justify-between items-center"
           >
             <div class="flex items-center justify-center w-full">
               <div
@@ -327,8 +236,8 @@
               <input
                 type="text"
                 class="focus:outline-none p-3 placeholder-grey text-black text-lg dark:text-white flex-grow"
-                placeholder="Show me less ..."
-                bind:value={negativeFeedPrompt}
+                placeholder="What do you want to see?"
+                bind:value={positiveFeedPrompt}
                 on:keydown={(e) => {
                   if (e.key === 'Enter') {
                     handlePromptFeed();
@@ -336,51 +245,163 @@
                 }}
               />
             </div>
+            <button
+              class="bg-panels-hover rounded-md w-7 h-7 mr-2 flex items-center justify-center"
+              on:click={() => (showExpandedForm = !showExpandedForm)}
+            >
+              {#if showExpandedForm}
+                <VerticalCollapseIcon />
+              {:else}
+                <VerticalExpandIcon />
+              {/if}
+            </button>
           </div>
-          <div class="flex flex-col mt-4">
-            <div class="flex gap-4">
-              <button
-                class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
-                on:click={() => {
-                  positiveFeedPrompt = '';
-                  negativeFeedPrompt = 'abortion, racism, sexism, classism';
-                  handlePromptFeed();
-                }}>Culture wars</button
-              >
-              <button
-                class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
-                on:click={() => {
-                  positiveFeedPrompt = '';
-                  negativeFeedPrompt = 'Jokes, funny, sarcasm, amusement';
-                  handlePromptFeed();
-                }}>Shitposts</button
-              >
-              <button
-                class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
-                on:click={() => {
-                  positiveFeedPrompt = '';
-                  negativeFeedPrompt = 'politics';
-                  handlePromptFeed();
-                }}>Politics</button
-              >
-              <button
-                class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
-                on:click={() => {
-                  positiveFeedPrompt = '';
-                  negativeFeedPrompt = 'crypto';
-                  handlePromptFeed();
-                }}>Crypto</button
-              >
+        </div>
+        <div class="flex flex-col overflow-x-scroll scrollbar-hide">
+          <div class="flex gap-4">
+            <button
+              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+              on:click={() => {
+                positiveFeedPrompt = 'Jokes, funny, sarcasm, amusement';
+                negativeFeedPrompt = 'seriousness, work, productivity';
+                handlePromptFeed();
+              }}>Shitposts</button
+            >
+            <button
+              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+              on:click={() => {
+                positiveFeedPrompt = 'poetry';
+                negativeFeedPrompt = '';
+                handlePromptFeed();
+              }}>Poetry</button
+            >
+            <button
+              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+              on:click={() => {
+                positiveFeedPrompt = 'https://';
+                negativeFeedPrompt = '';
+                handlePromptFeed();
+              }}>Links</button
+            >
+            <button
+              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+              on:click={() => {
+                positiveFeedPrompt = 'productivity, work, learning';
+                negativeFeedPrompt = '';
+                handlePromptFeed();
+              }}>Productivity</button
+            >
+            <button
+              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+              on:click={() => {
+                positiveFeedPrompt = 'high wordCount';
+                negativeFeedPrompt = '';
+                handlePromptFeed();
+              }}>Longform</button
+            >
+            <button
+              class="rounded-lg bg-panels-hover hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white text-grey p-2 px-4"
+              on:click={() => {
+                positiveFeedPrompt = 'retweet';
+                negativeFeedPrompt = '';
+                handlePromptFeed();
+              }}>Recommendations</button
+            >
+            <button
+              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+              on:click={() => {
+                positiveFeedPrompt = 'tech, programming, hoon';
+                negativeFeedPrompt = '';
+                handlePromptFeed();
+              }}>Tech</button
+            >
+            <button
+              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+              on:click={() => {
+                positiveFeedPrompt = 'politics';
+                negativeFeedPrompt = '';
+                handlePromptFeed();
+              }}>Politics</button
+            >
+            <button
+              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+              on:click={() => {
+                positiveFeedPrompt = 'crypto';
+                negativeFeedPrompt = '';
+                handlePromptFeed();
+              }}>Crypto</button
+            >
+          </div>
+        </div>
+        <div>
+          {#if showExpandedForm}
+            <div
+              class="border rounded-2xl bg-panels-hover flex w-full justify-between items-center mt-4"
+            >
+              <div class="flex items-center justify-center w-full">
+                <div
+                  class="w-9 h-9 ml-3 p-1.5 rounded-xl bg-gradient-to-b from-ai-purple to-ai-blue"
+                >
+                  <OpenAIIcon />
+                </div>
+                <input
+                  type="text"
+                  class="focus:outline-none p-3 placeholder-grey text-black text-lg dark:text-white flex-grow"
+                  placeholder="Show me less ..."
+                  bind:value={negativeFeedPrompt}
+                  on:keydown={(e) => {
+                    if (e.key === 'Enter') {
+                      handlePromptFeed();
+                    }
+                  }}
+                />
+              </div>
             </div>
+            <div class="flex flex-col mt-4">
+              <div class="flex gap-4">
+                <button
+                  class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+                  on:click={() => {
+                    positiveFeedPrompt = '';
+                    negativeFeedPrompt = 'abortion, racism, sexism, classism';
+                    handlePromptFeed();
+                  }}>Culture wars</button
+                >
+                <button
+                  class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+                  on:click={() => {
+                    positiveFeedPrompt = '';
+                    negativeFeedPrompt = 'Jokes, funny, sarcasm, amusement';
+                    handlePromptFeed();
+                  }}>Shitposts</button
+                >
+                <button
+                  class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+                  on:click={() => {
+                    positiveFeedPrompt = '';
+                    negativeFeedPrompt = 'politics';
+                    handlePromptFeed();
+                  }}>Politics</button
+                >
+                <button
+                  class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+                  on:click={() => {
+                    positiveFeedPrompt = '';
+                    negativeFeedPrompt = 'crypto';
+                    handlePromptFeed();
+                  }}>Crypto</button
+                >
+              </div>
+            </div>
+          {/if}
+        </div>
+        {#if canResetFeed}
+          <div class="flex justify-end">
+            <button class="underline" on:click={handleResetFeed}>Reset</button>
           </div>
         {/if}
       </div>
-      {#if canResetFeed}
-        <div class="flex justify-end">
-          <button class="underline" on:click={handleResetFeed}>Reset</button>
-        </div>
-      {/if}
-    </div>
+    {/if}
     <div>
       <FeedPostForm on:post={handlePost} />
       {#if loading}

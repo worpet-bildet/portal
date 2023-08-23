@@ -139,7 +139,7 @@
       {#each nav as n}
         <button
           on:click={() => (n.action ? n.action() : push(n.link))}
-          class="rounded-xl flex font-saucebold items-center px-4 hover:duration-500 py-2 md:py-0"
+          class="rounded-xl flex font-bold items-center px-4 hover:duration-500 py-2 md:py-0"
           class:text-grey={$location === n.link && highContrast}
           class:text-white={highContrast}>{n.title}</button
         >
@@ -155,7 +155,7 @@
 
     {#if isMobileNavOpen}
       <div
-        class="absolute top-0 right-0 flex font-saucebold flex-col items-end gap-4 bg-white pt-2 pb-5 px-5 rounded-md md:hidden"
+        class="absolute top-0 right-0 flex font-bold flex-col items-end gap-4 bg-white pt-2 pb-5 px-5 rounded-md md:hidden"
       >
         <button
           class="w-10 h-10"

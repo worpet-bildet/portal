@@ -128,31 +128,20 @@ export const api = {
         scry({ app: 'portal-manager', path: '/processing-payments' }),
       processedPayments: () =>
         scry({ app: 'portal-manager', path: '/processed-payments' }),
-      //  link from groups we are scrying for:
-      //  /1/chan/chat/~sampel-dilryd-mopreg/new-channel/msg/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749
-      chatMessage: () =>
-        scry({ 
-          app: 'portal-manager', 
-          path: '/chat/~sampel-dilryd-mopreg/new-channel/writs/writ/id/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749'
-      }),
-      chatMessage2: () =>
-        scry({ 
-          app: 'portal-manager', 
-          path: '/chat/~worpet-bildet/feedback---support/writs/writ/id/~novmec-hiltux/170.141.184.506.366.058.491.440.790.996.128.152.682'
-      }),
+      chatMessage: (path) => scry({ app: 'portal-manager', path }),
       //  link from groups we are scrying for:
       //  /1/chan/diary/~worpet-bildet/announcements/note/170141184506311745994155289567817629696
-      diaryNote: () =>
-        scry({
-          app: 'diary',
-          path: '/diary/~worpet-bildet/announcements/notes/note/170.141.184.506.311.745.994.155.289.567.817.629.696'
-        }),
-      // /1/chan/heap/~toptyr-bilder/links/curio/170141184506270899144208463636562182144
-      heapCurio: () =>
-        scry({
-          app: 'heap',
-          path: '/heap/~toptyr-bilder/links/curios/curio/id/170.141.184.506.270.899.144.208.463.636.562.182.144'
-        }),
+      // diaryNote: () =>
+      //   scry({
+      //     app: 'diary',
+      //     path: '/diary/~worpet-bildet/announcements/notes/note/170.141.184.506.311.745.994.155.289.567.817.629.696',
+      //   }),
+      // // /1/chan/heap/~toptyr-bilder/links/curio/170141184506270899144208463636562182144
+      // heapCurio: () =>
+      //   scry({
+      //     app: 'heap',
+      //     path: '/heap/~toptyr-bilder/links/curios/curio/id/170.141.184.506.270.899.144.208.463.636.562.182.144',
+      //   }),
     },
     do: {
       create: (json) => pmPoke({ create: json }),
@@ -190,61 +179,62 @@ export const api = {
             note,
           },
         }),
-    },
-    newDo: {
       //  here use 'create' in the following way:
       //  bespoke should specify channel and id, and other args should be empty
       //  everything else can be done as usual with create
       //  this example creates the message which is scried for in the `chatMessage` scry
-      createGroupsChatMsg: () =>
+      createGroupsChatMsg: (host, channel, poster, id, time) =>
         pmPoke({
-          'create': {
+          create: {
             bespoke: {
               'groups-chat-msg': {
-                group: "",
-                channel: {p: "~sampel-dilryd-mopreg", q: "new-channel"},
-                id: {p: "~sampel-dilryd-mopreg", q: "170.141.184.506.367.604.306.531.861.944.396.949.749"},
-                content: "",
+                group: '',
+                channel: { p: host, q: channel },
+                id: { p: poster, q: id },
+                content: '',
                 feels: 0,
-                replies: 0
-              }
-            }
+                replies: 0,
+              },
+            },
+            time,
           },
         }),
+    },
+    newDo: {
       //  /1/chan/diary/~worpet-bildet/announcements/note/170141184506311745994155289567817629696
       createGroupsDiaryNote: () =>
         pmPoke({
-          'create': {
+          create: {
             bespoke: {
               'groups-diary-note': {
-                group: "",
-                channel: {p: "~worpet-bildet", q: "announcements"},
-                time: "170.141.184.506.311.745.994.155.289.567.817.629.696",
-                essay: "",
+                group: '',
+                channel: { p: '~worpet-bildet', q: 'announcements' },
+                time: '170.141.184.506.311.745.994.155.289.567.817.629.696',
+                essay: '',
                 feels: 0,
-                replies: 0
-              }
-            }
+                replies: 0,
+              },
+            },
           },
         }),
       // /1/chan/heap/~toptyr-bilder/links/curio/170141184506270899144208463636562182144
       createGroupsHeapCurio: () =>
         pmPoke({
-          'create': {
+          create: {
             bespoke: {
               'groups-heap-curio': {
-                group: "",
-                channel: {p: "~toptyr-bilder", q: "links"},
-                time: "170.141.184.506.270.899.144.208.463.636.562.182.144",
-                heart: "",
+                group: '',
+                channel: { p: '~toptyr-bilder', q: 'links' },
+                time: '170.141.184.506.270.899.144.208.463.636.562.182.144',
+                heart: '',
                 feels: 0,
-                replies: 0
-              }
-            }
+                replies: 0,
+              },
+            },
           },
         }),
-},
-},
+    },
+  },
   s3: {
     do: {
       uploadImage: async (file, s3) => {

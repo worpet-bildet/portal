@@ -2,7 +2,13 @@
   import { createEventDispatcher } from 'svelte';
   import { api, me } from '@root/api';
   import { state, keyStrToObj } from '@root/state';
-  import { getAnyLink } from '@root/util';
+  import {
+    getAnyLink,
+    isChatPath,
+    formatChatPath,
+    getChatDetails,
+    toUrbitTime,
+  } from '@root/util';
   import { RecommendModal, Sigil } from '@components';
   import {
     TextArea,
@@ -14,6 +20,7 @@
     ItemImage,
     StarRating,
     LinkPreview,
+    GroupsChatMessage,
   } from '@fragments';
 
   export let replyTo;
@@ -31,11 +38,28 @@
     if ((ratingStars && !rating) || Number(rating) === 0) {
       return (error = 'Please give a score.');
     }
-    dispatch('post', { content, uploadedImageUrl, replyTo, rating });
+    // If we have some chat details here, we should generate the reference and
+    // then send the reference back up with the post, so it can decide whether
+    // to make a retweet or not
+    let ref;
+    if (chatDetails) {
+      const { host, channel, poster, id } = chatDetails;
+      const time = toUrbitTime(Date.now());
+      ref = {
+        struc: 'groups-chat-msg',
+        ship: me,
+        cord: '',
+        time,
+      };
+      api.portal.do.createGroupsChatMsg(host, channel, poster, id, time);
+    }
+    dispatch('post', { content, uploadedImageUrl, replyTo, rating, ref });
     content = '';
     uploadedImageUrl = '';
     rating = '';
     error = '';
+    chatDetails = undefined;
+    chatData = undefined;
     rating = undefined;
   };
 
@@ -74,7 +98,24 @@
   const handleRate = ({ target: { value } }) => {
     rating = value;
   };
+  const getAnyChatMessage = (content) =>
+    content.split(/[\r\n|\s]+/).find((line) => isChatPath(line));
+
   $: linkToPreview = getAnyLink(content || '');
+
+  let chatData, chatDetails;
+  const getChatData = async (chatPath) => {
+    chatData = await api.portal.get.chatMessage(formatChatPath(chatPath));
+    // If there is some chatData here we probably want to replace the chat link
+    // in the proposed input with an empty character, but we still want to save
+    // the chat link somewhere, presumably, so that we can eventually send it to
+    // the backend
+    chatDetails = getChatDetails(chatPath);
+    content = content.replace(chatPath, '');
+  };
+
+  $: chatToPreview = getAnyChatMessage(content || '');
+  $: if (chatToPreview) getChatData(chatToPreview);
 </script>
 
 <div
@@ -86,7 +127,7 @@
       <Sigil patp={me} />
     </div>
   </div>
-  <div class="col-span-11 pb-2">
+  <div class="col-span-11 pb-2 flex flex-col gap-2">
     <TextArea placeholder="Share a limerick, maybe" bind:value={content} />
     {#if uploadedImageUrl}
       <div class="flex">
@@ -95,6 +136,12 @@
     {/if}
     {#if linkToPreview}
       <LinkPreview url={linkToPreview} />
+    {/if}
+    {#if chatData}
+      {@const {
+        memo: { content, author },
+      } = chatData}
+      <GroupsChatMessage {author} {content} />
     {/if}
   </div>
   <div class="col-span-12 col-start-2 flex justify-between">
@@ -152,7 +199,7 @@
       <div />
     {/if}
     <button
-      class="bg-black dark:bg-white text-white dark:text-darkgrey hover:bg-grey dark:hover:bg-offwhite hover:duration-500 font-saucebold rounded-lg px-3 py-1 self-end"
+      class="bg-black dark:bg-white text-white dark:text-darkgrey hover:bg-grey dark:hover:bg-offwhite hover:duration-500 font-bold rounded-lg px-3 py-1 self-end"
       on:click={post}>Post</button
     >
   </div>

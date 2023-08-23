@@ -1,6 +1,5 @@
 <script>
   import { link } from 'svelte-spa-router';
-
   import { me } from '@root/api';
   import { getItem, keyStrFromObj } from '@root/state';
   import { isUrl } from '@root/util';
