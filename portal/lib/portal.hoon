@@ -1,5 +1,5 @@
 /-  *portal-data, portal-config, *portal-action, *portal-message,
-    portal-data-0, gr=social-graph, treaty
+    portal-data-0, gr=social-graph, treaty, w=writ, n=note, cur=curio
 /+  sig, io=agentio, mip, sss, ethereum
 |%
 +$  card  card:agent:gall
@@ -56,6 +56,10 @@
 ::
 ++  scry
   |_  [our=ship now=time]
+  ++  construct
+    |=  [care=@tas =dude:gall =^path]
+    [care (scot %p our) dude (scot %da now) path]
+  ::
   ::  gets item, and if doesn't exist returns ~
   ++  item-exists
     |=  [=key]
@@ -336,8 +340,74 @@
             (fall ship.act our)
             (fall cord.act '')
             (fall time.act `@t`(scot %da now))
+        ::
         (fall lens.act *lens)
-        bespoke
+        ::
+        ?+    -.bespoke    bespoke
+            %groups-chat-msg  :: path: '/chat/~sampel-dilryd-mopreg/new-channel/writs/writ/id/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749'
+          =/  =path
+            =,  bespoke
+            /chat/(scot %p p.channel)/[q.channel]/writs/writ/id/(scot %p p.id)/(scot %ud `@`q.id)/writ
+          =/  writ
+            .^(writ:w (~(construct scry [our now]) %gx %portal-manager path))
+          =/  chatmap
+            .^  (map flag:w [* * * perm=[* group=flag:w] *])
+                %gx
+                /(scot %p our)/chat/(scot %da now)/chats/noun
+            ==
+          =/  group-flag  group:perm:(~(got by chatmap) channel.bespoke)
+          :*  %groups-chat-msg
+            group-flag
+            channel:bespoke
+            id:bespoke
+            content:writ
+            ~(wyt by feels:writ)
+            ~(wyt in replied:writ)
+          ==
+          ::
+            %groups-diary-note  :: path: '/diary/~worpet-bildet/announcements/notes/note/170.141.184.506.311.745.994.155.289.567.817.629.696'
+          =/  =path
+            =,  bespoke
+            /diary/(scot %p p.channel)/[q.channel]/notes/note/(scot %ud `@`time)/diary-note
+          =/  note
+            .^(note:n (~(construct scry [our now]) %gx %diary path))
+          =/  diarymap
+            .^  (map flag:n [* * * perm=[* group=flag:w] *])
+                %gx
+                /(scot %p our)/diary/(scot %da now)/shelf/noun
+            ==
+          =/  group-flag  group:perm:(~(got by diarymap) channel.bespoke)
+          :*  %groups-diary-note
+            group-flag
+            channel:bespoke
+            time:bespoke
+            essay:note
+            ~(wyt by feels:note)
+            (wyt:on:quips:n quips:note)
+          ==
+          ::
+            %groups-heap-curio  :: path: '/heap/~toptyr-bilder/links/curios/curio/id/170.141.184.506.270.899.144.208.463.636.562.182.144
+          =/  =path
+            =,  bespoke
+            /heap/(scot %p p.channel)/[q.channel]/curios/curio/id/(scot %ud `@`time)/curio
+          =/  curio
+            .^(curio:cur (~(construct scry [our now]) %gx %heap path))
+          =/  heapmap
+            .^  (map flag:n [* * perm=[* group=flag:w] *])
+                %gx
+                /(scot %p our)/heap/(scot %da now)/stash/noun
+            ==
+          =/  group-flag  group:perm:(~(got by heapmap) channel.bespoke)
+          :*  %groups-heap-curio
+            group-flag
+            channel:bespoke
+            time:bespoke
+            heart:curio
+            ~(wyt by feels:curio)
+            ~(wyt in replied:curio)
+          ==
+        ==
+        ::
         :^  created-at=`@t`(scot %da now)
             updated-at=''
             permissions=~[our]
