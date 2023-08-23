@@ -60,7 +60,6 @@
       ::
       $+  prepend-to-feed
       [%prepend-to-feed =feed feed-key=[struc=%feed =ship =cord time=cord]]  ::  TODO rename?
-      [%index-as-curator toggle=?]
       [%onboarded toggle=?]
       [%blog-sub ~]
       ::
