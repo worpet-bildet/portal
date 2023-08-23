@@ -56,14 +56,14 @@
   let positiveFeedPrompt, negativeFeedPrompt, loading, canResetFeed;
   const handlePromptFeed = async () => {
     loading = true;
-    canResetFeed = true;
     await reScoreItems(positiveFeedPrompt, negativeFeedPrompt);
+    feed = feed.sort((a, b) => getItem(b.key)?.score - getItem(a.key)?.score);
+    canResetFeed = true;
     loading = false;
   };
 
   const handleResetFeed = () => {
     feed = feed.sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
-    canResetFeed = false;
     positiveFeedPrompt = '';
     negativeFeedPrompt = '';
   };
@@ -82,7 +82,6 @@
       .filter((a, idx) => {
         return mergedFeed.findIndex((b) => b.time === a.time) === idx;
       });
-
     if (canResetFeed) {
       feed = feed.sort((a, b) => getItem(b.key)?.score - getItem(a.key)?.score);
     } else {
@@ -119,16 +118,35 @@
     sortedRecommendations = getCollectedItemLeaderboard(me).slice(0, 4);
   });
 
-  const handlePost = ({ detail: { content, uploadedImageUrl } }) => {
-    api.portal.do.create({
-      bespoke: {
-        other: {
-          title: '',
-          blurb: content || '',
-          link: '',
-          image: uploadedImageUrl || '',
+  const handlePost = ({ detail: { content, uploadedImageUrl, ref } }) => {
+    let post = {};
+    console.log({ ref });
+    if (ref) {
+      // Here we need to create the retweet post instead of the type "other"
+      post = {
+        ...post,
+        bespoke: {
+          retweet: {
+            ref: ref,
+            blurb: content || '',
+          },
         },
-      },
+      };
+    } else {
+      post = {
+        ...post,
+        bespoke: {
+          other: {
+            title: '',
+            blurb: content || '',
+            link: '',
+            image: uploadedImageUrl || '',
+          },
+        },
+      };
+    }
+    post = {
+      ...post,
       'prepend-to-feed': [
         {
           ship: me,
@@ -137,7 +155,8 @@
           cord: '',
         },
       ],
-    });
+    };
+    api.portal.do.create(post);
   };
 
   let searchShip;
@@ -207,10 +226,6 @@
 
 <div class="grid grid-cols-9 gap-8 mb-4">
   <div class="flex flex-col gap-8 rounded-t-2xl col-span-12 md:col-span-6">
-    <!-- <div
-      class="flex gap-2 border p-4 flex-col rounded-2xl col-span-12 md:col-span-6"
-    >
-      <div class="flex justify-center items-center"> -->
     {#if config.aiEnabled !== 'false'}
       <div
         class="flex gap-2 border p-4 flex-col rounded-2xl col-span-12 md:col-span-6"
@@ -395,7 +410,7 @@
       </div>
     {/if}
     <div>
-      <FeedPostForm on:post={handlePost}/>
+      <FeedPostForm on:post={handlePost} />
       {#if loading}
         <div class="flex justify-center items-center py-20">
           <LoadingIcon />

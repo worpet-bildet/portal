@@ -120,7 +120,8 @@
 
 <div
   class="grid grid-cols-12 bg-panels dark:bg-darkgrey border py-5 pl-5 rounded-tl-lg rounded-tr-lg pr-3 gap-2"
-  class:border-error={error}>
+  class:border-error={error}
+>
   <div class="col-span-1">
     <div class="rounded-md overflow-hidden align-middle">
       <Sigil patp={me} />
@@ -180,9 +181,8 @@
             icon={ImageIcon}
             on:click={() => {
               if (!$state.s3 || !$state.s3.configuration?.currentBucket) {
-                alert('Configure S3 storage for image support. Download from ~dister-nocsyx-lassul/silo');
-              }
-              else {
+                alert('For attachment support, configure S3 storage with ~dister-nocsyx-lassul/silo. Otherwise, paste a link to a hosted image.');
+              } else {
                 fileInput.click();
               }
             }}

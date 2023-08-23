@@ -331,9 +331,8 @@
                 tooltip="Configure S3 storage for image support"
                 on:click={() => {
                   if (!$state.s3 || !$state.s3.configuration?.currentBucket) {
-                    alert('Configure S3 storage for image support. Download from ~dister-nocsyx-lassul/silo');
-                  }
-                  else {
+                    alert('For attachment support, configure S3 storage with ~dister-nocsyx-lassul/silo.');
+                  } else {
                     fileInput.click();
                   }
                 }}>Add Screenshots</IconButton
