@@ -95,8 +95,11 @@
         </div>
         <div class="col-span-11 flex flex-col">
           <div class="flex gap-1 text-grey">
-            <a class="text-sm" href={`#/${author}`}>{author}</a><span>in</span
-            ><a href={`#/group/${group}/`}>{group}</a>
+            <a class="text-sm hover:underline" href={`#/${author}`}>{author}</a
+            ><span>in</span><a
+              href={`#/group/${group}/`}
+              class="hover:underline">{group}</a
+            >
           </div>
           <div class="text-base">
             {#if content?.story?.inline}
