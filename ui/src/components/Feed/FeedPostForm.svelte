@@ -178,11 +178,13 @@
         <div class="rounded-full overflow-hidden">
           <IconButton
             icon={ImageIcon}
-            disabled={!$state.s3 || !$state.s3.configuration?.currentBucket}
-            tooltip="Configure S3 storage for image support"
             on:click={() => {
-              if (!$state.s3 || !$state.s3.configuration?.currentBucket) return;
-              fileInput.click();
+              if (!$state.s3 || !$state.s3.configuration?.currentBucket) {
+                alert('Configure S3 storage for image support. Download from ~dister-nocsyx-lassul/silo');
+              }
+              else {
+                fileInput.click();
+              }
             }}
             class="stroke-grey fill-grey hover:fill-black dark:hover:fill-grey"
           />
