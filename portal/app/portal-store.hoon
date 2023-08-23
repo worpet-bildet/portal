@@ -57,11 +57,9 @@
   [cards this]
 ::
 ++  on-save  
-  ~>  %bout.[0 '%portal-store +on-save']
   !>(state)
 ++  on-load
   |=  =vase
-  ~>  %bout.[0 '%portal-store +on-load']
   ^-  (quip card _this)
   =/  old  !<(versioned-state vase)
   ::  -  get state up to date!
@@ -175,6 +173,10 @@
       ::
         %item
       ?~  item.msg  `this
+      ?:  ?&  ?=(%tip -.bespoke.u.item.msg)
+          !=(beneficiary.bespoke.u.item.msg src.bowl)
+      ==
+        `this
       =.  items  (~(put by items) key.u.item.msg u.item.msg)
       :_  this
       (upd:cards-methods:stor u.item.msg)
