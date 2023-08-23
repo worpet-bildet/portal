@@ -4,6 +4,7 @@
     state,
     getCuratorAllCollectionItems,
     groupKeyToItemKey,
+    profileKeyToItemKey,
     collectionKeyToItemKey,
     keyStrFromObj,
     getItem,
@@ -11,11 +12,11 @@
   import { getMeta } from '@root/util';
   import { ItemPreview } from '@components';
   import {
-    LoadingIcon,
     IconButton,
     SparklesIcon,
     AppIcon,
     PeopleIcon,
+    PersonIcon,
     CollectionIcon,
     SearchIcon,
   } from '@fragments';
@@ -62,12 +63,13 @@
   };
 
   state.subscribe((s) => {
-    items = getCuratorAllCollectionItems(me);
+    if (!s.apps || !s.groups) return;
+    items = getCuratorAllCollectionItems(me) || [];
 
     myItems =
       new Set([
-        ...Object.keys(s.groups || {}).map(groupKeyToItemKey),
-        ...Object.entries(s.apps || {}).map(
+        ...Object.keys(s.groups).map(groupKeyToItemKey),
+        ...Object.entries(s.apps).map(
           ([cord, { ship }]) => `/app/${ship}/${cord}/`
         ),
         ...Object.keys(
@@ -168,7 +170,7 @@
           <ItemPreview {key} />
         {/each}
       {:else}
-        <div class="p-10 text-xs">
+        <div class="p-10">
           <pre>
  _   _  ____ _______ _    _ _____ _   _  _____   _______ ____
 | \ | |/ __ \__   __| |  | |_   _| \ | |/ ____| |__   __/ __ \
@@ -186,10 +188,6 @@
         </pre>
         </div>
       {/if}
-    </div>
-  {:else}
-    <div class="flex justify-center">
-      <LoadingIcon />
     </div>
   {/if}
 </div>
