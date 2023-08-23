@@ -10,7 +10,7 @@
     TrashIcon,
     EditIcon,
     ExternalDestinationIcon,
-    InlineChat,
+    GroupsChatMessage,
   } from '@fragments';
 
   export let key;
@@ -85,31 +85,7 @@
         bespoke: { content, id, group },
       } = item}
       {@const author = id.split('/')[0]}
-      <div
-        class="col-span-6 p-2 border rounded-lg grid grid-cols-12 gap-2 break-words"
-      >
-        <div class="col-span-1">
-          <div class="rounded-md overflow-hidden">
-            <Sigil patp={`${author}`} />
-          </div>
-        </div>
-        <div class="col-span-11 flex flex-col">
-          <div class="flex gap-1 text-grey">
-            <a class="text-sm hover:underline" href={`#/${author}`}>{author}</a
-            ><span>in</span><a
-              href={`#/group/${group}/`}
-              class="hover:underline">{group}</a
-            >
-          </div>
-          <div class="text-base">
-            {#if content?.story?.inline}
-              {#each content.story.inline as chat}
-                <InlineChat {chat} />
-              {/each}
-            {/if}
-          </div>
-        </div>
-      </div>
+      <GroupsChatMessage {author} {group} {content} />
     {:else}
       <div
         class="border overflow-hidden rounded-md"

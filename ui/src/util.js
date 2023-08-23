@@ -388,7 +388,6 @@ export const isChatPath = (path) => {
 //  /1/chan/chat/~sampel-dilryd-mopreg/new-channel/msg/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749
 export const getChatDetails = (path) => {
   const splut = path.split('/');
-  console.log({ splut });
   return {
     host: splut[4],
     channel: splut[5],

@@ -9,11 +9,14 @@
 {:else if chat['ship']}
   <span>{chat['ship']}</span>
 {:else if chat['link']}
-  <a href={chat['link'].href} target="_blank"
+  <a
+    href={chat['link'].href}
+    target="_blank"
+    class="hover:underline text-link dark:text-link-dark"
     >{chat['link'].content || chat['link'].href}</a
   >
 {:else if chat['inline-code']}
-  <span class="bg-offwhite font-mono rounded-md px-2 py-1"
+  <span class="bg-offwhite font-mono rounded-md px-2 py-1 dark:bg-panels"
     >{chat['inline-code']}</span
   >
 {:else if Array.isArray(chat)}

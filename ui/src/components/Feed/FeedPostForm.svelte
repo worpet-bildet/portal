@@ -20,7 +20,7 @@
     ItemImage,
     StarRating,
     LinkPreview,
-    InlineChat,
+    GroupsChatMessage,
   } from '@fragments';
 
   export let replyTo;
@@ -58,6 +58,8 @@
     uploadedImageUrl = '';
     rating = '';
     error = '';
+    chatDetails = undefined;
+    chatData = undefined;
     rating = undefined;
   };
 
@@ -139,23 +141,7 @@
       {@const {
         memo: { content, author },
       } = chatData}
-      <div class="p-2 border rounded-lg grid grid-cols-12 gap-2 break-words">
-        <div class="col-span-1">
-          <div class="rounded-md overflow-hidden">
-            <Sigil patp={`~${author}`} />
-          </div>
-        </div>
-        <div class="col-span-11 flex flex-col">
-          <div class="text-sm">~{author}</div>
-          <div>
-            {#if content?.story?.inline}
-              {#each content.story.inline as chat}
-                <InlineChat {chat} />
-              {/each}
-            {/if}
-          </div>
-        </div>
-      </div>
+      <GroupsChatMessage {author} {content} />
     {/if}
   </div>
   <div class="col-span-12 col-start-2 flex justify-between">
