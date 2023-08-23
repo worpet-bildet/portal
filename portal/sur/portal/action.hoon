@@ -41,17 +41,24 @@
       ::  
       $+  append
       [%append =key-list col-key=[struc=%collection =ship =cord time=cord]]
+      $+  prepend
       [%prepend =key-list col-key=[struc=%collection =ship =cord time=cord]]
       ::  removes all instances of key from collection
+      $+  remove
       [%remove =key-list col-key=[struc=%collection =ship =cord time=cord]]
       ::
+      $+  delete
       [%delete =key]  ::  adds [%deleted ~] lens
+      $+  destroy
       [%destroy =key]  :: abolishes the item from the atmosphere
       ::
+      $+  sub
       [%sub =key]
+      $+  sub-to-many
       [%sub-to-many =key-list]
       ::
       ::
+      $+  prepend-to-feed
       [%prepend-to-feed =feed feed-key=[struc=%feed =ship =cord time=cord]]  ::  TODO rename?
       [%index-as-curator toggle=?]
       [%onboarded toggle=?]
@@ -65,9 +72,11 @@
       [%payment-request seller=ship =desk]
       [%payment-tx-hash seller=ship tx-hash=@t]
       ::
+      $+  tip-request
       [%tip-request =key]
       [%tip-tx-hash beneficiary=ship tx-hash=@t note=@t]
       ::
+      $+  authorize-ships
       [%authorize-ships authorized-ships=(set ship)]
       ::
       [%set-rpc-endpoint rpc-endpoint=@ta]
