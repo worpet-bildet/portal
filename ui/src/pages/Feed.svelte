@@ -37,13 +37,6 @@
   let patpItemCount = {};
   let feed;
 
-  document.addEventListener('keydown', function(event) {
-    if (event.key === '/') {
-      event.preventDefault();
-      document.getElementById('feedGenerator').focus();
-    }
-  });
-
   const subToGlobalFeed = () => {
     return api.portal.do.subscribe({
       struc: 'feed',
@@ -54,6 +47,14 @@
   };
 
   let positiveFeedPrompt, negativeFeedPrompt, loading, canResetFeed;
+
+  function handleKeydown(event) {
+    if (event.key === '/') {
+      event.preventDefault();
+      positiveFeedPrompt.focus();
+    }
+  }
+
   const handlePromptFeed = async () => {
     loading = true;
     await reScoreItems(positiveFeedPrompt, negativeFeedPrompt);
@@ -224,6 +225,8 @@
   const happeningSoonTuple = isHappeningSoon(events);
 </script>
 
+<svelte:window on:keydown={handleKeydown} />
+
 <div class="grid grid-cols-9 gap-8 mb-4">
   <div class="flex flex-col gap-8 rounded-t-2xl col-span-12 md:col-span-6">
     {#if config.aiEnabled !== 'false'}
@@ -242,10 +245,9 @@
               </div>
               <input
                 type="text"
-                id="feedGenerator"
                 class="focus:outline-none p-3 placeholder-grey text-black text-lg dark:text-white flex-grow"
-                placeholder="What do you want to see?"
-                bind:value={positiveFeedPrompt}
+                placeholder="Search Portal"
+                bind:this={positiveFeedPrompt}
                 on:keydown={(e) => {
                   if (e.key === 'Enter' && e.metaKey) {
                     handlePromptFeed();
