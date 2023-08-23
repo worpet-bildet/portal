@@ -7,7 +7,7 @@
 </script>
 
 {#if feed && feed.length > 0}
-  {#each feed as item (item.time)}
+  {#each feed as item (item)}
     <FeedPost
       key={item.key}
       on:tipRequest={(e) => handleTipRequest(e.detail.key)}

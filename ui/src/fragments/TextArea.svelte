@@ -8,10 +8,10 @@
   const reset = async () => {
     await tick();
     autosize.update(textarea);
-    target.innerHTML = '';
+    if (target) target.innerHTML = '';
   };
 
-  $: if (value === '') {
+  $: if (!value || value === '') {
     reset();
   } else {
     handleInput();
@@ -20,12 +20,16 @@
   onMount(() => {
     textarea.addEventListener('paste', function (e) {
       e.preventDefault();
-      var text = e.clipboardData.getData('text/plain');
-      document.execCommand('insertHTML', false, text);
+      document.execCommand(
+        'insertHTML',
+        false,
+        e.clipboardData.getData('text/plain')
+      );
     });
   });
 
   const handleInput = () => {
+    if (!target) return setTimeout(handleInput, 100);
     target.innerHTML = linkifyHtml(
       value.replace(/\n/g, '<br />').replaceAll('<br /><br />', '<br />'),
       {
