@@ -1,11 +1,15 @@
 <script>
   import { link } from 'svelte-spa-router';
   import { Sigil } from '@components';
-  import { InlineChat } from '@fragments';
 
-  export let author;
+  import Block from './Block.svelte';
+  import Inline from './Inline.svelte';
+
+  export let heart;
   export let group;
-  export let content;
+  const { author, content } = heart;
+
+  console.log({ author, content });
 </script>
 
 <div
@@ -27,9 +31,14 @@
         >{/if}
     </div>
     <div class="text-base">
-      {#if content?.story?.inline}
-        {#each content.story.inline as chat}
-          <InlineChat {chat} />
+      {#if content?.inline}
+        {#each content.inline as inline}
+          <Inline {inline} />
+        {/each}
+      {/if}
+      {#if content?.block}
+        {#each content.block as block}
+          <Block {block} />
         {/each}
       {/if}
     </div>

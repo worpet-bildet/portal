@@ -400,9 +400,45 @@ export const getChatDetails = (path) => {
 //  /1/chan/chat/~sampel-dilryd-mopreg/new-channel/msg/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749
 // TO
 //  /chat/~sampel-dilryd-mopreg/new-channel/writs/writ/id/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749
-//  /chat/~nocsyx-lassul/log/writs/writ/id/~sogrum-savluc/170.141.184.506.358.567.219.567.224.823.002.068.680
 export const formatChatPath = (path) => {
   return path.replace('/1/chan', '').replace('/msg/', '/writs/writ/id/');
+};
+
+// /1/chan/heap/~toptyr-bilder/links/curio/170141184506270899144208463636562182144
+export const isCurioPath = (path) => {
+  return path.substring(0, 13) === '/1/chan/heap/';
+};
+
+// /1/chan/heap/~toptyr-bilder/links/curio/170141184506270899144208463636562182144
+export const getCurioDetails = (path) => {
+  const splut = path.split('/');
+  return {
+    host: splut[4],
+    channel: splut[5],
+    id: splut[7],
+  };
+};
+
+// FROM
+// /1/chan/heap/~toptyr-bilder/links/curio/170141184506270899144208463636562182144
+// TO
+// /heap/~toptyr-bilder/links/curios/curio/id/170.141.184.506.270.899.144.208.463.636.562.182.144
+export const formatCurioPath = (path) => {
+  const p = path.replace('/1/chan', '').replace('/curio/', '/curios/curio/id/');
+  // replace the last element in the path with the formatted id, where there is
+  // a period after every third character
+  const splut = p.split('/');
+  // reverse the string (we need to add the periods from the end)
+  const reversed = splut[splut.length - 1].split('').reverse().join('');
+  // split into groups of three
+  const groups = reversed.match(/.{1,3}/g);
+  // join with periods
+  const joined = groups.join('.');
+  // reverse again
+  const reversedAgain = joined.split('').reverse().join('');
+  // replace the last element in the path with the formatted id
+  splut[splut.length - 1] = reversedAgain;
+  return splut.join('/');
 };
 
 // Reference: https://github.com/mirtyl-wacdec/urbit_ex/blob/master/lib/api/utils.ex#LL260C14-L260C14

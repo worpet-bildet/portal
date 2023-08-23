@@ -4,13 +4,16 @@
   import { state, keyStrFromObj, getItem } from '@root/state';
   import { api } from '@root/api';
   import { getMeta } from '@root/util';
-  import { CollectionsSquarePreview, Sigil } from '@components';
+  import {
+    CollectionsSquarePreview,
+    Sigil,
+    GroupsChatMessage,
+  } from '@components';
   import {
     ItemImage,
     TrashIcon,
     EditIcon,
     ExternalDestinationIcon,
-    GroupsChatMessage,
   } from '@fragments';
 
   export let key;
@@ -32,7 +35,11 @@
    */
 
   const loadItem = (key) => {
-    item = getItem(keyStrFromObj(key));
+    if (typeof key === 'string') {
+      item = getItem(key);
+    } else {
+      item = getItem(keyStrFromObj(key));
+    }
     if ($state.isLoaded && !item) {
       return api.portal.do.subscribe(key);
     }
