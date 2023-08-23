@@ -217,11 +217,6 @@
         %onboarded
       `this(onboarded toggle.act)
       ::
-        %index-as-curator
-      =/  msg  [%index-as-curator src.bowl toggle.act]
-      :_  this(indexed-as-curator toggle.act)
-      [(~(msg cards [portal-indexer.state %portal-manager]) msg)]~
-      ::
         %payment-request
       ?:  (~(has by bought-apps) src.bowl desk.act)
         ~&  >  "already bought the app"
@@ -359,16 +354,6 @@
         %tip-confirmed
       :_  this
       [%give %fact [/updates]~ %portal-message !>(msg)]~
-      ::
-        %index-as-curator
-      ?>  =(our.bowl portal-indexer)
-      ?>  =(src.bowl src.msg)
-      =/  act  ~(act cards [our.bowl %portal-store])
-      =/  index-key  [%collection our.bowl '' 'index']
-      =/  ship-key   [%ship src.msg '' '']
-      =/  cards  `(list card)`~[(act [%remove ~[ship-key] index-key])]
-      =?  cards  toggle.msg  (snoc cards (act [%prepend ~[ship-key] index-key]))
-      [cards this]
     ==
     ::
       %sss-on-rock
