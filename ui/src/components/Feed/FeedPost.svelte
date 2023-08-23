@@ -63,12 +63,31 @@
   let showCommentForm = false;
 
   function handlePostComment({
-    detail: { content, uploadedImageUrl, replyTo },
+    detail: { content, uploadedImageUrl, replyTo, ref },
   }) {
-    return api.portal.do.create({
-      bespoke: {
-        other: { title: '', blurb: content, link: '', image: uploadedImageUrl },
-      },
+    // TODO: Merge this function with the one from /pages/Feed.svelte
+    let post = {};
+    if (ref) {
+      // Here we need to create the retweet post instead of the type "other"
+      post = {
+        ...post,
+        bespoke: { retweet: { ref: ref, blurb: content || '' } },
+      };
+    } else {
+      post = {
+        ...post,
+        bespoke: {
+          other: {
+            title: '',
+            blurb: content || '',
+            link: '',
+            image: uploadedImageUrl || '',
+          },
+        },
+      };
+    }
+    post = {
+      ...post,
       'tags-to': [
         {
           key: replyTo,
@@ -76,7 +95,8 @@
           'tag-from': `/${replyTo.ship}/reply-from`,
         },
       ],
-    });
+    };
+    return api.portal.do.create(post);
   }
 
   const likePost = () => {
@@ -92,6 +112,7 @@
 
   const dispatch = createEventDispatcher();
   const handleTipRequest = (key) => {
+    console.log('woooooo');
     dispatch('tipRequest', { key });
   };
 </script>
