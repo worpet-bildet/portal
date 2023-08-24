@@ -27,6 +27,7 @@
   export let recommendButtons = true;
   export let ratingStars = false;
   export let error;
+  export let placeholder;
 
   let dispatch = createEventDispatcher();
   let content, rating;
@@ -119,7 +120,7 @@
 </script>
 
 <div
-  class="grid grid-cols-12 bg-panels dark:bg-darkgrey border py-5 pl-5 rounded-tl-lg rounded-tr-lg pr-3 gap-2"
+  class="grid grid-cols-12 bg-panels dark:bg-darkgrey border-x border-b py-5 pl-5 pr-3 gap-2 {$$props.class}"
   class:border-error={error}
 >
   <div class="col-span-1">
@@ -128,7 +129,7 @@
     </div>
   </div>
   <div class="col-span-11 pb-2 flex flex-col gap-2">
-    <TextArea placeholder="Share a limerick, maybe" bind:value={content} on:keydown={(e) => {
+    <TextArea placeholder={placeholder} bind:value={content} on:keydown={(e) => {
       if (e.key === 'Enter' && e.metaKey) {
         post();
       }

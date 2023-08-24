@@ -1,5 +1,6 @@
 <script>
   import { push } from 'svelte-spa-router';
+  import { slide } from 'svelte/transition';
   import config from '@root/config';
   import { api, me } from '@root/api';
   import {
@@ -193,15 +194,6 @@
 
   const events = [
     {
-      title: 'On-nomi happy hour',
-      link: 'https://app.gather.town/app/xAYeiPI2XDYhRM9t/urbit-hacker-house',
-      startDate: '2023-06-29T18:30:00-04:00',
-      endDate: '2023-06-29T20:00:00-04:00',
-      frequency: 'every other week',
-      location: 'in the hacker house',
-      happeningSoon: 'false',
-    },
-    {
       title: 'Turf Build Party',
       link: 'https://app.gather.town/app/xAYeiPI2XDYhRM9t/urbit-hacker-house',
       startDate: '2023-06-23T12:00:00-04:00',
@@ -338,7 +330,7 @@
         <div>
           {#if showExpandedForm}
             <div
-              class="border rounded-2xl bg-panels-hover flex w-full justify-between items-center mt-4"
+              class="border rounded-2xl bg-panels-hover flex w-full justify-between items-center mt-4" transition:slide
             >
               <div class="flex items-center justify-center w-full">
                 <div
@@ -359,7 +351,7 @@
                 />
               </div>
             </div>
-            <div class="flex flex-col mt-4">
+            <div class="flex flex-col mt-4" transition:slide>
               <div class="flex gap-4">
                 <button
                   class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
@@ -412,7 +404,7 @@
       </div>
     {/if}
     <div>
-      <FeedPostForm on:post={handlePost} />
+      <FeedPostForm on:post={handlePost} placeholder="Share a limerick, maybe..." class="rounded-tl-lg rounded-tr-lg border-t"/>
       {#if loading}
         <div class="flex justify-center items-center py-20">
           <LoadingIcon />

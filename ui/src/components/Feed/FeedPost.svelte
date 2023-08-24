@@ -24,6 +24,7 @@
     LinkPreview,
     StarRating,
     EthereumIcon,
+    VerticalCollapseIcon
   } from '@fragments';
 
   export let key;
@@ -123,130 +124,138 @@
     bespoke: { nickname },
   } = getCurator(ship)}
   {@const blurbLink = getAnyLink(blurb)}
+  <div class="border-b border-x px-5 pt-5">
+    <div
+      id={createdAt}
+      class="grid grid-cols-12 bg-panels dark:bg-darkgrey gap-2 lg:gap-4 lg:gap-y-0"
+      in:fade
+    >
+      <div class="col-span-1">
+        <div class="rounded-md overflow-hidden">
+          <a href={`/${ship}`} use:link>
+            <Sigil patp={ship} />
+          </a>
+        </div>
+      </div>
+      <div class="col-span-12 md:col-span-10 flex flex-col gap-2">
+        <div class="flex gap-2 text-sm text-grey">
+          <a class="text-black dark:text-white" href={`/${ship}`} use:link
+            >{nickname || ship}</a
+          >
+          <span>·</span>
+          <span>{format(createdAt)}</span>
+        </div>
+        <div
+          class="whitespace-pre-wrap line-clamp-50 flex flex-col gap-2 break-words"
+        >
+          <div>
+            {@html linkifyHtml(blurb, {
+              attributes: {
+                class: 'text-link dark:text-link-dark',
+                target: '_blank',
+              },
+            })}
+          </div>
+          {#if blurbLink}
+            {#if isImage(blurbLink)}
+              <img src={blurbLink} class="object-cover" alt={blurb} />
+            {:else}
+              <div>
+                <LinkPreview url={blurbLink} />
+              </div>
+            {/if}
+          {/if}
+        </div>
+        {#if image}
+          <a href={image} target="_blank">
+            <div class="flex justify-center border rounded-lg overflow-hidden">
+              <img src={image} class="object-cover" alt={blurb} />
+            </div>
+          </a>
+        {/if}
+        {#if ref}
+          <div class="rounded-lg">
+            <ItemPreview key={ref} />
+          </div>
+        {/if}
+      </div>
+      {#if showRating}
+        <div class="flex justify-start col-span-12 col-start-2">
+          <StarRating
+            config={{
+              readOnly: true,
+              countStars: 5,
+              range: { min: 0, max: 5, step: 1 },
+              score: rating,
+            }}
+          />
+        </div>
+      {/if}
+      <div class="col-span-12 col-start-2 py-2">
+        <div class="-ml-2.5 flex gap-8">
+          {#if allowReplies}
+            <div class="flex">
+              <div class="rounded-full overflow-hidden">
+                <IconButton
+                  icon={ChatIcon}
+                  on:click={() => (showCommentForm = !showCommentForm)}
+                  class="fill-grey hover:fill-black dark:hover:fill-white"
+                />
+              </div>
+              <div class="pt-2 text-sm w-2 text-grey">
+                {#if replies.length > 0}
+                  {replies.length}
+                {/if}
+              </div>
+            </div>
+          {/if}
+          <div class="flex items-center">
+            {#if likedByMe}
+              <div class="w-5 h-5 ml-2 text-error">
+                <LikedIcon />
+              </div>
+              <span class="p-2 text-sm text-error">
+                {#if likeCount > 0}
+                  {likeCount}
+                {/if}
+              </span>
+            {:else}
+              <div class="rounded-full overflow-hidden">
+                <IconButton
+                  icon={LikeIcon}
+                  on:click={likePost}
+                  class="stroke-grey hover:stroke-error dark:hover:stroke-error"
+                />
+              </div>
+              <div class="pt-2 pb-2 text-sm text-grey">
+                {#if likeCount > 0}
+                  {likeCount}
+                {/if}
+              </div>
+            {/if}
+          </div>
+          {#if me !== item.keyObj.ship}
+            <div class="flex items-center">
+              <IconButton
+                icon={EthereumIcon}
+                on:click={() => handleTipRequest(item.keyObj)}
+                class="text-grey hover:text-black dark:hover:text-white"
+              />
+            </div>
+          {/if}
+        </div>
+      </div>
+    </div>
+  </div>
   <div
-    id={createdAt}
-    class="grid grid-cols-12 bg-panels dark:bg-darkgrey border-b border-x px-5 pt-5 gap-2 lg:gap-4 lg:gap-y-0"
+    class="grid grid-cols-12 bg-panels dark:bg-darkgrey gap-2 lg:gap-4 lg:gap-y-0"
     in:fade
   >
-    <div class="col-span-1">
-      <div class="rounded-md overflow-hidden">
-        <a href={`/${ship}`} use:link>
-          <Sigil patp={ship} />
-        </a>
-      </div>
-    </div>
-    <div class="col-span-12 md:col-span-10 flex flex-col gap-2">
-      <div class="flex gap-2 text-sm text-grey">
-        <a class="text-black dark:text-white" href={`/${ship}`} use:link
-          >{nickname || ship}</a
-        >
-        <span>·</span>
-        <span>{format(createdAt)}</span>
-      </div>
-      <div
-        class="whitespace-pre-wrap line-clamp-50 flex flex-col gap-2 break-words"
-      >
-        <div>
-          {@html linkifyHtml(blurb, {
-            attributes: {
-              class: 'text-link dark:text-link-dark',
-              target: '_blank',
-            },
-          })}
-        </div>
-        {#if blurbLink}
-          {#if isImage(blurbLink)}
-            <img src={blurbLink} class="object-cover" alt={blurb} />
-          {:else}
-            <div>
-              <LinkPreview url={blurbLink} />
-            </div>
-          {/if}
-        {/if}
-      </div>
-      {#if image}
-        <a href={image} target="_blank">
-          <div class="flex justify-center border rounded-lg overflow-hidden">
-            <img src={image} class="object-cover" alt={blurb} />
-          </div>
-        </a>
-      {/if}
-      {#if ref}
-        <div class="rounded-lg">
-          <ItemPreview key={ref} />
-        </div>
-      {/if}
-    </div>
-    {#if showRating}
-      <div class="flex justify-start col-span-12 col-start-2">
-        <StarRating
-          config={{
-            readOnly: true,
-            countStars: 5,
-            range: { min: 0, max: 5, step: 1 },
-            score: rating,
-          }}
-        />
-      </div>
-    {/if}
-    <div class="col-span-12 col-start-2 py-2">
-      <div class="-ml-2.5 flex gap-8">
-        {#if allowReplies}
-          <div class="flex">
-            <div class="rounded-full overflow-hidden">
-              <IconButton
-                icon={ChatIcon}
-                on:click={() => (showCommentForm = !showCommentForm)}
-                class="fill-grey hover:fill-black dark:hover:fill-white"
-              />
-            </div>
-            <div class="pt-2 text-sm w-2 text-grey">
-              {#if replies.length > 0}
-                {replies.length}
-              {/if}
-            </div>
-          </div>
-        {/if}
-        <div class="flex items-center">
-          {#if likedByMe}
-            <div class="w-5 h-5 ml-2 text-error">
-              <LikedIcon />
-            </div>
-            <span class="p-2 text-sm text-error">
-              {#if likeCount > 0}
-                {likeCount}
-              {/if}
-            </span>
-          {:else}
-            <div class="rounded-full overflow-hidden">
-              <IconButton
-                icon={LikeIcon}
-                on:click={likePost}
-                class="stroke-grey hover:stroke-error dark:hover:stroke-error"
-              />
-            </div>
-            <div class="pt-2 pb-2 text-sm text-grey">
-              {#if likeCount > 0}
-                {likeCount}
-              {/if}
-            </div>
-          {/if}
-        </div>
-        {#if me !== item.keyObj.ship}
-          <div class="flex items-center">
-            <IconButton
-              icon={EthereumIcon}
-              on:click={() => handleTipRequest(item.keyObj)}
-              class="text-grey hover:text-black dark:hover:text-white"
-            />
-          </div>
-        {/if}
-      </div>
-    </div>
     {#if showCommentForm}
-      <div class="flex flex-col col-span-12 py-4" transition:slide>
+      <div class="flex flex-col col-span-12" transition:slide>
         <FeedPostForm
           replyTo={item.keyObj}
+          placeholder="Post your reply..."
           recommendButtons={false}
           on:post={handlePostComment}
         />
@@ -254,6 +263,11 @@
           <svelte:self key={replyKey} allowReplies={false} />
         {/each}
       </div>
+      <button class="flex flex-col col-span-12 border-x border-b flex py-3 items-center justify-center"
+        on:click={() => (showCommentForm = !showCommentForm)}
+      >
+        <VerticalCollapseIcon/>
+      </button>
     {/if}
   </div>
 {:else}

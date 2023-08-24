@@ -357,8 +357,8 @@
               Current {title} hash
             </div>
             <pre class="flex justify-start text-lg">
-            {hash}
-          </pre>
+              {hash}
+            </pre>
           </div>
         </div>
       {:else if activeTab === 'Reviews'}
@@ -376,13 +376,15 @@
               </div>
               <FeedPostForm
                 on:post={handlePostReview}
+                placeholder="Write your review here..."
+                class="rounded-tl-lg rounded-tr-lg border-t"
                 recommendButtons={false}
                 ratingStars={true}
               />
             </div>
           {/if}
           {#if reviews.length > 0}
-            <div class="flex flex-col gap-4">
+            <div class="flex flex-col">
               {#each reviews as review (keyStrFromObj(review))}
                 <div>
                   <FeedPost
