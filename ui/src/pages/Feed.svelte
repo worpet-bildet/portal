@@ -194,6 +194,15 @@
 
   const events = [
     {
+      title: 'On-nomi happy hour',
+      link: 'https://app.gather.town/app/xAYeiPI2XDYhRM9t/urbit-hacker-house',
+      startDate: '2023-06-29T18:30:00-04:00',
+      endDate: '2023-06-29T20:00:00-04:00',
+      frequency: 'every other week',
+      location: 'in the hacker house',
+      happeningSoon: 'false',
+    },
+    {
       title: 'Turf Build Party',
       link: 'https://app.gather.town/app/xAYeiPI2XDYhRM9t/urbit-hacker-house',
       startDate: '2023-06-23T12:00:00-04:00',
