@@ -47,12 +47,12 @@
     });
   };
 
-  let positiveFeedPrompt, negativeFeedPrompt, loading, canResetFeed;
+  let positiveFeedPrompt, negativeFeedPrompt, loading, canResetFeed, positiveFeedPromptForm;
 
   function handleKeydown(event) {
     if (event.key === '/') {
       event.preventDefault();
-      positiveFeedPrompt.focus();
+      positiveFeedPromptForm.focus();
     }
   }
 
@@ -248,7 +248,8 @@
                 type="text"
                 class="focus:outline-none p-3 placeholder-grey text-black text-lg dark:text-white flex-grow"
                 placeholder="Search Portal"
-                bind:this={positiveFeedPrompt}
+                bind:value={positiveFeedPrompt}
+                bind:this={positiveFeedPromptForm}
                 on:keydown={(e) => {
                   if (e.key === 'Enter' && e.metaKey) {
                     handlePromptFeed();
