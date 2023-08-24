@@ -371,12 +371,9 @@
           {/if}
           {#if !isReviewedByMe}
             <div class="flex flex-col gap-2">
-              <div class="text-xl font-bold">
-                Review {title}
-              </div>
               <FeedPostForm
                 on:post={handlePostReview}
-                placeholder="Write your review here..."
+                placeholder="What do you think of {title}?"
                 class="rounded-tl-lg rounded-tr-lg border-t"
                 recommendButtons={false}
                 ratingStars={true}
