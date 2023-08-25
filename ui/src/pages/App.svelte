@@ -328,12 +328,13 @@
               />
               <IconButton
                 icon={ImageIcon}
-                disabled={!$state.s3 || !$state.s3.configuration.currentBucket}
                 tooltip="Configure S3 storage for image support"
                 on:click={() => {
-                  if (!$state.s3 || !$state.s3.configuration.currentBucket)
-                    return;
-                  fileInput.click();
+                  if (!$state.s3 || !$state.s3.configuration?.currentBucket) {
+                    alert('For attachment support, configure S3 storage with ~dister-nocsyx-lassul/silo.');
+                  } else {
+                    fileInput.click();
+                  }
                 }}>Add Screenshots</IconButton
               >
             </div>
@@ -356,8 +357,8 @@
               Current {title} hash
             </div>
             <pre class="flex justify-start text-lg">
-            {hash}
-          </pre>
+              {hash}
+            </pre>
           </div>
         </div>
       {:else if activeTab === 'Reviews'}
@@ -370,18 +371,17 @@
           {/if}
           {#if !isReviewedByMe}
             <div class="flex flex-col gap-2">
-              <div class="text-xl font-bold">
-                Review {title}
-              </div>
               <FeedPostForm
                 on:post={handlePostReview}
+                placeholder="What do you think of {title}?"
+                class="rounded-tl-lg rounded-tr-lg border-t"
                 recommendButtons={false}
                 ratingStars={true}
               />
             </div>
           {/if}
           {#if reviews.length > 0}
-            <div class="flex flex-col gap-4">
+            <div class="flex flex-col">
               {#each reviews as review (keyStrFromObj(review))}
                 <div>
                   <FeedPost

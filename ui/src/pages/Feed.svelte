@@ -1,5 +1,6 @@
 <script>
   import { push } from 'svelte-spa-router';
+  import { slide } from 'svelte/transition';
   import config from '@root/config';
   import { api, me } from '@root/api';
   import {
@@ -46,7 +47,15 @@
     });
   };
 
-  let positiveFeedPrompt, negativeFeedPrompt, loading, canResetFeed;
+  let positiveFeedPrompt, negativeFeedPrompt, loading, canResetFeed, positiveFeedPromptForm;
+
+  function handleKeydown(event) {
+    if (event.key === '/') {
+      event.preventDefault();
+      positiveFeedPromptForm.focus();
+    }
+  }
+
   const handlePromptFeed = async () => {
     loading = true;
     await reScoreItems(positiveFeedPrompt, negativeFeedPrompt);
@@ -217,6 +226,8 @@
   const happeningSoonTuple = isHappeningSoon(events);
 </script>
 
+<svelte:window on:keydown={handleKeydown} />
+
 <div class="grid grid-cols-9 gap-8 mb-4">
   <div class="flex flex-col gap-8 rounded-t-2xl col-span-12 md:col-span-6">
     {#if config.aiEnabled !== 'false'}
@@ -236,25 +247,26 @@
               <input
                 type="text"
                 class="focus:outline-none p-3 placeholder-grey text-black text-lg dark:text-white flex-grow"
-                placeholder="What do you want to see?"
+                placeholder="Search Portal"
                 bind:value={positiveFeedPrompt}
+                bind:this={positiveFeedPromptForm}
                 on:keydown={(e) => {
-                  if (e.key === 'Enter') {
+                  if (e.key === 'Enter' && e.metaKey) {
                     handlePromptFeed();
                   }
                 }}
               />
+              <div class="flex justify-center">
+                {#if canResetFeed}
+                  <button on:click={handleResetFeed} class="bg-panels-hover text-grey dark:border rounded-md px-2 mr-2 flex items-center justify-center"
+                    >x</button>
+                {:else}
+                  <button
+                  class="bg-panels-hover dark:border dark:text-grey rounded-md w-7 h-7 mr-2 flex items-center justify-center"
+                  >/</button>
+                {/if}
+              </div>
             </div>
-            <button
-              class="bg-panels-hover rounded-md w-7 h-7 mr-2 flex items-center justify-center"
-              on:click={() => (showExpandedForm = !showExpandedForm)}
-            >
-              {#if showExpandedForm}
-                <VerticalCollapseIcon />
-              {:else}
-                <VerticalExpandIcon />
-              {/if}
-            </button>
           </div>
         </div>
         <div class="flex flex-col overflow-x-scroll scrollbar-hide">
@@ -262,34 +274,10 @@
             <button
               class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
               on:click={() => {
-                positiveFeedPrompt = 'Jokes, funny, sarcasm, amusement';
-                negativeFeedPrompt = 'seriousness, work, productivity';
-                handlePromptFeed();
-              }}>Shitposts</button
-            >
-            <button
-              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
-              on:click={() => {
-                positiveFeedPrompt = 'poetry';
+                positiveFeedPrompt = 'crypto';
                 negativeFeedPrompt = '';
                 handlePromptFeed();
-              }}>Poetry</button
-            >
-            <button
-              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
-              on:click={() => {
-                positiveFeedPrompt = 'https://';
-                negativeFeedPrompt = '';
-                handlePromptFeed();
-              }}>Links</button
-            >
-            <button
-              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
-              on:click={() => {
-                positiveFeedPrompt = 'productivity, work, learning';
-                negativeFeedPrompt = '';
-                handlePromptFeed();
-              }}>Productivity</button
+              }}>Crypto</button
             >
             <button
               class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
@@ -310,6 +298,22 @@
             <button
               class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
               on:click={() => {
+                positiveFeedPrompt = 'productivity, work, learning';
+                negativeFeedPrompt = '';
+                handlePromptFeed();
+              }}>Productivity</button
+            >
+            <button
+              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+              on:click={() => {
+                positiveFeedPrompt = 'https://';
+                negativeFeedPrompt = '';
+                handlePromptFeed();
+              }}>Links</button
+            >
+            <button
+              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+              on:click={() => {
                 positiveFeedPrompt = 'tech, programming, hoon';
                 negativeFeedPrompt = '';
                 handlePromptFeed();
@@ -326,17 +330,17 @@
             <button
               class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
               on:click={() => {
-                positiveFeedPrompt = 'crypto';
-                negativeFeedPrompt = '';
+                positiveFeedPrompt = 'Jokes, funny, sarcasm';
+                negativeFeedPrompt = 'seriousness, work, productivity';
                 handlePromptFeed();
-              }}>Crypto</button
+              }}>Shitposts</button
             >
           </div>
         </div>
         <div>
           {#if showExpandedForm}
             <div
-              class="border rounded-2xl bg-panels-hover flex w-full justify-between items-center mt-4"
+              class="border rounded-2xl bg-panels-hover flex w-full justify-between items-center mt-4" transition:slide
             >
               <div class="flex items-center justify-center w-full">
                 <div
@@ -350,14 +354,14 @@
                   placeholder="Show me less ..."
                   bind:value={negativeFeedPrompt}
                   on:keydown={(e) => {
-                    if (e.key === 'Enter') {
+                    if (e.key === 'Enter' && e.metaKey) {
                       handlePromptFeed();
                     }
                   }}
                 />
               </div>
             </div>
-            <div class="flex flex-col mt-4">
+            <div class="flex flex-col mt-4" transition:slide>
               <div class="flex gap-4">
                 <button
                   class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
@@ -371,7 +375,7 @@
                   class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
                   on:click={() => {
                     positiveFeedPrompt = '';
-                    negativeFeedPrompt = 'Jokes, funny, sarcasm, amusement';
+                    negativeFeedPrompt = 'Jokes, funny, sarcasm';
                     handlePromptFeed();
                   }}>Shitposts</button
                 >
@@ -395,15 +399,22 @@
             </div>
           {/if}
         </div>
-        {#if canResetFeed}
-          <div class="flex justify-end">
-            <button class="underline" on:click={handleResetFeed}>Reset</button>
-          </div>
-        {/if}
+        <div class="flex justify-center">
+          <button
+              class="bg-panels-solid dark:bg-darkgrey rounded-md w-7 h-7 mr-2 border flex items-center justify-center mb-[-30px]"
+              on:click={() => (showExpandedForm = !showExpandedForm)}
+            >
+            {#if showExpandedForm}
+              <VerticalCollapseIcon />
+            {:else}
+              <VerticalExpandIcon />
+            {/if}
+          </button>
+        </div>
       </div>
     {/if}
     <div>
-      <FeedPostForm on:post={handlePost} />
+      <FeedPostForm on:post={handlePost} placeholder="Share a limerick, maybe..." class="rounded-tl-lg rounded-tr-lg border-t"/>
       {#if loading}
         <div class="flex justify-center items-center py-20">
           <LoadingIcon />
@@ -427,7 +438,7 @@
               class="border-b focus:outline-none placeholder-grey"
               placeholder="~worpet-bildet"
               bind:value={searchShip}
-              on:keydown={(e) => (e.key === 'Enter' ? search() : null)}
+              on:keydown={(e) => (e.key === 'Enter' && e.metaKey ? search() : null)}
             />
           </div>
           <button class="w-5" on:click={search}><SearchIcon /></button>

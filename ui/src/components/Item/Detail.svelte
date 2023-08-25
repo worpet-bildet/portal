@@ -59,7 +59,7 @@
     />
   {/if}
 </div>
-<div class="col-span-12 md:col-span-9 flex flex-col gap-4">
+<div class="col-span-12 md:col-span-9 flex flex-col">
   <div class="grid grid-cols-12 gap-4 w-full">
     <div class="relative col-span-3 md:col-span-2">
       <div bind:this={avatarPad} />
@@ -83,7 +83,7 @@
       </div>
     </div>
     <div
-      class="flex flex-col justify-start gap-2 col-span-9 relative break-words"
+      class="flex flex-col justify-start gap-2 col-span-9 relative break-words mb-4"
     >
       <div class="text-lg md:text-2xl font-bold">
         {title || ''}

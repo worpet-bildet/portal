@@ -2,7 +2,7 @@
   export let tabs, activeTab;
 </script>
 
-<div class="flex gap-4 border-b">
+<div class="flex gap-4 border-b mb-4">
   {#each tabs as tab}
     <button
       class="cursor-pointer text-lg hover:text-black font-saucebold hover:duration-500 dark:border-b-white dark:hover:text-white"
