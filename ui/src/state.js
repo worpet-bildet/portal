@@ -9,6 +9,13 @@ import { scoreItems } from './ai';
 export const state = writable(load() || {});
 export const feed = writable({});
 
+export const updateNotificationsLastChecked = () => {
+  state.update((s) => {
+    save({ notificationsLastChecked: new Date() });
+    return s;
+  });
+};
+
 export const toggleDarkmode = () => {
   state.update((s) => {
     s.darkmode = !s.darkmode;
