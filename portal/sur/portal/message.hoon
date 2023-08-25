@@ -17,6 +17,8 @@
       $+  sign-app
       [%sign-app dist-desk=@t sig=signature =treaty:treaty eth-price=(unit @t)]
       ::
+      [%unpublish =desk]
+      ::
       ::  buyer sends
       [%payment-request =desk]
       ::  buyer receives
