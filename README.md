@@ -112,3 +112,16 @@ on nuke
 7. Wait for the page to refresh (takes literally a minute or more sometimes)
 8. Wait another minute or two for Urbit to be Urbit
 9. Check that your changes have been deployed by navigating to the app
+
+## setting up indexers
+
+desk.ship is where you POST your feedposts to (so you don't want this to be ~worpet-bildet!)
+You make a local portal/portal/desk.ship
+It will be gitignored
+copy that to mars and commit it
+
+the .env var is where you LOAD your feedposts from (so this can be ~worpet-bildet)
+edit .env.local VITE_INDEXER
+source .env.local
+npm run dev
+
