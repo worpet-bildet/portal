@@ -300,20 +300,24 @@
           :_  %-  ~(add-tag sg:g graph.state)
               [from.u.wave.msg to.u.wave.msg app tag.u.wave.msg]
           %+  welp
-            ::  autosubbing to comments
+            ::  autosubbing to comments within the last 2 days
+            =/  key-to    (node-to-key:conv:portal to.u.wave.msg)
+            =/  key-from  (node-to-key:conv:portal from.u.wave.msg)
             ?:  ?&  =(+:tag.u.wave.msg /reply-to)
-                    =(our.bowl ship:(node-to-key:conv:portal to.u.wave.msg))
+                    =(our.bowl ship:key-to)
+                    (gte (slav %da time.key-from) (sub now.bowl ~d2))
                 ==
                 :_  ~
                 :*  %pass  /sub  %agent  [our.bowl %portal-manager]  %poke
-                    %portal-action  !>([%sub (node-to-key:conv:portal from.u.wave.msg)])
+                    %portal-action  !>([%sub key-from])
                 ==
             ?:  ?&  =(+:tag.u.wave.msg /reply-from)
-                    !=(our.bowl ship:(node-to-key:conv:portal from.u.wave.msg))
+                    !=(our.bowl ship:key-from)
+                    (gte (slav %da time.key-to) (sub now.bowl ~d2))
                 ==
                 :_  ~
                 :*  %pass  /sub  %agent  [our.bowl %portal-manager]  %poke
-                    %portal-action  !>([%sub (node-to-key:conv:portal to.u.wave.msg)])
+                    %portal-action  !>([%sub key-to])
                 ==
             ~
           :_  ~
