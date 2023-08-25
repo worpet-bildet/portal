@@ -1,6 +1,6 @@
 :~
   title+'Portal'
-  info+'A tool for decentralized curation and discovery of groups, apps and content on Urbit.'
+  info+'Portal is sovereign social media. A tool for decentralized curation and discovery of groups, apps and content on Urbit.'
   color+0x0
   version+[0 0 9]
   website+''
