@@ -265,12 +265,25 @@
     ::  a ne vanjski jer dolazi od portal-managera
     =/  msg  !<(message vase)
     ?+    -.msg  !!
+        %unpublish
+      ?:  !(~(has in authorized-ships) src.bowl)
+        ~&  >>>  "ship not authorized to unpublish"
+        `this
+      :_  this
+      :_  ~
+      %-  ~(act cards [our.bowl %portal-store])
+      :+  %remove
+        [%app our.bowl '' desk.msg]^~ 
+      [%collection our.bowl '' 'published-apps']
+      ::
         %sign-app
       ?:  !(~(has in authorized-ships) src.bowl)
         ~&  >>>  "ship not authorized to sign"
         `this
       ::  vulnerable to just receiving random apps from people lol
-      ?>  (validate-sig dist-desk.msg our.bowl our.bowl now.bowl sig.msg)
+      ?:  !(validate-sig dist-desk.msg our.bowl our.bowl now.bowl sig.msg)
+        ~&  >>>  "failed sig"
+        `this
       ~&  >  "%portal: sig is valid!"
       =/  dist-desk  (parse-dist-desk:misc dist-desk.msg)
       ?~  dist-desk  !!
@@ -286,18 +299,24 @@
                 [%collection our.bowl '' '~2000.1.1']~  ~  ~  ==
         ==
       =/  create-app
-        %-  ~(act cards [our.bowl %portal-store])
         ?:  %-  ~(item-exists scry our.bowl now.bowl)
             [%app our.bowl '' desk-name.u.dist-desk]
-          :^    %edit
-              [%app our.bowl '' desk-name.u.dist-desk]
-            `%def
-          `[%app ~ ~ `dist-desk.msg `sig.msg `treaty.msg eth-price.msg]
+          :~  %-  ~(act cards [our.bowl %portal-store])
+              :^    %edit
+                  [%app our.bowl '' desk-name.u.dist-desk]
+                `%def
+              `[%app ~ ~ `dist-desk.msg `sig.msg `treaty.msg eth-price.msg]
+              %-  ~(act cards [our.bowl %portal-store])
+              :+  %append 
+                [%app our.bowl '' desk-name.u.dist-desk]^~ 
+              [%collection our.bowl '' 'published-apps']
+          ==
+        :_  ~  %-  ~(act cards [our.bowl %portal-store])
         :*  %create  ~  ~  `desk-name.u.dist-desk  `%def
           `[%app ~ '' dist-desk.msg sig.msg treaty.msg (fall eth-price.msg '')]
           ~[[%collection our.bowl '' 'published-apps']]  ~  ~  ==
       :_  this
-      (snoc create-my-apps create-app)
+      (welp create-my-apps create-app)
       ::
         %payment-reference
       ~&  msg
