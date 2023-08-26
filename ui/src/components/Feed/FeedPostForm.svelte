@@ -28,6 +28,7 @@
   export let ratingStars = false;
   export let error;
   export let placeholder;
+  export let buttonText = 'Post';
 
   let dispatch = createEventDispatcher();
   let content, rating;
@@ -120,7 +121,7 @@
 </script>
 
 <div
-  class="grid grid-cols-12 bg-panels dark:bg-darkgrey border-x border-b py-5 pl-5 pr-3 gap-2 {$$props.class}"
+  class="grid grid-cols-12 bg-panels dark:bg-darkgrey border-x border-b py-5 pl-5 pr-3 gap-2 lg:gap-4 {$$props.class}"
   class:border-error={error}
 >
   <div class="col-span-1">
@@ -131,6 +132,7 @@
   <div class="col-span-11 pb-2 flex flex-col gap-2">
     <TextArea placeholder={placeholder} bind:value={content} on:keydown={(e) => {
       if (e.key === 'Enter' && e.metaKey) {
+        console.log('Meta + Enter detected');
         post();
       }
     }}/>
@@ -206,7 +208,7 @@
     {/if}
     <button
       class="bg-black dark:bg-white text-white dark:text-darkgrey hover:bg-grey dark:hover:bg-offwhite hover:duration-500 font-bold rounded-lg px-3 py-1 self-end"
-      on:click={post}>Post</button
+      on:click={post}>{buttonText}</button
     >
   </div>
   {#if error}

@@ -239,7 +239,7 @@
               <IconButton
                 icon={EthereumIcon}
                 on:click={() => handleTipRequest(item.keyObj)}
-                class="text-grey hover:text-black dark:hover:text-white"
+                class="text-grey hover:text-ai-blue dark:hover:text-white"
               />
             </div>
           {/if}
@@ -256,6 +256,7 @@
         <FeedPostForm
           replyTo={item.keyObj}
           placeholder="Post your reply..."
+          buttonText="Reply"
           recommendButtons={false}
           on:post={handlePostComment}
         />

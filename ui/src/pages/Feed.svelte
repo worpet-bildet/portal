@@ -68,6 +68,7 @@
     feed = feed.sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
     positiveFeedPrompt = '';
     negativeFeedPrompt = '';
+    canResetFeed = false;
   };
 
   state.subscribe((s) => {
@@ -262,7 +263,7 @@
                     >x</button>
                 {:else}
                   <button
-                  class="bg-panels-hover dark:border dark:text-grey rounded-md w-7 h-7 mr-2 flex items-center justify-center"
+                  class="bg-panels-hover dark:border text-grey rounded-md w-7 h-7 mr-2 flex items-center justify-center"
                   >/</button>
                 {/if}
               </div>
@@ -401,7 +402,7 @@
         </div>
         <div class="flex justify-center">
           <button
-              class="bg-panels-solid dark:bg-darkgrey rounded-md w-7 h-7 mr-2 border flex items-center justify-center mb-[-30px]"
+              class="bg-panels-solid dark:bg-darkgrey hover:border-darkgrey rounded-md w-7 h-7 mr-2 border flex items-center justify-center mb-[-30px]"
               on:click={() => (showExpandedForm = !showExpandedForm)}
             >
             {#if showExpandedForm}

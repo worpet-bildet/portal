@@ -42,6 +42,7 @@ module.exports = {
       grey: '#80808040',
       white: '#ffffff',
       black: '#000000',
+      darkgrey: '#181A1C',
       error: 'rgb(220 38 38)',
       spacer: '#696969',
     },
