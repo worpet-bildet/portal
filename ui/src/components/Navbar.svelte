@@ -7,6 +7,7 @@
     getNotifications,
     getItem,
     updateNotificationsLastChecked,
+    toggleMuteNotifications,
   } from '@root/state';
   import { me } from '@root/api';
   import { Sigil } from '@components';
@@ -17,6 +18,7 @@
     SunIcon,
     MoonIcon,
     BellIcon,
+    MutedIcon,
   } from '@fragments';
   import { getMeta, fromUrbitTime } from '@root/util';
   import logo from '@assets/logo.svg';
@@ -61,12 +63,14 @@
     notificationsOpen = true;
     updateNotificationsLastChecked();
     hasNewNotifications = false;
-    document.body.addEventListener('click', handleNotificationsClose);
+    // document.body.addEventListener('click', handleNotificationsClose);
   };
   const handleNotificationsClose = () => {
     notificationsOpen = false;
     document.body.removeEventListener('click', handleNotificationsClose);
   };
+
+  console.log(`state: ${$state.muteNotifications}`);
 </script>
 
 <div class="mb-10">
@@ -101,8 +105,26 @@
           </div>
           {#if notificationsOpen}
             <div
-              class="absolute top-10 w-max flex flex-col gap-4 bg-white dark:bg-black rounded-xl border border-white overflow-hidden"
+              class="absolute top-10 w-max p-3 flex flex-col gap-4 bg-white dark:bg-black rounded-xl border border-grey overflow-hidden"
             >
+              <div class="flex justify-between">
+                <div class="text-xl">Notifications</div>
+                <div class="relative flex items-center justify-end">
+                  <div class="relative">
+                    <input id="toggle" type="checkbox" class="cursor-pointer" bind:checked={$state.muteNotifications} on:change={() => toggleMuteNotifications()} />
+
+                    <!-- <label for="toggle" class="dot absolute left-1 top-1 bg-black w-6 h-6 rounded-full transition"></label>
+                    <label for="toggle" class="block border border-black w-14 h-8 rounded-full flex justify-between items-center">
+                      <BellIcon
+                        class={`p-[3px] transform translate-x-[3px] ${$state.muteNotifications ? 'text-white' : ''}`}
+                      />
+                      <MutedIcon
+                        class={`p-[3px] transform -translate-x-[3px] ${!$state.muteNotifications ? 'text-white' : ''}`}
+                      /> -->
+                    <!-- </label> -->
+                  </div>
+                </div>
+              </div>
               {#if notifications.length > 0}
                 {#each notifications as [reply, op]}
                   <button

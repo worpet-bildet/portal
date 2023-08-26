@@ -11,8 +11,21 @@ export const feed = writable({});
 
 export const updateNotificationsLastChecked = () => {
   state.update((s) => {
-    save({ notificationsLastChecked: new Date() });
+    let currentTime = new Date();
+    s.notificationsLastChecked = currentTime;
+    save({ notificationsLastChecked: currentTime });
     return s;
+  });
+};
+
+export const toggleMuteNotifications = () => {
+  state.update((s) => {
+    let newState = { ...s };
+    console.log(newState.muteNotifications)
+    newState.muteNotifications = !newState.muteNotifications;
+    console.log(newState.muteNotifications)
+    save({ muteNotifications: newState.muteNotifications });
+    return newState;
   });
 };
 
