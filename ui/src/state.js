@@ -271,7 +271,7 @@ export const getCollectedItemLeaderboard = (excludePatp) => {
   ).sort((a, b) => b[1] - a[1]);
 };
 
-export const getMoreFromThisShip = (patp) => {
+export const getMoreFromThisShip = (patp, cord='') => {
   return Object.entries(
     Object.values(get(state))
       .filter(
@@ -284,9 +284,9 @@ export const getMoreFromThisShip = (patp) => {
         b?.bespoke?.['key-list']
           .filter(
             (k) =>
-              k?.struc !== 'collection' &&
+              !['collection', 'ship'].includes(k?.struc) &&
               k?.ship === patp &&
-              k?.struc !== 'ship' &&
+              k?.cord !== cord &&
               !(
                 k?.cord === 'portal' &&
                 k?.ship === '~worpet-bildet' &&
