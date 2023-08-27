@@ -123,7 +123,7 @@
       >
         <div class="flex items-center gap-2">
           <div
-            class="font-bold line-clamp-1"
+            class="font-bold line-clamp-1 hover:line-clamp-none"
             class:text-sm={small}
             class:text-xl={!small}
           >
@@ -143,10 +143,24 @@
         >
           {blurb || description || ''}
         </div>
+        {#if struc === 'app' && !isInstalled}
+          <button
+            on:click={() => window.open(`${window.location.origin}/apps/grid/search/${ship}/apps`)}
+            class="bg-black rounded-md text-xs font-bold px-2 mr-2 dark:bg-white text-white dark:text-black hover:bg-grey dark:hover:bg-offwhite w-14 h-6"
+            >Install
+          </button>
+        {/if}
+        {#if struc === 'group' && !joinedDetails}
+          <button
+            on:click={api.urbit.do.joinGroup(groupKey).then(refreshGroups)}
+            class="bg-black rounded-md text-xs font-bold px-2 mr-2 dark:bg-white text-white dark:text-black hover:bg-grey dark:hover:bg-offwhite w-14 h-6"
+            >Join
+          </button>
+        {/if}
       </div>
       {#if editable || removable || struc === 'app' || struc === 'group'}
         <div
-          class="col-span-1 col-start-12 flex flex-col gap-2 self-center"
+          class="col-span-1 col-start-7 flex flex-col gap-2 self-center"
         >
           {#if editable}
             <button
@@ -164,20 +178,6 @@
               on:click={() => remove(keyStr)}
             >
               <TrashIcon />
-            </button>
-          {/if}
-          {#if struc === 'app' && !isInstalled}
-            <button
-              on:click={() => window.open(`${window.location.origin}/apps/grid/search/${ship}/apps`)}
-              class="bg-black rounded-md text-xs font-bold px-2 mr-2 dark:bg-white text-white dark:text-black hover:bg-grey dark:hover:bg-offwhite w-14 h-6"
-              >Install
-            </button>
-          {/if}
-          {#if struc === 'group' && !joinedDetails}
-            <button
-              on:click={api.urbit.do.joinGroup(groupKey).then(refreshGroups)}
-              class="bg-black rounded-md text-xs font-bold px-2 mr-2 dark:bg-white text-white dark:text-black hover:bg-grey dark:hover:bg-offwhite w-14 h-6"
-              >Join
             </button>
           {/if}
         </div>
