@@ -173,7 +173,7 @@
   state.subscribe((s) => {
     if (!s.isLoaded) return;
     loadApp(s);
-    sortedRecommendations = getMoreFromThisShip(ship).slice(0, 4);
+    sortedRecommendations = getMoreFromThisShip(ship, cord).slice(0, 4);
     purchased = s?.['bought-apps']?.[`${ship ?? '~zod'}/${desk}`];
   });
 
