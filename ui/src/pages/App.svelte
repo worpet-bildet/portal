@@ -18,6 +18,7 @@
     isValidTxHash,
     weiToEth,
     sendTransaction,
+    checkIfInstalled,
   } from '@root/util';
   import {
     ItemDetail,
@@ -160,9 +161,7 @@
       s.apps?.[cord]?.chad?.hasOwnProperty('hung') ||
       isInstalling;
 
-    isInstalled =
-      (!isInstalling && !!s.apps?.[desk]) ||
-      (s.apps?.[cord]?.chad?.hasOwnProperty('site') && !!s.apps?.[desk]);
+    isInstalled = checkIfInstalled(s, desk, cord, isInstalling);
 
     if (isInstalled) isInstalling = false;
 
