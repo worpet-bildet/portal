@@ -152,7 +152,11 @@
         {/if}
         {#if struc === 'group' && !joinedDetails}
           <button
-            on:click={api.urbit.do.joinGroup(groupKey).then(refreshGroups)}
+            on:click|stopPropagation={async (event) => {
+              event.stopPropagation();
+              event.target.innerHTML = "Joining";
+              await api.urbit.do.joinGroup(groupKey).then(refreshGroups);
+            }}
             class="bg-black rounded-md text-xs font-bold px-2 mr-2 dark:bg-white text-white dark:text-black hover:bg-grey dark:hover:bg-offwhite w-14 h-6"
             >Join
           </button>
