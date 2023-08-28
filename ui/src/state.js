@@ -112,6 +112,8 @@ export const refreshApps = () => {
     'webterm',
   ];
   api.urbit.get.installedApps().then(([{ initial }, kiln]) => {
+    console.log('a');
+    console.log(initial, kiln);
     state.update((s) => {
       let apps = {};
       Object.entries(initial).forEach(([key, data]) => {
@@ -119,6 +121,7 @@ export const refreshApps = () => {
         data.ship = kiln[key]?.sync?.ship;
         apps[key] = data;
       });
+      console.log(apps);
       s.apps = apps;
       return s;
     });

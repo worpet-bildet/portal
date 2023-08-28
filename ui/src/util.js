@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 
 export const checkIfInstalled = (s, desk, cord, isInstalling = false) => {
+  console.log(s.apps, s.apps?.[cord]?.chad?.hasOwnProperty('site'));
   return (!isInstalling && !!s.apps?.[desk]) ||
     (s.apps?.[cord]?.chad?.hasOwnProperty('site') && !!s.apps?.[desk]);
 }
