@@ -300,7 +300,9 @@
     =+  %-  malt  %+  turn  -
       |=  [k=[=ship =dude:gall p=^^path] v=[? ? =rock:portal-item]]
       `[key item]`[(path-to-key:conv +.p.k) rock.v]
-    items+(~(uni by items) -)
+    =+  (~(uni by items) -)
+    ::  filter only for feedpoasts from last 14 days (%other and %retweet type)
+    items+(last-x-items:stor - ~d14)
     ::
     [%keys ~]
     =+  ~(tap by read:da-item)
@@ -369,6 +371,22 @@
   ^-  ^items
   ?>  |(=(our.bowl ship.key.item) =(lens.item %temp))
   (~(put by items) key.item item)
+::
+::  items from e.g. last 14 days
+++  last-x-items
+  |=  [itms=^items x=@dr]
+  ^-  ^items
+  =+  ~(tap by itms)
+  %-  malt
+  %+  skim  -
+  |=  [=key =item]
+  ^-  ?
+  ?+    struc.key    %.y
+      ?(%other %retweet)
+    ?~  t=(slaw %da time.key)
+      %.y
+    (gte u.t (sub now.bowl x))
+  ==
 ::
 ++  cards-methods
   |%
@@ -458,7 +476,9 @@
       ::  note SSS only for feeds and collections is also temporary fix
       ::  because it is not scalable as well
       ?.  ?=(?(%feed %collection %app %blog) struc.key.act)
-        ?:  (~(has by items) key.act)  `state
+        ?:  (~(has by items) key.act)  
+          :_  state
+          (upd:cards-methods (get-item key.act))
         :_  state
         %+  snoc  `(list card)`(track-gr:cards-methods ship.key.act)
         `card`(~(msg cards [ship.key.act %portal-store]) [%get-item key.act])
@@ -469,7 +489,8 @@
               ::  stupid hack bcs sss sometimes loses the subscriber from the mem pool
               ::  so we are allowing the global feed sub to go thru if someone was
               ::  `accidentally` unsubscribed
-          `state
+          :_  state
+          (upd:cards-methods (get-item key.act))
       =^  cards  item-sub.state  (surf:da-item ship.key.act %portal-store path)
       :_  state
       (welp (track-gr:cards-methods ship.key.act) cards)
