@@ -3,8 +3,6 @@
   import { ItemPreview } from '@components';
 
   export let block;
-
-  console.log({ block });
 </script>
 
 {#if block['cite']}

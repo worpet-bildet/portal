@@ -6,13 +6,9 @@
   export let memo;
   export let group;
   const { author, content } = memo;
-
-  console.log({ content });
 </script>
 
-<div
-  class="col-span-6 p-1 rounded-lg grid grid-cols-12 gap-2 break-words"
->
+<div class="col-span-6 p-1 rounded-lg grid grid-cols-12 gap-2 break-words">
   <div class="col-span-1">
     <div class="rounded-md overflow-hidden">
       <Sigil patp={`${author}`} />

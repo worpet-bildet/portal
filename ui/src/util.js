@@ -3,9 +3,11 @@ import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 
 export const checkIfInstalled = (s, desk, cord, isInstalling = false) => {
-  return (!isInstalling && !!s.apps?.[desk]) ||
-    (s.apps?.[cord]?.chad?.hasOwnProperty('site') && !!s.apps?.[desk]);
-}
+  return (
+    (!isInstalling && !!s.apps?.[desk]) ||
+    (s.apps?.[cord]?.chad?.hasOwnProperty('site') && !!s.apps?.[desk])
+  );
+};
 
 export const getMeta = (item) => {
   return {
@@ -385,6 +387,15 @@ export const isHappeningSoon = (events) => {
   ];
 };
 
+export const formatId = (id) => {
+  // add dots after every third character, starting from the end
+  const reversed = id.split('').reverse().join('');
+  const groups = reversed.match(/.{1,3}/g);
+  const joined = groups.join('.');
+  const reversedAgain = joined.split('').reverse().join('');
+  return reversedAgain;
+};
+
 //  /1/chan/chat/~sampel-dilryd-mopreg/new-channel/msg/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749
 export const isChatPath = (path) => {
   return path.substring(0, 13) === '/1/chan/chat/';
@@ -420,7 +431,7 @@ export const getCurioDetails = (path) => {
   return {
     host: splut[4],
     channel: splut[5],
-    id: splut[7],
+    id: formatId(splut[7]),
   };
 };
 
@@ -430,19 +441,9 @@ export const getCurioDetails = (path) => {
 // /heap/~toptyr-bilder/links/curios/curio/id/170.141.184.506.270.899.144.208.463.636.562.182.144
 export const formatCurioPath = (path) => {
   const p = path.replace('/1/chan', '').replace('/curio/', '/curios/curio/id/');
-  // replace the last element in the path with the formatted id, where there is
-  // a period after every third character
   const splut = p.split('/');
-  // reverse the string (we need to add the periods from the end)
-  const reversed = splut[splut.length - 1].split('').reverse().join('');
-  // split into groups of three
-  const groups = reversed.match(/.{1,3}/g);
-  // join with periods
-  const joined = groups.join('.');
-  // reverse again
-  const reversedAgain = joined.split('').reverse().join('');
   // replace the last element in the path with the formatted id
-  splut[splut.length - 1] = reversedAgain;
+  splut[splut.length - 1] = formatId(splut[splut.length - 1]);
   return splut.join('/');
 };
 

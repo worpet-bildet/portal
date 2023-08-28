@@ -16,7 +16,7 @@
     RecommendModal,
     Sigil,
     GroupsChatMessage,
-    GroupsCurio,
+    GroupsHeapCurio,
   } from '@components';
   import {
     TextArea,
@@ -48,8 +48,7 @@
       return (error = 'Please give a score.');
     }
     // If we have some chat details here, we should generate the reference and
-    // then send the reference back up with the post, so it can decide whether
-    // to make a retweet or not
+    // then send the reference back up with the post
     let ref;
     if (chatDetails) {
       const { host, channel, poster, id } = chatDetails;
@@ -139,7 +138,6 @@
     curioData = await api.portal.get.heapCurio(formatCurioPath(curioPath));
     curioDetails = getCurioDetails(curioPath);
     content = content.replace(curioPath, '');
-    console.log({ curioData, curioDetails });
   };
 
   $: chatToPreview = getAnyChatMessage(content || '');
@@ -158,12 +156,16 @@
     </div>
   </div>
   <div class="col-span-11 pb-2 flex flex-col gap-2">
-    <TextArea placeholder={placeholder} bind:value={content} on:keydown={(e) => {
-      if (e.key === 'Enter' && e.metaKey) {
-        console.log('Meta + Enter detected');
-        post();
-      }
-    }}/>
+    <TextArea
+      {placeholder}
+      bind:value={content}
+      on:keydown={(e) => {
+        if (e.key === 'Enter' && e.metaKey) {
+          console.log('Meta + Enter detected');
+          post();
+        }
+      }}
+    />
     {#if uploadedImageUrl}
       <div class="flex">
         <img src={uploadedImageUrl} class="object-cover" alt="uploaded" />
@@ -176,7 +178,7 @@
       <GroupsChatMessage memo={chatData.memo} />
     {/if}
     {#if curioData}
-      <GroupsCurio heart={curioData.heart} />
+      <GroupsHeapCurio heart={curioData.heart} />
     {/if}
   </div>
   <div class="col-span-12 col-start-2 flex justify-between">
@@ -212,7 +214,9 @@
             icon={ImageIcon}
             on:click={() => {
               if (!$state.s3 || !$state.s3.configuration?.currentBucket) {
-                alert('For attachment support, configure S3 storage with ~dister-nocsyx-lassul/silo. Otherwise, paste a link to a hosted image.');
+                alert(
+                  'For attachment support, configure S3 storage with ~dister-nocsyx-lassul/silo. Otherwise, paste a link to a hosted image.'
+                );
               } else {
                 fileInput.click();
               }

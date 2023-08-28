@@ -14,6 +14,7 @@
     CollectionsSquarePreview,
     Sigil,
     GroupsChatMessage,
+    GroupsHeapCurio,
   } from '@components';
   import {
     ItemImage,
@@ -32,6 +33,8 @@
 
   let item, isInstalled, joinedDetails, groupKey;
 
+  let groupsStrucs = ['groups-chat-msg', 'groups-heap-curio'];
+
   $: loadItem(key);
 
   /**
@@ -49,8 +52,7 @@
     if ($state.isLoaded && !item) {
       return api.portal.do.subscribe(key);
     }
-    if (item.keyObj.struc === 'groups-chat-msg') clickable = false;
-    if (item.keyObj.struc === 'groups-chat-msg') console.log({ item });
+    if (groupsStrucs.includes(item.keyObj.struc)) clickable = false;
 
     if (item.keyObj.struc === 'group') {
       groupKey = `${item.keyObj.ship}/${item.keyObj.cord}`;
@@ -110,6 +112,11 @@
       } = item}
       {@const author = id.split('/')[0]}
       <GroupsChatMessage {author} {group} {content} />
+    {:else if struc === 'groups-heap-curio'}
+      {@const {
+        bespoke: { heart, group },
+      } = item}
+      <GroupsHeapCurio {heart} {group} />
     {:else}
       <div
         class="border overflow-hidden rounded-md self-center"
