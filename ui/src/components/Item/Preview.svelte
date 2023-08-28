@@ -1,16 +1,16 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import { push } from 'svelte-spa-router';
-  import { state, keyStrFromObj, getItem } from '@root/state';
+  import { state, keyStrFromObj, getItem, getJoinedGroupDetails, refreshGroups } from '@root/state';
   import { api } from '@root/api';
-  import { getMeta } from '@root/util';
+  import { getMeta, checkIfInstalled } from '@root/util';
   import { CollectionsSquarePreview, Sigil } from '@components';
   import {
     ItemImage,
     TrashIcon,
     EditIcon,
     ExternalDestinationIcon,
-    GroupsChatMessage,
+    GroupsChatMessage
   } from '@fragments';
 
   export let key;
@@ -21,7 +21,7 @@
   export let selected = false;
   export let small = false;
 
-  let item;
+  let item, isInstalled, joinedDetails, groupKey;
 
   $: loadItem(key);
 
@@ -38,6 +38,12 @@
     }
     if (item.keyObj.struc === 'groups-chat-msg') clickable = false;
     if (item.keyObj.struc === 'groups-chat-msg') console.log({ item });
+
+    if (item.keyObj.struc === 'group') {
+      groupKey = `${item.keyObj.ship}/${item.keyObj.cord}`
+      joinedDetails = getJoinedGroupDetails(groupKey);
+    }
+    if (item.keyObj.struc === 'app') isInstalled = checkIfInstalled(state, item?.keyObj?.ship, item?.keyObj?.cord);
   };
 
   state.subscribe(() => {
@@ -73,7 +79,7 @@
         dispatch('selected', { key, selected });
       }
     }}
-    class="grid grid-cols-6 w-full items-start gap-4 p-1 border border-transparent dark:hover:bg-transparent hover:duration-500 rounded-lg text-sm text-left"
+    class="grid grid-cols-6 w-full items-start gap-2 p-2 border dark:hover:bg-transparent hover:duration-500 rounded-lg text-sm text-left"
     class:cursor-default={!clickable}
     class:hover:bg-panels-hover={clickable}
     class:dark:hover:border-white={clickable}
@@ -88,7 +94,7 @@
       <GroupsChatMessage {author} {group} {content} />
     {:else}
       <div
-        class="border overflow-hidden rounded-md"
+        class="border overflow-hidden rounded-md self-center"
         class:col-span-1={!small}
         class:col-span-2={small}
       >
@@ -111,13 +117,13 @@
         {/if}
       </div>
       <div
-        class="flex flex-col items-start gap-2 overflow-hidden"
+        class="flex flex-col items-start gap-2 self-center"
         class:col-span-5={!small}
         class:col-span-4={small}
       >
         <div class="flex items-center gap-2">
           <div
-            class="font-bold line-clamp-1"
+            class="font-bold line-clamp-1 hover:line-clamp-none"
             class:text-sm={small}
             class:text-xl={!small}
           >
@@ -137,10 +143,28 @@
         >
           {blurb || description || ''}
         </div>
+        {#if struc === 'app' && !isInstalled}
+          <button
+            on:click={() => window.open(`${window.location.origin}/apps/grid/search/${ship}/apps`)}
+            class="bg-black rounded-md text-xs font-bold px-2 mr-2 dark:bg-white text-white dark:text-black hover:bg-grey dark:hover:bg-offwhite w-14 h-6"
+            >Install
+          </button>
+        {/if}
+        {#if struc === 'group' && !joinedDetails}
+          <button
+            on:click|stopPropagation={async (event) => {
+              event.stopPropagation();
+              event.target.innerHTML = "Joining";
+              await api.urbit.do.joinGroup(groupKey).then(refreshGroups);
+            }}
+            class="bg-black rounded-md text-xs font-bold px-2 mr-2 dark:bg-white text-white dark:text-black hover:bg-grey dark:hover:bg-offwhite w-14 h-6"
+            >Join
+          </button>
+        {/if}
       </div>
-      {#if editable || removable}
+      {#if editable || removable || struc === 'app' || struc === 'group'}
         <div
-          class="col-span-1 col-start-12 flex gap-2 justify-center items-center"
+          class="col-span-1 col-start-7 flex flex-col gap-2 self-center"
         >
           {#if editable}
             <button

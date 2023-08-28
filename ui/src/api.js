@@ -252,10 +252,13 @@ export const api = {
         let client = new S3Client({
           credentials: s3.credentials,
           endpoint: s3.credentials.endpoint,
-          region: s3.configuration.region,
+          region: s3.configuration.region || 'a',
         });
         const command = new PutObjectCommand(params);
         await client.send(command);
+        if (s3.credentials.endpoint.slice(-1) === '/') {
+          return `${s3.credentials.endpoint}${params.Bucket}/${params.Key}`;
+        }
         return `${s3.credentials.endpoint}/${params.Bucket}/${params.Key}`;
       },
     },

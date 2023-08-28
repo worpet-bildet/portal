@@ -239,7 +239,7 @@
               <IconButton
                 icon={EthereumIcon}
                 on:click={() => handleTipRequest(item.keyObj)}
-                class="text-grey hover:text-ai-blue dark:hover:text-white"
+                class="text-grey hover:text-ai-blue dark:hover:text-ai-blue"
               />
             </div>
           {/if}
