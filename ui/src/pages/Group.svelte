@@ -46,7 +46,7 @@
   state.subscribe((s) => {
     if (!s.isLoaded) return;
     loadGroup();
-    sortedRecommendations = getMoreFromThisShip(host).slice(0, 4);
+    sortedRecommendations = getMoreFromThisShip(host, cord).slice(0, 4);
   });
 
   const join = () => api.urbit.do.joinGroup(groupKey).then(refreshGroups);

@@ -9,7 +9,7 @@
 </script>
 
 <div
-  class="col-span-6 p-2 border rounded-lg grid grid-cols-12 gap-2 break-words"
+  class="col-span-6 p-1 rounded-lg grid grid-cols-12 gap-2 break-words"
 >
   <div class="col-span-1">
     <div class="rounded-md overflow-hidden">
