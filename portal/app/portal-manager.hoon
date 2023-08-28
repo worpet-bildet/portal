@@ -539,6 +539,20 @@
                 /(scot %p buyer.u.processing-data)/tip-to/(scot %da now.bowl)/[eth-paid]/[note]
             ==
         ==
+        :*  %pass  /hark  %agent  [our.bowl %hark]  %poke
+            %hark-action  !>
+            :*  %add-yarn  &  &
+                (end 7 (shas %portal-notif eny.bowl))
+                :^  ~  ~  q.byk.bowl
+                    ;:  welp  /portal  /tip
+                        (key-to-path:conv key.u.processing-data)
+                    ==
+                now.bowl
+                [ship+buyer.u.processing-data ' gave you a tip!' ~]
+                /portal
+                ~
+            ==
+        ==
     ==
   ==
   :: |=  [=wire sign=sign-arvo]

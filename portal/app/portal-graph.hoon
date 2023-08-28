@@ -307,9 +307,24 @@
                     =(our.bowl ship:key-to)
                     (gte (slav %da time.key-from) (sub now.bowl ~d2))
                 ==
-                :_  ~
-                :*  %pass  /sub  %agent  [our.bowl %portal-manager]  %poke
-                    %portal-action  !>([%sub key-from])
+                :~  :*  %pass  /sub  %agent  [our.bowl %portal-manager]  %poke
+                        %portal-action  !>([%sub key-from])
+                    ==
+                    :*  %pass  /hark  %agent  [our.bowl %hark]  %poke
+                        %hark-action  !>
+                        :*  %add-yarn  &  &
+                            (end 7 (shas %portal-notif eny.bowl))
+                            :^  ~  ~  q.byk.bowl
+                                ;:  welp  /portal  /reply
+                                    (key-to-path:conv:portal key-to)
+                                ==
+                                :: if its threaded by post key, then nested replies would get separate threads
+                            now.bowl
+                            [ship+ship:key-from ' replied to your post.' ~]
+                            /portal
+                            ~
+                        ==
+                    ==
                 ==
             ?:  ?&  =(+:tag.u.wave.msg /reply-from)
                     !=(our.bowl ship:key-from)
@@ -318,6 +333,27 @@
                 :_  ~
                 :*  %pass  /sub  %agent  [our.bowl %portal-manager]  %poke
                     %portal-action  !>([%sub key-to])
+                ==
+            ?:  ?&  =(+:tag.u.wave.msg /review-to)
+                    =(our.bowl ship:key-to)
+                ==
+                :~  :*  %pass  /sub  %agent  [our.bowl %portal-manager]  %poke
+                        %portal-action  !>([%sub key-from])
+                    ==
+                    :*  %pass  /hark  %agent  [our.bowl %hark]  %poke
+                        %hark-action  !>
+                        :*  %add-yarn  &  &
+                            (end 7 (shas %portal-notif eny.bowl))
+                            :^  ~  ~  q.byk.bowl
+                                ;:  welp  /portal  /app-review
+                                    (key-to-path:conv:portal key-to)
+                                ==
+                            now.bowl
+                            [ship+ship:key-from ' reviewed %' time:key-to '.' ~]
+                            /portal
+                            ~
+                        ==
+                    ==
                 ==
             ~
           :_  ~
