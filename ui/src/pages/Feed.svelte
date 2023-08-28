@@ -359,7 +359,7 @@
                   class="focus:outline-none p-3 placeholder-grey text-black text-lg dark:text-white flex-grow"
                   placeholder="Show me less ..."
                   bind:value={negativeFeedPrompt}
-                  on:keyboardSubmit={handlePromptFeed()}
+                  on:keyboardSubmit={handlePromptFeed}
                 />
               </div>
             </div>
