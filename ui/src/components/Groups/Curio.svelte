@@ -7,9 +7,7 @@
 
   export let heart;
   export let group;
-  const { author, content } = heart;
-
-  console.log({ author, content });
+  let { author, content } = heart;
 </script>
 
 <div

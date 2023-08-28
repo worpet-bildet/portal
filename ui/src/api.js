@@ -195,6 +195,23 @@ export const api = {
             time,
           },
         }),
+      // /1/chan/heap/~toptyr-bilder/links/curio/170141184506270899144208463636562182144
+      createGroupsHeapCurio: (host, channel, id, time) =>
+        pmPoke({
+          create: {
+            bespoke: {
+              'groups-heap-curio': {
+                group: '',
+                channel: { p: host, q: channel },
+                time: id,
+                heart: '',
+                feels: 0,
+                replies: 0,
+              },
+            },
+            time,
+          },
+        }),
     },
     newDo: {
       //  /1/chan/diary/~worpet-bildet/announcements/note/170141184506311745994155289567817629696
@@ -207,22 +224,6 @@ export const api = {
                 channel: { p: '~worpet-bildet', q: 'announcements' },
                 time: '170.141.184.506.311.745.994.155.289.567.817.629.696',
                 essay: '',
-                feels: 0,
-                replies: 0,
-              },
-            },
-          },
-        }),
-      // /1/chan/heap/~toptyr-bilder/links/curio/170141184506270899144208463636562182144
-      createGroupsHeapCurio: () =>
-        pmPoke({
-          create: {
-            bespoke: {
-              'groups-heap-curio': {
-                group: '',
-                channel: { p: '~toptyr-bilder', q: 'links' },
-                time: '170.141.184.506.270.899.144.208.463.636.562.182.144',
-                heart: '',
                 feels: 0,
                 replies: 0,
               },

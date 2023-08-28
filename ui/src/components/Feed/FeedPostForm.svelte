@@ -62,6 +62,17 @@
       };
       api.portal.do.createGroupsChatMsg(host, channel, poster, id, time);
     }
+    if (curioDetails) {
+      const { host, channel, id } = curioDetails;
+      const time = toUrbitTime(Date.now());
+      ref = {
+        struc: 'groups-heap-curio',
+        ship: me,
+        cord: '',
+        time,
+      };
+      api.portal.do.createGroupsHeapCurio(host, channel, id, time);
+    }
     dispatch('post', { content, uploadedImageUrl, replyTo, rating, ref });
     content = '';
     uploadedImageUrl = '';
@@ -69,6 +80,8 @@
     error = '';
     chatDetails = undefined;
     chatData = undefined;
+    curioDetails = undefined;
+    curioData = undefined;
     rating = undefined;
   };
 

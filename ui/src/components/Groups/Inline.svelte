@@ -1,4 +1,5 @@
 <script>
+  import { isImage } from '@root/util';
   export let inline;
 </script>
 
@@ -13,8 +14,13 @@
     href={inline['link'].href}
     target="_blank"
     class="hover:underline text-link dark:text-link-dark"
-    >{inline['link'].content || inline['link'].href}</a
   >
+    {#if isImage(inline['link'].href)}
+      <img src={inline['link'].href} alt={inline['link'].content} />
+    {:else}
+      {inline['link'].content || inline['link'].href}
+    {/if}
+  </a>
 {:else if inline['inline-code']}
   <span class="bg-offwhite font-mono rounded-md px-2 py-1 dark:bg-panels"
     >{inline['inline-code']}</span
