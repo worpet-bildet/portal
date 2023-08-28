@@ -21,7 +21,7 @@
     textarea.addEventListener('paste', function (e) {
       e.preventDefault();
       document.execCommand(
-        'insertHTML',
+        'insertText',
         false,
         e.clipboardData.getData('text/plain')
       );
