@@ -4,7 +4,6 @@
     state,
     getCuratorAllCollectionItems,
     groupKeyToItemKey,
-    profileKeyToItemKey,
     collectionKeyToItemKey,
     keyStrFromObj,
     getItem,
@@ -16,7 +15,7 @@
     SparklesIcon,
     AppIcon,
     PeopleIcon,
-    PersonIcon,
+    LoadingIcon,
     CollectionIcon,
     SearchIcon,
   } from '@fragments';
@@ -63,13 +62,12 @@
   };
 
   state.subscribe((s) => {
-    if (!s.apps || !s.groups) return;
-    items = getCuratorAllCollectionItems(me) || [];
+    items = getCuratorAllCollectionItems(me);
 
     myItems =
       new Set([
-        ...Object.keys(s.groups).map(groupKeyToItemKey),
-        ...Object.entries(s.apps).map(
+        ...Object.keys(s.groups || {}).map(groupKeyToItemKey),
+        ...Object.entries(s.apps || {}).map(
           ([cord, { ship }]) => `/app/${ship}/${cord}/`
         ),
         ...Object.keys(
@@ -170,7 +168,7 @@
           <ItemPreview {key} />
         {/each}
       {:else}
-        <div class="p-10">
+        <div class="p-10 text-xs">
           <pre>
  _   _  ____ _______ _    _ _____ _   _  _____   _______ ____
 | \ | |/ __ \__   __| |  | |_   _| \ | |/ ____| |__   __/ __ \
@@ -188,6 +186,10 @@
         </pre>
         </div>
       {/if}
+    </div>
+  {:else}
+    <div class="flex justify-center">
+      <LoadingIcon />
     </div>
   {/if}
 </div>

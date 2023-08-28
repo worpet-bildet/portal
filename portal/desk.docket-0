@@ -1,11 +1,11 @@
 :~
   title+'Portal'
-  info+'A tool for decentralized curation and discovery of groups, apps and content on Urbit.'
+  info+'Portal is sovereign social media. A tool for decentralized curation and discovery of groups, apps and content on Urbit.'
   color+0x0
   version+[0 0 9]
   website+''
   license+''
   image+'https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/tile2.svg'
   base+'portal'
-  glob-http+['https://portal-glob.nyc3.cdn.digitaloceanspaces.com/glob-0v2.7sc4b.corv5.31jan.f1h2p.7r8sc.glob' 0v2.7sc4b.corv5.31jan.f1h2p.7r8sc]
+  glob-http+['https://portal-glob.nyc3.cdn.digitaloceanspaces.com/glob-0v7.kkfo7.vi6rp.l3s9l.03t1d.lepvj.glob' 0v7.kkfo7.vi6rp.l3s9l.03t1d.lepvj]
 ==

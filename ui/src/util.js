@@ -2,6 +2,11 @@ import * as linkify from 'linkifyjs';
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 
+export const checkIfInstalled = (s, desk, cord, isInstalling = false) => {
+  return (!isInstalling && !!s.apps?.[desk]) ||
+    (s.apps?.[cord]?.chad?.hasOwnProperty('site') && !!s.apps?.[desk]);
+}
+
 export const getMeta = (item) => {
   return {
     title: getTitle(item) || item?.keyObj?.cord,

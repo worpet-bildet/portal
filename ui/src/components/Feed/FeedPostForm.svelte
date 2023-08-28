@@ -34,6 +34,8 @@
   export let recommendButtons = true;
   export let ratingStars = false;
   export let error;
+  export let placeholder;
+  export let buttonText = 'Post';
 
   let dispatch = createEventDispatcher();
   let content, rating;
@@ -134,7 +136,7 @@
 </script>
 
 <div
-  class="grid grid-cols-12 bg-panels dark:bg-darkgrey border py-5 pl-5 rounded-tl-lg rounded-tr-lg pr-3 gap-2"
+  class="grid grid-cols-12 bg-panels dark:bg-darkgrey border-x border-b py-5 pl-5 pr-3 gap-2 lg:gap-4 {$$props.class}"
   class:border-error={error}
 >
   <div class="col-span-1">
@@ -143,7 +145,12 @@
     </div>
   </div>
   <div class="col-span-11 pb-2 flex flex-col gap-2">
-    <TextArea placeholder="Share a limerick, maybe" bind:value={content} />
+    <TextArea placeholder={placeholder} bind:value={content} on:keydown={(e) => {
+      if (e.key === 'Enter' && e.metaKey) {
+        console.log('Meta + Enter detected');
+        post();
+      }
+    }}/>
     {#if uploadedImageUrl}
       <div class="flex">
         <img src={uploadedImageUrl} class="object-cover" alt="uploaded" />
@@ -190,11 +197,12 @@
         <div class="rounded-full overflow-hidden">
           <IconButton
             icon={ImageIcon}
-            disabled={!$state.s3 || !$state.s3.configuration?.currentBucket}
-            tooltip="Configure S3 storage for image support"
             on:click={() => {
-              if (!$state.s3 || !$state.s3.configuration?.currentBucket) return;
-              fileInput.click();
+              if (!$state.s3 || !$state.s3.configuration?.currentBucket) {
+                alert('For attachment support, configure S3 storage with ~dister-nocsyx-lassul/silo. Otherwise, paste a link to a hosted image.');
+              } else {
+                fileInput.click();
+              }
             }}
             class="stroke-grey fill-grey hover:fill-black dark:hover:fill-grey"
           />
@@ -215,7 +223,7 @@
     {/if}
     <button
       class="bg-black dark:bg-white text-white dark:text-darkgrey hover:bg-grey dark:hover:bg-offwhite hover:duration-500 font-bold rounded-lg px-3 py-1 self-end"
-      on:click={post}>Post</button
+      on:click={post}>{buttonText}</button
     >
   </div>
   {#if error}

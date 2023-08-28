@@ -7,6 +7,7 @@
 /$  portal-manager-result-to-json  %portal-manager-result  %json
 |%
 +$  versioned-state
+  $+  manager-versioned-state
   $%  state-0:config
       state-1:config
       state-2:config
@@ -18,6 +19,7 @@
       state-8
   ==
 +$  state-8
+  $+  manager-state-8
   $:  %8
       =processing-payments:config
       =processed-payments:config
@@ -37,6 +39,7 @@
       =our-apps:config
   ==
 +$  state-7
+  $+  manager-state-7
   $:  %7
       authorized-ships=(set ship)
       bought-apps=(map [ship desk] tx-hash=@t)
@@ -52,6 +55,7 @@
       =our-apps:config
   ==
 +$  state-6
+  $+  manager-state-6
   $:  %6
       sub-blog-paths=_(mk-subs blog-paths ,[%paths ~])
       sub-portal-devs=_(mk-subs portal-devs ,[%portal-devs ~])
@@ -65,6 +69,7 @@
       =our-apps:config
   ==
 +$  state-5
+  $+  manager-state-5
   $:  %5
       sub-portal-devs=_(mk-subs portal-devs ,[%portal-devs ~])
       =dev-map:config
@@ -76,7 +81,7 @@
       =onboarded:config
       =our-apps:config
   ==
-+$  card  card:agent:gall
++$  card  $+  gall-card  card:agent:gall
 --
 ::  %+  verb  %.y
 %-  agent:dbug
@@ -212,11 +217,6 @@
         %onboarded
       `this(onboarded toggle.act)
       ::
-        %index-as-curator
-      =/  msg  [%index-as-curator src.bowl toggle.act]
-      :_  this(indexed-as-curator toggle.act)
-      [(~(msg cards [portal-indexer.state %portal-manager]) msg)]~
-      ::
         %payment-request
       ?:  (~(has by bought-apps) src.bowl desk.act)
         ~&  >  "already bought the app"
@@ -265,12 +265,25 @@
     ::  a ne vanjski jer dolazi od portal-managera
     =/  msg  !<(message vase)
     ?+    -.msg  !!
+        %unpublish
+      ?:  !(~(has in authorized-ships) src.bowl)
+        ~&  >>>  "ship not authorized to unpublish"
+        `this
+      :_  this
+      :_  ~
+      %-  ~(act cards [our.bowl %portal-store])
+      :+  %remove
+        [%app our.bowl '' desk.msg]^~ 
+      [%collection our.bowl '' 'published-apps']
+      ::
         %sign-app
       ?:  !(~(has in authorized-ships) src.bowl)
         ~&  >>>  "ship not authorized to sign"
         `this
       ::  vulnerable to just receiving random apps from people lol
-      ?>  (validate-sig dist-desk.msg our.bowl our.bowl now.bowl sig.msg)
+      ?:  !(validate-sig dist-desk.msg our.bowl our.bowl now.bowl sig.msg)
+        ~&  >>>  "failed sig"
+        `this
       ~&  >  "%portal: sig is valid!"
       =/  dist-desk  (parse-dist-desk:misc dist-desk.msg)
       ?~  dist-desk  !!
@@ -286,18 +299,24 @@
                 [%collection our.bowl '' '~2000.1.1']~  ~  ~  ==
         ==
       =/  create-app
-        %-  ~(act cards [our.bowl %portal-store])
         ?:  %-  ~(item-exists scry our.bowl now.bowl)
             [%app our.bowl '' desk-name.u.dist-desk]
-          :^    %edit
-              [%app our.bowl '' desk-name.u.dist-desk]
-            `%def
-          `[%app ~ ~ `dist-desk.msg `sig.msg `treaty.msg eth-price.msg]
+          :~  %-  ~(act cards [our.bowl %portal-store])
+              :^    %edit
+                  [%app our.bowl '' desk-name.u.dist-desk]
+                `%def
+              `[%app ~ ~ `dist-desk.msg `sig.msg `treaty.msg eth-price.msg]
+              %-  ~(act cards [our.bowl %portal-store])
+              :+  %append 
+                [%app our.bowl '' desk-name.u.dist-desk]^~ 
+              [%collection our.bowl '' 'published-apps']
+          ==
+        :_  ~  %-  ~(act cards [our.bowl %portal-store])
         :*  %create  ~  ~  `desk-name.u.dist-desk  `%def
           `[%app ~ '' dist-desk.msg sig.msg treaty.msg (fall eth-price.msg '')]
           ~[[%collection our.bowl '' 'published-apps']]  ~  ~  ==
       :_  this
-      (snoc create-my-apps create-app)
+      (welp create-my-apps create-app)
       ::
         %payment-reference
       ~&  msg
@@ -354,16 +373,6 @@
         %tip-confirmed
       :_  this
       [%give %fact [/updates]~ %portal-message !>(msg)]~
-      ::
-        %index-as-curator
-      ?>  =(our.bowl portal-indexer)
-      ?>  =(src.bowl src.msg)
-      =/  act  ~(act cards [our.bowl %portal-store])
-      =/  index-key  [%collection our.bowl '' 'index']
-      =/  ship-key   [%ship src.msg '' '']
-      =/  cards  `(list card)`~[(act [%remove ~[ship-key] index-key])]
-      =?  cards  toggle.msg  (snoc cards (act [%prepend ~[ship-key] index-key]))
-      [cards this]
     ==
     ::
       %sss-on-rock

@@ -34,9 +34,9 @@
       %def
   ==
 ::
-+$  key  $+  key-2  [=struc =ship =cord time=cord]
++$  key  [=struc =ship =cord time=cord]
 ::
-+$  items  $+  items-2  (map key item)
++$  items  (map key item)
 ::
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -47,7 +47,6 @@
   =<  item
   |%
   +$  item
-   $+  item-2
    $:  =key
        =lens
        =bespoke
