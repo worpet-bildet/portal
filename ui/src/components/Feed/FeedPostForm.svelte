@@ -130,12 +130,7 @@
     </div>
   </div>
   <div class="col-span-11 pb-2 flex flex-col gap-2">
-    <TextArea placeholder={placeholder} bind:value={content} on:keydown={(e) => {
-      if (e.key === 'Enter' && e.metaKey) {
-        console.log('Meta + Enter detected');
-        post();
-      }
-    }}/>
+    <TextArea {placeholder} bind:value={content} on:keyboardSubmit={post} />
     {#if uploadedImageUrl}
       <div class="flex">
         <img src={uploadedImageUrl} class="object-cover" alt="uploaded" />
@@ -184,7 +179,9 @@
             icon={ImageIcon}
             on:click={() => {
               if (!$state.s3 || !$state.s3.configuration?.currentBucket) {
-                alert('For attachment support, configure S3 storage with ~dister-nocsyx-lassul/silo. Otherwise, paste a link to a hosted image.');
+                alert(
+                  'For attachment support, configure S3 storage with ~dister-nocsyx-lassul/silo. Otherwise, paste a link to a hosted image.'
+                );
               } else {
                 fileInput.click();
               }
