@@ -1,12 +1,13 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import { api, me } from '@root/api';
-  import { state, keyStrToObj } from '@root/state';
+  import { state, keyStrToObj, getGroup, getApp } from '@root/state';
   import {
     getAnyLink,
     isChatPath,
     isCurioPath,
     isNotePath,
+    isShortcode,
     formatChatPath,
     formatCurioPath,
     formatNotePath,
@@ -18,6 +19,7 @@
   import {
     RecommendModal,
     Sigil,
+    ItemPreview,
     GroupsChatMessage,
     GroupsHeapCurio,
     GroupsDiaryNote,
@@ -50,6 +52,9 @@
     }
     if ((ratingStars && !rating) || Number(rating) === 0) {
       return (error = 'Please give a score.');
+    }
+    if (shortcodeItems && shortcodeItems.length > 1) {
+      return (error = 'Please select one of the items to recommend.');
     }
     // If we have some chat details here, we should generate the reference and
     // then send the reference back up with the post
@@ -87,6 +92,10 @@
       };
       api.portal.do.createGroupsDiaryNote(host, channel, id, time);
     }
+    if (shortcodeItems && shortcodeItems.length === 1) {
+      const { keyObj } = shortcodeItems[0];
+      ref = { ...keyObj };
+    }
     dispatch('post', { content, uploadedImageUrl, replyTo, rating, ref });
     content = '';
     uploadedImageUrl = '';
@@ -98,6 +107,8 @@
     curioData = undefined;
     noteDetails = undefined;
     noteData = undefined;
+    shortcodeToPreview = undefined;
+    shortcodeItems = undefined;
     rating = undefined;
   };
 
@@ -142,6 +153,8 @@
     content.split(/[\r\n|\s]+/).find((word) => isCurioPath(word));
   const getAnyNote = (content) =>
     content.split(/[\r\n|\s]+/).find((word) => isNotePath(word));
+  const getAnyShortcode = (content) =>
+    content.split(/[\r\n|\s]+/).find((word) => isShortcode(word));
 
   $: linkToPreview = getAnyLink(content || '');
 
@@ -166,12 +179,26 @@
     content = content.replace(notePath, '');
   };
 
+  let shortcodeToPreview, shortcodeItems;
+  const getShortcodeItem = (shortcode) => {
+    if (!getGroup(shortcode) && !getApp(shortcode)) {
+      shortcodeItems = [];
+      return;
+    }
+    shortcodeItems = [getGroup(shortcode), getApp(shortcode)].filter(
+      (i) => !!i
+    );
+    content = content.replace(shortcode, '');
+  };
+
   $: chatToPreview = getAnyChatMessage(content || '');
   $: if (chatToPreview) getChatData(chatToPreview);
   $: curioToPreview = getAnyCurio(content || '');
   $: if (curioToPreview) getCurioData(curioToPreview);
   $: noteToPreview = getAnyNote(content || '');
   $: if (noteToPreview) getNoteData(noteToPreview);
+  $: shortcodeToPreview = getAnyShortcode(content || '');
+  $: if (shortcodeToPreview) getShortcodeItem(shortcodeToPreview);
 </script>
 
 <div
@@ -185,6 +212,22 @@
   </div>
   <div class="col-span-11 pb-2 flex flex-col gap-2">
     <TextArea {placeholder} bind:value={content} on:keyboardSubmit={post} />
+    {#if shortcodeItems}
+      {#if shortcodeItems.length > 1}
+        <div class="font-bold">Please select one of the items</div>
+      {/if}
+      {#each shortcodeItems as item}
+        <ItemPreview
+          key={item.keyObj}
+          clickable={false}
+          on:click={() => {
+            // remove the other item from the shortcodeitems list, because we
+            // can only reference one at a time
+            shortcodeItems = [item];
+          }}
+        />
+      {/each}
+    {/if}
     {#if uploadedImageUrl}
       <div class="flex">
         <img src={uploadedImageUrl} class="object-cover" alt="uploaded" />
