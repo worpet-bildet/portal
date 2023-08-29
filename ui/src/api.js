@@ -130,14 +130,10 @@ export const api = {
         scry({ app: 'portal-manager', path: '/processed-payments' }),
       chatMessage: (path) => scry({ app: 'portal-manager', path }),
       //  link from groups we are scrying for:
-      //  /1/chan/diary/~worpet-bildet/announcements/note/170141184506311745994155289567817629696
-      // diaryNote: () =>
-      //   scry({
-      //     app: 'diary',
-      //     path: '/diary/~worpet-bildet/announcements/notes/note/170.141.184.506.311.745.994.155.289.567.817.629.696',
-      //   }),
       // /heap/~toptyr-bilder/links/curios/curio/id/170.141.184.506.270.899.144.208.463.636.562.182.144
       heapCurio: (path) => scry({ app: 'heap', path }),
+      //  /1/chan/diary/~worpet-bildet/announcements/note/170141184506311745994155289567817629696
+      diaryNote: (path) => scry({ app: 'diary', path }),
     },
     do: {
       create: (json) => pmPoke({ create: json }),
