@@ -301,7 +301,7 @@
         <div class="flex flex-col overflow-x-scroll scrollbar-hide">
           <div class="flex gap-4">
             <button
-              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+              class="rounded-lg bg-panels-hover text-grey hover:bg-translucent-purple dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
               on:click={() => {
                 positiveFeedPrompt = 'crypto';
                 negativeFeedPrompt = '';
@@ -309,7 +309,7 @@
               }}>Crypto</button
             >
             <button
-              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+              class="rounded-lg bg-panels-hover text-grey hover:bg-translucent-purple dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
               on:click={() => {
                 positiveFeedPrompt = 'high wordCount';
                 negativeFeedPrompt = '';
@@ -317,7 +317,7 @@
               }}>Longform</button
             >
             <button
-              class="rounded-lg bg-panels-hover hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white text-grey p-2 px-4"
+              class="rounded-lg bg-panels-hover hover:bg-translucent-purple dark:border dark:hover:bg-transparent dark:hover:border-white text-grey p-2 px-4"
               on:click={() => {
                 positiveFeedPrompt = 'retweet';
                 negativeFeedPrompt = '';
@@ -325,7 +325,7 @@
               }}>Recommendations</button
             >
             <button
-              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+              class="rounded-lg bg-panels-hover text-grey hover:bg-translucent-purple dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
               on:click={() => {
                 positiveFeedPrompt = 'productivity, work, learning';
                 negativeFeedPrompt = '';
@@ -333,7 +333,7 @@
               }}>Productivity</button
             >
             <button
-              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+              class="rounded-lg bg-panels-hover text-grey hover:bg-translucent-purple dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
               on:click={() => {
                 positiveFeedPrompt = 'https://';
                 negativeFeedPrompt = '';
@@ -341,7 +341,7 @@
               }}>Links</button
             >
             <button
-              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+              class="rounded-lg bg-panels-hover text-grey hover:bg-translucent-purple dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
               on:click={() => {
                 positiveFeedPrompt = 'tech, programming, hoon';
                 negativeFeedPrompt = '';
@@ -349,7 +349,7 @@
               }}>Tech</button
             >
             <button
-              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+              class="rounded-lg bg-panels-hover text-grey hover:bg-translucent-purple dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
               on:click={() => {
                 positiveFeedPrompt = 'politics';
                 negativeFeedPrompt = '';
@@ -357,7 +357,7 @@
               }}>Politics</button
             >
             <button
-              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+              class="rounded-lg bg-panels-hover text-grey hover:bg-translucent-purple dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
               on:click={() => {
                 positiveFeedPrompt = 'Jokes, funny, sarcasm';
                 negativeFeedPrompt = 'seriousness, work, productivity';
@@ -390,7 +390,7 @@
             <div class="flex flex-col mt-4" transition:slide>
               <div class="flex gap-4">
                 <button
-                  class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+                  class="rounded-lg bg-panels-hover text-grey hover:bg-translucent-purple dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
                   on:click={() => {
                     positiveFeedPrompt = '';
                     negativeFeedPrompt = 'abortion, racism, sexism, classism';
@@ -398,7 +398,7 @@
                   }}>Culture wars</button
                 >
                 <button
-                  class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+                  class="rounded-lg bg-panels-hover text-grey hover:bg-translucent-purple dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
                   on:click={() => {
                     positiveFeedPrompt = '';
                     negativeFeedPrompt = 'Jokes, funny, sarcasm';
@@ -406,7 +406,7 @@
                   }}>Shitposts</button
                 >
                 <button
-                  class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+                  class="rounded-lg bg-panels-hover text-grey hover:bg-translucent-purple dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
                   on:click={() => {
                     positiveFeedPrompt = '';
                     negativeFeedPrompt = 'politics';
@@ -414,7 +414,7 @@
                   }}>Politics</button
                 >
                 <button
-                  class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+                  class="rounded-lg bg-panels-hover text-grey hover:bg-translucent-purple dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
                   on:click={() => {
                     positiveFeedPrompt = '';
                     negativeFeedPrompt = 'crypto';

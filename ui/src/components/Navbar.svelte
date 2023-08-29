@@ -7,6 +7,7 @@
     getNotifications,
     getItem,
     updateNotificationsLastChecked,
+    toggleMuteNotifications,
   } from '@root/state';
   import { me } from '@root/api';
   import { Sigil } from '@components';
@@ -17,6 +18,7 @@
     SunIcon,
     MoonIcon,
     BellIcon,
+    MutedIcon,
   } from '@fragments';
   import { getMeta, fromUrbitTime } from '@root/util';
   import logo from '@assets/logo.svg';
@@ -67,6 +69,7 @@
     notificationsOpen = false;
     document.body.removeEventListener('click', handleNotificationsClose);
   };
+
 </script>
 
 <div class="mb-10">
@@ -92,7 +95,7 @@
               on:click|stopPropagation={notificationsOpen ? handleNotificationsClose : handleNotificationsOpen}
               class="w-5 flex items-center">
               <BellIcon />
-              {#if hasNewNotifications}
+              {#if hasNewNotifications && !$state.muteNotifications}
                 <div class="relative inline-flex">
                   <span class="absolute top-0 right-0 inline-block w-2 h-2 bg-ai-purple rounded-full"></span>
                 </div>
@@ -101,8 +104,23 @@
           </div>
           {#if notificationsOpen}
             <div
-              class="absolute top-10 w-max flex flex-col gap-4 bg-white dark:bg-black rounded-xl border border-white overflow-hidden"
+              class="absolute top-10 w-max p-3 flex flex-col gap-4 bg-white dark:bg-black rounded-xl border border-grey overflow-hidden"
             >
+              <div class="flex justify-between">
+                <div class="text-xl">Notifications</div>
+                <div class="relative flex items-center justify-end">
+                  <div class="relative">
+                    <button on:click|stopPropagation={toggleMuteNotifications} class="switch block border border-black dark:border-white w-14 h-8 rounded-full flex justify-between items-center cursor-pointer">
+                      <BellIcon
+                        class={`p-[3px] transform translate-x-[3px] ${!$state.muteNotifications ? 'text-white dark:text-black bg-black dark:bg-white rounded-full' : ''}`}
+                      />
+                      <MutedIcon
+                        class={`p-[3px] transform -translate-x-[3px] ${$state.muteNotifications ? 'text-white dark:text-black bg-black dark:bg-white rounded-full' : ''}`}
+                      />
+                    </button>
+                  </div>
+                </div>
+              </div>
               {#if notifications.length > 0}
                 {#each notifications as [reply, op]}
                   <button
