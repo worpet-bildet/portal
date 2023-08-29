@@ -54,6 +54,9 @@
     positiveFeedPromptForm;
 
   function handleKeydown(event) {
+    // make sure we don't do anything if the user is inside a contendeditable
+    // div (aka the feedpostform)
+    if (event.target.isContentEditable) return;
     if (event.key === '/') {
       event.preventDefault();
       positiveFeedPromptForm.focus();
