@@ -1,5 +1,7 @@
 <script>
   import { link } from 'svelte-spa-router';
+  import { getGroup } from '@root/state';
+  import { getMeta } from '@root/util';
   import { Sigil } from '@components';
 
   import Block from './Block.svelte';
@@ -36,7 +38,7 @@
         >{#if group}<span>in</span><a
             use:link
             href={`/group/${group}/`}
-            class="hover:underline">{group}</a
+            class="hover:underline">{getMeta(getGroup(group)).title || group}</a
           >{/if}
       </div>
       <div class="text-base">

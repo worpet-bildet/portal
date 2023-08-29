@@ -2,8 +2,8 @@
   import { link } from 'svelte-spa-router';
   import { format } from 'timeago.js';
   import { getGroup } from '@root/state';
-  import { Sigil } from '@components';
   import { getMeta } from '@root/util';
+  import { Sigil } from '@components';
 
   import Block from './Block.svelte';
   import Inline from './Inline.svelte';
@@ -29,7 +29,7 @@
         >{#if group}<span>in</span><a
             use:link
             href={`/group/${group}/`}
-            class="hover:underline">{getMeta(getGroup(group)).title}</a
+            class="hover:underline">{getMeta(getGroup(group)).title || group}</a
           >{/if}
       </div>
       {#if sent}
