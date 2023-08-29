@@ -156,16 +156,7 @@
     </div>
   </div>
   <div class="col-span-11 pb-2 flex flex-col gap-2">
-    <TextArea
-      {placeholder}
-      bind:value={content}
-      on:keydown={(e) => {
-        if (e.key === 'Enter' && e.metaKey) {
-          console.log('Meta + Enter detected');
-          post();
-        }
-      }}
-    />
+    <TextArea {placeholder} bind:value={content} on:keyboardSubmit={post} />
     {#if uploadedImageUrl}
       <div class="flex">
         <img src={uploadedImageUrl} class="object-cover" alt="uploaded" />

@@ -254,11 +254,7 @@
                 placeholder="Search Portal"
                 bind:value={positiveFeedPrompt}
                 bind:this={positiveFeedPromptForm}
-                on:keydown={(e) => {
-                  if (e.key === 'Enter' && e.metaKey) {
-                    handlePromptFeed();
-                  }
-                }}
+                on:keyboardSubmit={handlePromptFeed}
               />
               <div class="flex justify-center">
                 {#if canResetFeed}
@@ -362,11 +358,7 @@
                   class="focus:outline-none p-3 placeholder-grey text-black text-lg dark:text-white flex-grow"
                   placeholder="Show me less ..."
                   bind:value={negativeFeedPrompt}
-                  on:keydown={(e) => {
-                    if (e.key === 'Enter' && e.metaKey) {
-                      handlePromptFeed();
-                    }
-                  }}
+                  on:keyboardSubmit={handlePromptFeed}
                 />
               </div>
             </div>
@@ -451,8 +443,7 @@
               class="border-b focus:outline-none placeholder-grey"
               placeholder="~worpet-bildet"
               bind:value={searchShip}
-              on:keydown={(e) =>
-                e.key === 'Enter' && e.metaKey ? search() : null}
+              on:keyboardSubmit={search}
             />
           </div>
           <button class="w-5" on:click={search}><SearchIcon /></button>
