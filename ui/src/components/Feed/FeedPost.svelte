@@ -24,7 +24,7 @@
     LinkPreview,
     StarRating,
     EthereumIcon,
-    VerticalCollapseIcon
+    VerticalCollapseIcon,
   } from '@fragments';
 
   export let key;
@@ -149,7 +149,7 @@
           class="whitespace-pre-wrap line-clamp-50 flex flex-col gap-2 break-words"
         >
           <div>
-            {@html linkifyHtml(blurb, {
+            {@html linkifyHtml(blurb.replace(/\n\n/g, '\n'), {
               attributes: {
                 class: 'text-link dark:text-link-dark',
                 target: '_blank',
@@ -264,10 +264,11 @@
           <svelte:self key={replyKey} allowReplies={false} />
         {/each}
       </div>
-      <button class="flex flex-col col-span-12 border-x border-b flex py-3 items-center justify-center"
+      <button
+        class="flex flex-col col-span-12 border-x border-b flex py-3 items-center justify-center"
         on:click={() => (showCommentForm = !showCommentForm)}
       >
-        <VerticalCollapseIcon/>
+        <VerticalCollapseIcon />
       </button>
     {/if}
   </div>
