@@ -76,6 +76,17 @@
       };
       api.portal.do.createGroupsHeapCurio(host, channel, id, time);
     }
+    if (noteDetails) {
+      const { host, channel, id } = noteDetails;
+      const time = toUrbitTime(Date.now());
+      ref = {
+        struc: 'groups-diary-note',
+        ship: me,
+        cord: '',
+        time,
+      };
+      api.portal.do.createGroupsDiaryNote(host, channel, id, time);
+    }
     dispatch('post', { content, uploadedImageUrl, replyTo, rating, ref });
     content = '';
     uploadedImageUrl = '';
@@ -85,6 +96,8 @@
     chatData = undefined;
     curioDetails = undefined;
     curioData = undefined;
+    noteDetails = undefined;
+    noteData = undefined;
     rating = undefined;
   };
 
@@ -148,7 +161,6 @@
 
   let noteData, noteDetails;
   const getNoteData = async (notePath) => {
-    console.log({ notePath });
     noteData = await api.portal.get.diaryNote(formatNotePath(notePath));
     noteDetails = getNoteDetails(notePath);
     content = content.replace(notePath, '');

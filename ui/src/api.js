@@ -208,22 +208,21 @@ export const api = {
             time,
           },
         }),
-    },
-    newDo: {
       //  /1/chan/diary/~worpet-bildet/announcements/note/170141184506311745994155289567817629696
-      createGroupsDiaryNote: () =>
+      createGroupsDiaryNote: (host, channel, id, time) =>
         pmPoke({
           create: {
             bespoke: {
               'groups-diary-note': {
                 group: '',
-                channel: { p: '~worpet-bildet', q: 'announcements' },
-                time: '170.141.184.506.311.745.994.155.289.567.817.629.696',
+                channel: { p: host, q: channel },
+                time: id,
                 essay: '',
                 feels: 0,
                 replies: 0,
               },
             },
+            time,
           },
         }),
     },

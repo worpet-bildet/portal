@@ -25,6 +25,7 @@
     StarRating,
     EthereumIcon,
     VerticalCollapseIcon,
+    VerticalExpandIcon,
   } from '@fragments';
 
   export let key;
@@ -115,6 +116,29 @@
   const handleTipRequest = (key) => {
     dispatch('tipRequest', { key });
   };
+
+  const showMore = () => {
+    postContainer.classList.remove('max-h-96');
+    showAll = true;
+  };
+  const showLess = () => {
+    postContainer.classList.add('max-h-96');
+    postContainer.scrollIntoView();
+    showAll = false;
+  };
+
+  let postContainer;
+  let longPost = false;
+  let showAll = true;
+  $: if (postContainer) {
+    // if the client height of the post container is more than 24 rem, we should
+    // show a "see more" button on the post, so that you can scroll past it
+    if (postContainer.clientHeight > 24 * 16) {
+      longPost = true;
+      showAll = false;
+      postContainer.classList.add('max-h-96');
+    }
+  }
 </script>
 
 {#if item}
@@ -123,7 +147,10 @@
     bespoke: { nickname },
   } = getCurator(ship)}
   {@const blurbLink = getAnyLink(blurb)}
-  <div class="border-b border-x px-5 pt-5">
+  <div
+    class="border-b border-x px-5 pt-5 overflow-hidden"
+    bind:this={postContainer}
+  >
     <div
       id={createdAt}
       class="grid grid-cols-12 bg-panels dark:bg-darkgrey gap-2 lg:gap-4 lg:gap-y-0"
@@ -246,6 +273,19 @@
       </div>
     </div>
   </div>
+  {#if longPost}
+    {#if showAll}
+      <button
+        class="flex items-center justify-end w-full p-2 gap-4 border-b-2 border-x"
+        on:click={showLess}>Show less <VerticalCollapseIcon /></button
+      >
+    {:else}
+      <button
+        class="flex items-center justify-end w-full p-2 gap-4 border-b-2 border-x"
+        on:click={showMore}>Show more <VerticalExpandIcon /></button
+      >
+    {/if}
+  {/if}
   <div
     class="grid grid-cols-12 bg-panels dark:bg-darkgrey gap-2 lg:gap-4 lg:gap-y-0"
     in:fade

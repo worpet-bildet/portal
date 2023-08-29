@@ -436,7 +436,6 @@ export const getCurioDetails = (path) => {
 // /1/chan/diary/~nibset-napwyn/winter-updates/note/170141184506358297022415421669185159168
 export const getNoteDetails = (path) => {
   const splut = path.split('/');
-  console.log({ splut });
   return {
     host: splut[4],
     channel: splut[5],
