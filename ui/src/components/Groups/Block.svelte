@@ -12,4 +12,6 @@
   {#if block['cite']['desk']}
     <ItemPreview key={deskKeyToItemKey(block['cite']['desk']['flag'])} />
   {/if}
+{:else if block.hasOwnProperty('rule')}
+  <hr class="mb-2 p-2" />
 {/if}

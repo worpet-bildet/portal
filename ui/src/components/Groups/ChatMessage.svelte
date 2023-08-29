@@ -20,8 +20,8 @@
   </div>
   <div class="col-span-11 flex flex-col">
     <div class="flex gap-1 text-grey">
-      <a use:link href={`#/${author}`} class="text-sm hover:underline"
-        >{author}</a
+      <a use:link href={`#/~${author}`} class="text-sm hover:underline"
+        >~{author}</a
       >{#if group}<span>in</span><a
           use:link
           href={`/group/${group}/`}
