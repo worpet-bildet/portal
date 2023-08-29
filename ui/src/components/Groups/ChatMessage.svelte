@@ -5,7 +5,11 @@
 
   export let memo;
   export let group;
-  const { author, content } = memo;
+  export let content;
+  export let author;
+
+  if (!content && memo) content = memo.content;
+  if (!author && memo) author = memo.author;
 </script>
 
 <div class="col-span-6 p-1 rounded-lg grid grid-cols-12 gap-2 break-words">
