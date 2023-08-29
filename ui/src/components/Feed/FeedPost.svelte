@@ -148,7 +148,7 @@
           class="whitespace-pre-wrap line-clamp-50 flex flex-col gap-2 break-words"
         >
           <div>
-            {@html linkifyHtml(blurb, {
+            {@html linkifyHtml(blurb.replace(/\n\n/g, '\n'), {
               attributes: {
                 class: 'text-link dark:text-link-dark',
                 target: '_blank',
