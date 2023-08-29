@@ -271,7 +271,7 @@ export const getCollectedItemLeaderboard = (excludePatp) => {
   ).sort((a, b) => b[1] - a[1]);
 };
 
-export const getMoreFromThisShip = (patp, cord='') => {
+export const getMoreFromThisShip = (patp, cord = '') => {
   return Object.entries(
     Object.values(get(state))
       .filter(

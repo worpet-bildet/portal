@@ -4,6 +4,7 @@
   import {
     state,
     keyStrFromObj,
+    keyStrToObj,
     getItem,
     getJoinedGroupDetails,
     refreshGroups,
@@ -15,6 +16,7 @@
     Sigil,
     GroupsChatMessage,
     GroupsHeapCurio,
+    GroupsDiaryNote,
   } from '@components';
   import {
     ItemImage,
@@ -33,7 +35,11 @@
 
   let item, isInstalled, joinedDetails, groupKey;
 
-  let groupsStrucs = ['groups-chat-msg', 'groups-heap-curio'];
+  let groupsStrucs = [
+    'groups-chat-msg',
+    'groups-heap-curio',
+    'groups-diary-note',
+  ];
 
   $: loadItem(key);
 
@@ -45,6 +51,7 @@
 
   const loadItem = (key) => {
     if (typeof key === 'string') {
+      key = keyStrToObj(key);
       item = getItem(key);
     } else {
       item = getItem(keyStrFromObj(key));
@@ -117,6 +124,11 @@
         bespoke: { heart, group },
       } = item}
       <GroupsHeapCurio {heart} {group} />
+    {:else if struc === 'groups-diary-note'}
+      {@const {
+        bespoke: { essay, group },
+      } = item}
+      <GroupsDiaryNote {essay} {group} />
     {:else}
       <div
         class="border overflow-hidden rounded-md self-center"

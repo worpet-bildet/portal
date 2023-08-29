@@ -6,10 +6,13 @@
     getAnyLink,
     isChatPath,
     isCurioPath,
+    isNotePath,
     formatChatPath,
     formatCurioPath,
+    formatNotePath,
     getChatDetails,
     getCurioDetails,
+    getNoteDetails,
     toUrbitTime,
   } from '@root/util';
   import {
@@ -17,6 +20,7 @@
     Sigil,
     GroupsChatMessage,
     GroupsHeapCurio,
+    GroupsDiaryNote,
   } from '@components';
   import {
     TextArea,
@@ -72,6 +76,17 @@
       };
       api.portal.do.createGroupsHeapCurio(host, channel, id, time);
     }
+    if (noteDetails) {
+      const { host, channel, id } = noteDetails;
+      const time = toUrbitTime(Date.now());
+      ref = {
+        struc: 'groups-diary-note',
+        ship: me,
+        cord: '',
+        time,
+      };
+      api.portal.do.createGroupsDiaryNote(host, channel, id, time);
+    }
     dispatch('post', { content, uploadedImageUrl, replyTo, rating, ref });
     content = '';
     uploadedImageUrl = '';
@@ -81,6 +96,8 @@
     chatData = undefined;
     curioDetails = undefined;
     curioData = undefined;
+    noteDetails = undefined;
+    noteData = undefined;
     rating = undefined;
   };
 
@@ -123,6 +140,8 @@
     content.split(/[\r\n|\s]+/).find((word) => isChatPath(word));
   const getAnyCurio = (content) =>
     content.split(/[\r\n|\s]+/).find((word) => isCurioPath(word));
+  const getAnyNote = (content) =>
+    content.split(/[\r\n|\s]+/).find((word) => isNotePath(word));
 
   $: linkToPreview = getAnyLink(content || '');
 
@@ -140,10 +159,19 @@
     content = content.replace(curioPath, '');
   };
 
+  let noteData, noteDetails;
+  const getNoteData = async (notePath) => {
+    noteData = await api.portal.get.diaryNote(formatNotePath(notePath));
+    noteDetails = getNoteDetails(notePath);
+    content = content.replace(notePath, '');
+  };
+
   $: chatToPreview = getAnyChatMessage(content || '');
   $: if (chatToPreview) getChatData(chatToPreview);
   $: curioToPreview = getAnyCurio(content || '');
   $: if (curioToPreview) getCurioData(curioToPreview);
+  $: noteToPreview = getAnyNote(content || '');
+  $: if (noteToPreview) getNoteData(noteToPreview);
 </script>
 
 <div
@@ -166,10 +194,13 @@
       <LinkPreview url={linkToPreview} />
     {/if}
     {#if chatData}
-      <GroupsChatMessage memo={chatData.memo} />
+      <GroupsChatMessage {...chatData} />
     {/if}
     {#if curioData}
-      <GroupsHeapCurio heart={curioData.heart} />
+      <GroupsHeapCurio {...curioData} />
+    {/if}
+    {#if noteData}
+      <GroupsDiaryNote {...noteData} />
     {/if}
   </div>
   <div class="col-span-12 col-start-2 flex justify-between">

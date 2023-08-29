@@ -388,8 +388,9 @@ export const isHappeningSoon = (events) => {
 };
 
 export const formatId = (id) => {
-  // add dots after every third character, starting from the end
-  const reversed = id.split('').reverse().join('');
+  // add dots after every third character, starting from the end. first we strip
+  // any dots from the string just to make sure
+  const reversed = id.replace(/\./g, '').split('').reverse().join('');
   const groups = reversed.match(/.{1,3}/g);
   const joined = groups.join('.');
   const reversedAgain = joined.split('').reverse().join('');
@@ -401,6 +402,16 @@ export const isChatPath = (path) => {
   return path.substring(0, 13) === '/1/chan/chat/';
 };
 
+// /1/chan/heap/~toptyr-bilder/links/curio/170141184506270899144208463636562182144
+export const isCurioPath = (path) => {
+  return path.substring(0, 13) === '/1/chan/heap/';
+};
+
+// /1/chan/diary/~nibset-napwyn/winter-updates/note/170141184506358297022415421669185159168
+export const isNotePath = (path) => {
+  return path.substring(0, 14) === '/1/chan/diary/';
+};
+
 //  /1/chan/chat/~sampel-dilryd-mopreg/new-channel/msg/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749
 export const getChatDetails = (path) => {
   const splut = path.split('/');
@@ -408,21 +419,8 @@ export const getChatDetails = (path) => {
     host: splut[4],
     channel: splut[5],
     poster: splut[7],
-    id: splut[8],
+    id: formatId(splut[8]),
   };
-};
-
-// FROM
-//  /1/chan/chat/~sampel-dilryd-mopreg/new-channel/msg/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749
-// TO
-//  /chat/~sampel-dilryd-mopreg/new-channel/writs/writ/id/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749
-export const formatChatPath = (path) => {
-  return path.replace('/1/chan', '').replace('/msg/', '/writs/writ/id/');
-};
-
-// /1/chan/heap/~toptyr-bilder/links/curio/170141184506270899144208463636562182144
-export const isCurioPath = (path) => {
-  return path.substring(0, 13) === '/1/chan/heap/';
 };
 
 // /1/chan/heap/~toptyr-bilder/links/curio/170141184506270899144208463636562182144
@@ -435,12 +433,42 @@ export const getCurioDetails = (path) => {
   };
 };
 
+// /1/chan/diary/~nibset-napwyn/winter-updates/note/170141184506358297022415421669185159168
+export const getNoteDetails = (path) => {
+  const splut = path.split('/');
+  return {
+    host: splut[4],
+    channel: splut[5],
+    id: formatId(splut[7]),
+  };
+};
+
+// FROM
+//  /1/chan/chat/~sampel-dilryd-mopreg/new-channel/msg/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749
+// TO
+//  /chat/~sampel-dilryd-mopreg/new-channel/writs/writ/id/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749
+export const formatChatPath = (path) => {
+  return path.replace('/1/chan', '').replace('/msg/', '/writs/writ/id/');
+};
+
 // FROM
 // /1/chan/heap/~toptyr-bilder/links/curio/170141184506270899144208463636562182144
 // TO
 // /heap/~toptyr-bilder/links/curios/curio/id/170.141.184.506.270.899.144.208.463.636.562.182.144
 export const formatCurioPath = (path) => {
   const p = path.replace('/1/chan', '').replace('/curio/', '/curios/curio/id/');
+  const splut = p.split('/');
+  // replace the last element in the path with the formatted id
+  splut[splut.length - 1] = formatId(splut[splut.length - 1]);
+  return splut.join('/');
+};
+
+// FROM
+// /1/chan/diary/~nibset-napwyn/winter-updates/note/170141184506358297022415421669185159168
+// TO
+// /diary/~nibset-napwyn/winter-updates/notes/note/170.141.184.506.358.297.022.415.421.669.185.159.168
+export const formatNotePath = (path) => {
+  const p = path.replace('/1/chan', '').replace('/note/', '/notes/note/');
   const splut = p.split('/');
   // replace the last element in the path with the formatted id
   splut[splut.length - 1] = formatId(splut[splut.length - 1]);

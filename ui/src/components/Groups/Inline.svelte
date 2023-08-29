@@ -5,8 +5,12 @@
 
 {#if typeof inline !== 'object' && !Array.isArray(inline)}
   <span>{inline}</span>
+{:else if Array.isArray(inline)}
+  {#each inline as c}
+    <svelte:self inline={c} />
+  {/each}
 {:else if inline.hasOwnProperty('break')}
-  <div />
+  <div class="p-2" />
 {:else if inline['ship']}
   <span>{inline['ship']}</span>
 {:else if inline['link']}
@@ -25,10 +29,6 @@
   <span class="bg-offwhite font-mono rounded-md px-2 py-1 dark:bg-panels"
     >{inline['inline-code']}</span
   >
-{:else if Array.isArray(inline)}
-  {#each inline as c}
-    <svelte:self inline={c} />
-  {/each}
 {:else if inline['italics']}
   <span class="italic"><svelte:self inline={inline['italics']} /></span>
 {:else if inline['bold']}
