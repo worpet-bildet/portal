@@ -94,6 +94,7 @@
     } else {
       feed = feed.sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
     }
+    feed = feed.slice(0, 200);
     // .sort((a, b) => getItem(b.key)?.score - getItem(a.key)?.score);
     // .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
 
