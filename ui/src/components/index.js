@@ -13,3 +13,9 @@ export { default as ItemPreview } from './Item/Preview.svelte';
 export { default as Sigil } from './Sigil.svelte';
 export { default as ShipForm } from './ShipForm.svelte';
 export { default as TipModal } from './TipModal.svelte';
+
+export { default as GroupsChatMessage } from './Groups/ChatMessage.svelte';
+export { default as GroupsHeapCurio } from './Groups/HeapCurio.svelte';
+export { default as GroupsContent } from './Groups/Content.svelte';
+export { default as GroupsBlock } from './Groups/Block.svelte';
+export { default as GroupsInline } from './Groups/Inline.svelte';

@@ -47,7 +47,11 @@
     });
   };
 
-  let positiveFeedPrompt, negativeFeedPrompt, loading, canResetFeed, positiveFeedPromptForm;
+  let positiveFeedPrompt,
+    negativeFeedPrompt,
+    loading,
+    canResetFeed,
+    positiveFeedPromptForm;
 
   function handleKeydown(event) {
     if (event.key === '/') {
@@ -123,7 +127,6 @@
 
   const handlePost = ({ detail: { content, uploadedImageUrl, ref } }) => {
     let post = {};
-    console.log({ ref });
     if (ref) {
       // Here we need to create the retweet post instead of the type "other"
       post = {
@@ -251,20 +254,20 @@
                 placeholder="Search Portal"
                 bind:value={positiveFeedPrompt}
                 bind:this={positiveFeedPromptForm}
-                on:keydown={(e) => {
-                  if (e.key === 'Enter' && e.metaKey) {
-                    handlePromptFeed();
-                  }
-                }}
+                on:keyboardSubmit={handlePromptFeed}
               />
               <div class="flex justify-center">
                 {#if canResetFeed}
-                  <button on:click={handleResetFeed} class="bg-panels-hover text-grey dark:border rounded-md px-2 mr-2 flex items-center justify-center"
-                    >x</button>
+                  <button
+                    on:click={handleResetFeed}
+                    class="bg-panels-hover text-grey dark:border rounded-md px-2 mr-2 flex items-center justify-center"
+                    >x</button
+                  >
                 {:else}
                   <button
-                  class="bg-panels-hover dark:border text-grey rounded-md w-7 h-7 mr-2 flex items-center justify-center"
-                  >/</button>
+                    class="bg-panels-hover dark:border text-grey rounded-md w-7 h-7 mr-2 flex items-center justify-center"
+                    >/</button
+                  >
                 {/if}
               </div>
             </div>
@@ -341,7 +344,8 @@
         <div>
           {#if showExpandedForm}
             <div
-              class="border rounded-2xl bg-panels-hover flex w-full justify-between items-center mt-4" transition:slide
+              class="border rounded-2xl bg-panels-hover flex w-full justify-between items-center mt-4"
+              transition:slide
             >
               <div class="flex items-center justify-center w-full">
                 <div
@@ -354,11 +358,7 @@
                   class="focus:outline-none p-3 placeholder-grey text-black text-lg dark:text-white flex-grow"
                   placeholder="Show me less ..."
                   bind:value={negativeFeedPrompt}
-                  on:keydown={(e) => {
-                    if (e.key === 'Enter' && e.metaKey) {
-                      handlePromptFeed();
-                    }
-                  }}
+                  on:keyboardSubmit={handlePromptFeed}
                 />
               </div>
             </div>
@@ -402,9 +402,9 @@
         </div>
         <div class="flex justify-center">
           <button
-              class="bg-panels-solid dark:bg-darkgrey hover:border-darkgrey rounded-md w-7 h-7 mr-2 border flex items-center justify-center mb-[-30px]"
-              on:click={() => (showExpandedForm = !showExpandedForm)}
-            >
+            class="bg-panels-solid dark:bg-darkgrey hover:border-darkgrey rounded-md w-7 h-7 mr-2 border flex items-center justify-center mb-[-30px]"
+            on:click={() => (showExpandedForm = !showExpandedForm)}
+          >
             {#if showExpandedForm}
               <VerticalCollapseIcon />
             {:else}
@@ -415,7 +415,11 @@
       </div>
     {/if}
     <div>
-      <FeedPostForm on:post={handlePost} placeholder="Share a limerick, maybe..." class="rounded-tl-lg rounded-tr-lg border-t"/>
+      <FeedPostForm
+        on:post={handlePost}
+        placeholder="Share a limerick, maybe..."
+        class="rounded-tl-lg rounded-tr-lg border-t"
+      />
       {#if loading}
         <div class="flex justify-center items-center py-20">
           <LoadingIcon />
@@ -439,7 +443,7 @@
               class="border-b focus:outline-none placeholder-grey"
               placeholder="~worpet-bildet"
               bind:value={searchShip}
-              on:keydown={(e) => (e.key === 'Enter' && e.metaKey ? search() : null)}
+              on:keyboardSubmit={search}
             />
           </div>
           <button class="w-5" on:click={search}><SearchIcon /></button>

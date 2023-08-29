@@ -24,7 +24,7 @@
     LinkPreview,
     StarRating,
     EthereumIcon,
-    VerticalCollapseIcon
+    VerticalCollapseIcon,
   } from '@fragments';
 
   export let key;
@@ -113,7 +113,6 @@
 
   const dispatch = createEventDispatcher();
   const handleTipRequest = (key) => {
-    console.log('woooooo');
     dispatch('tipRequest', { key });
   };
 </script>
@@ -264,10 +263,11 @@
           <svelte:self key={replyKey} allowReplies={false} />
         {/each}
       </div>
-      <button class="flex flex-col col-span-12 border-x border-b flex py-3 items-center justify-center"
+      <button
+        class="flex flex-col col-span-12 border-x border-b flex py-3 items-center justify-center"
         on:click={() => (showCommentForm = !showCommentForm)}
       >
-        <VerticalCollapseIcon/>
+        <VerticalCollapseIcon />
       </button>
     {/if}
   </div>
