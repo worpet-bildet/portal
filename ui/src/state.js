@@ -236,6 +236,10 @@ export const getGroup = (groupKey) => {
   return get(state)[`/group/${groupKey}/`];
 };
 
+export const getApp = (appKey) => {
+  return get(state)[`/app/${appKey}/`];
+};
+
 export const getItem = (listKey) => {
   if (typeof listKey === 'object') return get(state)[keyStrFromObj(listKey)];
   return get(state)[listKey];

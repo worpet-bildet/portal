@@ -90,6 +90,7 @@
   {@const { title, blurb, description, image, color, link, createdAt } =
     getMeta(item)}
   <button
+    on:click
     on:click={() => {
       if (clickable) {
         if (struc === 'ship') {

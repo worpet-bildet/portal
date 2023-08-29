@@ -412,6 +412,18 @@ export const isNotePath = (path) => {
   return path.substring(0, 14) === '/1/chan/diary/';
 };
 
+// ~worpet-bildet/portal
+// ~worpet-bildet/other-thing
+export const isShortcode = (path) => {
+  const parts = path.split('/');
+  if (parts.length < 2) return false;
+  return (
+    parts.length === 2 &&
+    isValidPatp(parts[0]) &&
+    isValidDeskOrGroupPath(parts[1])
+  );
+};
+
 //  /1/chan/chat/~sampel-dilryd-mopreg/new-channel/msg/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749
 export const getChatDetails = (path) => {
   const splut = path.split('/');
@@ -473,6 +485,12 @@ export const formatNotePath = (path) => {
   // replace the last element in the path with the formatted id
   splut[splut.length - 1] = formatId(splut[splut.length - 1]);
   return splut.join('/');
+};
+
+export const isValidDeskOrGroupPath = (path) => {
+  // return false if there are any non-alphanumeric characters other than a -
+  if (path.match(/[^a-zA-Z0-9-]/g)) return false;
+  return true;
 };
 
 // Reference: https://github.com/mirtyl-wacdec/urbit_ex/blob/master/lib/api/utils.ex#LL260C14-L260C14

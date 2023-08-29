@@ -14,7 +14,13 @@
     getRepliesByTo,
     getLikes,
   } from '@root/state';
-  import { getMeta, fromUrbitTime, getAnyLink, isImage } from '@root/util';
+  import {
+    getMeta,
+    fromUrbitTime,
+    getAnyLink,
+    isImage,
+    isValidPatp,
+  } from '@root/util';
   import { ItemPreview, Sigil, FeedPostForm } from '@components';
   import {
     ChatIcon,
@@ -68,7 +74,7 @@
     detail: { content, uploadedImageUrl, replyTo, ref },
   }) {
     // TODO: Merge this function with the one from /pages/Feed.svelte
-    let post = {};
+    let post = { 'tags-to': [] };
     if (ref) {
       // Here we need to create the retweet post instead of the type "other"
       post = {
@@ -88,9 +94,30 @@
         },
       };
     }
+    // check each word of the content for a mention, and if so, create a social
+    // graph tag for the mention
+    content
+      .split(' ')
+      .filter((word) => word.substr(0, 1) === '~' && isValidPatp(word))
+      .forEach((word) => {
+        console.log('mention', word);
+        post = {
+          ...post,
+          'tags-to': [
+            ...post['tags-to'],
+            {
+              key: { struc: 'ship', ship: word, cord: '', time: '' },
+              'tag-to': `/${me}/mention-to`,
+              'tag-from': `/${word}/mention-from`,
+            },
+          ],
+        };
+      });
+
     post = {
       ...post,
       'tags-to': [
+        ...post['tags-to'],
         {
           key: replyTo,
           'tag-to': `/${me}/reply-to`,
@@ -98,6 +125,7 @@
         },
       ],
     };
+
     return api.portal.do.create(post);
   }
 
@@ -110,6 +138,19 @@
       'tag-to': `/${me}/like-to`,
       'tag-from': `/${key.ship}/like-from`,
     });
+  };
+
+  // TODO: this is quite not good
+  const linkifyMentions = (html) => {
+    return html
+      .split(' ')
+      .map((word) => {
+        if (word.substr(0, 1) === '~' && isValidPatp(word)) {
+          return `<a href="#/${word}" use:link class="text-link">${word}</a>`;
+        }
+        return word;
+      })
+      .join(' ');
   };
 
   const dispatch = createEventDispatcher();
@@ -175,12 +216,14 @@
           class="whitespace-pre-wrap line-clamp-50 flex flex-col gap-2 break-words"
         >
           <div>
-            {@html linkifyHtml(blurb.replace(/\n\n/g, '\n'), {
-              attributes: {
-                class: 'text-link dark:text-link-dark',
-                target: '_blank',
-              },
-            })}
+            {@html linkifyHtml(
+              linkifyMentions(blurb.replace(/\n\n/g, '\n'), {
+                attributes: {
+                  class: 'text-link dark:text-link-dark',
+                  target: '_blank',
+                },
+              })
+            )}
           </div>
           {#if blurbLink}
             {#if isImage(blurbLink)}
