@@ -20,12 +20,9 @@ export const updateNotificationsLastChecked = () => {
 
 export const toggleMuteNotifications = () => {
   state.update((s) => {
-    let newState = { ...s };
-    console.log(newState.muteNotifications)
-    newState.muteNotifications = !newState.muteNotifications;
-    console.log(newState.muteNotifications)
-    save({ muteNotifications: newState.muteNotifications });
-    return newState;
+    s.muteNotifications = !s.muteNotifications;
+    save({ muteNotifications: s.muteNotifications });
+    return s;
   });
 };
 

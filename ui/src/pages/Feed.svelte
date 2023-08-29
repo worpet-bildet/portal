@@ -123,7 +123,6 @@
 
   const handlePost = ({ detail: { content, uploadedImageUrl, ref } }) => {
     let post = {};
-    console.log({ ref });
     if (ref) {
       // Here we need to create the retweet post instead of the type "other"
       post = {
