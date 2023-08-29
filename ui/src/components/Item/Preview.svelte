@@ -145,7 +145,10 @@
         </div>
         {#if struc === 'app' && !isInstalled}
           <button
-            on:click={() => window.open(`${window.location.origin}/apps/grid/search/${ship}/apps`)}
+            on:click|stopPropagation={event => {
+              event.stopPropagation();
+              window.open(`${window.location.origin}/apps/grid/search/${ship}/apps`);
+            }}
             class="bg-black rounded-md text-xs font-bold px-2 mr-2 dark:bg-white text-white dark:text-black hover:bg-grey dark:hover:bg-offwhite w-14 h-6"
             >Install
           </button>

@@ -33,6 +33,12 @@
   let dispatch = createEventDispatcher();
   let content, rating;
 
+  const getReference = (plaintextReference) => {
+    if ($state[plaintextReference]) {
+      return keyStrToObj($state[plaintextReference]);
+    }
+  }
+
   const post = () => {
     if (!content) {
       return (error = 'Please write something, anything.');
@@ -54,6 +60,9 @@
         time,
       };
       api.portal.do.createGroupsChatMsg(host, channel, poster, id, time);
+    }
+    if (plaintextReference) {
+      ref = getReference(plaintextReference);
     }
     dispatch('post', { content, uploadedImageUrl, replyTo, rating, ref });
     content = '';
@@ -115,6 +124,13 @@
     chatDetails = getChatDetails(chatPath);
     content = content.replace(chatPath, '');
   };
+
+  let plaintextReference;
+  const pattern = /~\w+\/\w+/g;
+  const match = content.match(pattern);
+  if (match) {
+    plaintextReference = match[0];
+  }
 
   $: chatToPreview = getAnyChatMessage(content || '');
   $: if (chatToPreview) getChatData(chatToPreview);

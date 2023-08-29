@@ -50,7 +50,7 @@
   let positiveFeedPrompt, negativeFeedPrompt, loading, canResetFeed, positiveFeedPromptForm;
 
   function handleKeydown(event) {
-    if (event.key === '/') {
+    if (event.key === '/' && document.activeElement === document.body) {
       event.preventDefault();
       positiveFeedPromptForm.focus();
     }

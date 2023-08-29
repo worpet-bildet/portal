@@ -169,6 +169,8 @@ export const getRef = (item) => item?.bespoke?.ref;
 export const getLens = (item) => item?.lens;
 export const getDistShip = (item) => item?.bespoke?.signature?.ship;
 export const getAnyLink = (string) => {
+  console.log('aaa');
+  console.log(linkify.find(string)?.[0]?.href);
   return linkify.find(string)?.[0]?.href;
 };
 export const getAllLinks = (string) => {
