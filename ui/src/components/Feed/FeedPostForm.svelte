@@ -5,11 +5,19 @@
   import {
     getAnyLink,
     isChatPath,
+    isCurioPath,
     formatChatPath,
+    formatCurioPath,
     getChatDetails,
+    getCurioDetails,
     toUrbitTime,
   } from '@root/util';
-  import { RecommendModal, Sigil } from '@components';
+  import {
+    RecommendModal,
+    Sigil,
+    GroupsChatMessage,
+    GroupsHeapCurio,
+  } from '@components';
   import {
     TextArea,
     IconButton,
@@ -20,7 +28,6 @@
     ItemImage,
     StarRating,
     LinkPreview,
-    GroupsChatMessage,
   } from '@fragments';
 
   export let replyTo;
@@ -41,8 +48,7 @@
       return (error = 'Please give a score.');
     }
     // If we have some chat details here, we should generate the reference and
-    // then send the reference back up with the post, so it can decide whether
-    // to make a retweet or not
+    // then send the reference back up with the post
     let ref;
     if (chatDetails) {
       const { host, channel, poster, id } = chatDetails;
@@ -55,6 +61,17 @@
       };
       api.portal.do.createGroupsChatMsg(host, channel, poster, id, time);
     }
+    if (curioDetails) {
+      const { host, channel, id } = curioDetails;
+      const time = toUrbitTime(Date.now());
+      ref = {
+        struc: 'groups-heap-curio',
+        ship: me,
+        cord: '',
+        time,
+      };
+      api.portal.do.createGroupsHeapCurio(host, channel, id, time);
+    }
     dispatch('post', { content, uploadedImageUrl, replyTo, rating, ref });
     content = '';
     uploadedImageUrl = '';
@@ -62,6 +79,8 @@
     error = '';
     chatDetails = undefined;
     chatData = undefined;
+    curioDetails = undefined;
+    curioData = undefined;
     rating = undefined;
   };
 
@@ -101,23 +120,30 @@
     rating = value;
   };
   const getAnyChatMessage = (content) =>
-    content.split(/[\r\n|\s]+/).find((line) => isChatPath(line));
+    content.split(/[\r\n|\s]+/).find((word) => isChatPath(word));
+  const getAnyCurio = (content) =>
+    content.split(/[\r\n|\s]+/).find((word) => isCurioPath(word));
 
   $: linkToPreview = getAnyLink(content || '');
 
   let chatData, chatDetails;
   const getChatData = async (chatPath) => {
     chatData = await api.portal.get.chatMessage(formatChatPath(chatPath));
-    // If there is some chatData here we probably want to replace the chat link
-    // in the proposed input with an empty character, but we still want to save
-    // the chat link somewhere, presumably, so that we can eventually send it to
-    // the backend
     chatDetails = getChatDetails(chatPath);
     content = content.replace(chatPath, '');
   };
 
+  let curioData, curioDetails;
+  const getCurioData = async (curioPath) => {
+    curioData = await api.portal.get.heapCurio(formatCurioPath(curioPath));
+    curioDetails = getCurioDetails(curioPath);
+    content = content.replace(curioPath, '');
+  };
+
   $: chatToPreview = getAnyChatMessage(content || '');
   $: if (chatToPreview) getChatData(chatToPreview);
+  $: curioToPreview = getAnyCurio(content || '');
+  $: if (curioToPreview) getCurioData(curioToPreview);
 </script>
 
 <div
@@ -140,10 +166,10 @@
       <LinkPreview url={linkToPreview} />
     {/if}
     {#if chatData}
-      {@const {
-        memo: { content, author },
-      } = chatData}
-      <GroupsChatMessage {author} {content} />
+      <GroupsChatMessage memo={chatData.memo} />
+    {/if}
+    {#if curioData}
+      <GroupsHeapCurio heart={curioData.heart} />
     {/if}
   </div>
   <div class="col-span-12 col-start-2 flex justify-between">

@@ -461,6 +461,11 @@ export const groupKeyToItemKey = (groupKey) => {
   return `/group/${parts[0]}/${parts[1]}/`;
 };
 
+export const deskKeyToItemKey = (deskKey) => {
+  const parts = deskKey.split('/');
+  return `/app/${parts[0]}/${parts[1]}/`;
+};
+
 export const profileKeyToItemKey = (profileKey) => {
   return `/${profileKey}/`;
 };

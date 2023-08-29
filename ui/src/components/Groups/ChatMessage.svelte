@@ -1,16 +1,14 @@
 <script>
   import { link } from 'svelte-spa-router';
   import { Sigil } from '@components';
-  import { InlineChat } from '@fragments';
+  import Inline from './Inline.svelte';
 
-  export let author;
+  export let memo;
   export let group;
-  export let content;
+  const { author, content } = memo;
 </script>
 
-<div
-  class="col-span-6 p-1 rounded-lg grid grid-cols-12 gap-2 break-words"
->
+<div class="col-span-6 p-1 rounded-lg grid grid-cols-12 gap-2 break-words">
   <div class="col-span-1">
     <div class="rounded-md overflow-hidden">
       <Sigil patp={`${author}`} />
@@ -28,8 +26,8 @@
     </div>
     <div class="text-base">
       {#if content?.story?.inline}
-        {#each content.story.inline as chat}
-          <InlineChat {chat} />
+        {#each content.story.inline as inline}
+          <Inline {inline} />
         {/each}
       {/if}
     </div>
