@@ -162,7 +162,28 @@
           cord: '',
         },
       ],
+      'tags-to': [],
     };
+
+    // check each word of the content for a mention, and if so, create a social
+    // graph tag for the mention
+    content
+      .split(' ')
+      .filter((word) => word.substr(0, 1) === '~' && isValidPatp(word))
+      .forEach((word) => {
+        post = {
+          ...post,
+          'tags-to': [
+            ...post['tags-to'],
+            {
+              key: { struc: 'ship', ship: word, cord: '', time: '' },
+              'tag-to': `/${me}/mention-to`,
+              'tag-from': `/${word}/mention-from`,
+            },
+          ],
+        };
+      });
+
     api.portal.do.create(post);
   };
 
