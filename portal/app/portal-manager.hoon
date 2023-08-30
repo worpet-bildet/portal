@@ -324,7 +324,7 @@
       [%give %fact [/updates]~ %portal-message !>(msg)]~
       ::
         %payment-confirmed
-      =.  bought-apps  (~(put by bought-apps) [src.bowl desk.msg] tx-hash.msg)
+      =.  bought-apps  (~(put by bought-apps) [src.bowl desk.msg] (crip (cass (trip tx-hash.msg))))
       :_  this
       :~  [%give %fact [/updates]~ %portal-message !>(msg)]
           [%give %fact [/updates]~ %portal-manager-result !>([%bought-apps bought-apps])]
@@ -353,21 +353,22 @@
         %tip-tx-hash
       :_  this
       ~&  >  "received hash"
+      =/  tx-hash-msg  (crip (cass (trip tx-hash.msg)))
       ::  check if in processed payments
       =/  processed  ^-  ^processed-payments  %+  skim  
           processed-payments
         |=  [=buyer =key tx-hash=@t =time note=@t]
         ?&  =(buyer src.bowl)
-            =(tx-hash tx-hash.msg)
+            =(tx-hash tx-hash-msg)
         ==
       ^-  (list card)
       ?~  processed 
         ::  if not in processed payments, validate transaction
         ::  dap.bowl should be desk
-        [%pass /get-tx %arvo %k %fard q.byk.bowl %get-tx-by-hash %noun !>([rpc-endpoint src.bowl tx-hash.msg note.msg])]~
+        [%pass /get-tx %arvo %k %fard q.byk.bowl %get-tx-by-hash %noun !>([rpc-endpoint src.bowl tx-hash-msg note.msg])]~
       ::  if in processed payments
       :~  :*  %pass  /tip-confirm  %agent  [src.bowl %portal-manager]  %poke  
-              %portal-message  !>([%tip-confirmed tx-hash.msg key:(snag 0 `^processed-payments`processed)])
+              %portal-message  !>([%tip-confirmed tx-hash-msg key:(snag 0 `^processed-payments`processed)])
       ==  ==
       ::
         %tip-confirmed

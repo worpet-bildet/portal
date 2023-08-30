@@ -15,7 +15,7 @@
   {/each}
   <TipModal bind:handleTipRequest />
 {:else}
-  <div class="flex justify-center mt-4">
+  <div class="flex justify-center dark:fill-white mt-4">
     <LoadingIcon />
   </div>
 {/if}
