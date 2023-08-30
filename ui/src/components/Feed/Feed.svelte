@@ -1,4 +1,5 @@
 <script>
+  import { keyStrFromObj } from '@root/state';
   import { FeedPost, TipModal } from '@components';
   import { LoadingIcon } from '@fragments';
 
@@ -7,7 +8,7 @@
 </script>
 
 {#if feed && feed.length > 0}
-  {#each feed as item (item)}
+  {#each feed as item (keyStrFromObj(item.key))}
     <FeedPost
       key={item.key}
       on:tipRequest={(e) => handleTipRequest(e.detail.key)}

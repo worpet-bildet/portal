@@ -23,6 +23,7 @@
       %groups-chat-msg
       %groups-diary-note
       %groups-heap-curio
+      %tip
       %other
   ==
 ::
@@ -91,6 +92,7 @@
       $+  bespoke-collection  [struc=%collection title=@t blurb=@t image=@t =key-list]
       $+  bespoke-validity-store  [struc=%validity-store =validity-records]
       $+  bespoke-blog        [struc=%blog title=@t blurb=@t uri=@t path=@t image=@t]
+      $+  bespoke-tip         [struc=%tip tipper=@p beneficiary=@p eth-amount=@t time=@t note=@t tx-hash=@t]
       $+  bespoke-groups-chat-msg
       $:  struc=%groups-chat-msg 
           group=flag:w
