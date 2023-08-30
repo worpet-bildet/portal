@@ -174,7 +174,7 @@
   $: if (postContainer) {
     // if the client height of the post container is more than 24 rem, we should
     // show a "see more" button on the post, so that you can scroll past it
-    if (postContainer.clientHeight > 24 * 16) {
+    if (postContainer.clientHeight > 30 * 16) {
       longPost = true;
       showAll = false;
       postContainer.classList.add('max-h-96');
