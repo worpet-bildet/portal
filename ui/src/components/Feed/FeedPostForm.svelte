@@ -1,7 +1,13 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import { api, me } from '@root/api';
-  import { state, keyStrToObj, getGroup, getApp } from '@root/state';
+  import {
+    state,
+    keyStrToObj,
+    getGroup,
+    getApp,
+    itemInState,
+  } from '@root/state';
   import {
     getAnyLink,
     isChatPath,
@@ -34,6 +40,7 @@
     ItemImage,
     StarRating,
     LinkPreview,
+    LoadingIcon,
   } from '@fragments';
 
   export let replyTo;
@@ -46,7 +53,9 @@
   let dispatch = createEventDispatcher();
   let content, rating;
 
-  const post = () => {
+  let submitting;
+  const post = async () => {
+    if (submitting) return;
     if (!content) {
       return (error = 'Please write something, anything.');
     }
@@ -96,7 +105,30 @@
       const { keyObj } = shortcodeItems[0];
       ref = { ...keyObj };
     }
-    dispatch('post', { content, uploadedImageUrl, replyTo, rating, ref });
+
+    const time = toUrbitTime(Date.now());
+    dispatch('post', {
+      content,
+      uploadedImageUrl,
+      replyTo,
+      rating,
+      ref,
+      time,
+    });
+
+    submitting = true;
+    try {
+      await itemInState({
+        struc: ref ? 'retweet' : 'other',
+        ship: me,
+        cord: '',
+        time,
+      });
+      submitting = false;
+    } catch (e) {
+      alert('Posting failed, please refresh the page and try again.');
+    }
+
     content = '';
     uploadedImageUrl = '';
     rating = '';
@@ -202,9 +234,18 @@
 </script>
 
 <div
-  class="grid grid-cols-12 bg-panels dark:bg-darkgrey border-x border-b py-5 pl-5 pr-3 gap-2 lg:gap-4 {$$props.class}"
+  class="relative grid grid-cols-12 bg-panels dark:bg-darkgrey border-x border-b py-5 pl-5 pr-3 gap-2 lg:gap-4 {$$props.class}"
   class:border-error={error}
 >
+  {#if submitting}
+    <div
+      class="absolute top-0 left-0 w-full h-full bg-white/30 dark:opacity-40 z-10 backdrop-blur-3xl"
+    >
+      <div class="flex w-full h-full items-center justify-center opacity-100">
+        <LoadingIcon />
+      </div>
+    </div>
+  {/if}
   <div class="col-span-1">
     <div class="rounded-md overflow-hidden align-middle">
       <Sigil patp={me} />

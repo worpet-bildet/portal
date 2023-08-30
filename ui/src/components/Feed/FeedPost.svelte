@@ -71,10 +71,10 @@
   let showCommentForm = false;
 
   function handlePostComment({
-    detail: { content, uploadedImageUrl, replyTo, ref },
+    detail: { content, uploadedImageUrl, replyTo, ref, time },
   }) {
     // TODO: Merge this function with the one from /pages/Feed.svelte
-    let post = { 'tags-to': [] };
+    let post = { 'tags-to': [], time };
     if (ref) {
       // Here we need to create the retweet post instead of the type "other"
       post = {

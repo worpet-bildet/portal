@@ -156,6 +156,23 @@ export const refreshBlogs = () => {
   });
 };
 
+export const itemInState = async (item) => {
+  // this is super, super dumb.
+  return new Promise((resolve, reject) => {
+    const unsubscribe = state.subscribe((s) => {
+      if (s[keyStrFromObj(item)]) {
+        unsubscribe();
+        clearTimeout(rejectTimeout);
+        resolve(true);
+      }
+    });
+    const rejectTimeout = setTimeout(() => {
+      unsubscribe();
+      reject();
+    }, 10000);
+  });
+};
+
 export const getCurator = (patp) => {
   return {
     keyObj: { ship: patp, struc: 'ship', cord: '', time: '' },
