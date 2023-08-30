@@ -11,7 +11,6 @@
     keyStrToObj,
     getCollectedItemLeaderboard,
     getItem,
-    getTips,
   } from '@root/state';
   import {
     Feed,
@@ -84,9 +83,7 @@
     if (s.isLoaded && !getGlobalFeed()) {
       return subToGlobalFeed();
     }
-    let mergedFeed = getGlobalFeed()
-      .concat(getCuratorFeed(me))
-      .concat(getTips());
+    let mergedFeed = getGlobalFeed().concat(getCuratorFeed(me));
     feed = mergedFeed
       .filter((a) => !!a)
       .filter((a, idx) => {
