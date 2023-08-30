@@ -35,7 +35,7 @@
   } from '@fragments';
 
   export let key;
-  export let allowReplies = true;
+  export let allowRepliesDepth = 2;
   export let showRating;
 
   let item;
@@ -59,7 +59,7 @@
           i === arr.findIndex((i) => keyStrFromObj(i) === keyStrFromObj(a))
         );
       })
-      .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
+      .sort((a, b) => fromUrbitTime(a.time) - fromUrbitTime(b.time) );
 
     let likes = [...(getLikes(key.ship, key) || [])];
 
@@ -262,7 +262,7 @@
       {/if}
       <div class="col-span-12 col-start-2 py-2">
         <div class="-ml-2.5 flex gap-8">
-          {#if allowReplies}
+          {#if allowRepliesDepth}
             <div class="flex">
               <div class="rounded-full overflow-hidden">
                 <IconButton
@@ -343,7 +343,7 @@
           on:post={handlePostComment}
         />
         {#each replies as replyKey (keyStrFromObj(replyKey))}
-          <svelte:self key={replyKey} allowReplies={false} />
+          <svelte:self key={replyKey} allowRepliesDepth={allowRepliesDepth - 1} />
         {/each}
       </div>
       <button

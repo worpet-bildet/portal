@@ -446,7 +446,7 @@
         class="rounded-tl-lg rounded-tr-lg border-t"
       />
       {#if loading}
-        <div class="flex justify-center items-center py-20">
+        <div class="flex justify-center dark:fill-white items-center py-20">
           <LoadingIcon />
         </div>
       {:else}
