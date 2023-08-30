@@ -129,8 +129,8 @@
     sortedRecommendations = getCollectedItemLeaderboard(me).slice(0, 4);
   });
 
-  const handlePost = ({ detail: { content, uploadedImageUrl, ref } }) => {
-    let post = {};
+  const handlePost = ({ detail: { content, uploadedImageUrl, ref, time } }) => {
+    let post = { time };
     if (ref) {
       // Here we need to create the retweet post instead of the type "other"
       post = {
