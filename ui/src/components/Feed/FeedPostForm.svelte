@@ -239,7 +239,7 @@
 >
   {#if submitting}
     <div
-      class="absolute top-0 left-0 w-full h-full bg-white/30 z-10 backdrop-blur-3xl"
+      class="absolute top-0 left-0 w-full h-full bg-white/30 dark:opacity-40 z-10 backdrop-blur-3xl"
     >
       <div class="flex w-full h-full items-center justify-center opacity-100">
         <LoadingIcon />
