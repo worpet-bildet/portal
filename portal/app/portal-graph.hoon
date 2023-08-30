@@ -321,7 +321,7 @@
                                 :: if its threaded by post key, then nested replies would get separate threads
                             now.bowl
                             [ship+ship:key-from ' replied to your post.' ~]
-                            /portal
+                            (welp /portal (key-to-path:conv:portal key-to))
                             ~
                         ==
                     ==
@@ -350,7 +350,25 @@
                                 ==
                             now.bowl
                             [ship+ship:key-from ' reviewed %' time:key-to '.' ~]
-                            /portal
+                            (welp /portal (key-to-path:conv:portal key-to))
+                            ~
+                        ==
+                    ==
+                ==
+            ?:  ?&  =(+:tag.u.wave.msg /mention-to)
+                    =(our.bowl ship:key-to)
+                ==
+                :~  :*  %pass  /hark  %agent  [our.bowl %hark]  %poke
+                        %hark-action  !>
+                        :*  %add-yarn  &  &
+                            (end 7 (shas %portal-notif eny.bowl))
+                            :^  ~  ~  q.byk.bowl
+                                ;:  welp  /portal  /mention
+                                    (key-to-path:conv:portal key-from)
+                                ==
+                            now.bowl
+                            [ship+ship:key-from ' mentioned you in their post.' ~]
+                            (welp /portal (key-to-path:conv:portal key-from))
                             ~
                         ==
                     ==
