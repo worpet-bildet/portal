@@ -40,7 +40,7 @@
         <ItemPreview {key} clickable={false} />
       </div>
       <button
-        class="bg-hover text-grey hover:bg-white dark:hover:bg-offwhite dark:bg-white dark:text-black hover:duration-500 font-saucebold rounded-lg py-2 px-3 col-start-11 col-span-2 lg:col-start-12 lg:col-span-1"
+        class="bg-hover text-grey hover:bg-white dark:hover:bg-offwhite dark:bg-white dark:text-black hover:duration-500 border font-bold rounded-lg py-2 px-3 col-start-11 col-span-2 lg:col-start-12 lg:col-span-1"
         on:click={recommend}>Post</button
       >
     </div>

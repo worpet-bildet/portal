@@ -217,11 +217,6 @@
         %onboarded
       `this(onboarded toggle.act)
       ::
-        %index-as-curator
-      =/  msg  [%index-as-curator src.bowl toggle.act]
-      :_  this(indexed-as-curator toggle.act)
-      [(~(msg cards [portal-indexer.state %portal-manager]) msg)]~
-      ::
         %payment-request
       ?:  (~(has by bought-apps) src.bowl desk.act)
         ~&  >  "already bought the app"
@@ -270,12 +265,25 @@
     ::  a ne vanjski jer dolazi od portal-managera
     =/  msg  !<(message vase)
     ?+    -.msg  !!
+        %unpublish
+      ?:  !(~(has in authorized-ships) src.bowl)
+        ~&  >>>  "ship not authorized to unpublish"
+        `this
+      :_  this
+      :_  ~
+      %-  ~(act cards [our.bowl %portal-store])
+      :+  %remove
+        [%app our.bowl '' desk.msg]^~ 
+      [%collection our.bowl '' 'published-apps']
+      ::
         %sign-app
       ?:  !(~(has in authorized-ships) src.bowl)
         ~&  >>>  "ship not authorized to sign"
         `this
       ::  vulnerable to just receiving random apps from people lol
-      ?>  (validate-sig dist-desk.msg our.bowl our.bowl now.bowl sig.msg)
+      ?:  !(validate-sig dist-desk.msg our.bowl our.bowl now.bowl sig.msg)
+        ~&  >>>  "failed sig"
+        `this
       ~&  >  "%portal: sig is valid!"
       =/  dist-desk  (parse-dist-desk:misc dist-desk.msg)
       ?~  dist-desk  !!
@@ -291,18 +299,24 @@
                 [%collection our.bowl '' '~2000.1.1']~  ~  ~  ==
         ==
       =/  create-app
-        %-  ~(act cards [our.bowl %portal-store])
         ?:  %-  ~(item-exists scry our.bowl now.bowl)
             [%app our.bowl '' desk-name.u.dist-desk]
-          :^    %edit
-              [%app our.bowl '' desk-name.u.dist-desk]
-            `%def
-          `[%app ~ ~ `dist-desk.msg `sig.msg `treaty.msg eth-price.msg]
+          :~  %-  ~(act cards [our.bowl %portal-store])
+              :^    %edit
+                  [%app our.bowl '' desk-name.u.dist-desk]
+                `%def
+              `[%app ~ ~ `dist-desk.msg `sig.msg `treaty.msg eth-price.msg]
+              %-  ~(act cards [our.bowl %portal-store])
+              :+  %append 
+                [%app our.bowl '' desk-name.u.dist-desk]^~ 
+              [%collection our.bowl '' 'published-apps']
+          ==
+        :_  ~  %-  ~(act cards [our.bowl %portal-store])
         :*  %create  ~  ~  `desk-name.u.dist-desk  `%def
           `[%app ~ '' dist-desk.msg sig.msg treaty.msg (fall eth-price.msg '')]
           ~[[%collection our.bowl '' 'published-apps']]  ~  ~  ==
       :_  this
-      (snoc create-my-apps create-app)
+      (welp create-my-apps create-app)
       ::
         %payment-reference
       ~&  msg
@@ -310,7 +324,7 @@
       [%give %fact [/updates]~ %portal-message !>(msg)]~
       ::
         %payment-confirmed
-      =.  bought-apps  (~(put by bought-apps) [src.bowl desk.msg] tx-hash.msg)
+      =.  bought-apps  (~(put by bought-apps) [src.bowl desk.msg] (crip (cass (trip tx-hash.msg))))
       :_  this
       :~  [%give %fact [/updates]~ %portal-message !>(msg)]
           [%give %fact [/updates]~ %portal-manager-result !>([%bought-apps bought-apps])]
@@ -339,36 +353,27 @@
         %tip-tx-hash
       :_  this
       ~&  >  "received hash"
+      =/  tx-hash-msg  (crip (cass (trip tx-hash.msg)))
       ::  check if in processed payments
       =/  processed  ^-  ^processed-payments  %+  skim  
           processed-payments
         |=  [=buyer =key tx-hash=@t =time note=@t]
         ?&  =(buyer src.bowl)
-            =(tx-hash tx-hash.msg)
+            =(tx-hash tx-hash-msg)
         ==
       ^-  (list card)
       ?~  processed 
         ::  if not in processed payments, validate transaction
         ::  dap.bowl should be desk
-        [%pass /get-tx %arvo %k %fard q.byk.bowl %get-tx-by-hash %noun !>([rpc-endpoint src.bowl tx-hash.msg note.msg])]~
+        [%pass /get-tx %arvo %k %fard q.byk.bowl %get-tx-by-hash %noun !>([rpc-endpoint src.bowl tx-hash-msg note.msg])]~
       ::  if in processed payments
       :~  :*  %pass  /tip-confirm  %agent  [src.bowl %portal-manager]  %poke  
-              %portal-message  !>([%tip-confirmed tx-hash.msg key:(snag 0 `^processed-payments`processed)])
+              %portal-message  !>([%tip-confirmed tx-hash-msg key:(snag 0 `^processed-payments`processed)])
       ==  ==
       ::
         %tip-confirmed
       :_  this
       [%give %fact [/updates]~ %portal-message !>(msg)]~
-      ::
-        %index-as-curator
-      ?>  =(our.bowl portal-indexer)
-      ?>  =(src.bowl src.msg)
-      =/  act  ~(act cards [our.bowl %portal-store])
-      =/  index-key  [%collection our.bowl '' 'index']
-      =/  ship-key   [%ship src.msg '' '']
-      =/  cards  `(list card)`~[(act [%remove ~[ship-key] index-key])]
-      =?  cards  toggle.msg  (snoc cards (act [%prepend ~[ship-key] index-key]))
-      [cards this]
     ==
     ::
       %sss-on-rock

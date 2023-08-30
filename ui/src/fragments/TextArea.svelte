@@ -1,17 +1,18 @@
 <script>
   import linkifyHtml from 'linkify-html';
   import autosize from 'svelte-autosize';
-  import { tick, onMount } from 'svelte';
+  import { tick, onMount, createEventDispatcher } from 'svelte';
+  const dispatch = createEventDispatcher();
   export let value = '';
 
   let textarea, target;
   const reset = async () => {
     await tick();
     autosize.update(textarea);
-    target.innerHTML = '';
+    if (target) target.innerHTML = '';
   };
 
-  $: if (value === '') {
+  $: if (!value || value === '') {
     reset();
   } else {
     handleInput();
@@ -20,18 +21,26 @@
   onMount(() => {
     textarea.addEventListener('paste', function (e) {
       e.preventDefault();
-      var text = e.clipboardData.getData('text/plain');
-      document.execCommand('insertHTML', false, text);
+      document.execCommand(
+        'insertText',
+        false,
+        e.clipboardData.getData('text/plain')
+      );
     });
   });
 
   const handleInput = () => {
+    if (!target) return setTimeout(handleInput, 100);
     target.innerHTML = linkifyHtml(
       value.replace(/\n/g, '<br />').replaceAll('<br /><br />', '<br />'),
       {
         attributes: { class: 'text-link dark:text-link-dark' },
       }
     );
+  };
+
+  const handleKeydown = (e) => {
+    if (e.key === 'Enter' && e.metaKey) dispatch('keyboardSubmit');
   };
 </script>
 
@@ -42,6 +51,7 @@
     bind:this={textarea}
     bind:innerText={value}
     on:input={handleInput}
+    on:keydown={handleKeydown}
     {...$$props}
     class="p-2 pb-4 w-full text-lg placeholder-grey resize-none leading-tight box-border break-words border-b focus:outline-none z-10 text-transparent caret-black dark:caret-white"
   />

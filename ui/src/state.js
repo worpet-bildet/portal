@@ -9,6 +9,23 @@ import { scoreItems } from './ai';
 export const state = writable(load() || {});
 export const feed = writable({});
 
+export const updateNotificationsLastChecked = () => {
+  state.update((s) => {
+    let currentTime = new Date();
+    s.notificationsLastChecked = currentTime;
+    save({ notificationsLastChecked: currentTime });
+    return s;
+  });
+};
+
+export const toggleMuteNotifications = () => {
+  state.update((s) => {
+    s.muteNotifications = !s.muteNotifications;
+    save({ muteNotifications: s.muteNotifications });
+    return s;
+  });
+};
+
 export const toggleDarkmode = () => {
   state.update((s) => {
     s.darkmode = !s.darkmode;
@@ -229,6 +246,10 @@ export const getGroup = (groupKey) => {
   return get(state)[`/group/${groupKey}/`];
 };
 
+export const getApp = (appKey) => {
+  return get(state)[`/app/${appKey}/`];
+};
+
 export const getItem = (listKey) => {
   if (typeof listKey === 'object') return get(state)[keyStrFromObj(listKey)];
   return get(state)[listKey];
@@ -264,7 +285,7 @@ export const getCollectedItemLeaderboard = (excludePatp) => {
   ).sort((a, b) => b[1] - a[1]);
 };
 
-export const getMoreFromThisShip = (patp) => {
+export const getMoreFromThisShip = (patp, cord = '') => {
   return Object.entries(
     Object.values(get(state))
       .filter(
@@ -277,9 +298,9 @@ export const getMoreFromThisShip = (patp) => {
         b?.bespoke?.['key-list']
           .filter(
             (k) =>
-              k?.struc !== 'collection' &&
+              !['collection', 'ship'].includes(k?.struc) &&
               k?.ship === patp &&
-              k?.struc !== 'ship' &&
+              k?.cord !== cord &&
               !(
                 k?.cord === 'portal' &&
                 k?.ship === '~worpet-bildet' &&
@@ -452,6 +473,11 @@ export const handleSubscriptionEvent = (event, type) => {
 export const groupKeyToItemKey = (groupKey) => {
   const parts = groupKey.split('/');
   return `/group/${parts[0]}/${parts[1]}/`;
+};
+
+export const deskKeyToItemKey = (deskKey) => {
+  const parts = deskKey.split('/');
+  return `/app/${parts[0]}/${parts[1]}/`;
 };
 
 export const profileKeyToItemKey = (profileKey) => {
