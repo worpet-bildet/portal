@@ -59,7 +59,7 @@
           i === arr.findIndex((i) => keyStrFromObj(i) === keyStrFromObj(a))
         );
       })
-      .sort((a, b) => fromUrbitTime(a.time) - fromUrbitTime(b.time) );
+      .sort((a, b) => fromUrbitTime(a.time) - fromUrbitTime(b.time));
 
     let likes = [...(getLikes(key.ship, key) || [])];
 
@@ -343,7 +343,10 @@
           on:post={handlePostComment}
         />
         {#each replies as replyKey (keyStrFromObj(replyKey))}
-          <svelte:self key={replyKey} allowRepliesDepth={allowRepliesDepth - 1} />
+          <svelte:self
+            key={replyKey}
+            allowRepliesDepth={allowRepliesDepth - 1}
+          />
         {/each}
       </div>
       <button
