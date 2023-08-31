@@ -59,7 +59,7 @@
           i === arr.findIndex((i) => keyStrFromObj(i) === keyStrFromObj(a))
         );
       })
-      .sort((a, b) => fromUrbitTime(a.time) - fromUrbitTime(b.time) );
+      .sort((a, b) => fromUrbitTime(a.time) - fromUrbitTime(b.time));
 
     let likes = [...(getLikes(key.ship, key) || [])];
 
@@ -71,10 +71,10 @@
   let showCommentForm = false;
 
   function handlePostComment({
-    detail: { content, uploadedImageUrl, replyTo, ref },
+    detail: { content, uploadedImageUrl, replyTo, ref, time },
   }) {
     // TODO: Merge this function with the one from /pages/Feed.svelte
-    let post = { 'tags-to': [] };
+    let post = { 'tags-to': [], time };
     if (ref) {
       // Here we need to create the retweet post instead of the type "other"
       post = {
@@ -343,7 +343,10 @@
           on:post={handlePostComment}
         />
         {#each replies as replyKey (keyStrFromObj(replyKey))}
-          <svelte:self key={replyKey} allowRepliesDepth={allowRepliesDepth - 1} />
+          <svelte:self
+            key={replyKey}
+            allowRepliesDepth={allowRepliesDepth - 1}
+          />
         {/each}
       </div>
       <button

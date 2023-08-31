@@ -540,6 +540,13 @@
                 /(scot %p buyer.u.processing-data)/tip-to/(scot %da now.bowl)/[eth-paid]/[note]
             ==
         ==
+        :*    %pass  /create-tip-item  %agent  [our.bowl %portal-store]  %poke  
+              %portal-action  !>
+              :*  %create  ~  ~  `(scot %da now.bowl)  ~
+                  `[%tip src our.bowl eth-paid (scot %da now.bowl) note tx-hash]
+                   ~  ~[[%feed our.bowl '' '~2000.1.1']]  ~
+              ==
+        ==
         :*  %pass  /hark  %agent  [our.bowl %hark]  %poke
             %hark-action  !>
             :*  %add-yarn  &  &
@@ -550,7 +557,7 @@
                     ==
                 now.bowl
                 [ship+buyer.u.processing-data ' gave you a tip!' ~]
-                /portal
+                (welp /portal /tip/(scot %p our.bowl)//(scot %da now.bowl))
                 ~
             ==
         ==
