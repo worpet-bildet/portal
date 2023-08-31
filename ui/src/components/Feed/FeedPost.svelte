@@ -41,10 +41,19 @@
   let item;
   let replies = [];
   let likeCount, likedByMe;
+  let showCommentForm = false;
   state.subscribe((s) => {
     item = getItem(keyStrFromObj(key));
     if (s.isLoaded && !item) {
       return api.portal.do.subscribe(key);
+    }
+
+    // Open the comments if we've been referred to this specific reply
+    const referredTo = s.referredTo;
+    if (referredTo && referredTo.key === keyStrFromObj(item.keyObj)) {
+      if (referredTo.type === 'reply') {
+        showCommentForm = true;
+      }
     }
     // This is a little confusing but we're merging the global list of comments
     // with any comments that we have made ourselves on the post, which should
@@ -67,8 +76,6 @@
     if (likedByMe && !likes.find((l) => l.ship === me)) likeCount++;
     likedByMe = likedByMe || likes.find((l) => l.ship === me);
   });
-
-  let showCommentForm = false;
 
   function handlePostComment({
     detail: { content, uploadedImageUrl, replyTo, ref, time },
@@ -100,7 +107,6 @@
       .split(' ')
       .filter((word) => word.substr(0, 1) === '~' && isValidPatp(word))
       .forEach((word) => {
-        console.log('mention', word);
         post = {
           ...post,
           'tags-to': [
@@ -193,7 +199,7 @@
     bind:this={postContainer}
   >
     <div
-      id={createdAt}
+      id={keyStrFromObj(item.keyObj)}
       class="grid grid-cols-12 bg-panels dark:bg-darkgrey gap-2 lg:gap-4 lg:gap-y-0"
       in:fade
     >

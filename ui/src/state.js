@@ -156,6 +156,10 @@ export const refreshBlogs = () => {
   });
 };
 
+export const setReferredTo = (key) => {
+  state.update((s) => ({ ...s, referredTo: key }));
+};
+
 export const itemInState = async (item) => {
   // this is super, super dumb.
   return new Promise((resolve, reject) => {
