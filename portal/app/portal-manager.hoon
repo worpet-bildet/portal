@@ -557,7 +557,7 @@
                     ==
                 now.bowl
                 [ship+buyer.u.processing-data ' gave you a tip!' ~]
-                (welp /portal /tip/(scot %p our.bowl)//(scot %da now.bowl))
+                (welp /portal/tip /tip/(scot %p our.bowl)//(scot %da now.bowl))
                 ~
             ==
         ==
