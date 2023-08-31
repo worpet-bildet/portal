@@ -43,6 +43,8 @@ export const getTitle = (item) => {
       return item?.bespoke?.nickname
         ? `${item?.bespoke?.nickname} (${item?.keyObj?.ship})`
         : item?.keyObj?.ship;
+    case 'tip':
+      return 'Tip';
     default:
       return item?.bespoke?.title;
   }
@@ -71,6 +73,10 @@ export const getBlurb = (item) => {
       return item?.bespoke?.treaty?.info;
     case 'ship':
       return item?.bespoke?.bio;
+    case 'tip':
+      return `I just received a ${weiToEth(
+        item?.bespoke?.['eth-amount']
+      )} ETH tip from ${item?.bespoke?.tipper} 🤑🤑🤑`;
     default:
       return item?.bespoke?.blurb;
   }

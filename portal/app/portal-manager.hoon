@@ -540,6 +540,13 @@
                 /(scot %p buyer.u.processing-data)/tip-to/(scot %da now.bowl)/[eth-paid]/[note]
             ==
         ==
+        :*    %pass  /create-tip-item  %agent  [our.bowl %portal-store]  %poke  
+              %portal-action  !>
+              :*  %create  ~  ~  ~  ~
+                  `[%tip src our.bowl eth-paid (scot %da now.bowl) note tx-hash]
+                   ~  ~[[%feed our.bowl '' '~2000.1.1']]  ~
+              ==
+        ==
     ==
   ==
   :: |=  [=wire sign=sign-arvo]
