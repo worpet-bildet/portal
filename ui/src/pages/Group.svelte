@@ -51,10 +51,7 @@
   });
 
 
-  console.log({joinedDetails});
-  console.log("joinedDetails");
-  console.log(sortedRecommendations);
-  console.log("key");
+  $: console.log({joinedDetails});
 
   const join = () => api.urbit.do.joinGroup(groupKey).then(refreshGroups);
   const leave = () => api.urbit.do.leaveGroup(groupKey).then(refreshGroups);

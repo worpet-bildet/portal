@@ -509,7 +509,7 @@
           <ItemPreview key={keyStrToObj(recommendation)} small />
         {/each}
         <button
-          class="text-left rounded-lg text-grey hover:text-black dark:hover:text-white p-2 px-4"
+          class="text-left rounded-lg text-grey hover:text-black dark:hover:text-white px-4"
           on:click={() => push('/explore')}
         >
           Show more

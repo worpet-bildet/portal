@@ -7,7 +7,7 @@
   import { ItemImage, StarRating, IconButton, EthereumIcon, PlusIcon, InstallIcon } from '@fragments';
   export let cover, avatar, title, description, patp, color, type, reviews, key;
 
-  let handleTipRequest, isInstalledOrJoined;
+  let handleTipRequest, isInstalledOrJoined = false;
   $: console.log({isInstalledOrJoined});
 
   let reviewCount, reviewAverageRating;
@@ -132,7 +132,7 @@
                   );
                 }}
                 class="bg-panels dark:bg-transparent hover:bg-panels-hover dark:hover:border-white dark:border border"
-                >Join Group</IconButton
+                >Install</IconButton
               >
             </div>
           {/if}
