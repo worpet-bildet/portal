@@ -14,8 +14,6 @@
 
   $: if (!value || value === '') {
     reset();
-  } else {
-    handleInput();
   }
 
   onMount(() => {
@@ -40,7 +38,10 @@
   };
 
   const handleKeydown = (e) => {
-    if (e.key === 'Enter' && e.metaKey) dispatch('keyboardSubmit');
+    if (e.key === 'Enter' && e.metaKey) {
+      textarea.blur();
+      dispatch('keyboardSubmit');
+    }
   };
 </script>
 
