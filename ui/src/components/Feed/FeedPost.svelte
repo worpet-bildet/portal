@@ -346,7 +346,7 @@
     </div>
   </div>
   <div
-    class="grid grid-cols-12 bg-panels dark:bg-transparentgap-2 lg:gap-4 lg:gap-y-0"
+    class="grid grid-cols-12 bg-panels dark:bg-transparent gap-2 lg:gap-4 lg:gap-y-0"
     in:fade
   >
     {#if showReplies}
