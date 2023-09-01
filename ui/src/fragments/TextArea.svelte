@@ -13,9 +13,8 @@
   };
 
   $: if (!value || value === '') {
+    value = '\n';
     reset();
-  } else {
-    handleInput();
   }
 
   onMount(() => {
@@ -29,10 +28,10 @@
     });
   });
 
-  const handleInput = () => {
+  const handleInput = (e) => {
     if (!target) return setTimeout(handleInput, 100);
     target.innerHTML = linkifyHtml(
-      value.replace(/\n/g, '<br />').replaceAll('<br /><br />', '<br />'),
+      value.replace(/\n\n/g, '\n').replace(/\n/g, '<br />'),
       {
         attributes: { class: 'text-link dark:text-link-dark' },
       }
@@ -40,7 +39,13 @@
   };
 
   const handleKeydown = (e) => {
-    if (e.key === 'Enter' && e.metaKey) dispatch('keyboardSubmit');
+    if (e.key === 'Enter' && e.metaKey) {
+      textarea.blur();
+      dispatch('keyboardSubmit');
+    } else if (e.keyCode == 13 && e.shiftKey === true) {
+      e.preventDefault();
+      document.execCommand('insertText', false, '\n');
+    }
   };
 </script>
 

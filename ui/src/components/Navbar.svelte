@@ -8,6 +8,7 @@
     getItem,
     updateNotificationsLastChecked,
     toggleMuteNotifications,
+    keyStrFromObj,
   } from '@root/state';
   import { me } from '@root/api';
   import { Sigil } from '@components';
@@ -46,8 +47,12 @@
   let hasNewNotifications;
   state.subscribe(() => {
     notifications = getNotifications(me);
-    let notificationTimes = notifications.map(([firstSubObj, secondSubObj]) => firstSubObj.time);
-    hasNewNotifications = notificationTimes.some(time => fromUrbitTime(time) > new Date($state.notificationsLastChecked).getTime());
+    let notificationTimes = notifications.map(([n]) => n.time);
+    hasNewNotifications = notificationTimes.some(
+      (time) =>
+        fromUrbitTime(time) >
+        new Date($state.notificationsLastChecked).getTime()
+    );
   });
 
   const pagesWithoutCoverPhoto = ['/explore', '/edit', '-edit/', '/'];
@@ -69,7 +74,6 @@
     notificationsOpen = false;
     document.body.removeEventListener('click', handleNotificationsClose);
   };
-
 </script>
 
 <div class="mb-10">
@@ -92,12 +96,17 @@
         <div class="relative">
           <div class="rounded-full">
             <button
-              on:click|stopPropagation={notificationsOpen ? handleNotificationsClose : handleNotificationsOpen}
-              class="w-5 flex items-center">
+              on:click|stopPropagation={notificationsOpen
+                ? handleNotificationsClose
+                : handleNotificationsOpen}
+              class="w-5 flex items-center"
+            >
               <BellIcon />
               {#if hasNewNotifications && !$state.muteNotifications}
                 <div class="relative inline-flex">
-                  <span class="absolute top-0 right-0 inline-block w-2 h-2 bg-ai-purple rounded-full"></span>
+                  <span
+                    class="absolute top-0 right-0 inline-block w-2 h-2 bg-ai-purple rounded-full"
+                  />
                 </div>
               {/if}
             </button>
@@ -110,12 +119,23 @@
                 <div class="text-xl">Notifications</div>
                 <div class="relative flex items-center justify-end">
                   <div class="relative">
-                    <button on:click|stopPropagation={toggleMuteNotifications} class="switch block border border-black dark:border-white w-14 h-8 rounded-full flex justify-between items-center cursor-pointer">
+                    <button
+                      on:click|stopPropagation={toggleMuteNotifications}
+                      class="switch block border border-black dark:border-white w-14 h-8 rounded-full flex justify-between items-center cursor-pointer"
+                    >
                       <BellIcon
-                        class={`p-[3px] transform translate-x-[3px] ${!$state.muteNotifications ? 'text-white dark:text-black bg-black dark:bg-white rounded-full' : ''}`}
+                        class={`p-[3px] transform translate-x-[3px] ${
+                          !$state.muteNotifications
+                            ? 'text-white dark:text-black bg-black dark:bg-white rounded-full'
+                            : ''
+                        }`}
                       />
                       <MutedIcon
-                        class={`p-[3px] transform -translate-x-[3px] ${$state.muteNotifications ? 'text-white dark:text-black bg-black dark:bg-white rounded-full' : ''}`}
+                        class={`p-[3px] transform -translate-x-[3px] ${
+                          $state.muteNotifications
+                            ? 'text-white dark:text-black bg-black dark:bg-white rounded-full'
+                            : ''
+                        }`}
                       />
                     </button>
                   </div>
@@ -128,7 +148,9 @@
                     on:click={() => {
                       switch (reply.struc) {
                         case 'other':
-                          window.location.href = `#${fromUrbitTime(op.time)}`;
+                          window.location.href = `#${encodeURIComponent(
+                            keyStrFromObj(op)
+                          )}`;
                           break;
                         case 'review':
                           push(`/app/${op.ship}/${op.cord || op.time}`);
