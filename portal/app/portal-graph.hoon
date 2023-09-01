@@ -20,6 +20,10 @@
 ::  - update to work with new sss
 ::  =^  cards  subgraph-pub, instead of =.  subgraph-pub
 ::  - autosub to comments on receiving %new-edge
+::  - scry paths separated
+::    [%nodes @ %entity @ @ ~]
+::    [%nodes @ ?(%ship %address) @ ~]
+
 +$  state-2
   $+  graph-state-2
   $:  %2
@@ -192,25 +196,20 @@
     =/  path  [%track p -.tag.q ~]
     ?-    -.q.track
         %start
-      ::  %portal modification
-      ::  if tag is being tracked already, don't do anything
-      ::  read:da-sub gives a unit, so if its ~ or non existent (or if rock=~),
-      ::  we proceed, otherwise we dont do anything
-      =+  (~(gut by read:da-sub) [source.q %portal-graph path] ~)
-      ?.  ?|  ?=(~ -)
-              =(~ rock.-)
-          ==
-        `this      
-      ::  destroy our local representation of this top-level tag,
-      ::  to prepare for synchronization with remote.
-      =.  graph.state
-        (~(nuke-top-level-tag sg:g graph.state) p -.tag.q)
+      :: %portal modification
+      ::  don't nuke, there won't be any conflicts anyways
+      :: (as only a single source of truth for each tag exists: its ship)
+      :: =.  graph.state
+      ::   (~(nuke-top-level-tag sg:g graph.state) p -.tag.q)
       ::  if we're already tracking someone, stop tracking them here!
+      ::  quits if someone else has the same app+tag (shouldnt happen)
+      ::  quitting seems to help resetting the sub work
       =/  prev  (~(get by tracking.state) [p -.tag.q^~])
       =?    subgraph-sub
           ?=(^ prev)
         (quit:da-sub u.prev %portal-graph path)
       ::  kill our path if we were serving this content previously
+      ::  shouldnt happen as well
       =^  cards  subgraph-pub  (kill:du-pub path^~)
       ::  start watching the chosen publisher
       =^  cards  subgraph-sub
@@ -486,15 +485,21 @@
   ::  /nodes/[app]/[from-node]
   ::  returns a set of all nodes connected to given node in given app
   ::
-      ?([%nodes @ ?(%ship %address) @ ~] [%nodes @ %entity @ @ ~])
+      [%nodes @ ?(%ship %address) @ ~]
     =/  =app:g  `@tas`i.t.path
     =/  =node:g
       =+  i.t.t.path
       ?-  -
         %ship     [- (slav %p i.t.t.t.path)]
         %address  [- (slav %ux i.t.t.t.path)]
-        %entity   [- [`@tas`i `@t`i.t]:t.t.path]
       ==
+    nodes+(~(get-nodes sg:g graph.state) node app ~)
+  ::
+      [%nodes @ %entity @ @ ~]
+    =/  =app:g  `@tas`i.t.path
+    =/  =node:g
+      =+  i.t.t.path
+      [- [`@tas`i `@t`i.t]:t.t.t.path]
     nodes+(~(get-nodes sg:g graph.state) node app ~)
   ::
   ::  /tags/[app]/[from-node]/[to-node]
