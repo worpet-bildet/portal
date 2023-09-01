@@ -41,11 +41,13 @@
   let item;
   let replies = [];
   let likeCount, likedByMe;
+  let showReplies = false;
   state.subscribe((s) => {
     item = getItem(keyStrFromObj(key));
     if (s.isLoaded && !item) {
       return api.portal.do.subscribe(key);
     }
+
     // This is a little confusing but we're merging the global list of comments
     // with any comments that we have made ourselves on the post, which should
     // mean that our comment shows up instantly even if our connection to the
@@ -61,14 +63,27 @@
       })
       .sort((a, b) => fromUrbitTime(a.time) - fromUrbitTime(b.time));
 
+    // Open the comments if we've been referred to this specific reply
+    const referredTo = s.referredTo;
+    if (
+      referredTo &&
+      referredTo.key === keyStrFromObj(item.keyObj) &&
+      referredTo.type === 'reply'
+    ) {
+      showReplies = true;
+    } else if (
+      referredTo &&
+      replies.find((r) => keyStrFromObj(r) === referredTo?.key)
+    ) {
+      showReplies = true;
+    }
+
     let likes = [...(getLikes(key.ship, key) || [])];
 
     likeCount = likes.length;
     if (likedByMe && !likes.find((l) => l.ship === me)) likeCount++;
     likedByMe = likedByMe || likes.find((l) => l.ship === me);
   });
-
-  let showCommentForm = false;
 
   function handlePostComment({
     detail: { content, uploadedImageUrl, replyTo, ref, time },
@@ -100,7 +115,6 @@
       .split(' ')
       .filter((word) => word.substr(0, 1) === '~' && isValidPatp(word))
       .forEach((word) => {
-        console.log('mention', word);
         post = {
           ...post,
           'tags-to': [
@@ -193,7 +207,7 @@
     bind:this={postContainer}
   >
     <div
-      id={createdAt}
+      id={keyStrFromObj(item.keyObj)}
       class="grid grid-cols-12 bg-panels dark:bg-darkgrey gap-2 lg:gap-4 lg:gap-y-0"
       in:fade
     >
@@ -267,7 +281,7 @@
               <div class="rounded-full overflow-hidden">
                 <IconButton
                   icon={ChatIcon}
-                  on:click={() => (showCommentForm = !showCommentForm)}
+                  on:click={() => (showReplies = !showReplies)}
                   class="fill-grey hover:fill-black dark:hover:fill-white"
                 />
               </div>
@@ -333,7 +347,7 @@
     class="grid grid-cols-12 bg-panels dark:bg-darkgrey gap-2 lg:gap-4 lg:gap-y-0"
     in:fade
   >
-    {#if showCommentForm}
+    {#if showReplies}
       <div class="flex flex-col col-span-12" transition:slide>
         <FeedPostForm
           replyTo={item.keyObj}
@@ -351,7 +365,7 @@
       </div>
       <button
         class="flex flex-col col-span-12 border-x border-b flex py-3 items-center justify-center"
-        on:click={() => (showCommentForm = !showCommentForm)}
+        on:click={() => (showReplies = !showReplies)}
       >
         <VerticalCollapseIcon />
       </button>
