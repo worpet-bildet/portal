@@ -52,12 +52,6 @@
     canResetFeed,
     positiveFeedPromptForm;
 
-  function handleSubmitHotkey(event) {
-    if (event.key === 'Enter' && event.metaKey) {
-      handlePromptFeed();
-    }
-  }
-
   function handleKeydown(event) {
     // make sure we don't do anything if the user is inside a contendeditable
     // div (aka the feedpostform)
@@ -65,6 +59,10 @@
       if (event.key === '/') {
         event.preventDefault();
         positiveFeedPromptForm.focus();
+      }
+    } else {
+      if (event.key === 'Enter' && event.metaKey) {
+        handlePromptFeed();
       }
     }
   }
@@ -283,7 +281,7 @@
                 placeholder="Search Portal"
                 bind:value={positiveFeedPrompt}
                 bind:this={positiveFeedPromptForm}
-                on:keydown={handleSubmitHotkey}
+                on:keydown={handleKeydown}
               />
               <div class="flex justify-center">
                 {#if canResetFeed}
@@ -387,7 +385,7 @@
                   class="focus:outline-none p-3 placeholder-grey text-black text-lg dark:text-white flex-grow"
                   placeholder="Show me less ..."
                   bind:value={negativeFeedPrompt}
-                  on:keydown={handleSubmitHotkey}
+                  on:keydown={handleKeydown}
                 />
               </div>
             </div>
@@ -472,7 +470,7 @@
               class="border-b focus:outline-none placeholder-grey"
               placeholder="~worpet-bildet"
               bind:value={searchShip}
-              on:keydown={handleSubmitHotkey}
+              on:keydown={handleKeydown}
             />
           </div>
           <button class="w-5" on:click={search}><SearchIcon /></button>
