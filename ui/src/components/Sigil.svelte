@@ -2,7 +2,7 @@
   import { sigil, stringRenderer } from '@tlon/sigil-js';
   import { state, getCurator } from '@root/state';
   import { formatColor, isLightColor, isUrl } from '@root/util';
-  export let patp, size;
+  export let patp, size = 50;
   export let color = '0x0';
 
   let avatar;
@@ -31,7 +31,7 @@
   {@html sigil({
     patp: replacementPatp || patp,
     renderer: stringRenderer,
-    size: size || 50,
+    size: size,
     colors: [`#${primaryColor}`, `#${secondaryColor}`],
   })}
 {/if}

@@ -2,6 +2,10 @@ import * as linkify from 'linkifyjs';
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 
+export const isSubmitHotkey = (e) => {
+  if (e.key === 'Enter' && e.metaKey) return true;
+};
+
 export const checkIfInstalled = (s, desk, cord, isInstalling = false) => {
   return (
     (!isInstalling && !!s.apps?.[desk]) ||

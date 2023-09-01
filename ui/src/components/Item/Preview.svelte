@@ -155,7 +155,7 @@
         {/if}
       </div>
       <div
-        class="flex flex-col items-start gap-2 self-center"
+        class="flex flex-col items-start gap-2 overflow-hidden self-center"
         class:col-span-5={!small}
         class:col-span-4={small}
       >
