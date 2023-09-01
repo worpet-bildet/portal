@@ -33,7 +33,7 @@
     console.log({ state: s });
     if (s.referredTo) {
       const item = document.getElementById(s.referredTo.key);
-      if (item) {
+      if (item && !scrolledAlready) {
         item.scrollIntoView();
         scrolledAlready = true;
       }
