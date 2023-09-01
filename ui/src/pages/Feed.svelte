@@ -31,7 +31,6 @@
     VerticalCollapseIcon,
   } from '@fragments';
   import { fromUrbitTime, isValidPatp, isHappeningSoon } from '@root/util';
-  import { handleKeydown } from '../fragments/TextArea.svelte';
 
   let sortedPals = [];
   let sortedRecommendations = [];
@@ -53,7 +52,13 @@
     canResetFeed,
     positiveFeedPromptForm;
 
-  function handleSlashKeydown(event) {
+  function handleSubmitHotkey(event) {
+    if (event.key === 'Enter' && event.metaKey) {
+      handlePromptFeed();
+    }
+  }
+
+  function handleKeydown(event) {
     // make sure we don't do anything if the user is inside a contendeditable
     // div (aka the feedpostform)
     if (document.activeElement == document.body) {
@@ -254,7 +259,7 @@
   const happeningSoonTuple = isHappeningSoon(events);
 </script>
 
-<svelte:window on:keydown={handleSlashKeydown} />
+<svelte:window on:keydown={handleKeydown} />
 
 <div class="grid grid-cols-9 gap-8 mb-4">
   <div class="flex flex-col gap-8 rounded-t-2xl col-span-12 md:col-span-6">
@@ -278,8 +283,7 @@
                 placeholder="Search Portal"
                 bind:value={positiveFeedPrompt}
                 bind:this={positiveFeedPromptForm}
-                on:keyboardSubmit={handlePromptFeed}
-                on:keydown={handleKeydown}
+                on:keydown={handleSubmitHotkey}
               />
               <div class="flex justify-center">
                 {#if canResetFeed}
@@ -383,8 +387,7 @@
                   class="focus:outline-none p-3 placeholder-grey text-black text-lg dark:text-white flex-grow"
                   placeholder="Show me less ..."
                   bind:value={negativeFeedPrompt}
-                  on:keyboardSubmit={handlePromptFeed}
-                  on:keydown={handleKeydown}
+                  on:keydown={handleSubmitHotkey}
                 />
               </div>
             </div>
@@ -469,7 +472,7 @@
               class="border-b focus:outline-none placeholder-grey"
               placeholder="~worpet-bildet"
               bind:value={searchShip}
-              on:keydown={handleKeydown}
+              on:keydown={handleSubmitHotkey}
             />
           </div>
           <button class="w-5" on:click={search}><SearchIcon /></button>
