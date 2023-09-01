@@ -124,7 +124,7 @@
       icon={SparklesIcon}
       active={filters.has('new')}
       on:click={() => toggleFilter('new')}
-      class="bg-panels text-xs md:text-md dark:fill-white dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
+      class="bg-panels text-xs md:text-lg dark:fill-white dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
       >New to me
     </IconButton>
     <IconButton
@@ -133,7 +133,7 @@
       on:click={() => {
         toggleFilter('apps');
       }}
-      class="bg-panels dark:fill-white text-xs md:text-md dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
+      class="bg-panels dark:fill-white text-xs md:text-lg dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
       >Apps</IconButton
     >
     <IconButton
@@ -142,7 +142,7 @@
       on:click={() => {
         toggleFilter('groups');
       }}
-      class="bg-panels dark:fill-grey text-xs md:text-md fill-white dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
+      class="bg-panels dark:fill-grey text-xs md:text-lg fill-white dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
       >Groups</IconButton
     >
     <IconButton
@@ -151,7 +151,7 @@
       on:click={() => {
         toggleFilter('collections');
       }}
-      class="bg-panels dark:fill-white text-xs md:text-md dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
+      class="bg-panels dark:fill-white text-xs md:text-lg dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
       >Collections</IconButton
     >
   </div>

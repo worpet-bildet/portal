@@ -1,4 +1,5 @@
 <script>
+	import { isSubmitHotkey } from '@root/util';
   import linkifyHtml from 'linkify-html';
   import autosize from 'svelte-autosize';
   import { tick, onMount, createEventDispatcher } from 'svelte';
@@ -39,7 +40,7 @@
   };
 
   const handleKeydown = (e) => {
-    if (e.key === 'Enter' && e.metaKey) {
+    if (isSubmitHotkey(e)) {
       textarea.blur();
       dispatch('keyboardSubmit');
     } else if (e.keyCode == 13 && e.shiftKey === true) {
