@@ -39,7 +39,7 @@
     );
   };
 
-  const handleKeydown = (e) => {
+  export const handleKeydown = (e) => {
     if (e.key === 'Enter' && e.metaKey) dispatch('keyboardSubmit');
   };
 </script>

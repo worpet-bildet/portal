@@ -41,6 +41,7 @@
     loadGroup();
   }
 
+
   let group, joinedDetails;
   let sortedRecommendations = [];
   state.subscribe((s) => {
@@ -48,6 +49,12 @@
     loadGroup();
     sortedRecommendations = getMoreFromThisShip(host, cord).slice(0, 4);
   });
+
+
+  console.log({joinedDetails});
+  console.log("joinedDetails");
+  console.log(sortedRecommendations);
+  console.log("key");
 
   const join = () => api.urbit.do.joinGroup(groupKey).then(refreshGroups);
   const leave = () => api.urbit.do.leaveGroup(groupKey).then(refreshGroups);
@@ -70,6 +77,7 @@
       patp={host}
       key={group.keyObj}
       type="group"
+      isInstalledOrJoined={joinedDetails}
     >
       <div
         class="col-span-12 md:col-span-9 bg-panels dark:bg-darkgrey border p-6 rounded-lg"

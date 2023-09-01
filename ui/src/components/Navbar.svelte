@@ -213,12 +213,9 @@
         <a
           use:link
           href={`/${me}`}
-          class="flex items-center gap-4 w-full justify-end"
+          class="flex items-center gap-4 py-2 w-full justify-center"
         >
           <div class="text-grey">Profile</div>
-          <div class="w-10 h-10 rounded-md overflow-hidden">
-            <Sigil patp={me} />
-          </div>
         </a>
       </div>
     {/if}

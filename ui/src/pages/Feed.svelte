@@ -31,6 +31,7 @@
     VerticalCollapseIcon,
   } from '@fragments';
   import { fromUrbitTime, isValidPatp, isHappeningSoon } from '@root/util';
+  import { handleKeydown } from '../fragments/TextArea.svelte';
 
   let sortedPals = [];
   let sortedRecommendations = [];
@@ -52,13 +53,14 @@
     canResetFeed,
     positiveFeedPromptForm;
 
-  function handleKeydown(event) {
+  function handleSlashKeydown(event) {
     // make sure we don't do anything if the user is inside a contendeditable
     // div (aka the feedpostform)
-    if (event.target.isContentEditable) return;
-    if (event.key === '/') {
-      event.preventDefault();
-      positiveFeedPromptForm.focus();
+    if (document.activeElement == document.body) {
+      if (event.key === '/') {
+        event.preventDefault();
+        positiveFeedPromptForm.focus();
+      }
     }
   }
 
@@ -252,7 +254,7 @@
   const happeningSoonTuple = isHappeningSoon(events);
 </script>
 
-<svelte:window on:keydown={handleKeydown} />
+<svelte:window on:keydown={handleSlashKeydown} />
 
 <div class="grid grid-cols-9 gap-8 mb-4">
   <div class="flex flex-col gap-8 rounded-t-2xl col-span-12 md:col-span-6">
@@ -277,6 +279,7 @@
                 bind:value={positiveFeedPrompt}
                 bind:this={positiveFeedPromptForm}
                 on:keyboardSubmit={handlePromptFeed}
+                on:keydown={handleKeydown}
               />
               <div class="flex justify-center">
                 {#if canResetFeed}
@@ -381,6 +384,7 @@
                   placeholder="Show me less ..."
                   bind:value={negativeFeedPrompt}
                   on:keyboardSubmit={handlePromptFeed}
+                  on:keydown={handleKeydown}
                 />
               </div>
             </div>
@@ -465,7 +469,7 @@
               class="border-b focus:outline-none placeholder-grey"
               placeholder="~worpet-bildet"
               bind:value={searchShip}
-              on:keyboardSubmit={search}
+              on:keydown={handleKeydown}
             />
           </div>
           <button class="w-5" on:click={search}><SearchIcon /></button>
