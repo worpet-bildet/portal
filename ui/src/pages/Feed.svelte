@@ -428,7 +428,7 @@
         </div>
         <div class="flex justify-center">
           <button
-            class="bg-panels-solid dark:bg-darkgrey hover:border-darkgrey rounded-md w-7 h-7 mr-2 border flex items-center justify-center mb-[-30px]"
+            class="bg-panels-solid dark:bg-darkgrey hover:border-darkgrey dark:hover:border-grey text-grey dark:text-grey rounded-md w-7 h-7 mr-2 border flex items-center justify-center mb-[-30px]"
             on:click={() => (showExpandedForm = !showExpandedForm)}
           >
             {#if showExpandedForm}

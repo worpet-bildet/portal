@@ -8,7 +8,7 @@
   export let cover, avatar, title, description, patp, color, type, reviews, key;
 
   let handleTipRequest, isInstalledOrJoined;
-  console.log(isInstalledOrJoined);
+  $: console.log({isInstalledOrJoined});
 
   let reviewCount, reviewAverageRating;
   $: {

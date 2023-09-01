@@ -36,7 +36,7 @@
 
   export let key;
   export let allowRepliesDepth = 2;
-  export let showRating;
+  export let showRating = false;
 
   let item;
   let replies = [];
@@ -206,7 +206,7 @@
   >
     <div
       id={keyStrFromObj(item.keyObj)}
-      class="grid grid-cols-12 bg-panels dark:bg-darkgrey gap-2 lg:gap-4 lg:gap-y-0"
+      class="grid grid-cols-12 bg-panels dark:bg-transparent gap-2 lg:gap-4 lg:gap-y-0"
       in:fade
     >
       <div class="col-span-1">
@@ -274,7 +274,7 @@
           />
         </div>
       {/if}
-      <div class={`col-span-12 col-start-2 py-2 ${longPost && !showAll ? 'bg-gradient-to-t from-panels-solid via-panels-solid pt-14' : ''}`}>
+      <div class={`col-span-12 col-start-2 py-2 ${longPost && !showAll ? 'bg-gradient-to-t from-panels-solid dark:from-dark-background dark:via-dark-background via-panels-solid pt-14' : ''}`}>
         <div class="-ml-2.5 flex gap-8">
           {#if allowRepliesDepth}
             <div class="flex">
@@ -337,7 +337,7 @@
             {:else}
               <button
                 class="flex items-center justify-center gap-4 text-grey"
-                on:click={showMore}>Show more <VerticalExpandIcon class="stroke-grey"/></button
+                on:click={showMore}>Show more <VerticalExpandIcon /></button
               >
             {/if}
           {/if}
@@ -346,7 +346,7 @@
     </div>
   </div>
   <div
-    class="grid grid-cols-12 bg-panels dark:bg-darkgrey gap-2 lg:gap-4 lg:gap-y-0"
+    class="grid grid-cols-12 bg-panels dark:bg-transparentgap-2 lg:gap-4 lg:gap-y-0"
     in:fade
   >
     {#if showReplies}
