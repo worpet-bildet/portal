@@ -14,7 +14,13 @@
     getRepliesByTo,
     getLikes,
   } from '@root/state';
-  import { getMeta, fromUrbitTime, getAnyLink, isImage } from '@root/util';
+  import {
+    getMeta,
+    fromUrbitTime,
+    getAnyLink,
+    isImage,
+    isValidPatp,
+  } from '@root/util';
   import { ItemPreview, Sigil, FeedPostForm } from '@components';
   import {
     ChatIcon,
@@ -24,21 +30,24 @@
     LinkPreview,
     StarRating,
     EthereumIcon,
-    VerticalCollapseIcon
+    VerticalCollapseIcon,
+    VerticalExpandIcon,
   } from '@fragments';
 
   export let key;
-  export let allowReplies = true;
+  export let allowRepliesDepth = 2;
   export let showRating;
 
   let item;
   let replies = [];
   let likeCount, likedByMe;
+  let showReplies = false;
   state.subscribe((s) => {
     item = getItem(keyStrFromObj(key));
     if (s.isLoaded && !item) {
       return api.portal.do.subscribe(key);
     }
+
     // This is a little confusing but we're merging the global list of comments
     // with any comments that we have made ourselves on the post, which should
     // mean that our comment shows up instantly even if our connection to the
@@ -52,7 +61,22 @@
           i === arr.findIndex((i) => keyStrFromObj(i) === keyStrFromObj(a))
         );
       })
-      .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
+      .sort((a, b) => fromUrbitTime(a.time) - fromUrbitTime(b.time));
+
+    // Open the comments if we've been referred to this specific reply
+    const referredTo = s.referredTo;
+    if (
+      referredTo &&
+      referredTo.key === keyStrFromObj(item.keyObj) &&
+      referredTo.type === 'reply'
+    ) {
+      showReplies = true;
+    } else if (
+      referredTo &&
+      replies.find((r) => keyStrFromObj(r) === referredTo?.key)
+    ) {
+      showReplies = true;
+    }
 
     let likes = [...(getLikes(key.ship, key) || [])];
 
@@ -61,13 +85,11 @@
     likedByMe = likedByMe || likes.find((l) => l.ship === me);
   });
 
-  let showCommentForm = false;
-
   function handlePostComment({
-    detail: { content, uploadedImageUrl, replyTo, ref },
+    detail: { content, uploadedImageUrl, replyTo, ref, time },
   }) {
     // TODO: Merge this function with the one from /pages/Feed.svelte
-    let post = {};
+    let post = { 'tags-to': [], time };
     if (ref) {
       // Here we need to create the retweet post instead of the type "other"
       post = {
@@ -87,9 +109,29 @@
         },
       };
     }
+    // check each word of the content for a mention, and if so, create a social
+    // graph tag for the mention
+    content
+      .split(' ')
+      .filter((word) => word.substr(0, 1) === '~' && isValidPatp(word))
+      .forEach((word) => {
+        post = {
+          ...post,
+          'tags-to': [
+            ...post['tags-to'],
+            {
+              key: { struc: 'ship', ship: word, cord: '', time: '' },
+              'tag-to': `/${me}/mention-to`,
+              'tag-from': `/${word}/mention-from`,
+            },
+          ],
+        };
+      });
+
     post = {
       ...post,
       'tags-to': [
+        ...post['tags-to'],
         {
           key: replyTo,
           'tag-to': `/${me}/reply-to`,
@@ -97,6 +139,7 @@
         },
       ],
     };
+
     return api.portal.do.create(post);
   }
 
@@ -111,11 +154,46 @@
     });
   };
 
+  // TODO: this is quite not good
+  const linkifyMentions = (html) => {
+    return html
+      .split(' ')
+      .map((word) => {
+        if (word.substr(0, 1) === '~' && isValidPatp(word)) {
+          return `<a href="#/${word}" use:link class="text-link">${word}</a>`;
+        }
+        return word;
+      })
+      .join(' ');
+  };
+
   const dispatch = createEventDispatcher();
   const handleTipRequest = (key) => {
-    console.log('woooooo');
     dispatch('tipRequest', { key });
   };
+
+  const showMore = () => {
+    postContainer.classList.remove('max-h-96');
+    showAll = true;
+  };
+  const showLess = () => {
+    postContainer.classList.add('max-h-96');
+    postContainer.scrollIntoView();
+    showAll = false;
+  };
+
+  let postContainer;
+  let longPost = false;
+  let showAll = true;
+  $: if (postContainer) {
+    // if the client height of the post container is more than 24 rem, we should
+    // show a "see more" button on the post, so that you can scroll past it
+    if (postContainer.clientHeight > 24 * 16) {
+      longPost = true;
+      showAll = false;
+      postContainer.classList.add('max-h-96');
+    }
+  }
 </script>
 
 {#if item}
@@ -124,9 +202,12 @@
     bespoke: { nickname },
   } = getCurator(ship)}
   {@const blurbLink = getAnyLink(blurb)}
-  <div class="border-b border-x px-5 pt-5">
+  <div
+    class="border-b border-x px-5 pt-5 overflow-hidden"
+    bind:this={postContainer}
+  >
     <div
-      id={createdAt}
+      id={keyStrFromObj(item.keyObj)}
       class="grid grid-cols-12 bg-panels dark:bg-darkgrey gap-2 lg:gap-4 lg:gap-y-0"
       in:fade
     >
@@ -149,12 +230,14 @@
           class="whitespace-pre-wrap line-clamp-50 flex flex-col gap-2 break-words"
         >
           <div>
-            {@html linkifyHtml(blurb, {
-              attributes: {
-                class: 'text-link dark:text-link-dark',
-                target: '_blank',
-              },
-            })}
+            {@html linkifyHtml(
+              linkifyMentions(blurb.replace(/\n\n/g, '\n'), {
+                attributes: {
+                  class: 'text-link dark:text-link-dark',
+                  target: '_blank',
+                },
+              })
+            )}
           </div>
           {#if blurbLink}
             {#if isImage(blurbLink)}
@@ -193,12 +276,12 @@
       {/if}
       <div class="col-span-12 col-start-2 py-2">
         <div class="-ml-2.5 flex gap-8">
-          {#if allowReplies}
+          {#if allowRepliesDepth}
             <div class="flex">
               <div class="rounded-full overflow-hidden">
                 <IconButton
                   icon={ChatIcon}
-                  on:click={() => (showCommentForm = !showCommentForm)}
+                  on:click={() => (showReplies = !showReplies)}
                   class="fill-grey hover:fill-black dark:hover:fill-white"
                 />
               </div>
@@ -247,11 +330,24 @@
       </div>
     </div>
   </div>
+  {#if longPost}
+    {#if showAll}
+      <button
+        class="flex items-center justify-end w-full p-2 gap-4 border-b-2 border-x"
+        on:click={showLess}>Show less <VerticalCollapseIcon /></button
+      >
+    {:else}
+      <button
+        class="flex items-center justify-end w-full p-2 gap-4 border-b-2 border-x"
+        on:click={showMore}>Show more <VerticalExpandIcon /></button
+      >
+    {/if}
+  {/if}
   <div
     class="grid grid-cols-12 bg-panels dark:bg-darkgrey gap-2 lg:gap-4 lg:gap-y-0"
     in:fade
   >
-    {#if showCommentForm}
+    {#if showReplies}
       <div class="flex flex-col col-span-12" transition:slide>
         <FeedPostForm
           replyTo={item.keyObj}
@@ -261,13 +357,17 @@
           on:post={handlePostComment}
         />
         {#each replies as replyKey (keyStrFromObj(replyKey))}
-          <svelte:self key={replyKey} allowReplies={false} />
+          <svelte:self
+            key={replyKey}
+            allowRepliesDepth={allowRepliesDepth - 1}
+          />
         {/each}
       </div>
-      <button class="flex flex-col col-span-12 border-x border-b flex py-3 items-center justify-center"
-        on:click={() => (showCommentForm = !showCommentForm)}
+      <button
+        class="flex flex-col col-span-12 border-x border-b flex py-3 items-center justify-center"
+        on:click={() => (showReplies = !showReplies)}
       >
-        <VerticalCollapseIcon/>
+        <VerticalCollapseIcon />
       </button>
     {/if}
   </div>

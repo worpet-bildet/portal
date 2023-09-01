@@ -1,15 +1,35 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import { api, me } from '@root/api';
-  import { state, keyStrToObj } from '@root/state';
+  import {
+    state,
+    keyStrToObj,
+    getGroup,
+    getApp,
+    itemInState,
+  } from '@root/state';
   import {
     getAnyLink,
     isChatPath,
+    isCurioPath,
+    isNotePath,
+    isShortcode,
     formatChatPath,
+    formatCurioPath,
+    formatNotePath,
     getChatDetails,
+    getCurioDetails,
+    getNoteDetails,
     toUrbitTime,
   } from '@root/util';
-  import { RecommendModal, Sigil } from '@components';
+  import {
+    RecommendModal,
+    Sigil,
+    ItemPreview,
+    GroupsChatMessage,
+    GroupsHeapCurio,
+    GroupsDiaryNote,
+  } from '@components';
   import {
     TextArea,
     IconButton,
@@ -20,7 +40,7 @@
     ItemImage,
     StarRating,
     LinkPreview,
-    GroupsChatMessage,
+    LoadingIcon,
   } from '@fragments';
 
   export let replyTo;
@@ -33,16 +53,20 @@
   let dispatch = createEventDispatcher();
   let content, rating;
 
-  const post = () => {
+  let submitting;
+  const post = async () => {
+    if (submitting) return;
     if (!content) {
       return (error = 'Please write something, anything.');
     }
     if ((ratingStars && !rating) || Number(rating) === 0) {
       return (error = 'Please give a score.');
     }
+    if (shortcodeItems && shortcodeItems.length > 1) {
+      return (error = 'Please select one of the items to recommend.');
+    }
     // If we have some chat details here, we should generate the reference and
-    // then send the reference back up with the post, so it can decide whether
-    // to make a retweet or not
+    // then send the reference back up with the post
     let ref;
     if (chatDetails) {
       const { host, channel, poster, id } = chatDetails;
@@ -55,13 +79,68 @@
       };
       api.portal.do.createGroupsChatMsg(host, channel, poster, id, time);
     }
-    dispatch('post', { content, uploadedImageUrl, replyTo, rating, ref });
+    if (curioDetails) {
+      const { host, channel, id } = curioDetails;
+      const time = toUrbitTime(Date.now());
+      ref = {
+        struc: 'groups-heap-curio',
+        ship: me,
+        cord: '',
+        time,
+      };
+      api.portal.do.createGroupsHeapCurio(host, channel, id, time);
+    }
+    if (noteDetails) {
+      const { host, channel, id } = noteDetails;
+      const time = toUrbitTime(Date.now());
+      ref = {
+        struc: 'groups-diary-note',
+        ship: me,
+        cord: '',
+        time,
+      };
+      api.portal.do.createGroupsDiaryNote(host, channel, id, time);
+    }
+    if (shortcodeItems && shortcodeItems.length === 1) {
+      const { keyObj } = shortcodeItems[0];
+      ref = { ...keyObj };
+    }
+
+    const time = toUrbitTime(Date.now());
+    dispatch('post', {
+      content,
+      uploadedImageUrl,
+      replyTo,
+      rating,
+      ref,
+      time,
+    });
+
+    submitting = true;
+    try {
+      await itemInState({
+        struc: ref ? 'retweet' : 'other',
+        ship: me,
+        cord: '',
+        time,
+      });
+      submitting = false;
+    } catch (e) {
+      alert('Posting failed, please refresh the page and try again.');
+    }
+
     content = '';
     uploadedImageUrl = '';
     rating = '';
     error = '';
     chatDetails = undefined;
     chatData = undefined;
+    curioDetails = undefined;
+    curioData = undefined;
+    noteDetails = undefined;
+    noteData = undefined;
+    shortcodeToPreview = undefined;
+    shortcodeItems = undefined;
     rating = undefined;
   };
 
@@ -101,41 +180,95 @@
     rating = value;
   };
   const getAnyChatMessage = (content) =>
-    content.split(/[\r\n|\s]+/).find((line) => isChatPath(line));
+    content.split(/[\r\n|\s]+/).find((word) => isChatPath(word));
+  const getAnyCurio = (content) =>
+    content.split(/[\r\n|\s]+/).find((word) => isCurioPath(word));
+  const getAnyNote = (content) =>
+    content.split(/[\r\n|\s]+/).find((word) => isNotePath(word));
+  const getAnyShortcode = (content) =>
+    content.split(/[\r\n|\s]+/).find((word) => isShortcode(word));
 
   $: linkToPreview = getAnyLink(content || '');
 
   let chatData, chatDetails;
   const getChatData = async (chatPath) => {
     chatData = await api.portal.get.chatMessage(formatChatPath(chatPath));
-    // If there is some chatData here we probably want to replace the chat link
-    // in the proposed input with an empty character, but we still want to save
-    // the chat link somewhere, presumably, so that we can eventually send it to
-    // the backend
     chatDetails = getChatDetails(chatPath);
     content = content.replace(chatPath, '');
   };
 
+  let curioData, curioDetails;
+  const getCurioData = async (curioPath) => {
+    curioData = await api.portal.get.heapCurio(formatCurioPath(curioPath));
+    curioDetails = getCurioDetails(curioPath);
+    content = content.replace(curioPath, '');
+  };
+
+  let noteData, noteDetails;
+  const getNoteData = async (notePath) => {
+    noteData = await api.portal.get.diaryNote(formatNotePath(notePath));
+    noteDetails = getNoteDetails(notePath);
+    content = content.replace(notePath, '');
+  };
+
+  let shortcodeToPreview, shortcodeItems;
+  const getShortcodeItem = (shortcode) => {
+    if (!getGroup(shortcode) && !getApp(shortcode)) {
+      shortcodeItems = [];
+      return;
+    }
+    shortcodeItems = [getGroup(shortcode), getApp(shortcode)].filter(
+      (i) => !!i
+    );
+    content = content.replace(shortcode, '');
+  };
+
   $: chatToPreview = getAnyChatMessage(content || '');
   $: if (chatToPreview) getChatData(chatToPreview);
+  $: curioToPreview = getAnyCurio(content || '');
+  $: if (curioToPreview) getCurioData(curioToPreview);
+  $: noteToPreview = getAnyNote(content || '');
+  $: if (noteToPreview) getNoteData(noteToPreview);
+  $: shortcodeToPreview = getAnyShortcode(content || '');
+  $: if (shortcodeToPreview) getShortcodeItem(shortcodeToPreview);
 </script>
 
 <div
-  class="grid grid-cols-12 bg-panels dark:bg-darkgrey border-x border-b py-5 pl-5 pr-3 gap-2 lg:gap-4 {$$props.class}"
+  class="relative grid grid-cols-12 bg-panels dark:bg-darkgrey border-x border-b py-5 pl-5 pr-3 gap-2 lg:gap-4 {$$props.class}"
   class:border-error={error}
 >
+  {#if submitting}
+    <div
+      class="absolute top-0 left-0 w-full h-full bg-white/30 dark:opacity-40 z-10 backdrop-blur-3xl"
+    >
+      <div class="flex w-full h-full items-center justify-center opacity-100">
+        <LoadingIcon />
+      </div>
+    </div>
+  {/if}
   <div class="col-span-1">
     <div class="rounded-md overflow-hidden align-middle">
       <Sigil patp={me} />
     </div>
   </div>
   <div class="col-span-11 pb-2 flex flex-col gap-2">
-    <TextArea placeholder={placeholder} bind:value={content} on:keydown={(e) => {
-      if (e.key === 'Enter' && e.metaKey) {
-        console.log('Meta + Enter detected');
-        post();
-      }
-    }}/>
+    <TextArea {placeholder} bind:value={content} on:keyboardSubmit={post} />
+    {#if shortcodeItems}
+      {#if shortcodeItems.length > 1}
+        <div class="font-bold">Please select one of the items</div>
+      {/if}
+      {#each shortcodeItems as item}
+        <ItemPreview
+          key={item.keyObj}
+          clickable={false}
+          on:click={() => {
+            // remove the other item from the shortcodeitems list, because we
+            // can only reference one at a time
+            shortcodeItems = [item];
+          }}
+        />
+      {/each}
+    {/if}
     {#if uploadedImageUrl}
       <div class="flex">
         <img src={uploadedImageUrl} class="object-cover" alt="uploaded" />
@@ -145,10 +278,13 @@
       <LinkPreview url={linkToPreview} />
     {/if}
     {#if chatData}
-      {@const {
-        memo: { content, author },
-      } = chatData}
-      <GroupsChatMessage {author} {content} />
+      <GroupsChatMessage {...chatData} />
+    {/if}
+    {#if curioData}
+      <GroupsHeapCurio {...curioData} />
+    {/if}
+    {#if noteData}
+      <GroupsDiaryNote {...noteData} />
     {/if}
   </div>
   <div class="col-span-12 col-start-2 flex justify-between">
@@ -184,7 +320,9 @@
             icon={ImageIcon}
             on:click={() => {
               if (!$state.s3 || !$state.s3.configuration?.currentBucket) {
-                alert('For attachment support, configure S3 storage with ~dister-nocsyx-lassul/silo. Otherwise, paste a link to a hosted image.');
+                alert(
+                  'For attachment support, configure S3 storage with ~dister-nocsyx-lassul/silo. Otherwise, paste a link to a hosted image.'
+                );
               } else {
                 fileInput.click();
               }

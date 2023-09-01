@@ -385,7 +385,6 @@
                 <div>
                   <FeedPost
                     key={review}
-                    allowReplies={false}
                     showRating={true}
                   />
                 </div>
@@ -522,7 +521,7 @@
           <div class="text-2xl">Purchasing...</div>
           <div class="w-full flex justify-center">
             <div class="w-32 h-32">
-              <LoadingIcon class="dark:stroke-white" />
+              <LoadingIcon />
             </div>
           </div>
         {:else}

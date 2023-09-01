@@ -3,9 +3,11 @@ import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 
 export const checkIfInstalled = (s, desk, cord, isInstalling = false) => {
-  return (!isInstalling && !!s.apps?.[desk]) ||
-    (s.apps?.[cord]?.chad?.hasOwnProperty('site') && !!s.apps?.[desk]);
-}
+  return (
+    (!isInstalling && !!s.apps?.[desk]) ||
+    (s.apps?.[cord]?.chad?.hasOwnProperty('site') && !!s.apps?.[desk])
+  );
+};
 
 export const getMeta = (item) => {
   return {
@@ -41,6 +43,8 @@ export const getTitle = (item) => {
       return item?.bespoke?.nickname
         ? `${item?.bespoke?.nickname} (${item?.keyObj?.ship})`
         : item?.keyObj?.ship;
+    case 'tip':
+      return 'Tip';
     default:
       return item?.bespoke?.title;
   }
@@ -69,6 +73,10 @@ export const getBlurb = (item) => {
       return item?.bespoke?.treaty?.info;
     case 'ship':
       return item?.bespoke?.bio;
+    case 'tip':
+      return `I just received a ${weiToEth(
+        item?.bespoke?.['eth-amount']
+      )} ETH tip from ${item?.bespoke?.tipper} 🤑🤑🤑`;
     default:
       return item?.bespoke?.blurb;
   }
@@ -385,9 +393,41 @@ export const isHappeningSoon = (events) => {
   ];
 };
 
+export const formatId = (id) => {
+  // add dots after every third character, starting from the end. first we strip
+  // any dots from the string just to make sure
+  const reversed = id.replace(/\./g, '').split('').reverse().join('');
+  const groups = reversed.match(/.{1,3}/g);
+  const joined = groups.join('.');
+  const reversedAgain = joined.split('').reverse().join('');
+  return reversedAgain;
+};
+
 //  /1/chan/chat/~sampel-dilryd-mopreg/new-channel/msg/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749
 export const isChatPath = (path) => {
   return path.substring(0, 13) === '/1/chan/chat/';
+};
+
+// /1/chan/heap/~toptyr-bilder/links/curio/170141184506270899144208463636562182144
+export const isCurioPath = (path) => {
+  return path.substring(0, 13) === '/1/chan/heap/';
+};
+
+// /1/chan/diary/~nibset-napwyn/winter-updates/note/170141184506358297022415421669185159168
+export const isNotePath = (path) => {
+  return path.substring(0, 14) === '/1/chan/diary/';
+};
+
+// ~worpet-bildet/portal
+// ~worpet-bildet/other-thing
+export const isShortcode = (path) => {
+  const parts = path.split('/');
+  if (parts.length < 2) return false;
+  return (
+    parts.length === 2 &&
+    isValidPatp(parts[0]) &&
+    isValidDeskOrGroupPath(parts[1])
+  );
 };
 
 //  /1/chan/chat/~sampel-dilryd-mopreg/new-channel/msg/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749
@@ -397,7 +437,27 @@ export const getChatDetails = (path) => {
     host: splut[4],
     channel: splut[5],
     poster: splut[7],
-    id: splut[8],
+    id: formatId(splut[8]),
+  };
+};
+
+// /1/chan/heap/~toptyr-bilder/links/curio/170141184506270899144208463636562182144
+export const getCurioDetails = (path) => {
+  const splut = path.split('/');
+  return {
+    host: splut[4],
+    channel: splut[5],
+    id: formatId(splut[7]),
+  };
+};
+
+// /1/chan/diary/~nibset-napwyn/winter-updates/note/170141184506358297022415421669185159168
+export const getNoteDetails = (path) => {
+  const splut = path.split('/');
+  return {
+    host: splut[4],
+    channel: splut[5],
+    id: formatId(splut[7]),
   };
 };
 
@@ -405,9 +465,38 @@ export const getChatDetails = (path) => {
 //  /1/chan/chat/~sampel-dilryd-mopreg/new-channel/msg/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749
 // TO
 //  /chat/~sampel-dilryd-mopreg/new-channel/writs/writ/id/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749
-//  /chat/~nocsyx-lassul/log/writs/writ/id/~sogrum-savluc/170.141.184.506.358.567.219.567.224.823.002.068.680
 export const formatChatPath = (path) => {
   return path.replace('/1/chan', '').replace('/msg/', '/writs/writ/id/');
+};
+
+// FROM
+// /1/chan/heap/~toptyr-bilder/links/curio/170141184506270899144208463636562182144
+// TO
+// /heap/~toptyr-bilder/links/curios/curio/id/170.141.184.506.270.899.144.208.463.636.562.182.144
+export const formatCurioPath = (path) => {
+  const p = path.replace('/1/chan', '').replace('/curio/', '/curios/curio/id/');
+  const splut = p.split('/');
+  // replace the last element in the path with the formatted id
+  splut[splut.length - 1] = formatId(splut[splut.length - 1]);
+  return splut.join('/');
+};
+
+// FROM
+// /1/chan/diary/~nibset-napwyn/winter-updates/note/170141184506358297022415421669185159168
+// TO
+// /diary/~nibset-napwyn/winter-updates/notes/note/170.141.184.506.358.297.022.415.421.669.185.159.168
+export const formatNotePath = (path) => {
+  const p = path.replace('/1/chan', '').replace('/note/', '/notes/note/');
+  const splut = p.split('/');
+  // replace the last element in the path with the formatted id
+  splut[splut.length - 1] = formatId(splut[splut.length - 1]);
+  return splut.join('/');
+};
+
+export const isValidDeskOrGroupPath = (path) => {
+  // return false if there are any non-alphanumeric characters other than a -
+  if (path.match(/[^a-zA-Z0-9-]/g)) return false;
+  return true;
 };
 
 // Reference: https://github.com/mirtyl-wacdec/urbit_ex/blob/master/lib/api/utils.ex#LL260C14-L260C14

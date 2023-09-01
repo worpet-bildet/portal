@@ -11,7 +11,17 @@ export const feed = writable({});
 
 export const updateNotificationsLastChecked = () => {
   state.update((s) => {
-    save({ notificationsLastChecked: new Date() });
+    let currentTime = new Date();
+    s.notificationsLastChecked = currentTime;
+    save({ notificationsLastChecked: currentTime });
+    return s;
+  });
+};
+
+export const toggleMuteNotifications = () => {
+  state.update((s) => {
+    s.muteNotifications = !s.muteNotifications;
+    save({ muteNotifications: s.muteNotifications });
     return s;
   });
 };
@@ -146,6 +156,27 @@ export const refreshBlogs = () => {
   });
 };
 
+export const setReferredTo = (key) => {
+  state.update((s) => ({ ...s, referredTo: key }));
+};
+
+export const itemInState = async (item) => {
+  // this is super, super dumb.
+  return new Promise((resolve, reject) => {
+    const unsubscribe = state.subscribe((s) => {
+      if (s[keyStrFromObj(item)]) {
+        unsubscribe();
+        clearTimeout(rejectTimeout);
+        resolve(true);
+      }
+    });
+    const rejectTimeout = setTimeout(() => {
+      unsubscribe();
+      reject();
+    }, 10000);
+  });
+};
+
 export const getCurator = (patp) => {
   return {
     keyObj: { ship: patp, struc: 'ship', cord: '', time: '' },
@@ -167,45 +198,6 @@ export const getGlobalFeed = () => {
   return get(state)[globalFeedKey(config.indexer)]?.bespoke?.feed?.sort(
     (a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time)
   );
-};
-
-// get all incoming tips from the social graph and mould them into the shape
-// of feed posts so that they can be displayed in the feed
-export const getTips = () => {
-  let q = [];
-  Object.entries(get(state).social || {})
-    .filter(([tipKey]) => tipKey.includes('tip-from'))
-    .forEach(([tipKey, itemKey]) => {
-      const [, , , time, amount] = tipKey.split('/');
-      const itemKeyObj = keyStrToObj(Object.entries(itemKey)[0][0]);
-      const from = Object.entries(itemKey)[0][1][0].ship;
-      // then we're going to make a feed item of the type "retweet"
-      const key = {
-        struc: 'retweet',
-        ship: from,
-        cord: '',
-        time: time,
-      };
-      if (!get(state)[keyStrFromObj(key)]) {
-        state.update((s) => ({
-          ...s,
-          [keyStrFromObj(key)]: {
-            keyObj: key,
-            meta: {
-              createdAt: time,
-            },
-            bespoke: {
-              blurb: `I just tipped ${weiToEth(amount)} ETH to ${
-                itemKeyObj.ship
-              }:`,
-              ref: itemKeyObj,
-            },
-          },
-        }));
-      }
-      q.push({ key, ship: from, time });
-    });
-  return q;
 };
 
 export const getCuratorCollections = (patp) => {
@@ -234,6 +226,10 @@ export const getCuratorItemsByStruc = (patp, struc) => {
 
 export const getGroup = (groupKey) => {
   return get(state)[`/group/${groupKey}/`];
+};
+
+export const getApp = (appKey) => {
+  return get(state)[`/app/${appKey}/`];
 };
 
 export const getItem = (listKey) => {
@@ -271,7 +267,7 @@ export const getCollectedItemLeaderboard = (excludePatp) => {
   ).sort((a, b) => b[1] - a[1]);
 };
 
-export const getMoreFromThisShip = (patp, cord='') => {
+export const getMoreFromThisShip = (patp, cord = '') => {
   return Object.entries(
     Object.values(get(state))
       .filter(
@@ -459,6 +455,11 @@ export const handleSubscriptionEvent = (event, type) => {
 export const groupKeyToItemKey = (groupKey) => {
   const parts = groupKey.split('/');
   return `/group/${parts[0]}/${parts[1]}/`;
+};
+
+export const deskKeyToItemKey = (deskKey) => {
+  const parts = deskKey.split('/');
+  return `/app/${parts[0]}/${parts[1]}/`;
 };
 
 export const profileKeyToItemKey = (profileKey) => {

@@ -311,6 +311,14 @@
                              ['path' s+path.bespoke]
                              ['image' s+image.bespoke]
                          ==
+      %tip          %-  pairs
+                    :~  ['tipper' (enjs-ship tipper.bespoke)]
+                        ['beneficiary' (enjs-ship beneficiary.bespoke)]
+                        ['eth-amount' s+eth-amount.bespoke]
+                        ['time' s+time.bespoke]
+                        ['note' s+note.bespoke]
+                        ['tx-hash' s+tx-hash.bespoke]
+                    ==
       %groups-chat-msg   %-  pairs
                          :~  ['group' s+(flag:enjs-writ group.bespoke)]
                              ['channel' s+(flag:enjs-writ channel.bespoke)]

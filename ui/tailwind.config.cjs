@@ -18,7 +18,7 @@ module.exports = {
         coverPhotoBottom: '#00000000',
         coverPhotoTop: '#000000aa',
         purple: '#573c7c',
-        blueish: '#ac6baf2a',
+        'translucent-purple': '#ac6baf2a',
         'ai-blue': '#77a1f3',
         'ai-purple': '#ac6baf',
         gradientdark: '#0c0c0c',
