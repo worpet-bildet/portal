@@ -303,8 +303,9 @@
       |=  [k=[=ship =dude:gall p=^^path] v=[? ? =rock:portal-item]]
       `[key item]`[(path-to-key:conv +.p.k) rock.v]
     =+  (~(uni by items) -)
-    ::  filter only for feedpoasts from last 14 days (%other and %retweet type)
-    items+(last-x-items:stor - ~d14)
+    ::  take feedpoasts from last 14 days (%other and %retweet type)
+    ::  don't take %ship items
+    items+(filter-items:stor - ~d14)
     ::
     [%keys ~]
     =+  ~(tap by read:da-item)
@@ -374,8 +375,8 @@
   ?>  |(=(our.bowl ship.key.item) =(lens.item %temp))
   (~(put by items) key.item item)
 ::
-::  items from e.g. last 14 days
-++  last-x-items
+::  items from e.g. last 14 days, remove ships
+++  filter-items
   |=  [itms=^items x=@dr]
   ^-  ^items
   =+  ~(tap by itms)
@@ -388,6 +389,9 @@
     ?~  t=(slaw %da time.key)
       %.y
     (gte u.t (sub now.bowl x))
+    ::
+      %ship
+    %.n
   ==
 ::
 ++  cards-methods
