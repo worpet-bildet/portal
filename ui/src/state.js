@@ -34,7 +34,7 @@ export const toggleDarkmode = () => {
   });
 };
 
-export const reScoreItems = async (positivePrompt, negativePrompt) => {
+export const reScoreItems = async (positivePrompt, negativePrompt, sortedPals) => {
   return new Promise((resolve) => {
     api.portal.get.items().then(({ items }) => {
       const feed = (getGlobalFeed() || []).slice(0, 200);
@@ -42,7 +42,7 @@ export const reScoreItems = async (positivePrompt, negativePrompt) => {
       items = items.filter((i) =>
         feed.find((f) => keyStrFromObj(f.key) === keyStrFromObj(i.keyObj))
       );
-      scoreItems(items, positivePrompt, negativePrompt).then((items) => {
+      scoreItems(items, positivePrompt, negativePrompt, sortedPals).then((items) => {
         state.update((s) => {
           items.forEach((i) => {
             s[i.keyStr] = i;

@@ -68,7 +68,7 @@
 
   const handlePromptFeed = async () => {
     loading = true;
-    await reScoreItems(positiveFeedPrompt, negativeFeedPrompt);
+    await reScoreItems(positiveFeedPrompt, negativeFeedPrompt, sortedPals);
     feed = feed.sort((a, b) => getItem(b.key)?.score - getItem(a.key)?.score);
     canResetFeed = true;
     loading = false;
