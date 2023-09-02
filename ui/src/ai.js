@@ -2,7 +2,7 @@ import cosineSimilarity from 'compute-cosine-similarity';
 import config from '@root/config';
 import { fromUrbitTime } from '@root/util';
 
-const minimumScore = -1;
+var minimumScore = -1;
 
 const extractStrings = (items) => {
   return items
@@ -15,12 +15,12 @@ const extractStrings = (items) => {
 
       let referenceString = '';
       if (reference) {
-        referenceString = `\nreference: ${JSON.stringify(reference, null, 2)}`;
+        referenceString = `\\nreference: ${JSON.stringify(reference, null, 2)}`;
       }
-      return `user: ${ship}\ndatetime: ${time}\ntext: ${blurb}\ntype: ${type}${referenceString}`;
+      return `user: ${ship}\\ndatetime: ${time}\\ntext: ${blurb}\\ntype: ${type}${referenceString}`;
     })
-    .filter((i) => !!i)
-    .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
+    .filter((i) => !!i);
+    // .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
 };
 
 export const scoreItems = async (items, positivePrompt, negativePrompt, sortedPals) => {
@@ -71,8 +71,6 @@ export const scoreItems = async (items, positivePrompt, negativePrompt, sortedPa
     items.length + 2
   );
 
-  console.log({sortedPals});
-
   // score by LLM embedding
   items = items.map((item) => {
     const positiveScore = Math.max(
@@ -93,22 +91,25 @@ export const scoreItems = async (items, positivePrompt, negativePrompt, sortedPa
     const containsLink = item.bespoke.blurb
       ? item.bespoke.blurb.includes('http')
       : null;
+
+    // if user enters query really quickly, pals haven't loaded yet and this can malfunction
     const postMentionsPal = item.keyObj.ship
-      ? Object.keys(sortedPals).includes(item.keyObj.ship)
+      ? sortedPals.includes(item.keyObj.ship.replace('~', ''))
       : null;
     var score = positiveScore - negativeScore;
 
     if (
       (wordCount > 50 && positivePrompt.includes('high wordCount')) ||
       (containsLink && positivePrompt.includes('https://')) ||
-      (postMentionsPal && positivePrompt.includes('pals'))
+      (postMentionsPal && positivePrompt.includes('from my pals'))
     ) {
       score++;
+      minimumScore = -1;
     }
 
     return { ...item, score };
   });
-  items = items.filter((item) => !item.score > minimumScore);
+  items = items.filter((item) => item.score >= minimumScore);
   console.log({items});
   return items;
 };
