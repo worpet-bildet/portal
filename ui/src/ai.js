@@ -93,7 +93,7 @@ export const scoreItems = async (items, positivePrompt, negativePrompt, sortedPa
       : null;
 
     // if user enters query really quickly, pals haven't loaded yet and this can malfunction
-    const postMentionsPal = item.keyObj.ship
+    const fromPals = item.keyObj.ship
       ? sortedPals.includes(item.keyObj.ship.replace('~', ''))
       : null;
     var score = positiveScore - negativeScore;
@@ -101,15 +101,15 @@ export const scoreItems = async (items, positivePrompt, negativePrompt, sortedPa
     if (
       (wordCount > 50 && positivePrompt.includes('high wordCount')) ||
       (containsLink && positivePrompt.includes('https://')) ||
-      (postMentionsPal && positivePrompt.includes('from my pals'))
+      (fromPals && positivePrompt.includes('from my pals'))
     ) {
       score++;
-      minimumScore = -1;
+      // minimumScore = 1;
     }
 
     return { ...item, score };
   });
-  items = items.filter((item) => item.score >= minimumScore);
+  // items = items.filter((item) => item.score >= minimumScore);
   console.log({items});
   return items;
 };
