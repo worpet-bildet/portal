@@ -302,12 +302,12 @@
         <div class="flex flex-col overflow-x-scroll scrollbar-hide">
           <div class="flex gap-4">
             <button
-              class="rounded-lg bg-panels-hover text-grey hover:bg-translucent-purple dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
+              class="rounded-lg bg-panels-hover text-grey hover:bg-translucent-purple dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4 whitespace-nowrap"
               on:click={() => {
                 positiveFeedPrompt = 'from my pals';
                 negativeFeedPrompt = '';
                 handlePromptFeed();
-              }}>From Pals</button
+              }}>Your Pals</button
             >
             <button
               class="rounded-lg bg-panels-hover text-grey hover:bg-translucent-purple dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
