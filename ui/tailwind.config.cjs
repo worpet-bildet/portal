@@ -15,6 +15,7 @@ module.exports = {
         grey: '#696969',
         black: '#000000',
         dark: '#00000080',
+        'dark-background': '#0e0e0e',
         coverPhotoBottom: '#00000000',
         coverPhotoTop: '#000000aa',
         purple: '#573c7c',

@@ -110,7 +110,7 @@
 </script>
 
 <div class="flex flex-col gap-4 mb-4 items-center">
-  <div class="flex bg-panels dark:bg-darkgrey border p-2 rounded-lg w-2/3">
+  <div class="flex bg-panels dark:bg-darkgrey border p-2 rounded-lg w-full md:w-2/3">
     <div class="w-5 text-grey mt-[3px] ml-2"><SearchIcon /></div>
     <input
       type="text"
@@ -119,12 +119,12 @@
       bind:value={searchString}
     />
   </div>
-  <div class="flex gap-8">
+  <div class="flex gap-1 md:gap-8">
     <IconButton
       icon={SparklesIcon}
       active={filters.has('new')}
       on:click={() => toggleFilter('new')}
-      class="bg-panels dark:fill-white dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
+      class="bg-panels text-xs md:text-lg dark:fill-white dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
       >New to me
     </IconButton>
     <IconButton
@@ -133,7 +133,7 @@
       on:click={() => {
         toggleFilter('apps');
       }}
-      class="bg-panels dark:fill-white dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
+      class="bg-panels dark:fill-white text-xs md:text-lg dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
       >Apps</IconButton
     >
     <IconButton
@@ -142,7 +142,7 @@
       on:click={() => {
         toggleFilter('groups');
       }}
-      class="bg-panels dark:fill-grey fill-white dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
+      class="bg-panels dark:fill-grey text-xs md:text-lg fill-white dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
       >Groups</IconButton
     >
     <IconButton
@@ -151,17 +151,17 @@
       on:click={() => {
         toggleFilter('collections');
       }}
-      class="bg-panels dark:fill-white dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
+      class="bg-panels dark:fill-white text-xs md:text-lg dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
       >Collections</IconButton
     >
   </div>
-  <p class="text-grey text-sm">
+  <p class="text-grey text-sm text-center">
     Items you come across on your travels will accrue here, but it's not yet an
     exhaustive index of all the things on Portal.
   </p>
   {#if items}
     <div
-      class="flex flex-col gap-4 bg-panels dark:bg-darkgrey w-2/3 border p-6 rounded-lg"
+      class="flex flex-col gap-4 bg-panels dark:bg-darkgrey w-full md:w-2/3 border p-6 rounded-lg"
     >
       {#if activeItems.length > 0}
         {#each activeItems as key}

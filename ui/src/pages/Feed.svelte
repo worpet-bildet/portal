@@ -30,7 +30,7 @@
     VerticalExpandIcon,
     VerticalCollapseIcon,
   } from '@fragments';
-  import { fromUrbitTime, isValidPatp, isHappeningSoon } from '@root/util';
+  import { fromUrbitTime, isValidPatp, isHappeningSoon, isSubmitHotkey } from '@root/util';
 
   let sortedPals = [];
   let sortedRecommendations = [];
@@ -52,9 +52,13 @@
     canResetFeed,
     positiveFeedPromptForm;
 
-  function handleKeydown(event) {
-    // make sure we don't do anything if the user is inside a contendeditable
-    // div (aka the feedpostform)
+  function handleSubmitKeydown(event) {
+    if (isSubmitHotkey(event)) {
+      handlePromptFeed();
+    }
+  }
+
+  function handleSearchKeydown(event) {
     if (event.target.isContentEditable) return;
     if (event.key === '/') {
       event.preventDefault();
@@ -252,7 +256,7 @@
   const happeningSoonTuple = isHappeningSoon(events);
 </script>
 
-<svelte:window on:keydown={handleKeydown} />
+<svelte:window on:keydown={handleSearchKeydown} />
 
 <div class="grid grid-cols-9 gap-8 mb-4">
   <div class="flex flex-col gap-8 rounded-t-2xl col-span-12 md:col-span-6">
@@ -276,7 +280,7 @@
                 placeholder="Search Portal"
                 bind:value={positiveFeedPrompt}
                 bind:this={positiveFeedPromptForm}
-                on:keyboardSubmit={handlePromptFeed}
+                on:keydown={handleSubmitKeydown}
               />
               <div class="flex justify-center">
                 {#if canResetFeed}
@@ -380,7 +384,7 @@
                   class="focus:outline-none p-3 placeholder-grey text-black text-lg dark:text-white flex-grow"
                   placeholder="Show me less ..."
                   bind:value={negativeFeedPrompt}
-                  on:keyboardSubmit={handlePromptFeed}
+                  on:keydown={handleSubmitKeydown}
                 />
               </div>
             </div>
@@ -424,7 +428,7 @@
         </div>
         <div class="flex justify-center">
           <button
-            class="bg-panels-solid dark:bg-darkgrey hover:border-darkgrey rounded-md w-7 h-7 mr-2 border flex items-center justify-center mb-[-30px]"
+            class="bg-panels-solid dark:bg-darkgrey hover:border-darkgrey dark:hover:border-grey text-grey dark:text-grey rounded-md w-7 h-7 mr-2 border flex items-center justify-center mb-[-30px]"
             on:click={() => (showExpandedForm = !showExpandedForm)}
           >
             {#if showExpandedForm}
@@ -465,7 +469,7 @@
               class="border-b focus:outline-none placeholder-grey"
               placeholder="~worpet-bildet"
               bind:value={searchShip}
-              on:keyboardSubmit={search}
+              on:keydown={handleSubmitKeydown}
             />
           </div>
           <button class="w-5" on:click={search}><SearchIcon /></button>
@@ -504,6 +508,13 @@
         {#each sortedRecommendations as [recommendation, count]}
           <ItemPreview key={keyStrToObj(recommendation)} small />
         {/each}
+        <button
+          class="text-left rounded-lg text-grey hover:text-black dark:hover:text-white px-4"
+          on:click={() => push('/explore')}
+        >
+          Show more
+        </button>
+
       </SidebarGroup>
     {/if}
     {#if $state.radioStations}

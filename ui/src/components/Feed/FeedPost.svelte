@@ -36,7 +36,7 @@
 
   export let key;
   export let allowRepliesDepth = 2;
-  export let showRating;
+  export let showRating = false;
 
   let item;
   let replies = [];
@@ -178,7 +178,6 @@
   };
   const showLess = () => {
     postContainer.classList.add('max-h-96');
-    postContainer.scrollIntoView();
     showAll = false;
   };
 
@@ -188,7 +187,7 @@
   $: if (postContainer) {
     // if the client height of the post container is more than 24 rem, we should
     // show a "see more" button on the post, so that you can scroll past it
-    if (postContainer.clientHeight > 24 * 16) {
+    if (postContainer.clientHeight > 36 * 16) {
       longPost = true;
       showAll = false;
       postContainer.classList.add('max-h-96');
@@ -204,11 +203,10 @@
   {@const blurbLink = getAnyLink(blurb)}
   <div
     class="border-b border-x px-5 pt-5 overflow-hidden"
-    bind:this={postContainer}
   >
     <div
       id={keyStrFromObj(item.keyObj)}
-      class="grid grid-cols-12 bg-panels dark:bg-darkgrey gap-2 lg:gap-4 lg:gap-y-0"
+      class="grid grid-cols-12 bg-panels dark:bg-transparent gap-2 lg:gap-4 lg:gap-y-0"
       in:fade
     >
       <div class="col-span-1">
@@ -218,7 +216,9 @@
           </a>
         </div>
       </div>
-      <div class="col-span-12 md:col-span-10 flex flex-col gap-2">
+      <div class="col-span-12 md:col-span-10 flex flex-col gap-2"
+        bind:this={postContainer}
+      >
         <div class="flex gap-2 text-sm text-grey">
           <a class="text-black dark:text-white" href={`/${ship}`} use:link
             >{nickname || ship}</a
@@ -274,7 +274,7 @@
           />
         </div>
       {/if}
-      <div class="col-span-12 col-start-2 py-2">
+      <div class={`col-span-12 col-start-2 py-2 ${longPost && !showAll ? 'bg-gradient-to-t from-panels-solid dark:from-dark-background dark:via-dark-background via-panels-solid pt-14' : ''}`}>
         <div class="-ml-2.5 flex gap-8">
           {#if allowRepliesDepth}
             <div class="flex">
@@ -317,34 +317,36 @@
               </div>
             {/if}
           </div>
-          {#if me !== item.keyObj.ship}
-            <div class="flex items-center">
-              <IconButton
-                icon={EthereumIcon}
-                on:click={() => handleTipRequest(item.keyObj)}
-                class="text-grey hover:text-ai-blue dark:hover:text-ai-blue"
-              />
-            </div>
+          <div class="flex items-center">
+            {#if me !== item.keyObj.ship}
+              <div class="flex items-center">
+                <IconButton
+                  icon={EthereumIcon}
+                  on:click={() => handleTipRequest(item.keyObj)}
+                  class="text-grey hover:text-ai-blue dark:hover:text-ai-blue"
+                />
+              </div>
+            {/if}
+          </div>
+          {#if longPost}
+            {#if showAll}
+              <button
+                class="flex items-center justify-center p-2 gap-4 text-grey"
+                on:click={showLess}>Show less <VerticalCollapseIcon /></button
+              >
+            {:else}
+              <button
+                class="flex items-center justify-center gap-4 text-grey"
+                on:click={showMore}>Show more <VerticalExpandIcon /></button
+              >
+            {/if}
           {/if}
         </div>
       </div>
     </div>
   </div>
-  {#if longPost}
-    {#if showAll}
-      <button
-        class="flex items-center justify-end w-full p-2 gap-4 border-b-2 border-x"
-        on:click={showLess}>Show less <VerticalCollapseIcon /></button
-      >
-    {:else}
-      <button
-        class="flex items-center justify-end w-full p-2 gap-4 border-b-2 border-x"
-        on:click={showMore}>Show more <VerticalExpandIcon /></button
-      >
-    {/if}
-  {/if}
   <div
-    class="grid grid-cols-12 bg-panels dark:bg-darkgrey gap-2 lg:gap-4 lg:gap-y-0"
+    class="grid grid-cols-12 bg-panels dark:bg-transparent gap-2 lg:gap-4 lg:gap-y-0"
     in:fade
   >
     {#if showReplies}
