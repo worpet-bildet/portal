@@ -2,7 +2,7 @@ import path from 'path';
 import { loadEnv, defineConfig } from 'vite';
 import { urbitPlugin } from '@urbit/vite-plugin-urbit';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
-import { viteCommonjs } from '@originjs/vite-plugin-commonjs'
+import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
 
 // https://vitejs.dev/config/
 export default ({ mode }) => {
@@ -35,6 +35,7 @@ export default ({ mode }) => {
         '@pages': path.resolve('./pages'),
         '@components': path.resolve('./src/components'),
         '@fragments': path.resolve('./src/fragments'),
+        $types: path.resolve('./src/types'),
       },
     },
   });

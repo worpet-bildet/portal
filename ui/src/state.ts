@@ -1,18 +1,29 @@
-import _ from 'lodash';
-import { get, writable } from 'svelte/store';
-import { api } from '@root/api';
-import { save, load } from '@root/storage';
-import config from '@root/config';
-import { fromUrbitTime, weiToEth } from '@root/util';
-import { scoreItems } from './ai';
+import { Groups } from '$types/landscape/groups';
+import { State } from '$types/state';
+import { ItemKey } from '$types/portal/item';
 
-export const state = writable(load() || {});
-export const feed = writable({});
+import { uniqBy } from 'lodash';
+import { get, writable } from 'svelte/store';
+
+import config from '@root/config';
+import { save, load } from '@root/storage';
+import { api } from '@root/api';
+import { scoreItems } from '@root/ai';
+import { fromUrbitTime } from '@root/util';
+
+// Specify defaultState first to overwrite it with anything in localStorage
+export const state = writable<State>({ ...load() });
+
+export const items = () => get(state).items || {};
+export const social = () => get(state).social || {};
+export const groups = () => get(state).groups || {};
+export const apps = () => get(state).apps || {};
+export const contacts = () => get(state).contacts || {};
 
 export const updateNotificationsLastChecked = () => {
   state.update((s) => {
     let currentTime = new Date();
-    s.notificationsLastChecked = currentTime;
+    s.notificationsLastChecked = currentTime.toString();
     save({ notificationsLastChecked: currentTime });
     return s;
   });
@@ -35,7 +46,7 @@ export const toggleDarkmode = () => {
 };
 
 export const reScoreItems = async (positivePrompt, negativePrompt) => {
-  return new Promise((resolve) => {
+  return new Promise<void>((resolve) => {
     api.portal.get.items().then(({ items }) => {
       const feed = (getGlobalFeed() || []).slice(0, 200);
       // only score items which are in the feed
@@ -45,7 +56,7 @@ export const reScoreItems = async (positivePrompt, negativePrompt) => {
       scoreItems(items, positivePrompt, negativePrompt).then((items) => {
         state.update((s) => {
           items.forEach((i) => {
-            s[i.keyStr] = i;
+            s.items[i.keyStr] = i;
           });
           return s;
         });
@@ -58,8 +69,9 @@ export const reScoreItems = async (positivePrompt, negativePrompt) => {
 export const refreshPortalItems = () => {
   api.portal.get.items().then(({ items }) => {
     state.update((s) => {
+      if (!s.items) s.items = {};
       items.forEach((i) => {
-        s[i.keyStr] = i;
+        s.items[i.keyStr] = i;
       });
       s.isLoaded = true;
       return s;
@@ -87,24 +99,25 @@ export const refreshBoughtApps = () => {
 
 export const refreshContacts = () => {
   api.urbit.get.contacts().then((contacts) => {
-    state.update((s) => ({ ...s, profiles: contacts }));
+    state.update((s) => ({ ...s, contacts: contacts }));
   });
 };
 
 export const refreshGroups = () => {
-  api.urbit.get.joinedGroups().then((groups) => {
+  api.urbit.get.joinedGroups().then((groups: Groups) => {
     let _groups = {};
     state.update((s) => {
-      Object.entries(groups || {}).forEach((g) => {
-        let [key, data] = g;
+      Object.entries(groups || {}).forEach(([key, data]) => {
         let {
           meta: { title },
         } = data;
         // weirdly, groups that we're joining are in our state without a title
-        if (!title) {
-          g[1].joining = true;
-        }
         _groups[key] = data;
+        // if you want to be really picky, this could set in some other object
+        // which is a supertype of Group but it's not worth it
+        if (!title) {
+          _groups[key].joining = true;
+        }
       });
       s.groups = _groups;
       return s;
@@ -180,28 +193,28 @@ export const itemInState = async (item) => {
 export const getCurator = (patp) => {
   return {
     keyObj: { ship: patp, struc: 'ship', cord: '', time: '' },
-    bespoke: { ...get(state)?.profiles?.[patp] },
+    bespoke: { ...contacts()[patp] },
   };
 };
 
 export const getProfile = (patp) => {
-  return get(state)?.profiles?.[patp];
+  return contacts()[patp];
 };
 
 export const getCuratorFeed = (patp) => {
-  return get(state)[feedKey(patp)]?.bespoke?.feed?.sort(
+  return items()[feedKey(patp)]?.bespoke?.feed?.sort(
     (a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time)
   );
 };
 
 export const getGlobalFeed = () => {
-  return get(state)[globalFeedKey(config.indexer)]?.bespoke?.feed?.sort(
+  return items()[globalFeedKey(config.indexer)]?.bespoke?.feed?.sort(
     (a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time)
   );
 };
 
 export const getCuratorCollections = (patp) => {
-  return get(state)
+  return items()
     [mainCollectionKey(patp)]?.bespoke?.['key-list']?.filter((k) => {
       return k.struc === 'collection';
     })
@@ -219,33 +232,33 @@ export const getCuratorFeaturedCollection = (patp) => {
 };
 
 export const getCuratorItemsByStruc = (patp, struc) => {
-  return Object.keys(get(state))
+  return Object.keys(items())
     .filter((k) => k.includes(`${struc}/${patp}`))
-    .map((k) => get(state)[k]);
+    .map((k) => items()[k]);
 };
 
 export const getGroup = (groupKey) => {
-  return get(state)[`/group/${groupKey}/`];
+  return items()[`/group/${groupKey}/`];
 };
 
 export const getApp = (appKey) => {
-  return get(state)[`/app/${appKey}/`];
+  return items()[`/app/${appKey}/`];
 };
 
 export const getItem = (listKey) => {
-  if (typeof listKey === 'object') return get(state)[keyStrFromObj(listKey)];
-  return get(state)[listKey];
+  if (typeof listKey === 'object') return items()[keyStrFromObj(listKey)];
+  return items()[listKey];
 };
 
 export const getCollectedItemLeaderboard = (excludePatp) => {
   return Object.entries(
-    Object.values(get(state))
+    Object.values(items())
       .filter(
-        (k) =>
-          k?.keyObj?.ship !== excludePatp &&
-          k?.keyObj?.struc === 'collection' &&
-          k?.keyObj?.time !== 'global' &&
-          k?.keyObj?.time !== 'index'
+        (i) =>
+          i?.keyObj?.ship !== excludePatp &&
+          i?.keyObj?.struc === 'collection' &&
+          i?.keyObj?.time !== 'global' &&
+          i?.keyObj?.time !== 'index'
       )
       .reduce((a, b) => {
         b?.bespoke?.['key-list']
@@ -264,12 +277,12 @@ export const getCollectedItemLeaderboard = (excludePatp) => {
           });
         return a;
       }, {})
-  ).sort((a, b) => b[1] - a[1]);
+  ).sort((a, b) => Number(b[1]) - Number(a[1]));
 };
 
 export const getMoreFromThisShip = (patp, cord = '') => {
   return Object.entries(
-    Object.values(get(state))
+    Object.values(items())
       .filter(
         (k) =>
           k?.keyObj?.struc === 'collection' &&
@@ -295,14 +308,14 @@ export const getMoreFromThisShip = (patp, cord = '') => {
           });
         return a;
       }, {})
-  ).sort((a, b) => b[1] - a[1]);
+  ).sort((a, b) => Number(b[1]) - Number(a[1]));
 };
 
 export const getAllCollectionsAndItems = (collectionKey) => {
-  return get(state)[collectionKey]?.bespoke?.['key-list'].concat(
+  return items()[collectionKey]?.bespoke?.['key-list'].concat(
     Object.values(
       Object.fromEntries(
-        Object.entries(get(state))
+        Object.entries(items())
           .filter(([key]) => key.includes('/collection/'))
           .filter(([key]) => !key.includes('published'))
           .filter(([key]) => !key.includes('all'))
@@ -312,19 +325,19 @@ export const getAllCollectionsAndItems = (collectionKey) => {
 };
 
 export const getCollectionItems = (collectionKey) => {
-  return get(state)[collectionKey]?.bespoke?.['key-list'];
+  return items()[collectionKey]?.bespoke?.['key-list'];
 };
 
 export const getJoinedGroupDetails = (groupKey) => {
-  return get(state).groups?.[groupKey];
+  return groups()[groupKey];
 };
 
 export const getReplies = (ship, key) => {
-  return get(state).social?.[`/${ship}/reply-from`]?.[keyStrFromObj(key)];
+  return social()[`/${ship}/reply-from`]?.[keyStrFromObj(key)];
 };
 
 export const getRepliesByTo = (ship, key) => {
-  return Object.entries(get(state).social?.[`/${ship}/reply-to`] || {})
+  return Object.entries(social()[`/${ship}/reply-to`] || {})
     .filter(([_, item]) =>
       item.find((i) => keyStrFromObj(i) === keyStrFromObj(key))
     )
@@ -332,15 +345,15 @@ export const getRepliesByTo = (ship, key) => {
 };
 
 export const getLikes = (ship, key) => {
-  return get(state).social?.[`/${ship}/like-from`]?.[keyStrFromObj(key)];
+  return social()[`/${ship}/like-from`]?.[keyStrFromObj(key)];
 };
 
 export const getReviews = (ship, key) => {
-  return get(state).social?.[`/${ship}/review-from`]?.[keyStrFromObj(key)];
+  return social()[`/${ship}/review-from`]?.[keyStrFromObj(key)];
 };
 
 export const getReviewsByTo = (ship, key) => {
-  return Object.entries(get(state).social?.[`/${ship}/review-to`] || {})
+  return Object.entries(social()[`/${ship}/review-to`] || {})
     .filter(([_, item]) =>
       item.find((i) => keyStrFromObj(i) === keyStrFromObj(key))
     )
@@ -360,7 +373,7 @@ export const resetTip = () => {
 export const getNotifications = (ship) => {
   let q = [];
   let feed = getGlobalFeed() || [];
-  Object.entries(get(state).social?.[`/${ship}/reply-from`] || {})?.forEach(
+  Object.entries(social()[`/${ship}/reply-from`] || {})?.forEach(
     ([op, replies]) => {
       // don't show notifications for items which are no longer in the feed
       if (!feed?.find((f) => keyStrFromObj(f.key) === op)) return;
@@ -369,7 +382,7 @@ export const getNotifications = (ship) => {
       });
     }
   );
-  Object.entries(get(state).social?.[`/${ship}/review-from`] || {})?.forEach(
+  Object.entries(social()[`/${ship}/review-from`] || {})?.forEach(
     ([op, reviews]) => {
       // reviews are permanent so we don't care about the feed
       reviews.forEach((review) => {
@@ -394,7 +407,7 @@ export const handleSubscriptionEvent = (event, type) => {
             if (!s.social[socialKey][socialUpdate]) {
               s.social[socialKey][socialUpdate] = [];
             }
-            s.social[socialKey][socialUpdate] = _.uniqBy(
+            s.social[socialKey][socialUpdate] = uniqBy(
               [
                 ...s.social[socialKey][socialUpdate],
                 ...event.app[socialKey][socialUpdate],
@@ -429,7 +442,7 @@ export const handleSubscriptionEvent = (event, type) => {
     case 'contact-news':
       state.update((s) => ({
         ...s,
-        profiles: { ...s.profiles, [event.who]: event.con },
+        contacts: { ...s.contacts, [event.who]: event.con },
       }));
       break;
     case 'charge-update':
@@ -462,19 +475,19 @@ export const deskKeyToItemKey = (deskKey) => {
   return `/app/${parts[0]}/${parts[1]}/`;
 };
 
-export const profileKeyToItemKey = (profileKey) => {
-  return `/${profileKey}/`;
+export const contactKeyToItemKey = (contactKey) => {
+  return `/${contactKey}/`;
 };
 
 export const collectionKeyToItemKey = (collectionKey) => {
   return `${collectionKey}`;
 };
 
-export const keyStrFromObj = ({ struc, ship, cord, time }) => {
+export const keyStrFromObj = ({ struc, ship, cord, time }: ItemKey) => {
   return `/${struc}/${ship}/${cord}/${time}`;
 };
 
-export const keyStrToObj = (str) => {
+export const keyStrToObj = (str): ItemKey => {
   const parts = str.split('/');
   let time = parts[1] === 'blog' ? parts.slice(4).join('/') : parts[4];
   return {
@@ -485,7 +498,7 @@ export const keyStrToObj = (str) => {
   };
 };
 
-export const profileStrToObj = (str) => {
+export const contactStrToObj = (str): ItemKey => {
   const parts = str.split('/');
   return {
     struc: 'ship',
@@ -495,7 +508,6 @@ export const profileStrToObj = (str) => {
   };
 };
 
-const mainCollection = (patp) => get(state)[mainCollectionKey(patp)];
 const mainCollectionKey = (patp) => `/collection/${patp}//~2000.1.1`;
 const allCollectionKey = (patp) => `/collection/${patp}//all`;
 const feedKey = (patp) => `/feed/${patp}//~2000.1.1`;
