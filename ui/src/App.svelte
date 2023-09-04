@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import Router, { location, push } from 'svelte-spa-router';
   import { GoogleAnalytics, ga } from '@beyonk/svelte-google-analytics';
   import { state, setReferredTo } from '@root/state';
@@ -42,6 +42,7 @@
 
   const urlParams = new URLSearchParams(window.location.hash.slice(3));
   const notificationPath = urlParams.get('grid-note');
+
   /**
    * The schema is
    * /portal/reply/op-key
