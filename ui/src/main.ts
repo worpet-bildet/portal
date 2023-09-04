@@ -21,6 +21,13 @@ useDocketSubscription(handleSubscriptionEvent);
 useRadioSubscription(handleSubscriptionEvent);
 useStorageSubscription(handleSubscriptionEvent);
 
+declare global {
+  interface Window {
+    ship: string;
+    ethereum: any;
+  }
+}
+
 const app = new App({
   target: document.getElementById('app'),
 });
