@@ -89,6 +89,6 @@
   />
   <div
     bind:this={target}
-    class="p-2 pb-4 w-full text-lg placeholder-grey text-black resize-none leading-tight box-border break-words focus:outline-none absolute top-0 left-0 pointer-events-none"
+    class="p-2 pb-4 w-full text-lg placeholder-grey text-black dark:text-white resize-none leading-tight box-border break-words focus:outline-none absolute top-0 left-0 pointer-events-none"
   />
 </div>
