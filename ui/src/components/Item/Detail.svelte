@@ -1,11 +1,28 @@
 <script>
   import { link } from 'svelte-spa-router';
-  import { me } from '@root/api';
-  import { getItem, keyStrFromObj } from '@root/state';
+  import { me, api } from '@root/api';
+  import { getItem, keyStrFromObj, refreshGroups } from '@root/state';
   import { isUrl } from '@root/util';
   import { Sigil, TipModal } from '@components';
-  import { ItemImage, StarRating, IconButton, EthereumIcon } from '@fragments';
-  export let cover, avatar, title, description, patp, color, type, reviews, key;
+  import {
+    ItemImage,
+    StarRating,
+    IconButton,
+    EthereumIcon,
+    PlusIcon,
+    InstallIcon,
+  } from '@fragments';
+
+  export let cover,
+    avatar,
+    title,
+    description,
+    patp,
+    color,
+    type,
+    reviews,
+    key,
+    isInstalledOrJoined;
 
   let handleTipRequest;
 
@@ -99,15 +116,44 @@
             by {patp}
           </a>{/if}
       </div>
-      {#if window.ethereum && me !== patp}
-        <div class="flex">
+      <div class="flex gap-3">
+        {#if window.ethereum && me !== patp}
           <IconButton
             icon={EthereumIcon}
-            class="border"
+            class="bg-panels dark:bg-transparent hover:bg-panels-hover dark:hover:border-white dark:border border"
             on:click={() => handleTipRequest(key)}>Tip</IconButton
           >
-        </div>
-      {/if}
+        {/if}
+        {#if !isInstalledOrJoined}
+          {#if type === 'group'}
+            <div class="flex md:hidden">
+              <IconButton
+                icon={PlusIcon}
+                on:click={async (event) => {
+                  event.target.innerHTML = 'Joining';
+                  await api.urbit.do.joinGroup(key).then(refreshGroups);
+                }}
+                class="bg-panels dark:bg-transparent hover:bg-panels-hover dark:hover:border-white dark:border border"
+                >Join Group</IconButton
+              >
+            </div>
+          {/if}
+          {#if type === 'app'}
+            <div class="flex md:hidden">
+              <IconButton
+                icon={InstallIcon}
+                on:click={(event) => {
+                  window.open(
+                    `${window.location.origin}/apps/grid/search/${patp}/apps`
+                  );
+                }}
+                class="bg-panels dark:bg-transparent hover:bg-panels-hover dark:hover:border-white dark:border border"
+                >Install</IconButton
+              >
+            </div>
+          {/if}
+        {/if}
+      </div>
     </div>
     {#if reviews && reviewAverageRating}
       <div class="col-span-12 flex justify-end gap-8">
