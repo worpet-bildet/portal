@@ -169,6 +169,19 @@
       ::  default:  forward to %portal-store
       :_  this  [(~(act cards [our.bowl %portal-store]) act)]~
       ::
+        %aggregate-chats
+      :_  this  :_  ~
+      :*  %pass  /aggregate-chats  %arvo  %k  %fard  q.byk.bowl  %aggregate-chats  %noun
+          !>  
+      ==
+      :: - run thread
+      ::   - scry all groups chats you are in for last x msgs
+      ::   - figure out how to scry groups chats only for last 24 hours
+      ::   - compile 2 lists (top 25 based on reacts, top 25 based on replies)
+      ::   - create chat-msg items (even if they are duplicates)
+      ::   - scry if collection exists
+      ::   - create/edit collection
+      ::
         %manager-init
       =.  our-apps.state  ;;  our-apps:config
         %-  tail
@@ -213,7 +226,7 @@
         %blog-sub
       =^  cards  sub-blog-paths  (surf:da-blog-paths our.bowl %blog [%paths ~])
       [cards this]
-
+      ::
         %onboarded
       `this(onboarded toggle.act)
       ::
