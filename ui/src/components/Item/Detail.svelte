@@ -4,11 +4,27 @@
   import { getItem, keyStrFromObj, refreshGroups } from '@root/state';
   import { isUrl } from '@root/util';
   import { Sigil, TipModal } from '@components';
-  import { ItemImage, StarRating, IconButton, EthereumIcon, PlusIcon, InstallIcon } from '@fragments';
-  export let cover, avatar, title, description, patp, color, type, reviews, key;
+  import {
+    ItemImage,
+    StarRating,
+    IconButton,
+    EthereumIcon,
+    PlusIcon,
+    InstallIcon,
+  } from '@fragments';
 
-  let handleTipRequest, isInstalledOrJoined = false;
-  $: console.log({isInstalledOrJoined});
+  export let cover,
+    avatar,
+    title,
+    description,
+    patp,
+    color,
+    type,
+    reviews,
+    key,
+    isInstalledOrJoined;
+
+  let handleTipRequest;
 
   let reviewCount, reviewAverageRating;
   $: {

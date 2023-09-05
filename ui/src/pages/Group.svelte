@@ -41,7 +41,6 @@
     loadGroup();
   }
 
-
   let group, joinedDetails;
   let sortedRecommendations = [];
   state.subscribe((s) => {
@@ -49,9 +48,6 @@
     loadGroup();
     sortedRecommendations = getMoreFromThisShip(host, cord).slice(0, 4);
   });
-
-
-  $: console.log({joinedDetails});
 
   const join = () => api.urbit.do.joinGroup(groupKey).then(refreshGroups);
   const leave = () => api.urbit.do.leaveGroup(groupKey).then(refreshGroups);
