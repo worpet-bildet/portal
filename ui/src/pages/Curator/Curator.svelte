@@ -72,8 +72,8 @@
     api.pals.do.add(ship).then(refreshPals);
   };
 
-  let activeTab = 'Collections';
-  let tabs = ['Collections', 'Activity'];
+  let activeTab = 'Activity';
+  let tabs = ['Activity', 'Collections'];
 </script>
 
 {#if curator}
