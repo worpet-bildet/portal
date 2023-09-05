@@ -10,12 +10,20 @@ export interface ItemMeta {
   updatedAt: string;
 }
 
+export interface FeedItem {
+  key: ItemKey;
+  ship: string;
+  time: number;
+}
+
 export interface Item {
+  embedding: any;
   keyObj: ItemKey;
   bespoke: any;
   keyStr: string;
   lens: string;
   meta: ItemMeta;
+  score: number | null;
 }
 
 export interface ItemCollection {

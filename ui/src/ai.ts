@@ -1,7 +1,7 @@
+import { Item } from '$types/portal/item';
+
 import cosineSimilarity from 'compute-cosine-similarity';
 import config from '@root/config';
-
-const minimumScore = -1;
 
 const extractStrings = (items) => {
   return items
@@ -14,14 +14,20 @@ const extractStrings = (items) => {
 
       let referenceString = '';
       if (reference) {
-        referenceString = `\nreference: ${JSON.stringify(reference, null, 2)}`;
+        referenceString = `\\nreference: ${JSON.stringify(reference, null, 2)}`;
       }
-      return `user: ${ship}\ndatetime: ${time}\ntext: ${blurb}\ntype: ${type}${referenceString}`;
+      return `user: ${ship}\\ndatetime: ${time}\\ntext: ${blurb}\\ntype: ${type}${referenceString}`;
     })
     .filter((i) => !!i);
+  // .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
 };
 
-export const scoreItems = async (items, positivePrompt, negativePrompt) => {
+export const scoreItems = async (
+  items: Item[],
+  positivePrompt: string,
+  negativePrompt: string,
+  sortedPals
+) => {
   if (!positivePrompt)
     positivePrompt = 'Wholesome tweet, kindness, love, fun banter';
   if (!negativePrompt) negativePrompt = 'anger, negativity';
@@ -70,35 +76,46 @@ export const scoreItems = async (items, positivePrompt, negativePrompt) => {
   );
 
   // score by LLM embedding
-  items = items.map((item) => {
-    const positiveScore = Math.max(
-      positivePromptEmbeddings.map((e, i) =>
-        cosineSimilarity(item.embedding.embedding, e.embedding)
-      )
-    );
-    const negativeScore = Math.max(
-      negativePromptEmbeddings.map((e, i) =>
-        cosineSimilarity(item.embedding.embedding, e.embedding)
-      )
-    );
+  items = items
+    .map((item) => {
+      const positiveScore = Math.max(
+        ...positivePromptEmbeddings.map((e) =>
+          cosineSimilarity(item.embedding.embedding, e.embedding)
+        )
+      );
+      const negativeScore = Math.max(
+        ...negativePromptEmbeddings.map((e) =>
+          cosineSimilarity(item.embedding.embedding, e.embedding)
+        )
+      );
 
-    const wordCount = item.bespoke.blurb
-      ? item.bespoke.blurb.split(' ').length
-      : null;
-    const containsLink = item.bespoke.blurb
-      ? item.bespoke.blurb.includes('http')
-      : null;
-    var score = positiveScore - negativeScore;
+      // hard-coded heuristics
+      const wordCount = item.bespoke.blurb
+        ? item.bespoke.blurb.split(' ').length
+        : null;
+      const containsLink = item.bespoke.blurb
+        ? item.bespoke.blurb.includes('http')
+        : null;
 
-    if (
-      (wordCount > 50 && positivePrompt.includes('high wordCount')) ||
-      (containsLink && positivePrompt.includes('https://'))
-    ) {
-      score++;
-    }
+      // if user enters query really quickly, pals haven't loaded yet and this can malfunction
+      const fromPals = item.keyObj.ship
+        ? sortedPals.includes(item.keyObj.ship.replace('~', ''))
+        : null;
+      let score = positiveScore - negativeScore;
 
-    return { ...item, score };
-  });
-  items = items.filter((item) => !item.score > minimumScore);
+      if (
+        (wordCount > 50 && positivePrompt.includes('high wordCount')) ||
+        (containsLink && positivePrompt.includes('https://')) ||
+        (fromPals && positivePrompt.includes('from my pals'))
+      ) {
+        score += 1;
+      } else if (!fromPals && positivePrompt.includes('from my pals')) {
+        return;
+      }
+
+      return { ...item, score };
+    })
+    .filter((i) => !!i);
+
   return items;
 };
