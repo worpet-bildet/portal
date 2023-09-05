@@ -111,7 +111,8 @@
     class:cursor-default={!clickable}
     class:hover:bg-panels-hover={clickable}
     class:dark:hover:border-white={clickable}
-    class:bg-panels-hover={selected}
+    class:bg-dark={selected}
+    class:text-white={selected}
     class:dark:border-white={selected}
   >
     {#if struc === 'groups-chat-msg'}
@@ -168,7 +169,7 @@
             {title || ship}
           </div>
           <div class="text-grey">·</div>
-          <div class="text-grey">{struc}</div>
+          <div class="text-grey" class:text-white={selected}>{struc}</div>
           {#if (struc === 'other' && link) || struc === 'blog'}
             <div class="w-5">
               <ExternalDestinationIcon />
