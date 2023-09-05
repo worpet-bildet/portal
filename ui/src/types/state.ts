@@ -20,6 +20,7 @@ export type State = {
   blogs: string[];
   isLoaded: boolean;
   palsLoaded: boolean;
+  referredTo: { type: string; key: string };
   s3: any; // TODO
   payment: any; // TODO
   tip: any; // TODO
