@@ -43,11 +43,11 @@
     LoadingIcon,
   } from '@fragments';
 
-  export let replyTo;
+  export let replyTo = false;
   export let recommendButtons = true;
   export let ratingStars = false;
-  export let error;
-  export let placeholder;
+  export let error = false;
+  export let placeholder = '';
   export let buttonText = 'Post';
 
   let dispatch = createEventDispatcher();

@@ -1,3 +1,13 @@
+import { DocketAppResponse, KilnApps } from '$types/apps/app';
+import { IncomingPals, OutgoingPals } from '$types/apps/pals';
+import { ItemKey, Item } from '$types/portal/item';
+import { SocialGraph } from '$types/portal/graph';
+import { ContactRolodex } from '$types/landscape/contact';
+import { Groups } from '$types/landscape/groups';
+import { ChatMessage } from '$types/landscape/chat';
+import { DiaryNote } from '$types/landscape/diary';
+import { HeapCurio } from '$types/landscape/heap';
+
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import Urbit from '@urbit/http-api';
 import { writable } from 'svelte/store';
@@ -19,9 +29,9 @@ export const pmPoke = (json) =>
     json,
   });
 
-let subqueue = writable([]);
+let subqueue = writable<ItemKey[]>([]);
 let subscribingTo = {};
-export const subscribeToItem = (keyObj) => {
+export const subscribeToItem = (keyObj: ItemKey) => {
   if (keyObj.time === 'all') return; // FIXME a bit hacky
   if (subscribingTo[JSON.stringify(keyObj)]) return;
   subscribingTo[JSON.stringify(keyObj)] = true;
@@ -31,13 +41,15 @@ export const subscribeToItem = (keyObj) => {
 export const api = {
   urbit: {
     get: {
-      installedApps: () =>
+      installedApps: (): Promise<[DocketAppResponse, KilnApps]> =>
         Promise.all([
           scry({ app: 'docket', path: '/charges' }),
           scry({ app: 'hood', path: '/kiln/pikes' }),
         ]),
-      contacts: () => scry({ app: 'contacts', path: '/all' }),
-      joinedGroups: () => scry({ app: 'groups', path: '/groups' }),
+      contacts: (): Promise<ContactRolodex> =>
+        scry({ app: 'contacts', path: '/all' }),
+      joinedGroups: (): Promise<Groups> =>
+        scry({ app: 'groups', path: '/groups' }),
       storageConfig: () =>
         Promise.all([
           scry({ app: 'storage', path: '/configuration' }),
@@ -50,7 +62,7 @@ export const api = {
           poke({
             app: 'docket',
             mark: 'docket-install',
-            json: `${ship}/${desk}`,
+            json: `${me}/${desk}`,
           }),
           poke({ app: 'hood', mark: 'kiln-install', json: desk }),
           poke({ app: 'hood', mark: 'kiln-revive', json: desk }),
@@ -86,7 +98,10 @@ export const api = {
   },
   pals: {
     get: {
-      all: () => scry({ app: 'pals', path: '/json' }),
+      all: (): Promise<{
+        incoming: IncomingPals;
+        outgoing: OutgoingPals;
+      }> => scry({ app: 'pals', path: '/json' }),
     },
     do: {
       add: (ship) =>
@@ -105,7 +120,7 @@ export const api = {
   },
   blog: {
     get: {
-      all: () => scry({ app: 'blog', path: '/pages' }),
+      all: (): Promise<string[]> => scry({ app: 'blog', path: '/pages' }),
     },
   },
   radio: {
@@ -116,24 +131,25 @@ export const api = {
   },
   portal: {
     get: {
-      items: () => scry({ app: 'portal-store', path: '/items' }),
+      items: (): Promise<{ items: Item[] }> =>
+        scry({ app: 'portal-store', path: '/items' }),
       appDevs: () => scry({ app: 'portal-manager', path: '/portal-devs' }),
-      socialItems: () =>
+      socialItems: (): Promise<{ app: SocialGraph }> =>
         scry({ app: 'portal-graph', path: '/app/portal-store' }),
       boughtApps: () => scry({ app: 'portal-manager', path: '/bought-apps' }),
-      rpcEndpoint: () => scry({ app: 'portal-manager', path: '/rpc-endpoint' }),
-      receivingAddress: () =>
+      receivingAddress: (): Promise<string> =>
         scry({ app: 'portal-manager', path: '/receiving-address' }),
       processingPayments: () =>
         scry({ app: 'portal-manager', path: '/processing-payments' }),
       processedPayments: () =>
         scry({ app: 'portal-manager', path: '/processed-payments' }),
-      chatMessage: (path) => scry({ app: 'portal-manager', path }),
+      chatMessage: (path): Promise<ChatMessage> =>
+        scry({ app: 'portal-manager', path }),
       //  link from groups we are scrying for:
       // /heap/~toptyr-bilder/links/curios/curio/id/170.141.184.506.270.899.144.208.463.636.562.182.144
-      heapCurio: (path) => scry({ app: 'heap', path }),
+      heapCurio: (path): Promise<HeapCurio> => scry({ app: 'heap', path }),
       //  /1/chan/diary/~worpet-bildet/announcements/note/170141184506311745994155289567817629696
-      diaryNote: (path) => scry({ app: 'diary', path }),
+      diaryNote: (path): Promise<DiaryNote> => scry({ app: 'diary', path }),
     },
     do: {
       create: (json) => pmPoke({ create: json }),
@@ -145,16 +161,14 @@ export const api = {
           mark: 'social-graph-track',
           json: { start: json },
         }),
-      subscribe: (keyObj) => subscribeToItem(keyObj),
-      subscribeToMany: (keys) =>
+      subscribe: (keyObj: ItemKey) => subscribeToItem(keyObj),
+      subscribeToMany: (keys: ItemKey[]) =>
         pmPoke({ 'sub-to-many': { 'key-list': keys } }),
       subscribeToBlog: () => pmPoke({ 'blog-sub': null }),
       requestPayment: (seller, desk) =>
         pmPoke({ 'payment-request': { seller, desk } }),
       confirmPayment: (seller, txHash) =>
         pmPoke({ 'payment-tx-hash': { seller, 'tx-hash': txHash } }),
-      setRpcEndpoint: (endpoint) =>
-        pmPoke({ 'set-rpc-endpoint': { 'rpc-endpoint': endpoint } }),
       setReceivingAddress: (addr) =>
         pmPoke({ 'set-receiving-address': { 'receiving-address': addr } }),
       tipRequest: (keyObj) =>
@@ -293,7 +307,7 @@ export const useSubscription = (app, path, onEvent) => {
     err: console.error,
     quit: console.error,
   });
-  return () => urbit.unsubscribe(sub);
+  return async () => urbit.unsubscribe(await sub);
 };
 
 export const usePortalStoreSubscription = (onEvent) =>
