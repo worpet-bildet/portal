@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@assets/*": ["./src/assets/*"],
+      "@root/*": ["./src/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@components": ["./src/components/index.ts"],
+      "@fragments/*": ["./src/fragments/*"],
+      "$types/*": ["./src/types/*"],
+    },
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}

@@ -248,7 +248,7 @@ export const formatColor = (c) => {
 export const sendTransaction = async (to, value, data, chainId) => {
   let signer, provider;
   if (window.ethereum == null) {
-    provider = ethers.getDefaultProvider();
+    provider = ethers.getDefaultProvider(chainId);
   } else {
     provider = new ethers.BrowserProvider(window.ethereum);
     signer = await provider.getSigner();
@@ -385,7 +385,7 @@ export const isHappeningSoon = (events) => {
       hour: 'numeric',
       minute: 'numeric',
       timeZoneName: 'short',
-    };
+    } as const;
     const formattedStart = date.toLocaleString('en-US', options);
 
     return { ...event, formattedStart };
