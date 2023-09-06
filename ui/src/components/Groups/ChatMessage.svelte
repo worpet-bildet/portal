@@ -5,6 +5,7 @@
   import { Sigil } from '@components';
 
   import Inline from './Inline.svelte';
+  import Block from './Block.svelte';
 
   export let memo;
   export let group;
@@ -24,7 +25,7 @@
   <div class="col-span-11 flex flex-col">
     <div class="flex gap-1 text-grey">
       <a use:link href={`#/~${author}`} class="text-sm hover:underline"
-        >~{author}</a
+        >{author}</a
       >{#if group}<span>in</span><a
           use:link
           href={`/group/${group}/`}
@@ -35,6 +36,11 @@
       {#if content?.story?.inline}
         {#each content.story.inline as inline}
           <Inline {inline} />
+        {/each}
+      {/if}
+      {#if content?.story?.block}
+        {#each content.story.block as block}
+          <Block {block} />
         {/each}
       {/if}
     </div>
