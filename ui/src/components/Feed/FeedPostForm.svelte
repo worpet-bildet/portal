@@ -1,6 +1,6 @@
 <script lang="ts">
   import { ItemKey } from '$types/portal/item';
-  import { ChatMessage } from '$types/landscape/chat';
+  import { ChatWrit } from '$types/landscape/chat';
   import { DiaryNote } from '$types/landscape/diary';
   import { HeapCurio } from '$types/landscape/heap';
 
@@ -139,11 +139,11 @@
     uploadedImageUrl = '';
     error = '';
     chatDetails = undefined;
-    chatData = undefined;
+    chatWrit = undefined;
     curioDetails = undefined;
-    curioData = undefined;
+    heapCurio = undefined;
     noteDetails = undefined;
-    noteData = undefined;
+    diaryNote = undefined;
     shortcodeToPreview = undefined;
     shortcodeItems = undefined;
     rating = undefined;
@@ -196,26 +196,26 @@
 
   $: linkToPreview = getAnyLink(content || '');
 
-  let chatData: ChatMessage;
+  let chatWrit: ChatWrit;
   let chatDetails;
-  const getChatData = async (chatPath) => {
-    chatData = await api.portal.get.chatMessage(formatChatPath(chatPath));
+  const getChatWrit = async (chatPath) => {
+    chatWrit = await api.portal.get.chatWrit(formatChatPath(chatPath));
     chatDetails = getChatDetails(chatPath);
     content = content.replace(chatPath, '');
   };
 
-  let curioData: HeapCurio;
+  let heapCurio: HeapCurio;
   let curioDetails;
-  const getCurioData = async (curioPath) => {
-    curioData = await api.portal.get.heapCurio(formatCurioPath(curioPath));
+  const getheapCurio = async (curioPath) => {
+    heapCurio = await api.portal.get.heapCurio(formatCurioPath(curioPath));
     curioDetails = getCurioDetails(curioPath);
     content = content.replace(curioPath, '');
   };
 
-  let noteData: DiaryNote;
+  let diaryNote: DiaryNote;
   let noteDetails;
-  const getNoteData = async (notePath) => {
-    noteData = await api.portal.get.diaryNote(formatNotePath(notePath));
+  const getdiaryNote = async (notePath) => {
+    diaryNote = await api.portal.get.diaryNote(formatNotePath(notePath));
     noteDetails = getNoteDetails(notePath);
     content = content.replace(notePath, '');
   };
@@ -233,11 +233,11 @@
   };
 
   $: chatToPreview = getAnyChatMessage(content || '');
-  $: if (chatToPreview) getChatData(chatToPreview);
+  $: if (chatToPreview) getChatWrit(chatToPreview);
   $: curioToPreview = getAnyCurio(content || '');
-  $: if (curioToPreview) getCurioData(curioToPreview);
+  $: if (curioToPreview) getheapCurio(curioToPreview);
   $: noteToPreview = getAnyNote(content || '');
-  $: if (noteToPreview) getNoteData(noteToPreview);
+  $: if (noteToPreview) getdiaryNote(noteToPreview);
   $: shortcodeToPreview = getAnyShortcode(content || '');
   $: if (shortcodeToPreview) getShortcodeItem(shortcodeToPreview);
 </script>
@@ -286,14 +286,14 @@
     {#if linkToPreview}
       <LinkPreview url={linkToPreview} />
     {/if}
-    {#if chatData}
-      <GroupsChatMessage {...chatData} />
+    {#if chatWrit}
+      <GroupsChatMessage {...chatWrit.memo} />
     {/if}
-    {#if curioData}
-      <GroupsHeapCurio {...curioData} />
+    {#if heapCurio}
+      <GroupsHeapCurio {heapCurio} />
     {/if}
-    {#if noteData}
-      <GroupsDiaryNote {...noteData} />
+    {#if diaryNote}
+      <GroupsDiaryNote {diaryNote} />
     {/if}
   </div>
   <div class="col-span-12 col-start-2 flex justify-between">

@@ -4,7 +4,7 @@ import { ItemKey, Item } from '$types/portal/item';
 import { SocialGraph } from '$types/portal/graph';
 import { ContactRolodex } from '$types/landscape/contact';
 import { Groups } from '$types/landscape/groups';
-import { ChatMessage } from '$types/landscape/chat';
+import { ChatWrit } from '$types/landscape/chat';
 import { DiaryNote } from '$types/landscape/diary';
 import { HeapCurio } from '$types/landscape/heap';
 
@@ -143,7 +143,7 @@ export const api = {
         scry({ app: 'portal-manager', path: '/processing-payments' }),
       processedPayments: () =>
         scry({ app: 'portal-manager', path: '/processed-payments' }),
-      chatMessage: (path): Promise<ChatMessage> =>
+      chatWrit: (path): Promise<ChatWrit> =>
         scry({ app: 'portal-manager', path }),
       //  link from groups we are scrying for:
       // /heap/~toptyr-bilder/links/curios/curio/id/170.141.184.506.270.899.144.208.463.636.562.182.144
@@ -188,7 +188,7 @@ export const api = {
       //  here use 'create' in the following way:
       //  bespoke should specify channel and id, and other args should be empty
       //  everything else can be done as usual with create
-      //  this example creates the message which is scried for in the `chatMessage` scry
+      //  this example creates the message which is scried for in the `chatWrit` scry
       createGroupsChatMsg: (host, channel, poster, id, time) =>
         pmPoke({
           create: {
