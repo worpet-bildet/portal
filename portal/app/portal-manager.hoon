@@ -172,7 +172,7 @@
         %aggregate-chats
       :_  this  :_  ~
       :*  %pass  /aggregate-chats  %arvo  %k  %fard  q.byk.bowl  %aggregate-chats  %noun
-          !>  
+          !>  ~
       ==
       :: - run thread
       ::   - scry all groups chats you are in for last x msgs
@@ -507,6 +507,14 @@
   |=  [=wire sign=sign-arvo]
   ^-  (quip card:agent:gall _this)
   ?+  wire  `this
+      [%aggregate-chats ~]
+    ?>  ?=([%khan %arow *] sign)
+    ?.  ?=(%.y -.p.sign)
+      ~&  >>  "fetching data failed"
+      `this
+    ~&  >  "fetching data succeeded"
+    `this
+    ::
       [%get-tx ~]
     ?>  ?=([%khan %arow *] sign)
     ?.  ?=(%.y -.p.sign)
