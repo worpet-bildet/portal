@@ -68,8 +68,6 @@
         return globalFeed().findIndex((b) => b.time === a.time) === idx;
       });
 
-    console.log({ globalFeed: globalFeed(), feed });
-
     // Get the latest post, if it was more than six hours ago, send another sub
     if (
       feed[0] &&
