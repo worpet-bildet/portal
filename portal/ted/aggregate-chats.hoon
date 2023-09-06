@@ -1,4 +1,4 @@
-/-  spider, ch=chat, gr=groups, w=writ, portal-data
+/-  spider, ch=chat, gr=groups, w=writ, portal-data, *portal-action
 /+  *strandio, mip, io=agentio
 =,  strand=strand:spider
 ^-  thread:spider
@@ -81,8 +81,10 @@
     %-  ~(poke pass:io /make-col) 
     :-  [our %portal-manager] 
     :-  %portal-action
-    !>  :*  %create  `our  ~  `'groups-msgs'  ~
-            [%collection '' '' '' ~]
+    !>  
+    ^-  action
+    :*  %create  `our  ~  `'groups-msgs'  ~
+            `[%collection '' '' '' ~]
             ~  ~  ~
         ==
   ::
@@ -91,7 +93,9 @@
     %-  ~(poke pass:io /make-col) 
     :-  [our %portal-manager] 
     :-  %portal-action
-    !>  :*  %edit  [%collection our '' 'groups-msgs']  ~  
+    !>  
+    ^-  action
+    :*  %edit  [%collection our '' 'groups-msgs']  ~  
             `[%collection ~ ~ ~ `*key-list:portal-data]
         ==
   ::
@@ -103,7 +107,7 @@
     |=  [p=[=flag:ch =time =writ:w] q=[cards=(list card:agent:gall) inc=@dr]]
     :-  p
     %=  q
-      cards  (snoc cards.q (chat-msg-card (add now inc.q) p))
+      cards  (snoc cards.q (chat-msg-card (scot %da (add now inc.q)) p))
       inc  (add inc.q ~s0..0001)
     ==
   ::
@@ -113,8 +117,10 @@
     %-  ~(poke pass:io /make-chat-msg) 
     :-  [our %portal-manager] 
     :-  %portal-action
-    !>  :*  %create  `our  ~  `item-time  ~
-            [%groups-chat-msg *flag:ch flag id:writ content:writ 0 0]
+    !>  
+    ^-  action
+    :*  %create  `our  ~  `item-time  ~
+            `[%groups-chat-msg *flag:ch flag id:writ content:writ 0 0]
             [%collection our '' 'groups-msgs']^~
             ~  ~
         ==
