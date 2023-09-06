@@ -236,7 +236,7 @@
         >
           <div>
             {@html linkifyMentions(
-              linkifyHtml(blurb.replace(/\n\n/g, '\n'), {
+              linkifyHtml(blurb, {
                 attributes: {
                   class: 'text-link dark:text-link-dark',
                   target: '_blank',
