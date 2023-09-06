@@ -1,6 +1,17 @@
-import { Groups } from '$types/landscape/groups';
+import {
+  ItemKey,
+  Item,
+  ItemCollection,
+  FeedItem,
+  ItemStruc,
+} from '$types/portal/item';
+import { HarkNotificationDestination } from '$types/portal/notification';
+import { SocialGraph } from '$types/portal/graph';
+import { DocketApps } from '$types/apps/app';
+import { OutgoingPals } from '$types/apps/pals';
+import { Contact, ContactRolodex } from '$types/landscape/contact';
+import { Group, Groups } from '$types/landscape/groups';
 import { State } from '$types/state';
-import { ItemKey, Item, FeedItem } from '$types/portal/item';
 
 import { uniqBy } from 'lodash';
 import { get, writable } from 'svelte/store';
@@ -11,16 +22,16 @@ import { api } from '@root/api';
 import { scoreItems } from '@root/ai';
 import { fromUrbitTime } from '@root/util';
 
-// Specify defaultState first to overwrite it with anything in localStorage
 export const state = writable<State>({ ...load() });
 
-export const items = () => get(state).items || {};
-export const social = () => get(state).social || {};
-export const groups = () => get(state).groups || {};
-export const apps = () => get(state).apps || {};
-export const contacts = () => get(state).contacts || {};
+export const items = (): ItemCollection => get(state).items || {};
+export const social = (): SocialGraph => get(state).social || {};
+export const groups = (): Groups => get(state).groups || {};
+export const apps = (): DocketApps => get(state).apps || {};
+export const contacts = (): ContactRolodex => get(state).contacts || {};
+export const pals = (): OutgoingPals => get(state).pals || {};
 
-export const updateNotificationsLastChecked = () => {
+export const updateNotificationsLastChecked = (): void => {
   state.update((s) => {
     let currentTime = new Date();
     s.notificationsLastChecked = currentTime.toString();
@@ -29,7 +40,7 @@ export const updateNotificationsLastChecked = () => {
   });
 };
 
-export const toggleMuteNotifications = () => {
+export const toggleMuteNotifications = (): void => {
   state.update((s) => {
     s.muteNotifications = !s.muteNotifications;
     save({ muteNotifications: s.muteNotifications });
@@ -37,7 +48,7 @@ export const toggleMuteNotifications = () => {
   });
 };
 
-export const toggleDarkmode = () => {
+export const toggleDarkmode = (): void => {
   state.update((s) => {
     s.darkmode = !s.darkmode;
     save({ darkmode: s.darkmode });
@@ -45,11 +56,12 @@ export const toggleDarkmode = () => {
   });
 };
 
-export const reScoreItems = async (
+// In theory this could return the scored version of the feed so that we can do
+// the filtering inside the ai file -- this whole system is a bit of a mess
+export const reScoreItems = (
   positivePrompt: string,
-  negativePrompt: string,
-  sortedPals
-) => {
+  negativePrompt: string
+): Promise<void> => {
   return new Promise<void>((resolve) => {
     api.portal.get.items().then(({ items }) => {
       const feed = (getGlobalFeed() || []).slice(0, 200);
@@ -57,7 +69,7 @@ export const reScoreItems = async (
       items = items.filter((i) =>
         feed.find((f) => keyStrFromObj(f.key) === keyStrFromObj(i.keyObj))
       );
-      scoreItems(items, positivePrompt, negativePrompt, sortedPals).then(
+      scoreItems(items, positivePrompt, negativePrompt, pals()).then(
         (items) => {
           state.update((s) => {
             items.forEach((i) => {
@@ -72,10 +84,10 @@ export const reScoreItems = async (
   });
 };
 
-export const refreshPortalItems = () => {
+export const refreshPortalItems = (): void => {
   api.portal.get.items().then(({ items }) => {
     state.update((s) => {
-      if (!s.items) s.items = {};
+      if (!s.items) s.items = {} as ItemCollection;
       items.forEach((i) => {
         s.items[i.keyStr] = i;
       });
@@ -85,33 +97,33 @@ export const refreshPortalItems = () => {
   });
 };
 
-export const refreshPortalAppDevs = () => {
+export const refreshPortalAppDevs = (): void => {
   api.portal.get.appDevs().then((appDevs) => {
     state.update((s) => ({ ...s, appDevs: appDevs?.['portal-devs'] }));
   });
 };
 
-export const refreshSocialItems = () => {
+export const refreshSocialItems = (): void => {
   api.portal.get.socialItems().then((items) => {
     state.update((s) => ({ ...s, social: items.app }));
   });
 };
 
-export const refreshBoughtApps = () => {
+export const refreshBoughtApps = (): void => {
   api.portal.get.boughtApps().then((items) => {
     state.update((s) => ({ ...s, ...items }));
   });
 };
 
-export const refreshContacts = () => {
+export const refreshContacts = (): void => {
   api.urbit.get.contacts().then((contacts) => {
     state.update((s) => ({ ...s, contacts: contacts }));
   });
 };
 
-export const refreshGroups = () => {
+export const refreshGroups = (): void => {
   api.urbit.get.joinedGroups().then((groups: Groups) => {
-    let _groups = {};
+    let _groups = {} as Groups;
     state.update((s) => {
       Object.entries(groups || {}).forEach(([key, data]) => {
         let {
@@ -131,10 +143,10 @@ export const refreshGroups = () => {
   });
 };
 
-export const refreshApps = () => {
+export const refreshApps = (): void => {
   const EXCLUDE_APPS = [
     'base',
-    'garden',
+    'garden', // TODO: remove in 412
     'groups',
     'kids',
     'landscape',
@@ -154,7 +166,7 @@ export const refreshApps = () => {
   });
 };
 
-export const refreshPals = async () => {
+export const refreshPals = (): void => {
   api.pals.get
     .all()
     .then(({ outgoing }) => {
@@ -165,30 +177,32 @@ export const refreshPals = async () => {
     });
 };
 
-export const refreshRadioChannels = () => {
+export const refreshRadioChannels = (): void => {
   api.radio.do.requestChannels();
 };
 
-export const refreshBlogs = () => {
+export const refreshBlogs = (): void => {
   api.blog.get.all().then((blogs) => {
     state.update((s) => ({ ...s, blogs }));
   });
 };
 
-export const setReferredTo = (key) => {
+export const setReferredTo = (key: HarkNotificationDestination): void => {
   state.update((s) => ({ ...s, referredTo: key }));
 };
 
-export const itemInState = async (item) => {
-  // this is super, super dumb.
+export const itemInState = (item: ItemKey): Promise<void> => {
   return new Promise((resolve, reject) => {
     const unsubscribe = state.subscribe((s) => {
-      if (s[keyStrFromObj(item)]) {
+      if (s.items[keyStrFromObj(item)]) {
         unsubscribe();
         clearTimeout(rejectTimeout);
-        resolve(true);
+        resolve();
       }
     });
+    // the timeout here could trigger if we've lost the subscription to the
+    // backend, which happens from time to time. it's not ideal if someone has
+    // crafted a long post, because it looks like their post gets nuked
     const rejectTimeout = setTimeout(() => {
       unsubscribe();
       reject();
@@ -196,58 +210,62 @@ export const itemInState = async (item) => {
   });
 };
 
-export const getCurator = (patp) => {
+// TODO: add a type for this return
+export const getCurator = (patp: string) => {
   return {
     keyObj: { ship: patp, struc: 'ship', cord: '', time: '' },
     bespoke: { ...contacts()[patp] },
   };
 };
 
-export const getProfile = (patp) => {
+export const getProfile = (patp: string): Contact => {
   return contacts()[patp];
 };
 
-export const getCuratorFeed = (patp): FeedItem[] => {
-  return items()[feedKey(patp)]?.bespoke?.feed?.sort(
-    (a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time)
+export const sortFeedItemsByTime = (items: FeedItem[]) => {
+  return items?.sort(
+    (a: FeedItem, b: FeedItem) => fromUrbitTime(b.time) - fromUrbitTime(a.time)
   );
+};
+
+export const getCuratorFeed = (patp: string): FeedItem[] => {
+  return sortFeedItemsByTime(items()[feedKey(patp)]?.bespoke?.feed);
 };
 
 export const getGlobalFeed = (): FeedItem[] => {
-  return items()[globalFeedKey(config.indexer)]?.bespoke?.feed?.sort(
-    (a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time)
+  return sortFeedItemsByTime(
+    items()[globalFeedKey(config.indexer)]?.bespoke?.feed
   );
 };
 
-export const getCuratorCollections = (patp) => {
+export const getCuratorCollections = (patp: string): ItemKey[] => {
   return items()
     [mainCollectionKey(patp)]?.bespoke?.['key-list']?.filter((k) => {
       return k.struc === 'collection';
     })
-    ?.filter((k) => k.time !== '~2000.1.1')
-    ?.filter((k) => k.time !== 'index')
-    ?.filter((k) => k.time !== 'all');
+    ?.filter((k: ItemKey) => k.time !== '~2000.1.1')
+    ?.filter((k: ItemKey) => k.time !== 'index')
+    ?.filter((k: ItemKey) => k.time !== 'all');
 };
 
-export const getCuratorAllCollectionItems = (patp) => {
+export const getCuratorAllCollectionItems = (patp: string): ItemKey[] => {
   return getAllCollectionsAndItems(allCollectionKey(patp));
 };
 
-export const getCuratorFeaturedCollection = (patp) => {
-  return getCuratorCollections(patp).slice(0, 1);
-};
-
-export const getCuratorItemsByStruc = (patp, struc) => {
+export const getCuratorItemsByStruc = (
+  patp: string,
+  struc: ItemStruc
+): Item[] => {
   return Object.keys(items())
     .filter((k) => k.includes(`${struc}/${patp}`))
     .map((k) => items()[k]);
 };
 
-export const getGroup = (groupKey) => {
+export const getGroup = (groupKey: string): Item => {
   return items()[`/group/${groupKey}/`];
 };
 
-export const getApp = (appKey) => {
+export const getApp = (appKey: string): Item => {
   return items()[`/app/${appKey}/`];
 };
 
@@ -256,7 +274,9 @@ export const getItem = (listKey: string | ItemKey): Item => {
   return items()[listKey];
 };
 
-export const getCollectedItemLeaderboard = (excludePatp: string) => {
+export const getCollectedItemLeaderboard = (
+  excludePatp: string
+): [string, number][] => {
   return Object.entries<number>(
     Object.values(items())
       .filter(
@@ -286,7 +306,10 @@ export const getCollectedItemLeaderboard = (excludePatp: string) => {
   ).sort((a, b) => Number(b[1]) - Number(a[1]));
 };
 
-export const getMoreFromThisShip = (patp: string, cord: string = '') => {
+export const getMoreFromThisShip = (
+  patp: string,
+  cord: string = ''
+): [string, number][] => {
   return Object.entries<number>(
     Object.values(items())
       .filter(
@@ -298,7 +321,7 @@ export const getMoreFromThisShip = (patp: string, cord: string = '') => {
       .reduce((a, b) => {
         b?.bespoke?.['key-list']
           .filter(
-            (k) =>
+            (k: ItemKey) =>
               !['collection', 'ship'].includes(k?.struc) &&
               k?.ship === patp &&
               k?.cord !== cord &&
@@ -308,7 +331,7 @@ export const getMoreFromThisShip = (patp: string, cord: string = '') => {
                 (k?.struc === 'app' || k?.struc === 'group')
               )
           )
-          .forEach((k) => {
+          .forEach((k: ItemKey) => {
             if (!a[keyStrFromObj(k)]) return (a[keyStrFromObj(k)] = 1);
             a[keyStrFromObj(k)]++;
           });
@@ -317,7 +340,7 @@ export const getMoreFromThisShip = (patp: string, cord: string = '') => {
   ).sort((a, b) => Number(b[1]) - Number(a[1]));
 };
 
-export const getAllCollectionsAndItems = (collectionKey) => {
+export const getAllCollectionsAndItems = (collectionKey: string): ItemKey[] => {
   return items()[collectionKey]?.bespoke?.['key-list'].concat(
     Object.values(
       Object.fromEntries(
@@ -330,19 +353,19 @@ export const getAllCollectionsAndItems = (collectionKey) => {
   );
 };
 
-export const getCollectionItems = (collectionKey) => {
+export const getCollectionItems = (collectionKey: string): ItemKey[] => {
   return items()[collectionKey]?.bespoke?.['key-list'];
 };
 
-export const getJoinedGroupDetails = (groupKey) => {
+export const getJoinedGroupDetails = (groupKey: string): Group => {
   return groups()[groupKey];
 };
 
-export const getReplies = (ship, key) => {
+export const getReplies = (ship: string, key: ItemKey): ItemKey[] => {
   return social()[`/${ship}/reply-from`]?.[keyStrFromObj(key)];
 };
 
-export const getRepliesByTo = (ship, key) => {
+export const getRepliesByTo = (ship: string, key: ItemKey): ItemKey[] => {
   return Object.entries(social()[`/${ship}/reply-to`] || {})
     .filter(([_, item]) =>
       item.find((i) => keyStrFromObj(i) === keyStrFromObj(key))
@@ -350,15 +373,15 @@ export const getRepliesByTo = (ship, key) => {
     .map(([replyKey, _]) => keyStrToObj(replyKey));
 };
 
-export const getLikes = (ship, key) => {
+export const getLikes = (ship: string, key: ItemKey): ItemKey[] => {
   return social()[`/${ship}/like-from`]?.[keyStrFromObj(key)];
 };
 
-export const getReviews = (ship, key) => {
+export const getReviews = (ship: string, key: ItemKey): ItemKey[] => {
   return social()[`/${ship}/review-from`]?.[keyStrFromObj(key)];
 };
 
-export const getReviewsByTo = (ship, key) => {
+export const getReviewsByTo = (ship: string, key: ItemKey): ItemKey[] => {
   return Object.entries(social()[`/${ship}/review-to`] || {})
     .filter(([_, item]) =>
       item.find((i) => keyStrFromObj(i) === keyStrFromObj(key))
@@ -366,7 +389,7 @@ export const getReviewsByTo = (ship, key) => {
     .map(([reviewKey, _]) => keyStrToObj(reviewKey));
 };
 
-export const resetTip = () => {
+export const resetTip = (): void => {
   state.update((s) => ({
     ...s,
     tip: null,
@@ -376,7 +399,7 @@ export const resetTip = () => {
 
 // go through the social items, sort the replies by time, and ensure that they
 // are alongside a reference to the original item
-export const getNotifications = (ship) => {
+export const getNotifications = (ship: string): [ItemKey, ItemKey][] => {
   let q = [];
   let feed = getGlobalFeed() || [];
   Object.entries(social()[`/${ship}/reply-from`] || {})?.forEach(
@@ -399,11 +422,15 @@ export const getNotifications = (ship) => {
   return q.sort((a, b) => fromUrbitTime(b[0].time) - fromUrbitTime(a[0].time));
 };
 
-export const handleSubscriptionEvent = (event, type) => {
+// TODO: define SubscriptionEvent type
+export const handleSubscriptionEvent = (event, type: string) => {
   console.log({ event, type });
   switch (type) {
     case 'portal-update':
-      state.update((s) => ({ ...s, [event.keyStr]: event }));
+      state.update((s) => ({
+        ...s,
+        items: { ...s.items, [event.keyStr]: event },
+      }));
       break;
     case 'social-graph-result':
       state.update((s) => {
@@ -471,40 +498,40 @@ export const handleSubscriptionEvent = (event, type) => {
   }
 };
 
-export const groupKeyToItemKey = (groupKey) => {
+export const groupKeyToItemKey = (groupKey: string): string => {
   const parts = groupKey.split('/');
   return `/group/${parts[0]}/${parts[1]}/`;
 };
 
-export const deskKeyToItemKey = (deskKey) => {
+export const deskKeyToItemKey = (deskKey: string): string => {
   const parts = deskKey.split('/');
   return `/app/${parts[0]}/${parts[1]}/`;
 };
 
-export const contactKeyToItemKey = (contactKey) => {
+export const contactKeyToItemKey = (contactKey: string): string => {
   return `/${contactKey}/`;
 };
 
-export const collectionKeyToItemKey = (collectionKey) => {
+export const collectionKeyToItemKey = (collectionKey: string): string => {
   return `${collectionKey}`;
 };
 
-export const keyStrFromObj = ({ struc, ship, cord, time }: ItemKey) => {
+export const keyStrFromObj = ({ struc, ship, cord, time }: ItemKey): string => {
   return `/${struc}/${ship}/${cord}/${time}`;
 };
 
-export const keyStrToObj = (str): ItemKey => {
+export const keyStrToObj = (str: string): ItemKey => {
   const parts = str.split('/');
   let time = parts[1] === 'blog' ? parts.slice(4).join('/') : parts[4];
   return {
-    struc: parts[1],
+    struc: parts[1] as ItemStruc,
     ship: parts[2],
     cord: parts[3],
     time: time,
   };
 };
 
-export const contactStrToObj = (str): ItemKey => {
+export const contactStrToObj = (str: string): ItemKey => {
   const parts = str.split('/');
   return {
     struc: 'ship',
@@ -514,12 +541,13 @@ export const contactStrToObj = (str): ItemKey => {
   };
 };
 
-const mainCollectionKey = (patp) => `/collection/${patp}//~2000.1.1`;
-const allCollectionKey = (patp) => `/collection/${patp}//all`;
-const feedKey = (patp) => `/feed/${patp}//~2000.1.1`;
-const globalFeedKey = (indexer) => `/feed/${indexer}//global`;
+const mainCollectionKey = (patp: string): string =>
+  `/collection/${patp}//~2000.1.1`;
+const allCollectionKey = (patp: string): string => `/collection/${patp}//all`;
+const feedKey = (patp: string): string => `/feed/${patp}//~2000.1.1`;
+const globalFeedKey = (indexer: string): string => `/feed/${indexer}//global`;
 
-export const refreshAll = () => {
+export const refreshAll = (): void => {
   refreshPortalItems();
   refreshPortalAppDevs();
   refreshSocialItems();
