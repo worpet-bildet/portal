@@ -70,6 +70,7 @@
       patp={host}
       key={group.keyObj}
       type="group"
+      isInstalledOrJoined={joinedDetails}
     >
       <div
         class="col-span-12 md:col-span-9 bg-panels dark:bg-darkgrey border p-6 rounded-lg"

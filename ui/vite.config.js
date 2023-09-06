@@ -33,7 +33,7 @@ export default ({ mode }) => {
         '@assets': path.resolve('./src/assets'),
         '@root': path.resolve('./src'),
         '@pages': path.resolve('./pages'),
-        '@components': path.resolve('./src/components'),
+        '@components': path.resolve('./src/components/index.ts'),
         '@fragments': path.resolve('./src/fragments'),
         $types: path.resolve('./src/types'),
       },

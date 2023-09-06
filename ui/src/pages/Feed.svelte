@@ -1,4 +1,6 @@
-<script>
+<script lang="ts">
+  import { FeedItem } from '$types/portal/item';
+
   import { push } from 'svelte-spa-router';
   import { slide } from 'svelte/transition';
   import config from '@root/config';
@@ -29,13 +31,17 @@
     LoadingIcon,
     VerticalExpandIcon,
     VerticalCollapseIcon,
-  } from '@fragments';
-  import { fromUrbitTime, isValidPatp, isHappeningSoon } from '@root/util';
+  } from '@fragments/index';
+  import {
+    fromUrbitTime,
+    isValidPatp,
+    isHappeningSoon,
+  } from '@root/util';
 
-  let sortedPals = [];
-  let sortedRecommendations = [];
-  let patpItemCount = {};
-  let feed;
+  let sortedPals: string[] = [];
+  let sortedRecommendations: [string, number][] = [];
+  let patpItemCount: { [key: string]: number } = {};
+  let feed: FeedItem[] = [];
 
   const subToGlobalFeed = () => {
     return api.portal.do.subscribe({
@@ -46,11 +52,11 @@
     });
   };
 
-  let positiveFeedPrompt,
-    negativeFeedPrompt,
-    loading,
-    canResetFeed,
-    positiveFeedPromptForm;
+  let positiveFeedPrompt: string,
+    negativeFeedPrompt: string,
+    loading: boolean,
+    canResetFeed: boolean,
+    positiveFeedPromptForm: HTMLInputElement;
 
   function handleAISearchKeydown(event) {
     if (event.key === 'Enter') {
@@ -72,16 +78,21 @@
     }
   }
 
+  const globalFeed = (): FeedItem[] =>
+    getGlobalFeed().concat(getCuratorFeed(me));
+
   const handlePromptFeed = async () => {
     loading = true;
-    await reScoreItems(positiveFeedPrompt, negativeFeedPrompt);
+    await reScoreItems(positiveFeedPrompt, negativeFeedPrompt, sortedPals);
     feed = feed.sort((a, b) => getItem(b.key)?.score - getItem(a.key)?.score);
     canResetFeed = true;
     loading = false;
   };
 
   const handleResetFeed = () => {
-    feed = feed.sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
+    feed = globalFeed().sort(
+      (a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time)
+    );
     positiveFeedPrompt = '';
     negativeFeedPrompt = '';
     canResetFeed = false;
@@ -93,14 +104,16 @@
     if (s.isLoaded && !getGlobalFeed()) {
       return subToGlobalFeed();
     }
-    let mergedFeed = getGlobalFeed().concat(getCuratorFeed(me));
-    feed = mergedFeed
+
+    feed = globalFeed()
       .filter((a) => !!a)
       .filter((a, idx) => {
-        return mergedFeed.findIndex((b) => b.time === a.time) === idx;
+        return globalFeed().findIndex((b) => b.time === a.time) === idx;
       });
     if (canResetFeed) {
-      feed = feed.sort((a, b) => getItem(b.key)?.score - getItem(a.key)?.score);
+      feed = feed
+        .filter((i) => !!getItem(i.key)?.score)
+        .sort((a, b) => getItem(b.key)?.score - getItem(a.key)?.score);
     } else {
       feed = feed.sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
     }
@@ -137,7 +150,7 @@
   });
 
   const handlePost = ({ detail: { content, uploadedImageUrl, ref, time } }) => {
-    let post = { time };
+    let post = { time } as any;
     if (ref) {
       // Here we need to create the retweet post instead of the type "other"
       post = {
@@ -307,6 +320,14 @@
         </div>
         <div class="flex flex-col overflow-x-scroll scrollbar-hide">
           <div class="flex gap-4">
+            <button
+              class="rounded-lg bg-panels-hover text-grey hover:bg-translucent-purple dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4 whitespace-nowrap"
+              on:click={() => {
+                positiveFeedPrompt = 'from my pals';
+                negativeFeedPrompt = '';
+                handlePromptFeed();
+              }}>Your Pals</button
+            >
             <button
               class="rounded-lg bg-panels-hover text-grey hover:bg-translucent-purple dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
               on:click={() => {
@@ -511,7 +532,7 @@
     {#if sortedRecommendations.length > 0}
       <SidebarGroup>
         <div class="text-xl font-bold mx-2">Most recommended</div>
-        {#each sortedRecommendations as [recommendation, count]}
+        {#each sortedRecommendations as [recommendation]}
           <ItemPreview key={keyStrToObj(recommendation)} small />
         {/each}
         <button
@@ -520,7 +541,6 @@
         >
           Show more
         </button>
-
       </SidebarGroup>
     {/if}
     {#if $state.radioStations}

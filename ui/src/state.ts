@@ -1,6 +1,6 @@
 import { Groups } from '$types/landscape/groups';
 import { State } from '$types/state';
-import { ItemKey } from '$types/portal/item';
+import { ItemKey, Item, FeedItem } from '$types/portal/item';
 
 import { uniqBy } from 'lodash';
 import { get, writable } from 'svelte/store';
@@ -45,7 +45,11 @@ export const toggleDarkmode = () => {
   });
 };
 
-export const reScoreItems = async (positivePrompt, negativePrompt) => {
+export const reScoreItems = async (
+  positivePrompt: string,
+  negativePrompt: string,
+  sortedPals
+) => {
   return new Promise<void>((resolve) => {
     api.portal.get.items().then(({ items }) => {
       const feed = (getGlobalFeed() || []).slice(0, 200);
@@ -53,15 +57,17 @@ export const reScoreItems = async (positivePrompt, negativePrompt) => {
       items = items.filter((i) =>
         feed.find((f) => keyStrFromObj(f.key) === keyStrFromObj(i.keyObj))
       );
-      scoreItems(items, positivePrompt, negativePrompt).then((items) => {
-        state.update((s) => {
-          items.forEach((i) => {
-            s.items[i.keyStr] = i;
+      scoreItems(items, positivePrompt, negativePrompt, sortedPals).then(
+        (items) => {
+          state.update((s) => {
+            items.forEach((i) => {
+              s.items[i.keyStr] = i;
+            });
+            return s;
           });
-          return s;
-        });
-        resolve();
-      });
+          resolve();
+        }
+      );
     });
   });
 };
@@ -201,13 +207,13 @@ export const getProfile = (patp) => {
   return contacts()[patp];
 };
 
-export const getCuratorFeed = (patp) => {
+export const getCuratorFeed = (patp): FeedItem[] => {
   return items()[feedKey(patp)]?.bespoke?.feed?.sort(
     (a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time)
   );
 };
 
-export const getGlobalFeed = () => {
+export const getGlobalFeed = (): FeedItem[] => {
   return items()[globalFeedKey(config.indexer)]?.bespoke?.feed?.sort(
     (a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time)
   );
@@ -245,13 +251,13 @@ export const getApp = (appKey) => {
   return items()[`/app/${appKey}/`];
 };
 
-export const getItem = (listKey) => {
+export const getItem = (listKey: string | ItemKey): Item => {
   if (typeof listKey === 'object') return items()[keyStrFromObj(listKey)];
   return items()[listKey];
 };
 
-export const getCollectedItemLeaderboard = (excludePatp) => {
-  return Object.entries(
+export const getCollectedItemLeaderboard = (excludePatp: string) => {
+  return Object.entries<number>(
     Object.values(items())
       .filter(
         (i) =>
@@ -263,7 +269,7 @@ export const getCollectedItemLeaderboard = (excludePatp) => {
       .reduce((a, b) => {
         b?.bespoke?.['key-list']
           .filter(
-            (k) =>
+            (k: ItemKey) =>
               k?.struc !== 'collection' &&
               !(
                 k?.cord === 'portal' &&
@@ -271,7 +277,7 @@ export const getCollectedItemLeaderboard = (excludePatp) => {
                 (k?.struc === 'app' || k?.struc === 'group')
               )
           )
-          .forEach((k) => {
+          .forEach((k: ItemKey) => {
             if (!a[keyStrFromObj(k)]) return (a[keyStrFromObj(k)] = 1);
             a[keyStrFromObj(k)]++;
           });
@@ -280,8 +286,8 @@ export const getCollectedItemLeaderboard = (excludePatp) => {
   ).sort((a, b) => Number(b[1]) - Number(a[1]));
 };
 
-export const getMoreFromThisShip = (patp, cord = '') => {
-  return Object.entries(
+export const getMoreFromThisShip = (patp: string, cord: string = '') => {
+  return Object.entries<number>(
     Object.values(items())
       .filter(
         (k) =>
