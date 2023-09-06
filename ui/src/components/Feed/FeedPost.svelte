@@ -201,9 +201,7 @@
     bespoke: { nickname },
   } = getCurator(ship)}
   {@const blurbLink = getAnyLink(blurb)}
-  <div
-    class="border-b border-x px-5 pt-5 overflow-hidden"
-  >
+  <div class="border-b border-x px-5 pt-5 overflow-hidden">
     <div
       id={keyStrFromObj(item.keyObj)}
       class="grid grid-cols-12 bg-panels dark:bg-transparent gap-2 lg:gap-4 lg:gap-y-0"
@@ -216,7 +214,8 @@
           </a>
         </div>
       </div>
-      <div class="col-span-12 md:col-span-10 flex flex-col gap-2"
+      <div
+        class="col-span-12 md:col-span-10 flex flex-col gap-2"
         bind:this={postContainer}
       >
         <div class="flex gap-2 text-sm text-grey">
@@ -231,7 +230,7 @@
         >
           <div>
             {@html linkifyHtml(
-              linkifyMentions(blurb.replace(/\n\n/g, '\n'), {
+              linkifyMentions(blurb, {
                 attributes: {
                   class: 'text-link dark:text-link-dark',
                   target: '_blank',
@@ -274,7 +273,13 @@
           />
         </div>
       {/if}
-      <div class={`col-span-12 col-start-2 py-2 ${longPost && !showAll ? 'bg-gradient-to-t from-panels-solid dark:from-dark-background dark:via-dark-background via-panels-solid pt-14' : ''}`}>
+      <div
+        class={`col-span-12 col-start-2 py-2 ${
+          longPost && !showAll
+            ? 'bg-gradient-to-t from-panels-solid dark:from-dark-background dark:via-dark-background via-panels-solid pt-14'
+            : ''
+        }`}
+      >
         <div class="-ml-2.5 flex gap-8">
           {#if allowRepliesDepth}
             <div class="flex">
