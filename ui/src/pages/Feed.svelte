@@ -30,7 +30,7 @@
     VerticalExpandIcon,
     VerticalCollapseIcon,
   } from '@fragments';
-  import { fromUrbitTime, isValidPatp, isHappeningSoon, isSubmitHotkey } from '@root/util';
+  import { fromUrbitTime, isValidPatp, isHappeningSoon } from '@root/util';
 
   let sortedPals = [];
   let sortedRecommendations = [];
@@ -52,9 +52,15 @@
     canResetFeed,
     positiveFeedPromptForm;
 
-  function handleSubmitKeydown(event) {
-    if (isSubmitHotkey(event)) {
+  function handleAISearchKeydown(event) {
+    if (event.key === 'Enter') {
       handlePromptFeed();
+    }
+  }
+
+  function handleShipSearchKeydown(event) {
+    if (event.key === 'Enter') {
+      search();
     }
   }
 
@@ -280,7 +286,7 @@
                 placeholder="Search Portal"
                 bind:value={positiveFeedPrompt}
                 bind:this={positiveFeedPromptForm}
-                on:keydown={handleSubmitKeydown}
+                on:keydown={handleAISearchKeydown}
               />
               <div class="flex justify-center">
                 {#if canResetFeed}
@@ -384,7 +390,7 @@
                   class="focus:outline-none p-3 placeholder-grey text-black text-lg dark:text-white flex-grow"
                   placeholder="Show me less ..."
                   bind:value={negativeFeedPrompt}
-                  on:keydown={handleSubmitKeydown}
+                  on:keydown={handleAISearchKeydown}
                 />
               </div>
             </div>
@@ -469,7 +475,7 @@
               class="border-b focus:outline-none placeholder-grey"
               placeholder="~worpet-bildet"
               bind:value={searchShip}
-              on:keydown={handleSubmitKeydown}
+              on:keydown={handleShipSearchKeydown}
             />
           </div>
           <button class="w-5" on:click={search}><SearchIcon /></button>
