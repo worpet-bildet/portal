@@ -2,6 +2,7 @@
   import { ItemKey, Item } from '$types/portal/item';
 
   import linkifyHtml from 'linkify-html';
+  import DOMPurify from 'dompurify';
   import { link } from 'svelte-spa-router';
   import { format } from 'timeago.js';
   import { fade, slide } from 'svelte/transition';
@@ -235,7 +236,7 @@
         >
           <div>
             {@html linkifyMentions(
-              linkifyHtml(blurb, {
+              linkifyHtml(DOMPurify.sanitize(blurb), {
                 attributes: {
                   class: 'text-link dark:text-link-dark',
                   target: '_blank',

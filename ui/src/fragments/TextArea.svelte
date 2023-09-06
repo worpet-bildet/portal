@@ -1,12 +1,15 @@
-<script>
-  import { isSubmitHotkey } from '@root/util';
+<script lang="ts">
+  import DOMPurify from 'dompurify';
   import linkifyHtml from 'linkify-html';
   import autosize from 'svelte-autosize';
   import { tick, createEventDispatcher } from 'svelte';
+  import { isSubmitHotkey } from '@root/util';
   const dispatch = createEventDispatcher();
   export let value = '';
 
-  let textarea, target;
+  let textarea: HTMLTextAreaElement;
+  let target: HTMLDivElement;
+
   const reset = async () => {
     await tick();
     autosize.update(textarea);
@@ -21,7 +24,7 @@
 
   const handleInput = () => {
     if (!target) return setTimeout(handleInput, 100);
-    target.innerHTML = linkifyHtml(value, {
+    target.innerHTML = linkifyHtml(DOMPurify.sanitize(value), {
       attributes: { class: 'text-link dark:text-link-dark' },
     });
   };
