@@ -330,7 +330,9 @@
                 tooltip="Configure S3 storage for image support"
                 on:click={() => {
                   if (!$state.s3 || !$state.s3.configuration?.currentBucket) {
-                    alert('For attachment support, configure S3 storage with ~dister-nocsyx-lassul/silo.');
+                    alert(
+                      'For attachment support, configure S3 storage with ~dister-nocsyx-lassul/silo.'
+                    );
                   } else {
                     fileInput.click();
                   }
@@ -374,8 +376,8 @@
                 on:post={handlePostReview}
                 placeholder="What do you think of {title}?"
                 class="rounded-tl-lg rounded-tr-lg border-t"
-                recommendButtons={false}
-                ratingStars={true}
+                showRecommendButtons={false}
+                showRatingStars={true}
               />
             </div>
           {/if}
@@ -383,10 +385,7 @@
             <div class="flex flex-col">
               {#each reviews as review (keyStrFromObj(review))}
                 <div>
-                  <FeedPost
-                    key={review}
-                    showRating={true}
-                  />
+                  <FeedPost key={review} showRating={true} />
                 </div>
               {/each}
             </div>

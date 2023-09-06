@@ -1,4 +1,5 @@
 import { ItemCollection } from './portal/item';
+import { HarkNotificationDestination } from './portal/notification';
 import { Groups } from './landscape/groups';
 import { ContactRolodex } from './landscape/contact';
 import { DocketApps } from './apps/app';
@@ -20,7 +21,7 @@ export type State = {
   blogs: string[];
   isLoaded: boolean;
   palsLoaded: boolean;
-  referredTo: { type: string; key: string };
+  referredTo: HarkNotificationDestination;
   s3: any; // TODO
   payment: any; // TODO
   tip: any; // TODO

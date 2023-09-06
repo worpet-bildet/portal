@@ -6,9 +6,10 @@
       "@root/*": ["./src/*"],
       "@pages/*": ["./src/pages/*"],
       "@components": ["./src/components/index.ts"],
-      "@fragments/*": ["./src/fragments/*"],
+      "@fragments": ["./src/fragments/index.ts"],
       "$types/*": ["./src/types/*"],
     },
+    "allowSyntheticDefaultImports": true
   },
   "include": ["src"],
   "exclude": ["node_modules"]

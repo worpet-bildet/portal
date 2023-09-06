@@ -1,8 +1,10 @@
 <script lang="ts">
   import { FeedItem } from '$types/portal/item';
+  import { RadioStation } from '$types/apps/radio';
 
   import { push } from 'svelte-spa-router';
   import { slide } from 'svelte/transition';
+
   import config from '@root/config';
   import { api, me } from '@root/api';
   import {
@@ -14,6 +16,12 @@
     getCollectedItemLeaderboard,
     getItem,
   } from '@root/state';
+  import {
+    fromUrbitTime,
+    isValidPatp,
+    isHappeningSoon,
+    isSubmitHotkey,
+  } from '@root/util';
   import {
     Feed,
     ItemPreview,
@@ -31,13 +39,7 @@
     LoadingIcon,
     VerticalExpandIcon,
     VerticalCollapseIcon,
-  } from '@fragments/index';
-  import {
-    fromUrbitTime,
-    isValidPatp,
-    isHappeningSoon,
-    isSubmitHotkey,
-  } from '@root/util';
+  } from '@fragments';
 
   let sortedPals: string[] = [];
   let sortedRecommendations: [string, number][] = [];
@@ -53,20 +55,20 @@
     });
   };
 
-  let positiveFeedPrompt: string,
-    negativeFeedPrompt: string,
-    loading: boolean,
-    canResetFeed: boolean,
-    positiveFeedPromptForm: HTMLInputElement;
+  let positiveFeedPrompt: string;
+  let negativeFeedPrompt: string;
+  let loading: boolean;
+  let canResetFeed: boolean;
+  let positiveFeedPromptForm: HTMLInputElement;
 
-  function handleSubmitKeydown(event) {
+  function handleSubmitKeydown(event: KeyboardEvent) {
     if (isSubmitHotkey(event)) {
       handlePromptFeed();
     }
   }
 
-  function handleSearchKeydown(event) {
-    if (event.target.isContentEditable) return;
+  function handleSearchKeydown(event: KeyboardEvent) {
+    if ((event.target as HTMLTextAreaElement).isContentEditable) return;
     if (event.key === '/') {
       event.preventDefault();
       positiveFeedPromptForm.focus();
@@ -76,7 +78,7 @@
   const globalFeed = (): FeedItem[] =>
     getGlobalFeed().concat(getCuratorFeed(me));
 
-  const handlePromptFeed = async () => {
+  const handlePromptFeed = async (): Promise<void> => {
     loading = true;
     await reScoreItems(positiveFeedPrompt, negativeFeedPrompt, sortedPals);
     feed = feed.sort((a, b) => getItem(b.key)?.score - getItem(a.key)?.score);
@@ -84,7 +86,7 @@
     loading = false;
   };
 
-  const handleResetFeed = () => {
+  const handleResetFeed = (): void => {
     feed = globalFeed().sort(
       (a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time)
     );
@@ -144,7 +146,9 @@
     sortedRecommendations = getCollectedItemLeaderboard(me).slice(0, 4);
   });
 
-  const handlePost = ({ detail: { content, uploadedImageUrl, ref, time } }) => {
+  const handlePost = ({
+    detail: { content, uploadedImageUrl, ref, time },
+  }): void => {
     let post = { time } as any;
     if (ref) {
       // Here we need to create the retweet post instead of the type "other"
@@ -205,8 +209,8 @@
     api.portal.do.create(post);
   };
 
-  let searchShip;
-  let lastValidShip = searchShip;
+  let searchShip: string;
+  let lastValidShip: string | false = searchShip;
   $: {
     if (isValidPatp(searchShip)) {
       lastValidShip = isValidPatp(searchShip);
@@ -216,18 +220,17 @@
     if (!lastValidShip) return;
     push(`/${lastValidShip}`);
   };
-  const sortRadioStations = (stations) => {
+  const sortRadioStations = (stations: RadioStation[]) => {
     return stations
       .sort((a, b) => b.time - a.time)
       .filter((s) => s.viewers > 0)
       .filter((s) => !!s.description)
       .slice(0, 4);
   };
-  const tuneRadio = (location) => {
+
+  const tuneRadio = (patp: string) => {
     window.open(
-      `${window.location.origin}/apps/radio?station=${encodeURIComponent(
-        location
-      )}`
+      `${window.location.origin}/apps/radio?station=${encodeURIComponent(patp)}`
     );
   };
 

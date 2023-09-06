@@ -1,5 +1,15 @@
+export type ItemStruc =
+  | 'feed'
+  | 'collection'
+  | 'app'
+  | 'group'
+  | 'ship'
+  | 'other'
+  | 'retweet'
+  | 'tip';
+
 export interface ItemKey {
-  struc: string;
+  struc: ItemStruc;
   ship: string;
   cord: string;
   time: string;

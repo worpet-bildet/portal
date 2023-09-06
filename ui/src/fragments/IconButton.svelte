@@ -5,7 +5,7 @@
   export let disabled = false;
   export let tooltip = '';
   export let icon;
-  export let active;
+  export let active = false;
 </script>
 
 <button

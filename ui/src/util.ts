@@ -2,7 +2,7 @@ import * as linkify from 'linkifyjs';
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 
-export const isSubmitHotkey = (e) => {
+export const isSubmitHotkey = (e: KeyboardEvent) => {
   if (e.key === 'Enter' && e.metaKey) return true;
 };
 
