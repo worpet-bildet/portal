@@ -1,4 +1,9 @@
-<script>
+<script lang="ts">
+  import { ItemKey } from '$types/portal/item';
+  import { ChatMessage } from '$types/landscape/chat';
+  import { DiaryNote } from '$types/landscape/diary';
+  import { HeapCurio } from '$types/landscape/heap';
+
   import { createEventDispatcher } from 'svelte';
   import { api, me } from '@root/api';
   import {
@@ -43,23 +48,24 @@
     LoadingIcon,
   } from '@fragments';
 
-  export let replyTo = false;
-  export let recommendButtons = true;
-  export let ratingStars = false;
-  export let error = false;
+  export let replyTo: ItemKey | boolean = false;
+  export let showRecommendButtons = true;
+  export let showRatingStars = false;
+  export let error: string | boolean = false;
   export let placeholder = '';
   export let buttonText = 'Post';
 
   let dispatch = createEventDispatcher();
-  let content, rating;
+  let content: string;
+  let rating: number;
 
-  let submitting;
+  let submitting: boolean;
   const post = async () => {
     if (submitting) return;
     if (!content) {
       return (error = 'Please write something, anything.');
     }
-    if ((ratingStars && !rating) || Number(rating) === 0) {
+    if ((showRatingStars && !rating) || Number(rating) === 0) {
       return (error = 'Please give a score.');
     }
     if (shortcodeItems && shortcodeItems.length > 1) {
@@ -131,7 +137,6 @@
 
     content = '';
     uploadedImageUrl = '';
-    rating = '';
     error = '';
     chatDetails = undefined;
     chatData = undefined;
@@ -145,12 +150,12 @@
   };
 
   // TODO: Factor out the selection of groups/apps into its own component
-  let groupModalOpen,
-    appModalOpen,
-    recommendModalOpen,
-    selectedKey,
-    fileInput,
-    uploadedImageUrl;
+  let groupModalOpen: boolean;
+  let appModalOpen: boolean;
+  let recommendModalOpen: boolean;
+  let selectedKey: ItemKey;
+  let fileInput: HTMLInputElement;
+  let uploadedImageUrl: string;
 
   let groups = {};
   let apps = {};
@@ -169,42 +174,46 @@
     }
   });
 
-  const handleImageSelect = async (e) => {
+  const handleImageSelect = async (e): Promise<void> => {
     uploadedImageUrl = await api.s3.do.uploadImage(
       e.target.files[0],
       $state.s3
     );
   };
 
-  const handleRate = ({ target: { value } }) => {
-    rating = value;
+  const handleRate = (event: InputEvent) => {
+    rating = Number((event.target as HTMLInputElement).value);
   };
-  const getAnyChatMessage = (content) =>
+
+  const getAnyChatMessage = (content: string): string =>
     content.split(/[\r\n|\s]+/).find((word) => isChatPath(word));
-  const getAnyCurio = (content) =>
+  const getAnyCurio = (content: string): string =>
     content.split(/[\r\n|\s]+/).find((word) => isCurioPath(word));
-  const getAnyNote = (content) =>
+  const getAnyNote = (content: string): string =>
     content.split(/[\r\n|\s]+/).find((word) => isNotePath(word));
-  const getAnyShortcode = (content) =>
+  const getAnyShortcode = (content: string): string =>
     content.split(/[\r\n|\s]+/).find((word) => isShortcode(word));
 
   $: linkToPreview = getAnyLink(content || '');
 
-  let chatData, chatDetails;
+  let chatData: ChatMessage;
+  let chatDetails;
   const getChatData = async (chatPath) => {
     chatData = await api.portal.get.chatMessage(formatChatPath(chatPath));
     chatDetails = getChatDetails(chatPath);
     content = content.replace(chatPath, '');
   };
 
-  let curioData, curioDetails;
+  let curioData: HeapCurio;
+  let curioDetails;
   const getCurioData = async (curioPath) => {
     curioData = await api.portal.get.heapCurio(formatCurioPath(curioPath));
     curioDetails = getCurioDetails(curioPath);
     content = content.replace(curioPath, '');
   };
 
-  let noteData, noteDetails;
+  let noteData: DiaryNote;
+  let noteDetails;
   const getNoteData = async (notePath) => {
     noteData = await api.portal.get.diaryNote(formatNotePath(notePath));
     noteDetails = getNoteDetails(notePath);
@@ -288,7 +297,7 @@
     {/if}
   </div>
   <div class="col-span-12 col-start-2 flex justify-between">
-    {#if recommendButtons}
+    {#if showRecommendButtons}
       <div class="flex gap-1 items-center">
         <div class="rounded-full overflow-hidden">
           <IconButton
@@ -331,7 +340,7 @@
           />
         </div>
       </div>
-    {:else if ratingStars}
+    {:else if showRatingStars}
       <StarRating
         on:change={handleRate}
         config={{

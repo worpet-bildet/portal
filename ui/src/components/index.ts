@@ -2,6 +2,7 @@ export { default as Navbar } from './Navbar.svelte';
 export { default as Feed } from './Feed/Feed.svelte';
 export { default as FeedPost } from './Feed/FeedPost.svelte';
 export { default as FeedPostForm } from './Feed/FeedPostForm.svelte';
+export { default as FeedPromptForm } from './Feed/FeedPromptForm.svelte';
 export { default as RecommendModal } from './Feed/RecommendModal.svelte';
 export { default as CollectionsGrid } from './Collections/Grid.svelte';
 export { default as CollectionsAdd } from './Collections/Add.svelte';

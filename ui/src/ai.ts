@@ -1,4 +1,5 @@
 import { Item } from '$types/portal/item';
+import { OutgoingPals } from '$types/apps/pals';
 
 import cosineSimilarity from 'compute-cosine-similarity';
 import config from '@root/config';
@@ -26,7 +27,7 @@ export const scoreItems = async (
   items: Item[],
   positivePrompt: string,
   negativePrompt: string,
-  sortedPals
+  pals: OutgoingPals
 ) => {
   if (!positivePrompt)
     positivePrompt = 'Wholesome tweet, kindness, love, fun banter';
@@ -99,7 +100,7 @@ export const scoreItems = async (
 
       // if user enters query really quickly, pals haven't loaded yet and this can malfunction
       const fromPals = item.keyObj.ship
-        ? sortedPals.includes(item.keyObj.ship.replace('~', ''))
+        ? pals[item.keyObj.ship.replace('~', '')]
         : null;
       let score = positiveScore - negativeScore;
 
