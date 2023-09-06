@@ -16,12 +16,7 @@
     getCollectedItemLeaderboard,
     getItem,
   } from '@root/state';
-  import {
-    fromUrbitTime,
-    isValidPatp,
-    isHappeningSoon,
-    isSubmitHotkey,
-  } from '@root/util';
+  import { fromUrbitTime, isValidPatp, isHappeningSoon } from '@root/util';
   import {
     Feed,
     ItemPreview,
@@ -61,14 +56,20 @@
   let canResetFeed: boolean;
   let positiveFeedPromptForm: HTMLInputElement;
 
-  function handleSubmitKeydown(event: KeyboardEvent) {
-    if (isSubmitHotkey(event)) {
+  function handleAISearchKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
       handlePromptFeed();
     }
   }
 
-  function handleSearchKeydown(event: KeyboardEvent) {
-    if ((event.target as HTMLTextAreaElement).isContentEditable) return;
+  function handleShipSearchKeydown(event) {
+    if (event.key === 'Enter') {
+      search();
+    }
+  }
+
+  function handleSearchKeydown(event) {
+    if (event.target.isContentEditable) return;
     if (event.key === '/') {
       event.preventDefault();
       positiveFeedPromptForm.focus();
@@ -297,7 +298,7 @@
                 placeholder="Search Portal"
                 bind:value={positiveFeedPrompt}
                 bind:this={positiveFeedPromptForm}
-                on:keydown={handleSubmitKeydown}
+                on:keydown={handleAISearchKeydown}
               />
               <div class="flex justify-center">
                 {#if canResetFeed}
@@ -409,7 +410,7 @@
                   class="focus:outline-none p-3 placeholder-grey text-black text-lg dark:text-white flex-grow"
                   placeholder="Show me less ..."
                   bind:value={negativeFeedPrompt}
-                  on:keydown={handleSubmitKeydown}
+                  on:keydown={handleAISearchKeydown}
                 />
               </div>
             </div>
@@ -494,7 +495,7 @@
               class="border-b focus:outline-none placeholder-grey"
               placeholder="~worpet-bildet"
               bind:value={searchShip}
-              on:keydown={handleSubmitKeydown}
+              on:keydown={handleShipSearchKeydown}
             />
           </div>
           <button class="w-5" on:click={search}><SearchIcon /></button>
