@@ -174,9 +174,8 @@
   };
 
   const dispatch = createEventDispatcher();
-  const handleTipRequest = (key) => {
+  const handleTipRequest = (key: ItemKey): boolean =>
     dispatch('tipRequest', { key });
-  };
 
   const showMore = () => {
     postContainer.classList.remove('max-h-96');

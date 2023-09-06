@@ -8,6 +8,7 @@ import {
 import { HarkNotificationDestination } from '$types/portal/notification';
 import { SocialGraph } from '$types/portal/graph';
 import { DocketApps } from '$types/apps/app';
+import { OutgoingPals } from '$types/apps/pals';
 import { Contact, ContactRolodex } from '$types/landscape/contact';
 import { Group, Groups } from '$types/landscape/groups';
 import { State } from '$types/state';
@@ -21,7 +22,6 @@ import { api } from '@root/api';
 import { scoreItems } from '@root/ai';
 import { fromUrbitTime } from '@root/util';
 
-// Specify defaultState first to overwrite it with anything in localStorage
 export const state = writable<State>({ ...load() });
 
 export const items = (): ItemCollection => get(state).items || {};
@@ -29,6 +29,7 @@ export const social = (): SocialGraph => get(state).social || {};
 export const groups = (): Groups => get(state).groups || {};
 export const apps = (): DocketApps => get(state).apps || {};
 export const contacts = (): ContactRolodex => get(state).contacts || {};
+export const pals = (): OutgoingPals => get(state).pals || {};
 
 export const updateNotificationsLastChecked = (): void => {
   state.update((s) => {
@@ -59,8 +60,7 @@ export const toggleDarkmode = (): void => {
 // the filtering inside the ai file -- this whole system is a bit of a mess
 export const reScoreItems = (
   positivePrompt: string,
-  negativePrompt: string,
-  sortedPals: string[]
+  negativePrompt: string
 ): Promise<void> => {
   return new Promise<void>((resolve) => {
     api.portal.get.items().then(({ items }) => {
@@ -69,7 +69,7 @@ export const reScoreItems = (
       items = items.filter((i) =>
         feed.find((f) => keyStrFromObj(f.key) === keyStrFromObj(i.keyObj))
       );
-      scoreItems(items, positivePrompt, negativePrompt, sortedPals).then(
+      scoreItems(items, positivePrompt, negativePrompt, pals()).then(
         (items) => {
           state.update((s) => {
             items.forEach((i) => {
@@ -194,7 +194,7 @@ export const setReferredTo = (key: HarkNotificationDestination): void => {
 export const itemInState = (item: ItemKey): Promise<void> => {
   return new Promise((resolve, reject) => {
     const unsubscribe = state.subscribe((s) => {
-      if (s[keyStrFromObj(item)]) {
+      if (s.items[keyStrFromObj(item)]) {
         unsubscribe();
         clearTimeout(rejectTimeout);
         resolve();
@@ -427,7 +427,10 @@ export const handleSubscriptionEvent = (event, type: string) => {
   console.log({ event, type });
   switch (type) {
     case 'portal-update':
-      state.update((s) => ({ ...s, [event.keyStr]: event }));
+      state.update((s) => ({
+        ...s,
+        items: { ...s.items, [event.keyStr]: event },
+      }));
       break;
     case 'social-graph-result':
       state.update((s) => {
