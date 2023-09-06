@@ -148,6 +148,7 @@
   ^-  (quip card _this)
   ?+    mark    (on-poke:default mark vase)
       %portal-action
+    ~&  >  "%portal-store: received %portal-action"
     ?.  =(our.bowl src.bowl)  `this
     =/  act  !<(action vase)
     ?+    -.act    (on-poke:default mark vase)
@@ -323,10 +324,11 @@
       path(t.t.t.t ['' t.t.t.t.t.path])
     :-  %item
     =/  key  (path-to-key:conv t.path)
-    ?:  |(=(our.bowl ship.key) =(time.key ''))
-      (~(gut by items) key ~)
+    ?^  itm=(~(gut by items) key ~)
+      itm
     =/  item  (~(gut by read:da-item) [ship.key %portal-store [%item t.path]] ~)
-    ?~  item  item
+    ?~  item
+      item
     rock:item
     ::
       [%item-exists @ @ @ @ ~]
@@ -335,8 +337,8 @@
     =?  path  =('use_as_empty_path_slot' i.t.t.t.t.path)
       path(t.t.t.t ['' t.t.t.t.t.path])
     =/  key  (path-to-key:conv t.path)
-    ?:  |(=(our.bowl ship.key) =(time.key ''))
-      (~(has by items) key)
+    ?:  (~(has by items) key)
+      %.y
     (~(has by read:da-item) [ship.key %portal-store [%item t.path]])
     ::
     ::  TODO

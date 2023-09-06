@@ -163,8 +163,15 @@
   ^-  (quip card _this)
   ?+    mark    (on-poke:default mark vase)
       %portal-action
+    ~&  src.bowl
+    ~&  our.bowl
+    ~&  >  "%portal-manager: received %portal-action"
+    ~&  =(src.bowl our.bowl)
     ?>  =(our.bowl src.bowl)
+    ~&  >  "here"
     =/  act  !<(action vase)
+    ~&  >>>  "but not here??"
+    ~&  >  act
     ?+    -.act
       ::  default:  forward to %portal-store
       :_  this  [(~(act cards [our.bowl %portal-store]) act)]~
