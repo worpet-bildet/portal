@@ -6,7 +6,11 @@ export type ItemStruc =
   | 'ship'
   | 'other'
   | 'retweet'
-  | 'tip';
+  | 'tip'
+  | 'blog'
+  | 'groups-chat-msg'
+  | 'groups-heap-curio'
+  | 'groups-diary-note';
 
 export interface ItemKey {
   struc: ItemStruc;
@@ -39,3 +43,28 @@ export interface Item {
 export interface ItemCollection {
   [key: string]: Item;
 }
+
+export interface Feed {}
+export interface Collection {
+  title: string;
+  blurb: string;
+  image: string;
+  'key-list': ItemKey[];
+}
+export interface App {}
+export interface Group {}
+export interface Ship {}
+export interface Other {
+  title: string;
+  blurb: string;
+  link: string;
+  image: string;
+}
+export interface Retweet {
+  ref: ItemKey;
+  blurb: string;
+}
+export interface Tip {}
+export interface GroupsChatMsg {}
+export interface GroupsHeapCurio {}
+export interface GroupsDiaryNote {}

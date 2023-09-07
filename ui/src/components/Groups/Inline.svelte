@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { isImage } from '@root/util';
   export let inline;
 </script>

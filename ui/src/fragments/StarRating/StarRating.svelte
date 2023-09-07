@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import Star from './Star.svelte';
   export let config = {
     readOnly: false,

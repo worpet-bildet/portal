@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { sigil, stringRenderer } from '@tlon/sigil-js';
   import { state, getCurator } from '@root/state';
   import { formatColor, isLightColor, isUrl } from '@root/util';
@@ -17,8 +17,6 @@
     primaryColor = '000000';
     secondaryColor = 'ffffff';
   }
-
-  $: console.log({ patp });
 
   let replacementPatp;
   $: if ((!patp || patp.length > 14) && !avatar) replacementPatp = '~zod';

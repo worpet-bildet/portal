@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { push, pop } from 'svelte-spa-router';
   import { me } from '@root/api';
   import {

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { pop } from 'svelte-spa-router';
   import {
     state,
@@ -133,17 +133,20 @@
         <IconButton
           icon={PlusIcon}
           on:click={add}
-          class="dark:hover:border-white dark:border hover:bg-panels-hover">Add Item</IconButton
+          class="dark:hover:border-white dark:border hover:bg-panels-hover"
+          >Add Item</IconButton
         >
         <IconButton
           icon={CheckIcon}
           on:click={save}
-          class="dark:hover:border-white dark:border hover:bg-panels-hover">Save</IconButton
+          class="dark:hover:border-white dark:border hover:bg-panels-hover"
+          >Save</IconButton
         >
         <IconButton
           icon={LeftArrowIcon}
           on:click={pop}
-          class="dark:hover:border-white dark:border hover:bg-panels-hover">Back</IconButton
+          class="dark:hover:border-white dark:border hover:bg-panels-hover"
+          >Back</IconButton
         >
       </SidebarGroup>
     </RightSidebar>

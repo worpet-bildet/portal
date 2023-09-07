@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { Confetti } from 'svelte-confetti';
   import config from '@root/config';
   import { api, me } from '@root/api';

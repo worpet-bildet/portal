@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   export let id, readOnly, fillPercentage, starConfig;
 </script>
 

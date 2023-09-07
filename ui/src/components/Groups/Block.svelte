@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { groupKeyToItemKey, deskKeyToItemKey } from '@root/state';
   import { ItemPreview } from '@components';
 

@@ -1,24 +1,24 @@
-<script>
+<script lang="ts">
   import { flip } from 'svelte/animate';
 
-  export let list;
-  export let key;
+  export let list: any[];
+  export let key: string;
 
-  let hovering = false;
+  let hovering: false | number = false;
 
   const drop = (event, target) => {
     event.dataTransfer.dropEffect = 'move';
     const start = parseInt(event.dataTransfer.getData('text/plain'));
-    const newTracklist = list;
+    const newList = list;
 
     if (start < target) {
-      newTracklist.splice(target + 1, 0, newTracklist[start]);
-      newTracklist.splice(start, 1);
+      newList.splice(target + 1, 0, newList[start]);
+      newList.splice(start, 1);
     } else {
-      newTracklist.splice(target, 0, newTracklist[start]);
-      newTracklist.splice(start + 1, 1);
+      newList.splice(target, 0, newList[start]);
+      newList.splice(start + 1, 1);
     }
-    list = newTracklist;
+    list = newList;
     hovering = null;
   };
 
@@ -36,7 +36,7 @@
     draggable={true}
     on:dragstart={(event) => dragstart(event, index)}
     on:drop|preventDefault={(event) => drop(event, index)}
-    ondragover="return false"
+    on:dragover={(e) => e.preventDefault()}
     on:dragenter={() => (hovering = index)}
     class="hover:bg-panels-hover"
     class:bg-grey={hovering === index}

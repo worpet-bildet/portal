@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { link } from 'svelte-spa-router';
   import { me, api } from '@root/api';
   import { getItem, keyStrFromObj, refreshGroups } from '@root/state';
@@ -13,22 +13,22 @@
     InstallIcon,
   } from '@fragments';
 
-  export let cover,
-    avatar,
-    title,
-    description,
-    patp,
-    color,
-    type,
-    reviews,
-    key,
-    isInstalledOrJoined;
+  export let cover = '';
+  export let avatar = '';
+  export let title = '';
+  export let description = '';
+  export let patp = '';
+  export let color = '#000000';
+  export let type = '';
+  export let reviews = [];
+  export let key = '';
+  export let isInstalledOrJoined;
 
   let handleTipRequest;
 
   let reviewCount, reviewAverageRating;
   $: {
-    if (reviews && reviews.length > 0) {
+    if (reviews.length > 0) {
       // if we have reviews, let's count them, and get the average score!
       reviewCount = reviews.length;
       reviewAverageRating = (
@@ -39,6 +39,11 @@
       ).toFixed(1);
     }
   }
+
+  const handleJoinGroup = async (event: MouseEvent) => {
+    (event.currentTarget as HTMLElement).innerHTML = 'Joining';
+    await api.urbit.do.joinGroup(key).then(refreshGroups);
+  };
 
   let avatarPad, avatarContainer, innerWidth;
   $: if (avatarPad && avatarContainer) {
@@ -129,10 +134,7 @@
             <div class="flex md:hidden">
               <IconButton
                 icon={PlusIcon}
-                on:click={async (event) => {
-                  event.target.innerHTML = 'Joining';
-                  await api.urbit.do.joinGroup(key).then(refreshGroups);
-                }}
+                on:click={handleJoinGroup}
                 class="bg-panels dark:bg-transparent hover:bg-panels-hover dark:hover:border-white dark:border border"
                 >Join Group</IconButton
               >
@@ -142,7 +144,7 @@
             <div class="flex md:hidden">
               <IconButton
                 icon={InstallIcon}
-                on:click={(event) => {
+                on:click={() => {
                   window.open(
                     `${window.location.origin}/apps/grid/search/${patp}/apps`
                   );
