@@ -510,9 +510,9 @@
       [%aggregate-chats ~]
     ?>  ?=([%khan %arow *] sign)
     ?.  ?=(%.y -.p.sign)
-      ~&  >>  "fetching data failed"
+      ~&  >>  "%portal-manager: aggregate-chats thread failed"
       `this
-    ~&  >  "fetching data succeeded"
+    ~&  >  "%portal-manager: aggregate-chats thread succeeded"
     `this
     ::
       [%get-tx ~]

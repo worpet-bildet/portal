@@ -611,10 +611,6 @@
       ~&  >>  signature
       [~ %.n]
     [~ %.y]
-
-
-      
-
   --
 ::
 ++  validate-sig

@@ -148,7 +148,6 @@
   ^-  (quip card _this)
   ?+    mark    (on-poke:default mark vase)
       %portal-action
-    ~&  >  "%portal-store: received %portal-action"
     ?.  =(our.bowl src.bowl)  `this
     =/  act  !<(action vase)
     ?+    -.act    (on-poke:default mark vase)
