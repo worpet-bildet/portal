@@ -170,17 +170,8 @@
       :_  this  [(~(act cards [our.bowl %portal-store]) act)]~
       ::
         %aggregate-chats
-      :_  this  :_  ~
-      :*  %pass  /aggregate-chats  %arvo  %k  %fard  q.byk.bowl  %aggregate-chats  %noun
-          !>  ~
-      ==
-      :: - run thread
-      ::   - scry all groups chats you are in for last x msgs
-      ::   - figure out how to scry groups chats only for last 24 hours
-      ::   - compile 2 lists (top 25 based on reacts, top 25 based on replies)
-      ::   - create chat-msg items (even if they are duplicates)
-      ::   - scry if collection exists
-      ::   - create/edit collection
+      :_  this
+      aggregate-chats-cards:helper
       ::
         %manager-init
       =.  our-apps.state  ;;  our-apps:config
@@ -198,11 +189,25 @@
         :*  %pass  /our-treaty/(scot %p ship)/[desk]  %agent
             [our.bowl %treaty]  %watch  /treaty/(scot %p ship)/[desk]
         ==
+      ::
+      =/  timers  .^((list [@da =duct]) %bx /(scot %p our.bowl)//(scot %da now.bowl)/debug/timers)
+      =/  timer-exists
+        %+  lien  timers
+        |=  [@da =duct]   ::  duct is (list wire)
+        =(%portal-chats-timer (rear ;;(path -:duct)))
+      ::
       :_  this
-      %+  welp  `(list card)`cards
-      ?:  (~(has by wex.bowl) [/our-apps our.bowl %treaty])
-          ~
-      [%pass /our-apps %agent [our.bowl %treaty] %watch /alliance]~
+      ;:  welp  
+          `(list card)`cards
+          ?:  (~(has by wex.bowl) [/our-apps our.bowl %treaty])
+              ~
+            [%pass /our-apps %agent [our.bowl %treaty] %watch /alliance]~
+          ?:  timer-exists
+              ~
+            %+  welp  
+            chats-timer-cards:helper
+            aggregate-chats-cards:helper
+      ==
       ::
         %sub-to-many
       ::  %def sent to portal-store
@@ -507,6 +512,14 @@
   |=  [=wire sign=sign-arvo]
   ^-  (quip card:agent:gall _this)
   ?+  wire  `this
+      [%portal-chats-timer ~]
+    ?>  ?=([%behn %wake *] sign)
+    ~&  >  "got chats timer"
+    :_  this
+    %+  welp
+      chats-timer-cards:helper 
+      aggregate-chats-cards:helper
+    ::
       [%aggregate-chats ~]
     ?>  ?=([%khan %arow *] sign)
     ?.  ?=(%.y -.p.sign)
@@ -746,6 +759,12 @@
       ::  scrying should not be done on on-load or on-init
       (~(act cards [our.bowl %portal-manager]) [%manager-init ~])
   ==
+::
+++  chats-timer-cards
+  [%pass /portal-chats-timer %arvo %b [%wait (add now.bowl ~h4)]]^~
+::
+++  aggregate-chats-cards
+  [%pass /aggregate-chats %arvo %k %fard q.byk.bowl %aggregate-chats noun+!>(~)]^~
 ::
 ++  dev-map-upd
   |=  =_dev-map

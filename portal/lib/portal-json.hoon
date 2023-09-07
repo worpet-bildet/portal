@@ -845,6 +845,7 @@
                 [%prepend-to-feed (ot:dejs ~[key+dejs-key feed+dejs-feed])]
                 [%add-tag-request (ot:dejs ~[our+dejs-key their+dejs-key tag-to+dejs-path tag-from+dejs-path])]
                 [%blog-sub ul:dejs]
+                [%aggregate-chats ul:dejs]
                 [%payment-request (ot:dejs ~[seller+dejs-ship desk+so:dejs])]
                 [%payment-tx-hash (ot:dejs ~[seller+dejs-ship tx-hash+so:dejs])]
                 [%tip-request (ot:dejs ~[key+dejs-key])]
