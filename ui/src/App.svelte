@@ -40,7 +40,7 @@
     }
   });
 
-  const urlParams = new URLSearchParams(window.location.hash.slice(3));
+  const urlParams = new URLSearchParams(window.location.search);
   const notificationPath = urlParams.get('grid-note');
 
   /**
@@ -52,6 +52,7 @@
    *
    * */
   if (notificationPath) {
+    window.history.replaceState({}, document.title, '/apps/portal/#/');
     const parts = notificationPath.split('/');
     const [_, __, type] = parts.slice(0, 3);
     const key = `/${parts.slice(3).join('/')}`;
