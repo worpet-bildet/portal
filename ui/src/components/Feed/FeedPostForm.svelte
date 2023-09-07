@@ -206,7 +206,7 @@
 
   let heapCurio: HeapCurio;
   let curioDetails;
-  const getheapCurio = async (curioPath) => {
+  const getHeapCurio = async (curioPath) => {
     heapCurio = await api.portal.get.heapCurio(formatCurioPath(curioPath));
     curioDetails = getCurioDetails(curioPath);
     content = content.replace(curioPath, '');
@@ -214,8 +214,9 @@
 
   let diaryNote: DiaryNote;
   let noteDetails;
-  const getdiaryNote = async (notePath) => {
+  const getDiaryNote = async (notePath) => {
     diaryNote = await api.portal.get.diaryNote(formatNotePath(notePath));
+    console.log({ diaryNote });
     noteDetails = getNoteDetails(notePath);
     content = content.replace(notePath, '');
   };
@@ -235,9 +236,9 @@
   $: chatToPreview = getAnyChatMessage(content || '');
   $: if (chatToPreview) getChatWrit(chatToPreview);
   $: curioToPreview = getAnyCurio(content || '');
-  $: if (curioToPreview) getheapCurio(curioToPreview);
+  $: if (curioToPreview) getHeapCurio(curioToPreview);
   $: noteToPreview = getAnyNote(content || '');
-  $: if (noteToPreview) getdiaryNote(noteToPreview);
+  $: if (noteToPreview) getDiaryNote(noteToPreview);
   $: shortcodeToPreview = getAnyShortcode(content || '');
   $: if (shortcodeToPreview) getShortcodeItem(shortcodeToPreview);
 </script>
@@ -290,10 +291,10 @@
       <GroupsChatMessage {...chatWrit.memo} />
     {/if}
     {#if heapCurio}
-      <GroupsHeapCurio {heapCurio} />
+      <GroupsHeapCurio {...heapCurio} />
     {/if}
     {#if diaryNote}
-      <GroupsDiaryNote {diaryNote} />
+      <GroupsDiaryNote {...diaryNote} />
     {/if}
   </div>
   <div class="col-span-12 col-start-2 flex justify-between">
