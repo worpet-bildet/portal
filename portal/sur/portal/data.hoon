@@ -1,4 +1,4 @@
-/-   *treaty, group-preview=meta, *portal-signature, w=writ, n=note, cur=curio
+/-   t=treaty, group-preview=meta, s=portal-signature, w=writ, n=note, cur=curio
 |%
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
@@ -85,7 +85,7 @@
 +$  bespoke
   $%  $+  bespoke-ship        [struc=%ship ~]
       $+  bespoke-group       [struc=%group =data:group-preview]
-      $+  bespoke-app         [struc=%app screenshots=(list @t) blurb=@t dist-desk=@t sig=signature =treaty eth-price=@t]
+      $+  bespoke-app         [struc=%app screenshots=(list @t) blurb=@t dist-desk=@t sig=signature:s =treaty:t eth-price=@t]
       $+  bespoke-review      [struc=%review blurb=@t rating=@ud]
       $+  bespoke-retweet     [struc=%retweet blurb=@t ref=key]
       $+  bespoke-feed        [struc=%feed =feed]
@@ -145,7 +145,7 @@
 ::  made with jamming the whole item, so that nobody can fake an item
 +$  sig  
   $+  signature
-  signature
+  signature:s
 ::
 ::
 ::
