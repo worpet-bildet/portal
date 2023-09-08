@@ -15,7 +15,7 @@
       [%item item=(unit item:d)]
       ::
       $+  sign-app
-      [%sign-app dist-desk=@t sig=signature:s:d =treaty:t:d eth-price=(unit @t)]
+      [%sign-app dist-desk=@t sig=signature:d =treaty:t:d eth-price=(unit @t)]
       ::
       [%unpublish =desk]
       ::

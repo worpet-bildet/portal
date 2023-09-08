@@ -5,6 +5,7 @@
 :: /$  store-result-to-json  %portal-store-result  %json
 :: /$  portal-update-to-json  %portal-update  %json
 =/  indexer  *portal-indexer:c
+
 |%
 +$  card  $+  gall-card  card:agent:gall
 +$  state-3
@@ -228,7 +229,7 @@
               src=@p
               our=@p 
               now=@da 
-              sig=signature:s:d
+              sig=signature:d
               =item:d
           ==
       q.p.p.sign
