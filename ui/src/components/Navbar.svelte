@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { push, link, location } from 'svelte-spa-router';
   import { format } from 'timeago.js';
   import {

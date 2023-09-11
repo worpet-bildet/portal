@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { Sigil } from '@components';
   import { isValidPatp } from '@root/util';
 

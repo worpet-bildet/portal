@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { api, me } from '@root/api';
   import { getItem, keyStrFromObj } from '@root/state';
   import { getMeta } from '@root/util';
