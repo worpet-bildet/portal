@@ -1,4 +1,4 @@
-/-  c=portal-config, g=groups, portal-devs, blog-paths
+/-  c=portal-config, portal-devs, blog-paths
 /+  default-agent, p=portal, sss::, dbug
 :: /$  json-to-action  %json  %portal-action
 :: /$  msg-to-json  %portal-message  %json
@@ -37,7 +37,7 @@
       =onboarded:c
       =our-apps:c
   ==
-  
+
 +$  state-7
   $+  manager-state-7
   $:  %7
@@ -676,7 +676,7 @@
       [%get-group-preview @ @ @ @ ~]
     ?+    -.sign    (on-agent:default wire sign)
         %fact
-      =/  preview  !<(preview:g q.cage.sign)
+      =/  preview  !<(preview:g:d:m:p q.cage.sign)
       =/  key  (path-to-key:conv:p +.wire)
       =/  act  [%replace key %temp [%group meta.preview]]
       :_  this
@@ -808,7 +808,7 @@
     (~(act cards:p [our.bowl %portal-store]) create-empty-temp)^~
     ::
       %group
-    =.  bespoke  [%group *data:group-preview:d:m:p]
+    =.  bespoke  [%group *data:g:d:m:p]
     =/  path  /groups/(scot %p ship.key.act)/[`@tas`cord.key.act]/preview
     =/  wire  [%get-group-preview (key-to-path:conv:p key.act)]
     =/  sub-status  (~(gut by wex.bowl) [wire ship.key.act %groups] ~)
@@ -825,6 +825,5 @@
         [%pass wire %agent [ship.key.act %treaty] %watch path]
     ==
   ==
-
-
+  
 --

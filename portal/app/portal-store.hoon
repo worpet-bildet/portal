@@ -5,7 +5,6 @@
 :: /$  store-result-to-json  %portal-store-result  %json
 :: /$  portal-update-to-json  %portal-update  %json
 ::/*  indexer  %ship  /desk/ship
-
 =/  indexer  ~faster-dilryd-mopreg
 |%
 +$  card  $+  gall-card  card:agent:gall

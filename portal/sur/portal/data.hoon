@@ -1,4 +1,4 @@
-/-   t=treaty, group-preview=meta, w=writ, n=note, cur=curio
+/-   t=treaty, g=groups, w=writ, n=note, cur=curio
 |%
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
@@ -84,7 +84,7 @@
 ::  data specific to the item struc
 +$  bespoke
   $%  $+  bespoke-ship        [struc=%ship ~]
-      $+  bespoke-group       [struc=%group =data:group-preview]
+      $+  bespoke-group       [struc=%group =data:g]
       $+  bespoke-app         [struc=%app screenshots=(list @t) blurb=@t dist-desk=@t sig=signature =treaty:t eth-price=@t]
       $+  bespoke-review      [struc=%review blurb=@t rating=@ud]
       $+  bespoke-retweet     [struc=%retweet blurb=@t ref=key]
