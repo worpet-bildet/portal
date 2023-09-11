@@ -8,6 +8,7 @@ export type ItemStruc =
   | 'retweet'
   | 'tip'
   | 'blog'
+  | 'review'
   | 'groups-chat-msg'
   | 'groups-heap-curio'
   | 'groups-diary-note';
@@ -51,7 +52,9 @@ export interface Collection {
   image: string;
   'key-list': ItemKey[];
 }
-export interface App {}
+export interface App {
+  screenshots: string[];
+}
 export interface Group {}
 export interface Ship {}
 export interface Other {
@@ -65,6 +68,11 @@ export interface Retweet {
   blurb: string;
 }
 export interface Tip {}
+export interface Blog {}
+export interface Review {
+  blurb: string;
+  rating: number;
+}
 export interface GroupsChatMsg {}
 export interface GroupsHeapCurio {}
 export interface GroupsDiaryNote {}

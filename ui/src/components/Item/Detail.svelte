@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { ItemKey, Review } from '$types/portal/item';
+
   import { link } from 'svelte-spa-router';
   import { me, api } from '@root/api';
   import { getItem, keyStrFromObj, refreshGroups } from '@root/state';
@@ -20,29 +22,32 @@
   export let patp = '';
   export let color = '#000000';
   export let type = '';
-  export let reviews = [];
-  export let key = '';
-  export let isInstalledOrJoined;
+  export let reviews: ItemKey[] = [];
+  export let key: ItemKey;
+  export let isInstalledOrJoined = false;
 
-  let handleTipRequest;
+  let handleTipRequest: (key: ItemKey) => void;
 
-  let reviewCount, reviewAverageRating;
+  let reviewCount: number;
+  let reviewAverageRating: number;
   $: {
     if (reviews.length > 0) {
       // if we have reviews, let's count them, and get the average score!
       reviewCount = reviews.length;
-      reviewAverageRating = (
-        reviews.reduce((rating = 0, r) => {
-          rating += Number(getItem(keyStrFromObj(r))?.bespoke?.rating);
-          return rating;
-        }, 0) / reviewCount
-      ).toFixed(1);
+      reviewAverageRating = Number(
+        (
+          reviews.reduce((rating = 0, r) => {
+            rating += Number(getItem(keyStrFromObj(r))?.bespoke?.rating);
+            return rating;
+          }, 0) / reviewCount
+        ).toFixed(1)
+      );
     }
   }
 
   const handleJoinGroup = async (event: MouseEvent) => {
     (event.currentTarget as HTMLElement).innerHTML = 'Joining';
-    await api.urbit.do.joinGroup(key).then(refreshGroups);
+    await api.urbit.do.joinGroup(`${key.ship}/${key.cord}`).then(refreshGroups);
   };
 
   let avatarPad, avatarContainer, innerWidth;
@@ -175,7 +180,7 @@
             />
           </span>
           <span>
-            {reviewAverageRating === 'NaN' ? 'Loading...' : reviewAverageRating}
+            {reviewCount ? reviewAverageRating.toFixed(2) : 'Loading...'}
           </span>
         </div>
         <div class="border border-spacer" />

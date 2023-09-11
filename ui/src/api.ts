@@ -1,5 +1,5 @@
 import { ItemKey, Item } from '$types/portal/item';
-import { SocialGraph } from '$types/portal/graph';
+import { SocialGraph, SocialGraphTrackRequest } from '$types/portal/graph';
 import { PokeData, Create, Edit, SocialTagRequest } from '$types/portal/poke';
 import { DocketAppResponse, KilnApps } from '$types/apps/app';
 import { IncomingPals, OutgoingPals } from '$types/apps/pals';
@@ -58,12 +58,12 @@ export const api = {
         ]),
     },
     do: {
-      installApp: (desk) =>
+      installApp: (ship: string, desk: string) =>
         Promise.all([
           poke({
             app: 'docket',
             mark: 'docket-install',
-            json: `${me}/${desk}`,
+            json: `${ship}/${desk}`,
           }),
           poke({ app: 'hood', mark: 'kiln-install', json: desk }),
           poke({ app: 'hood', mark: 'kiln-revive', json: desk }),
@@ -156,12 +156,6 @@ export const api = {
       create: (json: Create) => pmPoke({ create: json }),
       edit: (json: Edit) => pmPoke({ edit: json }),
       addTag: (json: SocialTagRequest) => pmPoke({ 'add-tag-request': json }),
-      trackSocialGraph: (json) =>
-        poke({
-          app: 'portal-graph',
-          mark: 'social-graph-track',
-          json: { start: json },
-        }),
       subscribe: (keyObj: ItemKey) => subscribeToItem(keyObj),
       subscribeToMany: (keys: ItemKey[]) =>
         pmPoke({ 'sub-to-many': { 'key-list': keys } }),
@@ -243,6 +237,13 @@ export const api = {
             },
             time,
           },
+        }),
+
+      trackSocialGraph: (json: SocialGraphTrackRequest) =>
+        poke({
+          app: 'portal-graph',
+          mark: 'social-graph-track',
+          json: { start: json },
         }),
     },
   },

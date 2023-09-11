@@ -44,34 +44,34 @@
   } from '@fragments';
 
   // TODO: there must be a better way
-  let cord,
-    ship,
-    time,
-    desk,
-    defKey,
-    itemKey,
-    isDefItem,
-    item,
-    lens,
-    image,
-    screenshots,
-    title,
-    description,
-    link,
-    distShip,
-    ethPrice,
-    color,
-    version,
-    hash,
-    reviews,
-    isReviewedByMe,
-    isInstalling,
-    isInstalled,
-    servedFrom,
-    subbingToSocialGraph,
-    recommendModalOpen,
-    paymentModalOpen,
-    provePurchaseModalOpen;
+  let cord;
+  let ship;
+  let time;
+  let desk;
+  let defKey;
+  let itemKey;
+  let isDefItem;
+  let item;
+  let lens;
+  let image;
+  let screenshots;
+  let title;
+  let description;
+  let link;
+  let distShip;
+  let ethPrice;
+  let color;
+  let version;
+  let hash;
+  let reviews;
+  let isReviewedByMe;
+  let isInstalling;
+  let isInstalled;
+  let servedFrom;
+  let subbingToSocialGraph;
+  let recommendModalOpen;
+  let paymentModalOpen;
+  let provePurchaseModalOpen;
 
   export let params;
   $: {
@@ -181,7 +181,8 @@
     // FIXME: stopgap
     window.open(`${window.location.origin}/apps/grid/search/${ship}/apps`);
     isInstalling = true;
-    api.urbit.do.installApp(distShip || ship, desk).then(refreshApps);
+    let installShip = distShip && distShip !== '~zod' ? distShip : ship;
+    api.urbit.do.installApp(installShip, desk).then(refreshApps);
   };
 
   const uninstall = () => {
@@ -239,7 +240,12 @@
   };
 
   let fileInput;
-  const handleImageSelect = async ({ target: { files } }) => {
+  const handleImageSelect = (event: Event) => {
+    const files = (event.target as HTMLInputElement).files;
+    addScreenshot(files);
+  };
+
+  const addScreenshot = async (files: FileList) => {
     api.portal.do.edit({
       key: keyStrToObj(defKey),
       bespoke: {
