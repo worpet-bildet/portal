@@ -1,5 +1,5 @@
-/-  *tests-action, portal-action, *portal-data, gr=social-graph, *tests-spec
-/+  default-agent, dbug, p=portal
+/-  *tests-action, *tests-spec
+/+  default-agent, p=portal  ::, dbug
 ::
 =/  indxr    ~faster-dilryd-mopreg
 =/  usr1     ~faster-dozzod-dilryd-mopreg
@@ -9,7 +9,7 @@
 |%
 +$  card  card:agent:gall
 --
-%-  agent:dbug
+:: %-  agent:dbug
 =*  state  *[%0 ~]
 ^-  agent:gall
 =<
@@ -28,7 +28,7 @@
   ::
   ?:  ?=(%portal-action mark)
     ~&  "%portal-tester: doing %portal-action"
-    ~&  !<(action:portal-action vase)
+    ~&  !<(action:m:p vase)
     :_  this  :_  ~
     ^-  card
     :*  %pass  /act  %agent  [our.bowl %portal-manager]  %poke
@@ -185,11 +185,11 @@
     =/  app-time      ^-  @tas  %-  crip  (welp "app" (scow %ud (mod eny.bowl 1.000)))
     ::
     =/  app-bespoke
-      [%app 'screenshot'^~ 'blurb' '' *signature *treaty 'asdf']
+      [%app 'screenshot'^~ 'blurb' '' *signature:d:m:p *treaty:t:d:m:p 'asdf']
     =/  edit-app-bespoke
       [%app ~ `'blurbnew' ~ ~ ~ ~]
     =/  expected-app-bespoke
-      [%app 'screenshot'^~ 'blurbnew' '' *signature *treaty 'asdf']
+      [%app 'screenshot'^~ 'blurbnew' '' *signature:d:m:p *treaty:t:d:m:p 'asdf']
     ::
     =/  col-bespoke           [%collection 'title' 'blurb' 'img' ~]
     =/  edit-col-bespoke      [%collection `'newtitle' ~ ~ ~]
@@ -218,7 +218,7 @@
   --
 ::
 ++  scry-path
-  |=  [=key scry=?(%item-exists %item)]
+  |=  [=key:d:m:p scry=?(%item-exists %item)]
   ^-  path
   :~  %gx
       %portal-store
@@ -231,7 +231,7 @@
   ==
 ::
 ++  create-feedpoast
-  |=  [=ship time=cord =bespoke]
+  |=  [=ship time=cord =bespoke:d:m:p]
   ^-  test-poke
   %-  some
   :-  %portal-tester  :-  %tests-action  !>
@@ -240,7 +240,7 @@
   [%create `ship ~ `time ~ `bespoke ~ [%feed ship '' '~2000.1.1']^~ ~]
 ::
 ++  create-reply
-  |=  [=ship time=cord =bespoke to=[=struc =ship =cord time=cord]]
+  |=  [=ship time=cord =bespoke:d:m:p to=[=struc:d:m:p =ship =cord time=cord]]
   ^-  test-poke
   %-  some
   :-  %portal-tester  :-  %tests-action  !>
@@ -251,7 +251,7 @@
   ==
 ::
 ++  create-item
-  |=  [=ship time=cord =bespoke]
+  |=  [=ship time=cord =bespoke:d:m:p]
   ^-  test-poke
   %-  some
   :-  %portal-tester  :-  %tests-action  !>
@@ -260,7 +260,7 @@
   [%create `ship ~ `time ~ `bespoke ~ ~ ~]
 ::
 ++  edit-item
-  |=  [=struc =ship time=cord edit-bespoke=noun]
+  |=  [=struc:d:m:p =ship time=cord edit-bespoke=noun]
   ^-  test-poke
   %-  some
   :-  %portal-tester  :-  %tests-action  !>
@@ -269,7 +269,7 @@
   [%edit [struc ship '' time] ~ `edit-bespoke]
 ::
 ++  sub-to-many :: who is the ship which subs to many 
-  |=  [who=ship =key-list]
+  |=  [who=ship =key-list:d:m:p]
   ^-  test-poke
   %-  some
   :-  %portal-tester  :-  %tests-action  !>
@@ -288,7 +288,7 @@
   [%start ship /(scot %p ship)]
 ::
 ++  harness-item
-  |=  [=struc =ship time=cord =lens =bespoke]
+  |=  [=struc:d:m:p =ship time=cord =lens:d:m:p =bespoke:d:m:p]
   ^-  test-harness
   =/  key  [struc ship '' time]
   %-  some 
@@ -297,7 +297,7 @@
       ^-  $-(* ?)
         |=  a=*
         ?~  +.a  %.n
-        =+  ;;([%item itm=item] a)
+        =+  ;;([%item itm=item:d:m:p] a)
         ~&  "received: {<key.itm>}"
         ~&  "expected: {<key>}"
         ~&  "received: {<lens.itm>}"
@@ -311,13 +311,13 @@
       `(unit (list @dr))``(reap 20 ~s3)
 ::
 ++  harness-graph
-  |=  [k1=key k2=key path-validator=$-(p=path ?) timers=(unit (list @dr))]
+  |=  [k1=key:d:m:p k2=key:d:m:p path-validator=$-(p=path ?) timers=(unit (list @dr))]
   ^-  test-harness
   %-  some 
-  :^    graph-result:gr
+  :^    graph-result:gr:m:p
       (graph-scry-path k1 k2)
     |=  graph-result=*
-    =/  result  ;;  graph-result:gr  graph-result
+    =/  result  ;;  graph-result:gr:m:p  graph-result
     ?>  ?=([%tags *] result)
     %-  %~  any  in  +.result
     path-validator
@@ -327,7 +327,7 @@
   |=  [time=@dr]
   ^-  test-harness
   %-  some 
-  :^  store-result
+  :^  store-result:d:m:p
       (scry-path [%collection indxr '' '~2000.1.1'] %item-exists)
       |=(a=* %.y)
       `(unit (list @dr))``time^~
@@ -348,7 +348,7 @@
   ::   %.y
 ::
 ++  graph-scry-path
-  |=  [k1=key k2=key]
+  |=  [k1=key:d:m:p k2=key:d:m:p]
   =,  conv:p
   ;:  welp
       /gx/portal-graph/tags/portal-store
