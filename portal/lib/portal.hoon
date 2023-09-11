@@ -45,6 +45,16 @@
       (snip p)
     (path-to-key (stab (crip p)))
   ::
+  ++  node-to-path
+    |=  [=node:gr:m]
+    ^-  path
+    ?>  ?=(%entity -.node)
+    :~  %entity
+        app.node
+        name.node
+    ==
+
+  ::
   ++  feed-to-key-list
     |=  =feed:d:m
     ^-  key-list:d:m
