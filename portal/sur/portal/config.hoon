@@ -1,7 +1,7 @@
 /-  d=portal-data
-/*  indexer  %ship  /desk/ship
+::/*  indexer  %ship  /desk/ship
 |%
-+$  indexer  $~(^indexer @p)
++$  indexer  $~(^~faster-dilryd-mopreg @p)
 +$  portal-curator  indexer
 +$  portal-indexer  indexer
 ::
