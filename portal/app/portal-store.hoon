@@ -5,6 +5,7 @@
 :: /$  store-result-to-json  %portal-store-result  %json
 :: /$  portal-update-to-json  %portal-update  %json
 ::/*  indexer  %ship  /desk/ship
+
 =/  indexer  ~faster-dilryd-mopreg
 |%
 +$  card  $+  gall-card  card:agent:gall
@@ -130,16 +131,13 @@
       %create   =^(cards state (create:handle-poke:stor act) [cards this])
       %replace  =^(cards state (replace:handle-poke:stor act) [cards this])
       %edit     =^(cards state (edit:handle-poke:stor act) [cards this])
-      %prepend-to-feed   =^(cards state (prepend-to-feed:handle-poke:stor act) [cards this])
-      %append  =^(cards state (append:handle-poke:stor act) [cards this])
-      %prepend  =^(cards state (prepend:handle-poke:stor act) [cards this])
-      %remove  =^(cards state (remove:handle-poke:stor act) [cards this])
+      %prepend-to-feed  =^(cards state (prepend-to-feed:handle-poke:stor act) [cards this])
+      %append   =^(cards state (append:handle-poke:stor act) [cards this])
+      %remove   =^(cards state (remove:handle-poke:stor act) [cards this])
       %destroy  =^(cards state (destroy:handle-poke:stor act) [cards this])
       %sub      =^(cards state (sub:handle-poke:stor act) [cards this])
-        %sub-to-many
-      =^(cards state (sub-to-many:handle-poke:stor act) [cards this])
-        %add-tag-request
-      =^(cards state (add-tag-request:handle-poke:stor act) [cards this])
+      %sub-to-many      =^(cards state (sub-to-many:handle-poke:stor act) [cards this])
+      %add-tag-request  =^(cards state (add-tag-request:handle-poke:stor act) [cards this])
     ==
     ::
       %portal-message
@@ -549,16 +547,6 @@
       :_  state
       (welp cards (upd:cards-methods col))
     ::
-    ++  prepend
-      |=  [act=action:m:p]
-      ^+  [*(list card) state]
-      ?>  ?=([%prepend *] act)
-      =/  path  [%item (key-to-path:conv:p col-key.act)]
-      =/  col  (prepend-to-col:itm (get-item col-key.act) act)
-      =^  cards  item-pub  (give:du-item path [%whole col])
-      :_  state(items (put-item col))
-      (welp cards (upd:cards-methods col))
-    ::
     ++  remove
       |=  [act=action:m:p]
       ^+  [*(list card) state]
@@ -591,17 +579,17 @@
       =.  item-sub  (quit:da-item ship.key.act %portal-store path)
       `state
     ::
-  ++  add-tag-request
-    |=  [act=action:m:p]
-    ^+  [*(list card) state]
-    ?>  ?=([%add-tag-request *] act)
-    ::  no safeguards built yet
-    =/  our  (key-to-node:conv:p our.act)
-    =/  their    (key-to-node:conv:p their.act)
-    :_  state
-    %+  snoc  (gra:cards-methods portal-store+[%add-tag tag-to.act our their])
-    %-  ~(msg cards:p [ship.their.act %portal-store])
-        [%add-tag-request our.bowl tag-from.act their our]
+    ++  add-tag-request
+      |=  [act=action:m:p]
+      ^+  [*(list card) state]
+      ?>  ?=([%add-tag-request *] act)
+      ::  no safeguards built yet
+      =/  our  (key-to-node:conv:p our.act)
+      =/  their    (key-to-node:conv:p their.act)
+      :_  state
+      %+  snoc  (gra:cards-methods portal-store+[%add-tag tag-to.act our their])
+      %-  ~(msg cards:p [ship.their.act %portal-store])
+          [%add-tag-request our.bowl tag-from.act their our]
     --
 ::
 ++  init-sequence

@@ -449,16 +449,6 @@
     %^  edit  now  col
       [%edit col-key.act ~ `[%collection ~ ~ ~ `new-key-list]]
   ::
-  ++  prepend-to-col
-    |=  [now=time col=item:d:m act=action:m]
-    ^-  item:d:m
-    ?>  ?=([%prepend *] act)
-    ?>  ?=(%collection -.bespoke.col)
-    ?>  =(col-key.act key.col)
-    =/  new-key-list  (weld key-list.act key-list.bespoke.col)
-    %^  edit  now  col
-      [%edit col-key.act ~ `[%collection ~ ~ ~ `new-key-list]]
-  ::
   ++  remove-from-col
     |=  [now=time col=item:d:m act=action:m]
     ^-  item:d:m
@@ -469,17 +459,6 @@
       |=(=key:d:m ?~((find [key]~ key-list.act) %.n %.y))
     %^  edit  now  col
       [%edit col-key.act ~ `[%collection ~ ~ ~ `new-key-list]]
-
-  ::
-  ++  delete
-    |=  [now=time =item:d:m act=action:m]
-    ^-  item:d:m
-    ?>  ?=([%delete *] act)
-    ?>  =(key.item key.act)
-    %=  item
-      lens             %deleted
-      updated-at.meta  `@t`(scot %da now)
-    ==
   ::
   --
 ::
@@ -491,9 +470,7 @@
   ++  prepend-to-feed  (cury prepend-to-feed:pure now.bowl)
   ++  append-no-dupe   (cury append-no-dupe:pure now.bowl)
   ++  append-to-col    (cury append-to-col:pure now.bowl)
-  ++  prepend-to-col   (cury prepend-to-col:pure now.bowl)
   ++  remove-from-col  (cury remove-from-col:pure now.bowl)
-  ++  delete           (cury delete:pure now.bowl)
   --
 ::
 ::

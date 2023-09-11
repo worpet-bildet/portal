@@ -41,14 +41,10 @@
       ::  
       $+  append
       [%append =key-list:d col-key=[struc=%collection =ship =cord time=cord]]
-      $+  prepend
-      [%prepend =key-list:d col-key=[struc=%collection =ship =cord time=cord]]
       ::  removes all instances of key from collection
       $+  remove
       [%remove =key-list:d col-key=[struc=%collection =ship =cord time=cord]]
       ::
-      $+  delete
-      [%delete =key:d]  ::  adds [%deleted ~] lens
       $+  destroy
       [%destroy =key:d]  :: abolishes the item from the atmosphere
       ::
@@ -64,9 +60,6 @@
       [%blog-sub ~]
       ::
       [%manager-init ~]
-      ::  ? purge needs to be defined as action?
-      :: TODO make purge have only 'items-to-keep' arg
-      [%purge portal-curator=@p]
       ::
       [%payment-request seller=ship =desk]
       [%payment-tx-hash seller=ship tx-hash=@t]
