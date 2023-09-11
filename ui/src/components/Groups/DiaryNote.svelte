@@ -1,4 +1,6 @@
-<script>
+<script lang="ts">
+  import { NoteEssay } from '$types/landscape/diary';
+
   import { link } from 'svelte-spa-router';
   import { format } from 'timeago.js';
   import { getGroup } from '@root/state';
@@ -8,8 +10,8 @@
   import Block from './Block.svelte';
   import Inline from './Inline.svelte';
 
-  export let essay;
-  export let group;
+  export let essay: NoteEssay;
+  export let group = '';
 
   const { author, content, title, image, sent } = essay;
 </script>
@@ -20,12 +22,12 @@
   <div class="col-span-12 grid grid-cols-12 items-center gap-4 text-sm">
     <div class="col-span-1">
       <div class="rounded-md overflow-hidden">
-        <Sigil patp={`${author}`} />
+        <Sigil patp={author} />
       </div>
     </div>
     <div class="col-span-11 flex justify-between text-grey">
       <div class="flex gap-1">
-        <a use:link href={`#/~${author}`} class="hover:underline">~{author}</a
+        <a use:link href={`#/~${author}`} class="hover:underline">{author}</a
         >{#if group}<span>in</span><a
             use:link
             href={`/group/${group}/`}
@@ -47,9 +49,9 @@
     <div class="text-base">
       {#if content?.length > 0}
         {#each content as c}
-          {#if c.inline}
+          {#if 'inline' in c}
             <Inline {...c} />
-          {:else if c.block}
+          {:else if 'block' in c}
             <Block {...c} />
           {/if}
         {/each}

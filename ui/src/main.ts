@@ -1,25 +1,16 @@
 import './app.css';
 import App from './App.svelte';
-import {
-  usePortalStoreSubscription,
-  usePortalManagerSubscription,
-  useSocialSubscription,
-  useContactsSubscription,
-  useGroupsSubscription,
-  useDocketSubscription,
-  useRadioSubscription,
-  useStorageSubscription,
-} from './api';
+import { useSubscription } from './api';
 import { handleSubscriptionEvent } from './state';
 
-usePortalStoreSubscription(handleSubscriptionEvent);
-usePortalManagerSubscription(handleSubscriptionEvent);
-useSocialSubscription(handleSubscriptionEvent);
-useContactsSubscription(handleSubscriptionEvent);
-useGroupsSubscription(handleSubscriptionEvent);
-useDocketSubscription(handleSubscriptionEvent);
-useRadioSubscription(handleSubscriptionEvent);
-useStorageSubscription(handleSubscriptionEvent);
+useSubscription('portal-store', '/updates', handleSubscriptionEvent);
+useSubscription('portal-manager', '/updates', handleSubscriptionEvent);
+useSubscription('portal-graph', '/updates', handleSubscriptionEvent);
+useSubscription('contacts', '/news', handleSubscriptionEvent);
+useSubscription('groups', '/groups', handleSubscriptionEvent);
+useSubscription('docket', '/charges', handleSubscriptionEvent);
+useSubscription('tower', '/greg/local', handleSubscriptionEvent);
+useSubscription('storage', '/all', handleSubscriptionEvent);
 
 declare global {
   interface Window {

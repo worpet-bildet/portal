@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { push } from 'svelte-spa-router';
   import {
     state,
@@ -95,7 +95,10 @@
         <div class="pt-4 flex flex-col">
           {#if activeTab === 'Activity'}
             {#if me === patp}
-              <FeedPostForm placeholder="Share a limerick, maybe..." class="rounded-tl-lg rounded-tr-lg border-t"/>
+              <FeedPostForm
+                placeholder="Share a limerick, maybe..."
+                class="rounded-tl-lg rounded-tr-lg border-t"
+              />
             {/if}
             {#if !feed || feed.length === 0}
               <div class="col-span-12">

@@ -1,4 +1,6 @@
-<script>
+<script lang="ts">
+  import { CurioHeart } from '$types/landscape/heap';
+
   import { link } from 'svelte-spa-router';
   import { getGroup } from '@root/state';
   import { getMeta } from '@root/util';
@@ -7,12 +9,21 @@
   import Block from './Block.svelte';
   import Inline from './Inline.svelte';
 
-  export let heart;
-  export let group;
+  export let heart: CurioHeart;
+  export let group = '';
+
   let { author, content } = heart;
 
   let unsupported;
-  if (content.block.find((b) => b?.cite?.chan)) {
+  if (
+    content.block.find((b) => {
+      if ('cite' in b) {
+        if ('chan' in b.cite) {
+          return true;
+        }
+      }
+    })
+  ) {
     unsupported = true;
   }
 </script>

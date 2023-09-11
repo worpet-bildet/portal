@@ -1,6 +1,8 @@
 <script lang="ts">
-  import { ItemKey } from '$types/portal/item';
-  import { ChatMessage } from '$types/landscape/chat';
+  import { ItemKey, Item } from '$types/portal/item';
+  import { DocketApp } from '$types/apps/app';
+  import { Groups } from '$types/landscape/groups';
+  import { ChatWrit } from '$types/landscape/chat';
   import { DiaryNote } from '$types/landscape/diary';
   import { HeapCurio } from '$types/landscape/heap';
 
@@ -73,38 +75,21 @@
     }
     // If we have some chat details here, we should generate the reference and
     // then send the reference back up with the post
-    let ref;
+    let ref: ItemKey;
+    const time = toUrbitTime(Date.now());
     if (chatDetails) {
       const { host, channel, poster, id } = chatDetails;
-      const time = toUrbitTime(Date.now());
-      ref = {
-        struc: 'groups-chat-msg',
-        ship: me,
-        cord: '',
-        time,
-      };
+      ref = { struc: 'groups-chat-msg', ship: me, cord: '', time };
       api.portal.do.createGroupsChatMsg(host, channel, poster, id, time);
     }
     if (curioDetails) {
       const { host, channel, id } = curioDetails;
-      const time = toUrbitTime(Date.now());
-      ref = {
-        struc: 'groups-heap-curio',
-        ship: me,
-        cord: '',
-        time,
-      };
+      ref = { struc: 'groups-heap-curio', ship: me, cord: '', time };
       api.portal.do.createGroupsHeapCurio(host, channel, id, time);
     }
     if (noteDetails) {
       const { host, channel, id } = noteDetails;
-      const time = toUrbitTime(Date.now());
-      ref = {
-        struc: 'groups-diary-note',
-        ship: me,
-        cord: '',
-        time,
-      };
+      ref = { struc: 'groups-diary-note', ship: me, cord: '', time };
       api.portal.do.createGroupsDiaryNote(host, channel, id, time);
     }
     if (shortcodeItems && shortcodeItems.length === 1) {
@@ -112,15 +97,7 @@
       ref = { ...keyObj };
     }
 
-    const time = toUrbitTime(Date.now());
-    dispatch('post', {
-      content,
-      uploadedImageUrl,
-      replyTo,
-      rating,
-      ref,
-      time,
-    });
+    dispatch('post', { content, uploadedImageUrl, replyTo, rating, ref, time });
 
     submitting = true;
     try {
@@ -133,17 +110,18 @@
       submitting = false;
     } catch (e) {
       alert('Posting failed, please refresh the page and try again.');
+      return;
     }
 
     content = '';
     uploadedImageUrl = '';
     error = '';
     chatDetails = undefined;
-    chatData = undefined;
+    chatWrit = undefined;
     curioDetails = undefined;
-    curioData = undefined;
+    heapCurio = undefined;
     noteDetails = undefined;
-    noteData = undefined;
+    diaryNote = undefined;
     shortcodeToPreview = undefined;
     shortcodeItems = undefined;
     rating = undefined;
@@ -157,8 +135,8 @@
   let fileInput: HTMLInputElement;
   let uploadedImageUrl: string;
 
-  let groups = {};
-  let apps = {};
+  let groups: Groups = {};
+  let apps: { [key: string]: DocketApp } = {};
   state.subscribe((s) => {
     if (s.groups) {
       Object.entries(s.groups).forEach(([key, data]) => {
@@ -174,9 +152,9 @@
     }
   });
 
-  const handleImageSelect = async (e): Promise<void> => {
+  const handleImageSelect = async (e: Event): Promise<void> => {
     uploadedImageUrl = await api.s3.do.uploadImage(
-      e.target.files[0],
+      (e.target as HTMLInputElement).files[0],
       $state.s3
     );
   };
@@ -196,32 +174,33 @@
 
   $: linkToPreview = getAnyLink(content || '');
 
-  let chatData: ChatMessage;
+  let chatWrit: ChatWrit;
   let chatDetails;
-  const getChatData = async (chatPath) => {
-    chatData = await api.portal.get.chatMessage(formatChatPath(chatPath));
+  const getChatWrit = async (chatPath: string) => {
+    chatWrit = await api.portal.get.chatWrit(formatChatPath(chatPath));
     chatDetails = getChatDetails(chatPath);
     content = content.replace(chatPath, '');
   };
 
-  let curioData: HeapCurio;
+  let heapCurio: HeapCurio;
   let curioDetails;
-  const getCurioData = async (curioPath) => {
-    curioData = await api.portal.get.heapCurio(formatCurioPath(curioPath));
+  const getHeapCurio = async (curioPath: string) => {
+    heapCurio = await api.portal.get.heapCurio(formatCurioPath(curioPath));
     curioDetails = getCurioDetails(curioPath);
     content = content.replace(curioPath, '');
   };
 
-  let noteData: DiaryNote;
+  let diaryNote: DiaryNote;
   let noteDetails;
-  const getNoteData = async (notePath) => {
-    noteData = await api.portal.get.diaryNote(formatNotePath(notePath));
+  const getDiaryNote = async (notePath: string) => {
+    diaryNote = await api.portal.get.diaryNote(formatNotePath(notePath));
     noteDetails = getNoteDetails(notePath);
     content = content.replace(notePath, '');
   };
 
-  let shortcodeToPreview, shortcodeItems;
-  const getShortcodeItem = (shortcode) => {
+  let shortcodeToPreview: string;
+  let shortcodeItems: Item[];
+  const getShortcodeItem = (shortcode: string) => {
     if (!getGroup(shortcode) && !getApp(shortcode)) {
       shortcodeItems = [];
       return;
@@ -233,11 +212,11 @@
   };
 
   $: chatToPreview = getAnyChatMessage(content || '');
-  $: if (chatToPreview) getChatData(chatToPreview);
+  $: if (chatToPreview) getChatWrit(chatToPreview);
   $: curioToPreview = getAnyCurio(content || '');
-  $: if (curioToPreview) getCurioData(curioToPreview);
+  $: if (curioToPreview) getHeapCurio(curioToPreview);
   $: noteToPreview = getAnyNote(content || '');
-  $: if (noteToPreview) getNoteData(noteToPreview);
+  $: if (noteToPreview) getDiaryNote(noteToPreview);
   $: shortcodeToPreview = getAnyShortcode(content || '');
   $: if (shortcodeToPreview) getShortcodeItem(shortcodeToPreview);
 </script>
@@ -286,14 +265,14 @@
     {#if linkToPreview}
       <LinkPreview url={linkToPreview} />
     {/if}
-    {#if chatData}
-      <GroupsChatMessage {...chatData} />
+    {#if chatWrit}
+      <GroupsChatMessage {...chatWrit.memo} />
     {/if}
-    {#if curioData}
-      <GroupsHeapCurio {...curioData} />
+    {#if heapCurio}
+      <GroupsHeapCurio {...heapCurio} />
     {/if}
-    {#if noteData}
-      <GroupsDiaryNote {...noteData} />
+    {#if diaryNote}
+      <GroupsDiaryNote {...diaryNote} />
     {/if}
   </div>
   <div class="col-span-12 col-start-2 flex justify-between">
