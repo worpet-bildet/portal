@@ -1,6 +1,6 @@
-/-  *portal-message
+/-  m=portal-move
 /+  portal-json
-|_  msg=message
+|_  msg=message:m
 ++  grow
   |%
   ++  noun  msg
@@ -8,7 +8,7 @@
   --
 ++  grab
   |%
-  ++  noun  message
+  ++  noun  message:m
   --
 ++  grad  %noun
 --

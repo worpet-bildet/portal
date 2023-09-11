@@ -1,8 +1,7 @@
 /-  subgraph
-/+  verb, dbug, default-agent, io=agentio, portal,
-    g=social-graph, *mip, *sss
-/$  social-graph-result-to-json  %social-graph-result  %json
-/$  json-to-social-graph-track  %json  %social-graph-track
+/+  default-agent, p=portal, g=social-graph, *mip, *sss
+:: /$  social-graph-result-to-json  %social-graph-result  %json
+:: /$  json-to-social-graph-track  %json  %social-graph-track
 |%
 ::  we are renaming %social-graph to %portal-graph
 ::  because we are using it for a different purpose
@@ -47,7 +46,7 @@
 ::
 ^-  agent:gall
 ::  %+  verb  &
-%-  agent:dbug
+:: %-  agent:dbug
 ::  SSS declarations
 =/  subgraph-sub  (mk-subs subgraph ,[%track @ @ ~])
 =/  subgraph-pub  (mk-pubs subgraph ,[%track @ @ ~])
@@ -280,7 +279,7 @@
       ::  quit sub if sender not in our tracking map
       ?.  =(src.msg (~(gut by tracking.state) [app tag] our.bowl))
         :_  this  :_  ~
-        %+  ~(poke pass:io /self)
+        %+  ~(poke pass:io:p /self)
           [our.bowl %portal-graph]
         social-graph-track+!>(`track:g`[app %stop src.msg tag])
       =^  cards  graph.state
@@ -300,8 +299,8 @@
               [from.u.wave.msg to.u.wave.msg app tag.u.wave.msg]
           %+  welp
             ::  autosubbing to comments within the last 2 days
-            =/  key-to    (node-to-key:conv:portal to.u.wave.msg)
-            =/  key-from  (node-to-key:conv:portal from.u.wave.msg)
+            =/  key-to    (node-to-key:conv:p to.u.wave.msg)
+            =/  key-from  (node-to-key:conv:p from.u.wave.msg)
             ?:  ?&  =(+:tag.u.wave.msg /reply-to)
                     =(our.bowl ship:key-to)
                     (gte (slav %da time.key-from) (sub now.bowl ~d2))
@@ -315,12 +314,12 @@
                             (end 7 (shas %portal-notif eny.bowl))
                             :^  ~  ~  q.byk.bowl
                                 ;:  welp  /portal  /reply
-                                    (key-to-path:conv:portal key-to)
+                                    (key-to-path:conv:p key-to)
                                 ==
                                 :: if its threaded by post key, then nested replies would get separate threads
                             now.bowl
                             [ship+ship:key-from ' replied to your post.' ~]
-                            (welp /portal/reply (key-to-path:conv:portal key-to))
+                            (welp /portal/reply (key-to-path:conv:p key-to))
                             ~
                         ==
                     ==
@@ -345,11 +344,11 @@
                             (end 7 (shas %portal-notif eny.bowl))
                             :^  ~  ~  q.byk.bowl
                                 ;:  welp  /portal  /app-review
-                                    (key-to-path:conv:portal key-to)
+                                    (key-to-path:conv:p key-to)
                                 ==
                             now.bowl
                             [ship+ship:key-from ' reviewed %' time:key-to '.' ~]
-                            (welp /portal/review (key-to-path:conv:portal key-to))
+                            (welp /portal/review (key-to-path:conv:p key-to))
                             ~
                         ==
                     ==
@@ -363,11 +362,11 @@
                             (end 7 (shas %portal-notif eny.bowl))
                             :^  ~  ~  q.byk.bowl
                                 ;:  welp  /portal  /mention
-                                    (key-to-path:conv:portal key-from)
+                                    (key-to-path:conv:p key-from)
                                 ==
                             now.bowl
                             [ship+ship:key-from ' mentioned you in their post.' ~]
-                            (welp /portal/mention (key-to-path:conv:portal key-from))
+                            (welp /portal/mention (key-to-path:conv:p key-from))
                             ~
                         ==
                     ==
