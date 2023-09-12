@@ -1,9 +1,9 @@
 /-  c=portal-config, portal-devs, blog-paths
 /+  default-agent, p=portal, sss::, dbug
-/$  json-to-action  %json  %portal-action
-/$  msg-to-json  %portal-message  %json
-/$  dev-map-to-json  %portal-dev-map  %json
-/$  portal-manager-result-to-json  %portal-manager-result  %json
+:: /$  json-to-action  %json  %portal-action
+:: /$  msg-to-json  %portal-message  %json
+:: /$  dev-map-to-json  %portal-dev-map  %json
+:: /$  portal-manager-result-to-json  %portal-manager-result  %json
 |%
 +$  versioned-state
   $+  manager-versioned-state
@@ -835,13 +835,42 @@
                               `%temp
                               `bespoke
                               ?:  ?|  =(%app struc.key.act)
-                                      =(%group struc.key.act)  ==
+                                      =(%group struc.key.act)  
+                                      =(%groups-diary-note struc.key.act)
+                                      =(%groups-heap-curio struc.key.act)
+                                  ==
                                 [%collection our.bowl '' 'all']~
                               ~
                               ~
                               ~
                           ==
-  ?+    struc.key.act    !!
+  ?+    struc.key.act    !!    
+    ::  
+      %groups-diary-note
+    =+  tap=(trip cord.key.act)
+    =+  (find ['/']~ tap)
+    ?~  -  ~|("invalid cord in key for %groups-diary-note" !!)
+    =/  almost-flag  (trim u.- tap)
+    =/  channel=flag:n:d:m:p
+        :-  ship.key.act
+            (crip p.almost-flag)
+    =/  timee
+      `@da`(slav %ud (crip (slag 1 q.almost-flag)))
+    =.  bespoke
+      =,  d:m:p
+      :*  %groups-diary-note
+          *flag:n
+          channel
+          timee
+          *essay:n
+          0
+          0
+      ==
+    (~(act cards:p [our.bowl %portal-store]) create-empty-temp)^~
+    :: ::
+    ::   %groups-heap-curio
+    :: =.  bespoke  (need bespoke.act)
+    :: (~(act cards:p [our.bowl %portal-store]) create-empty-temp)^~
     ::
       %ship
     =.  bespoke  [%ship ~]
