@@ -1,4 +1,6 @@
-<script>
+<script lang="ts">
+  import { ItemKey, Item } from '$types/portal/item';
+
   import { link, pop } from 'svelte-spa-router';
   import { api } from '@root/api';
   import {
@@ -24,8 +26,13 @@
 
   const { patp } = params;
 
-  let curator;
-  let nickname, cover, avatar, bio, ethAddress, collections;
+  let curator; // TODO: type
+  let nickname: string;
+  let cover: string;
+  let avatar: string;
+  let bio: string;
+  let ethAddress: string;
+  let collections: ItemKey[];
   state.subscribe(async () => {
     curator = getCurator(patp);
     ({ nickname, cover, avatar, bio } = curator.bespoke || {});

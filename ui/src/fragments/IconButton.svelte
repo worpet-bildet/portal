@@ -1,11 +1,12 @@
-<script>
+<script lang="ts">
+  import { SvelteComponent } from 'svelte';
   import { LoadingIcon } from '@fragments';
   export let loading = false;
   export let async = false;
   export let disabled = false;
   export let tooltip = '';
-  export let icon;
-  export let active;
+  export let active = false;
+  export let icon = SvelteComponent;
 </script>
 
 <button
@@ -27,7 +28,7 @@
 >
   <span class="w-5">
     {#if loading}
-      <svelte:component this={LoadingIcon} class="w-5" />
+      <svelte:component this={LoadingIcon} />
     {:else}
       <svelte:component this={icon} />
     {/if}

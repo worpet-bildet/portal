@@ -81,6 +81,9 @@ export interface Group {
   bloc: string[];
   secret: boolean;
   saga: Saga | null;
+
+  // CUSTOM
+  joining: boolean;
 }
 
 export interface Fleet {

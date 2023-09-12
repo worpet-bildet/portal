@@ -1,4 +1,6 @@
-<script>
+<script lang="ts">
+  import { Item } from '$types/portal/item';
+
   import { push, pop } from 'svelte-spa-router';
   import { me } from '@root/api';
   import {
@@ -19,26 +21,32 @@
     ShareIcon,
     SidebarGroup,
   } from '@fragments';
+
   export let params;
 
   // wild here is the collectionkey
   let { wild } = params;
   let collectionKey = `/collection/${wild}`;
 
-  let collection, items, recommendModalOpen;
+  let collection: Item;
+  let items;
+  let recommendModalOpen;
 
   let sortedRecommendations = [];
   state.subscribe(() => {
     collection = getItem(collectionKey);
     if (!collection) return;
     items = getCollectionItems(collection.keyStr);
-    sortedRecommendations = getMoreFromThisShip(ship).slice(0, 4);
+    sortedRecommendations = getMoreFromThisShip(collection.keyObj?.ship).slice(
+      0,
+      4
+    );
   });
 </script>
 
 {#if collection}
   {@const { title, ship, blurb, image } = getMeta(collection)}
-  {@const { cover } = getCurator(collection?.keyObj?.ship)}
+  {@const { cover } = getCurator(collection?.keyObj?.ship)?.bespoke}
   <div class="grid grid-cols-12 gap-x-8 mb-4">
     <ItemDetail
       patp={ship}

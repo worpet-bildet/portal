@@ -1,5 +1,8 @@
-<script>
+<script lang="ts">
+  import { ItemKey, Item } from '$types/portal/item';
+
   import linkifyHtml from 'linkify-html';
+  import DOMPurify from 'dompurify';
   import { link } from 'svelte-spa-router';
   import { format } from 'timeago.js';
   import { fade, slide } from 'svelte/transition';
@@ -38,10 +41,12 @@
   export let allowRepliesDepth = 2;
   export let showRating = false;
 
-  let item;
-  let replies = [];
-  let likeCount, likedByMe;
+  let item: Item;
+  let replies: ItemKey[] = [];
+  let likeCount: number;
+  let likedByMe: boolean;
   let showReplies = false;
+
   state.subscribe((s) => {
     item = getItem(keyStrFromObj(key));
     if (s.isLoaded && !item) {
@@ -82,14 +87,14 @@
 
     likeCount = likes.length;
     if (likedByMe && !likes.find((l) => l.ship === me)) likeCount++;
-    likedByMe = likedByMe || likes.find((l) => l.ship === me);
+    likedByMe = likedByMe || !!likes.find((l) => l.ship === me);
   });
 
   function handlePostComment({
     detail: { content, uploadedImageUrl, replyTo, ref, time },
   }) {
     // TODO: Merge this function with the one from /pages/Feed.svelte
-    let post = { 'tags-to': [], time };
+    let post = { 'tags-to': [], time } as any;
     if (ref) {
       // Here we need to create the retweet post instead of the type "other"
       post = {
@@ -113,16 +118,18 @@
     // graph tag for the mention
     content
       .split(' ')
-      .filter((word) => word.substr(0, 1) === '~' && isValidPatp(word))
-      .forEach((word) => {
+      .filter(
+        (word: string) => word.substring(0, 1) === '~' && isValidPatp(word)
+      )
+      .forEach((taggedShip: string) => {
         post = {
           ...post,
           'tags-to': [
             ...post['tags-to'],
             {
-              key: { struc: 'ship', ship: word, cord: '', time: '' },
+              key: { struc: 'ship', ship: taggedShip, cord: '', time: '' },
               'tag-to': `/${me}/mention-to`,
-              'tag-from': `/${word}/mention-from`,
+              'tag-from': `/${taggedShip}/mention-from`,
             },
           ],
         };
@@ -168,9 +175,8 @@
   };
 
   const dispatch = createEventDispatcher();
-  const handleTipRequest = (key) => {
+  const handleTipRequest = (key: ItemKey): boolean =>
     dispatch('tipRequest', { key });
-  };
 
   const showMore = () => {
     postContainer.classList.remove('max-h-96');
@@ -201,9 +207,7 @@
     bespoke: { nickname },
   } = getCurator(ship)}
   {@const blurbLink = getAnyLink(blurb)}
-  <div
-    class="border-b border-x px-5 pt-5 overflow-hidden"
-  >
+  <div class="border-b border-x px-5 pt-5 overflow-hidden">
     <div
       id={keyStrFromObj(item.keyObj)}
       class="grid grid-cols-12 bg-panels dark:bg-transparent gap-2 lg:gap-4 lg:gap-y-0"
@@ -216,7 +220,8 @@
           </a>
         </div>
       </div>
-      <div class="col-span-12 md:col-span-10 flex flex-col gap-2"
+      <div
+        class="col-span-12 md:col-span-10 flex flex-col gap-2"
         bind:this={postContainer}
       >
         <div class="flex gap-2 text-sm text-grey">
@@ -230,8 +235,8 @@
           class="whitespace-pre-wrap line-clamp-50 flex flex-col gap-2 break-words"
         >
           <div>
-            {@html linkifyHtml(
-              linkifyMentions(blurb.replace(/\n\n/g, '\n'), {
+            {@html linkifyMentions(
+              linkifyHtml(DOMPurify.sanitize(blurb), {
                 attributes: {
                   class: 'text-link dark:text-link-dark',
                   target: '_blank',
@@ -274,7 +279,13 @@
           />
         </div>
       {/if}
-      <div class={`col-span-12 col-start-2 py-2 ${longPost && !showAll ? 'bg-gradient-to-t from-panels-solid dark:from-dark-background dark:via-dark-background via-panels-solid pt-14' : ''}`}>
+      <div
+        class={`col-span-12 col-start-2 py-2 ${
+          longPost && !showAll
+            ? 'bg-gradient-to-t from-panels-solid dark:from-dark-background dark:via-dark-background via-panels-solid pt-14'
+            : ''
+        }`}
+      >
         <div class="-ml-2.5 flex gap-8">
           {#if allowRepliesDepth}
             <div class="flex">
@@ -355,7 +366,7 @@
           replyTo={item.keyObj}
           placeholder="Post your reply..."
           buttonText="Reply"
-          recommendButtons={false}
+          showRecommendButtons={false}
           on:post={handlePostComment}
         />
         {#each replies as replyKey (keyStrFromObj(replyKey))}

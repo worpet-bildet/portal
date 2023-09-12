@@ -1,12 +1,12 @@
-/-  *portal-data
+/-  d=portal-data
 ::  SSS item
 |%
 ++  name  %item
-+$  rock  item
++$  rock  item:d
 ::  TODO  waves, but you cant just add because you also need sig and meta
 +$  wave
-  $%  [%whole =item]
-      [%prepend-to-feed =feed]  ::  TODO also sig and meta here
+  $%  [%whole =item:d]
+      [%prepend-to-feed =feed:d]  ::  TODO also sig and meta here
       :: [%lens =lens =meta =sig]
       :: [%bespoke =bespoke =meta =sig]
   ==
@@ -19,7 +19,7 @@
       %prepend-to-feed
     ?>  ?=([%feed *] bespoke.rock)
     %=  rock
-      feed.bespoke  (oust [200 (lent wave)] (weld feed.wave feed.bespoke.rock))  
+      feed.bespoke  (weld feed.wave feed.bespoke.rock) 
     ==
   ==
 --

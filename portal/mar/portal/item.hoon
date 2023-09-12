@@ -1,6 +1,6 @@
-/-  *portal-data
+/-  d=portal-data
 /+  portal-json
-|_  itm=item
+|_  itm=item:d
 ++  grow
   |%
   ++  noun  itm
@@ -8,7 +8,7 @@
   --
 ++  grab
   |%
-  ++  noun  item
+  ++  noun  item:d
   --
 ++  grad  %noun
 --

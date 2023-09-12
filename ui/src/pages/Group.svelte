@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import {
     state,
     getGroup,
@@ -70,6 +70,7 @@
       patp={host}
       key={group.keyObj}
       type="group"
+      isInstalledOrJoined={joinedDetails}
     >
       <div
         class="col-span-12 md:col-span-9 bg-panels dark:bg-darkgrey border p-6 rounded-lg"
@@ -174,30 +175,12 @@
       {#if sortedRecommendations.length > 0}
         <SidebarGroup>
           <div class="text-lg mx-1">More from {host}</div>
-          {#each sortedRecommendations as [recommendation, count]}
+          {#each sortedRecommendations as [recommendation]}
             <ItemPreview key={keyStrToObj(recommendation)} small />
           {/each}
         </SidebarGroup>
       {/if}
     </RightSidebar>
-    <!-- <div class="hidden lg:flex lg:col-span-3 flex-col gap-8">
-      {#if curator && curator.groups && curator.groups.length > 0}
-        <div class="grid gap-y-4">
-          <div class="text-xl">{patp} recommends</div>
-          {#each curator.groups as key}
-            <SidebarGroup {key} />
-          {/each}
-        </div>
-      {/if}
-      <div class="grid gap-y-4">
-        <div class="text-xl">{patp}'s top 5</div>
-        <SidebarPal />
-        <SidebarPal />
-        <SidebarPal />
-        <SidebarPal />
-        <SidebarPal />
-      </div>
-    </div> -->
   </div>
   <RecommendModal bind:open={recommendModalOpen} key={group.keyObj} />
 {:else}

@@ -1,17 +1,20 @@
-<script>
+<script lang="ts">
+  import { FeedItem, ItemKey } from '$types/portal/item';
+
   import { keyStrFromObj } from '@root/state';
   import { FeedPost, TipModal } from '@components';
   import { LoadingIcon } from '@fragments';
 
-  let handleTipRequest;
-  export let feed;
+  export let feed: FeedItem[] = [];
+
+  let handleTipRequest: (key: ItemKey) => void;
 </script>
 
 {#if feed && feed.length > 0}
-  {#each feed as item (keyStrFromObj(item.key))}
+  {#each feed.slice(0, 200) as item (keyStrFromObj(item.key))}
     <FeedPost
       key={item.key}
-      on:tipRequest={(e) => handleTipRequest(e.detail.key)}
+      on:tipRequest={({ detail: { key } }) => handleTipRequest(key)}
     />
   {/each}
   <TipModal bind:handleTipRequest />

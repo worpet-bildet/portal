@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { Confetti } from 'svelte-confetti';
   import { onMount } from 'svelte';
 

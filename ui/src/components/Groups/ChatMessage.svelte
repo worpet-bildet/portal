@@ -1,42 +1,52 @@
-<script>
+<script lang="ts">
+  import { ChatMessage } from '$types/landscape/chat';
+
   import { link } from 'svelte-spa-router';
   import { getGroup } from '@root/state';
   import { getMeta } from '@root/util';
   import { Sigil } from '@components';
 
   import Inline from './Inline.svelte';
+  import Block from './Block.svelte';
 
-  export let memo;
-  export let group;
-  export let content;
-  export let author;
-
-  if (!content && memo) content = memo.content;
-  if (!author && memo) author = memo.author;
+  export let group: string = '';
+  export let author: string = '';
+  export let content: ChatMessage;
 </script>
 
-<div class="col-span-6 p-1 rounded-lg grid grid-cols-12 gap-2 break-words">
-  <div class="col-span-1">
-    <div class="rounded-md overflow-hidden">
-      <Sigil patp={`${author}`} />
+{#if !content}
+  <div>Contacting {author}...</div>
+{:else}
+  <div class="col-span-6 p-1 rounded-lg grid grid-cols-12 gap-2 break-words">
+    <div class="col-span-1">
+      <div class="rounded-md overflow-hidden">
+        <Sigil patp={author} />
+      </div>
+    </div>
+    <div class="col-span-11 flex flex-col">
+      <div class="flex gap-1 text-grey">
+        <a use:link href={`#/${author}`} class="text-sm hover:underline"
+          >{author}</a
+        >{#if group}<span>in</span><a
+            use:link
+            href={`/group/${group}/`}
+            class="hover:underline">{getMeta(getGroup(group)).title || group}</a
+          >{/if}
+      </div>
+      <div class="text-base">
+        {#if 'story' in content}
+          {#if content.story?.inline}
+            {#each content.story.inline as inline}
+              <Inline {inline} />
+            {/each}
+          {/if}
+          {#if content?.story?.block}
+            {#each content.story.block as block}
+              <Block {block} />
+            {/each}
+          {/if}
+        {/if}
+      </div>
     </div>
   </div>
-  <div class="col-span-11 flex flex-col">
-    <div class="flex gap-1 text-grey">
-      <a use:link href={`#/~${author}`} class="text-sm hover:underline"
-        >~{author}</a
-      >{#if group}<span>in</span><a
-          use:link
-          href={`/group/${group}/`}
-          class="hover:underline">{getMeta(getGroup(group)).title || group}</a
-        >{/if}
-    </div>
-    <div class="text-base">
-      {#if content?.story?.inline}
-        {#each content.story.inline as inline}
-          <Inline {inline} />
-        {/each}
-      {/if}
-    </div>
-  </div>
-</div>
+{/if}

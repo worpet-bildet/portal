@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { api } from '@root/api';
 
   export let url;

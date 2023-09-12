@@ -1,6 +1,6 @@
-/-  *portal-data
+/-  d=portal-data
 /+  portal-json
-|_  str=store-result
+|_  str=store-result:d
 ++  grow
   |%
   ++  noun  str
@@ -8,7 +8,7 @@
   --
 ++  grab
   |%
-  ++  noun  store-result
+  ++  noun  store-result:d
   --
 ++  grad  %noun
 --
