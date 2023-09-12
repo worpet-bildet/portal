@@ -74,6 +74,8 @@
   =^  cards-1  state  +.output
   ::  -  remove empty collections + ~2000.1.2 from main collection
   =^  cards-2  state
+    ?.  (~(has by items) [%collection our.bowl '' '~2000.1.1'])
+      `state
     %-  remove:handle-poke:stor  :+  %remove
     (snoc -.output [%collection our.bowl '' '~2000.1.2'])
     [%collection our.bowl '' '~2000.1.1']

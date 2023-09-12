@@ -1,5 +1,4 @@
 /-  portal-data-0, portal-data-1, portal-data-2, d=portal-data, st=portal-states
-/-  s=portal-signature
 |_  [=bowl:gall]
 ++  state-2-to-3
   |=  =state-2:st
@@ -76,13 +75,13 @@
                       image.general.data.item-0
                   ==
     =/  meta  [cord.key-0 (scot %da now.bowl) ~ [%public ~]]
-    (some [key [key lens bespoke meta *signature:s]])
+    (some [key [key lens bespoke meta *signature:d]])
   ?:  ?=([%validity-store *] bespoke.data.item-0)
     =/  key  [%validity-store our.bowl '' cord.key-0]
     =/  lens  %def
     =/  bespoke  [%validity-store *validity-records:portal-data-1]
     =/  meta  [cord.key-0 (scot %da now.bowl) ~ [%public ~]]
-    (some [key [key lens bespoke meta sig=*signature:s]])
+    (some [key [key lens bespoke meta sig=*signature:d]])
   ?:  =(key-0 [our.bowl [%list %enditem %other ~] '~2000.1.2'])
     ~
   ?:  ?=([%list *] type.key-0)
@@ -137,6 +136,6 @@
             (list-key-conv key)
           ==
       ==
-    (some [key [key lens bespoke meta *signature:s]])
+    (some [key [key lens bespoke meta *signature:d]])
   ~
 --
