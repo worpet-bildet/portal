@@ -361,8 +361,8 @@
         ::
         ?+    -.bespoke    bespoke
             %groups-chat-msg  :: path: '/chat/~sampel-dilryd-mopreg/new-channel/writs/writ/id/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749'
-          ?.  ?|  =(*flag:w group.bespoke)
-                  =(*content:w content.bespoke)
+          ?.  ?|  =(*flag:w:d:m group.bespoke)
+                  =(*content:w:d:m content.bespoke)
               ==
             bespoke
           =/  =path

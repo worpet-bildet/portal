@@ -1,4 +1,4 @@
-/-  spider, ch=chat, gr=groups, w=writ, data=portal-data, *portal-action
+/-  spider, ch=chat, m=portal-move
 /+  *strandio, mip, io=agentio
 =,  strand=strand:spider
 ^-  thread:spider
@@ -10,11 +10,11 @@
 ;<  now=time  bind:m  get-time
 ;<  chatmap=(map flag:ch chat:ch)  bind:m  
     (scry (map flag:ch chat:ch) /gx/chat/chats/noun)
-;<  feels-col=store-result:data  bind:m
-  %+  scry  store-result:data
+;<  feels-col=store-result:d:m  bind:m
+  %+  scry  store-result:d:m
   /gx/portal-store/item/collection/(scot %p our)//msgs-by-feels/noun
-;<  replies-col=store-result:data  bind:m
-  %+  scry  store-result:data
+;<  replies-col=store-result:d:m  bind:m
+  %+  scry  store-result:d:m
   /gx/portal-store/item/collection/(scot %p our)//msgs-by-replies/noun
 ?>  ?=([%item *] feels-col)
 ?>  ?=([%item *] replies-col)
@@ -60,13 +60,13 @@
   $(flags +:flags)
   ::
   ++  sort-lists
-    |=  aggregate=(mip:mip flag:ch time writ:w)
-    =/  msgs  ~(tap bi:mip aggregate)  ::  (list [flag:ch time writ:w])
+    |=  aggregate=(mip:mip flag:ch time writ:w:d:m)
+    =/  msgs  ~(tap bi:mip aggregate)  ::  (list [flag:ch time writ:w:d:m])
     ::  sorts by 1. greater count of replies/feels, 2. newer post
     =/  by-feels
       %+  swag  [0 25]
       %+  sort  msgs
-      |=  [a=[=flag:ch =time =writ:w] b=[=flag:ch =time =writ:w]]
+      |=  [a=[=flag:ch =time =writ:w:d:m] b=[=flag:ch =time =writ:w:d:m]]
       =/  first   ~(wyt by feels.writ.a)
       =/  second  ~(wyt by feels.writ.b)
       ?:  =(first second)
@@ -75,7 +75,7 @@
     =/  by-replies
       %+  swag  [0 25]
       %+  sort  msgs
-      |=  [a=[=flag:ch =time =writ:w] b=[=flag:ch =time =writ:w]]
+      |=  [a=[=flag:ch =time =writ:w:d:m] b=[=flag:ch =time =writ:w:d:m]]
       =/  first   ~(wyt in replied.writ.a)
       =/  second  ~(wyt in replied.writ.b)
       ?:  =(first second)
@@ -87,7 +87,7 @@
     ::
   ::
   ++  cards
-    |=  [by-feels=(list [=flag:ch =time =writ:w]) by-replies=(list [=flag:ch =time =writ:w])]
+    |=  [by-feels=(list [=flag:ch =time =writ:w:d:m]) by-replies=(list [=flag:ch =time =writ:w:d:m])]
     ^-  (list card:agent:gall)
     ::  doesn't deduplicate items, but who cares
     ;:  welp
@@ -102,7 +102,7 @@
     :-  [our %portal-manager] 
     :-  %portal-action
     !>  
-    ^-  action
+    ^-  action:m
     [%destroy key]
   ::
   ++  create-col-card
@@ -112,7 +112,7 @@
     :-  [our %portal-manager] 
     :-  %portal-action
     !>  
-    ^-  action
+    ^-  action:m
     :*  %create  `our  ~  `col-name  ~
             `[%collection '' '' '' ~]
             ~  ~  ~
@@ -125,17 +125,17 @@
     :-  [our %portal-manager] 
     :-  %portal-action
     !>  
-    ^-  action
+    ^-  action:m
     :*  %edit  [%collection our '' col-name]  ~  
-            `[%collection ~ ~ ~ `*key-list:data]
+            `[%collection ~ ~ ~ `*key-list:d:m]
         ==
   ::
   ++  chat-msg-cards
-    |=  [start-time=@dr add-to-col=cord a=(list [=flag:ch =time =writ:w])]
+    |=  [start-time=@dr add-to-col=cord a=(list [=flag:ch =time =writ:w:d:m])]
     ^-  (list card:agent:gall)
     %-  head  %-  tail
     %^  spin  a  [*(list card:agent:gall) start-time]
-    |=  [p=[=flag:ch =time =writ:w] q=[cards=(list card:agent:gall) inc=@dr]]
+    |=  [p=[=flag:ch =time =writ:w:d:m] q=[cards=(list card:agent:gall) inc=@dr]]
     :-  p
     %=  q
       cards  (snoc cards.q (chat-msg-card add-to-col (scot %da (add now inc.q)) p))
@@ -143,13 +143,13 @@
     ==
   ::
   ++  chat-msg-card
-    |=  [add-to-col=cord item-time=cord =flag:ch =time =writ:w]
+    |=  [add-to-col=cord item-time=cord =flag:ch =time =writ:w:d:m]
     ^-  card:agent:gall
     %-  ~(poke pass:io /make-chat-msg) 
     :-  [our %portal-manager] 
     :-  %portal-action
     !>  
-    ^-  action
+    ^-  action:m
     :*  %create  `our  ~  `item-time  ~
         :-  ~  
         :*  %groups-chat-msg  
@@ -162,10 +162,10 @@
     ==
   ::
   ++  deduplicate
-    |=  [a=(list [=flag:ch =time =writ:w])]
+    |=  [a=(list [=flag:ch =time =writ:w:d:m])]
     %-  flop  %-  tail
-    %^  spin  a  *(list [=flag:ch =time =writ:w])  
-    |=  [el=[=flag:ch =time =writ:w] st=(list [=flag:ch =time =writ:w])]
+    %^  spin  a  *(list [=flag:ch =time =writ:w:d:m])  
+    |=  [el=[=flag:ch =time =writ:w:d:m] st=(list [=flag:ch =time =writ:w:d:m])]
     ?~  (find [el]~ st)
       el^[el st]
     [el st]
