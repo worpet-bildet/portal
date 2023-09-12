@@ -1,7 +1,7 @@
 /-  subgraph
 /+  default-agent, p=portal, g=social-graph, *mip, *sss
-:: /$  social-graph-result-to-json  %social-graph-result  %json
-:: /$  json-to-social-graph-track  %json  %social-graph-track
+/$  social-graph-result-to-json  %social-graph-result  %json
+/$  json-to-social-graph-track  %json  %social-graph-track
 |%
 ::  we are renaming %social-graph to %portal-graph
 ::  because we are using it for a different purpose

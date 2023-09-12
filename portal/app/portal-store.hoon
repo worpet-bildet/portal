@@ -1,9 +1,9 @@
 /-  portal-item, st=portal-states
 /+  default-agent, p=portal, sss, tr=portal-transition, dbug
-:: /$  items-to-json  %portal-items  %json
-:: /$  item-to-json  %portal-item  %json
-:: /$  store-result-to-json  %portal-store-result  %json
-:: /$  portal-update-to-json  %portal-update  %json
+/$  items-to-json  %portal-items  %json
+/$  item-to-json  %portal-item  %json
+/$  store-result-to-json  %portal-store-result  %json
+/$  portal-update-to-json  %portal-update  %json
 /*  indexer  %ship  /desk/ship
 |%
 +$  card  $+  gall-card  card:agent:gall
