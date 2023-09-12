@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { api } from '@root/api';
   import { state, getItem, keyStrFromObj } from '@root/state';
   import { getMeta } from '@root/util';
@@ -74,7 +74,9 @@
       {/if}
     </div>
     {#if withTitle}
-      <div class="rounded-bl-lg rounded-br-lg bg-panels dark:bg-darkgrey border p-2">
+      <div
+        class="rounded-bl-lg rounded-br-lg bg-panels dark:bg-darkgrey border p-2"
+      >
         <div>{title}</div>
       </div>
     {/if}

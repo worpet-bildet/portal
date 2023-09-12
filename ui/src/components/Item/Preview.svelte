@@ -1,4 +1,6 @@
-<script>
+<script lang="ts">
+  import { Item, ItemKey } from '$types/portal/item';
+
   import { createEventDispatcher } from 'svelte';
   import { push } from 'svelte-spa-router';
   import {
@@ -25,7 +27,8 @@
     ExternalDestinationIcon,
   } from '@fragments';
 
-  export let key;
+  export let key: ItemKey;
+
   export let clickable = true;
   export let removable = false;
   export let editable = false;
@@ -33,7 +36,10 @@
   export let selected = false;
   export let small = false;
 
-  let item, isInstalled, joinedDetails, groupKey;
+  let item: Item;
+  let isInstalled: boolean;
+  let joinedDetails;
+  let groupKey: string;
 
   let groupsStrucs = [
     'groups-chat-msg',
@@ -49,7 +55,7 @@
    * instead have a component for each type of item.
    */
 
-  const loadItem = (key) => {
+  const loadItem = (key: ItemKey) => {
     if (typeof key === 'string') {
       key = keyStrToObj(key);
       item = getItem(key);
@@ -85,7 +91,6 @@
 {#if item}
   {@const {
     keyObj: { struc, ship },
-    keyStr,
   } = item}
   {@const { title, blurb, description, image, color, link, createdAt } =
     getMeta(item)}
@@ -198,7 +203,7 @@
           <button
             on:click|stopPropagation={async (event) => {
               event.stopPropagation();
-              event.target.innerHTML = 'Joining';
+              event.currentTarget.innerHTML = 'Joining';
               await api.urbit.do.joinGroup(groupKey).then(refreshGroups);
             }}
             class="bg-black rounded-md text-xs font-bold px-2 mr-2 dark:bg-white text-white dark:text-black hover:bg-grey dark:hover:bg-offwhite w-14 h-6"
@@ -212,7 +217,7 @@
             <button
               class="w-8 h-8 hover:text-blue-500 cursor-pointer"
               on:click|stopPropagation
-              on:click={() => edit(keyStr)}
+              on:click={edit}
             >
               <EditIcon />
             </button>
@@ -221,7 +226,7 @@
             <button
               class="w-8 h-8 hover:bg-red-500 cursor-pointer"
               on:click|stopPropagation
-              on:click={() => remove(keyStr)}
+              on:click={remove}
             >
               <TrashIcon />
             </button>

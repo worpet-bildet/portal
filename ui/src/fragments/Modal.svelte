@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { CrossIcon, IconButton } from '@fragments';
   export let open = false;
 

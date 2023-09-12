@@ -1,38 +1,19 @@
-/-  *portal-data, *portal-action, gr=social-graph, portal-config
+/-  dat=portal-data, gr=social-graph, config=portal-config, c=writ,
+    d=note, h=curio, m=portal-move
 /+  *portal, docket, treaty, ethereum
 |%
 ++  enjs
   =,  enjs:format
   |%
-  :: ++  enjs-outgoing-subs
-  ::   |=  =outgoing-subs
-  ::   ^-  json
-  ::   |^
-  ::   =/  transform
-  ::     |=  [ship=@p map=(map key acked=?)]
-  ::     ^-  [@t json]
-  ::     [(scot %p ship) (enjs-key-acked-map map)]
-  ::   =/  l  (turn ~(tap by outgoing-subs) transform)
-  ::   [%o `(map @t json)`(malt l)]
-  ::   ++  enjs-key-acked-map
-  ::     |=  mapp=(map key acked=?)
-  ::     ^-  json
-  ::     =/  transform
-  ::       |=  [=key acked=?]
-  ::       ^-  [@t json]
-  ::       [(spat (key-to-path:conv key)) b+acked]
-  ::     =/  l  (turn ~(tap by mapp) transform)
-  ::     [%o `(map @t json)`(malt l)]
-  ::   --
   ++  enjs-dev-map
-    |=  =dev-map:portal-config
+    |=  =dev-map:config
     ^-  json
     :-  %o
     %-  ~(run by dev-map)
     |=  ship=@p  ::  =ship is buggy for some reason
     (enjs-ship ship)
   ++  enjs-valid
-    |=  =valid
+    |=  =valid:dat
     ^-  json
     ?~  valid
       %-  pairs
@@ -43,19 +24,8 @@
     :~  ['valid' b++.valid]
         ['noResult' b+%.n]
     ==
-  :: ++  enjs-front-end-update
-  ::   |=  =front-end-update
-  ::   ^-  json
-  ::   %-  pairs
-  ::   :~  ['srcIsOur' b+src-is-our.front-end-update]
-  ::       ['action' s+`@t`update.front-end-update]
-  ::       ['keyObj' (enjs-key key.front-end-update)]
-  ::       ['keyStr' (enjs-jam-key key.front-end-update)]
-  ::       ['item' ?~(item.front-end-update ~ (enjs-item-or-null item.front-end-update))]
-  ::       ['face' s+(crip (weld (trip update.front-end-update) (spud type.key.front-end-update)))]
-  ::   ==
   ++  enjs-item-or-null
-    |=  [item=?(~ item)]
+    |=  [item=?(~ item:dat)]
     ^-  json
     ?~  item  ~
     %-  pairs
@@ -66,7 +36,7 @@
         ['meta' (enjs-meta meta.item)]
     ==
   ++  enjs-update
-    |=  [=item]
+    |=  [=item:dat]
     ^-  json
     %-  pairs
     :~  ['keyStr' (enjs-jam-key key.item)]
@@ -76,15 +46,8 @@
         ['meta' (enjs-meta meta.item)]
     ==
   ::
-      :: +$  store-result
-    :: $@  ?
-    :: $%  [%items =items]
-    ::     [%item item=?(~ item)]
-    ::     [%keys =key-set]  
-    ::     [%valid =valid]
-    :: ==
   ++  enjs-message
-    |=  [=message]
+    |=  [=message:m]
     ^-  json
     ?+    -.message    s+''
         %payment-reference  
@@ -100,20 +63,68 @@
         :~  ['tx-hash' s+tx-hash.message]
             ['desk' s+desk.message]
         ==
+        %tip-reference  
+      %+  frond  'tip-reference'
+      %-  pairs
+        :~  ['hex' s+hex.message]
+            ['receiving-address' s+receiving-address.message]
+        ==
+        %tip-confirmed
+      %+  frond  'tip-confirmed'
+      %-  pairs
+        :~  ['tx-hash' s+tx-hash.message]
+            ['key' (enjs-key key.message)]
+        ==
+
     ==
   ++  enjs-hex
     |=  hex=@ux
     ^-  json
     s+(crip (num-to-hex:ethereum hex))
   ++  enjs-manager-result
-    |=  [=manager-result]
+    |=  [=manager-result:config]
     ^-  json
     ?@  manager-result  b+manager-result
     ?-  -.manager-result
       %portal-devs  %+  frond  'portal-devs'  (enjs-dev-map +.manager-result)
       %bought-apps  %+  frond  'bought-apps'  (enjs-bought-apps +.manager-result)
       %authorized-ships  %+  frond  'authorized-ships'  (enjs-authorized-ships +.manager-result)
+      %processing-payments  (enjs-processing-payments +.manager-result)
+      %processed-payments  (enjs-processed-payments +.manager-result)
+      %rpc-endpoint  s++.manager-result
+      %receiving-address  s++.manager-result
     ==
+  ::
+  ++  enjs-processing-payments
+    |=  [=processing-payments:config]
+    ^-  json
+    :-  %o
+    =+  ~(tap by processing-payments)
+    %-  malt  %+  turn  -
+    |=  [hex=@t [=buyer:config =key:dat receiving-address=@t]]
+    ^-  [@t json]
+    :-  hex
+    %-  pairs
+    :~  ['buyer' (enjs-ship buyer)]
+        ['desk' (enjs-key key)]
+        ['receiving-address' s+receiving-address]
+    ==
+  ::
+  ++  enjs-processed-payments
+    |=  [=processed-payments:config]
+    ^-  json
+    :-  %a
+    %+  turn  processed-payments
+    |=  [=buyer:config =key:dat tx-hash=@t time=@da note=@t]
+    ^-  json
+    %-  pairs
+    :~  ['buyer' `json`(enjs-ship buyer)]
+        ['desk' `json`(enjs-key key)]
+        ['tx-hash' s+tx-hash]
+        ['time' `json`(^time time)]
+        ['note' s+note]
+    ==
+  ::
   ++  enjs-authorized-ships
     |=  [ships=(set @p)]
     ^-  json
@@ -139,7 +150,7 @@
         (trip desk)
     ==
   ++  enjs-store-result
-    |=  [=store-result]
+    |=  [=store-result:dat]
     ^-  json
     ?@  store-result  b+store-result
     ?+  -.store-result  s+''
@@ -194,16 +205,16 @@
     (node-to-key:conv node)
   ::
   ++  enjs-key-and-item
-    |=  [=key =item]
+    |=  [=key:dat =item:dat]
     ^-  json
     (enjs-item-or-null item)
   ++  enjs-items
-    |=  =items
+    |=  =items:dat
     ^-  json
     =/  lis  ~(tap by items)
     [%a (turn lis enjs-key-and-item)]
   ++  enjs-meta
-    |=  [=meta]
+    |=  [=meta:dat]
     ^-  json
     %-  pairs
     :~  ['createdAt' s+created-at.meta]
@@ -233,7 +244,7 @@
   ::         ['color' s+color.general]
   ::     ==
   ++  enjs-bespoke
-    |=  [=bespoke]
+    |=  [=bespoke:dat]
     ^-  json
     ?-    -.bespoke
       %ship        s+''
@@ -280,97 +291,54 @@
                              ['path' s+path.bespoke]
                              ['image' s+image.bespoke]
                          ==
+      %tip          %-  pairs
+                    :~  ['tipper' (enjs-ship tipper.bespoke)]
+                        ['beneficiary' (enjs-ship beneficiary.bespoke)]
+                        ['eth-amount' s+eth-amount.bespoke]
+                        ['time' s+time.bespoke]
+                        ['note' s+note.bespoke]
+                        ['tx-hash' s+tx-hash.bespoke]
+                    ==
+      %groups-chat-msg   %-  pairs
+                         :~  ['group' s+(flag:enjs-writ group.bespoke)]
+                             ['channel' s+(flag:enjs-writ channel.bespoke)]
+                             ['id' (id:enjs-writ id.bespoke)]
+                             ['content' (content:enjs-writ content.bespoke)]
+                             ['feels' n+(scot %ud feels.bespoke)]
+                             ['replies' n+(scot %ud replies.bespoke)]
+                         ==
+      %groups-diary-note
+                          %-  pairs
+                          :~  ['group' s+(flag:enjs-note group.bespoke)]
+                              ['channel' s+(flag:enjs-note channel.bespoke)]
+                              ['time' s+(scot %ud time.bespoke)]
+                              ['essay' (essay:enjs-note essay.bespoke)]
+                              ['feels' n+(scot %ud feels.bespoke)]
+                              ['replies' n+(scot %ud replies.bespoke)]
+                          ==
+      %groups-heap-curio
+                          %-  pairs
+                          :~  ['group' s+(flag:enjs-curio group.bespoke)]
+                              ['channel' s+(flag:enjs-curio channel.bespoke)]
+                              ['time' s+(scot %ud time.bespoke)]
+                              ['heart' (heart:enjs-curio heart.bespoke)]
+                              ['feels' n+(scot %ud feels.bespoke)]
+                              ['replies' n+(scot %ud replies.bespoke)]
+                          ==
       %validity-store  s+''
     ==
-  ::   --
-  :: ++  enjs-social
-  ::   |=  =social
-  ::   ^-  json
-  ::   |^
-  ::   %-  pairs
-  ::   :~  ['ratings' (enjs-rats ratings.social)]
-  ::       ['comments' (enjs-coms comments.social)]
-  ::       ['reviews' (enjs-revs reviews.social)]
-  ::   ==
-  ::   ++  enjs-rats
-  ::     |=  =ratings
-  ::     ^-  json
-  ::     |^
-  ::     =/  lis  ~(tap by ratings)
-  ::     [%a (turn lis enjs-rat)]
-  ::     ++  enjs-rat
-  ::       |=  [usr-name=@p rating=[rating-num=@ud =updated-at =created-at]]
-  ::       ^-  json
-  ::       %-  pairs
-  ::       :~  ['key' s+`@t`(scot %p usr-name)]
-  ::           ['ship' s+`@t`(scot %p usr-name)]
-  ::           ['ratingNum' (numb rating-num.rating)]
-  ::           ['updatedAt' s+updated-at.rating]
-  ::           ['createdAt' s+created-at.rating]
-  ::       ==
-  ::     --
-  ::   ++  enjs-coms
-  ::     |=  =comments
-  ::     ^-  json
-  ::     |^
-  ::     =/  lis  ~(tap by comments)
-  ::     [%a (turn `(list [com-key comment])`lis enjs-com)]
-  ::     ++  enjs-com
-  ::       |=  [=com-key =comment]
-  ::       ^-  json
-  ::       %-  pairs
-  ::       :~  ['key' (enjs-jam-com-key com-key)]
-  ::           ['keyObj' (enjs-com-key com-key)]
-  ::           ['ship' s+`@t`(scot %p ship.com-key)]
-  ::           ['text' s+text.comment]
-  ::           ['updatedAt' s+updated-at.comment]
-  ::           ['createdAt' s+created-at.com-key]
-  ::       ==
-  ::     ++  enjs-com-key
-  ::       |=  =com-key
-  ::       ^-  json
-  ::       %-  pairs
-  ::       :~  ['ship' s+`@t`(scot %p ship.com-key)]
-  ::           ['createdAt' s+created-at.com-key]
-  ::       ==
-  ::     ++  enjs-jam-com-key
-  ::       |=  =com-key
-  ::       ^-  json
-  ::       s+(crip (weld (scow %p ship.com-key) (trip created-at.com-key)))
-  ::     --
-  ::   ++  enjs-revs
-  ::     |=  =reviews
-  ::     ^-  json
-  ::     |^
-  ::     =/  lis  ~(tap by reviews)
-  ::     [%a (turn lis enjs-rev)]
-  ::     ++  enjs-rev
-  ::       |=  [reviewer=@p =review]
-  ::       ^-  json
-  ::       %-  pairs
-  ::       :~  ['key' s+`@t`(scot %p reviewer)]
-  ::           ['ship' s+`@t`(scot %p reviewer)]
-  ::           ['text' s+text.review]
-  ::           ['hash' s+`@t`(scot %uv hash.review)]
-  ::           ['isCurrent' b+is-current.review]
-  ::           ['isSafe' b+is-safe.review]
-  ::           ['updatedAt' s+updated-at.review]
-  ::           ['createdAt' s+created-at.review]
-  ::       ==
-  ::     --
-  ::   --
   :: ++  enjs-jammed-key-list
-  ::   |=  =key-list
+  ::   |=  =key-list:dat
   ::   ^-  json
   ::   :-  %a
   ::   %+  turn  key-list
-  ::   |=(=key (enjs-jam-key key))
+  ::   |=(=key:dat (enjs-jam-key key))
   ++  enjs-feed
-    |=  =feed
+    |=  =feed:dat
     ^-  json
     :-  %a
     %+  turn  feed
-    |=  [time=cord =^ship =key]
+    |=  [time=cord =^ship =key:dat]
     %-  pairs
     :~  ['time' s+time]
         ['ship' (enjs-ship ship)]
@@ -381,13 +349,13 @@
     ;;  json
     a+(turn list enjs-func)
   ++  enjs-key-list
-    |=  =key-list
+    |=  =key-list:dat
     ^-  json
     :-  %a
     %+  turn  key-list
-    |=(=key (enjs-key key))
+    |=(=key:dat (enjs-key key))
   ++  enjs-sig
-    |=  =signature
+    |=  =signature:dat
     ^-  json
     %-  pairs
     :~  ['hex' s+`@t`(scot %ux hex.signature)]
@@ -403,7 +371,7 @@
   ::  TODO make sure dejs is good too
   ::  prob no problem because it takes key (not jammed-key (path))
   ++  enjs-jam-key
-    |=  =key
+    |=  =key:dat
     ^-  json
     (path:enjs:format (key-to-path:conv key))
     ::  %-  crip
@@ -418,7 +386,7 @@
     ::  ==
 
   ++  enjs-key
-    |=  =key
+    |=  =key:dat
     ^-  json
     %-  pairs
     :~  ['struc' s+`@t`struc.key]
@@ -428,16 +396,397 @@
     ==
     ::
   ++  enjs-key-set
-    |=  =key-set
+    |=  =key-set:dat
     ^-  json
     =/  key-list  ~(tap in key-set)
-    [%a (turn key-list |=(=key (enjs-key)))]
+    [%a (turn key-list |=(=key:dat (enjs-key)))]
   ::
   ++  enjs-ship
     |=  ship=@p
     ^-  json
     s+`@t`(scot %p ship)
+  ::
+++  enjs-curio
+  =,  enjs:format
+  |%
+  ++  curio
+    |=  =curio:h
+    %-  pairs
+    :~  seal+(seal -.curio)
+        heart+(heart +.curio)
+    ==
+  ++  seal
+    |=  =seal:h
+    %-  pairs
+    :~  time+(time time.seal)
+    ::
+        :-  %feels
+        %-  pairs
+        %+  turn  ~(tap by feels.seal)
+        |=  [her=@p =feel:h]
+        [(scot %p her) s+feel]
+    ::
+        :-  %replied
+        :-  %a
+        (turn ~(tap in replied.seal) (cork (cury scot %ud) (lead %s)))
+    ==
+  ++  heart
+    |=  =heart:h
+    %-  pairs
+    :~  title+?~(title.heart ~ s+u.title.heart)
+        content+(content content.heart)
+        author+(ship author.heart)
+        sent+(time sent.heart)
+        replying+?~(replying.heart ~ s/(scot %ud u.replying.heart))
+    ==
+  ++  content
+    |=  =content:h
+    %-  pairs
+    :~  block+a+(turn p.content block)
+        inline+a+(turn q.content inline)
+    ==
+  ++  block
+    |=  b=block:h
+    ^-  json
+    %+  frond  -.b
+    ?-  -.b
+        %cite  (cite cite.b)
+        %image
+      %-  pairs
+      :~  src+s+src.b
+          height+(numb height.b)
+          width+(numb width.b)
+          alt+s+alt.b
+      ==
+    ==
+  ++  inline
+    |=  i=inline:h
+    ^-  json
+    ?@  i  s+i
+    %+  frond  -.i
+    ?-  -.i
+        %break
+      ~
+    ::
+        ?(%code %tag %inline-code)
+      s+p.i
+    ::
+        %ship  s/(scot %p p.i)
+    ::
+        %block  ~
+    ::
+        ?(%italics %bold %strike %blockquote)
+      :-  %a
+      (turn p.i inline)
+    ::
+        %link
+      %-  pairs
+      :~  href+s+p.i
+          content+s+q.i
+      ==
+    ==
+  ::
+  ++  cite
+    |=  =cite:h
+    %+  frond  -.cite
+    ?-    -.cite
+        %group  s+(flag flag.cite)
+    ::
+        %desk
+      %-  pairs
+      :~  ['flag' s+(flag flag.cite)]
+          ['where' s+(spat wer.cite)]
+      ==
+    ::
+        %chan
+      %-  pairs
+      :~  nest/s/(nest nest.cite)
+          where/s/(spat wer.cite)
+      ==
+    ::
+        %bait
+      %-  pairs
+      :~  group/s/(flag grp.cite)
+          graph/s/(flag gra.cite)
+          where/s/(spat wer.cite)
+      ==
+    ==
+  ++  flag
+    |=  f=flag:h
+    (rap 3 (scot %p p.f) '/' q.f ~)
+  ++  nest
+    |=  n=nest:h
+    (rap 3 p.n '/' (flag q.n) ~)
+
   --
+++  enjs-note
+  =,  enjs:format
+  |%
+  ++  essay
+    |=  =essay:d
+    %-  pairs
+    :~  title/s/title.essay
+        image/s/image.essay
+        content/a/(turn content.essay verse)
+        author+(ship author.essay)
+        sent+(time sent.essay)
+    ==
+  ::
+  ++  verse
+    |=  =verse:d
+    ^-  json
+    %+  frond  -.verse
+    ?-  -.verse
+        %block  (block p.verse)
+        %inline  a+(turn p.verse inline)
+    ==
+  ++  block
+    |=  b=block:d
+    ^-  json
+    %+  frond  -.b
+    ?-  -.b
+        %rule  ~
+        %cite  (cite cite.b)
+        %listing  (listing p.b)
+        %header
+      %-  pairs
+      :~  tag+s+p.b
+          content+a+(turn q.b inline)
+      ==
+        %image
+      %-  pairs
+      :~  src+s+src.b
+          height+(numb height.b)
+          width+(numb width.b)
+          alt+s+alt.b
+      ==
+        %code
+      %-  pairs
+      :~  code+s+code.b
+          lang+s+lang.b
+      ==
+    ==
+  ::
+  ++  listing
+    |=  l=listing:d
+    ^-  json
+    %+  frond  -.l
+    ?-  -.l
+        %item  a+(turn p.l inline)
+        %list
+      %-  pairs
+      :~  type+s+p.l
+          items+a+(turn q.l listing)
+          contents+a+(turn r.l inline)
+      ==
+    ==
+  ::
+  ++  inline
+    |=  i=inline:d
+    ^-  json
+    ?@  i  s+i
+    %+  frond  -.i
+    ?-  -.i
+        %break
+      ~
+    ::
+        %ship  s/(scot %p p.i)
+    ::
+        ?(%code %tag %inline-code)
+      s+p.i
+    ::
+        ?(%italics %bold %strike %blockquote)
+      :-  %a
+      (turn p.i inline)
+    ::
+        %block
+      %-  pairs
+      :~  index+(numb p.i)
+          text+s+q.i
+      ==
+    ::
+        %link
+      %-  pairs
+      :~  href+s+p.i
+          content+s+q.i
+      ==
+    ==
+  ::
+  ++  cite
+    |=  =cite:c
+    %+  frond  -.cite
+    ?-    -.cite
+        %group  s+(flag flag.cite)
+    ::
+        %desk
+      %-  pairs
+      :~  ['flag' s+(flag flag.cite)]
+          ['where' s+(spat wer.cite)]
+      ==
+    ::
+        %chan
+      %-  pairs
+      :~  nest/s/(nest nest.cite)
+          where/s/(spat wer.cite)
+      ==
+    ::
+        %bait
+      %-  pairs
+      :~  group/s/(flag grp.cite)
+          graph/s/(flag gra.cite)
+          where/s/(spat wer.cite)
+      ==
+    ==
+  ++  nest
+    |=  n=nest:c
+    (rap 3 p.n '/' (flag q.n) ~)
+
+  ++  flag
+    |=  f=flag:c
+    (rap 3 (scot %p p.f) '/' q.f ~)
+  --
+++  enjs-writ
+  =,  enjs:format
+  |%
+  ++  id 
+    |=  =id:c
+    n+(rap 3 '"' (scot %p p.id) '/' (scot %ud q.id) '"' ~)
+
+  ++  writ
+    |=  =writ:c
+    %-  pairs
+    :~  seal+(seal -.writ)
+        memo+(memo +.writ)
+    ==
+  ++  seal
+    |=  =seal:c
+    %-  pairs
+    :~  id+(id id.seal)
+    ::
+        :-  %feels
+        %-  pairs
+        %+  turn  ~(tap by feels.seal)
+        |=  [her=@p =feel:c]
+        [(scot %p her) s+feel]
+    ::
+        :-  %replied
+        :-  %a
+        (turn ~(tap in replied.seal) |=(i=id:c (id i)))
+    ==
+  ++  memo 
+    |=  =memo:c
+    %-  pairs
+    :~  replying+?~(replying.memo ~ (id u.replying.memo))
+        author+(ship author.memo)
+        sent+(time sent.memo)
+        content+(content content.memo)
+    ==
+
+
+  ++  notice
+    |=  n=notice:c
+    %-  pairs
+    :~  pfix/s/pfix.n
+        sfix/s/sfix.n
+    ==
+  ::
+  ++  content
+    |=  c=content:c
+    %+  frond  -.c
+    ?-  -.c
+      %story   (story p.c)
+      %notice  (notice p.c)
+    ==
+  ::
+  ++  story
+    |=  s=story:c
+    ^-  json
+    %-  pairs
+    :~  :-  %block  a+(turn p.s block)
+        :-  %inline  a+(turn q.s inline)
+    ==
+  ::
+  ++  inline
+    |=  i=inline:c
+    ^-  json
+    ?@  i  s+i
+    %+  frond  -.i
+    ?-  -.i
+        %break
+      ~
+    ::
+        %ship  s/(scot %p p.i)
+    ::
+        ?(%code %tag %inline-code)
+      s+p.i
+    ::
+        ?(%italics %bold %strike %blockquote)
+      :-  %a
+      (turn p.i inline)
+    ::
+        %block
+      %-  pairs
+      :~  index+(numb p.i)
+          text+s+q.i
+      ==
+    ::
+        %link
+      %-  pairs
+      :~  href+s+p.i
+          content+s+q.i
+      ==
+    ==
+  ::
+    ++  block
+    |=  b=block:c
+    ^-  json
+    %+  frond  -.b
+    ?-  -.b
+        %cite  (cite cite.b)
+        %image
+      %-  pairs
+      :~  src+s+src.b
+          height+(numb height.b)
+          width+(numb width.b)
+          alt+s+alt.b
+      ==
+      
+    ==
+  ::
+  ++  cite
+    |=  =cite:c
+    %+  frond  -.cite
+    ?-    -.cite
+        %group  s+(flag flag.cite)
+    ::
+        %desk
+      %-  pairs
+      :~  ['flag' s+(flag flag.cite)]
+          ['where' s+(spat wer.cite)]
+      ==
+    ::
+        %chan
+      %-  pairs
+      :~  nest/s/(nest nest.cite)
+          where/s/(spat wer.cite)
+      ==
+    ::
+        %bait
+      %-  pairs
+      :~  group/s/(flag grp.cite)
+          graph/s/(flag gra.cite)
+          where/s/(spat wer.cite)
+      ==
+    ==
+  ++  nest
+    |=  n=nest:c
+    (rap 3 p.n '/' (flag q.n) ~)
+
+  ++  flag
+    |=  f=flag:c
+    (rap 3 (scot %p p.f) '/' q.f ~)
+  --
+--
 ::
 ::
 ++  dejs
@@ -461,7 +810,7 @@
     ==
   ++  dejs-action
     |=  jon=json
-    ;;  action
+    ;;  action:m
     =,  dejs-soft
     =/  jn  %.  jon
             %-  of:dejs
@@ -478,6 +827,10 @@
                 [%blog-sub ul:dejs]
                 [%payment-request (ot:dejs ~[seller+dejs-ship desk+so:dejs])]
                 [%payment-tx-hash (ot:dejs ~[seller+dejs-ship tx-hash+so:dejs])]
+                [%tip-request (ot:dejs ~[key+dejs-key])]
+                [%tip-tx-hash (ot:dejs ~[beneficiary+dejs-ship tx-hash+so:dejs note+so:dejs])]
+                [%set-rpc-endpoint (ot:dejs ~[rpc-endpoint+so:dejs])]
+                [%set-receiving-address (ot:dejs ~[receiving-address+so:dejs])]
             ==
     ?+    -.jn    jn
         %create
@@ -504,12 +857,12 @@
   ::
   ++  dejs-tagging-list
     |=  jon=json
-    ^-  (list [=key tag-to=path tag-from=path])
+    ^-  (list [=key:dat tag-to=path tag-from=path])
     %.  jon
     (ar:dejs dejs-key-tag-tag)
   ++  dejs-key-tag-tag
     |=  jon=json
-    ^-  [=key tag-to=path tag-from=path]
+    ^-  [=key:dat tag-to=path tag-from=path]
     %.  jon
     %-  ot:dejs
     :~  key+dejs-key
@@ -528,7 +881,7 @@
   ::  only work in conversions
   ++  dejs-soft-bespoke-create
     |=  jon=json
-    ;;  (unit bespoke)
+    ;;  (unit bespoke:dat)
     =,  dejs-soft
     =/  jn  %.  jon
         %-  of:dejs
@@ -538,6 +891,9 @@
             [%retweet json]
             [%review json]
             [%blog json]
+            [%groups-chat-msg json]
+            [%groups-diary-note json]
+            [%groups-heap-curio json]
         ==
     ?-    -.jn
         %other
@@ -590,7 +946,43 @@
                       image+so
                   ==
       =+  (turn `(list (unit))`raw |=(a=(unit *) (fall a ~)))
-      (some blog+(pole-to-cell raw))
+      (some blog+(pole-to-cell -))
+        %groups-chat-msg
+      =/  raw  %.  ;;((map @t json) +>:jn)
+      %-  ot-raw  :~  group+dejs-soft-null-flag
+                      channel+dejs-soft-flag:dejs-writ
+                      id+dejs-soft-id:dejs-writ
+                      content+dejs-soft-null-content
+                      feels+dejs-soft-null-num
+                      replies+dejs-soft-null-num
+                  ==
+      =+  (turn `(list (unit))`raw |=(a=(unit *) (fall a ~)))
+      ;;  (unit bespoke:dat)
+      (some groups-chat-msg+(pole-to-cell -))
+        %groups-diary-note
+      =/  raw  %.  ;;((map @t json) +>:jn)
+      %-  ot-raw  :~  group+dejs-soft-null-flag
+                      channel+dejs-soft-flag:dejs-writ
+                      time+dejs-soft-time:dejs-writ
+                      essay+dejs-soft-null-essay
+                      feels+dejs-soft-null-num
+                      replies+dejs-soft-null-num
+                  ==
+      =+  (turn `(list (unit))`raw |=(a=(unit *) (fall a ~)))
+      ;;  (unit bespoke:dat)
+      (some groups-diary-note+(pole-to-cell -))
+        %groups-heap-curio
+      =/  raw  %.  ;;((map @t json) +>:jn)
+      %-  ot-raw  :~  group+dejs-soft-null-flag
+                      channel+dejs-soft-flag:dejs-writ
+                      time+dejs-soft-time:dejs-writ
+                      heart+dejs-soft-null-heart
+                      feels+dejs-soft-null-num
+                      replies+dejs-soft-null-num
+                  ==
+      =+  (turn `(list (unit))`raw |=(a=(unit *) (fall a ~)))
+      ;;  (unit bespoke:dat)
+      (some groups-heap-curio+(pole-to-cell -))
     ==
   ::
   ++  dejs-soft-bespoke-edit  ::use ot-raw
@@ -656,7 +1048,7 @@
   ::
   ++  dejs-key-text
     |=  jon=json
-    ^-  [key cord]
+    ^-  [key:dat cord]
     %.  jon
     %-  ot:dejs
     :~  key+dejs-key
@@ -664,7 +1056,7 @@
     ==
   ++  dejs-feed
     |=  jon=json
-    ^-  feed
+    ^-  feed:dat
     %.  jon
     %-  ar:dejs
     %-  ot:dejs
@@ -673,6 +1065,26 @@
         key+dejs-key
     ==
   ::
+  ++  dejs-soft-null-flag
+    |=  jon=json
+    ^-  (unit flag:c)
+    `[~zod '']
+  ++  dejs-soft-null-content
+    |=  jon=json
+    ^-  (unit content:c)
+    `[%notice ['' '']]
+  ++  dejs-soft-null-essay
+    |=  jon=json
+    ^-  (unit essay:d)
+    `*essay:d
+  ++  dejs-soft-null-heart
+    |=  jon=json
+    ^-  (unit heart:h)
+    `*heart:h
+  ++  dejs-soft-null-num
+    |=  jon=json
+    ^-  (unit @ud)
+    ~
   ++  dejs-soft-s-list
     |=  jon=json
     ^-  (unit (list @t))
@@ -686,17 +1098,17 @@
     (ar:dejs so:dejs)
   ++  dejs-key-list
     |=  jon=json
-    ^-  key-list
+    ^-  key-list:dat
     %.  jon
     (ar:dejs dejs-key)
   ++  dejs-soft-key-list
     |=  jon=json
-    ^-  (unit key-list)
+    ^-  (unit key-list:dat)
     %.  jon
     (ar:dejs-soft dejs-soft-key)
   ++  dejs-key
     |=  jon=json
-    ;;  key
+    ;;  key:dat
     %.  jon
     %-  ot:dejs
     :~  struc+so:dejs
@@ -706,7 +1118,7 @@
     ==
   ++  dejs-soft-key
     |=  jon=json
-    ;;  (unit key)
+    ;;  (unit key:dat)
     %.  jon
     %-  ot:dejs-soft
     :~  struc+so:dejs-soft
@@ -738,9 +1150,37 @@
     `@uv`(slav %uv (so:dejs jon))
   ++  dejs-key-set
     |=  jon=json
-    ^-  key-set
+    ^-  key-set:dat
     %-  silt
     %.  jon
     (ar:dejs dejs-key)
+  
+  ++  dejs-writ
+    =,  dejs-soft
+    |%
+    ++  dejs-soft-flag
+      |=  jon=json
+      ;;  (unit flag:c)
+      ?~  jon  ~
+      %.  jon
+      %-  ot
+      :~  p+dejs-soft-ship
+          q+so
+      ==
+    ++  dejs-soft-time
+      |=  jon=json
+      ;;  (unit time)
+      ?~  jon  ~
+      (slaw %ud ;;(@t +:jon))
+    ++  dejs-soft-id
+      |=  jon=json
+      ;;  (unit id:c)
+      ?~  jon  ~
+      %.  jon
+      %-  ot
+      :~  p+dejs-soft-ship
+          q+dejs-soft-time
+      ==
+    --
   --
 --

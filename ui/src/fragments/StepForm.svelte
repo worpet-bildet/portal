@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import {
     IconButton,
@@ -33,14 +33,29 @@
   {#if navbuttons}
     <div class="flex justify-between w-full">
       {#if !isFirstStep}
-        <IconButton icon={LeftArrowIcon} on:click={back} class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent">Back</IconButton>
+        <IconButton
+          icon={LeftArrowIcon}
+          on:click={back}
+          class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
+          >Back</IconButton
+        >
       {:else}
         <div />
       {/if}
       {#if !isLastStep}
-        <IconButton icon={RightArrowIcon} on:click={next} class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent">Next</IconButton>
+        <IconButton
+          icon={RightArrowIcon}
+          on:click={next}
+          class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
+          >Next</IconButton
+        >
       {:else}
-        <IconButton icon={CheckIcon} on:click={save} class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent">Save</IconButton>
+        <IconButton
+          icon={CheckIcon}
+          on:click={save}
+          class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
+          >Save</IconButton
+        >
       {/if}
     </div>
   {/if}

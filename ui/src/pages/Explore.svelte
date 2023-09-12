@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { me } from '@root/api';
   import {
     state,
@@ -110,7 +110,9 @@
 </script>
 
 <div class="flex flex-col gap-4 mb-4 items-center">
-  <div class="flex bg-panels dark:bg-darkgrey border p-2 rounded-lg w-full md:w-2/3">
+  <div
+    class="flex bg-panels dark:bg-darkgrey border p-2 rounded-lg w-full md:w-2/3"
+  >
     <div class="w-5 text-grey mt-[3px] ml-2"><SearchIcon /></div>
     <input
       type="text"

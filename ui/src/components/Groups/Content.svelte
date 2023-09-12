@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   /**
    * Handles the rendering of Groups content. At this point in time, that is
    * Notes, Chat Messages, and Curios.
