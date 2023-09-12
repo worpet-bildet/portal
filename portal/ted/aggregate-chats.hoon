@@ -171,17 +171,3 @@
     [el st]
   --
 (pure:m !>(~))
-:: [ x=[p=~natnex-ronret q=%friends-of-door-link-2714]
-::     y=~2023.9.5..20.38.06..cf6a
-::       v
-::     [ [ id=[p=~larlyt-nocset q=~2023.9.5..20.37.58..5645.a1ca.c083.126e]
-::         feels=[n=[p=~faster-dilryd-mopreg q=~.:heart_eyes:] l=~ r=~]
-::         replied={[p=~natnex-ronret q=~2023.9.5..21.59.38..0c8b.4395.8106.24dd]}
-::       ]
-::       replying=~
-::       author=~larlyt-nocset
-::       sent=~2023.9.5..20.37.58..5645.a1ca.c083.126e
-::       content=[%story p=[p=~ q=~['door brings immortality' [%break ~]]]]
-::     ]
-::   ]
-
