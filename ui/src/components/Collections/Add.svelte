@@ -1,4 +1,8 @@
-<script>
+<script lang="ts">
+  import { Other, ItemKey } from '$types/portal/item';
+  import { Groups } from '$types/landscape/groups';
+  import { DocketApps } from '$types/apps/app';
+
   import { createEventDispatcher } from 'svelte';
   import { state, keyStrToObj, keyStrFromObj } from '@root/state';
   import { api, me } from '@root/api';
@@ -16,8 +20,8 @@
   import { toUrbitTime } from '@root/util';
   let dispatch = createEventDispatcher();
 
-  let groups = {};
-  let apps;
+  let groups: Groups = {};
+  let apps: DocketApps;
   state.subscribe((s) => {
     // We filter the groups here based on which ones have a title or not - we
     // don't filter them on retrieval from the api like we do with apps because
@@ -37,15 +41,15 @@
     showModal = true;
   };
 
-  let name,
-    description,
-    groupKeys,
-    appKeys,
-    shipKeys,
-    otherKeys,
-    newShip,
-    newOtherItem,
-    showFormNav;
+  let name: string;
+  let description: string;
+  let groupKeys: string[];
+  let appKeys: string[];
+  let shipKeys: ItemKey[];
+  let otherKeys: ItemKey[];
+  let newShip: string;
+  let newOtherItem: Other = { title: '', blurb: '', link: '', image: '' };
+  let showFormNav: boolean;
 
   const groupSelected = ({ detail: { key } }) => {
     let keyStr = keyStrFromObj(key);
@@ -101,14 +105,14 @@
     // here we should cretae create a key for the item, and then save it and add
     // the key to our list of other items so that it will show up in the list
     let time = toUrbitTime(Date.now());
-    let key = { struc: 'other', ship: me, cord: '', time };
+    let key = { struc: 'other', ship: me, cord: '', time } as ItemKey;
     api.portal.do.create({ time, bespoke: { other: newOtherItem } });
     otherKeys.push(key);
-    newOtherItem = {};
+    newOtherItem = { title: '', blurb: '', link: '', image: '' };
   };
 
   const saveShip = async () => {
-    let key = { struc: 'ship', ship: newShip, time: '', cord: '' };
+    let key = { struc: 'ship', ship: newShip, time: '', cord: '' } as ItemKey;
     shipKeys.push(key);
     newShip = '';
   };
@@ -122,7 +126,7 @@
     shipKeys = [];
     otherKeys = [];
     newShip = '';
-    newOtherItem = {};
+    newOtherItem = { title: '', blurb: '', link: '', image: '' };
     showFormNav = true;
   };
 
@@ -161,17 +165,16 @@
       {:else if formstep === 'groups'}
         {#if Object.entries(groups).length > 0}
           <div class="text-2xl font-bold">Add groups</div>
-          {#each Object.entries(groups) as [path, { meta: { title, image } }]}
-            {@const key = {
-              struc: 'group',
-              ship: path.split('/')[0],
-              cord: path.split('/')[1],
-              time: '',
-            }}
+          {#each Object.entries(groups) as [path]}
             <div class="flex justify-between">
               <div class="w-full">
                 <ItemPreview
-                  {key}
+                  key={{
+                    struc: 'group',
+                    ship: path.split('/')[0],
+                    cord: path.split('/')[1],
+                    time: '',
+                  }}
                   clickable={false}
                   selectable
                   on:selected={groupSelected}
@@ -187,12 +190,11 @@
         {/if}
       {:else if formstep === 'apps'}
         <div class="text-2xl font-bold">Add apps</div>
-        {#each Object.entries(apps) as [path, { title, image, ship, info }]}
-          {@const key = { struc: 'app', ship, cord: path, time: '' }}
+        {#each Object.entries(apps) as [path, { ship }]}
           <div class="flex justify-between">
             <div class="w-full">
               <ItemPreview
-                {key}
+                key={{ struc: 'app', ship, cord: path, time: '' }}
                 clickable={false}
                 selectable
                 on:selected={appSelected}

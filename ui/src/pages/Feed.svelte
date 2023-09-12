@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { Create as PortalCreate } from '$types/portal/poke';
   import { FeedItem, ItemKey } from '$types/portal/item';
   import { RadioStation } from '$types/apps/radio';
 
@@ -99,7 +100,7 @@
   const handlePost = ({
     detail: { content, uploadedImageUrl, ref, time },
   }): void => {
-    let post = { time } as any;
+    let post = { time } as PortalCreate;
     if (ref) {
       // Here we need to create the retweet post instead of the type "other"
       post = {

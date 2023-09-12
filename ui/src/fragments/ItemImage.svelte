@@ -1,11 +1,11 @@
-<script>
+<script lang="ts">
   import { isUrl, invertHex, formatColor } from '@root/util';
 
   import placeholder from '@assets/placeholder.svg';
 
   export let image = '';
   export let title = '';
-  export let color = '';
+  export let color = '#000000';
 
   let primaryColor, secondaryColor;
   $: {

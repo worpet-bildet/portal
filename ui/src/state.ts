@@ -481,7 +481,7 @@ export const handleSubscriptionEvent = (event, type: string) => {
     case 'charge-update':
       refreshApps();
       break;
-    case 'group-action-0' || 'group-leave':
+    case 'group-action-0' || 'group-leave' || 'group-action-2':
       refreshGroups();
       break;
     case 'greg-event':

@@ -1,6 +1,5 @@
-/-  *portal-data, *portal-action, *portal-message, config=portal-config,
-    groups, treaty, portal-devs, blog-paths, writ
-/+  default-agent, dbug, *portal, io=agentio, *sig, *sss, ethereum, verb
+/-  c=portal-config, portal-devs, blog-paths
+/+  default-agent, p=portal, sss::, dbug
 /$  json-to-action  %json  %portal-action
 /$  msg-to-json  %portal-message  %json
 /$  dev-map-to-json  %portal-dev-map  %json
@@ -8,11 +7,11 @@
 |%
 +$  versioned-state
   $+  manager-versioned-state
-  $%  state-0:config
-      state-1:config
-      state-2:config
-      state-3:config
-      state-4:config
+  $%  state-0:c
+      state-1:c
+      state-2:c
+      state-3:c
+      state-4:c
       state-5
       state-6
       state-7
@@ -21,70 +20,70 @@
 +$  state-8
   $+  manager-state-8
   $:  %8
-      =processing-payments:config
-      =processed-payments:config
+      =processing-payments:c
+      =processed-payments:c
       rpc-endpoint=$~(`@ta`'https://rpc.ankr.com/eth' @ta)
-      =receiving-address:config
+      =receiving-address:c
       authorized-ships=(set ship)
       bought-apps=(map [ship desk] tx-hash=@t)
-      sub-blog-paths=_(mk-subs blog-paths ,[%paths ~])
-      sub-portal-devs=_(mk-subs portal-devs ,[%portal-devs ~])
-      =dev-map:config
-      =portal-curator:config
-      =portal-indexer:config
-      =purge-timer:config
-      =purge-time:config
-      =indexed-as-curator:config
-      =onboarded:config
-      =our-apps:config
+      sub-blog-paths=_(mk-subs:sss blog-paths ,[%paths ~])
+      sub-portal-devs=_(mk-subs:sss portal-devs ,[%portal-devs ~])
+      =dev-map:c
+      =portal-curator:c
+      =portal-indexer:c
+      =purge-timer:c
+      =purge-time:c
+      =indexed-as-curator:c
+      =onboarded:c
+      =our-apps:c
   ==
+
 +$  state-7
   $+  manager-state-7
   $:  %7
       authorized-ships=(set ship)
       bought-apps=(map [ship desk] tx-hash=@t)
-      sub-blog-paths=_(mk-subs blog-paths ,[%paths ~])
-      sub-portal-devs=_(mk-subs portal-devs ,[%portal-devs ~])
-      =dev-map:config
-      =portal-curator:config
-      =portal-indexer:config
-      =purge-timer:config
-      =purge-time:config
-      =indexed-as-curator:config
-      =onboarded:config
-      =our-apps:config
+      sub-blog-paths=_(mk-subs:sss blog-paths ,[%paths ~])
+      sub-portal-devs=_(mk-subs:sss portal-devs ,[%portal-devs ~])
+      =dev-map:c
+      =portal-curator:c
+      =portal-indexer:c
+      =purge-timer:c
+      =purge-time:c
+      =indexed-as-curator:c
+      =onboarded:c
+      =our-apps:c
   ==
 +$  state-6
   $+  manager-state-6
   $:  %6
-      sub-blog-paths=_(mk-subs blog-paths ,[%paths ~])
-      sub-portal-devs=_(mk-subs portal-devs ,[%portal-devs ~])
-      =dev-map:config
-      =portal-curator:config
-      =portal-indexer:config
-      =purge-timer:config
-      =purge-time:config
-      =indexed-as-curator:config
-      =onboarded:config
-      =our-apps:config
+      sub-blog-paths=_(mk-subs:sss blog-paths ,[%paths ~])
+      sub-portal-devs=_(mk-subs:sss portal-devs ,[%portal-devs ~])
+      =dev-map:c
+      =portal-curator:c
+      =portal-indexer:c
+      =purge-timer:c
+      =purge-time:c
+      =indexed-as-curator:c
+      =onboarded:c
+      =our-apps:c
   ==
 +$  state-5
   $+  manager-state-5
   $:  %5
-      sub-portal-devs=_(mk-subs portal-devs ,[%portal-devs ~])
-      =dev-map:config
-      =portal-curator:config
-      =portal-indexer:config
-      =purge-timer:config
-      =purge-time:config
-      =indexed-as-curator:config
-      =onboarded:config
-      =our-apps:config
+      sub-portal-devs=_(mk-subs:sss portal-devs ,[%portal-devs ~])
+      =dev-map:c
+      =portal-curator:c
+      =portal-indexer:c
+      =purge-timer:c
+      =purge-time:c
+      =indexed-as-curator:c
+      =onboarded:c
+      =our-apps:c
   ==
 +$  card  $+  gall-card  card:agent:gall
 --
-::  %+  verb  %.y
-%-  agent:dbug
+:: %-  agent:dbug
 =|  state-8
 =*  state  -
 ^-  agent:gall
@@ -94,9 +93,9 @@
 +*  this        .
     default     ~(. (default-agent this %|) bowl)
     helper      ~(. +> bowl)
-    da-portal-devs  =/  da  (da portal-devs ,[%portal-devs ~])
+    da-portal-devs  =/  da  (da:sss portal-devs ,[%portal-devs ~])
       (da sub-portal-devs bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
-    da-blog-paths   =/  da  (da blog-paths ,[%paths ~])
+    da-blog-paths   =/  da  (da:sss blog-paths ,[%paths ~])
       (da sub-blog-paths bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
 ++  on-init
   =.  state  *state-8
@@ -113,40 +112,40 @@
     ?-  -.old
         ?(%0 %1 [%2 *] %3)
       ^-  state-8
-      :*  %8  *processing-payments:config  *processed-payments:config
-              *@ta  *receiving-address:config
+      :*  %8  *processing-payments:c  *processed-payments:c
+              *@ta  *receiving-address:c
               (sy ~[our.bowl])  *(map [ship desk] @t)
-              (mk-subs blog-paths ,[%paths ~])  
-              (mk-subs portal-devs ,[%portal-devs ~])  ~ 
-              +:*state-4:config
+              (mk-subs:sss blog-paths ,[%paths ~])  
+              (mk-subs:sss portal-devs ,[%portal-devs ~])  ~ 
+              +:*state-4:c
       ==
       ::
         %4
-      :*  %8  *processing-payments:config  *processed-payments:config
-              *@ta  *receiving-address:config
+      :*  %8  *processing-payments:c  *processed-payments:c
+              *@ta  *receiving-address:c
               (sy ~[our.bowl])  *(map [ship desk] @t)  
-              (mk-subs blog-paths ,[%paths ~]) 
-              (mk-subs portal-devs ,[%portal-devs ~])  ~
+              (mk-subs:sss blog-paths ,[%paths ~]) 
+              (mk-subs:sss portal-devs ,[%portal-devs ~])  ~
               +.old
       ==
       ::
         %5
-      :*  %8  *processing-payments:config  *processed-payments:config
-              *@ta  *receiving-address:config
+      :*  %8  *processing-payments:c  *processed-payments:c
+              *@ta  *receiving-address:c
               (sy ~[our.bowl])  *(map [ship desk] @t) 
-              (mk-subs blog-paths ,[%paths ~]) 
+              (mk-subs:sss blog-paths ,[%paths ~]) 
               +.old
       ==
       ::
         %6
-      :*  %8  *processing-payments:config  *processed-payments:config
-              *@ta  *receiving-address:config
+      :*  %8  *processing-payments:c  *processed-payments:c
+              *@ta  *receiving-address:c
               (sy ~[our.bowl])  *(map [ship desk] @t)  +.old
       ==
       ::
         %7
-      :*  %8  *processing-payments:config  *processed-payments:config
-              *@ta  *receiving-address:config
+      :*  %8  *processing-payments:c  *processed-payments:c
+              *@ta  *receiving-address:c
               +.old
       ==
       ::
@@ -164,15 +163,15 @@
   ?+    mark    (on-poke:default mark vase)
       %portal-action
     ?>  =(our.bowl src.bowl)
-    =/  act  !<(action vase)
+    =/  act  !<(action:m:p vase)
     ?+    -.act
       ::  default:  forward to %portal-store
-      :_  this  [(~(act cards [our.bowl %portal-store]) act)]~
+      :_  this  [(~(act cards:p [our.bowl %portal-store]) act)]~
       ::
         %manager-init
-      =.  our-apps.state  ;;  our-apps:config
+      =.  our-apps.state  ;;  our-apps:c
         %-  tail
-        .^  update:alliance:treaty  %gx
+        .^  update:alliance:t:d:m:p  %gx
             /(scot %p our.bowl)/treaty/(scot %da now.bowl)/alliance/noun
         ==
       =/  cards
@@ -194,17 +193,17 @@
         %sub-to-many
       ::  %def sent to portal-store
       ::  %temp cycled thru single subs
-      =/  keys=[temp=key-list def=key-list]  (skid-temp:keys key-list.act)
+      =/  keys=[temp=key-list:d:m:p def=key-list:d:m:p]  (skid-temp:keys:p key-list.act)
       =^  cards  state
         %-  tail  %^  spin  temp.keys  [*(list card) state]
-        |=  [=key q=[cards=(list card) state=state-8]]
+        |=  [=key:d:m:p q=[cards=(list card) state=state-8]]
         :-  key
         =.  state  state.q
         =^  cards  state.q  (sub:helper [%sub key])
         :_  state.q  (welp cards cards.q)
       :_  this
       %+  snoc  cards
-      (~(act ^cards [our.bowl %portal-store]) [%sub-to-many def.keys])
+      (~(act cards:p [our.bowl %portal-store]) [%sub-to-many def.keys])
       ::
         %sub
       =^  cards  state  (sub:helper [%sub key.act])
@@ -263,7 +262,7 @@
       %portal-message
     ::  src.bowl src.msg problem kad store misli da je src our
     ::  a ne vanjski jer dolazi od portal-managera
-    =/  msg  !<(message vase)
+    =/  msg  !<(message:m:p vase)
     ?+    -.msg  !!
         %unpublish
       ?:  !(~(has in authorized-ships) src.bowl)
@@ -271,7 +270,7 @@
         `this
       :_  this
       :_  ~
-      %-  ~(act cards [our.bowl %portal-store])
+      %-  ~(act cards:p [our.bowl %portal-store])
       :+  %remove
         [%app our.bowl '' desk.msg]^~ 
       [%collection our.bowl '' 'published-apps']
@@ -281,37 +280,37 @@
         ~&  >>>  "ship not authorized to sign"
         `this
       ::  vulnerable to just receiving random apps from people lol
-      ?:  !(validate-sig dist-desk.msg our.bowl our.bowl now.bowl sig.msg)
+      ?:  !(validate-sig:p dist-desk.msg our.bowl our.bowl now.bowl sig.msg)
         ~&  >>>  "failed sig"
         `this
       ~&  >  "%portal: sig is valid!"
-      =/  dist-desk  (parse-dist-desk:misc dist-desk.msg)
+      =/  dist-desk  (parse-dist-desk:misc:p dist-desk.msg)
       ?~  dist-desk  !!
       ::  making sure published-apps collection exists
       =/  create-my-apps
-      ?:  %-  ~(item-exists scry our.bowl now.bowl)
+      ?:  %-  ~(item-exists scry:p our.bowl now.bowl)
               [%collection our.bowl '' 'published-apps']
           ~
         :~
-          %-  ~(act cards [our.bowl %portal-store])
+          %-  ~(act cards:p [our.bowl %portal-store])
             :*  %create  ~  ~  `'published-apps'  `%def
                 `[%collection 'My Apps' 'Collection of all apps I have published.' '' ~]
                 [%collection our.bowl '' '~2000.1.1']~  ~  ~  ==
         ==
       =/  create-app
-        ?:  %-  ~(item-exists scry our.bowl now.bowl)
+        ?:  %-  ~(item-exists scry:p our.bowl now.bowl)
             [%app our.bowl '' desk-name.u.dist-desk]
-          :~  %-  ~(act cards [our.bowl %portal-store])
+          :~  %-  ~(act cards:p [our.bowl %portal-store])
               :^    %edit
                   [%app our.bowl '' desk-name.u.dist-desk]
                 `%def
               `[%app ~ ~ `dist-desk.msg `sig.msg `treaty.msg eth-price.msg]
-              %-  ~(act cards [our.bowl %portal-store])
+              %-  ~(act cards:p [our.bowl %portal-store])
               :+  %append 
                 [%app our.bowl '' desk-name.u.dist-desk]^~ 
               [%collection our.bowl '' 'published-apps']
           ==
-        :_  ~  %-  ~(act cards [our.bowl %portal-store])
+        :_  ~  %-  ~(act cards:p [our.bowl %portal-store])
         :*  %create  ~  ~  `desk-name.u.dist-desk  `%def
           `[%app ~ '' dist-desk.msg sig.msg treaty.msg (fall eth-price.msg '')]
           ~[[%collection our.bowl '' 'published-apps']]  ~  ~  ==
@@ -334,7 +333,7 @@
       ==  ==
       ::
         %tip-request
-      =/  hex  (crip (cass (num-to-hex:ethereum (mod eny.bowl (pow 4 16)))))
+      =/  hex  (crip (cass (num-to-hex:ethereum:p (mod eny.bowl (pow 4 16)))))
       =.  processing-payments
         (~(put by processing-payments) hex [src.bowl key.msg receiving-address])
       :_  this
@@ -355,9 +354,9 @@
       ~&  >  "received hash"
       =/  tx-hash-msg  (crip (cass (trip tx-hash.msg)))
       ::  check if in processed payments
-      =/  processed  ^-  ^processed-payments  %+  skim  
+      =/  processed  ^-  processed-payments:c  %+  skim  
           processed-payments
-        |=  [=buyer =key tx-hash=@t =time note=@t]
+        |=  [buyer=ship =key:d:m:p tx-hash=@t =time note=@t]
         ?&  =(buyer src.bowl)
             =(tx-hash tx-hash-msg)
         ==
@@ -368,7 +367,7 @@
         [%pass /get-tx %arvo %k %fard q.byk.bowl %get-tx-by-hash %noun !>([rpc-endpoint src.bowl tx-hash-msg note.msg])]~
       ::  if in processed payments
       :~  :*  %pass  /tip-confirm  %agent  [src.bowl %portal-manager]  %poke  
-              %portal-message  !>([%tip-confirmed tx-hash-msg key:(snag 0 `^processed-payments`processed)])
+              %portal-message  !>([%tip-confirmed tx-hash-msg key:(snag 0 `processed-payments:c`processed)])
       ==  ==
       ::
         %tip-confirmed
@@ -377,7 +376,7 @@
     ==
     ::
       %sss-on-rock
-    ?-  msg=!<($%(from:da-portal-devs from:da-blog-paths) (fled vase))
+    ?-  msg=!<($%(from:da-portal-devs from:da-blog-paths) (fled:sss vase))
         [[%portal-devs ~] *]
       ?~  wave.msg  `this
       ?-  -.u.wave.msg
@@ -400,7 +399,8 @@
         =.  dev-map  (~(put by dev-map) dist-desk dev.u.wave.msg)
         :_  this
         %+  snoc  (dev-map-upd (malt (limo ~[[dist-desk dev.u.wave.msg]])))
-        [(~(poke pass:io /sub) [our.bowl %portal-store] portal-action+!>([%sub [%app dev '' desk.key]:u.wave.msg]))]
+        %-  ~(act cards:p [our.bowl %portal-store])
+        [%sub [%app dev '' desk.key]:u.wave.msg]
         ::
           %del
         `this
@@ -411,7 +411,7 @@
       ::
       ?~  wave.msg  `this
       =/  create-my-blogs
-        :~  %-  ~(act cards [our.bowl %portal-store])
+        :~  %-  ~(act cards:p [our.bowl %portal-store])
             :*  %create  ~  ~  `'published-blogs'  `%def
                 `[%collection 'My Blogs' 'Collection of all blogs I have published.' '' ~]
                 [%collection our.bowl '' '~2000.1.1']~  ~  ~  ==
@@ -421,10 +421,10 @@
         =/  key-time  (path-to-key-time path)
         =/  path  (spat path)
         =/  key  [%blog our.bowl '' key-time]
-        ?:  (~(item-exists scry our.bowl now.bowl) key)
-          :~  %-  ~(act cards [our.bowl %portal-store])
+        ?:  (~(item-exists scry:p our.bowl now.bowl) key)
+          :~  %-  ~(act cards:p [our.bowl %portal-store])
           [%append [key]~ [%collection our.bowl '' 'published-blogs']]  ==
-        :~  %-  ~(act cards [our.bowl %portal-store])
+        :~  %-  ~(act cards:p [our.bowl %portal-store])
         :*  %create  ~  ~  `key-time  `%def
           `[%blog (blog-path-to-title path) '' (fall uri '') path '']
           ~[[%collection our.bowl '' 'published-blogs']]  ~  ~  ==  ==
@@ -447,23 +447,23 @@
         ::
           %depost
         :_  this
-        :~  %-  ~(act cards [our.bowl %portal-store])
+        :~  %-  ~(act cards:p [our.bowl %portal-store])
             :+  %remove
               [%blog our.bowl '' (path-to-key-time path.u.wave.msg)]~
             [%collection our.bowl '' 'published-blogs']
         ==
         ::
           %uri
-        =/  item  %-  ~(get-item scry our.bowl now.bowl)
+        =/  item  %-  ~(get-item scry:p our.bowl now.bowl)
                   [%collection our.bowl '' 'published-blogs']
         ?>  ?=([%collection *] bespoke.item)
         =/  cards
           %-  tail  %^  spin  key-list.bespoke.item  *(list card)
-          |=  [=key cards=(list card)]
+          |=  [=key:d:m:p cards=(list card)]
           :-  key
           %+  snoc  cards
           ^-  card
-          %-  ~(act ^cards [our.bowl %portal-store])
+          %-  ~(act cards:p [our.bowl %portal-store])
           :^    %edit
               [%blog our.bowl '' time.key]
             ~
@@ -474,19 +474,19 @@
     ::
       %sss-fake-on-rock
     :_  this
-    ?-  msg=!<($%(from:da-portal-devs from:da-blog-paths) (fled vase))
+    ?-  msg=!<($%(from:da-portal-devs from:da-blog-paths) (fled:sss vase))
       [[%paths ~] *]        (handle-fake-on-rock:da-blog-paths msg)
       [[%portal-devs ~] *]  (handle-fake-on-rock:da-portal-devs msg)
     ==
     ::
       %sss-portal-devs
     =^  cards  sub-portal-devs
-      (apply:da-portal-devs !<(into:da-portal-devs (fled vase)))
+      (apply:da-portal-devs !<(into:da-portal-devs (fled:sss vase)))
     [cards this]
     ::
       %sss-blog-paths
     =^  cards  sub-blog-paths
-      (apply:da-blog-paths !<(into:da-blog-paths (fled vase)))
+      (apply:da-blog-paths !<(into:da-blog-paths (fled:sss vase)))
     cards^this
   ==
 ::
@@ -499,13 +499,13 @@
     ?.  ?=(%.y -.p.sign)
       ~&  >>  "fetching data failed"
       `this
-    =+  !<([tx-hash=@t src=@p result=?(~ transaction-result:eth) note=@t] q.p.p.sign)
+    =+  !<([tx-hash=@t src=@p result=?(~ transaction-result:eth:p) note=@t] q.p.p.sign)
     ?~  result
       ~&  >>  "transaction wasn't made over last 24 hr"
       `this
     =/  hex                (crip (cass (trip input.result)))
     =/  receiving-address  (crip (cass (trip (fall to.result ''))))
-    =/  eth-paid           (crip (skip (scow %ud (hex-to-num:ethereum (need value.result))) |=(a=@t =(a '.'))))
+    =/  eth-paid           (crip (skip (scow %ud (hex-to-num:ethereum:p (need value.result))) |=(a=@t =(a '.'))))
     ?~  processing-data=(~(get by processing-payments) hex)
       ~&  >>  "payment with this hex ({<hex>}) not in processing payments"
       `this
@@ -553,7 +553,7 @@
                 (end 7 (shas %portal-notif eny.bowl))
                 :^  ~  ~  q.byk.bowl
                     ;:  welp  /portal  /tip
-                        (key-to-path:conv key.u.processing-data)
+                        (key-to-path:conv:p key.u.processing-data)
                     ==
                 now.bowl
                 [ship+buyer.u.processing-data ' gave you a tip!' ~]
@@ -594,8 +594,8 @@
     [%x %processed-payments ~]   portal-manager-result+!>([%processed-payments processed-payments])
     ::
       [%x %chat @ @ %writs %writ %id @ @ ~]
-    =+  new-writ=.^(* (~(construct scry [our now]:bowl) %gx %chat (snoc `(list @ta)`t.path %writ)))
-    writ+!>(;;(writ:writ +:new-writ))
+    =+  new-writ=.^(* (~(construct scry:p [our now]:bowl) %gx %chat (snoc `(list @ta)`t.path %writ)))
+    writ+!>(;;(writ:w:d:m:p +:new-writ))
   ==
 ++  on-agent
   |=  [=wire =sign:agent:gall]
@@ -605,7 +605,7 @@
     ::  this takes just apps ids
     ?+    -.sign    (on-agent:default wire sign)
         %fact
-      =/  upd  !<(update:alliance q.cage.sign)
+      =/  upd  !<(update:alliance:t:d:m:p q.cage.sign)
       =^  cards  our-apps
         ?-  -.upd
           ::  get treaty, and then add to published-apps
@@ -618,7 +618,7 @@
           ::  remove from published-apps
             %del
           :_  (~(del in our-apps) [ship.upd desk.upd])
-          :~  %-  ~(act cards [our.bowl %portal-store])
+          :~  %-  ~(act cards:p [our.bowl %portal-store])
             [%remove ~[[%app ship.upd '' desk.upd]] [%collection our.bowl '' 'published-apps']]
           ==
           ::
@@ -634,28 +634,28 @@
     ?+    -.sign    (on-agent:default wire sign)
         %fact
       :_  this
-      =/  treaty  !<(treaty:treaty q.cage.sign)
+      =/  treaty  !<(treaty:t:d:m:p q.cage.sign)
       ::  if exists, edit treaty and append to published-apps
       =/  key  [%app our.bowl '' `@t`i.t.t.wire]
-      ?:  (~(item-exists scry our.bowl now.bowl) key)
-        :~  %-  ~(act cards [our.bowl %portal-store])
+      ?:  (~(item-exists scry:p our.bowl now.bowl) key)
+        :~  %-  ~(act cards:p [our.bowl %portal-store])
               [%edit key ~ `[%app ~ ~ ~ ~ `treaty ~]]
-            %-  ~(act cards [our.bowl %portal-store])
+            %-  ~(act cards:p [our.bowl %portal-store])
               [%append [key]~ [%collection our.bowl '' 'published-apps']]
         ==
       ::  if doesn't exist, create and append to published-apps
-      =/  create-app  ^-  action
+      =/  create-app  ^-  action:m:p
         :*  %create
             ~
             ~
             ``@t`i.t.t.wire
             `%def
-            `[%app ~ '' '' *signature treaty *@t]
+            `[%app ~ '' '' *signature:d:m:p treaty *@t]
             [%collection our.bowl '' 'published-apps']~
             ~
             ~
         ==
-      :~  (~(act cards [our.bowl %portal-store]) create-app)
+      :~  (~(act cards:p [our.bowl %portal-store]) create-app)
           [%pass wire %agent [our.bowl %treaty] %leave ~]
       ==
     ==
@@ -663,11 +663,11 @@
       [%treaty @ @ @ @ ~]
     ?+    -.sign    (on-agent:default wire sign)
         %fact
-      =/  treaty  !<(treaty:treaty q.cage.sign)
-      =/  key  (path-to-key:conv +.wire)
-      =/  act  [%replace key %temp [%app ~ '' '' *signature treaty *@t]]
+      =/  treaty  !<(treaty:t:d:m:p q.cage.sign)
+      =/  key  (path-to-key:conv:p +.wire)
+      =/  act  [%replace key %temp [%app ~ '' '' *signature:d:m:p treaty *@t]]
       :_  this
-      :~  [(~(act cards [our.bowl %portal-store]) act)]
+      :~  [(~(act cards:p [our.bowl %portal-store]) act)]
           ::  TODO why unsub here, instead of getting updates?
           [%pass wire %agent [ship.key %treaty] %leave ~]
       ==
@@ -676,11 +676,11 @@
       [%get-group-preview @ @ @ @ ~]
     ?+    -.sign    (on-agent:default wire sign)
         %fact
-      =/  preview  !<(preview:groups q.cage.sign)
-      =/  key  (path-to-key:conv +.wire)
+      =/  preview  !<(preview:g:d:m:p q.cage.sign)
+      =/  key  (path-to-key:conv:p +.wire)
       =/  act  [%replace key %temp [%group meta.preview]]
       :_  this
-      :~  [(~(act cards [our.bowl %portal-store]) act)]
+      :~  [(~(act cards:p [our.bowl %portal-store]) act)]
           ::  TODO why unsub here, instead of getting updates?
           [%pass wire %agent [p.flag.preview %groups] %leave ~]
       ==
@@ -708,9 +708,9 @@
 --
 |_  [=bowl:gall]
 +*  this      .
-    da-blog-paths   =/  da  (da blog-paths ,[%paths ~])
+    da-blog-paths   =/  da  (da:sss blog-paths ,[%paths ~])
       (da sub-blog-paths bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
-    da-portal-devs  =/  da  (da portal-devs ,[%portal-devs ~])
+    da-portal-devs  =/  da  (da:sss portal-devs ,[%portal-devs ~])
       (da sub-portal-devs bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
 ::
 ++  init-sequence
@@ -721,9 +721,9 @@
   %+  welp
     cards-1
       ::  sub to home page
-  :~  [(~(act cards [our.bowl %portal-store]) sub-init)]
+  :~  [(~(act cards:p [our.bowl %portal-store]) sub-init)]
       ::  scrying should not be done on on-load or on-init
-      (~(act cards [our.bowl %portal-manager]) [%manager-init ~])
+      (~(act cards:p [our.bowl %portal-manager]) [%manager-init ~])
   ==
 ::
 ++  dev-map-upd
@@ -769,13 +769,13 @@
 ::
 ::  portal-manager only needs to do funky stuff with %temp items
 ++  sub
-  |=  [act=action]
+  |=  [act=action:m:p]
   ^+  [*(list card) state]
   ?>  ?=([%sub *] act)
   ?.  =(time.key.act '')   ::  branch on whether is %temp (empty time.key)
     :: if not temp
     :_  state
-    ~[(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(act))]
+    (~(act cards:p [our.bowl %portal-store]) act)^~    
   ::  if temp
   =;  cards
     ?:  ?=(%app struc.key.act)  ::  temp app
@@ -786,9 +786,9 @@
         (surf:da-portal-devs ship.key.act %portal-app-publisher [%portal-devs ~])
       [(welp cards cards-1) state]
     [cards state]
-  ?:  (~(item-exists scry our.bowl now.bowl) key.act)  ~
-  =|  bespoke=bespoke
-  =*  create-empty-temp  ^-  action  :*  %create
+  ?:  (~(item-exists scry:p our.bowl now.bowl) key.act)  ~
+  =|  bespoke=bespoke:d:m:p
+  =*  create-empty-temp  ^-  action:m:p  :*  %create
                               `ship.key.act
                               `cord.key.act
                               `''
@@ -805,26 +805,25 @@
     ::
       %ship
     =.  bespoke  [%ship ~]
-    ~[(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(create-empty-temp))]
+    (~(act cards:p [our.bowl %portal-store]) create-empty-temp)^~
     ::
       %group
-    =.  bespoke  [%group *data:group-preview]
+    =.  bespoke  [%group *data:g:d:m:p]
     =/  path  /groups/(scot %p ship.key.act)/[`@tas`cord.key.act]/preview
-    =/  wire  [%get-group-preview (key-to-path:conv key.act)]
+    =/  wire  [%get-group-preview (key-to-path:conv:p key.act)]
     =/  sub-status  (~(gut by wex.bowl) [wire ship.key.act %groups] ~)
-    :~  [(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(create-empty-temp))]
+    :~  (~(act cards:p [our.bowl %portal-store]) create-empty-temp)
         [%pass wire %agent [ship.key.act %groups] %watch path]
     ==
     ::
       %app
-    =.  bespoke  [%app ~ '' '' *signature *treaty:treaty *@t]
+    =.  bespoke  [%app ~ '' '' *signature:d:m:p *treaty:t:d:m:p *@t]
     =/  path  /treaty/(scot %p ship.key.act)/[`@tas`cord.key.act]
-    =/  wire  [%treaty (key-to-path:conv key.act)]
+    =/  wire  [%treaty (key-to-path:conv:p key.act)]
     =/  sub-status  (~(gut by wex.bowl) [wire ship.key.act %treaty] ~)
-    :~  [(~(poke pass:io /act) [our.bowl %portal-store] portal-action+!>(create-empty-temp))]
+    :~  (~(act cards:p [our.bowl %portal-store]) create-empty-temp)
         [%pass wire %agent [ship.key.act %treaty] %watch path]
     ==
   ==
-
-
+  
 --

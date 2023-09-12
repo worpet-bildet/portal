@@ -7,3 +7,8 @@ export interface GraphTarget {
 export interface SocialGraph {
   [key: string]: GraphTarget;
 }
+
+export interface SocialGraphTrackRequest {
+  source: string;
+  tag: string;
+}

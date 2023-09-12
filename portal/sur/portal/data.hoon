@@ -1,4 +1,4 @@
-/-   *treaty, group-preview=meta, *portal-signature, w=writ, n=note, cur=curio
+/-   t=treaty, g=groups, w=writ, n=note, cur=curio
 |%
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
@@ -84,8 +84,8 @@
 ::  data specific to the item struc
 +$  bespoke
   $%  $+  bespoke-ship        [struc=%ship ~]
-      $+  bespoke-group       [struc=%group =data:group-preview]
-      $+  bespoke-app         [struc=%app screenshots=(list @t) blurb=@t dist-desk=@t sig=signature =treaty eth-price=@t]
+      $+  bespoke-group       [struc=%group =data:g]
+      $+  bespoke-app         [struc=%app screenshots=(list @t) blurb=@t dist-desk=@t sig=signature =treaty:t eth-price=@t]
       $+  bespoke-review      [struc=%review blurb=@t rating=@ud]
       $+  bespoke-retweet     [struc=%retweet blurb=@t ref=key]
       $+  bespoke-feed        [struc=%feed =feed]
@@ -140,12 +140,14 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
-::  Item Metadata
+::  Signature Types
 ::
-::  made with jamming the whole item, so that nobody can fake an item
-+$  sig  
++$  signature  
   $+  signature
-  signature
+  [hex=@ux =ship =life]
+::
+::  for signing apps by the distributor ship
++$  sig-input  [%sign-app dev=ship dist-desk=@t]      
 ::
 ::
 ::
