@@ -26,7 +26,9 @@
     getCurioDetails,
     getNoteDetails,
     toUrbitTime,
+    formatPatp,
   } from '@root/util';
+
   import {
     RecommendModal,
     Sigil,
@@ -34,6 +36,7 @@
     GroupsChatMessage,
     GroupsHeapCurio,
     GroupsDiaryNote,
+    InlineShip,
   } from '@components';
   import {
     TextArea,
@@ -240,180 +243,33 @@
   $: if (noteToPreview) getNoteData(noteToPreview);
   $: shortcodeToPreview = getAnyShortcode(content || '');
   $: if (shortcodeToPreview) getShortcodeItem(shortcodeToPreview);
+
+  // from this, we are going to construct a list of the patps that the user is
+  // replying to
+  export let replyingTo: ItemKey | boolean = false;
 </script>
 
-<div
-  class="relative grid grid-cols-12 bg-panels dark:bg-darkgrey border-x border-b py-5 pl-5 pr-3 gap-2 lg:gap-4 {$$props.class}"
-  class:border-error={error}
->
+<div class="flex flex-col w-full border rounded-lg p-4 gap-4 relative">
   {#if submitting}
     <div
-      class="absolute top-0 left-0 w-full h-full bg-white/30 dark:opacity-40 z-10 backdrop-blur-3xl"
+      class="absolute top-0 left-0 w-full h-full bg-white/30 dark:opacity-40 z-10 backdrop-blur-sm"
     >
       <div class="flex w-full h-full items-center justify-center opacity-100">
         <LoadingIcon />
       </div>
     </div>
   {/if}
-  <div class="col-span-1">
-    <div class="rounded-md overflow-hidden align-middle">
-      <Sigil patp={me} />
-    </div>
+  <div class="flex items-center gap-2">
+    <InlineShip patp={me} />
   </div>
-  <div class="col-span-11 pb-2 flex flex-col gap-2">
-    <TextArea {placeholder} bind:value={content} on:keyboardSubmit={post} />
-    {#if shortcodeItems}
-      {#if shortcodeItems.length > 1}
-        <div class="font-bold">Please select one of the items</div>
-      {/if}
-      {#each shortcodeItems as item}
-        <ItemPreview
-          key={item.keyObj}
-          clickable={false}
-          on:click={() => {
-            // remove the other item from the shortcodeitems list, because we
-            // can only reference one at a time
-            shortcodeItems = [item];
-          }}
-        />
-      {/each}
-    {/if}
-    {#if uploadedImageUrl}
-      <div class="flex">
-        <img src={uploadedImageUrl} class="object-cover" alt="uploaded" />
-      </div>
-    {/if}
-    {#if linkToPreview}
-      <LinkPreview url={linkToPreview} />
-    {/if}
-    {#if chatData}
-      <GroupsChatMessage {...chatData} />
-    {/if}
-    {#if curioData}
-      <GroupsHeapCurio {...curioData} />
-    {/if}
-    {#if noteData}
-      <GroupsDiaryNote {...noteData} />
-    {/if}
+  <div class="flex w-full">
+    <TextArea
+      bind:value={content}
+      placeholder="/ Share anything you like"
+      on:keyboardSubmit={post}
+    />
   </div>
-  <div class="col-span-12 col-start-2 flex justify-between">
-    {#if showRecommendButtons}
-      <div class="flex gap-1 items-center">
-        <div class="rounded-full overflow-hidden">
-          <IconButton
-            icon={AppIcon}
-            on:click={() => {
-              appModalOpen = true;
-            }}
-            class="fill-black dark:fill-white hover:fill-grey dark:hover:fill-grey"
-          />
-        </div>
-        <div class="rounded-full overflow-hidden">
-          <IconButton
-            icon={PeopleIcon}
-            on:click={() => {
-              groupModalOpen = true;
-            }}
-            class="fill-white dark:fill-grey hover:fill-grey dark:hover:fill-black"
-          />
-        </div>
-        <input
-          type="file"
-          accept="image/*"
-          class="hidden"
-          bind:this={fileInput}
-          on:change={handleImageSelect}
-        />
-        <div class="rounded-full overflow-hidden">
-          <IconButton
-            icon={ImageIcon}
-            on:click={() => {
-              if (!$state.s3 || !$state.s3.configuration?.currentBucket) {
-                alert(
-                  'For attachment support, configure S3 storage with ~dister-nocsyx-lassul/silo. Otherwise, paste a link to a hosted image.'
-                );
-              } else {
-                fileInput.click();
-              }
-            }}
-            class="stroke-grey fill-grey hover:fill-black dark:hover:fill-grey"
-          />
-        </div>
-      </div>
-    {:else if showRatingStars}
-      <StarRating
-        on:change={handleRate}
-        config={{
-          readOnly: false,
-          countStars: 5,
-          range: { min: 0, max: 5, step: 1 },
-          score: rating,
-        }}
-      />
-    {:else}
-      <div />
-    {/if}
-    <button
-      class="bg-black dark:bg-white text-white dark:text-darkgrey hover:bg-grey dark:hover:bg-offwhite hover:duration-500 font-bold rounded-lg px-3 py-1 self-end"
-      on:click={post}>{buttonText}</button
-    >
+  <div class="flex justify-end w-full">
+    <button class="py-1 px-4 rounded-md bg-black text-white">Post</button>
   </div>
-  {#if error}
-    <div class="col-span-11 col-start-2 text-error pt-2">{error}</div>
-  {/if}
-  <Modal bind:open={appModalOpen}>
-    <div class="flex flex-col gap-4 p-4">
-      <div class="text-2xl font-bold">Recommend an app</div>
-      {#if Object.values(apps).length === 0}
-        <div>
-          You have not installed any apps yet. Install some to recommend them on
-          Portal.
-        </div>
-      {/if}
-      {#each Object.entries(apps) as [path, { title, image, color }]}
-        <button
-          class="grid grid-cols-12 dark:border dark:hover:border-white hover:duration-500 rounded-lg items-center gap-4 p-1 hover:bg-panels-hover dark:hover:bg-transparent"
-          on:click={() => {
-            appModalOpen = false;
-            recommendModalOpen = true;
-            selectedKey = keyStrToObj(`/app/${path}/`);
-          }}
-        >
-          <div class="col-span-1">
-            <ItemImage {image} title={title || path} {color} />
-          </div>
-          <div class="col-span-11 justify-self-start font-bold">
-            {title || path}
-          </div>
-        </button>
-      {/each}
-    </div>
-  </Modal>
-  <Modal bind:open={groupModalOpen}>
-    <div class="flex flex-col gap-4 p-4">
-      <div class="text-2xl font-bold">Recommend a group</div>
-      {#if Object.values(groups).length === 0}
-        <div>
-          You are not a member of any groups yet, join some in order to
-          recommend them on Portal.
-        </div>
-      {/if}
-      {#each Object.entries(groups) as [path, { meta: { title, image } }]}
-        <button
-          class="grid grid-cols-12 dark:border dark:hover:border-white hover:duration-500 hover:bg-panels-hover rounded-lg items-center gap-4 p-1 hover:bg-panels dark:hover:bg-transparent"
-          on:click={() => {
-            groupModalOpen = false;
-            recommendModalOpen = true;
-            selectedKey = keyStrToObj(`/group/${path}/`);
-          }}
-        >
-          <div class="col-span-1">
-            <ItemImage {image} {title} />
-          </div>
-          <div class="col-span-11 justify-self-start font-bold">{title}</div>
-        </button>
-      {/each}
-    </div>
-  </Modal>
-  <RecommendModal bind:open={recommendModalOpen} key={selectedKey} />
 </div>

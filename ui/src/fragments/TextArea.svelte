@@ -5,7 +5,8 @@
   import { tick, createEventDispatcher } from 'svelte';
   import { isSubmitHotkey } from '@root/util';
   const dispatch = createEventDispatcher();
-  export let value = '';
+
+  export let value: string = '';
 
   let textarea: HTMLTextAreaElement;
   let target: HTMLDivElement;
@@ -37,18 +38,19 @@
   };
 </script>
 
-<div class="relative">
+<div class="relative w-full">
   <textarea
-    use:autosize
-    bind:this={textarea}
     bind:value
+    bind:this={textarea}
+    use:autosize
+    rows={1}
     on:input={handleInput}
     on:keydown={handleKeydown}
     {...$$props}
-    class="p-2 pb-4 w-full text-lg placeholder-grey resize-none leading-tight box-border break-words border-b focus:outline-none z-10 text-transparent bg-transparent caret-black dark:caret-white"
+    class="py-4 px-3 w-full text-lg placeholder-light resize-none leading-tight break-words focus:outline-none z-10 text-transparent caret-black dark:caret-white bg-panel rounded-lg"
   />
   <div
     bind:this={target}
-    class="p-2 pb-4 w-full text-lg placeholder-grey text-black dark:text-white resize-none leading-tight box-border break-words focus:outline-none absolute top-0 left-0 pointer-events-none whitespace-pre-wrap"
+    class="py-4 px-3 w-full text-lg text-black dark:text-white resize-none leading-tight break-words focus:outline-none absolute top-0 left-0 pointer-events-none whitespace-pre-wrap"
   />
 </div>

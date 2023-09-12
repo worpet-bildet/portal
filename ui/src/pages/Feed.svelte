@@ -192,14 +192,10 @@
 
 <div class="grid grid-cols-9 gap-8 mb-4">
   <div class="flex flex-col gap-8 rounded-t-2xl col-span-12 md:col-span-6">
-    {#if config.aiEnabled !== 'false'}
-      <FeedPromptForm {feed} bind:promptedFeed bind:loading />
-    {/if}
     <div>
       <FeedPostForm
         on:post={handlePost}
         placeholder="Share a limerick, maybe..."
-        class="rounded-tl-lg rounded-tr-lg border-t"
       />
       {#if loading}
         <div class="flex justify-center dark:fill-white items-center py-20">
@@ -211,26 +207,6 @@
     </div>
   </div>
   <RightSidebar>
-    <SidebarGroup>
-      <div class="flex flex-col gap-4 mx-2 mb-2 overflow-hidden">
-        <div class="text-xl font-bold">Find a ship</div>
-        <div
-          class="flex w-full gap-4 items-center rounded-lg p-4 justify-between"
-        >
-          <div class="flex gap-4">
-            <div class="w-6"><Sigil patp={lastValidShip || '~zod'} /></div>
-            <input
-              type="text"
-              class="border-b focus:outline-none placeholder-grey"
-              placeholder="~worpet-bildet"
-              bind:value={searchShip}
-              on:keydown={handleShipSearchKeydown}
-            />
-          </div>
-          <button class="w-5" on:click={search}><SearchIcon /></button>
-        </div>
-      </div>
-    </SidebarGroup>
     {#if sortedRecommendations.length > 0}
       <SidebarGroup>
         <div class="text-xl font-bold mx-2">Most recommended</div>

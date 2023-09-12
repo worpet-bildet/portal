@@ -503,6 +503,14 @@ export const isValidDeskOrGroupPath = (path) => {
   return true;
 };
 
+export const formatPatp = (patpLike) => {
+  if (!patpLike) return;
+  if (!isValidPatp(patpLike)) return;
+  if (patpLike.slice(0, 1) !== '~') patpLike = `~${patpLike}`;
+  const parts = patpLike.split('-');
+  if (parts.length > 2) return `~${parts[2]}^${parts[3]}`;
+};
+
 // Reference: https://github.com/mirtyl-wacdec/urbit_ex/blob/master/lib/api/utils.ex#LL260C14-L260C14
 export const isValidPatp = (patp) => {
   if (!patp) return false;

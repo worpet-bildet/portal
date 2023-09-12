@@ -2,6 +2,9 @@ module.exports = {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx,svelte}'],
   theme: {
     extend: {
+      backdropBlur: {
+        xs: '2px',
+      },
       fontFamily: {
         logo: ['krona'],
         saucebold: ['sauce-bold'],
@@ -11,9 +14,24 @@ module.exports = {
         'scrollbar-width': 'none',
       },
       colors: {
-        transparent: '#00000000',
-        grey: '#696969',
+        white: '#ffffff',
         black: '#000000',
+        transparent: '#00000000',
+
+        panel: '#FAFAFA',
+        panelhover: '#EFEFEF',
+        indicator: '#EAEAEA',
+        indicatortext: '#8E8E8E',
+        panelicon: '#B1B1B1',
+        paneltext: '#636363',
+        light: '#AFAFAF',
+        greyicon: '#C7C7C7',
+        darkgreyicon: '#676767',
+        input: '#F8F8F8',
+        strucpill: '#F1F1F1',
+        strucpilltext: '#ABABAB',
+
+        grey: '#696969',
         dark: '#00000080',
         'dark-background': '#0e0e0e',
         coverPhotoBottom: '#00000000',
@@ -27,7 +45,6 @@ module.exports = {
         panels: '#f9f9f940', //#D6D3D6',
         'panels-solid': '#f9f9f9',
         'panels-hover': '#00000008',
-        white: '#ffffff',
         hover: '#ffffff60',
         offwhite: '#c5c5c5',
         error: 'rgb(220 38 38)',
@@ -38,7 +55,8 @@ module.exports = {
       },
     },
     borderColor: {
-      DEFAULT: '#80808040',
+      DEFAULT: '#EFEFEF',
+
       transparent: '#00000000',
       grey: '#80808040',
       white: '#ffffff',

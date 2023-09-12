@@ -1,4 +1,7 @@
 export { default as Navbar } from './Navbar.svelte';
+export { default as GlobalSearch } from './GlobalSearch.svelte';
+export { default as InlineShip } from './InlineShip.svelte';
+
 export { default as Feed } from './Feed/Feed.svelte';
 export { default as FeedPost } from './Feed/FeedPost.svelte';
 export { default as FeedPostForm } from './Feed/FeedPostForm.svelte';

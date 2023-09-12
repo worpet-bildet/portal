@@ -275,7 +275,7 @@ export const getItem = (listKey: string | ItemKey): Item => {
 };
 
 export const getCollectedItemLeaderboard = (
-  excludePatp: string
+  excludePatp?: string
 ): [string, number][] => {
   return Object.entries<number>(
     Object.values(items())

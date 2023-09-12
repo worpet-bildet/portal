@@ -1,7 +1,11 @@
 <script>
   import { isUrl, invertHex, formatColor } from '@root/util';
+
   import placeholder from '@assets/placeholder.svg';
-  export let image, title, color;
+
+  export let image = '';
+  export let title = '';
+  export let color = '';
 
   let primaryColor, secondaryColor;
   $: {
@@ -20,7 +24,7 @@
     />
   {:else}
     <div
-      class="absolute top-0 left-0 flex items-center justify-center text-xs md:text-2xl text-clip w-full h-full"
+      class="absolute top-0 left-0 flex items-center justify-center text-xs text-clip w-full h-full"
       style="background-color: #{primaryColor ||
         '000000'}; color: #{secondaryColor || '000000'};"
     >

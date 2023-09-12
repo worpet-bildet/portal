@@ -7,7 +7,7 @@
   import { Feed, Group, App, Explore, Api } from './pages';
   import { Curator, EditCurator } from './pages/Curator';
   import { Collection, EditCollection } from './pages/Collection';
-  import { Navbar } from '@components';
+  import { Navbar, GlobalSearch } from '@components';
 
   const routes = {
     '/': Feed,
@@ -20,6 +20,8 @@
     '/:patp': Curator,
     '/:patp/edit': EditCurator,
   };
+
+  let navCollapsed: boolean = false;
 
   console.log('ENV', config.env);
   if (config.env === 'development') {
@@ -68,15 +70,18 @@
 </script>
 
 <main class:dark={$state.darkmode}>
-  <div
-    class="dark:bg-gradient-to-b from-darkgrey to-gradientdark dark:text-white min-h-screen"
-  >
+  <div class="grid grid-cols-12 dark:text-white h-screen">
     <GoogleAnalytics properties={[config.googleAnalyticsId]} />
-    <div class="relative z-10">
-      <Navbar />
+    <div class:col-span-2={!navCollapsed} class:col-span-1={navCollapsed}>
+      <Navbar bind:navCollapsed />
     </div>
-    <div class="p-2 z-0 md:px-16 lg:px-32 2xl:px-56">
-      <Router {routes} />
+    <div
+      class="px-10 py-5 bg-white overflow-y-auto grid grid-cols-12"
+      class:col-span-10={!navCollapsed}
+      class:col-span-11={navCollapsed}
+    >
+      <div class="py-4 col-span-8"><GlobalSearch /></div>
+      <div class="col-span-12 min-h-screen"><Router {routes} /></div>
     </div>
   </div>
 </main>
