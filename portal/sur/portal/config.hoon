@@ -1,4 +1,4 @@
-/-  *portal-data
+/-  d=portal-data
 /*  indexer  %ship  /desk/ship
 |%
 +$  indexer  $~(^indexer @p)
@@ -7,10 +7,10 @@
 ::
 +$  processing-payments  
   $+  processing-payments
-  (map hex [=buyer =key =receiving-address])
+  (map hex [=buyer =key:d =receiving-address])
 +$  processed-payments
   $+  processed-payments
-  (list [=buyer =key tx-hash=@t =time note=@t])
+  (list [=buyer =key:d tx-hash=@t =time note=@t])
 ::
 +$  receiving-address  @t
 +$  eth-amount  @t
@@ -18,7 +18,7 @@
 +$  hex  @t
 +$  group  [name=@ta ships=(set ship)]
 ::
-+$  default-curators  (set key)
++$  default-curators  (set key:d)
 +$  purge-timer  $~(%.y ?)
 +$  purge-time  _~d1
 +$  indexed-as-curator  $~(%.n ?)
