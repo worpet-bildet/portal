@@ -54,6 +54,7 @@
       [%sub-to-many =key-list:d]
       ::
       [%aggregate-chats ~]
+      [%aggregate-notes-curios ~]
       ::
       $+  prepend-to-feed
       [%prepend-to-feed =feed:d feed-key=[struc=%feed =ship =cord time=cord]]  ::  TODO rename?

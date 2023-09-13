@@ -172,6 +172,10 @@
       :_  this
       aggregate-chats-cards:helper
       ::
+        %aggregate-notes-curios
+      :_  this
+      aggregate-notes-curios-cards:helper
+      ::
         %manager-init
       =.  our-apps.state  ;;  our-apps:c
         %-  tail
@@ -190,10 +194,14 @@
         ==
       ::
       =/  timers  .^((list [@da =duct]) %bx /(scot %p our.bowl)//(scot %da now.bowl)/debug/timers)
-      =/  timer-exists
+      =/  chats-timer-exists
         %+  lien  timers
         |=  [@da =duct]   ::  duct is (list wire)
         =(%portal-chats-timer (rear ;;(path -:duct)))
+      =/  notes-curios-timer-exists
+        %+  lien  timers
+        |=  [@da =duct]   ::  duct is (list wire)
+        =(%portal-notes-curios-timer (rear ;;(path -:duct)))
       ::
       :_  this
       ;:  welp  
@@ -201,11 +209,17 @@
           ?:  (~(has by wex.bowl) [/our-apps our.bowl %treaty])
               ~
             [%pass /our-apps %agent [our.bowl %treaty] %watch /alliance]~
-          ?:  timer-exists
+          ?:  chats-timer-exists
               ~
             %+  welp  
             chats-timer-cards:helper
             aggregate-chats-cards:helper
+          ::
+          ?:  notes-curios-timer-exists
+              ~
+            %+  welp  
+            notes-curios-timer-cards:helper
+            aggregate-notes-curios-cards:helper
       ==
       ::
         %sub-to-many
@@ -528,6 +542,22 @@
     ~&  >  "%portal-manager: aggregate-chats thread succeeded"
     `this
     ::
+      [%portal-notes-curios-timer ~]
+    ?>  ?=([%behn %wake *] sign)
+    ~&  >  "got notes-curios timer"
+    :_  this
+    %+  welp
+      notes-curios-timer-cards:helper 
+      aggregate-notes-curios-cards:helper
+    ::
+      [%aggregate-notes-curios ~]
+    ?>  ?=([%khan %arow *] sign)
+    ?.  ?=(%.y -.p.sign)
+      ~&  >>  "%portal-manager: aggregate-notes-curios thread failed"
+      `this
+    ~&  >  "%portal-manager: aggregate-notes-curios thread succeeded"
+    `this
+    ::
       [%get-tx ~]
     ?>  ?=([%khan %arow *] sign)
     ?.  ?=(%.y -.p.sign)
@@ -766,6 +796,12 @@
 ++  aggregate-chats-cards
   [%pass /aggregate-chats %arvo %k %fard q.byk.bowl %aggregate-chats noun+!>(~)]^~
 ::
+++  notes-curios-timer-cards
+  [%pass /portal-notes-curios-timer %arvo %b [%wait (add now.bowl ~h1)]]^~
+::
+++  aggregate-notes-curios-cards
+  [%pass /aggregate-notes-curios %arvo %k %fard q.byk.bowl %aggregate-notes-curios noun+!>(~)]^~
+::
 ++  dev-map-upd
   |=  =_dev-map
   ^-  (list card)
@@ -807,6 +843,17 @@
     (snap p 0 (^sub -.p 32))
   (crip p)
 ::
+::  used in groups-heap-curio and groups-diary-note %temp item keys
+++  cord-to-channel-time
+  |=  =cord
+  ^-  [channel-name=term =time]
+  =+  tap=(trip cord)
+  =+  (find ['/']~ tap)
+  ?~  -  ~|("invalid cord in key for %groups-diary-note/%groups-heap-curio" !!)
+  =/  almost-flag  (trim u.- tap)
+  :-  (crip p.almost-flag)
+  `@da`(slav %ud (crip (slag 1 q.almost-flag)))
+::
 ::  portal-manager only needs to do funky stuff with %temp items
 ++  sub
   |=  [act=action:m:p]
@@ -847,30 +894,16 @@
   ?+    struc.key.act    !!    
     ::  
       %groups-diary-note
-    =+  tap=(trip cord.key.act)
-    =+  (find ['/']~ tap)
-    ?~  -  ~|("invalid cord in key for %groups-diary-note" !!)
-    =/  almost-flag  (trim u.- tap)
-    =/  channel=flag:n:d:m:p
-        :-  ship.key.act
-            (crip p.almost-flag)
-    =/  timee
-      `@da`(slav %ud (crip (slag 1 q.almost-flag)))
-    =.  bespoke
-      =,  d:m:p
-      :*  %groups-diary-note
-          *flag:n
-          channel
-          timee
-          *essay:n
-          0
-          0
-      ==
+    =+  (cord-to-channel-time cord.key.act)
+    =.  bespoke  =,  d:m:p
+      [%groups-diary-note *flag:n [ship.key.act -.-] +.- *essay:n 0 0]
     (~(act cards:p [our.bowl %portal-store]) create-empty-temp)^~
-    :: ::
-    ::   %groups-heap-curio
-    :: =.  bespoke  (need bespoke.act)
-    :: (~(act cards:p [our.bowl %portal-store]) create-empty-temp)^~
+    ::
+      %groups-heap-curio
+    =+  (cord-to-channel-time cord.key.act)
+    =.  bespoke  =,  d:m:p
+      [%groups-heap-curio *flag:cur [ship.key.act -.-] +.- *heart:cur 0 0]
+    (~(act cards:p [our.bowl %portal-store]) create-empty-temp)^~
     ::
       %ship
     =.  bespoke  [%ship ~]
