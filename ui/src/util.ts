@@ -509,6 +509,7 @@ export const formatPatp = (patpLike) => {
   if (patpLike.slice(0, 1) !== '~') patpLike = `~${patpLike}`;
   const parts = patpLike.split('-');
   if (parts.length > 2) return `~${parts[2]}^${parts[3]}`;
+  return patpLike;
 };
 
 // Reference: https://github.com/mirtyl-wacdec/urbit_ex/blob/master/lib/api/utils.ex#LL260C14-L260C14

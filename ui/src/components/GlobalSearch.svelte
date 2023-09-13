@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Item } from '$types/portal/item';
+  import { Item, ItemKey } from '$types/portal/item';
 
   import { push } from 'svelte-spa-router';
   import { fade } from 'svelte/transition';
@@ -10,10 +10,10 @@
     getItem,
     getCollectedItemLeaderboard,
     keyStrFromObj,
-    getCuratorAllCollectionItems,
+    items,
     getGlobalFeed,
   } from '@root/state';
-  import { getMeta } from '@root/util';
+  import { getMeta, formatPatp } from '@root/util';
 
   import { Sigil } from '@components';
   import { PlaceholderIcon, NavItem } from '@fragments';
@@ -32,15 +32,14 @@
   };
 
   let all: Item[];
+  let collectedItems: Item[];
 
   const setDefaultResults = () => {
     searchResults = {
-      items: getCollectedItemLeaderboard()
+      items: (getCollectedItemLeaderboard() || [])
         .slice(0, 3)
         .map(([key]) => getItem(key)),
-      posts: getGlobalFeed()
-        .slice(0, 3)
-        .map(({ key }) => getItem(key)),
+      posts: (getGlobalFeed() || []).slice(0, 3).map(({ key }) => getItem(key)),
       ships: [],
       pages: [
         { title: 'Feed', icon: PlaceholderIcon, action: () => push('/') },
@@ -62,15 +61,18 @@
   state.subscribe((s) => {
     if (searchResults.items.length > 0) return;
     if (!s.isLoaded) return;
-    all = getCuratorAllCollectionItems(me).map(getItem);
+    all = Object.values(items());
+    collectedItems = (getCollectedItemLeaderboard() || []).map(([key]) =>
+      getItem(key)
+    );
     setDefaultResults();
   });
 
   const reset = () => {
-    focused = false;
-    selectedIndex = -1;
-    searchString = '';
-    setDefaultResults();
+    // focused = false;
+    // selectedIndex = -1;
+    // searchString = '';
+    // setDefaultResults();
   };
 
   /**
@@ -95,15 +97,13 @@
   const updateResults = (_search) => {
     if (!_search) return setDefaultResults();
     searchResults = {
-      items: all.filter((item) => {
+      items: collectedItems.filter((item) => {
         return (
           ['app', 'group', 'collection'].includes(item?.keyObj?.struc) &&
           match(item)
         );
       }),
       posts: all.filter((item) => {
-        console.log({ item });
-        if (item.keyObj.struc === 'other') console.log({ item });
         return item?.keyObj?.struc === 'other' && match(item);
       }),
       ships: all.filter((item) => {
@@ -199,11 +199,13 @@
                 class:bg-panel={selectedIndex === i}
                 bind:this={buttons[i]}
               >
-                <div class="flex items-center gap-4">
-                  <div class="w-7 h-7 overflow-hidden rounded-sm">
+                <div class="flex items-center gap-4 w-full">
+                  <div class="w-7 h-7 overflow-hidden rounded-md">
                     <ItemImage {image} {title} {color} />
                   </div>
-                  <div>{title}</div>
+                  <div class="text-left line-clamp-1 overflow-ellipsis">
+                    {title}
+                  </div>
                 </div>
                 <div
                   class="text-xs text-strucpilltext bg-strucpill rounded-full px-3 py-1"
@@ -223,15 +225,15 @@
               {@const { blurb, ship } = getMeta(item)}
               <button
                 on:mousedown={() => push(keyStrFromObj(item.keyObj))}
-                class="flex justify-between items-center px-2 py-1 rounded-md hover:bg-panel"
+                class="flex flex-row gap-2 text-start px-2 py-1 rounded-md hover:bg-panel line-clamp-1"
                 class:bg-panel={selectedIndex === i}
                 bind:this={buttons[i]}
               >
-                <div class="flex items-center gap-4">
-                  <div class="w-7 h-7 overflow-hidden rounded-sm">
-                    <Sigil patp={ship} />
-                  </div>
-                  <div>{blurb}</div>
+                <div class="font-bold whitespace-nowrap">
+                  {formatPatp(ship)}:
+                </div>
+                <div class="text-left overflow-ellipsis line-clamp-1">
+                  "{blurb.replace(/\n/g, ' ')}"
                 </div>
               </button>
             {/each}
