@@ -33,7 +33,7 @@
 
   const handleAISearchKeydown = (event: KeyboardEvent): void => {
     if (event.key === 'Enter') {
-      dispatch('prompt');
+      handlePromptFeed();
     }
   };
 
