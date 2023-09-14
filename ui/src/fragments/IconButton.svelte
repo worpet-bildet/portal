@@ -1,12 +1,11 @@
 <script lang="ts">
-  import { SvelteComponent } from 'svelte';
   import { LoadingIcon } from '@fragments';
   export let loading = false;
   export let async = false;
   export let disabled = false;
   export let tooltip = '';
   export let active = false;
-  export let icon = SvelteComponent;
+  export let icon: ConstructorOfATypedSvelteComponent | undefined = undefined;
 </script>
 
 <button

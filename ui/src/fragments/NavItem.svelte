@@ -16,7 +16,7 @@
 >
   <div
     class="flex gap-3"
-    class:text-paneltext={!hovering}
+    class:text-navtext={!hovering}
     class:text-black={hovering}
   >
     <div class:text-panelicon={!hovering} class:text-black={hovering}>

@@ -50,7 +50,6 @@
   let desk;
   let defKey;
   let itemKey;
-  let isDefItem;
   let item;
   let lens;
   let image;
@@ -98,7 +97,6 @@
       desk = cord;
     }
     if (time) {
-      isDefItem = true;
       defKey = `/app/${ship}//${time}`;
       itemKey = defKey;
       desk = time;
@@ -381,7 +379,6 @@
               <FeedPostForm
                 on:post={handlePostReview}
                 placeholder="What do you think of {title}?"
-                class="rounded-tl-lg rounded-tr-lg border-t"
                 showRecommendButtons={false}
                 showRatingStars={true}
               />

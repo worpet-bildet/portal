@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { Create } from '$types/portal/poke';
   import { ItemKey, Item } from '$types/portal/item';
   import { DocketApp } from '$types/apps/app';
   import { Groups } from '$types/landscape/groups';
@@ -28,6 +29,8 @@
     getCurioDetails,
     getNoteDetails,
     toUrbitTime,
+    isValidPatp,
+    collapseNames,
     formatPatp,
   } from '@root/util';
 
@@ -53,12 +56,13 @@
     LoadingIcon,
   } from '@fragments';
 
-  export let replyTo: ItemKey | boolean = false;
+  export let replyTo: ItemKey | undefined = undefined;
   export let showRecommendButtons = true;
   export let showRatingStars = false;
   export let error: string | boolean = false;
   export let placeholder = '';
   export let buttonText = 'Post';
+  export let replyingToNames: string[] = [];
 
   let dispatch = createEventDispatcher();
   let content: string;
@@ -100,7 +104,68 @@
       ref = { ...keyObj };
     }
 
-    dispatch('post', { content, uploadedImageUrl, replyTo, rating, ref, time });
+    // TODO: Split this out into a function
+    let post = { time, 'tags-to': [] } as Create;
+    if (ref) {
+      // Here we need to create the retweet post instead of the type "other"
+      post = {
+        ...post,
+        bespoke: { retweet: { ref: ref, blurb: content || '' } },
+      };
+    } else {
+      post = {
+        ...post,
+        bespoke: {
+          other: {
+            title: '',
+            blurb: content || '',
+            link: '',
+            image: uploadedImageUrl || '',
+          },
+        },
+      };
+    }
+    post = {
+      ...post,
+      'prepend-to-feed': [
+        { ship: me, struc: 'feed', time: '~2000.1.1', cord: '' },
+      ],
+    };
+
+    if (replyTo) {
+      post = {
+        ...post,
+        'tags-to': [
+          ...post['tags-to'],
+          {
+            key: replyTo,
+            'tag-to': `/${me}/reply-to`,
+            'tag-from': `/${replyTo.ship}/reply-from`,
+          },
+        ],
+      };
+    }
+
+    // check each word of the content for a mention, and if so, create a social
+    // graph tag for the mention
+    content
+      .split(' ')
+      .filter((word) => word.substring(0, 1) === '~' && isValidPatp(word))
+      .forEach((word) => {
+        post = {
+          ...post,
+          'tags-to': [
+            ...post['tags-to'],
+            {
+              key: { struc: 'ship', ship: word, cord: '', time: '' },
+              'tag-to': `/${me}/mention-to`,
+              'tag-from': `/${word}/mention-from`,
+            },
+          ],
+        };
+      });
+
+    api.portal.do.create(post);
 
     submitting = true;
     try {
@@ -222,13 +287,13 @@
   $: if (noteToPreview) getDiaryNote(noteToPreview);
   $: shortcodeToPreview = getAnyShortcode(content || '');
   $: if (shortcodeToPreview) getShortcodeItem(shortcodeToPreview);
-
-  // from this, we are going to construct a list of the patps that the user is
-  // replying to
-  export let replyingTo: ItemKey | boolean = false;
 </script>
 
-<div class="flex flex-col w-full border rounded-lg p-4 gap-4 relative">
+<div
+  class="flex flex-col w-full border-l border-r border-b p-4 gap-4 relative rounded-b-lg"
+  class:border-t={!replyTo}
+  class:rounded-t-lg={!replyTo}
+>
   {#if submitting}
     <div
       class="absolute top-0 left-0 w-full h-full bg-white/30 dark:opacity-40 z-10 backdrop-blur-sm"
@@ -241,6 +306,12 @@
   <div class="flex items-center gap-2">
     <InlineShip patp={me} />
   </div>
+  {#if replyTo}
+    <div class="flex w-full gap-1 line-clamp-1">
+      <div class="text-posttext">Replying to</div>
+      <div class="text-black">{collapseNames(replyingToNames)}</div>
+    </div>
+  {/if}
   <div class="flex w-full">
     <TextArea
       bind:value={content}
@@ -249,6 +320,8 @@
     />
   </div>
   <div class="flex justify-end w-full">
-    <button class="py-1 px-4 rounded-md bg-black text-white">Post</button>
+    <button class="py-1 px-4 rounded-md bg-black text-white">
+      {#if replyTo}Reply{:else}Post{/if}
+    </button>
   </div>
 </div>

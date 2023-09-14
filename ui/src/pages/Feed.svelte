@@ -100,64 +100,62 @@
   const handlePost = ({
     detail: { content, uploadedImageUrl, ref, time },
   }): void => {
-    let post = { time } as PortalCreate;
-    if (ref) {
-      // Here we need to create the retweet post instead of the type "other"
-      post = {
-        ...post,
-        bespoke: {
-          retweet: {
-            ref: ref,
-            blurb: content || '',
-          },
-        },
-      };
-    } else {
-      post = {
-        ...post,
-        bespoke: {
-          other: {
-            title: '',
-            blurb: content || '',
-            link: '',
-            image: uploadedImageUrl || '',
-          },
-        },
-      };
-    }
-    post = {
-      ...post,
-      'prepend-to-feed': [
-        {
-          ship: me,
-          struc: 'feed',
-          time: '~2000.1.1',
-          cord: '',
-        },
-      ],
-      'tags-to': [],
-    };
-
-    // check each word of the content for a mention, and if so, create a social
-    // graph tag for the mention
-    content
-      .split(' ')
-      .filter((word) => word.substr(0, 1) === '~' && isValidPatp(word))
-      .forEach((word) => {
-        post = {
-          ...post,
-          'tags-to': [
-            ...post['tags-to'],
-            {
-              key: { struc: 'ship', ship: word, cord: '', time: '' },
-              'tag-to': `/${me}/mention-to`,
-              'tag-from': `/${word}/mention-from`,
-            },
-          ],
-        };
-      });
-
-    api.portal.do.create(post);
+    // let post = { time } as PortalCreate;
+    // if (ref) {
+    //   // Here we need to create the retweet post instead of the type "other"
+    //   post = {
+    //     ...post,
+    //     bespoke: {
+    //       retweet: {
+    //         ref: ref,
+    //         blurb: content || '',
+    //       },
+    //     },
+    //   };
+    // } else {
+    //   post = {
+    //     ...post,
+    //     bespoke: {
+    //       other: {
+    //         title: '',
+    //         blurb: content || '',
+    //         link: '',
+    //         image: uploadedImageUrl || '',
+    //       },
+    //     },
+    //   };
+    // }
+    // post = {
+    //   ...post,
+    //   'prepend-to-feed': [
+    //     {
+    //       ship: me,
+    //       struc: 'feed',
+    //       time: '~2000.1.1',
+    //       cord: '',
+    //     },
+    //   ],
+    //   'tags-to': [],
+    // };
+    // // check each word of the content for a mention, and if so, create a social
+    // // graph tag for the mention
+    // content
+    //   .split(' ')
+    //   .filter((word) => word.substr(0, 1) === '~' && isValidPatp(word))
+    //   .forEach((word) => {
+    //     post = {
+    //       ...post,
+    //       'tags-to': [
+    //         ...post['tags-to'],
+    //         {
+    //           key: { struc: 'ship', ship: word, cord: '', time: '' },
+    //           'tag-to': `/${me}/mention-to`,
+    //           'tag-from': `/${word}/mention-from`,
+    //         },
+    //       ],
+    //     };
+    //   });
+    // api.portal.do.create(post);
   };
 
   let searchShip: string;
@@ -200,7 +198,7 @@
       />
       {#if loading}
         <div class="flex justify-center dark:fill-white items-center py-20">
-          <LoadingIcon />
+          <div class="w-10 h-10"><LoadingIcon /></div>
         </div>
       {:else}
         <Feed feed={promptedFeed.length > 0 ? promptedFeed : feed} />

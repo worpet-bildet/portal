@@ -213,7 +213,7 @@ export const itemInState = (item: ItemKey): Promise<void> => {
 // TODO: add a type for this return
 export const getCurator = (patp: string) => {
   return {
-    keyObj: { ship: patp, struc: 'ship', cord: '', time: '' },
+    keyObj: { ship: patp, struc: 'ship', cord: '', time: '' } as ItemKey,
     bespoke: { ...contacts()[patp] },
   };
 };
@@ -348,6 +348,7 @@ export const getAllCollectionsAndItems = (collectionKey: string): ItemKey[] => {
           .filter(([key]) => key.includes('/collection/'))
           .filter(([key]) => !key.includes('published'))
           .filter(([key]) => !key.includes('all'))
+          .filter(([key]) => !key.includes('index'))
       )
     ).map((item) => item.keyObj)
   );
@@ -361,8 +362,21 @@ export const getJoinedGroupDetails = (groupKey: string): Group => {
   return groups()[groupKey];
 };
 
-export const getReplies = (ship: string, key: ItemKey): ItemKey[] => {
-  return social()[`/${ship}/reply-from`]?.[keyStrFromObj(key)];
+export const getParent = (key: ItemKey): ItemKey => {
+  return social()[`/${key.ship}/reply-to`]?.[keyStrFromObj(key)]?.[0];
+};
+
+export const getPostChain = (key: ItemKey): ItemKey[] => {
+  const parent = getParent(key);
+  if (parent) {
+    return [parent, ...getPostChain(parent)];
+  } else {
+    return [];
+  }
+};
+
+export const getReplies = (key: ItemKey): ItemKey[] => {
+  return social()[`/${key.ship}/reply-from`]?.[keyStrFromObj(key)];
 };
 
 export const getRepliesByTo = (ship: string, key: ItemKey): ItemKey[] => {

@@ -1,6 +1,10 @@
+import { ContactRolodex } from '$types/landscape/contact';
+
+import fuzzy from 'fuzzy';
 import * as linkify from 'linkifyjs';
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
+import { deSig } from '@urbit/api';
 
 export const isSubmitHotkey = (e: KeyboardEvent) => {
   if (e.key === 'Enter' && e.metaKey) return true;
@@ -503,15 +507,101 @@ export const isValidDeskOrGroupPath = (path) => {
   return true;
 };
 
+// Most of the stuff below is stolen from Tlon's Landscape Apps repo
+export function preSig(ship: string): string {
+  if (!ship) return '';
+  if (ship.trim().startsWith('~')) return ship.trim();
+  return `~${ship.trim()}`;
+}
+
+export const collapseNames = (names: string[]): string => {
+  names = Array.from(new Set(names));
+  if (names.length === 1) return names.join();
+  if (names.length === 2) return names[0] + ' and ' + names[1];
+  if (names.length > 2)
+    return names[0] + ' and ' + (names.length - 1) + ' others';
+};
+
 export const formatPatp = (patpLike) => {
   if (!patpLike) return;
   if (!isValidPatp(patpLike)) return;
   if (patpLike.slice(0, 1) !== '~') patpLike = `~${patpLike}`;
   const parts = patpLike.split('-');
-  if (parts.length > 2) return `~${parts[2]}^${parts[3]}`;
+  if (parts.length === 3) return `~${parts[1]}^${parts[2]}`;
+  if (parts.length === 4) return `~${parts[2]}^${parts[3]}`;
   return patpLike;
 };
 
+function normalizeText(text: string): string {
+  const DISALLOWED_MENTION_CHARS = /[^\w\d-]/g;
+  return text.replace(DISALLOWED_MENTION_CHARS, '');
+}
+
+// assumes already lowercased
+function scoreEntry(filter: string, entry: fuzzy.FilterResult<string>): number {
+  const parts = entry.string.split('~');
+
+  // shouldn't happen
+  if (parts.length === 1) {
+    return entry.score;
+  }
+
+  const [nickname, ship] = parts;
+  // downrank comets significantly
+  const score = ship.length > 28 ? entry.score * 0.25 : entry.score;
+
+  // making this highest because ships are unique, nicknames are not
+  // also prevents someone setting their nickname as someone else's
+  // patp taking over prime position
+  if (ship === filter) {
+    return score + 120;
+  }
+
+  if (nickname === filter) {
+    return score + 100;
+  }
+
+  // since ship is in the middle of the string we need to make it work
+  // as if it was at the beginning
+  if (nickname && ship.startsWith(filter)) {
+    return score + 80;
+  }
+
+  return score;
+}
+
+export const getPossiblePatps = (
+  query: string,
+  contacts: ContactRolodex
+): string[] => {
+  const sigged = preSig(query);
+  const valid = isValidPatp(sigged);
+
+  const contactNames = Object.keys(contacts);
+
+  // fuzzy search both nicknames and patps; fuzzy#filter only supports
+  // string comparision, so concat nickname + patp
+  const searchSpace = Object.entries(contacts).map(([patp, contact]) =>
+    `${normalizeText(contact?.nickname || '')}${patp}`.toLocaleLowerCase()
+  );
+
+  if (valid && !contactNames.includes(sigged)) {
+    contactNames.push(sigged);
+    searchSpace.push(sigged);
+  }
+
+  const normQuery = normalizeText(query).toLocaleLowerCase();
+  const fuzzyNames = fuzzy.filter(normQuery, searchSpace).sort((a, b) => {
+    const filter = deSig(query) || '';
+    const right = scoreEntry(filter, b);
+    const left = scoreEntry(filter, a);
+    return right - left;
+  });
+
+  const items = fuzzyNames.map((entry) => contactNames[entry.index]);
+
+  return items;
+};
 // Reference: https://github.com/mirtyl-wacdec/urbit_ex/blob/master/lib/api/utils.ex#LL260C14-L260C14
 export const isValidPatp = (patp) => {
   if (!patp) return false;

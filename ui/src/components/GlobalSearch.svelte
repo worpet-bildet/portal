@@ -8,21 +8,24 @@
   import {
     state,
     getItem,
-    getCollectedItemLeaderboard,
+    getCuratorAllCollectionItems,
     keyStrFromObj,
     items,
+    pals,
+    contacts,
+    getCurator,
     getGlobalFeed,
   } from '@root/state';
-  import { getMeta, formatPatp } from '@root/util';
+  import { getMeta, formatPatp, getPossiblePatps } from '@root/util';
 
   import { Sigil } from '@components';
-  import { PlaceholderIcon, NavItem } from '@fragments';
+  import { PlaceholderIcon } from '@fragments';
   import ItemImage from '@root/fragments/ItemImage.svelte';
 
   let searchResults: {
     items: Item[];
     posts: Item[];
-    ships: Item[];
+    ships: Partial<Item>[];
     pages: any[];
   } = {
     items: [],
@@ -36,11 +39,11 @@
 
   const setDefaultResults = () => {
     searchResults = {
-      items: (getCollectedItemLeaderboard() || [])
-        .slice(0, 3)
-        .map(([key]) => getItem(key)),
+      items: (getCuratorAllCollectionItems(me) || []).slice(0, 3).map(getItem),
       posts: (getGlobalFeed() || []).slice(0, 3).map(({ key }) => getItem(key)),
-      ships: [],
+      ships: Object.keys(pals())
+        .slice(0, 3)
+        .map((patp) => getCurator(`~${patp}`)),
       pages: [
         { title: 'Feed', icon: PlaceholderIcon, action: () => push('/') },
         {
@@ -62,17 +65,15 @@
     if (searchResults.items.length > 0) return;
     if (!s.isLoaded) return;
     all = Object.values(items());
-    collectedItems = (getCollectedItemLeaderboard() || []).map(([key]) =>
-      getItem(key)
-    );
+    collectedItems = (getCuratorAllCollectionItems(me) || []).map(getItem);
     setDefaultResults();
   });
 
   const reset = () => {
-    // focused = false;
-    // selectedIndex = -1;
-    // searchString = '';
-    // setDefaultResults();
+    focused = false;
+    selectedIndex = -1;
+    searchString = '';
+    setDefaultResults();
   };
 
   /**
@@ -84,34 +85,44 @@
   // Fetch from the state everything which contains the search string, and order
   // them by the most recent first
   const lc = (s: string) => (s ? s.toLowerCase() : '');
-  const contains = (s: string) => lc(s).includes(lc(searchString));
+  const contains = (s: string) => lc(s).includes(lc(searchString.trim()));
   const match = (i: Item) => {
     return (
       contains(i?.keyObj?.ship) ||
+      contains(i?.keyObj?.cord) ||
+      contains(i?.keyObj?.time) ||
       contains(i?.bespoke?.title) ||
       contains(i?.bespoke?.description) ||
-      contains(i?.bespoke?.blurb)
+      contains(i?.bespoke?.blurb) ||
+      contains(i?.bespoke?.treaty?.title) ||
+      contains(i?.bespoke?.treaty?.info)
     );
   };
 
   const updateResults = (_search) => {
     if (!_search) return setDefaultResults();
     searchResults = {
-      items: collectedItems.filter((item) => {
-        return (
-          ['app', 'group', 'collection'].includes(item?.keyObj?.struc) &&
-          match(item)
-        );
-      }),
-      posts: all.filter((item) => {
-        return item?.keyObj?.struc === 'other' && match(item);
-      }),
-      ships: all.filter((item) => {
-        return item?.keyObj?.struc === 'ship' && match(item);
-      }),
-      pages: searchResults.pages.filter((page) => {
-        return contains(page.title);
-      }),
+      items: collectedItems
+        .filter((item) => {
+          return (
+            ['app', 'group', 'collection'].includes(item?.keyObj?.struc) &&
+            match(item)
+          );
+        })
+        .slice(0, 5),
+      posts: all
+        .filter((item) => {
+          return item?.keyObj?.struc === 'other' && match(item);
+        })
+        .slice(0, 5),
+      ships: getPossiblePatps(searchString, contacts())
+        .map((patp) => getCurator(patp))
+        .slice(0, 5),
+      pages: searchResults.pages
+        .filter((page) => {
+          return contains(page.title);
+        })
+        .slice(0, 5),
     };
   };
 
@@ -191,7 +202,7 @@
         <div class="flex flex-col gap-2">
           {#if searchResults.items.length > 0}
             <div class="text-light">Apps, Groups & Collections</div>
-            {#each searchResults.items as item, i}
+            {#each searchResults.items as item, i (keyStrFromObj(item.keyObj))}
               {@const { title, image, struc, color } = getMeta(item)}
               <button
                 on:mousedown={() => push(keyStrFromObj(item.keyObj))}
@@ -219,8 +230,8 @@
 
         <div class="flex flex-col gap-2">
           {#if searchResults.posts.length > 0}
-            <div class="text-light">Posts</div>
-            {#each searchResults.posts as item, _i}
+            <div class="text-light">Recent posts</div>
+            {#each searchResults.posts as item, _i (keyStrFromObj(item.keyObj))}
               {@const i = _i + searchResults.items.length}
               {@const { blurb, ship } = getMeta(item)}
               <button
@@ -233,7 +244,33 @@
                   {formatPatp(ship)}:
                 </div>
                 <div class="text-left overflow-ellipsis line-clamp-1">
-                  "{blurb.replace(/\n/g, ' ')}"
+                  "{blurb.replace(/\n/g, ' ').trim()}"
+                </div>
+              </button>
+            {/each}
+          {/if}
+        </div>
+
+        <div class="flex flex-col gap-2">
+          {#if searchResults.ships.length > 0}
+            <div class="text-light">Ships</div>
+            {#each searchResults.ships as item, _i (keyStrFromObj(item.keyObj))}
+              {@const { nickname, ship } = getMeta(item)}
+              {@const i =
+                _i + searchResults.items.length + searchResults.posts.length}
+              <button
+                on:mousedown={() => push(`/${item.keyObj.ship}`)}
+                class="flex flex-row gap-2 text-start px-2 py-1 rounded-md hover:bg-panel line-clamp-1"
+                class:bg-panel={selectedIndex === i}
+                bind:this={buttons[i]}
+              >
+                <div class="flex items-center gap-2">
+                  <div class="w-6 h-6 overflow-hidden rounded-md">
+                    <Sigil patp={ship} />
+                  </div>
+                  <div>
+                    {nickname ? nickname : ship}
+                  </div>
                 </div>
               </button>
             {/each}
@@ -243,9 +280,12 @@
         <div class="flex flex-col gap-2">
           {#if searchResults.pages.length > 0}
             <div class="text-light">Pages</div>
-            {#each searchResults.pages as page, _i}
+            {#each searchResults.pages as page, _i (page.title)}
               {@const i =
-                _i + searchResults.items.length + searchResults.posts.length}
+                _i +
+                searchResults.items.length +
+                searchResults.posts.length +
+                searchResults.ships.length}
               <button
                 on:mousedown={() => page.action()}
                 class="flex justify-between items-center px-2 py-1 rounded-md hover:bg-panel"

@@ -15,6 +15,7 @@
     getCurator,
     getReplies,
     getRepliesByTo,
+    getPostChain,
     getLikes,
   } from '@root/state';
   import {
@@ -24,6 +25,7 @@
     isImage,
     isValidPatp,
     formatPatp,
+    collapseNames,
   } from '@root/util';
   import { ItemPreview, Sigil, FeedPostForm, InlineShip } from '@components';
   import {
@@ -38,9 +40,11 @@
     VerticalExpandIcon,
   } from '@fragments';
 
-  export let key;
+  export let key: ItemKey;
   export let allowRepliesDepth = 2;
   export let showRating = false;
+  export let indent = false;
+  export let isReplyFormOpen = false;
 
   let item: Item;
   let replies: ItemKey[] = [];
@@ -48,9 +52,9 @@
   let likedByMe: boolean;
   let showReplies = false;
 
-  state.subscribe((s) => {
+  const loadPost = (_k) => {
     item = getItem(keyStrFromObj(key));
-    if (s.isLoaded && !item) {
+    if ($state.isLoaded && !item) {
       return api.portal.do.subscribe(key);
     }
 
@@ -58,10 +62,7 @@
     // with any comments that we have made ourselves on the post, which should
     // mean that our comment shows up instantly even if our connection to the
     // indexer is not good
-    replies = [
-      ...(getReplies(key.ship, key) || []),
-      ...(getRepliesByTo(me, key) || []),
-    ]
+    replies = [...(getReplies(key) || []), ...(getRepliesByTo(me, key) || [])]
       .filter((a, i, arr) => {
         return (
           i === arr.findIndex((i) => keyStrFromObj(i) === keyStrFromObj(a))
@@ -70,7 +71,7 @@
       .sort((a, b) => fromUrbitTime(a.time) - fromUrbitTime(b.time));
 
     // Open the comments if we've been referred to this specific reply
-    const referredTo = s.referredTo;
+    const referredTo = $state.referredTo;
     if (
       referredTo &&
       referredTo.key === keyStrFromObj(item.keyObj) &&
@@ -89,7 +90,9 @@
     likeCount = likes.length;
     if (likedByMe && !likes.find((l) => l.ship === me)) likeCount++;
     likedByMe = likedByMe || !!likes.find((l) => l.ship === me);
-  });
+  };
+
+  $: $state && loadPost(key);
 
   function handlePostComment({
     detail: { content, uploadedImageUrl, replyTo, ref, time },
@@ -200,36 +203,66 @@
       postContainer.classList.add('max-h-96');
     }
   }
+
+  $: postChain = item && [item.keyObj, ...getPostChain(item.keyObj)].reverse();
+  $: replyingToNames = postChain
+    ?.slice(1)
+    ?.map(getItem)
+    ?.map((i) => getCurator(i.keyObj.ship))
+    ?.map(getMeta)
+    ?.map((m) => m.nickname || m.ship);
 </script>
 
 {#if item}
   {@const { blurb, ship, createdAt, ref, image, rating } = getMeta(item)}
-  {@const {
-    bespoke: { nickname },
-  } = getCurator(ship)}
   {@const blurbLink = getAnyLink(blurb)}
-  <div class="flex flex-col gap-2 w-full my-6" in:fade>
+  <div class="flex flex-col gap-2 w-full" in:fade>
     <div class="flex items-center justify-between px-3">
-      <InlineShip patp={me} {nickname} />
+      <div class="flex items-center gap-1 text-sm">
+        <InlineShip patp={ship} />
+        {#if replyingToNames.length > 0}
+          <a
+            use:link
+            href={keyStrFromObj(item.keyObj)}
+            class="hover:underline flex gap-1 decoration-posttext"
+          >
+            <span class="text-posttext">replying to</span>
+            <span>
+              {collapseNames(replyingToNames)}
+            </span>
+          </a>
+        {/if}
+      </div>
       <div class="text-xs text-light">{format(createdAt)}</div>
     </div>
-    <div
-      class="flex flex-col bg-panel text-paneltext rounded-xl px-3 py-5 whitespace-pre-wrap break-words gap-5"
-    >
-      <div>{@html linkifyHtml(DOMPurify.sanitize(blurb))}</div>
-      <div class="grid grid-cols-8">
-        <div class="col-span-1 flex items-center gap-2">
-          {#if likedByMe}
-            <div class="w-6 h-6 text-greyicon"><LikedIcon /></div>
-            <div class="text-light">{likeCount}</div>
-          {:else}
-            <div class="w-6 h-6 text-greyicon"><LikeIcon /></div>
-            <div class="text-light">{likeCount}</div>
-          {/if}
-        </div>
-        <div class="col-span-1 flex items-center gap-2">
-          <div class="w-6 h-6 text-darkgreyicon"><ChatIcon /></div>
-          <div class="text-light">{replies.length}</div>
+    <div class="flex w-full gap-4">
+      {#if indent}
+        <div class="border-2 ml-6 mr-1" />
+      {/if}
+      <div
+        class="flex flex-col w-full bg-panel text-posttext px-3 py-5 whitespace-pre-wrap break-words gap-5"
+        class:rounded-t-xl={isReplyFormOpen}
+        class:rounded-xl={!isReplyFormOpen}
+      >
+        <div>{@html linkifyHtml(DOMPurify.sanitize(blurb))}</div>
+        <div class="grid grid-cols-8">
+          <div class="col-span-1 flex items-center gap-2">
+            {#if likedByMe}
+              <div class="w-6 h-6 text-greyicon"><LikedIcon /></div>
+              <div class="text-light">{likeCount}</div>
+            {:else}
+              <div class="w-6 h-6 text-greyicon"><LikeIcon /></div>
+              <div class="text-light">{likeCount}</div>
+            {/if}
+          </div>
+          <a
+            use:link
+            href={keyStrFromObj(item.keyObj)}
+            class="col-span-1 flex items-center gap-2"
+          >
+            <div class="w-6 h-6 text-darkgreyicon"><ChatIcon /></div>
+            <div class="text-light">{replies.length}</div>
+          </a>
         </div>
       </div>
     </div>

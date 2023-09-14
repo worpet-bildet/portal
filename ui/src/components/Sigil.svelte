@@ -7,10 +7,11 @@
   export let color = '0x0';
 
   let avatar;
-  state.subscribe(() => {
+  const loadSigil = (_p) => {
     ({ color, avatar } = getCurator(patp).bespoke || {});
-  });
+  };
 
+  $: $state && loadSigil(patp);
   $: primaryColor = formatColor(color);
   $: secondaryColor = isLightColor(primaryColor) ? '000000' : 'ffffff';
   $: if (primaryColor.length < 6) {
