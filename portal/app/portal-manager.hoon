@@ -1,9 +1,9 @@
 /-  c=portal-config, portal-devs, blog-paths
 /+  default-agent, p=portal, sss::, dbug
-/$  json-to-action  %json  %portal-action
-/$  msg-to-json  %portal-message  %json
-/$  dev-map-to-json  %portal-dev-map  %json
-/$  portal-manager-result-to-json  %portal-manager-result  %json
+:: /$  json-to-action  %json  %portal-action
+:: /$  msg-to-json  %portal-message  %json
+:: /$  dev-map-to-json  %portal-dev-map  %json
+:: /$  portal-manager-result-to-json  %portal-manager-result  %json
 |%
 +$  versioned-state
   $+  manager-versioned-state
@@ -665,7 +665,7 @@
         %fact
       =/  treaty  !<(treaty:t:d:m:p q.cage.sign)
       =/  key  (path-to-key:conv:p +.wire)
-      =/  act  [%replace key %temp [%app ~ '' '' *signature:d:m:p treaty *@t]]
+      =/  act  [%edit key `%temp `[%app ~ ~ ~ ~ `treaty ~]]
       :_  this
       :~  [(~(act cards:p [our.bowl %portal-store]) act)]
           ::  TODO why unsub here, instead of getting updates?
@@ -679,6 +679,8 @@
       =/  preview  !<(preview:g:d:m:p q.cage.sign)
       =/  key  (path-to-key:conv:p +.wire)
       =/  act  [%replace key %temp [%group meta.preview]]
+      ~&  >  "received group preview"
+      ~&  act
       :_  this
       :~  [(~(act cards:p [our.bowl %portal-store]) act)]
           ::  TODO why unsub here, instead of getting updates?
