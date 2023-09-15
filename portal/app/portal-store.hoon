@@ -338,6 +338,27 @@
   ?>  |(=(our.bowl ship.key.item) =(lens.item %temp))
   (~(put by items) key.item item)
 ::
+++  pub-item
+  |=  in=$%([%whole =item:d:m:p] [%prepend-to-feed =feed:d:m:p =key:d:m:p =reach:d:m:p])
+  ^+  [*(list card) item-pub]
+  ?-    -.in
+      %prepend-to-feed
+    =/  path  [%item (key-to-path:conv:p key.in)]
+    (give:du-item path [%prepend-to-feed feed.in])
+    ::
+      %whole
+    ?:  =(lens.item.in %temp)
+      `item-pub
+    ::
+    ?+    struc.key.item.in
+      `item-pub
+      ::
+        ?(%feed %collection %app %blog)
+      =/  path  [%item (key-to-path:conv:p key.item.in)]
+      (give:du-item path [%whole item.in])
+    ==
+  ==
+::
 ::  items from e.g. last 14 days, remove ships
 ++  filter-items
   |=  [itms=items:d:m:p x=@dr]
@@ -446,16 +467,8 @@
       ?:  (~(has by items) key.item)  `state :: which other actions need these checks?
       =.  items  (put-item item)
       ::  TODO check if already in list/items (if doing put with temp)
-      =^  cards  state
-        ?:  =(lens.item %temp)
-          :-  (upd:cards-methods item)
-          state
-        =^  cards  item-pub  (give:du-item path [%whole item])
-        :_  state
-        ;:  welp  cards
-                  (upd:cards-methods item)
-                  ::(gro:cards-methods item)
-        ==
+      =^  cards  item-pub  (pub-item [%whole item])
+      =.  cards  (welp cards (upd:cards-methods item))
       ::  add to collections
       =^  cards-1  state
         %-  tail  %^  spin  `key-list:d:m:p`append-to.act  [cards state]
@@ -498,10 +511,7 @@
       ?>  ?=([%edit *] act)
       =/  path  [%item (key-to-path:conv:p key.act)]
       =/  item  (edit:itm (get-item key.act) act)
-      ?:  =(lens.item %temp)
-        :-  (upd:cards-methods item)
-        state(items (put-item item))
-      =^  cards  item-pub  (give:du-item path [%whole item])
+      =^  cards  item-pub  (pub-item [%whole item])
       :_  state(items (put-item item))
       (welp cards (upd:cards-methods item))
     ::
@@ -513,7 +523,7 @@
       =/  feed  (prepend-to-feed:itm (get-item feed-key.act) act)
       =/  cards  (upd:cards-methods feed)
       =.  items  (put-item feed)
-      =^  cards-1  item-pub  (give:du-item path [%prepend-to-feed feed.act])
+      =^  cards-1  item-pub  (pub-item [%prepend-to-feed feed.act feed-key.act reach.meta.feed])
       ?.  =(time.feed-key.act 'global')
         =/  msg  [%feed-update our.bowl feed.act]
         :_  state
@@ -529,7 +539,7 @@
       =/  path  [%item (key-to-path:conv:p col-key.act)]
       =/  col  (append-no-dupe:itm (get-item col-key.act) act)
       =.  items  (put-item col)
-      =^  cards  item-pub  (give:du-item path [%whole col])
+      =^  cards  item-pub  (pub-item [%whole col])
       :_  state
       (welp cards (upd:cards-methods col))
     ::
@@ -539,7 +549,7 @@
       ?>  ?=([%remove *] act)
       =/  path  [%item (key-to-path:conv:p col-key.act)]
       =/  col  (remove-from-col:itm (get-item col-key.act) act)
-      =^  cards  item-pub  (give:du-item path [%whole col])
+      =^  cards  item-pub  (pub-item [%whole col])
       :_  state(items (put-item col))
       (welp cards (upd:cards-methods col))
     ::
