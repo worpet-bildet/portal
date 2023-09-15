@@ -665,7 +665,7 @@
         %fact
       =/  treaty  !<(treaty:t:d:m:p q.cage.sign)
       =/  key  (path-to-key:conv:p +.wire)
-      =/  act  [%replace key %temp [%app ~ '' '' *signature:d:m:p treaty *@t]]
+      =/  act  [%edit key `%temp `[%app ~ ~ ~ ~ `treaty ~]]
       :_  this
       :~  [(~(act cards:p [our.bowl %portal-store]) act)]
           ::  TODO why unsub here, instead of getting updates?
@@ -678,7 +678,7 @@
         %fact
       =/  preview  !<(preview:g:d:m:p q.cage.sign)
       =/  key  (path-to-key:conv:p +.wire)
-      =/  act  [%replace key %temp [%group meta.preview]]
+      =/  act  [%edit key `%temp `[%group `meta.preview]]
       :_  this
       :~  [(~(act cards:p [our.bowl %portal-store]) act)]
           ::  TODO why unsub here, instead of getting updates?

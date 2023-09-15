@@ -128,7 +128,6 @@
     =/  act  !<(action:m:p vase)
     ?+    -.act    (on-poke:default mark vase)
       %create   =^(cards state (create:handle-poke:stor act) [cards this])
-      %replace  =^(cards state (replace:handle-poke:stor act) [cards this])
       %edit     =^(cards state (edit:handle-poke:stor act) [cards this])
       %prepend-to-feed  =^(cards state (prepend-to-feed:handle-poke:stor act) [cards this])
       %append   =^(cards state (append:handle-poke:stor act) [cards this])
@@ -437,19 +436,6 @@
       =^  cards  item-sub.state  (surf:da-item ship.key.act %portal-store path)
       :_  state
       (welp (track-gr:cards-methods ship.key.act) cards)
-    ::
-    ++  replace
-      |=  [act=action:m:p]
-      ^+  [*(list card) state]
-      ?>  ?=([%replace *] act)
-      =/  item  (replace:itm (get-item key.act) act)
-      =/  path  [%item (key-to-path:conv:p key.item)]
-      ?:  =(lens.item %temp)
-        :-  (upd:cards-methods item)
-        state(items (put-item item))
-      =^  cards  item-pub  (give:du-item path [%whole item])
-      :-  (welp cards (upd:cards-methods item))
-      state(items (put-item item))
     ::
     ++  create
       |=  [act=action:m:p]
