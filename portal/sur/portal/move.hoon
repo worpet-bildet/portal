@@ -25,6 +25,7 @@
             $=  bespoke  %-  unit
               $%  [%other title=(unit @t) blurb=(unit @t) link=(unit @t) image=(unit @t)]
                   [%app screenshots=(unit (list @t)) blurb=(unit @t) dist-desk=(unit @t) sig=(unit signature:d) treaty=(unit treaty:t:d) eth-price=(unit @t)]
+                  [%group data=(unit data:g:d)]
                   [%collection title=(unit @t) blurb=(unit @t) image=(unit @t) key-list=(unit key-list:d)]  ::does it need link?
                   [%feed feed=(unit feed:d)]
                   [%retweet blurb=(unit @t) ref=(unit key:d)]
@@ -32,9 +33,6 @@
               ==
         ==
       ==
-      ::
-      $+  replace
-      [%replace =key:d =lens:d =bespoke:d]  ::  TODO should it act like put or edit?, i.e. can it create a nonexisting item. NO! (?)
       ::
       $+  add-tag-request
       [%add-tag-request our=key:d their=key:d tag-to=path tag-from=path]

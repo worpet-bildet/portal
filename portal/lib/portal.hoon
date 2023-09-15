@@ -302,6 +302,12 @@
             (fall eth-price.u.bespoke.act eth-price.bespoke.item)
         ==
         ::
+          %group
+        ?>  ?=(%group -.bespoke.item)
+        :*  %group
+            (fall data.u.bespoke.act data.bespoke.item)
+        ==
+        ::
           %collection
         ?>  ?=(%collection -.bespoke.item)
         :*  %collection
@@ -334,17 +340,6 @@
             (fall image.u.bespoke.act image.bespoke.item)
         ==
       ==
-    ==
-  ::
-  ++  replace
-    |=  [now=time =item:d:m act=action:m]
-    ^-  item:d:m
-    ?>  ?=([%replace *] act)
-    ?>  =(key.item key.act)
-    %=  item
-      lens             lens.act
-      bespoke          bespoke.act
-      updated-at.meta  `@t`(scot %da now)
     ==
   ::
   ++  create
@@ -475,7 +470,6 @@
 ++  item-methods  ::  all arms here should output item
   |_  =bowl:gall
   ++  edit             (cury edit:pure now.bowl)
-  ++  replace          (cury replace:pure now.bowl)
   ++  create           (cury create:pure [our now]:bowl)
   ++  prepend-to-feed  (cury prepend-to-feed:pure now.bowl)
   ++  append-no-dupe   (cury append-no-dupe:pure now.bowl)
