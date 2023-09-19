@@ -58,7 +58,7 @@
   :-  %portal-action
   !>  
   ^-  action:mov
-  [%create `our ~ `feed-name ~ `[%feed feed] ~ ~ ~]
+  [%create `our ~ `feed-name ~ ~ `[%feed feed] ~ ~ ~]
 =/  edit-feed-card
   |=  [feed-name=cord =feed:d:mov]
   ^-  card:agent:gall
@@ -67,7 +67,7 @@
   :-  %portal-action
   !>  
   ^-  action:mov
-  [%edit [%feed our '' feed-name] ~ `[%feed `feed]]
+  [%edit [%feed our '' feed-name] ~ ~ `[%feed `feed]]
 =/  sub-to-many-card
   |=  =feed:d:mov
   ^-  card:agent:gall

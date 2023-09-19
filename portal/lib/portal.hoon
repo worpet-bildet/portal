@@ -387,8 +387,8 @@
           =/  =path
             =,  bespoke
             /diary/(scot %p p.channel)/[q.channel]/notes/note/(scot %ud `@`time)/diary-note
-          =/  note
-            .^(note:n:d:m (~(construct scry [our now]) %gx %diary path))
+          =/  note  ;;  note:n:d:m
+            .^(noun (~(construct scry [our now]) %gx %diary path))
           =/  diarymap
             .^  (map flag:n:d:m [* * * perm=[* group=flag:w:d:m] *])
                 %gx
