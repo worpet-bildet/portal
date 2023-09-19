@@ -142,9 +142,10 @@
     =/  msg  !<(message:m:p vase)
     ?+    -.msg    !!
         %get-item
-      :_  this
-      :~  (~(msg cards:p [src.bowl %portal-store]) [%item (~(get by items) key.msg)])
-      ==
+      ?:  (ship-in-reach:stor src.bowl key.msg)
+        :_  this  :_  ~
+        (~(msg cards:p [src.bowl %portal-store]) [%item (~(get by items) key.msg)])
+      `this
       ::
         %item
       ?~  item.msg  `this
@@ -171,8 +172,11 @@
     ::
       %sss-to-pub
     =/  msg  !<(into:du-item (fled:sss vase))
-    =^  cards  item-pub  (apply:du-item msg)
-    [cards this]
+    =/  key  (path-to-key:conv:p +.-.msg)
+    ?:  (ship-in-reach:stor src.bowl key)
+      =^  cards  item-pub  (apply:du-item msg)
+      [cards this]
+    `this
     ::
       %sss-item
     =^  cards  item-sub  (apply:da-item !<(into:da-item (fled:sss vase)))
@@ -337,6 +341,21 @@
   ^-  items:d:m:p
   ?>  |(=(our.bowl ship.key.item) =(lens.item %temp))
   (~(put by items) key.item item)
+::
+::  whether a ship is allowed to get/sub to an item
+++  ship-in-reach
+  |=  [=ship =key:d:m:p]
+  ^-  ?
+  =/  reach  reach:meta:(get-item key)
+  ?-    reach
+    [%public *]   ?~((find [ship]~ blacklist.reach) %.y %.n)
+    [%private *]  ?^((find [ship]~ whitelist.reach) %.y %.n)
+  ==
+  :: ?:  r
+  ::   ~&  >  "{<(scot %p ship)>} in reach of {<(key-to-path:conv:p key)>}"
+  ::   r
+  :: ~&  >>>  "{<(scot %p ship)>} out of reach of {<(key-to-path:conv:p key)>}"
+  :: r
 ::
 ++  pub-item
   |=  in=$%([%whole =item:d:m:p] [%prepend-to-feed =feed:d:m:p =key:d:m:p =reach:d:m:p])
@@ -595,19 +614,19 @@
   =.  cards  (welp cards (track-gr:cards-methods indexer))
   =^  cards-1  state
     %-  create:handle-poke
-    :*  %create  ~  ~  `'~2000.1.1'  `%def
+    :*  %create  ~  ~  `'~2000.1.1'  `%def  ~
     `[%collection 'Main Collection' 'Your first collection.' '' ~]
     [%collection our.bowl '' '~2000.1.1']~  ~  ~  ==
   =^  cards-2  state
     %-  create:handle-poke
-    :*  %create  ~  ~  `'~2000.1.1'  `%def
+    :*  %create  ~  ~  `'~2000.1.1'  `%def  ~
     `[%validity-store *validity-records:d:m:p]  ~  ~  ~  ==
   =^  cards-3  state
     %-  create:handle-poke
-    [%create ~ ~ `'~2000.1.1' `%personal `[%feed ~] ~ ~ ~]
+    [%create ~ ~ `'~2000.1.1' `%personal ~ `[%feed ~] ~ ~ ~]
   =^  cards-4  state
     %-  create:handle-poke
-    :*  %create  ~  ~  `'all'  `%def
+    :*  %create  ~  ~  `'all'  `%def  ~
     `[%collection 'All' 'Collection of all apps, groups and ships.' '' ~]
     [%collection our.bowl '' '~2000.1.1']~  ~  ~  ==
   =/  cards-5    ::  - make your tags public
@@ -617,17 +636,17 @@
     ==  ==
   =^  cards-6  state
     %-  create:handle-poke
-    :*  %create  ~  ~  `'published-apps'  `%def
+    :*  %create  ~  ~  `'published-apps'  `%def  ~
     `[%collection 'My Apps' 'Collection of all apps I have published.' '' ~]
     [%collection our.bowl '' '~2000.1.1']~  ~  ~  ==
   ::
   ?:  =(our.bowl indexer)
     =^  cards-7  state
       %-  create:handle-poke
-      [%create ~ ~ `'global' `%global `[%feed ~] ~ ~ ~]
+      [%create ~ ~ `'global' `%global ~ `[%feed ~] ~ ~ ~]
     =^  cards-8  state
       %-  create:handle-poke
-      [%create ~ ~ `'index' `%def `[%collection '' '' '' ~] ~ ~ ~]
+      [%create ~ ~ `'index' `%def ~ `[%collection '' '' '' ~] ~ ~ ~]
     :_  state
     (zing ~[cards cards-1 cards-2 cards-3 cards-4 cards-5 cards-6 cards-7 cards-8])
   :_  state
