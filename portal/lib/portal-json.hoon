@@ -220,29 +220,15 @@
     :~  ['createdAt' s+created-at.meta]
         ['updatedAt' s+updated-at.meta]
         ['permissions N/A' s+'']
-        ['reach N/A' s+'']
+        ['reach' (enjs-reach reach.meta)]
     ==
-  :: ++  enjs-data
-  ::   |=  [=data]
-  ::   ^-  json
-  ::   |^
-  ::   %-  pairs
-  ::   :~  ['general' (enjs-general general.data)]
-  ::       ['bespoke' (enjs-bespoke bespoke.data)]
-  ::   ==
-  ::   ++  enjs-general
-  ::     |=  [=general]
-  ::     ^-  json
-  ::     %-  pairs
-  ::     :~  ['title' s+title.general]
-  ::         ['link' s+link.general]
-  ::         ['description' s+description.general]
-  ::         ['tags' (enjs-cord-list tags.general)]
-  ::         ::['properties' o+properties.general]
-  ::         ['pictures' (enjs-cord-list pictures.general)]
-  ::         ['image' s+image.general]
-  ::         ['color' s+color.general]
-  ::     ==
+  ++  enjs-reach
+    |=  [=reach:dat]
+    ^-  json
+    ?-    -.reach
+      %private  (frond ['whitelist' a+(turn whitelist.reach enjs-ship)])
+      %public  (frond ['blacklist' a+(turn blacklist.reach enjs-ship)])
+    ==
   ++  enjs-bespoke
     |=  [=bespoke:dat]
     ^-  json
@@ -839,6 +825,7 @@
                       cord+so
                       time+so
                       lens+so
+                      reach+dejs-soft-reach
                       bespoke+dejs-soft-bespoke-create
                       append-to+dejs-key-list
                       prepend-to-feed+dejs-key-list
@@ -849,6 +836,7 @@
       =/  raw  %.  ;;((map @t json) +>:jn)
       %-  ot-raw  :~  key+dejs-soft-key
                       lens+so
+                      reach+dejs-soft-reach
                       bespoke+dejs-soft-bespoke-edit
                   ==
       =/  edit  (pole-to-cell raw)
@@ -1106,6 +1094,14 @@
     ^-  (unit key-list:dat)
     %.  jon
     (ar:dejs-soft dejs-soft-key)
+  ++  dejs-soft-reach
+    |=  jon=json
+    ;;  (unit reach:dat)
+    %.  jon
+    %-  of:dejs-soft
+    :~  [%private (ot:dejs-soft ~[whitelist+(ar:dejs-soft dejs-soft-ship)])]
+        [%public (ot:dejs-soft ~[blacklist+(ar:dejs-soft dejs-soft-ship)])]
+    ==
   ++  dejs-key
     |=  jon=json
     ;;  key:dat

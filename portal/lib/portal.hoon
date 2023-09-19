@@ -279,6 +279,9 @@
         lens
       (fall lens.act lens.item)
       ::
+        meta  
+      meta.item(reach (fall reach.act reach.meta.item))
+      ::
         bespoke
       ?~  bespoke.act  bespoke.item
       ?-  -.u.bespoke.act
@@ -422,7 +425,7 @@
         :^  created-at=`@t`(scot %da now)
             updated-at=''
             permissions=~[our]
-            reach=[%public ~]
+            reach=(fall reach.act [%public ~])
   ::
   ++  prepend-to-feed
     |=  [now=time feed=item:d:m act=action:m]
@@ -432,7 +435,7 @@
     ?>  =(key.feed feed-key.act)
     =/  new-feed  %+  oust  [1.000 (lent feed.act)]
       (weld feed.act feed.bespoke.feed)
-    (edit now feed [%edit key.feed ~ `[%feed `new-feed]])
+    (edit now feed [%edit key.feed ~ ~ `[%feed `new-feed]])
   ::
   ++  append-no-dupe
     |=  [now=time col=item:d:m act=action:m]
@@ -442,7 +445,7 @@
     ?>  =(col-key.act key.col)
     =+  (welp key-list.bespoke.col key-list.act)
     %^  edit  now  col
-      [%edit col-key.act ~ `[%collection ~ ~ ~ `(deduplicate:keys -)]]
+      [%edit col-key.act ~ ~ `[%collection ~ ~ ~ `(deduplicate:keys -)]]
   ::
   ++  append-to-col
     |=  [now=time col=item:d:m act=action:m]
@@ -452,7 +455,7 @@
     ?>  =(col-key.act key.col)
     =/  new-key-list  (weld key-list.bespoke.col key-list.act)
     %^  edit  now  col
-      [%edit col-key.act ~ `[%collection ~ ~ ~ `new-key-list]]
+      [%edit col-key.act ~ ~ `[%collection ~ ~ ~ `new-key-list]]
   ::
   ++  remove-from-col
     |=  [now=time col=item:d:m act=action:m]
@@ -463,7 +466,7 @@
     =/  new-key-list  %+  skip  key-list.bespoke.col
       |=(=key:d:m ?~((find [key]~ key-list.act) %.n %.y))
     %^  edit  now  col
-      [%edit col-key.act ~ `[%collection ~ ~ ~ `new-key-list]]
+      [%edit col-key.act ~ ~ `[%collection ~ ~ ~ `new-key-list]]
   ::
   --
 ::
