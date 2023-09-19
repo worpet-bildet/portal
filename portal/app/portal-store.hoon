@@ -144,9 +144,10 @@
     =/  msg  !<(message:m:p vase)
     ?+    -.msg    !!
         %get-item
-      :_  this
-      :~  (~(msg cards:p [src.bowl %portal-store]) [%item (~(get by items) key.msg)])
-      ==
+      ?:  (ship-in-reach:stor src.bowl key.msg)
+        :_  this  :_  ~
+        (~(msg cards:p [src.bowl %portal-store]) [%item (~(get by items) key.msg)])
+      `this
       ::
         %item
       ?~  item.msg  `this
@@ -173,8 +174,11 @@
     ::
       %sss-to-pub
     =/  msg  !<(into:du-item (fled:sss vase))
-    =^  cards  item-pub  (apply:du-item msg)
-    [cards this]
+    =/  key  (path-to-key:conv:p +.-.msg)
+    ?:  (ship-in-reach:stor src.bowl key)
+      =^  cards  item-pub  (apply:du-item msg)
+      [cards this]
+    `this
     ::
       %sss-item
     =^  cards  item-sub  (apply:da-item !<(into:da-item (fled:sss vase)))
@@ -339,6 +343,21 @@
   ^-  items:d:m:p
   ?>  |(=(our.bowl ship.key.item) =(lens.item %temp))
   (~(put by items) key.item item)
+::
+::  whether a ship is allowed to get/sub to an item
+++  ship-in-reach
+  |=  [=ship =key:d:m:p]
+  ^-  ?
+  =/  reach  reach:meta:(get-item key)
+  ?-    reach
+    [%public *]   ?~((find [ship]~ blacklist.reach) %.y %.n)
+    [%private *]  ?^((find [ship]~ whitelist.reach) %.y %.n)
+  ==
+  :: ?:  r
+  ::   ~&  >  "{<(scot %p ship)>} in reach of {<(key-to-path:conv:p key)>}"
+  ::   r
+  :: ~&  >>>  "{<(scot %p ship)>} out of reach of {<(key-to-path:conv:p key)>}"
+  :: r
 ::
 ++  pub-item
   |=  in=$%([%whole =item:d:m:p] [%prepend-to-feed =feed:d:m:p =key:d:m:p =reach:d:m:p])
