@@ -5,6 +5,19 @@
 ::
 ++  conv
   |%
+  ::  when he is hashed 
+  ++  to-key
+    |=  [=struc:d:m:p =ship =cord time=cord]
+    ^-  key:d:m:p
+    ?+    struc
+      [struc ship cord time]
+      ::
+        ?(%groups-chat-msg %groups-diary-note %groups-heap-curio)
+      :^  struc
+          ~zod   ::?
+          (scot %uv (shax (jam [ship cord])))
+          ''
+    ==
   ::
   ::  TODO what if time looks like '/some-blog-path'
   ::  or '/some/blog/path'
