@@ -1,9 +1,9 @@
 /-  c=portal-config, portal-devs, blog-paths
-/+  default-agent, p=portal, sss::, dbug
-:: /$  json-to-action  %json  %portal-action
-:: /$  msg-to-json  %portal-message  %json
-:: /$  dev-map-to-json  %portal-dev-map  %json
-:: /$  portal-manager-result-to-json  %portal-manager-result  %json
+/+  default-agent, p=portal, sss, dbug
+/$  json-to-action  %json  %portal-action
+/$  msg-to-json  %portal-message  %json
+/$  dev-map-to-json  %portal-dev-map  %json
+/$  portal-manager-result-to-json  %portal-manager-result  %json
 |%
 +$  versioned-state
   $+  manager-versioned-state
@@ -83,7 +83,7 @@
   ==
 +$  card  $+  gall-card  card:agent:gall
 --
-:: %-  agent:dbug
+%-  agent:dbug
 =|  state-8
 =*  state  -
 ^-  agent:gall
@@ -325,7 +325,7 @@
           ~
         :~
           %-  ~(act cards:p [our.bowl %portal-store])
-            :*  %create  ~  ~  `'published-apps'  `%def
+            :*  %create  ~  ~  `'published-apps'  `%def  ~
                 `[%collection 'My Apps' 'Collection of all apps I have published.' '' ~]
                 [%collection our.bowl '' '~2000.1.1']~  ~  ~  ==
         ==
@@ -333,17 +333,18 @@
         ?:  %-  ~(item-exists scry:p our.bowl now.bowl)
             [%app our.bowl '' desk-name.u.dist-desk]
           :~  %-  ~(act cards:p [our.bowl %portal-store])
-              :^    %edit
+              :*    %edit
                   [%app our.bowl '' desk-name.u.dist-desk]
-                `%def
+                `%def  ~
               `[%app ~ ~ `dist-desk.msg `sig.msg `treaty.msg eth-price.msg]
+              ==
               %-  ~(act cards:p [our.bowl %portal-store])
               :+  %append 
                 [%app our.bowl '' desk-name.u.dist-desk]^~ 
               [%collection our.bowl '' 'published-apps']
           ==
         :_  ~  %-  ~(act cards:p [our.bowl %portal-store])
-        :*  %create  ~  ~  `desk-name.u.dist-desk  `%def
+        :*  %create  ~  ~  `desk-name.u.dist-desk  `%def  ~
           `[%app ~ '' dist-desk.msg sig.msg treaty.msg (fall eth-price.msg '')]
           ~[[%collection our.bowl '' 'published-apps']]  ~  ~  ==
       :_  this
@@ -444,7 +445,7 @@
       ?~  wave.msg  `this
       =/  create-my-blogs
         :~  %-  ~(act cards:p [our.bowl %portal-store])
-            :*  %create  ~  ~  `'published-blogs'  `%def
+          :*  %create  ~  ~  `'published-blogs'  `%def  ~
                 `[%collection 'My Blogs' 'Collection of all blogs I have published.' '' ~]
                 [%collection our.bowl '' '~2000.1.1']~  ~  ~  ==
         ==
@@ -457,7 +458,7 @@
           :~  %-  ~(act cards:p [our.bowl %portal-store])
           [%append [key]~ [%collection our.bowl '' 'published-blogs']]  ==
         :~  %-  ~(act cards:p [our.bowl %portal-store])
-        :*  %create  ~  ~  `key-time  `%def
+        :*  %create  ~  ~  `key-time  `%def  ~
           `[%blog (blog-path-to-title path) '' (fall uri '') path '']
           ~[[%collection our.bowl '' 'published-blogs']]  ~  ~  ==  ==
       ?-  -.u.wave.msg
@@ -496,10 +497,11 @@
           %+  snoc  cards
           ^-  card
           %-  ~(act cards:p [our.bowl %portal-store])
-          :^    %edit
+          :*    %edit
               [%blog our.bowl '' time.key]
-            ~
+            ~  ~
           `[%blog ~ ~ `uri.u.wave.msg ~ ~]
+          ==
         :_  this  (welp create-my-blogs cards)
       ==
     ==
@@ -606,7 +608,7 @@
         ==
         :*    %pass  /create-tip-item  %agent  [our.bowl %portal-store]  %poke  
               %portal-action  !>
-              :*  %create  ~  ~  `(scot %da now.bowl)  ~
+              :*  %create  ~  ~  `(scot %da now.bowl)  ~  ~
                   `[%tip src our.bowl eth-paid (scot %da now.bowl) note tx-hash]
                    ~  ~[[%feed our.bowl '' '~2000.1.1']]  ~
               ==
@@ -703,7 +705,7 @@
       =/  key  [%app our.bowl '' `@t`i.t.t.wire]
       ?:  (~(item-exists scry:p our.bowl now.bowl) key)
         :~  %-  ~(act cards:p [our.bowl %portal-store])
-              [%edit key ~ `[%app ~ ~ ~ ~ `treaty ~]]
+              [%edit key ~ ~ `[%app ~ ~ ~ ~ `treaty ~]]
             %-  ~(act cards:p [our.bowl %portal-store])
               [%append [key]~ [%collection our.bowl '' 'published-apps']]
         ==
@@ -714,6 +716,7 @@
             ~
             ``@t`i.t.t.wire
             `%def
+            ~
             `[%app ~ '' '' *signature:d:m:p treaty *@t]
             [%collection our.bowl '' 'published-apps']~
             ~
@@ -729,7 +732,7 @@
         %fact
       =/  treaty  !<(treaty:t:d:m:p q.cage.sign)
       =/  key  (path-to-key:conv:p +.wire)
-      =/  act  [%replace key %temp [%app ~ '' '' *signature:d:m:p treaty *@t]]
+      =/  act  [%edit key `%temp ~ `[%app ~ ~ ~ ~ `treaty ~]]
       :_  this
       :~  [(~(act cards:p [our.bowl %portal-store]) act)]
           ::  TODO why unsub here, instead of getting updates?
@@ -742,7 +745,7 @@
         %fact
       =/  preview  !<(preview:g:d:m:p q.cage.sign)
       =/  key  (path-to-key:conv:p +.wire)
-      =/  act  [%replace key %temp [%group meta.preview]]
+      =/  act  [%edit key `%temp ~ `[%group `meta.preview]]
       :_  this
       :~  [(~(act cards:p [our.bowl %portal-store]) act)]
           ::  TODO why unsub here, instead of getting updates?
@@ -875,11 +878,13 @@
     [cards state]
   ?:  (~(item-exists scry:p our.bowl now.bowl) key.act)  ~
   =|  bespoke=bespoke:d:m:p
+  =/  reach=reach:d:m:p  [%public ~]
   =*  create-empty-temp  ^-  action:m:p  :*  %create
                               `ship.key.act
                               `cord.key.act
                               `''
                               `%temp
+                              `reach
                               `bespoke
                               ?:  ?|  =(%app struc.key.act)
                                       =(%group struc.key.act)  

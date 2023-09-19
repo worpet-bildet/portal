@@ -237,7 +237,7 @@
   :-  %portal-tester  :-  %tests-action  !>
   :+  %portal-act-request  ship
   :-  %portal-action  !>
-  [%create `ship ~ `time ~ `bespoke ~ [%feed ship '' '~2000.1.1']^~ ~]
+  [%create `ship ~ `time ~ ~ `bespoke ~ [%feed ship '' '~2000.1.1']^~ ~]
 ::
 ++  create-reply
   |=  [=ship time=cord =bespoke:d:m:p to=[=struc:d:m:p =ship =cord time=cord]]
@@ -246,7 +246,7 @@
   :-  %portal-tester  :-  %tests-action  !>
   :+  %portal-act-request  ship
   :-  %portal-action  !>
-  :*  %create  `ship  ~  `time  ~  `bespoke  ~  [%feed ship '' '~2000.1.1']^~  
+  :*  %create  `ship  ~  `time  ~  ~  `bespoke  ~  [%feed ship '' '~2000.1.1']^~  
       [to /(scot %p ship)/reply-to /(scot %p ship.to)/reply-from]^~
   ==
 ::
@@ -257,7 +257,7 @@
   :-  %portal-tester  :-  %tests-action  !>
   :+  %portal-act-request  ship
   :-  %portal-action  !>
-  [%create `ship ~ `time ~ `bespoke ~ ~ ~]
+  [%create `ship ~ `time ~ ~ `bespoke ~ ~ ~]
 ::
 ++  edit-item
   |=  [=struc:d:m:p =ship time=cord edit-bespoke=noun]
@@ -266,7 +266,7 @@
   :-  %portal-tester  :-  %tests-action  !>
   :+  %portal-act-request  ship
   :-  %portal-action  !>
-  [%edit [struc ship '' time] ~ `edit-bespoke]
+  [%edit [struc ship '' time] ~ ~ `edit-bespoke]
 ::
 ++  sub-to-many :: who is the ship which subs to many 
   |=  [who=ship =key-list:d:m:p]
