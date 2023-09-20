@@ -164,9 +164,109 @@
       %portal-action
     ?>  =(our.bowl src.bowl)
     =/  act  !<(action:m:p vase)
-    ?+    -.act
-      ::  default:  forward to %portal-store
-      :_  this  [(~(act cards:p [our.bowl %portal-store]) act)]~
+    ?-    -.act
+      ::  in many of the following actions, we use to-key:conv:p to convert 
+      ::  all unhashed keys which should be hashed to hashed
+      ::
+        %create
+      =/  new-key  ^-  key:d:m:p
+        %:  to-key:conv:p
+          -:(fall bespoke.act *bespoke:d:m:p) 
+          (fall ship.act our.bowl) 
+          (fall cord.act '') 
+          (fall time.act (scot %da now.bowl))
+        ==
+      :_  this  :_  ~
+      %-  ~(act cards:p [our.bowl %portal-store])
+      %=  act
+        ship             `ship.new-key
+        cord             `cord.new-key
+        time             `time.new-key
+        ::
+          append-to
+        ;;  (list [%collection =ship =cord time=cord])
+        (to-key-list:conv:p append-to.act)
+        ::
+          prepend-to-feed
+        ;;  (list [%feed =ship =cord time=cord])
+        (to-key-list:conv:p prepend-to-feed.act)
+        ::
+          tags-to
+        %+  turn  tags-to.act
+        |=  [=key:d:m:p tag-to=path tag-from=path]
+        [(to-key:conv:p key) tag-to tag-from]
+      ==
+      ::
+        %edit
+      :_  this  :_  ~
+      %-  ~(act cards:p [our.bowl %portal-store])
+      %=    act
+        key       (to-key:conv:p key.act)
+        ::
+          bespoke
+        ?~  bespoke.act  ~
+        ?+    -.u.bespoke.act    bespoke.act
+            %collection
+          :-  ~
+          %=    u.bespoke.act
+              key-list
+            =,  u.bespoke.act
+            ?~  key-list  key-list
+            `(to-key-list:conv:p +:key-list)
+          ==
+          ::
+            %feed
+          :-  ~
+          %=    u.bespoke.act
+              feed
+            =,  u.bespoke.act
+            ?~  feed  feed
+            `(to-feed:conv:p +:feed)
+          ==
+          ::
+            %retweet
+          :-  ~
+          %=    u.bespoke.act
+              ref
+            =,  u.bespoke.act
+            ?~  ref  ref
+            `(to-key:conv:p +:ref)
+          ==
+        ==
+      ==
+      ::
+        %add-tag-request
+      :_  this  :_  ~
+      %-  ~(act cards:p [our.bowl %portal-store])
+      %=    act
+        our    (to-key:conv:p our.act)
+        their  (to-key:conv:p their.act)
+      ==
+      ::
+        ?(%append %remove)
+      :_  this  :_  ~
+      %-  ~(act cards:p [our.bowl %portal-store])
+      %=    act
+        key-list  (to-key-list:conv:p key-list.act)
+          col-key   
+        ;;  [%collection =ship =cord time=cord]
+        (to-key:conv:p col-key.act)
+      ==
+      ::
+        %destroy
+      :_  this  :_  ~
+      %-  ~(act cards:p [our.bowl %portal-store])
+      act(key (to-key:conv:p key.act))
+      ::
+        %prepend-to-feed
+      :_  this  :_  ~
+      %-  ~(act cards:p [our.bowl %portal-store])
+      %=    act
+        feed  (to-feed:conv:p feed.act)
+          feed-key   
+        ;;  [%feed =ship =cord time=cord]
+        (to-key:conv:p feed-key.act)
+      ==
       ::
         %aggregate-chats
       :_  this
@@ -225,7 +325,8 @@
         %sub-to-many
       ::  %def sent to portal-store
       ::  %temp cycled thru single subs
-      =/  keys=[temp=key-list:d:m:p def=key-list:d:m:p]  (skid-temp:keys:p key-list.act)
+      =/  key-list  (to-key-list:conv:p key-list.act)
+      =/  keys=[temp=key-list:d:m:p def=key-list:d:m:p]  (skid-temp:keys:p key-list)
       =^  cards  state
         %-  tail  %^  spin  temp.keys  [*(list card) state]
         |=  [=key:d:m:p q=[cards=(list card) state=state-8]]
@@ -238,7 +339,7 @@
       (~(act cards:p [our.bowl %portal-store]) [%sub-to-many def.keys])
       ::
         %sub
-      =^  cards  state  (sub:helper [%sub key.act])
+      =^  cards  state  (sub:helper [%sub (to-key:conv:p key.act)])
       [cards this]
       ::
         %blog-sub
@@ -279,9 +380,12 @@
       [%give %fact [/updates]~ %portal-manager-result !>([%rpc-endpoint rpc-endpoint.act])]~
       ::
         %tip-request
+      ?~  time.key.act
+        ~&  >>  "%portal-manager: don't tip a %temp item."
+        `this
       :_  this  :_  ~
       :*  %pass  /tip-req  %agent  [ship.key.act %portal-manager]  %poke
-          %portal-message  !>(act)
+          %portal-message  !>(act(key (to-key:conv:p key.act)))
       ==
       ::
         %tip-tx-hash

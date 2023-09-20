@@ -58,7 +58,7 @@
   =.  state  old
   `this
   ::
-  :: ::  -  destroy empty collections
+  ::  -  destroy empty collections
   :: =/  output
   ::   =+  ~(tap by items.state)
   ::   %-  tail  %^  spin  -  [*key-list:d:m:p *(list card) state]
@@ -92,7 +92,7 @@
   ::   %-  tail  %^  spin  -  [*(list card) state]
   ::   |=  [=item:d:m:p q=[cards=(list card) state=state-3]]
   ::   :-  item
-  ::   =/  path  [%item (key-to-path:conv:p key.item)]
+  ::   =/  path  [%item (key-to-path:conv:p)]
   ::   =.  state  state.q
   ::   ?:  =(lens.item %temp)  q                        ::  if %temp, no need
   ::   ?.  ?=(?(%collection %feed %app %blog) struc.key.item)      ::  if not %col or %feed or %app
@@ -297,7 +297,7 @@
     =?  path  =('use_as_empty_path_slot' i.t.t.t.t.path)
       path(t.t.t.t ['' t.t.t.t.t.path])
     :-  %item
-    =/  key  (path-to-key:conv:p t.path)
+    =/  key  ;;  key:d:m:p  (to-key:conv:p (path-to-key:conv:p t.path))
     ?^  itm=(~(gut by items) key ~)
       itm
     =/  item  (~(gut by read:da-item) [ship.key %portal-store [%item t.path]] ~)
@@ -310,7 +310,7 @@
       path(t.t.t ['' t.t.t.t.path])
     =?  path  =('use_as_empty_path_slot' i.t.t.t.t.path)
       path(t.t.t.t ['' t.t.t.t.t.path])
-    =/  key  (path-to-key:conv:p t.path)
+    =/  key  ;;  key:d:m:p  (to-key:conv:p (path-to-key:conv:p t.path))
     ?:  (~(has by items) key)
       %.y
     (~(has by read:da-item) [ship.key %portal-store [%item t.path]])

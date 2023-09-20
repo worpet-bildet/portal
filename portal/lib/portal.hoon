@@ -5,19 +5,37 @@
 ::
 ++  conv
   |%
-  ::  when he is hashed 
+  ::  uniformizes unhashed and hashed to hashed keys
+  ::  expected to be idempotent
   ++  to-key
-    |=  [=struc:d:m:p =ship =cord time=cord]
-    ^-  key:d:m:p
+    |=  [=struc:d:m =ship =cord time=cord]
     ?+    struc
       [struc ship cord time]
       ::
         ?(%groups-chat-msg %groups-diary-note %groups-heap-curio)
+      ?:  ?&  =(ship ~zod)
+              =((scag 2 (trip cord)) "0v")
+          ==
+        ::
+        [struc ship cord time]
+        ::
       :^  struc
-          ~zod   ::?
+          ~zod
           (scot %uv (shax (jam [ship cord])))
           ''
     ==
+  ::
+  ::  runs to-key over key-list
+  ++  to-key-list
+    |=  [=key-list:d:m]
+    (turn key-list to-key)
+  ::
+  ::  runs to-key over feed
+  ++  to-feed
+    |=  [=feed:d:m]
+    %+  turn  feed
+    |=  [time=cord =ship =key:d:m]
+    [time ship (to-key key)]
   ::
   ::  TODO what if time looks like '/some-blog-path'
   ::  or '/some/blog/path'
