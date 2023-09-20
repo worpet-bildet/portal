@@ -12,7 +12,7 @@
 
 {#if feed && feed.length > 0}
   {#each feed.slice(0, 200) as item (keyStrFromObj(item.key))}
-    <div class="my-6">
+    <div class="mb-6">
       <FeedPost
         key={item.key}
         on:tipRequest={({ detail: { key } }) => handleTipRequest(key)}

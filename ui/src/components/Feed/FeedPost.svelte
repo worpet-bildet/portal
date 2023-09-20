@@ -39,6 +39,7 @@
     VerticalCollapseIcon,
     VerticalExpandIcon,
   } from '@fragments';
+  import InlineItem from '../InlineItem.svelte';
 
   export let key: ItemKey;
   export let allowRepliesDepth = 2;
@@ -48,8 +49,8 @@
 
   let item: Item;
   let replies: ItemKey[] = [];
-  let likeCount: number;
-  let likedByMe: boolean;
+  let numLikes: number;
+  let isLikedByMe: boolean;
   let showReplies = false;
 
   const loadPost = (_k) => {
@@ -70,26 +71,11 @@
       })
       .sort((a, b) => fromUrbitTime(a.time) - fromUrbitTime(b.time));
 
-    // Open the comments if we've been referred to this specific reply
-    const referredTo = $state.referredTo;
-    if (
-      referredTo &&
-      referredTo.key === keyStrFromObj(item.keyObj) &&
-      referredTo.type === 'reply'
-    ) {
-      showReplies = true;
-    } else if (
-      referredTo &&
-      replies.find((r) => keyStrFromObj(r) === referredTo?.key)
-    ) {
-      showReplies = true;
-    }
-
     let likes = [...(getLikes(key.ship, key) || [])];
 
-    likeCount = likes.length;
-    if (likedByMe && !likes.find((l) => l.ship === me)) likeCount++;
-    likedByMe = likedByMe || !!likes.find((l) => l.ship === me);
+    numLikes = likes.length;
+    if (isLikedByMe && !likes.find((l) => l.ship === me)) numLikes++;
+    isLikedByMe = isLikedByMe || !!likes.find((l) => l.ship === me);
   };
 
   $: $state && loadPost(key);
@@ -155,8 +141,8 @@
   }
 
   const likePost = () => {
-    likedByMe = true;
-    likeCount++;
+    isLikedByMe = true;
+    numLikes++;
     return api.portal.do.addTag({
       our: { struc: 'ship', ship: me, cord: '', time: '' },
       their: key,
@@ -191,6 +177,15 @@
     showAll = false;
   };
 
+  const getRef = (s) => {
+    try {
+      const { ref } = JSON.parse(s.trim());
+      return ref;
+    } catch (e) {
+      return false;
+    }
+  };
+
   let postContainer;
   let longPost = false;
   let showAll = true;
@@ -203,14 +198,6 @@
       postContainer.classList.add('max-h-96');
     }
   }
-
-  $: postChain = item && [item.keyObj, ...getPostChain(item.keyObj)].reverse();
-  $: replyingToNames = postChain
-    ?.slice(1)
-    ?.map(getItem)
-    ?.map((i) => getCurator(i.keyObj.ship))
-    ?.map(getMeta)
-    ?.map((m) => m.nickname || m.ship);
 </script>
 
 {#if item}
@@ -220,18 +207,6 @@
     <div class="flex items-center justify-between px-3">
       <div class="flex items-center gap-1 text-sm">
         <InlineShip patp={ship} />
-        {#if replyingToNames.length > 0}
-          <a
-            use:link
-            href={keyStrFromObj(item.keyObj)}
-            class="hover:underline flex gap-1 decoration-posttext"
-          >
-            <span class="text-posttext">replying to</span>
-            <span>
-              {collapseNames(replyingToNames)}
-            </span>
-          </a>
-        {/if}
       </div>
       <div class="text-xs text-light">{format(createdAt)}</div>
     </div>
@@ -244,15 +219,26 @@
         class:rounded-t-xl={isReplyFormOpen}
         class:rounded-xl={!isReplyFormOpen}
       >
-        <div>{@html linkifyHtml(DOMPurify.sanitize(blurb))}</div>
+        <p>
+          {#each blurb.split(/(\s)/) as word}
+            {#if getRef(word)}
+              <InlineItem keyStr={getRef(word)} />
+            {:else}
+              {word}
+            {/if}
+          {/each}
+        </p>
+        {#if blurbLink}
+          <LinkPreview url={blurbLink} />
+        {/if}
         <div class="grid grid-cols-8">
           <div class="col-span-1 flex items-center gap-2">
-            {#if likedByMe}
+            {#if isLikedByMe}
               <div class="w-6 h-6 text-greyicon"><LikedIcon /></div>
-              <div class="text-light">{likeCount}</div>
+              <div class="text-light">{numLikes}</div>
             {:else}
               <div class="w-6 h-6 text-greyicon"><LikeIcon /></div>
-              <div class="text-light">{likeCount}</div>
+              <div class="text-light">{numLikes}</div>
             {/if}
           </div>
           <a

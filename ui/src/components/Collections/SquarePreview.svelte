@@ -83,6 +83,8 @@
   </div>
 {:else}
   <div class="flex justify-center items-center p-10 w-full h-full">
-    <LoadingIcon class="w-16 h-16" />
+    <div class="w-16 h-16">
+      <LoadingIcon />
+    </div>
   </div>
 {/if}

@@ -1,33 +1,39 @@
 <script lang="ts">
   import { link } from 'svelte-spa-router';
-  import {
-    state,
-    getCuratorCollections,
-    keyStrFromObj,
-    getItem,
-  } from '@root/state';
   import { api, me } from '@root/api';
-  import SquarePreview from './SquarePreview.svelte';
+  import { state, getCuratorCollections, getItem } from '@root/state';
   import { ArrowPathIcon } from '@fragments';
+  import SquarePreview from './SquarePreview.svelte';
+
   export let patp;
 
   let loading = true;
   let collections, curatorCollections;
+  let subbingTo = new Set();
   const loadCollections = (patp) => {
     curatorCollections = getCuratorCollections(patp) || [];
     curatorCollections.forEach((c) => {
-      if ($state.isLoaded && !getItem(keyStrFromObj(c)) && c.time !== 'all') {
+      if ($state.isLoaded && !getItem(c) && c.time !== 'all') {
+        subbingTo.add(c);
         api.portal.do.subscribe(c);
       }
     });
     collections = (getCuratorCollections(patp) || [])
-      .map((c) => getItem(keyStrFromObj(c)))
+      .map(getItem)
       .filter((c) => !!c)
       .filter((c) => !!c.keyStr)
       .filter((c) => c?.bespoke?.['key-list']?.length > 0)
-      .filter((c) => c?.keyObj?.time !== 'all');
+      .filter((c) => c?.keyObj?.time !== 'all')
+      .map((c) => {
+        subbingTo.delete(c.keyStr);
+        return c;
+      });
 
-    if (collections.length > 0) loading = false;
+    console.log({ subbingTo, curatorCollections, collections });
+
+    if (collections.length > 0 || subbingTo.size === 0) {
+      loading = false;
+    }
   };
 
   let hasBlog, hasBlogCollection, subbingToBlogs;
@@ -50,11 +56,11 @@
     api.portal.do.subscribeToBlog();
   };
 
-  $: loadCollections(patp);
+  $: $state && loadCollections(patp);
 </script>
 
 <div class="grid grid-cols-12 gap-4 items-start">
-  {#if loading || (curatorCollections.length > 0 && collections.length === 0)}
+  {#if loading || subbingTo.size > 0}
     <div class="col-span-12">Loading...</div>
   {:else if collections.length === 0}
     <div class="col-span-12">

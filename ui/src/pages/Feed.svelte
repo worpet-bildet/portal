@@ -196,6 +196,8 @@
         on:post={handlePost}
         placeholder="Share a limerick, maybe..."
       />
+    </div>
+    <div>
       {#if loading}
         <div class="flex justify-center dark:fill-white items-center py-20">
           <div class="w-10 h-10"><LoadingIcon /></div>

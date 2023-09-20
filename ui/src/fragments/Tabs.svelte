@@ -1,5 +1,6 @@
 <script lang="ts">
-  export let tabs, activeTab;
+  export let tabs: string[];
+  export let activeTab: string;
 </script>
 
 <div class="flex gap-4 border-b mb-4">

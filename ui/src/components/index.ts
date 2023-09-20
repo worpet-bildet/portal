@@ -1,6 +1,11 @@
 export { default as Navbar } from './Navbar.svelte';
 export { default as GlobalSearch } from './GlobalSearch.svelte';
 export { default as InlineShip } from './InlineShip.svelte';
+export { default as InlineItem } from './InlineItem.svelte';
+
+export { default as GroupPreview } from './Item/GroupPreview.svelte';
+
+export { default as RichTextArea } from './RichTextArea/RichTextArea.svelte';
 
 export { default as Feed } from './Feed/Feed.svelte';
 export { default as FeedPost } from './Feed/FeedPost.svelte';

@@ -42,9 +42,9 @@
     GroupsHeapCurio,
     GroupsDiaryNote,
     InlineShip,
+    RichTextArea,
   } from '@components';
   import {
-    TextArea,
     IconButton,
     AppIcon,
     PeopleIcon,
@@ -69,16 +69,13 @@
   let rating: number;
 
   let submitting: boolean;
-  const post = async () => {
+  const post = async ({ detail: { content } }) => {
     if (submitting) return;
     if (!content) {
       return (error = 'Please write something, anything.');
     }
     if ((showRatingStars && !rating) || Number(rating) === 0) {
       return (error = 'Please give a score.');
-    }
-    if (shortcodeItems && shortcodeItems.length > 1) {
-      return (error = 'Please select one of the items to recommend.');
     }
     // If we have some chat details here, we should generate the reference and
     // then send the reference back up with the post
@@ -98,10 +95,6 @@
       const { host, channel, id } = noteDetails;
       ref = { struc: 'groups-diary-note', ship: me, cord: '', time };
       api.portal.do.createGroupsDiaryNote(host, channel, id, time);
-    }
-    if (shortcodeItems && shortcodeItems.length === 1) {
-      const { keyObj } = shortcodeItems[0];
-      ref = { ...keyObj };
     }
 
     // TODO: Split this out into a function
@@ -125,12 +118,6 @@
         },
       };
     }
-    post = {
-      ...post,
-      'prepend-to-feed': [
-        { ship: me, struc: 'feed', time: '~2000.1.1', cord: '' },
-      ],
-    };
 
     if (replyTo) {
       post = {
@@ -142,6 +129,13 @@
             'tag-to': `/${me}/reply-to`,
             'tag-from': `/${replyTo.ship}/reply-from`,
           },
+        ],
+      };
+    } else {
+      post = {
+        ...post,
+        'prepend-to-feed': [
+          { ship: me, struc: 'feed', time: '~2000.1.1', cord: '' },
         ],
       };
     }
@@ -190,8 +184,6 @@
     heapCurio = undefined;
     noteDetails = undefined;
     diaryNote = undefined;
-    shortcodeToPreview = undefined;
-    shortcodeItems = undefined;
     rating = undefined;
   };
 
@@ -237,8 +229,6 @@
     content.split(/[\r\n|\s]+/).find((word) => isCurioPath(word));
   const getAnyNote = (content: string): string =>
     content.split(/[\r\n|\s]+/).find((word) => isNotePath(word));
-  const getAnyShortcode = (content: string): string =>
-    content.split(/[\r\n|\s]+/).find((word) => isShortcode(word));
 
   $: linkToPreview = getAnyLink(content || '');
 
@@ -266,40 +256,28 @@
     content = content.replace(notePath, '');
   };
 
-  let shortcodeToPreview: string;
-  let shortcodeItems: Item[];
-  const getShortcodeItem = (shortcode: string) => {
-    if (!getGroup(shortcode) && !getApp(shortcode)) {
-      shortcodeItems = [];
-      return;
-    }
-    shortcodeItems = [getGroup(shortcode), getApp(shortcode)].filter(
-      (i) => !!i
-    );
-    content = content.replace(shortcode, '');
-  };
-
   $: chatToPreview = getAnyChatMessage(content || '');
   $: if (chatToPreview) getChatWrit(chatToPreview);
   $: curioToPreview = getAnyCurio(content || '');
   $: if (curioToPreview) getHeapCurio(curioToPreview);
   $: noteToPreview = getAnyNote(content || '');
   $: if (noteToPreview) getDiaryNote(noteToPreview);
-  $: shortcodeToPreview = getAnyShortcode(content || '');
-  $: if (shortcodeToPreview) getShortcodeItem(shortcodeToPreview);
+
+  $: console.log({ chatWrit, curioDetails, noteDetails });
 </script>
 
 <div
-  class="flex flex-col w-full border-l border-r border-b p-4 gap-4 relative rounded-b-lg"
+  class="flex flex-col w-full border-l border-r border-b p-4 gap-4 rounded-b-lg"
+  class:relative={submitting}
   class:border-t={!replyTo}
   class:rounded-t-lg={!replyTo}
 >
   {#if submitting}
-    <div
-      class="absolute top-0 left-0 w-full h-full bg-white/30 dark:opacity-40 z-10 backdrop-blur-sm"
-    >
+    <div class="absolute top-0 left-0 w-full h-full bg-white/70 z-10">
       <div class="flex w-full h-full items-center justify-center opacity-100">
-        <LoadingIcon />
+        <div class="w-10 h-10">
+          <LoadingIcon />
+        </div>
       </div>
     </div>
   {/if}
@@ -313,12 +291,18 @@
     </div>
   {/if}
   <div class="flex w-full">
-    <TextArea
-      bind:value={content}
+    <RichTextArea
+      bind:content
       placeholder="/ Share anything you like"
       on:keyboardSubmit={post}
     />
   </div>
+  {#if chatWrit}
+    <GroupsChatMessage {...chatWrit.memo} />
+  {/if}
+  {#if linkToPreview}
+    <LinkPreview url={linkToPreview} />
+  {/if}
   <div class="flex justify-end w-full">
     <button class="py-1 px-4 rounded-md bg-black text-white">
       {#if replyTo}Reply{:else}Post{/if}

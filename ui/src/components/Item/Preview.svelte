@@ -173,8 +173,6 @@
           >
             {title || ship}
           </div>
-          <div class="text-grey">·</div>
-          <div class="text-grey" class:text-white={selected}>{struc}</div>
           {#if (struc === 'other' && link) || struc === 'blog'}
             <div class="w-5">
               <ExternalDestinationIcon />

@@ -10,7 +10,7 @@
 
 <button
   class="
-    py-2 px-2 flex items-center gap-4 hover:duration-500
+    py-2 px-2 flex items-center gap-2 hover:duration-500
     overflow-hidden rounded-lg
     {$$props.class}
   "

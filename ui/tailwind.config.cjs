@@ -5,6 +5,13 @@ module.exports = {
       backdropBlur: {
         xs: '2px',
       },
+      dropShadow: {
+        search: '0 14px 37px rgba(0, 0, 0, 0.04)',
+        '4xl': [
+          '0 35px 35px rgba(0, 0, 0, 0.25)',
+          '0 45px 65px rgba(0, 0, 0, 0.15)',
+        ],
+      },
       fontFamily: {
         logo: ['krona'],
         saucebold: ['sauce-bold'],
@@ -31,6 +38,8 @@ module.exports = {
         strucpill: '#F1F1F1',
         strucpilltext: '#ABABAB',
         posttext: '#858585',
+        coverDefaultGradientBottom: '##C471F5',
+        coverDefaultGradientTop: '##FA71CD',
 
         grey: '#696969',
         dark: '#00000080',

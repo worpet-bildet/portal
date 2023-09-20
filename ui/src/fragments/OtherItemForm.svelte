@@ -16,7 +16,7 @@
   </div>
   <div class="col-span-6 flex flex-col gap-2">
     <div>Description</div>
-    <TextArea type="text" bind:value={item.blurb} />
+    <TextArea bind:value={item.blurb} />
   </div>
   <div class="col-span-12 flex flex-col gap-2">
     <div>Image URL</div>

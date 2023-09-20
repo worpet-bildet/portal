@@ -135,10 +135,13 @@
     );
   };
 
-  const handleKeydown = (e: KeyboardEvent) => {
+  const handleKeydownGlobal = (e: KeyboardEvent) => {
     if (e.metaKey && e.key === 'k') {
       return searchInput.focus();
     }
+  };
+
+  const handleKeydownInput = (e: KeyboardEvent) => {
     if (e.key === 'Escape') {
       return searchInput.blur();
     }
@@ -165,7 +168,7 @@
   $: updateResults(searchString);
 </script>
 
-<svelte:window on:keydown={handleKeydown} />
+<svelte:window on:keydown={handleKeydownGlobal} />
 
 {#if focused}
   <div
@@ -173,7 +176,7 @@
     in:fade
   />
 {/if}
-<div class="flex flex-col w-full gap-4 relative">
+<div class="flex flex-col w-full gap-4 relative z-20">
   <div
     class="flex w-full justify-between rounded-lg bg-input border p-3"
     class:z-20={focused}
@@ -188,6 +191,7 @@
         class="w-full bg-transparent outline-none mr-2"
         placeholder="Search Portal..."
         bind:this={searchInput}
+        on:keydown|capture={handleKeydownInput}
       />
     </div>
     <div class="bg-indicator text-indicatortext text-xs px-2 py-1 rounded-md">
@@ -197,7 +201,7 @@
   <div class="relative">
     {#if focused}
       <div
-        class="flex flex-col border rounded-lg p-3 z-20 absolute bg-white w-full gap-3"
+        class="flex flex-col border rounded-lg p-3 z-20 absolute bg-white w-full gap-3 drop-shadow-search"
       >
         <div class="flex flex-col gap-2">
           {#if searchResults.items.length > 0}

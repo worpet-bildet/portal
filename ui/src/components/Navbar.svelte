@@ -84,11 +84,13 @@
     </div>
   </div>
   <div class="p-2">
-    <button
+    <a
+      use:link
+      href={`/${me}`}
       class="flex items-center gap-3 bg-white w-full py-2 px-3 rounded-lg"
     >
       <div class="w-6 h-6 rounded-sm overflow-hidden"><Sigil patp={me} /></div>
       <div class="text-sm">{formatPatp(me)}</div>
-    </button>
+    </a>
   </div>
 </div>

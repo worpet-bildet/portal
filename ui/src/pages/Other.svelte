@@ -66,7 +66,7 @@
   $: postChain = item && [item.keyObj, ...getPostChain(item.keyObj)].reverse();
   $: replyingToNames = postChain
     ?.map(getItem)
-    ?.map((i) => getCurator(i.keyObj.ship))
+    ?.map((i) => getCurator(i?.keyObj?.ship))
     ?.map(getMeta)
     ?.map((m) => m.nickname || m.ship);
   $: postOfInterest?.scrollIntoView();
