@@ -128,7 +128,6 @@
     =/  act  !<(action:m:p vase)
     ?+    -.act    (on-poke:default mark vase)
       %create   =^(cards state (create:handle-poke:stor act) [cards this])
-      %replace  =^(cards state (replace:handle-poke:stor act) [cards this])
       %edit     =^(cards state (edit:handle-poke:stor act) [cards this])
       %prepend-to-feed  =^(cards state (prepend-to-feed:handle-poke:stor act) [cards this])
       %append   =^(cards state (append:handle-poke:stor act) [cards this])
@@ -143,9 +142,10 @@
     =/  msg  !<(message:m:p vase)
     ?+    -.msg    !!
         %get-item
-      :_  this
-      :~  (~(msg cards:p [src.bowl %portal-store]) [%item (~(get by items) key.msg)])
-      ==
+      ?:  (ship-in-reach:stor src.bowl key.msg)
+        :_  this  :_  ~
+        (~(msg cards:p [src.bowl %portal-store]) [%item (~(get by items) key.msg)])
+      `this
       ::
         %item
       ?~  item.msg  `this
@@ -172,8 +172,11 @@
     ::
       %sss-to-pub
     =/  msg  !<(into:du-item (fled:sss vase))
-    =^  cards  item-pub  (apply:du-item msg)
-    [cards this]
+    =/  key  (path-to-key:conv:p +.-.msg)
+    ?:  (ship-in-reach:stor src.bowl key)
+      =^  cards  item-pub  (apply:du-item msg)
+      [cards this]
+    `this
     ::
       %sss-item
     =^  cards  item-sub  (apply:da-item !<(into:da-item (fled:sss vase)))
@@ -339,6 +342,42 @@
   ?>  |(=(our.bowl ship.key.item) =(lens.item %temp))
   (~(put by items) key.item item)
 ::
+::  whether a ship is allowed to get/sub to an item
+++  ship-in-reach
+  |=  [=ship =key:d:m:p]
+  ^-  ?
+  =/  reach  reach:meta:(get-item key)
+  ?-    reach
+    [%public *]   ?~((find [ship]~ blacklist.reach) %.y %.n)
+    [%private *]  ?^((find [ship]~ whitelist.reach) %.y %.n)
+  ==
+  :: ?:  r
+  ::   ~&  >  "{<(scot %p ship)>} in reach of {<(key-to-path:conv:p key)>}"
+  ::   r
+  :: ~&  >>>  "{<(scot %p ship)>} out of reach of {<(key-to-path:conv:p key)>}"
+  :: r
+::
+++  pub-item
+  |=  in=$%([%whole =item:d:m:p] [%prepend-to-feed =feed:d:m:p =key:d:m:p =reach:d:m:p])
+  ^+  [*(list card) item-pub]
+  ?-    -.in
+      %prepend-to-feed
+    =/  path  [%item (key-to-path:conv:p key.in)]
+    (give:du-item path [%prepend-to-feed feed.in])
+    ::
+      %whole
+    ?:  =(lens.item.in %temp)
+      `item-pub
+    ::
+    ?+    struc.key.item.in
+      `item-pub
+      ::
+        ?(%feed %collection %app %blog)
+      =/  path  [%item (key-to-path:conv:p key.item.in)]
+      (give:du-item path [%whole item.in])
+    ==
+  ==
+::
 ::  items from e.g. last 14 days, remove ships
 ++  filter-items
   |=  [itms=items:d:m:p x=@dr]
@@ -438,19 +477,6 @@
       :_  state
       (welp (track-gr:cards-methods ship.key.act) cards)
     ::
-    ++  replace
-      |=  [act=action:m:p]
-      ^+  [*(list card) state]
-      ?>  ?=([%replace *] act)
-      =/  item  (replace:itm (get-item key.act) act)
-      =/  path  [%item (key-to-path:conv:p key.item)]
-      ?:  =(lens.item %temp)
-        :-  (upd:cards-methods item)
-        state(items (put-item item))
-      =^  cards  item-pub  (give:du-item path [%whole item])
-      :-  (welp cards (upd:cards-methods item))
-      state(items (put-item item))
-    ::
     ++  create
       |=  [act=action:m:p]
       ^+  [*(list card) state]
@@ -460,16 +486,8 @@
       ?:  (~(has by items) key.item)  `state :: which other actions need these checks?
       =.  items  (put-item item)
       ::  TODO check if already in list/items (if doing put with temp)
-      =^  cards  state
-        ?:  =(lens.item %temp)
-          :-  (upd:cards-methods item)
-          state
-        =^  cards  item-pub  (give:du-item path [%whole item])
-        :_  state
-        ;:  welp  cards
-                  (upd:cards-methods item)
-                  ::(gro:cards-methods item)
-        ==
+      =^  cards  item-pub  (pub-item [%whole item])
+      =.  cards  (welp cards (upd:cards-methods item))
       ::  add to collections
       =^  cards-1  state
         %-  tail  %^  spin  `key-list:d:m:p`append-to.act  [cards state]
@@ -512,10 +530,7 @@
       ?>  ?=([%edit *] act)
       =/  path  [%item (key-to-path:conv:p key.act)]
       =/  item  (edit:itm (get-item key.act) act)
-      ?:  =(lens.item %temp)
-        :-  (upd:cards-methods item)
-        state(items (put-item item))
-      =^  cards  item-pub  (give:du-item path [%whole item])
+      =^  cards  item-pub  (pub-item [%whole item])
       :_  state(items (put-item item))
       (welp cards (upd:cards-methods item))
     ::
@@ -527,7 +542,7 @@
       =/  feed  (prepend-to-feed:itm (get-item feed-key.act) act)
       =/  cards  (upd:cards-methods feed)
       =.  items  (put-item feed)
-      =^  cards-1  item-pub  (give:du-item path [%prepend-to-feed feed.act])
+      =^  cards-1  item-pub  (pub-item [%prepend-to-feed feed.act feed-key.act reach.meta.feed])
       ?.  =(time.feed-key.act 'global')
         =/  msg  [%feed-update our.bowl feed.act]
         :_  state
@@ -543,7 +558,7 @@
       =/  path  [%item (key-to-path:conv:p col-key.act)]
       =/  col  (append-no-dupe:itm (get-item col-key.act) act)
       =.  items  (put-item col)
-      =^  cards  item-pub  (give:du-item path [%whole col])
+      =^  cards  item-pub  (pub-item [%whole col])
       :_  state
       (welp cards (upd:cards-methods col))
     ::
@@ -553,7 +568,7 @@
       ?>  ?=([%remove *] act)
       =/  path  [%item (key-to-path:conv:p col-key.act)]
       =/  col  (remove-from-col:itm (get-item col-key.act) act)
-      =^  cards  item-pub  (give:du-item path [%whole col])
+      =^  cards  item-pub  (pub-item [%whole col])
       :_  state(items (put-item col))
       (welp cards (upd:cards-methods col))
     ::
@@ -599,19 +614,19 @@
   =.  cards  (welp cards (track-gr:cards-methods indexer))
   =^  cards-1  state
     %-  create:handle-poke
-    :*  %create  ~  ~  `'~2000.1.1'  `%def
+    :*  %create  ~  ~  `'~2000.1.1'  `%def  ~
     `[%collection 'Main Collection' 'Your first collection.' '' ~]
     [%collection our.bowl '' '~2000.1.1']~  ~  ~  ==
   =^  cards-2  state
     %-  create:handle-poke
-    :*  %create  ~  ~  `'~2000.1.1'  `%def
+    :*  %create  ~  ~  `'~2000.1.1'  `%def  ~
     `[%validity-store *validity-records:d:m:p]  ~  ~  ~  ==
   =^  cards-3  state
     %-  create:handle-poke
-    [%create ~ ~ `'~2000.1.1' `%personal `[%feed ~] ~ ~ ~]
+    [%create ~ ~ `'~2000.1.1' `%personal ~ `[%feed ~] ~ ~ ~]
   =^  cards-4  state
     %-  create:handle-poke
-    :*  %create  ~  ~  `'all'  `%def
+    :*  %create  ~  ~  `'all'  `%def  ~
     `[%collection 'All' 'Collection of all apps, groups and ships.' '' ~]
     [%collection our.bowl '' '~2000.1.1']~  ~  ~  ==
   =/  cards-5    ::  - make your tags public
@@ -621,17 +636,17 @@
     ==  ==
   =^  cards-6  state
     %-  create:handle-poke
-    :*  %create  ~  ~  `'published-apps'  `%def
+    :*  %create  ~  ~  `'published-apps'  `%def  ~
     `[%collection 'My Apps' 'Collection of all apps I have published.' '' ~]
     [%collection our.bowl '' '~2000.1.1']~  ~  ~  ==
   ::
   ?:  =(our.bowl indexer)
     =^  cards-7  state
       %-  create:handle-poke
-      [%create ~ ~ `'global' `%global `[%feed ~] ~ ~ ~]
+      [%create ~ ~ `'global' `%global ~ `[%feed ~] ~ ~ ~]
     =^  cards-8  state
       %-  create:handle-poke
-      [%create ~ ~ `'index' `%def `[%collection '' '' '' ~] ~ ~ ~]
+      [%create ~ ~ `'index' `%def ~ `[%collection '' '' '' ~] ~ ~ ~]
     :_  state
     (zing ~[cards cards-1 cards-2 cards-3 cards-4 cards-5 cards-6 cards-7 cards-8])
   :_  state
