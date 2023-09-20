@@ -325,8 +325,7 @@
         %sub-to-many
       ::  %def sent to portal-store
       ::  %temp cycled thru single subs
-      =/  key-list  (to-key-list:conv:p key-list.act)
-      =/  keys=[temp=key-list:d:m:p def=key-list:d:m:p]  (skid-temp:keys:p key-list)
+      =/  keys=[temp=key-list:d:m:p def=key-list:d:m:p]  (skid-temp:keys:p key-list.act)
       =^  cards  state
         %-  tail  %^  spin  temp.keys  [*(list card) state]
         |=  [=key:d:m:p q=[cards=(list card) state=state-8]]
@@ -336,10 +335,10 @@
         :_  state.q  (welp cards cards.q)
       :_  this
       %+  snoc  cards
-      (~(act cards:p [our.bowl %portal-store]) [%sub-to-many def.keys])
+      (~(act cards:p [our.bowl %portal-store]) [%sub-to-many (to-key-list:conv:p def.keys)])
       ::
         %sub
-      =^  cards  state  (sub:helper [%sub (to-key:conv:p key.act)])
+      =^  cards  state  (sub:helper [%sub key.act])
       [cards this]
       ::
         %blog-sub
@@ -966,10 +965,11 @@
   |=  [act=action:m:p]
   ^+  [*(list card) state]
   ?>  ?=([%sub *] act)
+  =/  new-key  ;;  key:d:m:p  (to-key:conv:p key.act)
   ?.  =(time.key.act '')   ::  branch on whether is %temp (empty time.key)
     :: if not temp
     :_  state
-    (~(act cards:p [our.bowl %portal-store]) act)^~    
+    (~(act cards:p [our.bowl %portal-store]) act(key new-key))^~    
   ::  if temp
   =;  cards
     ?:  ?=(%app struc.key.act)  ::  temp app
@@ -977,30 +977,30 @@
       :: where it subs to the actual %def app
       ::  is this too much spam?
       =^  cards-1  sub-portal-devs
-        (surf:da-portal-devs ship.key.act %portal-app-publisher [%portal-devs ~])
+        (surf:da-portal-devs ship.new-key %portal-app-publisher [%portal-devs ~])
       [(welp cards cards-1) state]
     [cards state]
-  ?:  (~(item-exists scry:p our.bowl now.bowl) key.act)  ~
+  ?:  (~(item-exists scry:p our.bowl now.bowl) new-key)  ~
   =|  bespoke=bespoke:d:m:p
   =/  reach=reach:d:m:p  [%public ~]
   =*  create-empty-temp  ^-  action:m:p  :*  %create
-                              `ship.key.act
-                              `cord.key.act
+                              `ship.new-key
+                              `cord.new-key
                               `''
                               `%temp
                               `reach
                               `bespoke
-                              ?:  ?|  =(%app struc.key.act)
-                                      =(%group struc.key.act)  
-                                      =(%groups-diary-note struc.key.act)
-                                      =(%groups-heap-curio struc.key.act)
+                              ?:  ?|  =(%app struc.new-key)
+                                      =(%group struc.new-key)  
+                                      =(%groups-diary-note struc.new-key)
+                                      =(%groups-heap-curio struc.new-key)
                                   ==
                                 [%collection our.bowl '' 'all']~
                               ~
                               ~
                               ~
                           ==
-  ?+    struc.key.act    !!    
+  ?+    struc.new-key    !!    
     ::  
       %groups-diary-note
     =+  (cord-to-channel-time cord.key.act)

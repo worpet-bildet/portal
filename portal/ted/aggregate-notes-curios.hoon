@@ -7,20 +7,25 @@
 ^-  form:m
 ;<  our=ship  bind:m  get-our
 ;<  now=time  bind:m  get-time
+::
 ;<  diarymap=(map flag:d diary:d)  bind:m  
     (scry (map flag:d diary:d) /gx/diary/shelf/noun)
 ;<  heapmap=(map flag:h heap:h)  bind:m  
     (scry (map flag:h heap:h) /gx/heap/stash/noun)
+::
 ;<  notes-feed=store-result:d:mov  bind:m
   %+  scry  store-result:d:mov
   /gx/portal-store/item/feed/(scot %p our)//groups-notes/noun
 ;<  curios-feed=store-result:d:mov  bind:m
   %+  scry  store-result:d:mov
   /gx/portal-store/item/feed/(scot %p our)//groups-curios/noun
+::
 ?>  ?=([%item *] notes-feed)
 ?>  ?=([%item *] curios-feed)
+::
 =/  diary-flags  ~(tap in ~(key by diarymap))
 =/  heap-flags  ~(tap in ~(key by heapmap))
+::
 =/  [notes-from=@da notes-count=@t notes-exists=? actual-notes-feed=feed:d:mov]
   ?~  notes-exists=+.notes-feed
     [(sub now ~d14) '1.000' %.n ~]
@@ -29,6 +34,7 @@
   ?~  feed.bespoke.notes
     [(sub now ~h1.m5) '100' %.y ~]
   [(slav %da -:-:feed.bespoke.notes) '100' %.y feed.bespoke.notes]
+::
 =/  [curios-from=@dr curios-count=@t curios-exists=? actual-curios-feed=feed:d:mov]
   ?~  curios-exists=+.curios-feed
     [(sub now ~d14) '1.000' %.n ~]
@@ -37,6 +43,7 @@
   ?~  feed.bespoke.curios
     [(sub now ~h1.m5) '100' %.y ~]
   [(slav %da -:-:feed.bespoke.curios) '100' %.y feed.bespoke.curios]
+::
 =|  new-notes-feed=feed:d:mov
 =|  new-curios-feed=feed:d:mov
 ::
@@ -45,11 +52,13 @@
   |=  [=term =time]
   ^-  cord
   (crip ;:(weld (trip term) "/" (scow %ud time)))
+::
 =/  compare-feed
   |=  [a=[time=cord *] b=[time=cord *]]
   %+  gte
   (slav %da time.a)
   (slav %da time.b)
+::
 =/  create-feed-card
   |=  [feed-name=cord =feed:d:mov]
   ^-  card:agent:gall
@@ -59,6 +68,7 @@
   !>  
   ^-  action:mov
   [%create `our ~ `feed-name ~ ~ `[%feed feed] ~ ~ ~]
+::
 =/  edit-feed-card
   |=  [feed-name=cord =feed:d:mov]
   ^-  card:agent:gall
@@ -68,6 +78,7 @@
   !>  
   ^-  action:mov
   [%edit [%feed our '' feed-name] ~ ~ `[%feed `feed]]
+::
 =/  sub-to-many-card
   |=  =feed:d:mov
   ^-  card:agent:gall
