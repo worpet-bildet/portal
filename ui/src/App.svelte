@@ -16,6 +16,7 @@
     '/group/:host/:cord': Group,
     '/app/*': App,
     '/other/*': Other,
+    '/retweet/*': Other,
     '/collection/*': Collection,
     '/collection-edit/*': EditCollection,
     '/:patp': Curator,
@@ -29,7 +30,6 @@
     routes['/dev/api'] = Api;
   }
 
-  let scrolledAlready = false;
   state.subscribe((s) => {
     console.log({ state: s });
   });

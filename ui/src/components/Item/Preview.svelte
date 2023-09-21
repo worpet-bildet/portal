@@ -40,6 +40,7 @@
   let isInstalled: boolean;
   let joinedDetails;
   let groupKey: string;
+  let isGroupsItem: boolean = false;
 
   let groupsStrucs = [
     'groups-chat-msg',
@@ -65,7 +66,8 @@
     if ($state.isLoaded && !item) {
       return api.portal.do.subscribe(key);
     }
-    if (groupsStrucs.includes(item.keyObj.struc)) clickable = false;
+    if (groupsStrucs.includes(item.keyObj.struc)) isGroupsItem = true;
+    if (isGroupsItem) clickable = false;
 
     if (item.keyObj.struc === 'group') {
       groupKey = `${item.keyObj.ship}/${item.keyObj.cord}`;
@@ -79,9 +81,7 @@
       );
   };
 
-  state.subscribe(() => {
-    loadItem(key);
-  });
+  $: $state && loadItem(key);
 
   const dispatch = createEventDispatcher();
   const remove = () => dispatch('remove', item.keyStr);
@@ -119,6 +119,7 @@
     class:bg-dark={selected}
     class:text-white={selected}
     class:dark:border-white={selected}
+    class:bg-white={isGroupsItem}
   >
     {#if struc === 'groups-chat-msg'}
       {@const {

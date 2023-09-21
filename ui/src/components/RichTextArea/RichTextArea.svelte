@@ -1,19 +1,22 @@
 <script lang="ts">
   import { onMount, onDestroy, createEventDispatcher } from 'svelte';
-  import { Editor, Extension } from '@tiptap/core';
+  import { Editor, Extension, nodeInputRule } from '@tiptap/core';
   import StarterKit from '@tiptap/starter-kit';
   import { Placeholder } from '@tiptap/extension-placeholder';
+  import { CharacterCount } from '@tiptap/extension-character-count';
 
   import suggestion from './suggestion';
   import Commands from './command';
   import CommandList from './CommandList.svelte';
-  import ItemReference from './ItemReference';
+  import InlineItemReference from './InlineItemReference';
+  import BlockGroupsReference from './BlockGroupsReference';
   import { sigVisible, sigItems, sigProps } from './stores';
 
   const dispatch = createEventDispatcher();
 
   export let placeholder;
-  export let content;
+  export let editor: Editor;
+  export let content: string;
 
   $: content = editor && editor.getText();
 
@@ -21,7 +24,6 @@
   $: selectedIndex = $sigVisible ? selectedIndex : 0;
 
   let element;
-  let editor: Editor;
 
   export const handleKeydown = (event: KeyboardEvent) => {
     if (!$sigVisible) return;
@@ -57,7 +59,7 @@
     addKeyboardShortcuts() {
       return {
         'Mod-Enter': () => {
-          return dispatch('keyboardSubmit', { content: editor.getText() });
+          return dispatch('keyboardSubmit');
         },
       };
     },
@@ -69,7 +71,9 @@
       extensions: [
         StarterKit,
         KeyboardShortcuts,
-        ItemReference,
+        // BlockGroupsReference,
+        CharacterCount,
+        InlineItemReference,
         Commands.configure({
           suggestion,
         }),

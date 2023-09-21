@@ -440,6 +440,7 @@ export const isShortcode = (path) => {
 
 //  /1/chan/chat/~sampel-dilryd-mopreg/new-channel/msg/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749
 export const getChatDetails = (path) => {
+  console.log({ path });
   const splut = path.split('/');
   return {
     host: splut[4],
@@ -529,6 +530,7 @@ export const formatPatp = (patpLike) => {
   const parts = patpLike.split('-');
   if (parts.length === 3) return `~${parts[1]}^${parts[2]}`;
   if (parts.length === 4) return `~${parts[2]}^${parts[3]}`;
+  if (parts.length > 4) return `${parts[0]}_${parts[parts.length - 1]}`;
   return patpLike;
 };
 

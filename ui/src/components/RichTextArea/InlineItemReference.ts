@@ -1,13 +1,13 @@
 import { SvelteNodeViewRenderer } from 'svelte-tiptap';
 import { mergeAttributes, Node } from '@tiptap/core';
-import ItemReference from './ItemReference.svelte';
+import InlineItemReference from './InlineItemReference.svelte';
 
 export type ReferenceOptions = {
   HTMLAttributes: Record<string, any>;
 };
 
 export default Node.create<ReferenceOptions>({
-  name: 'item-reference',
+  name: 'inline-item-reference',
 
   group: 'inline',
   content: 'inline*',
@@ -16,12 +16,12 @@ export default Node.create<ReferenceOptions>({
   inline: true,
 
   parseHTML() {
-    return [{ tag: 'item-reference' }];
+    return [{ tag: 'inline-item-reference' }];
   },
 
   renderHTML({ HTMLAttributes }) {
     return [
-      'item-reference',
+      'inline-item-reference',
       mergeAttributes(HTMLAttributes, { contenteditable: false }),
       0,
     ];
@@ -32,7 +32,7 @@ export default Node.create<ReferenceOptions>({
   },
 
   addNodeView() {
-    return SvelteNodeViewRenderer(ItemReference);
+    return SvelteNodeViewRenderer(InlineItemReference);
   },
 
   addAttributes() {

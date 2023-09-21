@@ -43,7 +43,9 @@
   };
 
   const loadItem = (_k) => {
-    const keyStr = `/other/${params.wild}`;
+    const keyStr = window.location.hash.includes('/other/')
+      ? `/other/${params.wild}`
+      : `/retweet/${params.wild}`;
     const keyObj = keyStrToObj(keyStr);
     // we don't want to clickjack after finding social connections
     if (!$state.social) return;

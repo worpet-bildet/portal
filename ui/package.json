@@ -12,6 +12,7 @@
     "@aws-sdk/client-s3": "^3.341.0",
     "@ernane/svelte-star-rating": "^1.1.2",
     "@tiptap/core": "^2.1.9",
+    "@tiptap/extension-character-count": "^2.1.10",
     "@tiptap/extension-mention": "^2.1.9",
     "@tiptap/extension-placeholder": "^2.1.9",
     "@tiptap/pm": "^2.1.9",

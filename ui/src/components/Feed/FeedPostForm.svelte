@@ -55,6 +55,7 @@
     LinkPreview,
     LoadingIcon,
   } from '@fragments';
+  import { Editor } from '@tiptap/core';
 
   export let replyTo: ItemKey | undefined = undefined;
   export let showRecommendButtons = true;
@@ -69,7 +70,7 @@
   let rating: number;
 
   let submitting: boolean;
-  const post = async ({ detail: { content } }) => {
+  const post = async () => {
     if (submitting) return;
     if (!content) {
       return (error = 'Please write something, anything.');
@@ -83,6 +84,7 @@
     const time = toUrbitTime(Date.now());
     if (chatDetails) {
       const { host, channel, poster, id } = chatDetails;
+      console.log({ poster });
       ref = { struc: 'groups-chat-msg', ship: me, cord: '', time };
       api.portal.do.createGroupsChatMsg(host, channel, poster, id, time);
     }
@@ -175,7 +177,7 @@
       return;
     }
 
-    content = '';
+    editor.commands.clearContent();
     uploadedImageUrl = '';
     error = '';
     chatDetails = undefined;
@@ -194,6 +196,8 @@
   let selectedKey: ItemKey;
   let fileInput: HTMLInputElement;
   let uploadedImageUrl: string;
+
+  let editor: Editor;
 
   let groups: Groups = {};
   let apps: { [key: string]: DocketApp } = {};
@@ -223,6 +227,12 @@
     rating = Number((event.target as HTMLInputElement).value);
   };
 
+  const removeText = (str: string) => {
+    let to = editor.state.doc.content.size;
+    let from = to - str.length - 1;
+    editor.commands.deleteRange({ from, to });
+  };
+
   const getAnyChatMessage = (content: string): string =>
     content.split(/[\r\n|\s]+/).find((word) => isChatPath(word));
   const getAnyCurio = (content: string): string =>
@@ -237,7 +247,7 @@
   const getChatWrit = async (chatPath: string) => {
     chatWrit = await api.portal.get.chatWrit(formatChatPath(chatPath));
     chatDetails = getChatDetails(chatPath);
-    content = content.replace(chatPath, '');
+    removeText(chatPath);
   };
 
   let heapCurio: HeapCurio;
@@ -245,7 +255,7 @@
   const getHeapCurio = async (curioPath: string) => {
     heapCurio = await api.portal.get.heapCurio(formatCurioPath(curioPath));
     curioDetails = getCurioDetails(curioPath);
-    content = content.replace(curioPath, '');
+    removeText(curioPath);
   };
 
   let diaryNote: DiaryNote;
@@ -253,7 +263,7 @@
   const getDiaryNote = async (notePath: string) => {
     diaryNote = await api.portal.get.diaryNote(formatNotePath(notePath));
     noteDetails = getNoteDetails(notePath);
-    content = content.replace(notePath, '');
+    removeText(notePath);
   };
 
   $: chatToPreview = getAnyChatMessage(content || '');
@@ -263,11 +273,11 @@
   $: noteToPreview = getAnyNote(content || '');
   $: if (noteToPreview) getDiaryNote(noteToPreview);
 
-  $: console.log({ chatWrit, curioDetails, noteDetails });
+  // $: console.log({ chatWrit, curioDetails, noteDetails });
 </script>
 
 <div
-  class="flex flex-col w-full border-l border-r border-b p-4 gap-4 rounded-b-lg"
+  class="flex flex-col w-full h-full border-l border-r border-b p-4 gap-4 rounded-b-lg"
   class:relative={submitting}
   class:border-t={!replyTo}
   class:rounded-t-lg={!replyTo}
@@ -292,6 +302,7 @@
   {/if}
   <div class="flex w-full">
     <RichTextArea
+      bind:editor
       bind:content
       placeholder="/ Share anything you like"
       on:keyboardSubmit={post}
@@ -300,11 +311,17 @@
   {#if chatWrit}
     <GroupsChatMessage {...chatWrit.memo} />
   {/if}
+  {#if heapCurio}
+    <GroupsHeapCurio {...heapCurio} />
+  {/if}
+  {#if diaryNote}
+    <GroupsDiaryNote {...diaryNote} />
+  {/if}
   {#if linkToPreview}
     <LinkPreview url={linkToPreview} />
   {/if}
   <div class="flex justify-end w-full">
-    <button class="py-1 px-4 rounded-md bg-black text-white">
+    <button class="py-1 px-4 rounded-md bg-black text-white" on:click={post}>
       {#if replyTo}Reply{:else}Post{/if}
     </button>
   </div>

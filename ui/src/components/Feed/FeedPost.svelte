@@ -80,66 +80,6 @@
 
   $: $state && loadPost(key);
 
-  function handlePostComment({
-    detail: { content, uploadedImageUrl, replyTo, ref, time },
-  }) {
-    // TODO: Merge this function with the one from /pages/Feed.svelte
-    let post = { 'tags-to': [], time } as any;
-    if (ref) {
-      // Here we need to create the retweet post instead of the type "other"
-      post = {
-        ...post,
-        bespoke: { retweet: { ref: ref, blurb: content || '' } },
-      };
-    } else {
-      post = {
-        ...post,
-        bespoke: {
-          other: {
-            title: '',
-            blurb: content || '',
-            link: '',
-            image: uploadedImageUrl || '',
-          },
-        },
-      };
-    }
-    // check each word of the content for a mention, and if so, create a social
-    // graph tag for the mention
-    content
-      .split(' ')
-      .filter(
-        (word: string) => word.substring(0, 1) === '~' && isValidPatp(word)
-      )
-      .forEach((taggedShip: string) => {
-        post = {
-          ...post,
-          'tags-to': [
-            ...post['tags-to'],
-            {
-              key: { struc: 'ship', ship: taggedShip, cord: '', time: '' },
-              'tag-to': `/${me}/mention-to`,
-              'tag-from': `/${taggedShip}/mention-from`,
-            },
-          ],
-        };
-      });
-
-    post = {
-      ...post,
-      'tags-to': [
-        ...post['tags-to'],
-        {
-          key: replyTo,
-          'tag-to': `/${me}/reply-to`,
-          'tag-from': `/${replyTo.ship}/reply-from`,
-        },
-      ],
-    };
-
-    return api.portal.do.create(post);
-  }
-
   const likePost = () => {
     isLikedByMe = true;
     numLikes++;
@@ -228,6 +168,9 @@
             {/if}
           {/each}
         </p>
+        {#if ref}
+          <ItemPreview key={ref} />
+        {/if}
         {#if blurbLink}
           <LinkPreview url={blurbLink} />
         {/if}

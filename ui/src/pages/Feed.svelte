@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { Create as PortalCreate } from '$types/portal/poke';
   import { FeedItem, ItemKey } from '$types/portal/item';
   import { RadioStation } from '$types/apps/radio';
 
