@@ -95,10 +95,6 @@
     =+  sorted-new=(sort new-notes-feed compare-feed)
     ?:  notes-exists  :: if feed item exists
       =/  merged-feed  (weld sorted-new actual-notes-feed)
-      ~&  >  "sorted new"
-      ~&  sorted-new
-      ~&  >  "merged feed"
-      ~&  merged-feed
       %-  send-raw-cards
       :~  (edit-feed-card 'groups-notes' merged-feed)
           (sub-to-many-card sorted-new)

@@ -1,5 +1,6 @@
 /-  m=portal-move
 /+  io=agentio, ethereum
+/*  indexer  %ship  /desk/ship
 |%
 +$  card  card:agent:gall
 ::
@@ -16,13 +17,13 @@
       ?:  =(cord '')              ::  if not temp
         [struc ship cord time]
       ::
-      ?:  ?&  =(ship ~zod)
+      ?:  ?&  =(ship indexer)
               =((scag 2 (trip cord)) "0v")
           ==
         [struc ship cord time]
       ::
       :^  struc
-          ~zod
+          indexer
           (scot %uv (shax (jam [ship cord])))
           ''
     ==
