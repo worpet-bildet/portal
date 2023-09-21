@@ -268,13 +268,9 @@
         (to-key:conv:p feed-key.act)
       ==
       ::
-        %aggregate-chats
+        %aggregate
       :_  this
-      aggregate-chats-cards:helper
-      ::
-        %aggregate-notes-curios
-      :_  this
-      aggregate-notes-curios-cards:helper
+      aggregate-cards:helper
       ::
         %manager-init
       =.  our-apps.state  ;;  our-apps:c
@@ -294,14 +290,10 @@
         ==
       ::
       =/  timers  .^((list [@da =duct]) %bx /(scot %p our.bowl)//(scot %da now.bowl)/debug/timers)
-      =/  chats-timer-exists
+      =/  timer-exists
         %+  lien  timers
         |=  [@da =duct]   ::  duct is (list wire)
-        =(%portal-chats-timer (rear ;;(path -:duct)))
-      =/  notes-curios-timer-exists
-        %+  lien  timers
-        |=  [@da =duct]   ::  duct is (list wire)
-        =(%portal-notes-curios-timer (rear ;;(path -:duct)))
+        =(%portal-aggregate-timer (rear ;;(path -:duct)))
       ::
       :_  this
       ;:  welp  
@@ -309,17 +301,11 @@
           ?:  (~(has by wex.bowl) [/our-apps our.bowl %treaty])
               ~
             [%pass /our-apps %agent [our.bowl %treaty] %watch /alliance]~
-          ?:  chats-timer-exists
+          ?:  timer-exists
               ~
             %+  welp  
-            chats-timer-cards:helper
-            aggregate-chats-cards:helper
-          ::
-          ?:  notes-curios-timer-exists
-              ~
-            %+  welp  
-            notes-curios-timer-cards:helper
-            aggregate-notes-curios-cards:helper
+            aggregate-timer-cards:helper
+            aggregate-cards:helper
       ==
       ::
         %sub-to-many
@@ -631,36 +617,20 @@
   |=  [=wire sign=sign-arvo]
   ^-  (quip card:agent:gall _this)
   ?+  wire  `this
-      [%portal-chats-timer ~]
+      [%portal-aggregate-timer ~]
     ?>  ?=([%behn %wake *] sign)
-    ~&  >  "got chats timer"
+    ~&  >  "got aggregate timer"
     :_  this
     %+  welp
-      chats-timer-cards:helper 
-      aggregate-chats-cards:helper
+      aggregate-timer-cards:helper 
+      aggregate-cards:helper
     ::
-      [%aggregate-chats ~]
+      [%aggregate ~]
     ?>  ?=([%khan %arow *] sign)
     ?.  ?=(%.y -.p.sign)
-      ~&  >>  "%portal-manager: aggregate-chats thread failed"
+      ~&  >>  "%portal-manager: aggregate thread failed"
       `this
-    ~&  >  "%portal-manager: aggregate-chats thread succeeded"
-    `this
-    ::
-      [%portal-notes-curios-timer ~]
-    ?>  ?=([%behn %wake *] sign)
-    ~&  >  "got notes-curios timer"
-    :_  this
-    %+  welp
-      notes-curios-timer-cards:helper 
-      aggregate-notes-curios-cards:helper
-    ::
-      [%aggregate-notes-curios ~]
-    ?>  ?=([%khan %arow *] sign)
-    ?.  ?=(%.y -.p.sign)
-      ~&  >>  "%portal-manager: aggregate-notes-curios thread failed"
-      `this
-    ~&  >  "%portal-manager: aggregate-notes-curios thread succeeded"
+    ~&  >  "%portal-manager: aggregate thread succeeded"
     `this
     ::
       [%get-tx ~]
@@ -896,17 +866,11 @@
       (~(act cards:p [our.bowl %portal-manager]) [%manager-init ~])
   ==
 ::
-++  chats-timer-cards
-  [%pass /portal-chats-timer %arvo %b [%wait (add now.bowl ~h4)]]^~
+++  aggregate-timer-cards
+  [%pass /portal-aggregate-timer %arvo %b [%wait (add now.bowl ~h4)]]^~
 ::
-++  aggregate-chats-cards
-  [%pass /aggregate-chats %arvo %k %fard q.byk.bowl %aggregate-chats noun+!>(~)]^~
-::
-++  notes-curios-timer-cards
-  [%pass /portal-notes-curios-timer %arvo %b [%wait (add now.bowl ~h1)]]^~
-::
-++  aggregate-notes-curios-cards
-  [%pass /aggregate-notes-curios %arvo %k %fard q.byk.bowl %aggregate-notes-curios noun+!>(~)]^~
+++  aggregate-cards
+  [%pass /aggregate %arvo %k %fard q.byk.bowl %aggregate noun+!>(~)]^~
 ::
 ++  dev-map-upd
   |=  =_dev-map

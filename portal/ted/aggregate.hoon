@@ -32,7 +32,7 @@
   =/  notes  ;;(item:d:mov +.notes-feed)
   ?>  ?=([%feed *] bespoke.notes)
   ?~  feed.bespoke.notes
-    [(sub now ~h1.m5) '100' %.y ~]
+    [(sub now ~h4.m5) '100' %.y ~]
   [(slav %da -:-:feed.bespoke.notes) '100' %.y feed.bespoke.notes]
 ::
 =/  [curios-from=@dr curios-count=@t curios-exists=? actual-curios-feed=feed:d:mov]
@@ -41,7 +41,7 @@
   =/  curios  ;;(item:d:mov +.curios-feed)
   ?>  ?=([%feed *] bespoke.curios)
   ?~  feed.bespoke.curios
-    [(sub now ~h1.m5) '100' %.y ~]
+    [(sub now ~h4.m5) '100' %.y ~]
   [(slav %da -:-:feed.bespoke.curios) '100' %.y feed.bespoke.curios]
 ::
 =|  new-notes-feed=feed:d:mov
