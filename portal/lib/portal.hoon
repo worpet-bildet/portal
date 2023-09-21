@@ -13,12 +13,14 @@
       [struc ship cord time]
       ::
         ?(%groups-chat-msg %groups-diary-note %groups-heap-curio)
+      ?:  =(cord '')              ::  if not temp
+        [struc ship cord time]
+      ::
       ?:  ?&  =(ship ~zod)
               =((scag 2 (trip cord)) "0v")
           ==
-        ::
         [struc ship cord time]
-        ::
+      ::
       :^  struc
           ~zod
           (scot %uv (shax (jam [ship cord])))
