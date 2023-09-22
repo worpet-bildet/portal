@@ -1,5 +1,6 @@
 /-  spider, h=heap, d=diary, ch=chat, mov=portal-move
 /+  *strandio, mip, io=agentio, p=portal
+/*  indexer  %ship  /desk/ship
 =,  strand=strand:spider
 ^-  thread:spider
 |=  arg=vase
@@ -125,6 +126,30 @@
   ^-  action:mov
   [%sub-to-many (turn feed |=([* * =key:d:mov] key))]
 ::
+=/  create-groups-item-card
+  |=  [=cord =bespoke]
+  ^-  card:agent:gall
+  %-  ~(poke pass:io /create) 
+  :-  [our %portal-manager] 
+  :-  %portal-action
+  !>  [%create `indexer `cord `'' `%temp `[%private ~] `bespoke ~ ~ ~]
+::
+:: =/  create-diary-cards
+::   |=  notes=(list [=time =ship =key])
+::   %+  turn  notes
+::   |=  [=time =note:n:d]
+::   %-  create-groups-item-card
+::   (to-cord  time.note
+::     (list [time=cord =ship =key:d:mov])
+::   cord - `can be hashed or the normal one
+::   %groups-diary-note / %groups-heap-curio / %groups-chat-msg
+::   group-flag
+::   channel
+::   time  / time  / id
+::   essay / heart / content
+::   feels
+::   replies
+::
 ;<  ~  bind:m
   |-
   ?~  diary-flags
@@ -151,8 +176,8 @@
   =/  fed=feed:d:mov
     %+  turn  lis
     |=  [=time =note:n:d]
-    :+  (scot %da time)  our
-    [%groups-diary-note p.flag (to-cord q.flag time) '']
+    :+  (scot %da time.note)  our
+    [%groups-diary-note p.flag (to-cord q.flag time.note) '']
   =.  new-notes-feed  (weld fed new-notes-feed)
   $(diary-flags +:diary-flags)
 ::
@@ -182,8 +207,8 @@
   =/  fed=feed:d:mov
     %+  turn  lis
     |=  [=time =curio:c:h]
-    :+  (scot %da time)  our
-    [%groups-heap-curio p.flag (to-cord q.flag time) '']
+    :+  (scot %da time.curio)  our
+    [%groups-heap-curio p.flag (to-cord q.flag time.curio) '']
   =.  new-curios-feed  (weld fed new-curios-feed)
   $(heap-flags +:heap-flags)
 ::
@@ -196,14 +221,14 @@
       ^-  (set [time=cord =ship =key:d:mov])
       %-  ~(run in (sort-lists aggregate))
       |=  [=flag:ch =time =writ:w:d:mov]
-      :+  (scot %da time)  our
+      :+  (scot %da q.id.writ)  our
         [%groups-chat-msg p.flag (to-cord-msg q.flag p.id.writ q.id.writ) '']
     =/  aggregated-msgs  
       ^-  (set [=time =ship =key:d:mov])
       ::  need to sort by feels and replies to know what to add to feed
       %-  ~(run in (sort-lists aggregate))
       |=  [=flag:ch =time =writ:w:d:mov]
-      :+  time  our
+      :+  q.id.writ  our
         %-  to-key:conv:p
         [%groups-chat-msg p.flag (to-cord-msg q.flag p.id.writ q.id.writ) '']
     =/  feed-to-set  
@@ -263,7 +288,7 @@
       =/  first   ~(wyt by feels.writ.a)
       =/  second  ~(wyt by feels.writ.b)
       ?:  =(first second)
-        (gte time.a time.b)
+        (gte q.id.writ.a q.id.writ.b)
       (gth first second) 
     =/  by-replies
       %+  swag  [0 msgs-per-replies]
@@ -272,7 +297,7 @@
       =/  first   ~(wyt in replied.writ.a)
       =/  second  ~(wyt in replied.writ.b)
       ?:  =(first second)
-        (gte time.a time.b)
+        (gte q.id.writ.a q.id.writ.b)
       (gth first second)
     (silt (welp by-feels by-replies))
   ++  deduplicate
