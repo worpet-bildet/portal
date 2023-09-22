@@ -1,30 +1,10 @@
-/-  *portal-data, *portal-action, gr=social-graph, config=portal-config, c=writ,
-    d=note, h=curio
+/-  dat=portal-data, gr=social-graph, config=portal-config, c=writ,
+    d=note, h=curio, m=portal-move
 /+  *portal, docket, treaty, ethereum
 |%
 ++  enjs
   =,  enjs:format
   |%
-  :: ++  enjs-outgoing-subs
-  ::   |=  =outgoing-subs
-  ::   ^-  json
-  ::   |^
-  ::   =/  transform
-  ::     |=  [ship=@p map=(map key acked=?)]
-  ::     ^-  [@t json]
-  ::     [(scot %p ship) (enjs-key-acked-map map)]
-  ::   =/  l  (turn ~(tap by outgoing-subs) transform)
-  ::   [%o `(map @t json)`(malt l)]
-  ::   ++  enjs-key-acked-map
-  ::     |=  mapp=(map key acked=?)
-  ::     ^-  json
-  ::     =/  transform
-  ::       |=  [=key acked=?]
-  ::       ^-  [@t json]
-  ::       [(spat (key-to-path:conv key)) b+acked]
-  ::     =/  l  (turn ~(tap by mapp) transform)
-  ::     [%o `(map @t json)`(malt l)]
-  ::   --
   ++  enjs-dev-map
     |=  =dev-map:config
     ^-  json
@@ -33,7 +13,7 @@
     |=  ship=@p  ::  =ship is buggy for some reason
     (enjs-ship ship)
   ++  enjs-valid
-    |=  =valid
+    |=  =valid:dat
     ^-  json
     ?~  valid
       %-  pairs
@@ -45,7 +25,7 @@
         ['noResult' b+%.n]
     ==
   ++  enjs-item-or-null
-    |=  [item=?(~ item)]
+    |=  [item=?(~ item:dat)]
     ^-  json
     ?~  item  ~
     %-  pairs
@@ -56,7 +36,7 @@
         ['meta' (enjs-meta meta.item)]
     ==
   ++  enjs-update
-    |=  [=item]
+    |=  [=item:dat]
     ^-  json
     %-  pairs
     :~  ['keyStr' (enjs-jam-key key.item)]
@@ -67,7 +47,7 @@
     ==
   ::
   ++  enjs-message
-    |=  [=message]
+    |=  [=message:m]
     ^-  json
     ?+    -.message    s+''
         %payment-reference  
@@ -121,7 +101,7 @@
     :-  %o
     =+  ~(tap by processing-payments)
     %-  malt  %+  turn  -
-    |=  [hex=@t [=buyer:config =key =receiving-address]]
+    |=  [hex=@t [=buyer:config =key:dat receiving-address=@t]]
     ^-  [@t json]
     :-  hex
     %-  pairs
@@ -135,7 +115,7 @@
     ^-  json
     :-  %a
     %+  turn  processed-payments
-    |=  [=buyer:config =key tx-hash=@t time=@da note=@t]
+    |=  [=buyer:config =key:dat tx-hash=@t time=@da note=@t]
     ^-  json
     %-  pairs
     :~  ['buyer' `json`(enjs-ship buyer)]
@@ -170,7 +150,7 @@
         (trip desk)
     ==
   ++  enjs-store-result
-    |=  [=store-result]
+    |=  [=store-result:dat]
     ^-  json
     ?@  store-result  b+store-result
     ?+  -.store-result  s+''
@@ -225,46 +205,32 @@
     (node-to-key:conv node)
   ::
   ++  enjs-key-and-item
-    |=  [=key =item]
+    |=  [=key:dat =item:dat]
     ^-  json
     (enjs-item-or-null item)
   ++  enjs-items
-    |=  =items
+    |=  =items:dat
     ^-  json
     =/  lis  ~(tap by items)
     [%a (turn lis enjs-key-and-item)]
   ++  enjs-meta
-    |=  [=meta]
+    |=  [=meta:dat]
     ^-  json
     %-  pairs
     :~  ['createdAt' s+created-at.meta]
         ['updatedAt' s+updated-at.meta]
         ['permissions N/A' s+'']
-        ['reach N/A' s+'']
+        ['reach' (enjs-reach reach.meta)]
     ==
-  :: ++  enjs-data
-  ::   |=  [=data]
-  ::   ^-  json
-  ::   |^
-  ::   %-  pairs
-  ::   :~  ['general' (enjs-general general.data)]
-  ::       ['bespoke' (enjs-bespoke bespoke.data)]
-  ::   ==
-  ::   ++  enjs-general
-  ::     |=  [=general]
-  ::     ^-  json
-  ::     %-  pairs
-  ::     :~  ['title' s+title.general]
-  ::         ['link' s+link.general]
-  ::         ['description' s+description.general]
-  ::         ['tags' (enjs-cord-list tags.general)]
-  ::         ::['properties' o+properties.general]
-  ::         ['pictures' (enjs-cord-list pictures.general)]
-  ::         ['image' s+image.general]
-  ::         ['color' s+color.general]
-  ::     ==
+  ++  enjs-reach
+    |=  [=reach:dat]
+    ^-  json
+    ?-    -.reach
+      %private  (frond ['whitelist' a+(turn whitelist.reach enjs-ship)])
+      %public  (frond ['blacklist' a+(turn blacklist.reach enjs-ship)])
+    ==
   ++  enjs-bespoke
-    |=  [=bespoke]
+    |=  [=bespoke:dat]
     ^-  json
     ?-    -.bespoke
       %ship        s+''
@@ -311,6 +277,14 @@
                              ['path' s+path.bespoke]
                              ['image' s+image.bespoke]
                          ==
+      %tip          %-  pairs
+                    :~  ['tipper' (enjs-ship tipper.bespoke)]
+                        ['beneficiary' (enjs-ship beneficiary.bespoke)]
+                        ['eth-amount' s+eth-amount.bespoke]
+                        ['time' s+time.bespoke]
+                        ['note' s+note.bespoke]
+                        ['tx-hash' s+tx-hash.bespoke]
+                    ==
       %groups-chat-msg   %-  pairs
                          :~  ['group' s+(flag:enjs-writ group.bespoke)]
                              ['channel' s+(flag:enjs-writ channel.bespoke)]
@@ -340,17 +314,17 @@
       %validity-store  s+''
     ==
   :: ++  enjs-jammed-key-list
-  ::   |=  =key-list
+  ::   |=  =key-list:dat
   ::   ^-  json
   ::   :-  %a
   ::   %+  turn  key-list
-  ::   |=(=key (enjs-jam-key key))
+  ::   |=(=key:dat (enjs-jam-key key))
   ++  enjs-feed
-    |=  =feed
+    |=  =feed:dat
     ^-  json
     :-  %a
     %+  turn  feed
-    |=  [time=cord =^ship =key]
+    |=  [time=cord =^ship =key:dat]
     %-  pairs
     :~  ['time' s+time]
         ['ship' (enjs-ship ship)]
@@ -361,13 +335,13 @@
     ;;  json
     a+(turn list enjs-func)
   ++  enjs-key-list
-    |=  =key-list
+    |=  =key-list:dat
     ^-  json
     :-  %a
     %+  turn  key-list
-    |=(=key (enjs-key key))
+    |=(=key:dat (enjs-key key))
   ++  enjs-sig
-    |=  =signature
+    |=  =signature:dat
     ^-  json
     %-  pairs
     :~  ['hex' s+`@t`(scot %ux hex.signature)]
@@ -383,7 +357,7 @@
   ::  TODO make sure dejs is good too
   ::  prob no problem because it takes key (not jammed-key (path))
   ++  enjs-jam-key
-    |=  =key
+    |=  =key:dat
     ^-  json
     (path:enjs:format (key-to-path:conv key))
     ::  %-  crip
@@ -398,7 +372,7 @@
     ::  ==
 
   ++  enjs-key
-    |=  =key
+    |=  =key:dat
     ^-  json
     %-  pairs
     :~  ['struc' s+`@t`struc.key]
@@ -408,10 +382,10 @@
     ==
     ::
   ++  enjs-key-set
-    |=  =key-set
+    |=  =key-set:dat
     ^-  json
     =/  key-list  ~(tap in key-set)
-    [%a (turn key-list |=(=key (enjs-key)))]
+    [%a (turn key-list |=(=key:dat (enjs-key)))]
   ::
   ++  enjs-ship
     |=  ship=@p
@@ -822,7 +796,7 @@
     ==
   ++  dejs-action
     |=  jon=json
-    ;;  action
+    ;;  action:m
     =,  dejs-soft
     =/  jn  %.  jon
             %-  of:dejs
@@ -851,6 +825,7 @@
                       cord+so
                       time+so
                       lens+so
+                      reach+dejs-soft-reach
                       bespoke+dejs-soft-bespoke-create
                       append-to+dejs-key-list
                       prepend-to-feed+dejs-key-list
@@ -861,6 +836,7 @@
       =/  raw  %.  ;;((map @t json) +>:jn)
       %-  ot-raw  :~  key+dejs-soft-key
                       lens+so
+                      reach+dejs-soft-reach
                       bespoke+dejs-soft-bespoke-edit
                   ==
       =/  edit  (pole-to-cell raw)
@@ -869,12 +845,12 @@
   ::
   ++  dejs-tagging-list
     |=  jon=json
-    ^-  (list [=key tag-to=path tag-from=path])
+    ^-  (list [=key:dat tag-to=path tag-from=path])
     %.  jon
     (ar:dejs dejs-key-tag-tag)
   ++  dejs-key-tag-tag
     |=  jon=json
-    ^-  [=key tag-to=path tag-from=path]
+    ^-  [=key:dat tag-to=path tag-from=path]
     %.  jon
     %-  ot:dejs
     :~  key+dejs-key
@@ -893,7 +869,7 @@
   ::  only work in conversions
   ++  dejs-soft-bespoke-create
     |=  jon=json
-    ;;  (unit bespoke)
+    ;;  (unit bespoke:dat)
     =,  dejs-soft
     =/  jn  %.  jon
         %-  of:dejs
@@ -969,7 +945,7 @@
                       replies+dejs-soft-null-num
                   ==
       =+  (turn `(list (unit))`raw |=(a=(unit *) (fall a ~)))
-      ;;  (unit bespoke)
+      ;;  (unit bespoke:dat)
       (some groups-chat-msg+(pole-to-cell -))
         %groups-diary-note
       =/  raw  %.  ;;((map @t json) +>:jn)
@@ -981,7 +957,7 @@
                       replies+dejs-soft-null-num
                   ==
       =+  (turn `(list (unit))`raw |=(a=(unit *) (fall a ~)))
-      ;;  (unit bespoke)
+      ;;  (unit bespoke:dat)
       (some groups-diary-note+(pole-to-cell -))
         %groups-heap-curio
       =/  raw  %.  ;;((map @t json) +>:jn)
@@ -993,7 +969,7 @@
                       replies+dejs-soft-null-num
                   ==
       =+  (turn `(list (unit))`raw |=(a=(unit *) (fall a ~)))
-      ;;  (unit bespoke)
+      ;;  (unit bespoke:dat)
       (some groups-heap-curio+(pole-to-cell -))
     ==
   ::
@@ -1060,7 +1036,7 @@
   ::
   ++  dejs-key-text
     |=  jon=json
-    ^-  [key cord]
+    ^-  [key:dat cord]
     %.  jon
     %-  ot:dejs
     :~  key+dejs-key
@@ -1068,7 +1044,7 @@
     ==
   ++  dejs-feed
     |=  jon=json
-    ^-  feed
+    ^-  feed:dat
     %.  jon
     %-  ar:dejs
     %-  ot:dejs
@@ -1110,17 +1086,25 @@
     (ar:dejs so:dejs)
   ++  dejs-key-list
     |=  jon=json
-    ^-  key-list
+    ^-  key-list:dat
     %.  jon
     (ar:dejs dejs-key)
   ++  dejs-soft-key-list
     |=  jon=json
-    ^-  (unit key-list)
+    ^-  (unit key-list:dat)
     %.  jon
     (ar:dejs-soft dejs-soft-key)
+  ++  dejs-soft-reach
+    |=  jon=json
+    ;;  (unit reach:dat)
+    %.  jon
+    %-  of:dejs-soft
+    :~  [%private (ot:dejs-soft ~[whitelist+(ar:dejs-soft dejs-soft-ship)])]
+        [%public (ot:dejs-soft ~[blacklist+(ar:dejs-soft dejs-soft-ship)])]
+    ==
   ++  dejs-key
     |=  jon=json
-    ;;  key
+    ;;  key:dat
     %.  jon
     %-  ot:dejs
     :~  struc+so:dejs
@@ -1130,7 +1114,7 @@
     ==
   ++  dejs-soft-key
     |=  jon=json
-    ;;  (unit key)
+    ;;  (unit key:dat)
     %.  jon
     %-  ot:dejs-soft
     :~  struc+so:dejs-soft
@@ -1162,7 +1146,7 @@
     `@uv`(slav %uv (so:dejs jon))
   ++  dejs-key-set
     |=  jon=json
-    ^-  key-set
+    ^-  key-set:dat
     %-  silt
     %.  jon
     (ar:dejs dejs-key)

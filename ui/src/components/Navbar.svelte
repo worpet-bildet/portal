@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { push, link, location } from 'svelte-spa-router';
   import { format } from 'timeago.js';
   import {
@@ -6,6 +6,9 @@
     toggleDarkmode,
     getNotifications,
     getItem,
+    updateNotificationsLastChecked,
+    toggleMuteNotifications,
+    keyStrFromObj,
   } from '@root/state';
   import { me } from '@root/api';
   import { Sigil } from '@components';
@@ -16,6 +19,7 @@
     SunIcon,
     MoonIcon,
     BellIcon,
+    MutedIcon,
   } from '@fragments';
   import { getMeta, fromUrbitTime } from '@root/util';
   import logo from '@assets/logo.svg';
@@ -40,8 +44,15 @@
 
   let notifications = [];
   let notificationsOpen = false;
+  let hasNewNotifications;
   state.subscribe(() => {
     notifications = getNotifications(me);
+    let notificationTimes = notifications.map(([n]) => n.time);
+    hasNewNotifications = notificationTimes.some(
+      (time) =>
+        fromUrbitTime(time) >
+        new Date($state.notificationsLastChecked).getTime()
+    );
   });
 
   const pagesWithoutCoverPhoto = ['/explore', '/edit', '-edit/', '/'];
@@ -55,6 +66,8 @@
 
   const handleNotificationsOpen = () => {
     notificationsOpen = true;
+    updateNotificationsLastChecked();
+    hasNewNotifications = false;
     document.body.addEventListener('click', handleNotificationsClose);
   };
   const handleNotificationsClose = () => {
@@ -81,16 +94,53 @@
     <div class="hidden flex-col md:flex gap-4 md:flex-row items-center">
       {#if $location === '/'}
         <div class="relative">
-          <div class="rounded-full overflow-hidden">
+          <div class="rounded-full">
             <button
-              on:click|stopPropagation={handleNotificationsOpen}
-              class="w-5 flex items-center"><BellIcon /></button
+              on:click|stopPropagation={notificationsOpen
+                ? handleNotificationsClose
+                : handleNotificationsOpen}
+              class="w-5 flex items-center"
             >
+              <BellIcon />
+              {#if hasNewNotifications && !$state.muteNotifications}
+                <div class="relative inline-flex">
+                  <span
+                    class="absolute top-0 right-0 inline-block w-2 h-2 bg-ai-purple rounded-full"
+                  />
+                </div>
+              {/if}
+            </button>
           </div>
           {#if notificationsOpen}
             <div
-              class="absolute top-10 w-max flex flex-col gap-4 bg-white dark:bg-black rounded-xl border border-white overflow-hidden"
+              class="absolute top-10 w-max p-3 flex flex-col gap-4 bg-white dark:bg-black rounded-xl border border-grey overflow-hidden"
             >
+              <div class="flex justify-between">
+                <div class="text-xl">Notifications</div>
+                <div class="relative flex items-center justify-end">
+                  <div class="relative">
+                    <button
+                      on:click|stopPropagation={toggleMuteNotifications}
+                      class="switch block border border-black dark:border-white w-14 h-8 rounded-full flex justify-between items-center cursor-pointer"
+                    >
+                      <BellIcon
+                        class={`p-[3px] transform translate-x-[3px] ${
+                          !$state.muteNotifications
+                            ? 'text-white dark:text-black bg-black dark:bg-white rounded-full'
+                            : ''
+                        }`}
+                      />
+                      <MutedIcon
+                        class={`p-[3px] transform -translate-x-[3px] ${
+                          $state.muteNotifications
+                            ? 'text-white dark:text-black bg-black dark:bg-white rounded-full'
+                            : ''
+                        }`}
+                      />
+                    </button>
+                  </div>
+                </div>
+              </div>
               {#if notifications.length > 0}
                 {#each notifications as [reply, op]}
                   <button
@@ -98,7 +148,9 @@
                     on:click={() => {
                       switch (reply.struc) {
                         case 'other':
-                          window.location.href = `#${fromUrbitTime(op.time)}`;
+                          window.location.href = `#${encodeURIComponent(
+                            keyStrFromObj(op)
+                          )}`;
                           break;
                         case 'review':
                           push(`/app/${op.ship}/${op.cord || op.time}`);
@@ -183,12 +235,9 @@
         <a
           use:link
           href={`/${me}`}
-          class="flex items-center gap-4 w-full justify-end"
+          class="flex items-center gap-4 py-2 w-full justify-center"
         >
           <div class="text-grey">Profile</div>
-          <div class="w-10 h-10 rounded-md overflow-hidden">
-            <Sigil patp={me} />
-          </div>
         </a>
       </div>
     {/if}

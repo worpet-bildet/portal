@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { api } from '@root/api';
   import { state, getItem, keyStrFromObj } from '@root/state';
   import { getMeta } from '@root/util';
@@ -74,13 +74,15 @@
       {/if}
     </div>
     {#if withTitle}
-      <div class="rounded-bl-lg rounded-br-lg bg-panels dark:bg-darkgrey border p-2">
+      <div
+        class="rounded-bl-lg rounded-br-lg bg-panels dark:bg-darkgrey border p-2"
+      >
         <div>{title}</div>
       </div>
     {/if}
   </div>
 {:else}
   <div class="flex justify-center items-center p-10 w-full h-full">
-    <LoadingIcon class="w-16 h-16 dark:stroke-white" />
+    <LoadingIcon class="w-16 h-16" />
   </div>
 {/if}

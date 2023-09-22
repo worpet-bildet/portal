@@ -1,19 +1,34 @@
-<script>
+<script lang="ts">
+  import { Item, ItemKey } from '$types/portal/item';
+
   import { createEventDispatcher } from 'svelte';
   import { push } from 'svelte-spa-router';
-  import { state, keyStrFromObj, getItem } from '@root/state';
+  import {
+    state,
+    keyStrFromObj,
+    keyStrToObj,
+    getItem,
+    getJoinedGroupDetails,
+    refreshGroups,
+  } from '@root/state';
   import { api } from '@root/api';
-  import { getMeta } from '@root/util';
-  import { CollectionsSquarePreview, Sigil } from '@components';
+  import { getMeta, checkIfInstalled } from '@root/util';
+  import {
+    CollectionsSquarePreview,
+    Sigil,
+    GroupsChatMessage,
+    GroupsHeapCurio,
+    GroupsDiaryNote,
+  } from '@components';
   import {
     ItemImage,
     TrashIcon,
     EditIcon,
     ExternalDestinationIcon,
-    GroupsChatMessage,
   } from '@fragments';
 
-  export let key;
+  export let key: ItemKey;
+
   export let clickable = true;
   export let removable = false;
   export let editable = false;
@@ -21,7 +36,16 @@
   export let selected = false;
   export let small = false;
 
-  let item;
+  let item: Item;
+  let isInstalled: boolean;
+  let joinedDetails;
+  let groupKey: string;
+
+  let groupsStrucs = [
+    'groups-chat-msg',
+    'groups-heap-curio',
+    'groups-diary-note',
+  ];
 
   $: loadItem(key);
 
@@ -31,13 +55,28 @@
    * instead have a component for each type of item.
    */
 
-  const loadItem = (key) => {
-    item = getItem(keyStrFromObj(key));
+  const loadItem = (key: ItemKey) => {
+    if (typeof key === 'string') {
+      key = keyStrToObj(key);
+      item = getItem(key);
+    } else {
+      item = getItem(keyStrFromObj(key));
+    }
     if ($state.isLoaded && !item) {
       return api.portal.do.subscribe(key);
     }
-    if (item.keyObj.struc === 'groups-chat-msg') clickable = false;
-    if (item.keyObj.struc === 'groups-chat-msg') console.log({ item });
+    if (groupsStrucs.includes(item.keyObj.struc)) clickable = false;
+
+    if (item.keyObj.struc === 'group') {
+      groupKey = `${item.keyObj.ship}/${item.keyObj.cord}`;
+      joinedDetails = getJoinedGroupDetails(groupKey);
+    }
+    if (item.keyObj.struc === 'app')
+      isInstalled = checkIfInstalled(
+        state,
+        item?.keyObj?.ship,
+        item?.keyObj?.cord
+      );
   };
 
   state.subscribe(() => {
@@ -52,11 +91,11 @@
 {#if item}
   {@const {
     keyObj: { struc, ship },
-    keyStr,
   } = item}
   {@const { title, blurb, description, image, color, link, createdAt } =
     getMeta(item)}
   <button
+    on:click
     on:click={() => {
       if (clickable) {
         if (struc === 'ship') {
@@ -73,11 +112,12 @@
         dispatch('selected', { key, selected });
       }
     }}
-    class="grid grid-cols-6 w-full items-start gap-4 p-1 border border-transparent dark:hover:bg-transparent hover:duration-500 rounded-lg text-sm text-left"
+    class="grid grid-cols-6 w-full items-start gap-2 p-2 border dark:hover:bg-transparent hover:duration-500 rounded-lg text-sm text-left"
     class:cursor-default={!clickable}
     class:hover:bg-panels-hover={clickable}
     class:dark:hover:border-white={clickable}
-    class:bg-panels-hover={selected}
+    class:bg-dark={selected}
+    class:text-white={selected}
     class:dark:border-white={selected}
   >
     {#if struc === 'groups-chat-msg'}
@@ -86,9 +126,19 @@
       } = item}
       {@const author = id.split('/')[0]}
       <GroupsChatMessage {author} {group} {content} />
+    {:else if struc === 'groups-heap-curio'}
+      {@const {
+        bespoke: { heart, group },
+      } = item}
+      <GroupsHeapCurio {heart} {group} />
+    {:else if struc === 'groups-diary-note'}
+      {@const {
+        bespoke: { essay, group },
+      } = item}
+      <GroupsDiaryNote {essay} {group} />
     {:else}
       <div
-        class="border overflow-hidden rounded-md"
+        class="border overflow-hidden rounded-md self-center"
         class:col-span-1={!small}
         class:col-span-2={small}
       >
@@ -111,20 +161,20 @@
         {/if}
       </div>
       <div
-        class="flex flex-col items-start gap-2 overflow-hidden"
+        class="flex flex-col items-start gap-2 overflow-hidden self-center"
         class:col-span-5={!small}
         class:col-span-4={small}
       >
         <div class="flex items-center gap-2">
           <div
-            class="font-bold line-clamp-1"
+            class="font-bold line-clamp-1 hover:line-clamp-none"
             class:text-sm={small}
             class:text-xl={!small}
           >
             {title || ship}
           </div>
           <div class="text-grey">·</div>
-          <div class="text-grey">{struc}</div>
+          <div class="text-grey" class:text-white={selected}>{struc}</div>
           {#if (struc === 'other' && link) || struc === 'blog'}
             <div class="w-5">
               <ExternalDestinationIcon />
@@ -137,16 +187,37 @@
         >
           {blurb || description || ''}
         </div>
+        {#if struc === 'app' && !isInstalled}
+          <button
+            on:click|stopPropagation={(event) => {
+              event.stopPropagation();
+              window.open(
+                `${window.location.origin}/apps/grid/search/${ship}/apps`
+              );
+            }}
+            class="bg-black rounded-md text-xs font-bold px-2 mr-2 dark:bg-white text-white dark:text-black hover:bg-grey dark:hover:bg-offwhite w-14 h-6"
+            >Install
+          </button>
+        {/if}
+        {#if struc === 'group' && !joinedDetails}
+          <button
+            on:click|stopPropagation={async (event) => {
+              event.stopPropagation();
+              event.currentTarget.innerHTML = 'Joining';
+              await api.urbit.do.joinGroup(groupKey).then(refreshGroups);
+            }}
+            class="bg-black rounded-md text-xs font-bold px-2 mr-2 dark:bg-white text-white dark:text-black hover:bg-grey dark:hover:bg-offwhite w-14 h-6"
+            >Join
+          </button>
+        {/if}
       </div>
-      {#if editable || removable}
-        <div
-          class="col-span-1 col-start-12 flex gap-2 justify-center items-center"
-        >
+      {#if editable || removable || struc === 'app' || struc === 'group'}
+        <div class="col-span-1 col-start-7 flex flex-col gap-2 self-center">
           {#if editable}
             <button
               class="w-8 h-8 hover:text-blue-500 cursor-pointer"
               on:click|stopPropagation
-              on:click={() => edit(keyStr)}
+              on:click={edit}
             >
               <EditIcon />
             </button>
@@ -155,7 +226,7 @@
             <button
               class="w-8 h-8 hover:bg-red-500 cursor-pointer"
               on:click|stopPropagation
-              on:click={() => remove(keyStr)}
+              on:click={remove}
             >
               <TrashIcon />
             </button>

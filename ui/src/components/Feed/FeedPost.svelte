@@ -1,5 +1,8 @@
-<script>
+<script lang="ts">
+  import { ItemKey, Item } from '$types/portal/item';
+
   import linkifyHtml from 'linkify-html';
+  import DOMPurify from 'dompurify';
   import { link } from 'svelte-spa-router';
   import { format } from 'timeago.js';
   import { fade, slide } from 'svelte/transition';
@@ -14,7 +17,13 @@
     getRepliesByTo,
     getLikes,
   } from '@root/state';
-  import { getMeta, fromUrbitTime, getAnyLink, isImage } from '@root/util';
+  import {
+    getMeta,
+    fromUrbitTime,
+    getAnyLink,
+    isImage,
+    isValidPatp,
+  } from '@root/util';
   import { ItemPreview, Sigil, FeedPostForm } from '@components';
   import {
     ChatIcon,
@@ -24,20 +33,26 @@
     LinkPreview,
     StarRating,
     EthereumIcon,
+    VerticalCollapseIcon,
+    VerticalExpandIcon,
   } from '@fragments';
 
   export let key;
-  export let allowReplies = true;
-  export let showRating;
+  export let allowRepliesDepth = 2;
+  export let showRating = false;
 
-  let item;
-  let replies = [];
-  let likeCount, likedByMe;
+  let item: Item;
+  let replies: ItemKey[] = [];
+  let likeCount: number;
+  let likedByMe: boolean;
+  let showReplies = false;
+
   state.subscribe((s) => {
     item = getItem(keyStrFromObj(key));
     if (s.isLoaded && !item) {
       return api.portal.do.subscribe(key);
     }
+
     // This is a little confusing but we're merging the global list of comments
     // with any comments that we have made ourselves on the post, which should
     // mean that our comment shows up instantly even if our connection to the
@@ -51,22 +66,35 @@
           i === arr.findIndex((i) => keyStrFromObj(i) === keyStrFromObj(a))
         );
       })
-      .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
+      .sort((a, b) => fromUrbitTime(a.time) - fromUrbitTime(b.time));
+
+    // Open the comments if we've been referred to this specific reply
+    const referredTo = s.referredTo;
+    if (
+      referredTo &&
+      referredTo.key === keyStrFromObj(item.keyObj) &&
+      referredTo.type === 'reply'
+    ) {
+      showReplies = true;
+    } else if (
+      referredTo &&
+      replies.find((r) => keyStrFromObj(r) === referredTo?.key)
+    ) {
+      showReplies = true;
+    }
 
     let likes = [...(getLikes(key.ship, key) || [])];
 
     likeCount = likes.length;
     if (likedByMe && !likes.find((l) => l.ship === me)) likeCount++;
-    likedByMe = likedByMe || likes.find((l) => l.ship === me);
+    likedByMe = likedByMe || !!likes.find((l) => l.ship === me);
   });
 
-  let showCommentForm = false;
-
   function handlePostComment({
-    detail: { content, uploadedImageUrl, replyTo, ref },
+    detail: { content, uploadedImageUrl, replyTo, ref, time },
   }) {
     // TODO: Merge this function with the one from /pages/Feed.svelte
-    let post = {};
+    let post = { 'tags-to': [], time } as any;
     if (ref) {
       // Here we need to create the retweet post instead of the type "other"
       post = {
@@ -86,9 +114,31 @@
         },
       };
     }
+    // check each word of the content for a mention, and if so, create a social
+    // graph tag for the mention
+    content
+      .split(' ')
+      .filter(
+        (word: string) => word.substring(0, 1) === '~' && isValidPatp(word)
+      )
+      .forEach((taggedShip: string) => {
+        post = {
+          ...post,
+          'tags-to': [
+            ...post['tags-to'],
+            {
+              key: { struc: 'ship', ship: taggedShip, cord: '', time: '' },
+              'tag-to': `/${me}/mention-to`,
+              'tag-from': `/${taggedShip}/mention-from`,
+            },
+          ],
+        };
+      });
+
     post = {
       ...post,
       'tags-to': [
+        ...post['tags-to'],
         {
           key: replyTo,
           'tag-to': `/${me}/reply-to`,
@@ -96,6 +146,7 @@
         },
       ],
     };
+
     return api.portal.do.create(post);
   }
 
@@ -110,11 +161,44 @@
     });
   };
 
-  const dispatch = createEventDispatcher();
-  const handleTipRequest = (key) => {
-    console.log('woooooo');
-    dispatch('tipRequest', { key });
+  // TODO: this is quite not good
+  const linkifyMentions = (html) => {
+    return html
+      .split(' ')
+      .map((word) => {
+        if (word.substr(0, 1) === '~' && isValidPatp(word)) {
+          return `<a href="#/${word}" use:link class="text-link">${word}</a>`;
+        }
+        return word;
+      })
+      .join(' ');
   };
+
+  const dispatch = createEventDispatcher();
+  const handleTipRequest = (key: ItemKey): boolean =>
+    dispatch('tipRequest', { key });
+
+  const showMore = () => {
+    postContainer.classList.remove('max-h-96');
+    showAll = true;
+  };
+  const showLess = () => {
+    postContainer.classList.add('max-h-96');
+    showAll = false;
+  };
+
+  let postContainer;
+  let longPost = false;
+  let showAll = true;
+  $: if (postContainer) {
+    // if the client height of the post container is more than 24 rem, we should
+    // show a "see more" button on the post, so that you can scroll past it
+    if (postContainer.clientHeight > 36 * 16) {
+      longPost = true;
+      showAll = false;
+      postContainer.classList.add('max-h-96');
+    }
+  }
 </script>
 
 {#if item}
@@ -123,137 +207,181 @@
     bespoke: { nickname },
   } = getCurator(ship)}
   {@const blurbLink = getAnyLink(blurb)}
-  <div
-    id={createdAt}
-    class="grid grid-cols-12 bg-panels dark:bg-darkgrey border-b border-x px-5 pt-5 gap-2 lg:gap-4 lg:gap-y-0"
-    in:fade
-  >
-    <div class="col-span-1">
-      <div class="rounded-md overflow-hidden">
-        <a href={`/${ship}`} use:link>
-          <Sigil patp={ship} />
-        </a>
-      </div>
-    </div>
-    <div class="col-span-12 md:col-span-10 flex flex-col gap-2">
-      <div class="flex gap-2 text-sm text-grey">
-        <a class="text-black dark:text-white" href={`/${ship}`} use:link
-          >{nickname || ship}</a
-        >
-        <span>·</span>
-        <span>{format(createdAt)}</span>
+  <div class="border-b border-x px-5 pt-5 overflow-hidden">
+    <div
+      id={keyStrFromObj(item.keyObj)}
+      class="grid grid-cols-12 bg-panels dark:bg-transparent gap-2 lg:gap-4 lg:gap-y-0"
+      in:fade
+    >
+      <div class="col-span-1">
+        <div class="rounded-md overflow-hidden">
+          <a href={`/${ship}`} use:link>
+            <Sigil patp={ship} />
+          </a>
+        </div>
       </div>
       <div
-        class="whitespace-pre-wrap line-clamp-50 flex flex-col gap-2 break-words"
+        class="col-span-12 md:col-span-10 flex flex-col gap-2"
+        bind:this={postContainer}
       >
-        <div>
-          {@html linkifyHtml(blurb, {
-            attributes: {
-              class: 'text-link dark:text-link-dark',
-              target: '_blank',
-            },
-          })}
+        <div class="flex gap-2 text-sm text-grey">
+          <a class="text-black dark:text-white" href={`/${ship}`} use:link
+            >{nickname || ship}</a
+          >
+          <span>·</span>
+          <span>{format(createdAt)}</span>
         </div>
-        {#if blurbLink}
-          {#if isImage(blurbLink)}
-            <img src={blurbLink} class="object-cover" alt={blurb} />
-          {:else}
-            <div>
-              <LinkPreview url={blurbLink} />
-            </div>
-          {/if}
-        {/if}
-      </div>
-      {#if image}
-        <a href={image} target="_blank">
-          <div class="flex justify-center border rounded-lg overflow-hidden">
-            <img src={image} class="object-cover" alt={blurb} />
+        <div
+          class="whitespace-pre-wrap line-clamp-50 flex flex-col gap-2 break-words"
+        >
+          <div>
+            {@html linkifyMentions(
+              linkifyHtml(DOMPurify.sanitize(blurb), {
+                attributes: {
+                  class: 'text-link dark:text-link-dark',
+                  target: '_blank',
+                },
+              })
+            )}
           </div>
-        </a>
-      {/if}
-      {#if ref}
-        <div class="rounded-lg">
-          <ItemPreview key={ref} />
-        </div>
-      {/if}
-    </div>
-    {#if showRating}
-      <div class="flex justify-start col-span-12 col-start-2">
-        <StarRating
-          config={{
-            readOnly: true,
-            countStars: 5,
-            range: { min: 0, max: 5, step: 1 },
-            score: rating,
-          }}
-        />
-      </div>
-    {/if}
-    <div class="col-span-12 col-start-2 py-2">
-      <div class="-ml-2.5 flex gap-8">
-        {#if allowReplies}
-          <div class="flex">
-            <div class="rounded-full overflow-hidden">
-              <IconButton
-                icon={ChatIcon}
-                on:click={() => (showCommentForm = !showCommentForm)}
-                class="fill-grey hover:fill-black dark:hover:fill-white"
-              />
-            </div>
-            <div class="pt-2 text-sm w-2 text-grey">
-              {#if replies.length > 0}
-                {replies.length}
-              {/if}
-            </div>
-          </div>
-        {/if}
-        <div class="flex items-center">
-          {#if likedByMe}
-            <div class="w-5 h-5 ml-2 text-error">
-              <LikedIcon />
-            </div>
-            <span class="p-2 text-sm text-error">
-              {#if likeCount > 0}
-                {likeCount}
-              {/if}
-            </span>
-          {:else}
-            <div class="rounded-full overflow-hidden">
-              <IconButton
-                icon={LikeIcon}
-                on:click={likePost}
-                class="stroke-grey hover:stroke-error dark:hover:stroke-error"
-              />
-            </div>
-            <div class="pt-2 pb-2 text-sm text-grey">
-              {#if likeCount > 0}
-                {likeCount}
-              {/if}
-            </div>
+          {#if blurbLink}
+            {#if isImage(blurbLink)}
+              <img src={blurbLink} class="object-cover" alt={blurb} />
+            {:else}
+              <div>
+                <LinkPreview url={blurbLink} />
+              </div>
+            {/if}
           {/if}
         </div>
-        {#if me !== item.keyObj.ship}
+        {#if image}
+          <a href={image} target="_blank">
+            <div class="flex justify-center border rounded-lg overflow-hidden">
+              <img src={image} class="object-cover" alt={blurb} />
+            </div>
+          </a>
+        {/if}
+        {#if ref}
+          <div class="rounded-lg">
+            <ItemPreview key={ref} />
+          </div>
+        {/if}
+      </div>
+      {#if showRating}
+        <div class="flex justify-start col-span-12 col-start-2">
+          <StarRating
+            config={{
+              readOnly: true,
+              countStars: 5,
+              range: { min: 0, max: 5, step: 1 },
+              score: rating,
+            }}
+          />
+        </div>
+      {/if}
+      <div
+        class={`col-span-12 col-start-2 py-2 ${
+          longPost && !showAll
+            ? 'bg-gradient-to-t from-panels-solid dark:from-dark-background dark:via-dark-background via-panels-solid pt-14'
+            : ''
+        }`}
+      >
+        <div class="-ml-2.5 flex gap-8">
+          {#if allowRepliesDepth}
+            <div class="flex">
+              <div class="rounded-full overflow-hidden">
+                <IconButton
+                  icon={ChatIcon}
+                  on:click={() => (showReplies = !showReplies)}
+                  class="fill-grey hover:fill-black dark:hover:fill-white"
+                />
+              </div>
+              <div class="pt-2 text-sm w-2 text-grey">
+                {#if replies.length > 0}
+                  {replies.length}
+                {/if}
+              </div>
+            </div>
+          {/if}
           <div class="flex items-center">
-            <IconButton
-              icon={EthereumIcon}
-              on:click={() => handleTipRequest(item.keyObj)}
-              class="text-grey stroke-grey"
-            />
+            {#if likedByMe}
+              <div class="w-5 h-5 ml-2 text-error">
+                <LikedIcon />
+              </div>
+              <span class="p-2 text-sm text-error">
+                {#if likeCount > 0}
+                  {likeCount}
+                {/if}
+              </span>
+            {:else}
+              <div class="rounded-full overflow-hidden">
+                <IconButton
+                  icon={LikeIcon}
+                  on:click={likePost}
+                  class="stroke-grey hover:stroke-error dark:hover:stroke-error"
+                />
+              </div>
+              <div class="pt-2 pb-2 text-sm text-grey">
+                {#if likeCount > 0}
+                  {likeCount}
+                {/if}
+              </div>
+            {/if}
           </div>
-        {/if}
+          <div class="flex items-center">
+            {#if me !== item.keyObj.ship}
+              <div class="flex items-center">
+                <IconButton
+                  icon={EthereumIcon}
+                  on:click={() => handleTipRequest(item.keyObj)}
+                  class="text-grey hover:text-ai-blue dark:hover:text-ai-blue"
+                />
+              </div>
+            {/if}
+          </div>
+          {#if longPost}
+            {#if showAll}
+              <button
+                class="flex items-center justify-center p-2 gap-4 text-grey"
+                on:click={showLess}>Show less <VerticalCollapseIcon /></button
+              >
+            {:else}
+              <button
+                class="flex items-center justify-center gap-4 text-grey"
+                on:click={showMore}>Show more <VerticalExpandIcon /></button
+              >
+            {/if}
+          {/if}
+        </div>
       </div>
     </div>
-    {#if showCommentForm}
-      <div class="flex flex-col col-span-12 py-4" transition:slide>
+  </div>
+  <div
+    class="grid grid-cols-12 bg-panels dark:bg-transparent gap-2 lg:gap-4 lg:gap-y-0"
+    in:fade
+  >
+    {#if showReplies}
+      <div class="flex flex-col col-span-12" transition:slide>
         <FeedPostForm
           replyTo={item.keyObj}
-          recommendButtons={false}
+          placeholder="Post your reply..."
+          buttonText="Reply"
+          showRecommendButtons={false}
           on:post={handlePostComment}
         />
         {#each replies as replyKey (keyStrFromObj(replyKey))}
-          <svelte:self key={replyKey} allowReplies={false} />
+          <svelte:self
+            key={replyKey}
+            allowRepliesDepth={allowRepliesDepth - 1}
+          />
         {/each}
       </div>
+      <button
+        class="flex flex-col col-span-12 border-x border-b flex py-3 items-center justify-center"
+        on:click={() => (showReplies = !showReplies)}
+      >
+        <VerticalCollapseIcon />
+      </button>
     {/if}
   </div>
 {:else}

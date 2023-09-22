@@ -1,4 +1,4 @@
-/-   *treaty, group-preview=meta, *portal-signature
+/-   *treaty, group-preview=meta
 |%
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
@@ -158,5 +158,15 @@
   $@  ?
   $%  [%portal-devs (map @t ship)]
   ==
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
++$  signature  
+  $+  signature
+  [hex=@ux =ship =life]
+::
+::  for signing apps by the distributor ship
++$  sig-input  [%sign-app dev=ship dist-desk=@t]      
+
+
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 --

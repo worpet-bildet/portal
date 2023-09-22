@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { api, mockData } from '@root/api';
   console.log(api.portal.get);
   console.log(api.portal.newDo);

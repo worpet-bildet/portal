@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { Confetti } from 'svelte-confetti';
   import config from '@root/config';
   import { api, me } from '@root/api';
@@ -18,6 +18,7 @@
     isValidTxHash,
     weiToEth,
     sendTransaction,
+    checkIfInstalled,
   } from '@root/util';
   import {
     ItemDetail,
@@ -43,34 +44,34 @@
   } from '@fragments';
 
   // TODO: there must be a better way
-  let cord,
-    ship,
-    time,
-    desk,
-    defKey,
-    itemKey,
-    isDefItem,
-    item,
-    lens,
-    image,
-    screenshots,
-    title,
-    description,
-    link,
-    distShip,
-    ethPrice,
-    color,
-    version,
-    hash,
-    reviews,
-    isReviewedByMe,
-    isInstalling,
-    isInstalled,
-    servedFrom,
-    subbingToSocialGraph,
-    recommendModalOpen,
-    paymentModalOpen,
-    provePurchaseModalOpen;
+  let cord;
+  let ship;
+  let time;
+  let desk;
+  let defKey;
+  let itemKey;
+  let isDefItem;
+  let item;
+  let lens;
+  let image;
+  let screenshots;
+  let title;
+  let description;
+  let link;
+  let distShip;
+  let ethPrice;
+  let color;
+  let version;
+  let hash;
+  let reviews;
+  let isReviewedByMe;
+  let isInstalling;
+  let isInstalled;
+  let servedFrom;
+  let subbingToSocialGraph;
+  let recommendModalOpen;
+  let paymentModalOpen;
+  let provePurchaseModalOpen;
 
   export let params;
   $: {
@@ -160,9 +161,7 @@
       s.apps?.[cord]?.chad?.hasOwnProperty('hung') ||
       isInstalling;
 
-    isInstalled =
-      (!isInstalling && !!s.apps?.[desk]) ||
-      (s.apps?.[cord]?.chad?.hasOwnProperty('site') && !!s.apps?.[desk]);
+    isInstalled = checkIfInstalled(s, desk, cord, isInstalling);
 
     if (isInstalled) isInstalling = false;
 
@@ -174,7 +173,7 @@
   state.subscribe((s) => {
     if (!s.isLoaded) return;
     loadApp(s);
-    sortedRecommendations = getMoreFromThisShip(ship).slice(0, 4);
+    sortedRecommendations = getMoreFromThisShip(ship, cord).slice(0, 4);
     purchased = s?.['bought-apps']?.[`${ship ?? '~zod'}/${desk}`];
   });
 
@@ -182,7 +181,8 @@
     // FIXME: stopgap
     window.open(`${window.location.origin}/apps/grid/search/${ship}/apps`);
     isInstalling = true;
-    api.urbit.do.installApp(distShip || ship, desk).then(refreshApps);
+    let installShip = distShip && distShip !== '~zod' ? distShip : ship;
+    api.urbit.do.installApp(installShip, desk).then(refreshApps);
   };
 
   const uninstall = () => {
@@ -240,7 +240,12 @@
   };
 
   let fileInput;
-  const handleImageSelect = async ({ target: { files } }) => {
+  const handleImageSelect = (event: Event) => {
+    const files = (event.target as HTMLInputElement).files;
+    addScreenshot(files);
+  };
+
+  const addScreenshot = async (files: FileList) => {
     api.portal.do.edit({
       key: keyStrToObj(defKey),
       bespoke: {
@@ -328,12 +333,15 @@
               />
               <IconButton
                 icon={ImageIcon}
-                disabled={!$state.s3 || !$state.s3.configuration.currentBucket}
                 tooltip="Configure S3 storage for image support"
                 on:click={() => {
-                  if (!$state.s3 || !$state.s3.configuration.currentBucket)
-                    return;
-                  fileInput.click();
+                  if (!$state.s3 || !$state.s3.configuration?.currentBucket) {
+                    alert(
+                      'For attachment support, configure S3 storage with ~dister-nocsyx-lassul/silo.'
+                    );
+                  } else {
+                    fileInput.click();
+                  }
                 }}>Add Screenshots</IconButton
               >
             </div>
@@ -356,8 +364,8 @@
               Current {title} hash
             </div>
             <pre class="flex justify-start text-lg">
-            {hash}
-          </pre>
+              {hash}
+            </pre>
           </div>
         </div>
       {:else if activeTab === 'Reviews'}
@@ -370,25 +378,20 @@
           {/if}
           {#if !isReviewedByMe}
             <div class="flex flex-col gap-2">
-              <div class="text-xl font-bold">
-                Review {title}
-              </div>
               <FeedPostForm
                 on:post={handlePostReview}
-                recommendButtons={false}
-                ratingStars={true}
+                placeholder="What do you think of {title}?"
+                class="rounded-tl-lg rounded-tr-lg border-t"
+                showRecommendButtons={false}
+                showRatingStars={true}
               />
             </div>
           {/if}
           {#if reviews.length > 0}
-            <div class="flex flex-col gap-4">
+            <div class="flex flex-col">
               {#each reviews as review (keyStrFromObj(review))}
                 <div>
-                  <FeedPost
-                    key={review}
-                    allowReplies={false}
-                    showRating={true}
-                  />
+                  <FeedPost key={review} showRating={true} />
                 </div>
               {/each}
             </div>
@@ -523,7 +526,7 @@
           <div class="text-2xl">Purchasing...</div>
           <div class="w-full flex justify-center">
             <div class="w-32 h-32">
-              <LoadingIcon class="dark:stroke-white" />
+              <LoadingIcon />
             </div>
           </div>
         {:else}

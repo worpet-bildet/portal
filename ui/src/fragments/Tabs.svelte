@@ -1,11 +1,11 @@
-<script>
+<script lang="ts">
   export let tabs, activeTab;
 </script>
 
-<div class="flex gap-4 border-b">
+<div class="flex gap-4 border-b mb-4">
   {#each tabs as tab}
     <button
-      class="cursor-pointer text-lg hover:text-black font-saucebold hover:duration-500 dark:border-b-white dark:hover:text-white"
+      class="cursor-pointer text-lg hover:text-black font-bold hover:duration-500 dark:border-b-white dark:hover:text-white"
       class:border-b-black={activeTab === tab}
       class:border-b-2={activeTab === tab}
       class:text-black={activeTab === tab}

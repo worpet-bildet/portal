@@ -1,4 +1,3 @@
-/-  portal-data
 /+  mip
 |%
 +$  social-graph        ::  note that both `nodes` and `edges` store exactly

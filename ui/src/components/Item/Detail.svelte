@@ -1,27 +1,54 @@
-<script>
+<script lang="ts">
+  import { ItemKey, Review } from '$types/portal/item';
+
   import { link } from 'svelte-spa-router';
-  import { me } from '@root/api';
-  import { getItem, keyStrFromObj } from '@root/state';
+  import { me, api } from '@root/api';
+  import { getItem, keyStrFromObj, refreshGroups } from '@root/state';
   import { isUrl } from '@root/util';
   import { Sigil, TipModal } from '@components';
-  import { ItemImage, StarRating, IconButton, EthereumIcon } from '@fragments';
-  export let cover, avatar, title, description, patp, color, type, reviews, key;
+  import {
+    ItemImage,
+    StarRating,
+    IconButton,
+    EthereumIcon,
+    PlusIcon,
+    InstallIcon,
+  } from '@fragments';
 
-  let handleTipRequest;
+  export let cover = '';
+  export let avatar = '';
+  export let title = '';
+  export let description = '';
+  export let patp = '';
+  export let color = '#000000';
+  export let type = '';
+  export let reviews: ItemKey[] = [];
+  export let key: ItemKey;
+  export let isInstalledOrJoined = false;
 
-  let reviewCount, reviewAverageRating;
+  let handleTipRequest: (key: ItemKey) => void;
+
+  let reviewCount: number;
+  let reviewAverageRating: number;
   $: {
-    if (reviews && reviews.length > 0) {
+    if (reviews.length > 0) {
       // if we have reviews, let's count them, and get the average score!
       reviewCount = reviews.length;
-      reviewAverageRating = (
-        reviews.reduce((rating = 0, r) => {
-          rating += Number(getItem(keyStrFromObj(r))?.bespoke?.rating);
-          return rating;
-        }, 0) / reviewCount
-      ).toFixed(1);
+      reviewAverageRating = Number(
+        (
+          reviews.reduce((rating = 0, r) => {
+            rating += Number(getItem(keyStrFromObj(r))?.bespoke?.rating);
+            return rating;
+          }, 0) / reviewCount
+        ).toFixed(1)
+      );
     }
   }
+
+  const handleJoinGroup = async (event: MouseEvent) => {
+    (event.currentTarget as HTMLElement).innerHTML = 'Joining';
+    await api.urbit.do.joinGroup(`${key.ship}/${key.cord}`).then(refreshGroups);
+  };
 
   let avatarPad, avatarContainer, innerWidth;
   $: if (avatarPad && avatarContainer) {
@@ -59,7 +86,7 @@
     />
   {/if}
 </div>
-<div class="col-span-12 md:col-span-9 flex flex-col gap-4">
+<div class="col-span-12 md:col-span-9 flex flex-col">
   <div class="grid grid-cols-12 gap-4 w-full">
     <div class="relative col-span-3 md:col-span-2">
       <div bind:this={avatarPad} />
@@ -83,7 +110,7 @@
       </div>
     </div>
     <div
-      class="flex flex-col justify-start gap-2 col-span-9 relative break-words"
+      class="flex flex-col justify-start gap-2 col-span-9 relative break-words mb-4"
     >
       <div class="text-lg md:text-2xl font-bold">
         {title || ''}
@@ -99,15 +126,41 @@
             by {patp}
           </a>{/if}
       </div>
-      {#if window.ethereum && me !== patp}
-        <div class="flex">
+      <div class="flex gap-3">
+        {#if window.ethereum && me !== patp}
           <IconButton
             icon={EthereumIcon}
-            class="border"
+            class="bg-panels dark:bg-transparent hover:bg-panels-hover dark:hover:border-white dark:border border"
             on:click={() => handleTipRequest(key)}>Tip</IconButton
           >
-        </div>
-      {/if}
+        {/if}
+        {#if !isInstalledOrJoined}
+          {#if type === 'group'}
+            <div class="flex md:hidden">
+              <IconButton
+                icon={PlusIcon}
+                on:click={handleJoinGroup}
+                class="bg-panels dark:bg-transparent hover:bg-panels-hover dark:hover:border-white dark:border border"
+                >Join Group</IconButton
+              >
+            </div>
+          {/if}
+          {#if type === 'app'}
+            <div class="flex md:hidden">
+              <IconButton
+                icon={InstallIcon}
+                on:click={() => {
+                  window.open(
+                    `${window.location.origin}/apps/grid/search/${patp}/apps`
+                  );
+                }}
+                class="bg-panels dark:bg-transparent hover:bg-panels-hover dark:hover:border-white dark:border border"
+                >Install</IconButton
+              >
+            </div>
+          {/if}
+        {/if}
+      </div>
     </div>
     {#if reviews && reviewAverageRating}
       <div class="col-span-12 flex justify-end gap-8">
@@ -127,7 +180,7 @@
             />
           </span>
           <span>
-            {reviewAverageRating === 'NaN' ? 'Loading...' : reviewAverageRating}
+            {reviewCount ? reviewAverageRating.toFixed(2) : 'Loading...'}
           </span>
         </div>
         <div class="border border-spacer" />

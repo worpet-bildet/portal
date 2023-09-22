@@ -1,15 +1,42 @@
-<script>
+<script lang="ts">
+  import { ItemKey, Item } from '$types/portal/item';
+  import { DocketApp } from '$types/apps/app';
+  import { Groups } from '$types/landscape/groups';
+  import { ChatWrit } from '$types/landscape/chat';
+  import { DiaryNote } from '$types/landscape/diary';
+  import { HeapCurio } from '$types/landscape/heap';
+
   import { createEventDispatcher } from 'svelte';
   import { api, me } from '@root/api';
-  import { state, keyStrToObj } from '@root/state';
+  import {
+    state,
+    keyStrToObj,
+    getGroup,
+    getApp,
+    itemInState,
+  } from '@root/state';
   import {
     getAnyLink,
     isChatPath,
+    isCurioPath,
+    isNotePath,
+    isShortcode,
     formatChatPath,
+    formatCurioPath,
+    formatNotePath,
     getChatDetails,
+    getCurioDetails,
+    getNoteDetails,
     toUrbitTime,
   } from '@root/util';
-  import { RecommendModal, Sigil } from '@components';
+  import {
+    RecommendModal,
+    Sigil,
+    ItemPreview,
+    GroupsChatMessage,
+    GroupsHeapCurio,
+    GroupsDiaryNote,
+  } from '@components';
   import {
     TextArea,
     IconButton,
@@ -20,59 +47,96 @@
     ItemImage,
     StarRating,
     LinkPreview,
-    GroupsChatMessage,
+    LoadingIcon,
   } from '@fragments';
 
-  export let replyTo;
-  export let recommendButtons = true;
-  export let ratingStars = false;
-  export let error;
+  export let replyTo: ItemKey | boolean = false;
+  export let showRecommendButtons = true;
+  export let showRatingStars = false;
+  export let error: string | boolean = false;
+  export let placeholder = '';
+  export let buttonText = 'Post';
 
   let dispatch = createEventDispatcher();
-  let content, rating;
+  let content: string;
+  let rating: number;
 
-  const post = () => {
+  let submitting: boolean;
+  const post = async () => {
+    if (submitting) return;
     if (!content) {
       return (error = 'Please write something, anything.');
     }
-    if ((ratingStars && !rating) || Number(rating) === 0) {
+    if ((showRatingStars && !rating) || Number(rating) === 0) {
       return (error = 'Please give a score.');
     }
+    if (shortcodeItems && shortcodeItems.length > 1) {
+      return (error = 'Please select one of the items to recommend.');
+    }
     // If we have some chat details here, we should generate the reference and
-    // then send the reference back up with the post, so it can decide whether
-    // to make a retweet or not
-    let ref;
+    // then send the reference back up with the post
+    let ref: ItemKey;
+    const time = toUrbitTime(Date.now());
     if (chatDetails) {
       const { host, channel, poster, id } = chatDetails;
-      const time = toUrbitTime(Date.now());
-      ref = {
-        struc: 'groups-chat-msg',
+      ref = { struc: 'groups-chat-msg', ship: me, cord: '', time };
+      api.portal.do.createGroupsChatMsg(host, channel, poster, id, time);
+    }
+    if (curioDetails) {
+      const { host, channel, id } = curioDetails;
+      ref = { struc: 'groups-heap-curio', ship: me, cord: '', time };
+      api.portal.do.createGroupsHeapCurio(host, channel, id, time);
+    }
+    if (noteDetails) {
+      const { host, channel, id } = noteDetails;
+      ref = { struc: 'groups-diary-note', ship: me, cord: '', time };
+      api.portal.do.createGroupsDiaryNote(host, channel, id, time);
+    }
+    if (shortcodeItems && shortcodeItems.length === 1) {
+      const { keyObj } = shortcodeItems[0];
+      ref = { ...keyObj };
+    }
+
+    dispatch('post', { content, uploadedImageUrl, replyTo, rating, ref, time });
+
+    submitting = true;
+    try {
+      await itemInState({
+        struc: ref ? 'retweet' : 'other',
         ship: me,
         cord: '',
         time,
-      };
-      api.portal.do.createGroupsChatMsg(host, channel, poster, id, time);
+      });
+      submitting = false;
+    } catch (e) {
+      alert('Posting failed, please refresh the page and try again.');
+      return;
     }
-    dispatch('post', { content, uploadedImageUrl, replyTo, rating, ref });
+
     content = '';
     uploadedImageUrl = '';
-    rating = '';
     error = '';
     chatDetails = undefined;
-    chatData = undefined;
+    chatWrit = undefined;
+    curioDetails = undefined;
+    heapCurio = undefined;
+    noteDetails = undefined;
+    diaryNote = undefined;
+    shortcodeToPreview = undefined;
+    shortcodeItems = undefined;
     rating = undefined;
   };
 
   // TODO: Factor out the selection of groups/apps into its own component
-  let groupModalOpen,
-    appModalOpen,
-    recommendModalOpen,
-    selectedKey,
-    fileInput,
-    uploadedImageUrl;
+  let groupModalOpen: boolean;
+  let appModalOpen: boolean;
+  let recommendModalOpen: boolean;
+  let selectedKey: ItemKey;
+  let fileInput: HTMLInputElement;
+  let uploadedImageUrl: string;
 
-  let groups = {};
-  let apps = {};
+  let groups: Groups = {};
+  let apps: { [key: string]: DocketApp } = {};
   state.subscribe((s) => {
     if (s.groups) {
       Object.entries(s.groups).forEach(([key, data]) => {
@@ -88,47 +152,111 @@
     }
   });
 
-  const handleImageSelect = async (e) => {
+  const handleImageSelect = async (e: Event): Promise<void> => {
     uploadedImageUrl = await api.s3.do.uploadImage(
-      e.target.files[0],
+      (e.target as HTMLInputElement).files[0],
       $state.s3
     );
   };
 
-  const handleRate = ({ target: { value } }) => {
-    rating = value;
+  const handleRate = (event: InputEvent) => {
+    rating = Number((event.target as HTMLInputElement).value);
   };
-  const getAnyChatMessage = (content) =>
-    content.split(/[\r\n|\s]+/).find((line) => isChatPath(line));
+
+  const getAnyChatMessage = (content: string): string =>
+    content.split(/[\r\n|\s]+/).find((word) => isChatPath(word));
+  const getAnyCurio = (content: string): string =>
+    content.split(/[\r\n|\s]+/).find((word) => isCurioPath(word));
+  const getAnyNote = (content: string): string =>
+    content.split(/[\r\n|\s]+/).find((word) => isNotePath(word));
+  const getAnyShortcode = (content: string): string =>
+    content.split(/[\r\n|\s]+/).find((word) => isShortcode(word));
 
   $: linkToPreview = getAnyLink(content || '');
 
-  let chatData, chatDetails;
-  const getChatData = async (chatPath) => {
-    chatData = await api.portal.get.chatMessage(formatChatPath(chatPath));
-    // If there is some chatData here we probably want to replace the chat link
-    // in the proposed input with an empty character, but we still want to save
-    // the chat link somewhere, presumably, so that we can eventually send it to
-    // the backend
+  let chatWrit: ChatWrit;
+  let chatDetails;
+  const getChatWrit = async (chatPath: string) => {
+    chatWrit = await api.portal.get.chatWrit(formatChatPath(chatPath));
     chatDetails = getChatDetails(chatPath);
     content = content.replace(chatPath, '');
   };
 
+  let heapCurio: HeapCurio;
+  let curioDetails;
+  const getHeapCurio = async (curioPath: string) => {
+    heapCurio = await api.portal.get.heapCurio(formatCurioPath(curioPath));
+    curioDetails = getCurioDetails(curioPath);
+    content = content.replace(curioPath, '');
+  };
+
+  let diaryNote: DiaryNote;
+  let noteDetails;
+  const getDiaryNote = async (notePath: string) => {
+    diaryNote = await api.portal.get.diaryNote(formatNotePath(notePath));
+    noteDetails = getNoteDetails(notePath);
+    content = content.replace(notePath, '');
+  };
+
+  let shortcodeToPreview: string;
+  let shortcodeItems: Item[];
+  const getShortcodeItem = (shortcode: string) => {
+    if (!getGroup(shortcode) && !getApp(shortcode)) {
+      shortcodeItems = [];
+      return;
+    }
+    shortcodeItems = [getGroup(shortcode), getApp(shortcode)].filter(
+      (i) => !!i
+    );
+    content = content.replace(shortcode, '');
+  };
+
   $: chatToPreview = getAnyChatMessage(content || '');
-  $: if (chatToPreview) getChatData(chatToPreview);
+  $: if (chatToPreview) getChatWrit(chatToPreview);
+  $: curioToPreview = getAnyCurio(content || '');
+  $: if (curioToPreview) getHeapCurio(curioToPreview);
+  $: noteToPreview = getAnyNote(content || '');
+  $: if (noteToPreview) getDiaryNote(noteToPreview);
+  $: shortcodeToPreview = getAnyShortcode(content || '');
+  $: if (shortcodeToPreview) getShortcodeItem(shortcodeToPreview);
 </script>
 
 <div
-  class="grid grid-cols-12 bg-panels dark:bg-darkgrey border py-5 pl-5 rounded-tl-lg rounded-tr-lg pr-3 gap-2"
+  class="relative grid grid-cols-12 bg-panels dark:bg-darkgrey border-x border-b py-5 pl-5 pr-3 gap-2 lg:gap-4 {$$props.class}"
   class:border-error={error}
 >
+  {#if submitting}
+    <div
+      class="absolute top-0 left-0 w-full h-full bg-white/30 dark:opacity-40 z-10 backdrop-blur-3xl"
+    >
+      <div class="flex w-full h-full items-center justify-center opacity-100">
+        <LoadingIcon />
+      </div>
+    </div>
+  {/if}
   <div class="col-span-1">
     <div class="rounded-md overflow-hidden align-middle">
       <Sigil patp={me} />
     </div>
   </div>
   <div class="col-span-11 pb-2 flex flex-col gap-2">
-    <TextArea placeholder="Share a limerick, maybe" bind:value={content} />
+    <TextArea {placeholder} bind:value={content} on:keyboardSubmit={post} />
+    {#if shortcodeItems}
+      {#if shortcodeItems.length > 1}
+        <div class="font-bold">Please select one of the items</div>
+      {/if}
+      {#each shortcodeItems as item}
+        <ItemPreview
+          key={item.keyObj}
+          clickable={false}
+          on:click={() => {
+            // remove the other item from the shortcodeitems list, because we
+            // can only reference one at a time
+            shortcodeItems = [item];
+          }}
+        />
+      {/each}
+    {/if}
     {#if uploadedImageUrl}
       <div class="flex">
         <img src={uploadedImageUrl} class="object-cover" alt="uploaded" />
@@ -137,15 +265,18 @@
     {#if linkToPreview}
       <LinkPreview url={linkToPreview} />
     {/if}
-    {#if chatData}
-      {@const {
-        memo: { content, author },
-      } = chatData}
-      <GroupsChatMessage {author} {content} />
+    {#if chatWrit}
+      <GroupsChatMessage {...chatWrit.memo} />
+    {/if}
+    {#if heapCurio}
+      <GroupsHeapCurio {...heapCurio} />
+    {/if}
+    {#if diaryNote}
+      <GroupsDiaryNote {...diaryNote} />
     {/if}
   </div>
   <div class="col-span-12 col-start-2 flex justify-between">
-    {#if recommendButtons}
+    {#if showRecommendButtons}
       <div class="flex gap-1 items-center">
         <div class="rounded-full overflow-hidden">
           <IconButton
@@ -175,17 +306,20 @@
         <div class="rounded-full overflow-hidden">
           <IconButton
             icon={ImageIcon}
-            disabled={!$state.s3 || !$state.s3.configuration?.currentBucket}
-            tooltip="Configure S3 storage for image support"
             on:click={() => {
-              if (!$state.s3 || !$state.s3.configuration?.currentBucket) return;
-              fileInput.click();
+              if (!$state.s3 || !$state.s3.configuration?.currentBucket) {
+                alert(
+                  'For attachment support, configure S3 storage with ~dister-nocsyx-lassul/silo. Otherwise, paste a link to a hosted image.'
+                );
+              } else {
+                fileInput.click();
+              }
             }}
             class="stroke-grey fill-grey hover:fill-black dark:hover:fill-grey"
           />
         </div>
       </div>
-    {:else if ratingStars}
+    {:else if showRatingStars}
       <StarRating
         on:change={handleRate}
         config={{
@@ -200,7 +334,7 @@
     {/if}
     <button
       class="bg-black dark:bg-white text-white dark:text-darkgrey hover:bg-grey dark:hover:bg-offwhite hover:duration-500 font-bold rounded-lg px-3 py-1 self-end"
-      on:click={post}>Post</button
+      on:click={post}>{buttonText}</button
     >
   </div>
   {#if error}

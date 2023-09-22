@@ -1,6 +1,5 @@
-/-  *portal-data, portal-config, *portal-action, *portal-message,
-    portal-data-0, gr=social-graph, treaty, w=writ, n=note, cur=curio
-/+  sig, io=agentio, mip, sss, ethereum
+/-  m=portal-move
+/+  io=agentio, ethereum
 |%
 +$  card  card:agent:gall
 ::
@@ -10,7 +9,7 @@
   ::  TODO what if time looks like '/some-blog-path'
   ::  or '/some/blog/path'
   ++  key-to-path
-    |=  [=key]
+    |=  [=key:d:m]
     ;;  [@ @ @ @ ~]
     ;:  weld
       ~[struc.key]
@@ -21,20 +20,20 @@
   ::
   ++  path-to-key
     |=  [=path]
-    ;;  key
-    :^  ;;  struc  -:path
+    ;;  key:d:m
+    :^  ;;  struc:d:m  -:path
         `ship`(slav %p +<:path)
         ?:((gte (lent path) 3) `cord`+>-:path '')
         ?:((gte (lent path) 4) `cord`+>+<:path '')
   ::
   ++  key-to-node
-    |=  [=key]
-    ;;  node:gr
+    |=  [=key:d:m]
+    ;;  node:gr:m
     [%entity %portal-store (spat (key-to-path key))]
   ::  
   ++  node-to-key  
-    |=  [=node:gr]
-    ;;  key
+    |=  [=node:gr:m]
+    ;;  key:d:m
     ?>  ?=([%entity *] node)
     =/  p  (trip name.node)
     ::  TODO if blog paths allowed to have trailing /, we needs to be fixed
@@ -46,25 +45,35 @@
       (snip p)
     (path-to-key (stab (crip p)))
   ::
+  ++  node-to-path
+    |=  [=node:gr:m]
+    ^-  path
+    ?>  ?=(%entity -.node)
+    :~  %entity
+        app.node
+        name.node
+    ==
+
+  ::
   ++  feed-to-key-list
-    |=  =feed
-    ^-  key-list
+    |=  =feed:d:m
+    ^-  key-list:d:m
     %+  turn  feed
-    |=  [* * =key]
+    |=  [* * =key:d:m]
     key
   --
 ::
 ++  scry
   |_  [our=ship now=time]
   ++  construct
-    |=  [care=@tas =dude:gall =^path]
+    |=  [care=@tas =dude:gall =path]
     [care (scot %p our) dude (scot %da now) path]
   ::
   ::  gets item, and if doesn't exist returns ~
   ++  item-exists
-    |=  [=key]
+    |=  [=key:d:m]
     ;;  ?
-    .^  store-result  %gx
+    .^  store-result:d:m  %gx
       ;:  weld
         /(scot %p our)/portal-store/(scot %da now)/item-exists
         (key-to-path:conv key)
@@ -72,10 +81,10 @@
     ==  ==
   ::
   ++  get-item
-    |=  [=key]
-    ;;  item
+    |=  [=key:d:m]
+    ;;  item:d:m
     %-  tail
-    .^  store-result  %gx
+    .^  store-result:d:m  %gx
       ;:  weld
         /(scot %p our)/portal-store/(scot %da now)/item
         (key-to-path:conv key)
@@ -83,30 +92,30 @@
     ==  ==
   ::
   ++  get-items
-    |=  [=key-list]
-    ^-  (map key ?(~ item))
-    (get-items:misc `items`(get-all-items) key-list)
+    |=  [=key-list:d:m]
+    ^-  (map key:d:m ?(~ item:d:m))
+    (get-items:misc `items:d:m`(get-all-items) key-list)
   ::
   ++  get-all-items
     |.
-    ;;  items
+    ;;  items:d:m
     %-  tail
-    .^(store-result %gx /(scot %p our)/portal-store/(scot %da now)/items/noun)
+    .^(store-result:d:m %gx /(scot %p our)/portal-store/(scot %da now)/items/noun)
   ::
   ++  get-all-keys
     |.
-    ;;  key-set
+    ;;  key-set:d:m
     %-  tail
-    .^  store-result
+    .^  store-result:d:m
       %gx
       /(scot %p our)/portal-store/(scot %da now)/keys/noun
     ==
   ::
   ++  get-item-latest-validity
-    |=  [=key]
-    ;;  valid
+    |=  [=key:d:m]
+    ;;  valid:d:m
     %-  tail
-    .^  store-result
+    .^  store-result:d:m
       %gx
       ;:  weld
         /(scot %p our)/portal-store/(scot %da now)/item-valid
@@ -119,35 +128,35 @@
 ++  keys
   |%
   ++  skid-temp
-    |=  [=key-list]
-    ^-  [temp=^key-list def=^key-list]
-    (skid key-list |=([=key] ?~(time.key %.y %.n)))
+    |=  [=key-list:d:m]
+    ^-  [temp=key-list:d:m def=key-list:d:m]
+    (skid key-list |=([=key:d:m] ?~(time.key %.y %.n)))
   ::
   ++  skip-strucs
-    |=  [=key-list strucs=(list struc)]
-    ^-  ^key-list
-    (skip key-list |=([=key] ?~((find [struc.key]~ strucs) %.n %.y)))
+    |=  [=key-list:d:m strucs=(list struc:d:m)]
+    ^-  key-list:d:m
+    (skip key-list |=([=key:d:m] ?~((find [struc.key]~ strucs) %.n %.y)))
   ::
   ++  skim-strucs
-    |=  [=key-list strucs=(list struc)]
-    ^-  ^key-list
-    (skim key-list |=([=key] ?~((find [struc.key]~ strucs) %.n %.y)))
+    |=  [=key-list:d:m strucs=(list struc:d:m)]
+    ^-  key-list:d:m
+    (skim key-list |=([=key:d:m] ?~((find [struc.key]~ strucs) %.n %.y)))
   ::
   ++  skip-ships
-    |=  [=key-list ships=(list ship)]
-    ^-  ^key-list
-    (skip key-list |=([=key] ?~((find [ship.key]~ ships) %.n %.y)))
+    |=  [=key-list:d:m ships=(list ship)]
+    ^-  key-list:d:m
+    (skip key-list |=([=key:d:m] ?~((find [ship.key]~ ships) %.n %.y)))
   ::
   ++  skim-ships
-    |=  [=key-list ships=(list ship)]
-    ^-  ^key-list
-    (skim key-list |=([=key] ?~((find [ship.key]~ ships) %.n %.y)))
+    |=  [=key-list:d:m ships=(list ship)]
+    ^-  key-list:d:m
+    (skim key-list |=([=key:d:m] ?~((find [ship.key]~ ships) %.n %.y)))
   ::
   ++  deduplicate
-    |=  [a=(list key)]
+    |=  [a=(list key:d:m)]
     %-  flop  %-  tail
-    %^  spin  a  *(list key)  
-    |=  [el=key st=(list key)]
+    %^  spin  a  *(list key:d:m)  
+    |=  [el=key:d:m st=(list key:d:m)]
     ?~  (find [el]~ st)
       el^[el st]
     [el st]
@@ -157,7 +166,7 @@
   |%
   ::
   ++  key-in-collection
-    |=  [=key col=item]
+    |=  [=key:d:m col=item:d:m]
     ^-  ?
     ?+    -.bespoke.col    !!
         %collection
@@ -165,7 +174,7 @@
     ==
   ::  check whether key is in key-list
   ++  key-in-key-list
-    |=  [=key =key-list]
+    |=  [=key:d:m =key-list:d:m]
     ^-  ?
     ?~((fand ~[key] key-list) %.n %.y)
   --
@@ -173,19 +182,26 @@
 ++  cards
   |_  =dock
   ++  act
-    |=  =action
+    |=  =action:m
     ^-  card
     [(~(poke pass:io /act) dock [%portal-action !>(action)])]
   ::
   ++  msg
-    |=  =message
+    |=  =message:m
     ^-  card
     [(~(poke pass:io /msg) dock [%portal-message !>(message)])]
   ::
-  ++  upd
-    |=  =item
-    ^-  card
-    [%give %fact [/updates]~ %portal-update !>(item)]
+  ++  track-gr
+    |=  [=ship]
+    %+  ~(poke pass:io /gr-track) 
+        dock
+        %social-graph-track^!>(portal-store+[%start ship /(scot %p ship)])
+  ::
+  ++  edit-gr
+    |=  edit=[=app:gr:m [%add-tag tag=path from=node:gr:m to=node:gr:m]]
+    %+  ~(poke pass:io /gr-tag)
+        dock 
+        %social-graph-edit^!>(edit)
   --
 ::
 ::
@@ -194,7 +210,7 @@
   ::  input @p, output ship-type:portal-data
   ++  get-ship-type
     |=  [=ship]
-    ^-  ship-type
+    ^-  ship-type:d:m
     =/  hex  `@ux`ship
     ?:  &((gte hex 0x0) (lte hex 0xff))  %galaxy
     ?:  &((gte hex 0x100) (lte hex 0xffff))  %star
@@ -232,16 +248,16 @@
   ::
   ::  takes items and key-set and retrieves the desired items
   ++  get-items
-    |=  [=items =key-list]
-    ^-  ^items
-    =|  new-map=(map key item)
-    =.  new-map  (~(gas by new-map) (turn key-list |=(=key [key *item])))
+    |=  [=items:d:m =key-list:d:m]
+    ^-  items:d:m
+    =|  new-map=(map key:d:m item:d:m)
+    =.  new-map  (~(gas by new-map) (turn key-list |=(=key:d:m [key *item:d:m])))
     (~(int by new-map) items)
   ::
   ::  takes list item and outputs key-list
   ++  collection-to-key-list
-      |=  [=item]
-      ^-  key-list
+      |=  [=item:d:m]
+      ^-  key-list:d:m
       ?+    -.bespoke.item    ~
           %collection  key-list.bespoke.item
       ==
@@ -251,9 +267,9 @@
 ++  pure
   |%
   ++  edit
-    |=  [now=time =item act=action]
+    |=  [now=time =item:d:m act=action:m]
     ::  should output item
-    ^-  ^item
+    ^-  item:d:m
     ?>  ?=([%edit *] act)
     ?>  =(key.item key.act)
     %=  item
@@ -262,6 +278,9 @@
       ::
         lens
       (fall lens.act lens.item)
+      ::
+        meta  
+      meta.item(reach (fall reach.act reach.meta.item))
       ::
         bespoke
       ?~  bespoke.act  bespoke.item
@@ -284,6 +303,12 @@
             (fall sig.u.bespoke.act sig.bespoke.item)
             (fall treaty.u.bespoke.act treaty.bespoke.item)
             (fall eth-price.u.bespoke.act eth-price.bespoke.item)
+        ==
+        ::
+          %group
+        ?>  ?=(%group -.bespoke.item)
+        :*  %group
+            (fall data.u.bespoke.act data.bespoke.item)
         ==
         ::
           %collection
@@ -320,28 +345,17 @@
       ==
     ==
   ::
-  ++  replace
-    |=  [now=time =item act=action]
-    ^-  ^item
-    ?>  ?=([%replace *] act)
-    ?>  =(key.item key.act)
-    %=  item
-      lens             lens.act
-      bespoke          bespoke.act
-      updated-at.meta  `@t`(scot %da now)
-    ==
-  ::
   ++  create
-    |=  [[our=ship now=time] act=action]
-    ^-  item
+    |=  [[our=ship now=time] act=action:m]
+    ^-  item:d:m
     ?>  ?=([%create *] act)     ::  assert that action is %create
-    =/  bespoke  (fall bespoke.act *bespoke)
+    =/  bespoke  (fall bespoke.act *bespoke:d:m)
     :^  :^  -.bespoke
             (fall ship.act our)
             (fall cord.act '')
             (fall time.act `@t`(scot %da now))
         ::
-        (fall lens.act *lens)
+        (fall lens.act *lens:d:m)
         ::
         ?+    -.bespoke    bespoke
             %groups-chat-msg  :: path: '/chat/~sampel-dilryd-mopreg/new-channel/writs/writ/id/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749'
@@ -349,9 +363,9 @@
             =,  bespoke
             /chat/(scot %p p.channel)/[q.channel]/writs/writ/id/(scot %p p.id)/(scot %ud `@`q.id)/writ
           =/  writ
-            .^(writ:w (~(construct scry [our now]) %gx %portal-manager path))
+            .^(writ:w:d:m (~(construct scry [our now]) %gx %portal-manager path))
           =/  chatmap
-            .^  (map flag:w [* * * perm=[* group=flag:w] *])
+            .^  (map flag:w:d:m [* * * perm=[* group=flag:w:d:m] *])
                 %gx
                 /(scot %p our)/chat/(scot %da now)/chats/noun
             ==
@@ -369,10 +383,10 @@
           =/  =path
             =,  bespoke
             /diary/(scot %p p.channel)/[q.channel]/notes/note/(scot %ud `@`time)/diary-note
-          =/  note
-            .^(note:n (~(construct scry [our now]) %gx %diary path))
+          =/  note  ;;  note:n:d:m
+            .^(noun (~(construct scry [our now]) %gx %diary path))
           =/  diarymap
-            .^  (map flag:n [* * * perm=[* group=flag:w] *])
+            .^  (map flag:n:d:m [* * * perm=[* group=flag:w:d:m] *])
                 %gx
                 /(scot %p our)/diary/(scot %da now)/shelf/noun
             ==
@@ -383,7 +397,7 @@
             time:bespoke
             essay:note
             ~(wyt by feels:note)
-            (wyt:on:quips:n quips:note)
+            (wyt:on:quips:n:d:m quips:note)
           ==
           ::
             %groups-heap-curio  :: path: '/heap/~toptyr-bilder/links/curios/curio/id/170.141.184.506.270.899.144.208.463.636.562.182.144
@@ -391,9 +405,9 @@
             =,  bespoke
             /heap/(scot %p p.channel)/[q.channel]/curios/curio/id/(scot %ud `@`time)/curio
           =/  curio
-            .^(curio:cur (~(construct scry [our now]) %gx %heap path))
+            .^(curio:cur:d:m (~(construct scry [our now]) %gx %heap path))
           =/  heapmap
-            .^  (map flag:n [* * perm=[* group=flag:w] *])
+            .^  (map flag:n:d:m [* * perm=[* group=flag:w:d:m] *])
                 %gx
                 /(scot %p our)/heap/(scot %da now)/stash/noun
             ==
@@ -411,83 +425,59 @@
         :^  created-at=`@t`(scot %da now)
             updated-at=''
             permissions=~[our]
-            reach=[%public ~]
+            reach=(fall reach.act [%public ~])
   ::
   ++  prepend-to-feed
-    |=  [now=time feed=item act=action]
-    ^-  item
+    |=  [now=time feed=item:d:m act=action:m]
+    ^-  item:d:m
     ?>  ?=([%prepend-to-feed *] act)
     ?>  ?=(%feed -.bespoke.feed)
     ?>  =(key.feed feed-key.act)
     =/  new-feed  %+  oust  [1.000 (lent feed.act)]
       (weld feed.act feed.bespoke.feed)
-    (edit now feed [%edit key.feed ~ `[%feed `new-feed]])
+    (edit now feed [%edit key.feed ~ ~ `[%feed `new-feed]])
   ::
   ++  append-no-dupe
-    |=  [now=time col=item act=action]
-    ^-  item
+    |=  [now=time col=item:d:m act=action:m]
+    ^-  item:d:m
     ?>  ?=([%append *] act)
     ?>  ?=(%collection -.bespoke.col)
     ?>  =(col-key.act key.col)
     =+  (welp key-list.bespoke.col key-list.act)
     %^  edit  now  col
-      [%edit col-key.act ~ `[%collection ~ ~ ~ `(deduplicate:keys -)]]
+      [%edit col-key.act ~ ~ `[%collection ~ ~ ~ `(deduplicate:keys -)]]
   ::
   ++  append-to-col
-    |=  [now=time col=item act=action]
-    ^-  item
+    |=  [now=time col=item:d:m act=action:m]
+    ^-  item:d:m
     ?>  ?=([%append *] act)
     ?>  ?=(%collection -.bespoke.col)
     ?>  =(col-key.act key.col)
     =/  new-key-list  (weld key-list.bespoke.col key-list.act)
     %^  edit  now  col
-      [%edit col-key.act ~ `[%collection ~ ~ ~ `new-key-list]]
-  ::
-  ++  prepend-to-col
-    |=  [now=time col=item act=action]
-    ^-  item
-    ?>  ?=([%prepend *] act)
-    ?>  ?=(%collection -.bespoke.col)
-    ?>  =(col-key.act key.col)
-    =/  new-key-list  (weld key-list.act key-list.bespoke.col)
-    %^  edit  now  col
-      [%edit col-key.act ~ `[%collection ~ ~ ~ `new-key-list]]
+      [%edit col-key.act ~ ~ `[%collection ~ ~ ~ `new-key-list]]
   ::
   ++  remove-from-col
-    |=  [now=time col=item act=action]
-    ^-  item
+    |=  [now=time col=item:d:m act=action:m]
+    ^-  item:d:m
     ?>  ?=([%remove *] act)
     ?>  ?=(%collection -.bespoke.col)
     ?>  =(col-key.act key.col)
     =/  new-key-list  %+  skip  key-list.bespoke.col
-      |=(=key ?~((find [key]~ key-list.act) %.n %.y))
+      |=(=key:d:m ?~((find [key]~ key-list.act) %.n %.y))
     %^  edit  now  col
-      [%edit col-key.act ~ `[%collection ~ ~ ~ `new-key-list]]
-
-  ::
-  ++  delete
-    |=  [now=time =item act=action]
-    ^-  ^item
-    ?>  ?=([%delete *] act)
-    ?>  =(key.item key.act)
-    %=  item
-      lens             %deleted
-      updated-at.meta  `@t`(scot %da now)
-    ==
+      [%edit col-key.act ~ ~ `[%collection ~ ~ ~ `new-key-list]]
   ::
   --
 ::
 ++  item-methods  ::  all arms here should output item
   |_  =bowl:gall
   ++  edit             (cury edit:pure now.bowl)
-  ++  replace          (cury replace:pure now.bowl)
   ++  create           (cury create:pure [our now]:bowl)
   ++  prepend-to-feed  (cury prepend-to-feed:pure now.bowl)
   ++  append-no-dupe   (cury append-no-dupe:pure now.bowl)
   ++  append-to-col    (cury append-to-col:pure now.bowl)
-  ++  prepend-to-col   (cury prepend-to-col:pure now.bowl)
   ++  remove-from-col  (cury remove-from-col:pure now.bowl)
-  ++  delete           (cury delete:pure now.bowl)
   --
 ::
 ::
@@ -531,90 +521,9 @@
     `@ud`(scan (trip price) dem)
   ::
   --
-
-::  OOD
-::  includes arms which are used to validate data
-++  validator
-  |%
-  ::(default-v1:validator our now key.upd upd) for actually validating
-  ++  default-v1
-    |=  [our=ship now=time item-key=key =item]
-    ^-  (list card)
-    ::  slight amount of time after this
-    ?.  &(=(struc.bespoke.item %app) !=(lens.item %temp))  ~
-    =/  v-store-key  `key`[%validity-store our '' '~2000.1.1']
-    =/  validity-store
-      ;;  ^item  (~(get-item scry our now) v-store-key)
-    ?+    -.bespoke.validity-store    ~
-        %validity-store
-      =/  validation-result  ['default-v1' (new-item our now item-key item) 'default']
-      =/  validity-records  validity-records.bespoke.validity-store
-      =/  validation-time-map  (~(gut by validity-records) item-key *validation-time-map)
-      =/  validation-time-map  (put:valid-mop validation-time-map now validation-result)
-      =/  validity-records  (~(put by validity-records) item-key validation-time-map)
-      =/  edit-action  `action`[%replace v-store-key %def [%validity-store validity-records]]
-      [%pass /edit %agent [our %portal-manager] %poke %portal-action !>(edit-action)]~   :: why send card instead of calling edit function?
-    ==
-  ::
-  ++  get-latest
-    |=  [our=ship now=time =key]
-    ^-  valid
-    =/  validity-store
-      ;;  item  (~(get-item scry our now) [%validity-store our '' '~2000.1.1'])
-    ?+    -.bespoke.validity-store    ~
-        %validity-store
-      =/  validity-records  validity-records.bespoke.validity-store
-      =/  validation-time-map  (~(gut by validity-records) key *validation-time-map)
-      ?~  validation-time-map  ~
-      =/  maybe-valid  (pry:valid-mop (^validation-time-map validation-time-map))
-      ?~  maybe-valid  ~
-      =/  maybe-valid  `validation-result`val.u.maybe-valid
-      valid.maybe-valid
-    ==
-  ::
-  ::  validates item for signature
-  ::  if app- dist-desk, signature, id
-  ++  new-item
-    |=  [our=@p now=@da =key =item]
-    ^-  valid
-    ?+    -.bespoke.item    ~
-        %app
-      =/  dist-desk  (parse-dist-desk:misc dist-desk.bespoke.item)
-      ?~  dist-desk  [~ %.n]
-      (sig key dist-name.u.dist-desk desk-name.u.dist-desk sig.bespoke.item our now)
-    ==
-
-  ::
-  ::  validates signature
-  ++  sig
-    |=  [=key dist-ship=@p desk-name=@tas =signature our=@p now=@da]
-    ^-  valid
-    :: not doing this anymore, requires sig from everyone who is not us
-    :: ?:  (ships-related:misc ship.key dist-ship)
-    ::   [~ %.y]
-    ?:  =(ship.key dist-ship)
-      `&
-    ?.  =(ship.signature dist-ship)
-      ~&  "signature fail: ship in sig ({(scow %p ship.signature)}) and distributor ship ({(scow %p dist-ship)}) are not the same"
-      [~ %.n]
-    ?:  =((get-ship-type:misc our) %comet)
-      ~&  "our ship is a comet - skipping signature validation of {(trip desk-name)} by {(scow %p dist-ship)}. beware, apps may be unsafe and/or pirated"
-      ~
-    ::  TODO validation has wrong sig-input
-    ::  TODO needs to validate all formatted like /app/[ship]//[name]
-    ?.  (validate:^sig [our signature [%app key desk-name] now])
-      ~&  "signature fail: distributor signature validation failed"
-      ~&  >>  signature
-      [~ %.n]
-    [~ %.y]
-
-
-      
-
-  --
 ::
 ++  validate-sig
-  |=  [dist-desk=@t dev=ship our=ship now=time sig=signature]
+  |=  [dist-desk=@t dev=ship our=ship now=time sig=signature:d:m]
   :: ~&  "dist-desk: {<dist-desk>}"
   :: ~&  "dev: {<dev>}"
   :: ~&  "our: {<our>}"
@@ -634,4 +543,45 @@
   :: ~&  sig
   (validate:^sig our sig [%sign-app dev ^dist-desk] now)
 ::
+++  sig
+  |%
+  ++  jael-scry
+    |*  [=mold our=ship desk=term now=time =path]
+    .^  mold
+      %j
+      (scot %p our)
+      desk
+      (scot %da now)
+      path
+    ==
+  ::
+  ++  sign
+    |=  [our=ship now=time sig-input=*]
+    ^-  signature:d:m
+    =+  (jael-scry ,=life our %life now /(scot %p our))
+    =+  (jael-scry ,=ring our %vein now /(scot %ud life))
+    :+  `@ux`(sign:as:(nol:nu:crub:crypto ring) (jam sig-input))
+      our
+    life
+  ::
+  ++  validate
+    |=  [our=ship =signature:d:m sig-input=* now=time]
+    ^-  ?
+    =+  (jael-scry ,lyf=(unit @) our %lyfe now /(scot %p ship.signature))
+    ::  we do not have a public key from ship at this life
+    ::
+    ?~  lyf  %.n
+    ?.  =(u.lyf life.signature)  %.n
+    =+  %:  jael-scry
+          ,deed=[a=life b=pass c=(unit @ux)]
+          our  %deed  now  /(scot %p ship.signature)/(scot %ud life.signature)
+        ==
+    ::  if signature is from a past life, skip validation
+    ::  XX: should be visualised on frontend, not great.
+    ?.  =(a.deed life.signature)  %.n
+    ::  verify signature from ship at life
+    ::
+    =/  them  (com:nu:crub:crypto b.deed)
+    =(`(jam sig-input) (sure:as.them hex.signature))
+  --
 --

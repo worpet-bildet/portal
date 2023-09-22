@@ -1,43 +1,44 @@
-<script>
+<script lang="ts">
+  import { Create as PortalCreate } from '$types/portal/poke';
+  import { FeedItem, ItemKey } from '$types/portal/item';
+  import { RadioStation } from '$types/apps/radio';
+
   import { push } from 'svelte-spa-router';
+
   import config from '@root/config';
   import { api, me } from '@root/api';
   import {
     state,
-    reScoreItems,
     getGlobalFeed,
     getCuratorFeed,
     keyStrToObj,
     getCollectedItemLeaderboard,
-    getItem,
-    getTips,
   } from '@root/state';
+  import { fromUrbitTime, isValidPatp } from '@root/util';
   import {
     Feed,
     ItemPreview,
     SidebarPal,
     FeedPostForm,
     Sigil,
+    FeedPromptForm,
   } from '@components';
   import {
     RightSidebar,
     SidebarGroup,
     SearchIcon,
     PersonIcon,
-    UpRightArrowIcon,
-    OpenAIIcon,
     LoadingIcon,
-    VerticalExpandIcon,
-    VerticalCollapseIcon,
   } from '@fragments';
-  import { fromUrbitTime, isValidPatp, isHappeningSoon } from '@root/util';
 
-  let sortedPals = [];
-  let sortedRecommendations = [];
-  let patpItemCount = {};
-  let feed;
+  let sortedPals: string[] = [];
+  let sortedRecommendations: [string, number][] = [];
+  let patpItemCount: { [key: string]: number } = {};
+  let feed: FeedItem[] = [];
+  let promptedFeed: FeedItem[] = [];
+  let loading: boolean;
 
-  const subToGlobalFeed = () => {
+  const subToGlobalFeed = (): void => {
     return api.portal.do.subscribe({
       struc: 'feed',
       ship: config.indexer,
@@ -46,20 +47,14 @@
     });
   };
 
-  let positiveFeedPrompt, negativeFeedPrompt, loading, canResetFeed;
-  const handlePromptFeed = async () => {
-    loading = true;
-    await reScoreItems(positiveFeedPrompt, negativeFeedPrompt);
-    feed = feed.sort((a, b) => getItem(b.key)?.score - getItem(a.key)?.score);
-    canResetFeed = true;
-    loading = false;
-  };
+  function handleShipSearchKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      search();
+    }
+  }
 
-  const handleResetFeed = () => {
-    feed = feed.sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
-    positiveFeedPrompt = '';
-    negativeFeedPrompt = '';
-  };
+  const globalFeed = (): FeedItem[] =>
+    getGlobalFeed().concat(getCuratorFeed(me));
 
   state.subscribe((s) => {
     let { pals } = s;
@@ -67,21 +62,12 @@
     if (s.isLoaded && !getGlobalFeed()) {
       return subToGlobalFeed();
     }
-    let mergedFeed = getGlobalFeed()
-      .concat(getCuratorFeed(me))
-      .concat(getTips());
-    feed = mergedFeed
+
+    feed = globalFeed()
       .filter((a) => !!a)
       .filter((a, idx) => {
-        return mergedFeed.findIndex((b) => b.time === a.time) === idx;
+        return globalFeed().findIndex((b) => b.time === a.time) === idx;
       });
-    if (canResetFeed) {
-      feed = feed.sort((a, b) => getItem(b.key)?.score - getItem(a.key)?.score);
-    } else {
-      feed = feed.sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
-    }
-    // .sort((a, b) => getItem(b.key)?.score - getItem(a.key)?.score);
-    // .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
 
     // Get the latest post, if it was more than six hours ago, send another sub
     if (
@@ -111,9 +97,10 @@
     sortedRecommendations = getCollectedItemLeaderboard(me).slice(0, 4);
   });
 
-  const handlePost = ({ detail: { content, uploadedImageUrl, ref } }) => {
-    let post = {};
-    console.log({ ref });
+  const handlePost = ({
+    detail: { content, uploadedImageUrl, ref, time },
+  }): void => {
+    let post = { time } as PortalCreate;
     if (ref) {
       // Here we need to create the retweet post instead of the type "other"
       post = {
@@ -148,12 +135,33 @@
           cord: '',
         },
       ],
+      'tags-to': [],
     };
+
+    // check each word of the content for a mention, and if so, create a social
+    // graph tag for the mention
+    content
+      .split(' ')
+      .filter((word) => word.substr(0, 1) === '~' && isValidPatp(word))
+      .forEach((word) => {
+        post = {
+          ...post,
+          'tags-to': [
+            ...post['tags-to'],
+            {
+              key: { struc: 'ship', ship: word, cord: '', time: '' },
+              'tag-to': `/${me}/mention-to`,
+              'tag-from': `/${word}/mention-from`,
+            },
+          ],
+        };
+      });
+
     api.portal.do.create(post);
   };
 
-  let searchShip;
-  let lastValidShip = searchShip;
+  let searchShip: string;
+  let lastValidShip: string | false = searchShip;
   $: {
     if (isValidPatp(searchShip)) {
       lastValidShip = isValidPatp(searchShip);
@@ -163,253 +171,43 @@
     if (!lastValidShip) return;
     push(`/${lastValidShip}`);
   };
-  const sortRadioStations = (stations) => {
+  const sortRadioStations = (stations: RadioStation[]) => {
     return stations
       .sort((a, b) => b.time - a.time)
       .filter((s) => s.viewers > 0)
       .filter((s) => !!s.description)
       .slice(0, 4);
   };
-  const tuneRadio = (location) => {
+
+  const tuneRadio = (patp: string) => {
     window.open(
-      `${window.location.origin}/apps/radio?station=${encodeURIComponent(
-        location
-      )}`
+      `${window.location.origin}/apps/radio?station=${encodeURIComponent(patp)}`
     );
   };
 
-  const recommendedApps = [
+  const recommendedApps: ItemKey[] = [
     { struc: 'app', ship: '~paldev', cord: 'pals', time: '' },
     { struc: 'app', ship: '~nodmyn-dosrux', cord: 'radio', time: '' },
   ];
-
-  const events = [
-    {
-      title: 'On-nomi happy hour',
-      link: 'https://app.gather.town/app/xAYeiPI2XDYhRM9t/urbit-hacker-house',
-      startDate: '2023-06-29T18:30:00-04:00',
-      endDate: '2023-06-29T20:00:00-04:00',
-      frequency: 'every other week',
-      location: 'in the hacker house',
-      happeningSoon: 'false',
-    },
-    {
-      title: 'Turf Build Party',
-      link: 'https://app.gather.town/app/xAYeiPI2XDYhRM9t/urbit-hacker-house',
-      startDate: '2023-06-23T12:00:00-04:00',
-      endDate: '2023-06-23T14:00:00-04:00',
-      frequency: '',
-      location: 'in the hacker house',
-      happeningSoon: 'false',
-    },
-    {
-      title: 'Build Party',
-      link: 'https://app.gather.town/app/xAYeiPI2XDYhRM9t/urbit-hacker-house',
-      startDate: '2023-06-27T14:00:00-04:00',
-      endDate: '2023-06-27T17:00:00-04:00',
-      frequency: '',
-      location: 'in the hacker house',
-      happeningSoon: 'false',
-    },
-  ];
-  let showExpandedForm = false;
-
-  const happeningSoonTuple = isHappeningSoon(events);
 </script>
 
 <div class="grid grid-cols-9 gap-8 mb-4">
   <div class="flex flex-col gap-8 rounded-t-2xl col-span-12 md:col-span-6">
     {#if config.aiEnabled !== 'false'}
-      <div
-        class="flex gap-2 border p-4 flex-col rounded-2xl col-span-12 md:col-span-6"
-      >
-        <div class="flex gap-2">
-          <div
-            class="border rounded-2xl bg-panels-hover flex w-full justify-between items-center"
-          >
-            <div class="flex items-center justify-center w-full">
-              <div
-                class="w-9 h-9 ml-3 p-1.5 rounded-xl bg-gradient-to-b from-ai-purple to-ai-blue"
-              >
-                <OpenAIIcon />
-              </div>
-              <input
-                type="text"
-                class="focus:outline-none p-3 placeholder-grey text-black text-lg dark:text-white flex-grow"
-                placeholder="What do you want to see?"
-                bind:value={positiveFeedPrompt}
-                on:keydown={(e) => {
-                  if (e.key === 'Enter') {
-                    handlePromptFeed();
-                  }
-                }}
-              />
-            </div>
-            <button
-              class="bg-panels-hover rounded-md w-7 h-7 mr-2 flex items-center justify-center"
-              on:click={() => (showExpandedForm = !showExpandedForm)}
-            >
-              {#if showExpandedForm}
-                <VerticalCollapseIcon />
-              {:else}
-                <VerticalExpandIcon />
-              {/if}
-            </button>
-          </div>
-        </div>
-        <div class="flex flex-col overflow-x-scroll scrollbar-hide">
-          <div class="flex gap-4">
-            <button
-              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
-              on:click={() => {
-                positiveFeedPrompt = 'Jokes, funny, sarcasm, amusement';
-                negativeFeedPrompt = 'seriousness, work, productivity';
-                handlePromptFeed();
-              }}>Shitposts</button
-            >
-            <button
-              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
-              on:click={() => {
-                positiveFeedPrompt = 'poetry';
-                negativeFeedPrompt = '';
-                handlePromptFeed();
-              }}>Poetry</button
-            >
-            <button
-              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
-              on:click={() => {
-                positiveFeedPrompt = 'https://';
-                negativeFeedPrompt = '';
-                handlePromptFeed();
-              }}>Links</button
-            >
-            <button
-              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
-              on:click={() => {
-                positiveFeedPrompt = 'productivity, work, learning';
-                negativeFeedPrompt = '';
-                handlePromptFeed();
-              }}>Productivity</button
-            >
-            <button
-              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
-              on:click={() => {
-                positiveFeedPrompt = 'high wordCount';
-                negativeFeedPrompt = '';
-                handlePromptFeed();
-              }}>Longform</button
-            >
-            <button
-              class="rounded-lg bg-panels-hover hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white text-grey p-2 px-4"
-              on:click={() => {
-                positiveFeedPrompt = 'retweet';
-                negativeFeedPrompt = '';
-                handlePromptFeed();
-              }}>Recommendations</button
-            >
-            <button
-              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
-              on:click={() => {
-                positiveFeedPrompt = 'tech, programming, hoon';
-                negativeFeedPrompt = '';
-                handlePromptFeed();
-              }}>Tech</button
-            >
-            <button
-              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
-              on:click={() => {
-                positiveFeedPrompt = 'politics';
-                negativeFeedPrompt = '';
-                handlePromptFeed();
-              }}>Politics</button
-            >
-            <button
-              class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
-              on:click={() => {
-                positiveFeedPrompt = 'crypto';
-                negativeFeedPrompt = '';
-                handlePromptFeed();
-              }}>Crypto</button
-            >
-          </div>
-        </div>
-        <div>
-          {#if showExpandedForm}
-            <div
-              class="border rounded-2xl bg-panels-hover flex w-full justify-between items-center mt-4"
-            >
-              <div class="flex items-center justify-center w-full">
-                <div
-                  class="w-9 h-9 ml-3 p-1.5 rounded-xl bg-gradient-to-b from-ai-purple to-ai-blue"
-                >
-                  <OpenAIIcon />
-                </div>
-                <input
-                  type="text"
-                  class="focus:outline-none p-3 placeholder-grey text-black text-lg dark:text-white flex-grow"
-                  placeholder="Show me less ..."
-                  bind:value={negativeFeedPrompt}
-                  on:keydown={(e) => {
-                    if (e.key === 'Enter') {
-                      handlePromptFeed();
-                    }
-                  }}
-                />
-              </div>
-            </div>
-            <div class="flex flex-col mt-4">
-              <div class="flex gap-4">
-                <button
-                  class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
-                  on:click={() => {
-                    positiveFeedPrompt = '';
-                    negativeFeedPrompt = 'abortion, racism, sexism, classism';
-                    handlePromptFeed();
-                  }}>Culture wars</button
-                >
-                <button
-                  class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
-                  on:click={() => {
-                    positiveFeedPrompt = '';
-                    negativeFeedPrompt = 'Jokes, funny, sarcasm, amusement';
-                    handlePromptFeed();
-                  }}>Shitposts</button
-                >
-                <button
-                  class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
-                  on:click={() => {
-                    positiveFeedPrompt = '';
-                    negativeFeedPrompt = 'politics';
-                    handlePromptFeed();
-                  }}>Politics</button
-                >
-                <button
-                  class="rounded-lg bg-panels-hover text-grey hover:bg-blueish dark:border dark:hover:bg-transparent dark:hover:border-white p-2 px-4"
-                  on:click={() => {
-                    positiveFeedPrompt = '';
-                    negativeFeedPrompt = 'crypto';
-                    handlePromptFeed();
-                  }}>Crypto</button
-                >
-              </div>
-            </div>
-          {/if}
-        </div>
-        {#if canResetFeed}
-          <div class="flex justify-end">
-            <button class="underline" on:click={handleResetFeed}>Reset</button>
-          </div>
-        {/if}
-      </div>
+      <FeedPromptForm {feed} bind:promptedFeed bind:loading />
     {/if}
     <div>
-      <FeedPostForm on:post={handlePost} />
+      <FeedPostForm
+        on:post={handlePost}
+        placeholder="Share a limerick, maybe..."
+        class="rounded-tl-lg rounded-tr-lg border-t"
+      />
       {#if loading}
-        <div class="flex justify-center items-center py-20">
+        <div class="flex justify-center dark:fill-white items-center py-20">
           <LoadingIcon />
         </div>
       {:else}
-        <Feed {feed} />
+        <Feed feed={promptedFeed.length > 0 ? promptedFeed : feed} />
       {/if}
     </div>
   </div>
@@ -427,45 +225,25 @@
               class="border-b focus:outline-none placeholder-grey"
               placeholder="~worpet-bildet"
               bind:value={searchShip}
-              on:keydown={(e) => (e.key === 'Enter' ? search() : null)}
+              on:keydown={handleShipSearchKeydown}
             />
           </div>
           <button class="w-5" on:click={search}><SearchIcon /></button>
         </div>
       </div>
     </SidebarGroup>
-    {#if happeningSoonTuple[0]}
-      <SidebarGroup>
-        <div class="text-xl font-bold mx-2">Upcoming Events</div>
-        <div class="flex flex-col gap-4">
-          {#each happeningSoonTuple[1] as { title, link, startDate, endDate, frequency, location, happeningSoon, formattedStart }}
-            {#if happeningSoon}
-              <button
-                class="flex flex-col gap-2 rounded-md p-2 border border-transparent dark:hover:border-white dark:hover:bg-transparent hover:bg-panels-hover hover:duration-500 text-left"
-                on:click={() => window.open(`${link}`, '_blank')}
-              >
-                <div>{title}</div>
-                <div
-                  class="flex items-center w-full justify-between gap-2 text-xs text-grey"
-                >
-                  <div>Starts {formattedStart}</div>
-                  <div class="flex items-center gap-1">
-                    <div>{location}</div>
-                    <div class="w-4"><UpRightArrowIcon /></div>
-                  </div>
-                </div>
-              </button>
-            {/if}
-          {/each}
-        </div>
-      </SidebarGroup>
-    {/if}
     {#if sortedRecommendations.length > 0}
       <SidebarGroup>
         <div class="text-xl font-bold mx-2">Most recommended</div>
-        {#each sortedRecommendations as [recommendation, count]}
+        {#each sortedRecommendations as [recommendation]}
           <ItemPreview key={keyStrToObj(recommendation)} small />
         {/each}
+        <button
+          class="text-left rounded-lg text-grey hover:text-black dark:hover:text-white px-4"
+          on:click={() => push('/explore')}
+        >
+          Show more
+        </button>
       </SidebarGroup>
     {/if}
     {#if $state.radioStations}

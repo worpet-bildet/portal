@@ -1,6 +1,5 @@
 /-  subgraph
-/+  verb, dbug, default-agent, io=agentio, portal,
-    g=social-graph, *mip, *sss
+/+  default-agent, p=portal, g=social-graph, *mip, *sss
 /$  social-graph-result-to-json  %social-graph-result  %json
 /$  json-to-social-graph-track  %json  %social-graph-track
 |%
@@ -20,6 +19,10 @@
 ::  - update to work with new sss
 ::  =^  cards  subgraph-pub, instead of =.  subgraph-pub
 ::  - autosub to comments on receiving %new-edge
+::  - scry paths separated
+::    [%nodes @ %entity @ @ ~]
+::    [%nodes @ ?(%ship %address) @ ~]
+
 +$  state-2
   $+  graph-state-2
   $:  %2
@@ -43,7 +46,7 @@
 ::
 ^-  agent:gall
 ::  %+  verb  &
-%-  agent:dbug
+:: %-  agent:dbug
 ::  SSS declarations
 =/  subgraph-sub  (mk-subs subgraph ,[%track @ @ ~])
 =/  subgraph-pub  (mk-pubs subgraph ,[%track @ @ ~])
@@ -192,25 +195,20 @@
     =/  path  [%track p -.tag.q ~]
     ?-    -.q.track
         %start
-      ::  %portal modification
-      ::  if tag is being tracked already, don't do anything
-      ::  read:da-sub gives a unit, so if its ~ or non existent (or if rock=~),
-      ::  we proceed, otherwise we dont do anything
-      =+  (~(gut by read:da-sub) [source.q %portal-graph path] ~)
-      ?.  ?|  ?=(~ -)
-              =(~ rock.-)
-          ==
-        `this      
-      ::  destroy our local representation of this top-level tag,
-      ::  to prepare for synchronization with remote.
-      =.  graph.state
-        (~(nuke-top-level-tag sg:g graph.state) p -.tag.q)
+      :: %portal modification
+      ::  don't nuke, there won't be any conflicts anyways
+      :: (as only a single source of truth for each tag exists: its ship)
+      :: =.  graph.state
+      ::   (~(nuke-top-level-tag sg:g graph.state) p -.tag.q)
       ::  if we're already tracking someone, stop tracking them here!
+      ::  quits if someone else has the same app+tag (shouldnt happen)
+      ::  quitting seems to help resetting the sub work
       =/  prev  (~(get by tracking.state) [p -.tag.q^~])
       =?    subgraph-sub
           ?=(^ prev)
         (quit:da-sub u.prev %portal-graph path)
       ::  kill our path if we were serving this content previously
+      ::  shouldnt happen as well
       =^  cards  subgraph-pub  (kill:du-pub path^~)
       ::  start watching the chosen publisher
       =^  cards  subgraph-sub
@@ -281,7 +279,7 @@
       ::  quit sub if sender not in our tracking map
       ?.  =(src.msg (~(gut by tracking.state) [app tag] our.bowl))
         :_  this  :_  ~
-        %+  ~(poke pass:io /self)
+        %+  ~(poke pass:io:p /self)
           [our.bowl %portal-graph]
         social-graph-track+!>(`track:g`[app %stop src.msg tag])
       =^  cards  graph.state
@@ -300,20 +298,78 @@
           :_  %-  ~(add-tag sg:g graph.state)
               [from.u.wave.msg to.u.wave.msg app tag.u.wave.msg]
           %+  welp
-            ::  autosubbing to comments
+            ::  autosubbing to comments within the last 2 days
+            =/  key-to    (node-to-key:conv:p to.u.wave.msg)
+            =/  key-from  (node-to-key:conv:p from.u.wave.msg)
             ?:  ?&  =(+:tag.u.wave.msg /reply-to)
-                    =(our.bowl ship:(node-to-key:conv:portal to.u.wave.msg))
+                    =(our.bowl ship:key-to)
+                    (gte (slav %da time.key-from) (sub now.bowl ~d2))
                 ==
-                :_  ~
-                :*  %pass  /sub  %agent  [our.bowl %portal-manager]  %poke
-                    %portal-action  !>([%sub (node-to-key:conv:portal from.u.wave.msg)])
+                :~  :*  %pass  /sub  %agent  [our.bowl %portal-manager]  %poke
+                        %portal-action  !>([%sub key-from])
+                    ==
+                    :*  %pass  /hark  %agent  [our.bowl %hark]  %poke
+                        %hark-action  !>
+                        :*  %add-yarn  &  &
+                            (end 7 (shas %portal-notif eny.bowl))
+                            :^  ~  ~  q.byk.bowl
+                                ;:  welp  /portal  /reply
+                                    (key-to-path:conv:p key-to)
+                                ==
+                                :: if its threaded by post key, then nested replies would get separate threads
+                            now.bowl
+                            [ship+ship:key-from ' replied to your post.' ~]
+                            (welp /portal/reply (key-to-path:conv:p key-to))
+                            ~
+                        ==
+                    ==
                 ==
             ?:  ?&  =(+:tag.u.wave.msg /reply-from)
-                    !=(our.bowl ship:(node-to-key:conv:portal from.u.wave.msg))
+                    !=(our.bowl ship:key-from)
+                    (gte (slav %da time.key-to) (sub now.bowl ~d2))
                 ==
                 :_  ~
                 :*  %pass  /sub  %agent  [our.bowl %portal-manager]  %poke
-                    %portal-action  !>([%sub (node-to-key:conv:portal to.u.wave.msg)])
+                    %portal-action  !>([%sub key-to])
+                ==
+            ?:  ?&  =(+:tag.u.wave.msg /review-to)
+                    =(our.bowl ship:key-to)
+                ==
+                :~  :*  %pass  /sub  %agent  [our.bowl %portal-manager]  %poke
+                        %portal-action  !>([%sub key-from])
+                    ==
+                    :*  %pass  /hark  %agent  [our.bowl %hark]  %poke
+                        %hark-action  !>
+                        :*  %add-yarn  &  &
+                            (end 7 (shas %portal-notif eny.bowl))
+                            :^  ~  ~  q.byk.bowl
+                                ;:  welp  /portal  /app-review
+                                    (key-to-path:conv:p key-to)
+                                ==
+                            now.bowl
+                            [ship+ship:key-from ' reviewed %' time:key-to '.' ~]
+                            (welp /portal/review (key-to-path:conv:p key-to))
+                            ~
+                        ==
+                    ==
+                ==
+            ?:  ?&  =(+:tag.u.wave.msg /mention-to)
+                    =(our.bowl ship:key-to)
+                ==
+                :~  :*  %pass  /hark  %agent  [our.bowl %hark]  %poke
+                        %hark-action  !>
+                        :*  %add-yarn  &  &
+                            (end 7 (shas %portal-notif eny.bowl))
+                            :^  ~  ~  q.byk.bowl
+                                ;:  welp  /portal  /mention
+                                    (key-to-path:conv:p key-from)
+                                ==
+                            now.bowl
+                            [ship+ship:key-from ' mentioned you in their post.' ~]
+                            (welp /portal/mention (key-to-path:conv:p key-from))
+                            ~
+                        ==
+                    ==
                 ==
             ~
           :_  ~
@@ -428,15 +484,21 @@
   ::  /nodes/[app]/[from-node]
   ::  returns a set of all nodes connected to given node in given app
   ::
-      ?([%nodes @ ?(%ship %address) @ ~] [%nodes @ %entity @ @ ~])
+      [%nodes @ ?(%ship %address) @ ~]
     =/  =app:g  `@tas`i.t.path
     =/  =node:g
       =+  i.t.t.path
       ?-  -
         %ship     [- (slav %p i.t.t.t.path)]
         %address  [- (slav %ux i.t.t.t.path)]
-        %entity   [- [`@tas`i `@t`i.t]:t.t.path]
       ==
+    nodes+(~(get-nodes sg:g graph.state) node app ~)
+  ::
+      [%nodes @ %entity @ @ ~]
+    =/  =app:g  `@tas`i.t.path
+    =/  =node:g
+      =+  i.t.t.path
+      [- [`@tas`i `@t`i.t]:t.t.t.path]
     nodes+(~(get-nodes sg:g graph.state) node app ~)
   ::
   ::  /tags/[app]/[from-node]/[to-node]
