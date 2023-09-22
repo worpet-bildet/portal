@@ -183,6 +183,33 @@
         cord             `cord.new-key
         time             `time.new-key
         ::
+          bespoke
+        ?~  bespoke.act  ~
+        ?+    -.u.bespoke.act
+            bespoke.act
+          ::
+            %collection
+          :-  ~
+          %=    u.bespoke.act
+              key-list
+            (to-key-list:conv:p key-list.u.bespoke.act)
+          ==
+          ::
+            %feed
+          :-  ~
+          %=    u.bespoke.act
+              feed
+            (to-feed:conv:p feed.u.bespoke.act)
+          ==
+          ::
+            %retweet
+          :-  ~
+          %=    u.bespoke.act
+              ref
+            (to-key:conv:p ref.u.bespoke.act)
+          ==
+        ==    
+        ::
           append-to
         ;;  (list [%collection =ship =cord time=cord])
         (to-key-list:conv:p append-to.act)
@@ -924,6 +951,22 @@
   :-  (crip p.almost-flag)
   `@da`(slav %ud (crip (slag 1 q.almost-flag)))
 ::
+::  used in groups-chat-msg %temp item keys
+++  cord-to-channel-id
+  |=  =cord
+  ^-  [channel-name=term =ship =time]
+  =+  tap=(trip cord)
+  =+  (find ['/']~ tap)
+  ?~  -  ~|("invalid cord in key for %groups-chat-msg" !!)
+  =/  [channel=tape ship-time=tape]  (trim u.- tap)
+  =+  new-tap=(slag 1 ship-time)
+  =+  (find ['/']~ new-tap)
+  ?~  -  ~|("invalid cord in key for %groups-chat-msg" !!)
+  =/  [ship=tape time=tape]  (trim u.- new-tap)
+  :+  (crip channel)
+    `@p`(slav %p (crip ship))
+  `@da`(slav %ud (crip (slag 1 time)))
+::
 ::  portal-manager only needs to do funky stuff with %temp items
 ++  sub
   |=  [act=action:m:p]
@@ -958,6 +1001,7 @@
                                       =(%group struc.new-key)  
                                       =(%groups-diary-note struc.new-key)
                                       =(%groups-heap-curio struc.new-key)
+                                      =(%groups-chat-msg struc.new-key)
                                   ==
                                 [%collection our.bowl '' 'all']~
                               ~
@@ -966,6 +1010,12 @@
                           ==
   ?+    struc.new-key    !!    
     ::  
+      %groups-chat-msg
+    =+  (cord-to-channel-id cord.key.act)
+    =.  bespoke  =,  d:m:p
+      [%groups-chat-msg *flag:n [ship.key.act -.-] +.- *content:w 0 0]
+    (~(act cards:p [our.bowl %portal-store]) create-empty-temp)^~
+    ::
       %groups-diary-note
     =+  (cord-to-channel-time cord.key.act)
     =.  bespoke  =,  d:m:p

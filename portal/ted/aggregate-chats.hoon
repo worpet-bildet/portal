@@ -113,7 +113,7 @@
     :-  %portal-action
     !>  
     ^-  action:mov
-    :*  %create  `our  ~  `col-name  ~  ~
+    :*  %create  `our  ~  `col-name  ~
             `[%collection '' '' '' ~]
             ~  ~  ~
         ==
@@ -126,7 +126,7 @@
     :-  %portal-action
     !>  
     ^-  action:mov
-    :*  %edit  [%collection our '' col-name]  ~  ~
+    :*  %edit  [%collection our '' col-name]  ~  
             `[%collection ~ ~ ~ `*key-list:d:mov]
         ==
   ::
@@ -150,7 +150,7 @@
     :-  %portal-action
     !>  
     ^-  action:mov
-    :*  %create  `our  ~  `item-time  ~  ~
+    :*  %create  `our  ~  `item-time  ~
         :-  ~  
         :*  %groups-chat-msg  
             group:perm:(~(got by chatmap) flag)
