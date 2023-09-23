@@ -67,7 +67,8 @@
       .filter((a) => !!a)
       .filter((a, idx) => {
         return globalFeed().findIndex((b) => b.time === a.time) === idx;
-      });
+      })
+      .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
 
     // Get the latest post, if it was more than six hours ago, send another sub
     if (
