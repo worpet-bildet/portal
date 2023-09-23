@@ -1,3 +1,4 @@
+import { Item } from '$types/portal/item';
 import { ContactRolodex } from '$types/landscape/contact';
 
 import fuzzy from 'fuzzy';
@@ -11,10 +12,7 @@ export const isSubmitHotkey = (e: KeyboardEvent) => {
 };
 
 export const checkIfInstalled = (s, desk, cord, isInstalling = false) => {
-  return (
-    (!isInstalling && !!s.apps?.[desk]) ||
-    (s.apps?.[cord]?.chad?.hasOwnProperty('site') && !!s.apps?.[desk])
-  );
+  return s.apps?.[desk] || s.apps?.[cord] || isInstalling;
 };
 
 export const getMeta = (item) => {
@@ -399,6 +397,24 @@ export const isHappeningSoon = (events) => {
     formattedEvents.some((event) => event.happeningSoon),
     formattedEvents,
   ];
+};
+
+// Fetch from the state everything which contains the search string, and order
+// them by the most recent first
+export const lc = (s: string) => (s ? s.toLowerCase() : '');
+export const contains = (haystack: string, needle: string) =>
+  lc(haystack).includes(lc(needle.trim()));
+export const matchItem = (i: Item, needle: string) => {
+  return (
+    contains(i?.keyObj?.ship, needle) ||
+    contains(i?.keyObj?.cord, needle) ||
+    contains(i?.keyObj?.time, needle) ||
+    contains(i?.bespoke?.title, needle) ||
+    contains(i?.bespoke?.description, needle) ||
+    contains(i?.bespoke?.blurb, needle) ||
+    contains(i?.bespoke?.treaty?.title, needle) ||
+    contains(i?.bespoke?.treaty?.info, needle)
+  );
 };
 
 export const formatId = (id) => {

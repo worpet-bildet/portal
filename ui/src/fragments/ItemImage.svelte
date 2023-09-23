@@ -7,6 +7,11 @@
   export let title = '';
   export let color = '#000000';
 
+  let container;
+  const squareImage = () => {
+    container.style.height = `${container.clientWidth}px`;
+  };
+
   let primaryColor, secondaryColor;
   $: {
     primaryColor = formatColor(color);
@@ -14,13 +19,14 @@
   }
 </script>
 
-<div class="relative h-full">
+<div class="relative h-full" bind:this={container}>
   <img alt="n/a" src={placeholder} class="w-full h-full object-cover" on:load />
   {#if isUrl(image)}
     <img
       src={image}
       class="w-full h-full object-cover absolute top-0 left-0"
       alt={title}
+      on:load={squareImage}
     />
   {:else}
     <div

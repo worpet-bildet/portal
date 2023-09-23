@@ -1,15 +1,15 @@
 <svg
-  viewBox="0 0 24 24"
+  width="48"
+  height="48"
+  viewBox="0 0 48 48"
+  fill="none"
   xmlns="http://www.w3.org/2000/svg"
-  class="dark:stroke-white"
-  ><path
-    d="M2,12A11.2,11.2,0,0,1,13,1.05C12.67,1,12.34,1,12,1a11,11,0,0,0,0,22c.34,0,.67,0,1-.05C6,23,2,17.74,2,12Z"
-    ><animateTransform
-      attributeName="transform"
-      type="rotate"
-      dur="0.6s"
-      values="0 12 12;360 12 12"
-      repeatCount="indefinite"
-    /></path
-  ></svg
 >
+  <path
+    d="M24 4V8M34 6.68L32 10.144M41.32 14L37.856 16M44 24H40M41.32 34L37.856 32M34 41.32L32 37.856M24 44V40M14 41.32L16 37.856M6.68 34L10.144 32M4 24H8M6.68 14L10.144 16M14 6.68L16 10.144"
+    stroke="#B1B1B1"
+    stroke-width="4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>

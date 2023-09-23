@@ -27,7 +27,7 @@ module.exports = {
 
         panel: '#FAFAFA',
         panelhover: '#EFEFEF',
-        indicator: '#EAEAEA',
+        indicator: '#CFE9FF',
         indicatortext: '#8E8E8E',
         panelicon: '#B1B1B1',
         navtext: '#636363',
@@ -38,8 +38,15 @@ module.exports = {
         strucpill: '#F1F1F1',
         strucpilltext: '#ABABAB',
         posttext: '#858585',
-        coverDefaultGradientBottom: '##C471F5',
-        coverDefaultGradientTop: '##FA71CD',
+        coverDefaultGradientBottom: '#C471F5',
+        coverDefaultGradientTop: '#FA71CD',
+        glass: '#FFFFFF30',
+        glasstext: '#FFFFFFCC',
+        tertiary: '#909090',
+        flavour: '#6D6D6D',
+
+        navitemactive: '#E5F3FF',
+        navtextactive: '#2D9AFF',
 
         grey: '#696969',
         dark: '#00000080',

@@ -8,7 +8,8 @@
   import Inline from './Inline.svelte';
 
   export let heart: CurioHeart;
-  export let group = '';
+  export let group: string = '';
+  export let isExpanded: boolean = false;
 
   let { author, content } = heart;
 
@@ -30,7 +31,7 @@
 {:else if !content}
   <div>Contacting {preSig(author)}...</div>
 {:else}
-  <GroupsWrapper {author} {group}>
+  <GroupsWrapper {author} {group} {isExpanded} on:expand>
     {#if content?.inline}
       {#each content.inline as inline}
         <Inline {inline} />

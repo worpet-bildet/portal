@@ -17,7 +17,7 @@
     <img
       src={block['image']['src']}
       alt={block['image']['alt']}
-      class="object-cover rounded-md my-2"
+      class="object-cover rounded-xl my-2"
     />
   </a>
 {:else if block.hasOwnProperty('rule')}

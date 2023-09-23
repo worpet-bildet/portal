@@ -229,13 +229,11 @@ export const sortFeedItemsByTime = (items: FeedItem[]) => {
 };
 
 export const getCuratorFeed = (patp: string): FeedItem[] => {
-  return sortFeedItemsByTime(items()[feedKey(patp)]?.bespoke?.feed);
+  return items()[feedKey(patp)]?.bespoke?.feed;
 };
 
 export const getGlobalFeed = (): FeedItem[] => {
-  return sortFeedItemsByTime(
-    items()[globalFeedKey(config.indexer)]?.bespoke?.feed
-  );
+  return items()[globalFeedKey(config.indexer)]?.bespoke?.feed;
 };
 
 export const getCuratorCollections = (patp: string): ItemKey[] => {
@@ -269,9 +267,16 @@ export const getApp = (appKey: string): Item => {
   return items()[`/app/${appKey}/`];
 };
 
-export const getItem = (listKey: string | ItemKey): Item => {
-  if (typeof listKey === 'object') return items()[keyStrFromObj(listKey)];
-  return items()[listKey];
+const normaliseKeyObj = (key: string | ItemKey): ItemKey => {
+  if (typeof key === 'string') return keyStrToObj(key);
+  return key;
+};
+
+export const getItem = (key: string | ItemKey): Item => {
+  const keyObj = normaliseKeyObj(key);
+  if (keyObj.struc === 'ship') return getCurator(keyObj.ship) as Item;
+  if (typeof key === 'object') return items()[keyStrFromObj(key)];
+  return items()[key];
 };
 
 export const getCollectedItemLeaderboard = (
@@ -291,6 +296,7 @@ export const getCollectedItemLeaderboard = (
           .filter(
             (k: ItemKey) =>
               k?.struc !== 'collection' &&
+              k?.struc !== 'ship' &&
               !(
                 k?.cord === 'portal' &&
                 k?.ship === '~worpet-bildet' &&
@@ -438,7 +444,7 @@ export const getNotifications = (ship: string): [ItemKey, ItemKey][] => {
 
 // TODO: define SubscriptionEvent type
 export const handleSubscriptionEvent = (event, type: string) => {
-  console.log({ event, type });
+  console.log({ ...event, type });
   switch (type) {
     case 'portal-update':
       state.update((s) => ({

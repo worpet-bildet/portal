@@ -6,27 +6,20 @@
   import Inline from './Inline.svelte';
 
   export let essay: NoteEssay;
-  export let group = '';
+  export let group: string = '';
+  export let isExpanded: boolean = false;
 
   const { author, content, title, image, sent } = essay;
 </script>
 
-<GroupsWrapper {group} {author}>
-  <div class="w-full flex flex-col">
-    {#if image}
-      <img src={image} class="object-cover rounded-md" alt="cover" />
-    {/if}
-    <div class="text-2xl font-bold py-4">{title}</div>
-    <div class="text-base">
-      {#if content?.length > 0}
-        {#each content as c}
-          {#if 'inline' in c}
-            <Inline {...c} />
-          {:else if 'block' in c}
-            <Block {...c} />
-          {/if}
-        {/each}
+<GroupsWrapper {group} {author} {image} {title} {isExpanded} on:expand>
+  {#if content?.length > 0}
+    {#each content as c}
+      {#if 'inline' in c}
+        <Inline {...c} />
+      {:else if 'block' in c}
+        <Block {...c} />
       {/if}
-    </div>
-  </div>
+    {/each}
+  {/if}
 </GroupsWrapper>

@@ -30,6 +30,7 @@
     SidebarGroup,
     IconButton,
   } from '@fragments';
+  import gradient from '@assets/gradient.svg';
 
   export let params;
   let { patp } = params;
@@ -82,7 +83,7 @@
   {@const { title, nickname, cover, image, description, color } =
     getMeta(curator)}
   <div class="grid grid-cols-12 gap-x-8 gap-y-8">
-    <div class="col-span-12 w-full h-40">
+    <div class="col-span-12 w-full h-48">
       {#if cover}
         <img
           src={cover}
@@ -90,8 +91,13 @@
           class="absolute top-0 left-0 w-full h-72 object-cover"
         />
       {:else}
-        <div
+        <!-- <div
           class="absolute top-0 left-0 w-full h-72 bg-gradient-to-t from-coverDefaultGradientBottom to-coverDefaultGradientTop"
+        /> -->
+        <img
+          src={gradient}
+          alt="default profile banner"
+          class="absolute top-0 left-0 w-full h-72 object-cover"
         />
       {/if}
       <div
@@ -174,34 +180,34 @@
           {/if}
         </div>
       </div>
-      <div class="col-span-4 flex flex-col gap-8">
+      <div class="col-span-4 flex flex-col gap-8 pt-4">
         {#if curator?.bespoke?.groups?.length > 0}
-          <div class="grid gap-y-4">
+          <div>
             <div class="text-lg font-bold">Favourite Groups</div>
-            {#each curator.bespoke.groups as key}
-              <GroupPreview
-                key={{
-                  struc: 'group',
-                  ship: key.split('/')[0],
-                  cord: key.split('/')[1],
-                  time: '',
-                }}
-              />
+            <div class="flex flex-col gap-2">
+              {#each curator.bespoke.groups as key}
+                <ItemPreview
+                  key={{
+                    struc: 'group',
+                    ship: key.split('/')[0],
+                    cord: key.split('/')[1],
+                    time: '',
+                  }}
+                />
+              {/each}
+            </div>
+          </div>
+        {/if}
+        {#if sortedRecommendations.length > 0}
+          <div>
+            <div class="text-lg font-bold">More from {nickname || patp}</div>
+            {#each sortedRecommendations as [recommendation]}
+              <ItemPreview key={keyStrToObj(recommendation)} />
             {/each}
           </div>
         {/if}
       </div>
     </div>
-    <RightSidebar>
-      {#if sortedRecommendations.length > 0}
-        <SidebarGroup>
-          <div class="text-lg mx-1">More from {nickname || patp}</div>
-          {#each sortedRecommendations as [recommendation]}
-            <ItemPreview key={keyStrToObj(recommendation)} small />
-          {/each}
-        </SidebarGroup>
-      {/if}
-    </RightSidebar>
   </div>
 {:else}
   Loading...

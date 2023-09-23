@@ -9,7 +9,6 @@
   import Commands from './command';
   import CommandList from './CommandList.svelte';
   import InlineItemReference from './InlineItemReference';
-  import BlockGroupsReference from './BlockGroupsReference';
   import { sigVisible, sigItems, sigProps } from './stores';
 
   const dispatch = createEventDispatcher();
@@ -78,7 +77,7 @@
           suggestion,
         }),
         Placeholder.configure({
-          placeholder: "Type '~' to insert a reference",
+          placeholder: placeholder ?? "Type '~' to insert a reference",
         }),
       ],
       onTransaction: () => {

@@ -1,44 +1,22 @@
 <script lang="ts">
   import { ItemKey, Item } from '$types/portal/item';
 
-  import linkifyHtml from 'linkify-html';
-  import DOMPurify from 'dompurify';
-  import { link } from 'svelte-spa-router';
+  import { link, location, push } from 'svelte-spa-router';
   import { format } from 'timeago.js';
-  import { fade, slide } from 'svelte/transition';
+  import { fade } from 'svelte/transition';
   import { createEventDispatcher } from 'svelte';
   import { api, me } from '@root/api';
   import {
     state,
     getItem,
     keyStrFromObj,
-    getCurator,
     getReplies,
     getRepliesByTo,
-    getPostChain,
     getLikes,
   } from '@root/state';
-  import {
-    getMeta,
-    fromUrbitTime,
-    getAnyLink,
-    isImage,
-    isValidPatp,
-    formatPatp,
-    collapseNames,
-  } from '@root/util';
-  import { ItemPreview, Sigil, FeedPostForm, InlineShip } from '@components';
-  import {
-    ChatIcon,
-    LikeIcon,
-    LikedIcon,
-    IconButton,
-    LinkPreview,
-    StarRating,
-    EthereumIcon,
-    VerticalCollapseIcon,
-    VerticalExpandIcon,
-  } from '@fragments';
+  import { getMeta, fromUrbitTime, getAnyLink, isValidPatp } from '@root/util';
+  import { ItemPreview, InlineShip } from '@components';
+  import { ChatIcon, LikeIcon, LikedIcon, LinkPreview } from '@fragments';
   import InlineItem from '../InlineItem.svelte';
 
   export let key: ItemKey;
@@ -54,7 +32,7 @@
   let showReplies = false;
 
   const loadPost = (_k) => {
-    item = getItem(keyStrFromObj(key));
+    item = getItem(key);
     if ($state.isLoaded && !item) {
       return api.portal.do.subscribe(key);
     }
@@ -138,6 +116,8 @@
       postContainer.classList.add('max-h-96');
     }
   }
+  $: expandPreview = $location.includes(keyStrFromObj(key));
+  $: previewNavigate = () => push(keyStrFromObj(key));
 </script>
 
 {#if item}
@@ -145,7 +125,7 @@
   {@const blurbLink = getAnyLink(blurb)}
   <div class="flex flex-col gap-2 w-full" in:fade>
     <div class="flex items-center justify-between px-3">
-      <div class="flex items-center gap-1 text-sm">
+      <div class="flex items-center gap-1">
         <InlineShip patp={ship} />
       </div>
       <div class="text-xs text-light">{format(createdAt)}</div>
@@ -169,7 +149,7 @@
           {/each}
         </p>
         {#if ref}
-          <ItemPreview key={ref} />
+          <ItemPreview key={ref} {expandPreview} on:expand={previewNavigate} />
         {/if}
         {#if blurbLink}
           <LinkPreview url={blurbLink} />

@@ -34,7 +34,7 @@
         <Sigil patp={me} />
       </div>
       <div class="col-span-11">
-        <TextArea bind:value={blurb} placeholder="Share a limerick, maybe" />
+        <TextArea bind:content={blurb} placeholder="Why do you like {title}?" />
       </div>
       <div class="col-span-11 col-start-2">
         <ItemPreview {key} clickable={false} />

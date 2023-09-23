@@ -20,27 +20,48 @@
     GroupsHeapCurio,
     GroupsDiaryNote,
   } from '@components';
-  import {
-    ItemImage,
-    TrashIcon,
-    EditIcon,
-    ExternalDestinationIcon,
-  } from '@fragments';
+  import { BinIcon, ItemImage, LinkIcon, PostIcon } from '@fragments';
 
-  export let key: ItemKey;
+  import GroupPreview from './GroupPreview.svelte';
+  import AppPreview from './AppPreview.svelte';
+  import SidebarPreview from './SidebarPreview.svelte';
+
+  export let key: ItemKey | string;
 
   export let clickable = true;
   export let removable = false;
   export let editable = false;
   export let selectable = false;
   export let selected = false;
-  export let small = false;
+  export let expandPreview = false;
 
   let item: Item;
   let isInstalled: boolean;
   let joinedDetails;
   let groupKey: string;
   let isGroupsItem: boolean = false;
+
+  // TODO: something like this instead of the ugly if statements
+  let previews = {
+    app: {
+      component: SidebarPreview,
+      action: () => {},
+      actionText: ['Install', 'Installing...'],
+      isActionEnabled: (item) => {
+        return !checkIfInstalled(state, item?.keyObj?.ship, item?.keyObj?.cord);
+      },
+    },
+    group: {
+      component: SidebarPreview,
+      action: () => {},
+      actionText: ['Join', 'Joining'],
+      isActionEnabled: (item) => {
+        return !getJoinedGroupDetails(
+          `${item?.keyObj?.ship}/${item?.keyObj?.cord}`
+        );
+      },
+    },
+  };
 
   let groupsStrucs = [
     'groups-chat-msg',
@@ -56,7 +77,7 @@
    * instead have a component for each type of item.
    */
 
-  const loadItem = (key: ItemKey) => {
+  const loadItem = (key: ItemKey | string) => {
     if (typeof key === 'string') {
       key = keyStrToObj(key);
       item = getItem(key);
@@ -75,7 +96,7 @@
     }
     if (item.keyObj.struc === 'app')
       isInstalled = checkIfInstalled(
-        state,
+        $state,
         item?.keyObj?.ship,
         item?.keyObj?.cord
       );
@@ -112,7 +133,7 @@
         dispatch('selected', { key, selected });
       }
     }}
-    class="grid grid-cols-6 w-full items-start gap-2 p-2 border dark:hover:bg-transparent hover:duration-500 rounded-lg text-sm text-left"
+    class={`flex w-full items-start gap-2 p-2 dark:hover:bg-transparent hover:duration-500 rounded-lg text-sm text-left break-words [word-break:break-word] ${$$props.class}`}
     class:cursor-default={!clickable}
     class:hover:bg-panels-hover={clickable}
     class:dark:hover:border-white={clickable}
@@ -126,23 +147,25 @@
         bespoke: { content, id, group },
       } = item}
       {@const author = id.split('/')[0]}
-      <GroupsChatMessage {author} {group} {content} />
+      <GroupsChatMessage
+        {author}
+        {group}
+        {content}
+        isExpanded={expandPreview}
+        on:expand
+      />
     {:else if struc === 'groups-heap-curio'}
       {@const {
         bespoke: { heart, group },
       } = item}
-      <GroupsHeapCurio {heart} {group} />
+      <GroupsHeapCurio {heart} {group} isExpanded={expandPreview} on:expand />
     {:else if struc === 'groups-diary-note'}
       {@const {
         bespoke: { essay, group },
       } = item}
-      <GroupsDiaryNote {essay} {group} />
+      <GroupsDiaryNote {essay} {group} isExpanded={expandPreview} on:expand />
     {:else}
-      <div
-        class="border overflow-hidden rounded-md self-center"
-        class:col-span-1={!small}
-        class:col-span-2={small}
-      >
+      <div class="w-12 h-12 overflow-hidden rounded-md self-center">
         {#if (struc === 'ship' || struc === 'retweet') && !image}
           <Sigil patp={ship} />
         {:else if struc === 'collection' && !image}
@@ -162,29 +185,22 @@
         {/if}
       </div>
       <div
-        class="flex flex-col items-start gap-2 overflow-hidden self-center"
-        class:col-span-5={!small}
-        class:col-span-4={small}
+        class="flex justify-between items-center grow gap-2 overflow-hidden self-center"
       >
-        <div class="flex items-center gap-2">
-          <div
-            class="font-bold line-clamp-1 hover:line-clamp-none"
-            class:text-sm={small}
-            class:text-xl={!small}
-          >
-            {title || ship}
-          </div>
-          {#if (struc === 'other' && link) || struc === 'blog'}
-            <div class="w-5">
-              <ExternalDestinationIcon />
+        <div class="flex flex-col">
+          <div class="flex items-center gap-2">
+            <div class="font-bold line-clamp-1">
+              {title || ship}
             </div>
-          {/if}
-        </div>
-        <div
-          class:line-clamp-1={small}
-          class="line-clamp-2 hover:line-clamp-none"
-        >
-          {blurb || description || ''}
+            {#if (struc === 'other' && link) || struc === 'blog'}
+              <div class="w-5">
+                <LinkIcon />
+              </div>
+            {/if}
+          </div>
+          <div class="line-clamp-2">
+            {blurb || description || ''}
+          </div>
         </div>
         {#if struc === 'app' && !isInstalled}
           <button
@@ -194,7 +210,7 @@
                 `${window.location.origin}/apps/grid/search/${ship}/apps`
               );
             }}
-            class="bg-black rounded-md text-xs font-bold px-2 mr-2 dark:bg-white text-white dark:text-black hover:bg-grey dark:hover:bg-offwhite w-14 h-6"
+            class="bg-black rounded-md text-xs font-bold px-2 dark:bg-white text-white dark:text-black hover:bg-grey dark:hover:bg-offwhite w-14 h-6"
             >Install
           </button>
         {/if}
@@ -205,12 +221,12 @@
               event.currentTarget.innerHTML = 'Joining';
               await api.urbit.do.joinGroup(groupKey).then(refreshGroups);
             }}
-            class="bg-black rounded-md text-xs font-bold px-2 mr-2 dark:bg-white text-white dark:text-black hover:bg-grey dark:hover:bg-offwhite w-14 h-6"
+            class="bg-black rounded-md text-xs font-bold px-2 dark:bg-white text-white dark:text-black hover:bg-grey dark:hover:bg-offwhite w-14 h-6"
             >Join
           </button>
         {/if}
       </div>
-      {#if editable || removable || struc === 'app' || struc === 'group'}
+      {#if editable || removable}
         <div class="col-span-1 col-start-7 flex flex-col gap-2 self-center">
           {#if editable}
             <button
@@ -218,7 +234,7 @@
               on:click|stopPropagation
               on:click={edit}
             >
-              <EditIcon />
+              <PostIcon />
             </button>
           {/if}
           {#if removable}
@@ -227,7 +243,7 @@
               on:click|stopPropagation
               on:click={remove}
             >
-              <TrashIcon />
+              <BinIcon />
             </button>
           {/if}
         </div>

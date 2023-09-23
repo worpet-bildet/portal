@@ -1,12 +1,15 @@
-import { getCollectedItemLeaderboard, getItem } from '@root/state';
-import { getMeta } from '@root/util';
+import {
+  getCollectedItemLeaderboard,
+  getItem,
+  items as getItems,
+} from '@root/state';
+import { getMeta, matchItem } from '@root/util';
 
 import { sigVisible, sigItems, sigLocation, sigProps } from './stores';
 
 export default {
   items: ({ query }) => {
-    const items = Object.values(getCollectedItemLeaderboard())
-      .map((i) => getItem(i[0]))
+    const items = Object.values(getItems())
       .filter((i) => ['app', 'group', 'collection'].includes(i?.keyObj?.struc))
       .map(getMeta)
       .filter((i) => !!i.title)
@@ -30,8 +33,11 @@ export default {
         },
       }));
 
+    // seems dumb that we go back and forth between item and meta
     return items
-      .filter((i) => i.title.toLowerCase().startsWith(query.toLowerCase()))
+      .filter((i) => {
+        return matchItem(getItem(i.keyStr), query);
+      })
       .slice(0, 10);
   },
 
@@ -41,11 +47,19 @@ export default {
         let editor = props.editor;
         let range = props.range;
         let location = props.clientRect();
+
+        const parent = document.getElementById('main');
+        const parentPos = parent.getBoundingClientRect();
+        const relativePos = { y: 0, x: 0 };
+
+        relativePos.y = location.top + parent.scrollTop;
+        relativePos.x = location.left - parentPos.left + 15;
+
         sigProps.set({ editor, range });
         sigVisible.set(true);
         sigLocation.set({
-          x: location.x,
-          y: location.y,
+          x: relativePos.x,
+          y: relativePos.y,
           height: location.height,
         });
         sigItems.set(props.items);

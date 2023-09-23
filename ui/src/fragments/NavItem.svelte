@@ -9,23 +9,23 @@
 </script>
 
 <button
-  class="flex items-center justify-between py-2 px-3 hover:bg-panelhover rounded-lg w-full"
+  class="flex items-center justify-between py-2 px-3 hover:bg-navitemactive rounded-lg w-full"
   on:mouseenter={() => (hovering = true)}
   on:mouseleave={() => (hovering = false)}
   on:click
 >
   <div
-    class="flex gap-3"
+    class="flex gap-3 items-center"
     class:text-navtext={!hovering}
-    class:text-black={hovering}
+    class:text-navtextactive={hovering}
   >
-    <div class:text-panelicon={!hovering} class:text-black={hovering}>
+    <div class:text-panelicon={!hovering} class:text-navtextactive={hovering}>
       <svelte:component this={icon} />
     </div>
-    <div class="text-sm">{title}</div>
+    <div>{title}</div>
   </div>
   {#if unreadCount > 0}
-    <div class="bg-indicator text-indicatortext text-xs px-2 py-1 rounded-md">
+    <div class="bg-indicator text-navtextactive text-xs px-2 py-1 rounded-md">
       {unreadCount}
     </div>
   {/if}

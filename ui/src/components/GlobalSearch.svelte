@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { Item, ItemKey } from '$types/portal/item';
+  import { Item } from '$types/portal/item';
 
-  import { push } from 'svelte-spa-router';
+  import { push, location } from 'svelte-spa-router';
   import { fade } from 'svelte/transition';
 
   import { me } from '@root/api';
@@ -16,11 +16,19 @@
     getCurator,
     getGlobalFeed,
   } from '@root/state';
-  import { getMeta, formatPatp, getPossiblePatps } from '@root/util';
+  import {
+    getMeta,
+    formatPatp,
+    getPossiblePatps,
+    matchItem,
+    contains,
+  } from '@root/util';
 
   import { Sigil } from '@components';
-  import { PlaceholderIcon } from '@fragments';
+  import { ActivityIcon, ExploreIcon, FeedIcon, SearchIcon } from '@fragments';
   import ItemImage from '@root/fragments/ItemImage.svelte';
+
+  export let isGlassy: boolean = false;
 
   let searchResults: {
     items: Item[];
@@ -36,6 +44,7 @@
 
   let all: Item[];
   let collectedItems: Item[];
+  let numResults: number = 0;
 
   const setDefaultResults = () => {
     searchResults = {
@@ -45,16 +54,16 @@
         .slice(0, 3)
         .map((patp) => getCurator(`~${patp}`)),
       pages: [
-        { title: 'Feed', icon: PlaceholderIcon, action: () => push('/') },
+        { title: 'Feed', icon: FeedIcon, action: () => push('/') },
         {
           title: 'Activity',
-          icon: PlaceholderIcon,
+          icon: ActivityIcon,
           unreadCount: 4,
           action: () => push('/activity'),
         },
         {
           title: 'Explore',
-          icon: PlaceholderIcon,
+          icon: ExploreIcon,
           action: () => push('/explore'),
         },
       ],
@@ -82,23 +91,6 @@
    * modal.
    */
 
-  // Fetch from the state everything which contains the search string, and order
-  // them by the most recent first
-  const lc = (s: string) => (s ? s.toLowerCase() : '');
-  const contains = (s: string) => lc(s).includes(lc(searchString.trim()));
-  const match = (i: Item) => {
-    return (
-      contains(i?.keyObj?.ship) ||
-      contains(i?.keyObj?.cord) ||
-      contains(i?.keyObj?.time) ||
-      contains(i?.bespoke?.title) ||
-      contains(i?.bespoke?.description) ||
-      contains(i?.bespoke?.blurb) ||
-      contains(i?.bespoke?.treaty?.title) ||
-      contains(i?.bespoke?.treaty?.info)
-    );
-  };
-
   const updateResults = (_search) => {
     if (!_search) return setDefaultResults();
     searchResults = {
@@ -106,13 +98,15 @@
         .filter((item) => {
           return (
             ['app', 'group', 'collection'].includes(item?.keyObj?.struc) &&
-            match(item)
+            matchItem(item, searchString)
           );
         })
         .slice(0, 5),
       posts: all
         .filter((item) => {
-          return item?.keyObj?.struc === 'other' && match(item);
+          return (
+            item?.keyObj?.struc === 'other' && matchItem(item, searchString)
+          );
         })
         .slice(0, 5),
       ships: getPossiblePatps(searchString, contacts())
@@ -120,19 +114,11 @@
         .slice(0, 5),
       pages: searchResults.pages
         .filter((page) => {
-          return contains(page.title);
+          return contains(page.title, searchString);
         })
         .slice(0, 5),
     };
-  };
-
-  const numResults = () => {
-    return (
-      searchResults.items.length +
-      searchResults.posts.length +
-      searchResults.ships.length +
-      searchResults.pages.length
-    );
+    searchResults = searchResults;
   };
 
   const handleKeydownGlobal = (e: KeyboardEvent) => {
@@ -146,7 +132,7 @@
       return searchInput.blur();
     }
     if (e.key === 'ArrowDown') {
-      return (selectedIndex = Math.min(selectedIndex + 1, numResults() - 1));
+      return (selectedIndex = Math.min(selectedIndex + 1, numResults - 1));
     }
     if (e.key === 'ArrowUp') {
       return (selectedIndex = Math.max(selectedIndex - 1, 0));
@@ -166,6 +152,21 @@
   let buttons: HTMLButtonElement[] = [];
 
   $: updateResults(searchString);
+  $: numResults =
+    searchResults.items.length +
+    searchResults.posts.length +
+    searchResults.ships.length +
+    searchResults.pages.length;
+
+  // feels dumb
+  $: glass = isGlassy;
+  $: if (isGlassy) {
+    searchInput.onfocus = () => (glass = false);
+    searchInput.onblur = () => (glass = true);
+  } else if (searchInput) {
+    searchInput.onfocus = () => {};
+    searchInput.onblur = () => {};
+  }
 </script>
 
 <svelte:window on:keydown={handleKeydownGlobal} />
@@ -178,23 +179,33 @@
 {/if}
 <div class="flex flex-col w-full gap-4 relative z-20">
   <div
-    class="flex w-full justify-between rounded-lg bg-input border p-3"
+    class="flex w-full justify-between rounded-lg border p-3"
     class:z-20={focused}
+    class:bg-input={!glass}
+    class:bg-glass={glass}
+    class:backdrop-blur-md={glass}
   >
-    <div class="flex items-center gap-4 w-full">
-      <PlaceholderIcon />
+    <div class="flex items-center gap-4 w-full" class:text-glasstext={glass}>
+      <SearchIcon />
       <input
         on:focus={() => (focused = true)}
         on:blur={reset}
         bind:value={searchString}
         type="text"
         class="w-full bg-transparent outline-none mr-2"
+        class:placeholder:text-glasstext={glass}
         placeholder="Search Portal..."
         bind:this={searchInput}
         on:keydown|capture={handleKeydownInput}
       />
     </div>
-    <div class="bg-indicator text-indicatortext text-xs px-2 py-1 rounded-md">
+    <div
+      class="text-xs px-2 py-1 rounded-md"
+      class:bg-indicator={!glass}
+      class:text-indicatortext={!glass}
+      class:bg-glass={glass}
+      class:text-glasstext={glass}
+    >
       ⌘K
     </div>
   </div>
@@ -203,8 +214,15 @@
       <div
         class="flex flex-col border rounded-lg p-3 z-20 absolute bg-white w-full gap-3 drop-shadow-search"
       >
-        <div class="flex flex-col gap-2">
-          {#if searchResults.items.length > 0}
+        {#if numResults === 0}
+          <div
+            class="flex items-center justify-center h-full w-full text-black py-5"
+          >
+            No results found
+          </div>
+        {/if}
+        {#if searchResults.items.length > 0}
+          <div class="flex flex-col gap-2">
             <div class="text-light">Apps, Groups & Collections</div>
             {#each searchResults.items as item, i (keyStrFromObj(item.keyObj))}
               {@const { title, image, struc, color } = getMeta(item)}
@@ -229,11 +247,11 @@
                 </div>
               </button>
             {/each}
-          {/if}
-        </div>
+          </div>
+        {/if}
 
-        <div class="flex flex-col gap-2">
-          {#if searchResults.posts.length > 0}
+        {#if searchResults.posts.length > 0}
+          <div class="flex flex-col gap-2">
             <div class="text-light">Recent posts</div>
             {#each searchResults.posts as item, _i (keyStrFromObj(item.keyObj))}
               {@const i = _i + searchResults.items.length}
@@ -252,11 +270,11 @@
                 </div>
               </button>
             {/each}
-          {/if}
-        </div>
+          </div>
+        {/if}
 
-        <div class="flex flex-col gap-2">
-          {#if searchResults.ships.length > 0}
+        {#if searchResults.ships.length > 0}
+          <div class="flex flex-col gap-2">
             <div class="text-light">Ships</div>
             {#each searchResults.ships as item, _i (keyStrFromObj(item.keyObj))}
               {@const { nickname, ship } = getMeta(item)}
@@ -278,11 +296,11 @@
                 </div>
               </button>
             {/each}
-          {/if}
-        </div>
+          </div>
+        {/if}
 
-        <div class="flex flex-col gap-2">
-          {#if searchResults.pages.length > 0}
+        {#if searchResults.pages.length > 0}
+          <div class="flex flex-col gap-2">
             <div class="text-light">Pages</div>
             {#each searchResults.pages as page, _i (page.title)}
               {@const i =
@@ -298,7 +316,7 @@
               >
                 <div class="flex items-center gap-4">
                   <div class="w-7 h-full overflow-hidden rounded-sm">
-                    <PlaceholderIcon />
+                    <SearchIcon />
                   </div>
                   <div>{page.title}</div>
                 </div>
@@ -311,8 +329,8 @@
                 {/if}
               </button>
             {/each}
-          {/if}
-        </div>
+          </div>
+        {/if}
       </div>
     {/if}
   </div>

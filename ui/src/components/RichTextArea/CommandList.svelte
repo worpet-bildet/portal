@@ -13,13 +13,8 @@
 
 {#if $sigVisible}
   <div
-    class="absolute flex flex-col bg-white drop-shadow-search w-96 max-w-full rounded-lg overflow-y-auto"
-    style="left: {$sigLocation.x}px; top: {$sigLocation.y +
-      $sigLocation.height +
-      384 >
-    height
-      ? $sigLocation.y - $sigLocation.height - 384
-      : $sigLocation.y + $sigLocation.height}px;"
+    class="absolute flex flex-col bg-white drop-shadow-search w-96 max-w-full rounded-lg overflow-y-auto z-20"
+    style="left: {$sigLocation.x}px; top: {$sigLocation.y + 30}px;"
   >
     <div class="p-2 text-sm text-slate-500">Items</div>
     {#each $sigItems as { title, struc, image, color, command }, i}

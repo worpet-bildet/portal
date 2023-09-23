@@ -1,13 +1,25 @@
 <script lang="ts">
   import { link } from 'svelte-spa-router';
+  import { createEventDispatcher } from 'svelte';
   import { getGroup } from '@root/state';
   import { getMeta, preSig, formatPatp } from '@root/util';
   import { ItemImage } from '@fragments';
+  const dispatch = createEventDispatcher();
 
   export let group: string = '';
   export let author: string = '';
+  export let image: string = '';
+  export let title: string = '';
+  export let isExpanded: boolean = false;
 
   let contentContainer: HTMLDivElement;
+
+  const handleClickExpand = () => dispatch('expand');
+
+  $: isTruncated =
+    !isExpanded &&
+    contentContainer &&
+    contentContainer.scrollHeight > contentContainer.clientHeight;
 </script>
 
 <div class="col-span-6 p-1 rounded-lg gap-2 break-words flex h-full">
@@ -28,8 +40,28 @@
         </a>
       {/if}
     </div>
-    <div class="text-base line-clamp-6" bind:this={contentContainer}>
+    {#if image}
+      <img src={image} class="rounded-2xl overflow-hidden my-2" alt="cover" />
+    {/if}
+    {#if title}
+      <div class="text-2xl font-bold py-2">{title}</div>
+    {/if}
+    <div
+      class="text-base"
+      class:line-clamp-6={!isExpanded}
+      bind:this={contentContainer}
+    >
       <slot />
     </div>
+    {#if isTruncated}
+      <div class="pt-4">
+        <button
+          class="font-bold text-black hover:underline"
+          on:click={handleClickExpand}
+        >
+          Continue reading ->
+        </button>
+      </div>
+    {/if}
   </div>
 </div>

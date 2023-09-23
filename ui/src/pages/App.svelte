@@ -32,7 +32,7 @@
     RightSidebar,
     IconButton,
     ShareIcon,
-    CrossIcon,
+    CancelIcon,
     InstallIcon,
     GlobeIcon,
     ExternalDestinationIcon,
@@ -375,7 +375,7 @@
             </div>
           {/if}
           {#if !isReviewedByMe}
-            <div class="flex flex-col gap-2">
+            <div class="flex flex-col gap-2 pb-8">
               <FeedPostForm
                 on:post={handlePostReview}
                 placeholder="What do you think of {title}?"
@@ -385,7 +385,7 @@
             </div>
           {/if}
           {#if reviews.length > 0}
-            <div class="flex flex-col">
+            <div class="flex flex-col gap-6">
               {#each reviews as review (keyStrFromObj(review))}
                 <div>
                   <FeedPost key={review} showRating={true} />
@@ -450,7 +450,7 @@
         >
         {#if isInstalled}
           <IconButton
-            icon={CrossIcon}
+            icon={CancelIcon}
             on:click={uninstall}
             async
             class="bg-panels dark:bg-transparent dark:border hover:bg-panels-hover dark:hover:border-white"

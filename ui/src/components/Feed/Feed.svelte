@@ -11,14 +11,16 @@
 </script>
 
 {#if feed && feed.length > 0}
-  {#each feed.slice(0, 200) as item (keyStrFromObj(item.key))}
-    <div class="mb-6">
-      <FeedPost
-        key={item.key}
-        on:tipRequest={({ detail: { key } }) => handleTipRequest(key)}
-      />
-    </div>
-  {/each}
+  <div class="flex flex-col gap-12">
+    {#each feed as item (keyStrFromObj(item.key))}
+      <div>
+        <FeedPost
+          key={item.key}
+          on:tipRequest={({ detail: { key } }) => handleTipRequest(key)}
+        />
+      </div>
+    {/each}
+  </div>
   <TipModal bind:handleTipRequest />
 {:else}
   <div class="flex justify-center dark:fill-white mt-20">

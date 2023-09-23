@@ -301,7 +301,7 @@ subqueue.subscribe((q) => {
     sub(q);
   } else {
     if (timeout) clearTimeout(timeout);
-    timeout = setTimeout(() => sub(q), 3 * 1000);
+    timeout = setTimeout(() => sub(q), 3 * 5000);
   }
 });
 

@@ -1,10 +1,7 @@
 <script lang="ts">
   import { ChatMessage } from '$types/landscape/chat';
 
-  import { link } from 'svelte-spa-router';
-  import { getGroup } from '@root/state';
-  import { getMeta, preSig, formatPatp } from '@root/util';
-  import { ItemImage } from '@fragments';
+  import { preSig } from '@root/util';
 
   import GroupsWrapper from './GroupsWrapper.svelte';
   import Inline from './Inline.svelte';
@@ -13,9 +10,10 @@
   export let group: string = '';
   export let author: string = '';
   export let content: ChatMessage;
+  export let isExpanded: boolean = false;
 
   const dropTrailingBreaks = (i) => {
-    if (Array.isArray(i) && i[i.length - 1].hasOwnProperty('break')) {
+    if (Array.isArray(i) && i[i.length - 1]?.hasOwnProperty('break')) {
       return i.slice(0, i.length - 1);
     }
     return i;
@@ -25,7 +23,7 @@
 {#if !content}
   <div>Contacting {preSig(author)}...</div>
 {:else}
-  <GroupsWrapper {group} {author}>
+  <GroupsWrapper {group} {author} {isExpanded} on:expand>
     {#if 'story' in content}
       {#if content.story?.inline}
         {#each dropTrailingBreaks(content.story.inline) as inline}

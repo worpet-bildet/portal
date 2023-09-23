@@ -2,7 +2,7 @@
   import { FeedItem, ItemKey } from '$types/portal/item';
   import { RadioStation } from '$types/apps/radio';
 
-  import { push } from 'svelte-spa-router';
+  import { push, link } from 'svelte-spa-router';
 
   import config from '@root/config';
   import { api, me } from '@root/api';
@@ -13,7 +13,7 @@
     keyStrToObj,
     getCollectedItemLeaderboard,
   } from '@root/state';
-  import { fromUrbitTime, isValidPatp } from '@root/util';
+  import { fromUrbitTime, isValidPatp, formatPatp } from '@root/util';
   import {
     Feed,
     ItemPreview,
@@ -66,6 +66,14 @@
       .filter((a) => !!a)
       .filter((a, idx) => {
         return globalFeed().findIndex((b) => b.time === a.time) === idx;
+      })
+      .filter((a) => {
+        return (
+          fromUrbitTime(a.key.time) > Date.now() - 1000 * 60 * 60 * 24 * 14
+        );
+      })
+      .sort((a, b) => {
+        return fromUrbitTime(b.key.time) - fromUrbitTime(a.key.time);
       });
 
     // Get the latest post, if it was more than six hours ago, send another sub
@@ -93,7 +101,9 @@
       });
     }
 
-    sortedRecommendations = getCollectedItemLeaderboard(me).slice(0, 4);
+    sortedRecommendations = getCollectedItemLeaderboard(me)
+      .filter((a) => !a[0].includes('ship'))
+      .slice(0, 4);
   });
 
   const handlePost = ({
@@ -172,8 +182,7 @@
     return stations
       .sort((a, b) => b.time - a.time)
       .filter((s) => s.viewers > 0)
-      .filter((s) => !!s.description)
-      .slice(0, 4);
+      .filter((s) => !!s.description);
   };
 
   const tuneRadio = (patp: string) => {
@@ -188,12 +197,12 @@
   ];
 </script>
 
-<div class="grid grid-cols-9 gap-8 mb-4">
-  <div class="flex flex-col gap-8 rounded-t-2xl col-span-12 md:col-span-6">
+<div class="grid grid-cols-12 gap-8 mb-4">
+  <div class="flex flex-col gap-8 rounded-t-2xl col-span-12 md:col-span-7">
     <div>
       <FeedPostForm
         on:post={handlePost}
-        placeholder="Share a limerick, maybe..."
+        placeholder="Type '~' to insert a reference"
       />
     </div>
     <div>
@@ -207,11 +216,11 @@
     </div>
   </div>
   <RightSidebar>
-    {#if sortedRecommendations.length > 0}
+    <!-- {#if sortedRecommendations.length > 0}
       <SidebarGroup>
         <div class="text-xl font-bold mx-2">Most recommended</div>
         {#each sortedRecommendations as [recommendation]}
-          <ItemPreview key={keyStrToObj(recommendation)} small />
+          <ItemPreview key={recommendation} small />
         {/each}
         <button
           class="text-left rounded-lg text-grey hover:text-black dark:hover:text-white px-4"
@@ -220,32 +229,64 @@
           Show more
         </button>
       </SidebarGroup>
-    {/if}
+    {/if} -->
     {#if $state.radioStations}
       <SidebarGroup>
-        <div class="text-xl font-bold mx-2">Jump into %radio 📻</div>
-        <div class="flex flex-col gap-4">
-          {#each sortRadioStations($state.radioStations) as { description, viewers, location }}
-            <button
-              class="flex flex-col gap-2 rounded-md p-2 hover:bg-panels-hover dark:hover:bg-transparent dark:border dark:border-transparent dark:hover:border-white hover:duration-500 text-left"
-              on:click={() => tuneRadio(location)}
-            >
-              <div>{description}</div>
-              <div
-                class="flex items-center w-full justify-between gap-2 text-xs"
+        <div class="flex flex-col gap-1 px-2">
+          <div class="flex flex-col gap-1 px-2">
+            <div class="flex items-start justify-between">
+              <div>📻 Urbit Radio</div>
+              <a
+                href={'/apps/radio'}
+                target="_blank"
+                class="text-flavour text-xs hover:underline">See all</a
               >
-                <div>by {location}</div>
-                <div class="flex items-center gap-1">
-                  <div class="w-4 dark:fill-white"><PersonIcon /></div>
-                  <div>{viewers}</div>
+            </div>
+            <div class="text-flavour text-xs">
+              Like Twitch without the children
+            </div>
+          </div>
+          <div class="flex flex-col gap-4">
+            {#each sortRadioStations($state.radioStations).slice(0, 3) as { description, viewers, location }}
+              <div
+                class="flex items-center justify-between rounded-md p-2 text-left"
+              >
+                <div class="flex items-center gap-2">
+                  <div class="rounded-md overflow-hidden w-8">
+                    <Sigil patp={location} />
+                  </div>
+                  <div class="flex flex-col">
+                    <div>{description}</div>
+                    <div
+                      class="flex items-center w-full justify-between gap-2 text-xs"
+                    >
+                      <div>
+                        by <a
+                          use:link
+                          href={`/${location}`}
+                          class="hover:underline">{formatPatp(location)}</a
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <div class="flex gap-2">
+                    <div class="w-4 dark:fill-white"><PersonIcon /></div>
+                    <div>{viewers}</div>
+                  </div>
+                  <button
+                    class="text-white text-sm bg-black rounded-md px-2 py-1"
+                    on:click={() => tuneRadio(location)}>Watch</button
+                  >
                 </div>
               </div>
-            </button>
-          {/each}
-        </div>
-      </SidebarGroup>
+            {/each}
+          </div>
+        </div></SidebarGroup
+      >
     {/if}
-    <SidebarGroup>
+    <!-- <SidebarGroup>
       {#if $state.palsLoaded && !$state.pals}
         <div>
           <div class="text-xl font-bold pb-4 px-2">
@@ -269,6 +310,23 @@
       {:else}
         Loading...
       {/if}
+    </SidebarGroup> -->
+    <SidebarGroup>
+      <div class="flex flex-col gap-2">
+        <div class="flex flex-col gap-1 px-2">
+          <div class="flex items-start justify-between">
+            <div>Discover Portal</div>
+            <a use:link href={'#/explore'} class="text-flavour text-xs"
+              >See all</a
+            >
+          </div>
+          <div class="text-flavour text-xs">Apps, Groups & Collections</div>
+        </div>
+        {#each sortedRecommendations as item}
+          <ItemPreview key={item[0]} keyStr={item[0]} />
+        {/each}
+      </div>
+      <div class="flex flex-col gap-4" />
     </SidebarGroup>
   </RightSidebar>
 </div>

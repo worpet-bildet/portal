@@ -18,7 +18,7 @@
 
   import { FeedPost, FeedPostForm } from '@components';
 
-  import { LoadingIcon } from '@fragments';
+  import { LoadingIcon, RightSidebar } from '@fragments';
 
   export let params;
 
@@ -74,42 +74,48 @@
   $: postOfInterest?.scrollIntoView();
 </script>
 
-<div>
-  <a use:link href="/" class="hover:underline">&lt; Feed</a>
-</div>
-{#if !item || (postChain && postChain.length === 0)}
-  <div class="flex items-center justify-center w-full h-1/2">
-    <div class="w-10 h-10"><LoadingIcon /></div>
-  </div>
-{/if}
-{#if postChain}
-  {#if postChain.length === 1}
-    <div class="my-6">
-      <FeedPost key={postChain[0]} isReplyFormOpen={true} />
-      <FeedPostForm {replyingToNames} replyTo={postChain[0]} />
+<div class="grid grid-cols-9 gap-8 mb-4">
+  <div class="flex flex-col gap-8 rounded-t-2xl col-span-12 md:col-span-6">
+    <div>
+      <a use:link href="/" class="hover:underline">&lt; Feed</a>
     </div>
-    {#each replies as reply}
-      <div class="pb-6">
-        <FeedPost key={reply} />
+    {#if !item || (postChain && postChain.length === 0)}
+      <div class="flex items-center justify-center w-full h-1/2">
+        <div class="w-10 h-10"><LoadingIcon /></div>
       </div>
-    {/each}
-  {:else}
-    {#each postChain as key, i}
-      <div class="my-6" bind:this={postOfInterest}>
-        <FeedPost
-          {key}
-          indent={keyStrFromObj(key) !== keyStrFromObj(item.keyObj)}
-          isReplyFormOpen={keyStrFromObj(key) === keyStrFromObj(item.keyObj)}
-        />
-        {#if i === postChain.length - 1}
-          <FeedPostForm {replyingToNames} replyTo={key} />
-        {/if}
-      </div>
-    {/each}
-    {#each replies as reply}
-      <div class="pb-6">
-        <FeedPost key={reply} />
-      </div>
-    {/each}
-  {/if}
-{/if}
+    {/if}
+    {#if postChain}
+      {#if postChain.length === 1}
+        <div class="mb-6">
+          <FeedPost key={postChain[0]} isReplyFormOpen={true} />
+          <FeedPostForm {replyingToNames} replyTo={postChain[0]} />
+        </div>
+        {#each replies as reply}
+          <div class="pb-6">
+            <FeedPost key={reply} />
+          </div>
+        {/each}
+      {:else}
+        {#each postChain as key, i}
+          <div class="mb-6" bind:this={postOfInterest}>
+            <FeedPost
+              {key}
+              indent={keyStrFromObj(key) !== keyStrFromObj(item.keyObj)}
+              isReplyFormOpen={keyStrFromObj(key) ===
+                keyStrFromObj(item.keyObj)}
+            />
+            {#if i === postChain.length - 1}
+              <FeedPostForm {replyingToNames} replyTo={key} />
+            {/if}
+          </div>
+        {/each}
+        {#each replies as reply}
+          <div class="pb-6">
+            <FeedPost key={reply} />
+          </div>
+        {/each}
+      {/if}
+    {/if}
+  </div>
+  <RightSidebar />
+</div>

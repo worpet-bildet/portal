@@ -24,6 +24,7 @@
   };
 
   let navCollapsed: boolean = false;
+  let main: HTMLDivElement;
 
   console.log('ENV', config.env);
   if (config.env === 'development') {
@@ -32,6 +33,10 @@
 
   state.subscribe((s) => {
     console.log({ state: s });
+  });
+
+  location.subscribe(() => {
+    if (main) main.scrollTo(0, 0);
   });
 
   const urlParams = new URLSearchParams(window.location.search);
@@ -53,6 +58,11 @@
     setReferredTo({ type, key });
     push(`${key}`);
   }
+
+  let isSearchGlassy = false;
+  const handleRouteLoaded = ({ detail: { route } }) => {
+    isSearchGlassy = route === '/:patp';
+  };
 </script>
 
 <main class:dark={$state.darkmode}>
@@ -62,12 +72,20 @@
       <Navbar bind:navCollapsed />
     </div>
     <div
-      class="px-10 py-5 bg-white overflow-y-auto grid grid-cols-12 relative"
+      bind:this={main}
+      id="main"
+      class="px-10 bg-white overflow-y-auto grid grid-cols-12 relative"
       class:col-span-10={!navCollapsed}
       class:col-span-11={navCollapsed}
     >
-      <div class="py-4 col-span-8"><GlobalSearch /></div>
-      <div class="col-span-12 min-h-screen pb-8"><Router {routes} /></div>
+      <div class="pt-4 col-span-12 grid grid-cols-12">
+        <div class="col-span-7 pr-3">
+          <GlobalSearch isGlassy={isSearchGlassy} />
+        </div>
+      </div>
+      <div class="col-span-12 min-h-screen pb-8">
+        <Router {routes} on:routeLoaded={handleRouteLoaded} />
+      </div>
     </div>
   </div>
 </main>

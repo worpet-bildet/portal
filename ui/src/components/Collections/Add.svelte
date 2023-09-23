@@ -13,7 +13,7 @@
     TextArea,
     PlusIcon,
     IconButton,
-    CrossIcon,
+    CancelIcon,
     CheckIcon,
     OtherItemForm,
   } from '@fragments';
@@ -222,7 +222,7 @@
         <ShipForm bind:ship={newShip} />
         <div class="flex justify-between">
           <IconButton
-            icon={CrossIcon}
+            icon={CancelIcon}
             on:click={() => {
               formstep = 'ships';
               showFormNav = true;
@@ -261,7 +261,7 @@
         <OtherItemForm bind:item={newOtherItem} />
         <div class="flex justify-between">
           <IconButton
-            icon={CrossIcon}
+            icon={CancelIcon}
             on:click={() => {
               formstep = 'other';
               showFormNav = true;

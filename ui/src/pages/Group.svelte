@@ -19,7 +19,7 @@
     RightSidebar,
     SidebarGroup,
     PlusIcon,
-    CrossIcon,
+    CancelIcon,
     IconButton,
   } from '@fragments';
 
@@ -158,7 +158,7 @@
             </div>
           </div>
           <IconButton
-            icon={CrossIcon}
+            icon={CancelIcon}
             on:click={leave}
             async
             class="bg-panels dark:bg-transparent hover:bg-panels-hover dark:hover:border-white dark:border"

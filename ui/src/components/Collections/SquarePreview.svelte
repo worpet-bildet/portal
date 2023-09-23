@@ -3,7 +3,7 @@
   import { state, getItem, keyStrFromObj } from '@root/state';
   import { getMeta } from '@root/util';
   import { Sigil } from '@components';
-  import { ItemImage, LoadingIcon } from '@fragments';
+  import { ItemImage, SearchIcon } from '@fragments';
   import placeholder from '@assets/placeholder.svg';
 
   export let key;
@@ -11,13 +11,13 @@
 
   let collection, title, image, previewItems;
   $: {
-    collection = getItem(keyStrFromObj(key));
+    collection = getItem(key);
     ({ title, image } = getMeta(collection));
 
     // we only want at most four items here
     previewItems = collection?.bespoke?.['key-list']
       ?.map((keyObj) => {
-        let i = getItem(keyStrFromObj(keyObj));
+        let i = getItem(keyObj);
         if ($state.isLoaded && !i) {
           api.portal.do.subscribe(keyObj);
           return;
@@ -31,23 +31,12 @@
   // this is quite janky, but i am happy enough with it for now
   let container, containerHeight, reset;
   const resetHeight = () => {
-    containerHeight = container && container.clientHeight;
-    if (
-      previewItems &&
-      (previewItems.length === 3 || previewItems.length === 2) &&
-      !image &&
-      !reset
-    ) {
-      container.style.height = `${containerHeight / 2}px`;
-      reset = true;
-    }
+    container.style.height = `${container.clientWidth}px`;
   };
 </script>
 
 {#if previewItems && previewItems.length > 0}
-  <div
-    class="rounded-lg overflow-hidden hover:bg-panels-hover dark:border dark:hover:border-white hover:duration-500"
-  >
+  <div class="rounded-lg overflow-hidden hover:duration-500 flex flex-col">
     <div class="grid grid-cols-2 grid-rows-2" bind:this={container}>
       {#if image}
         <div class="row-span-2 col-span-2">
@@ -82,9 +71,9 @@
     {/if}
   </div>
 {:else}
-  <div class="flex justify-center items-center p-10 w-full h-full">
-    <div class="w-16 h-16">
-      <LoadingIcon />
+  <div class="flex justify-center items-center w-full h-full">
+    <div class="w-8 h-8">
+      <SearchIcon />
     </div>
   </div>
 {/if}

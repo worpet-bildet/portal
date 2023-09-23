@@ -1,47 +1,29 @@
 <script lang="ts">
   import { Item, ItemKey } from '$types/portal/item';
 
-  import { createEventDispatcher } from 'svelte';
   import { push } from 'svelte-spa-router';
   import {
     state,
-    keyStrFromObj,
-    keyStrToObj,
     getItem,
     getJoinedGroupDetails,
     refreshGroups,
   } from '@root/state';
   import { api } from '@root/api';
-  import { getMeta, checkIfInstalled } from '@root/util';
-  import {
-    CollectionsSquarePreview,
-    Sigil,
-    GroupsChatMessage,
-    GroupsHeapCurio,
-    GroupsDiaryNote,
-  } from '@components';
-  import {
-    ItemImage,
-    TrashIcon,
-    EditIcon,
-    ExternalDestinationIcon,
-  } from '@fragments';
+  import { getMeta } from '@root/util';
+  import { ItemImage } from '@fragments';
 
   export let key: ItemKey;
 
   let item: Item;
-  let joinedDetails;
-  let groupKey: string;
 
   const loadItem = (key: ItemKey) => {
     item = getItem(key);
     if (!item) return api.portal.do.subscribe(key);
-
-    groupKey = `${item.keyObj.ship}/${item.keyObj.cord}`;
-    joinedDetails = getJoinedGroupDetails(groupKey);
   };
 
   $: $state && loadItem(key);
+  $: groupKey = `${item.keyObj.ship}/${item.keyObj.cord}`;
+  $: joinedDetails = getJoinedGroupDetails(groupKey);
 </script>
 
 {#if item}
@@ -49,9 +31,9 @@
   <button
     on:click
     on:click={() => push(item.keyStr)}
-    class="grid grid-cols-6 w-full items-start gap-2 p-2 border hover:duration-500 rounded-lg text-sm text-left"
+    class="grid grid-cols-6 w-full items-start gap-2 hover:duration-500 rounded-lg text-sm text-left"
   >
-    <div class="col-span-1 border overflow-hidden rounded-md self-center">
+    <div class="col-span-1 overflow-hidden rounded-md self-center">
       <ItemImage {image} {title} {color} />
     </div>
     <div

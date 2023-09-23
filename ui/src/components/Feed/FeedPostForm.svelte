@@ -46,14 +46,11 @@
   } from '@components';
   import {
     IconButton,
-    AppIcon,
-    PeopleIcon,
-    ImageIcon,
     Modal,
     ItemImage,
     StarRating,
     LinkPreview,
-    LoadingIcon,
+    SearchIcon,
   } from '@fragments';
   import { Editor } from '@tiptap/core';
 
@@ -272,27 +269,25 @@
   $: if (curioToPreview) getHeapCurio(curioToPreview);
   $: noteToPreview = getAnyNote(content || '');
   $: if (noteToPreview) getDiaryNote(noteToPreview);
-
-  // $: console.log({ chatWrit, curioDetails, noteDetails });
 </script>
 
 <div
-  class="flex flex-col w-full h-full border-l border-r border-b p-4 gap-4 rounded-b-lg"
+  class="flex flex-col w-full border-l border-r border-b p-4 gap-4 rounded-b-xl"
   class:relative={submitting}
   class:border-t={!replyTo}
-  class:rounded-t-lg={!replyTo}
+  class:rounded-t-xl={!replyTo}
 >
   {#if submitting}
     <div class="absolute top-0 left-0 w-full h-full bg-white/70 z-10">
       <div class="flex w-full h-full items-center justify-center opacity-100">
         <div class="w-10 h-10">
-          <LoadingIcon />
+          <SearchIcon />
         </div>
       </div>
     </div>
   {/if}
   <div class="flex items-center gap-2">
-    <InlineShip patp={me} />
+    <InlineShip patp={me} isExpanded />
   </div>
   {#if replyTo}
     <div class="flex w-full gap-1 line-clamp-1">
@@ -304,7 +299,7 @@
     <RichTextArea
       bind:editor
       bind:content
-      placeholder="/ Share anything you like"
+      {placeholder}
       on:keyboardSubmit={post}
     />
   </div>
@@ -321,7 +316,7 @@
     <LinkPreview url={linkToPreview} />
   {/if}
   <div class="flex justify-end w-full">
-    <button class="py-1 px-4 rounded-md bg-black text-white" on:click={post}>
+    <button class="py-2 px-3 rounded-lg bg-black text-white" on:click={post}>
       {#if replyTo}Reply{:else}Post{/if}
     </button>
   </div>
