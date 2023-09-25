@@ -123,6 +123,12 @@
   |=  [=mark =vase]
   ^-  (quip card _this)
   ?+    mark    (on-poke:default mark vase)
+      %portal-get
+    =/  get  !<(get:m:p vase)
+    ?>  ?=(%items -.get)
+    :_  this  ::  FE update
+    [%give %fact [/updates]~ %portal-store-result !>(scry-items)]^~
+    ::
       %portal-action
     ?.  =(our.bowl src.bowl)  `this
     =/  act  !<(action:m:p vase)
@@ -271,17 +277,9 @@
   =/  path  t.path
   ?+    path    ~|("unexpected scry into {<dap.bowl>} on path {<path>}" !!)
     ::
-    [%items ~]
-    =+  ~(tap by read:da-item)
-    =+  %-  malt  %+  turn  -
-      |=  [k=[=ship =dude:gall p=^^path] v=[? ? =rock:portal-item]]
-      `[key:d:m:p item:d:m:p]`[(path-to-key:conv:p +.p.k) rock.v]
-    =+  (~(uni by items) -)
-    ::  take feedpoasts from last 14 days (%other and %retweet type)
-    ::  don't take %ship items
-    items+(filter-items:stor - ~d14)
+      [%items ~]  scry-items
     ::
-    [%keys ~]
+      [%keys ~]
     =+  ~(tap by read:da-item)
     =+  %-  silt  %+  turn  -
       |=  [k=[=ship =dude:gall p=^^path] v=[? ? =rock:portal-item]]
@@ -341,6 +339,17 @@
   ^-  items:d:m:p
   ?>  |(=(our.bowl ship.key.item) =(lens.item %temp))
   (~(put by items) key.item item)
+::
+++  scry-items
+  ^-  store-result:d:m:p
+  =+  ~(tap by read:da-item)
+  =+  %-  malt  %+  turn  -
+    |=  [k=[=ship =dude:gall p=path] v=[? ? =rock:portal-item]]
+    `[key:d:m:p item:d:m:p]`[(path-to-key:conv:p +.p.k) rock.v]
+  =+  (~(uni by items) -)
+  ::  take feedpoasts from last 14 days (%other and %retweet type)
+  ::  don't take %ship items
+  items+(filter-items - ~d14)
 ::
 ::  whether a ship is allowed to get/sub to an item
 ++  ship-in-reach

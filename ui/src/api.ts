@@ -132,6 +132,23 @@ export const api = {
   },
   portal: {
     get: {
+      //  the following 3 pokes work because frontend is 
+      //  already subbed to path /updates
+      getItems: () =>  poke({
+          app:  'portal-store',
+          mark:  'portal-get',
+          json: {items : null}
+        }),
+      getPortalDevs: () =>  poke({
+          app:  'portal-manager',
+          mark:  'portal-get',
+          json: {'portal-devs' : null}
+        }),
+      getGraph: () =>  poke({
+          app:  'portal-graph',
+          mark:  'portal-get',
+          json: {'graph' : null}
+        }),
       items: (): Promise<{ items: Item[] }> =>
         scry({ app: 'portal-store', path: '/items' }),
       appDevs: () => scry({ app: 'portal-manager', path: '/portal-devs' }),

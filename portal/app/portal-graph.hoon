@@ -87,6 +87,12 @@
   |=  [=mark =vase]
   ^-  (quip card _this)
   ?+    mark  (on-poke:def mark vase)
+      %portal-get
+    =/  get  !<(get:m:p vase)
+    ?>  ?=(%graph -.get)
+    :_  this  ::  FE update
+    [%give %fact [/updates]~ %social-graph-result !>((scry-app %portal-store))]^~
+    ::
       %social-graph-edit
     ?>  =(our src):bowl
     =/  =edit:g  !<(edit:g vase)
@@ -425,6 +431,11 @@
 --
 ::  start helper core
 |_  =bowl:gall
+++  scry-app
+  |=  pat=@
+  =/  =app:g  `@tas`pat
+  app+(~(get-app sg:g graph.state) app)
+::
 ++  handle-scry
   ::  /controller/[app]/[tag]  <-  returns @p of who we source a tag from
   ::  /nodes/[app]/[from-node]/[tag]  <-  returns (set node)
@@ -557,8 +568,7 @@
   ::  returns full mapping of all information held in given app
   ::
       [%app @ ~]
-    =/  =app:g  `@tas`i.t.path
-    app+(~(get-app sg:g graph.state) app)
+    (scry-app i.t.path)
   ::
   ::  /has-tag/[app]/[from-node]/[to-node]/[tag]
   ::  returns true if tag exists on given edge, false otherwise

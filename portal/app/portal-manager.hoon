@@ -161,6 +161,12 @@
   |=  [=mark =vase]
   ^-  (quip card _this)
   ?+    mark    (on-poke:default mark vase)
+      %portal-get
+    =/  get  !<(get:m:p vase)
+    ?>  ?=(%portal-devs -.get)
+    :_  this  ::  FE update
+    [%give %fact [/updates]~ %portal-manager-result !>([%portal-devs dev-map])]^~
+    ::
       %portal-action
     ?>  =(our.bowl src.bowl)
     =/  act  !<(action:m:p vase)
