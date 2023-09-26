@@ -229,13 +229,11 @@ export const sortFeedItemsByTime = (items: FeedItem[]) => {
 };
 
 export const getCuratorFeed = (patp: string): FeedItem[] => {
-  return sortFeedItemsByTime(items()[feedKey(patp)]?.bespoke?.feed);
+  return items()[feedKey(patp)]?.bespoke?.feed;
 };
 
 export const getGlobalFeed = (): FeedItem[] => {
-  return sortFeedItemsByTime(
-    items()[globalFeedKey(config.indexer)]?.bespoke?.feed
-  );
+  return items()[globalFeedKey(config.indexer)]?.bespoke?.feed;
 };
 
 export const getCuratorCollections = (patp: string): ItemKey[] => {
