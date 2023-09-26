@@ -17,13 +17,14 @@
     ItemDetail,
     ItemPreview,
     RecommendModal,
+    MoreFrom,
   } from '@components';
   import {
-    EditIcon,
+    PostIcon,
     RightSidebar,
     IconButton,
-    LeftArrowIcon,
-    ShareIcon,
+    ArrowBackIcon,
+    RepostIcon,
     SidebarGroup,
     Tabs,
   } from '@fragments';
@@ -72,14 +73,14 @@
       </div>
       <div class="flex items-start gap-4">
         <IconButton
-          icon={ShareIcon}
+          icon={RepostIcon}
           on:click={() => (recommendModalOpen = true)}
           class="bg-panels dark:bg-transparent hover:bg-panels-hover dark:hover:bg-transparent dark:hover:border-white dark:border"
           >Recommend</IconButton
         >
         {#if me === ship}
           <IconButton
-            icon={EditIcon}
+            icon={PostIcon}
             on:click={() => push(`/collection-edit/${wild}`)}
             class="bg-panels dark:bg-transparent hover:bg-panels-hover dark:hover:bg-transparent dark:hover:border-white dark:border"
             >Edit</IconButton
@@ -97,15 +98,9 @@
         {/each}
       </div>
     </div>
-
-    {#if sortedRecommendations.length > 0}
-      <div class="col-span-4 pl-4 pt-4">
-        <div class="text-lg mx-1">More from {formatPatp(ship)}</div>
-        {#each sortedRecommendations as [recommendation, count]}
-          <ItemPreview key={keyStrToObj(recommendation)} small />
-        {/each}
-      </div>
-    {/if}
+    <div class="col-span-4 p-4">
+      <MoreFrom patp={ship} />
+    </div>
   </div>
   <RecommendModal bind:open={recommendModalOpen} key={collection.keyObj} />
 {/if}

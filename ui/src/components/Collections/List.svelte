@@ -2,7 +2,8 @@
   import { link } from 'svelte-spa-router';
   import { api, me } from '@root/api';
   import { state, getCuratorCollections, getItem } from '@root/state';
-  import { ArrowPathIcon } from '@fragments';
+  import { getMeta } from '@root/util';
+  import { RepostIcon } from '@fragments';
   import SquarePreview from './SquarePreview.svelte';
 
   export let patp;
@@ -59,7 +60,7 @@
   $: $state && loadCollections(patp);
 </script>
 
-<div class="grid grid-cols-12 gap-4 items-start">
+<div class="flex flex-col gap-4 items-start">
   {#if loading || subbingTo.size > 0}
     <div class="col-span-12">Loading...</div>
   {:else if collections.length === 0}
@@ -67,25 +68,44 @@
       {patp} hasn't created any collections on Portal yet.
     </div>
   {:else}
-    {#each collections as collection (collection.keyStr)}
-      <a use:link href={collection.keyStr} class="col-span-4 h-full">
-        <SquarePreview key={collection.keyObj} />
+    {#each collections as collection, i (collection.keyStr)}
+      {@const { title, blurb } = getMeta(collection)}
+      <a
+        use:link
+        href={collection.keyStr}
+        class="flex justify-between items-start w-full"
+      >
+        <div class="flex gap-4">
+          <div class="w-24 h-24">
+            <SquarePreview key={collection.keyObj} />
+          </div>
+          <div class="flex flex-col">
+            <div class="font-bold">{title}</div>
+            <div class="text-tertiary">{blurb}</div>
+          </div>
+        </div>
+        <div class="bg-strucpill text-tertiary text-xs rounded-full px-2 py-1">
+          COLLECTION
+        </div>
       </a>
+      {#if i < collections.length - 1}
+        <div class="border-b w-full" />
+      {/if}
     {/each}
   {/if}
   {#if me === patp && hasBlog && !hasBlogCollection && !subbingToBlogs}
     <button
       on:click={subToBlog}
-      class="flex flex-col items-center justify-center gap-4 col-span-4 h-full bg-purple text-white border dark:hover:border-white rounded-lg"
+      class="flex flex-col items-center justify-center gap-4 bg-purple text-white border dark:hover:border-white rounded-lg w-24 h-24"
     >
       <div class="w-5 h-5">
-        <ArrowPathIcon />
+        <RepostIcon />
       </div>
       <div>Sync my %blogs</div>
     </button>
   {:else if subbingToBlogs && !hasBlogCollection}
     <div
-      class="flex items-center justify-center col-span-4 h-full bg-purple text-white border dark:hover:border-white rounded-lg"
+      class="flex items-center justify-center bg-purple text-white border dark:hover:border-white rounded-lg w-24 h-24"
     >
       Syncing...
     </div>

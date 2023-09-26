@@ -133,7 +133,7 @@
         dispatch('selected', { key, selected });
       }
     }}
-    class={`flex w-full items-start gap-2 p-2 dark:hover:bg-transparent hover:duration-500 rounded-lg text-sm text-left break-words [word-break:break-word] ${$$props.class}`}
+    class={`flex w-full items-start gap-2 p-2 dark:hover:bg-transparent hover:duration-500 rounded-lg text-sm text-left ${$$props.class}`}
     class:cursor-default={!clickable}
     class:hover:bg-panels-hover={clickable}
     class:dark:hover:border-white={clickable}
@@ -147,84 +147,59 @@
         bespoke: { content, id, group },
       } = item}
       {@const author = id.split('/')[0]}
-      <GroupsChatMessage
-        {author}
-        {group}
-        {content}
-        isExpanded={expandPreview}
-        on:expand
-      />
+      <GroupsChatMessage {author} {group} {content} on:expand />
     {:else if struc === 'groups-heap-curio'}
       {@const {
         bespoke: { heart, group },
       } = item}
-      <GroupsHeapCurio {heart} {group} isExpanded={expandPreview} on:expand />
+      <GroupsHeapCurio {heart} {group} on:expand />
     {:else if struc === 'groups-diary-note'}
       {@const {
         bespoke: { essay, group },
       } = item}
-      <GroupsDiaryNote {essay} {group} isExpanded={expandPreview} on:expand />
+      <GroupsDiaryNote {essay} {group} on:expand />
+    {:else if struc === 'app'}
+      <AppPreview key={item.keyObj} />
+    {:else if struc === 'group'}
+      <GroupPreview key={item.keyObj} />
     {:else}
-      <div class="w-12 h-12 overflow-hidden rounded-md self-center">
-        {#if (struc === 'ship' || struc === 'retweet') && !image}
-          <Sigil patp={ship} />
-        {:else if struc === 'collection' && !image}
-          <CollectionsSquarePreview {key} withTitle={false} />
-        {:else if !image && link && struc !== 'app'}
-          {#await api.link.get.metadata(link)}
-            <ItemImage {image} {title} {color} />
-          {:then data}
-            {#if !data}
-              <ItemImage {image} {title} {color} />
+      <div class="flex justify-between items-center w-full">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 overflow-hidden rounded-md self-center">
+            {#if (struc === 'ship' || struc === 'retweet') && !image}
+              <Sigil patp={ship} />
+            {:else if struc === 'collection' && !image}
+              <CollectionsSquarePreview {key} withTitle={false} />
+            {:else if !image && link && struc !== 'app'}
+              {#await api.link.get.metadata(link)}
+                <ItemImage {image} {title} {color} />
+              {:then data}
+                {#if !data}
+                  <ItemImage {image} {title} {color} />
+                {:else}
+                  <ItemImage image={data.image} title={data.title} />
+                {/if}
+              {/await}
             {:else}
-              <ItemImage image={data.image} title={data.title} />
-            {/if}
-          {/await}
-        {:else}
-          <ItemImage {image} {title} {color} />
-        {/if}
-      </div>
-      <div
-        class="flex justify-between items-center grow gap-2 overflow-hidden self-center"
-      >
-        <div class="flex flex-col">
-          <div class="flex items-center gap-2">
-            <div class="font-bold line-clamp-1">
-              {title || ship}
-            </div>
-            {#if (struc === 'other' && link) || struc === 'blog'}
-              <div class="w-5">
-                <LinkIcon />
-              </div>
+              <ItemImage {image} {title} {color} />
             {/if}
           </div>
-          <div class="line-clamp-2">
-            {blurb || description || ''}
+          <div class="flex flex-col grow break-words [word-break:break-word]">
+            <div class="flex items-center gap-2">
+              <div class="font-bold line-clamp-1">
+                {title || ship}
+              </div>
+              {#if (struc === 'other' && link) || struc === 'blog'}
+                <div class="w-5">
+                  <LinkIcon />
+                </div>
+              {/if}
+            </div>
+            <div class="line-clamp-2">
+              {blurb || description || ''}
+            </div>
           </div>
         </div>
-        {#if struc === 'app' && !isInstalled}
-          <button
-            on:click|stopPropagation={(event) => {
-              event.stopPropagation();
-              window.open(
-                `${window.location.origin}/apps/grid/search/${ship}/apps`
-              );
-            }}
-            class="bg-black rounded-md text-xs font-bold px-2 dark:bg-white text-white dark:text-black hover:bg-grey dark:hover:bg-offwhite w-14 h-6"
-            >Install
-          </button>
-        {/if}
-        {#if struc === 'group' && !joinedDetails}
-          <button
-            on:click|stopPropagation={async (event) => {
-              event.stopPropagation();
-              event.currentTarget.innerHTML = 'Joining';
-              await api.urbit.do.joinGroup(groupKey).then(refreshGroups);
-            }}
-            class="bg-black rounded-md text-xs font-bold px-2 dark:bg-white text-white dark:text-black hover:bg-grey dark:hover:bg-offwhite w-14 h-6"
-            >Join
-          </button>
-        {/if}
       </div>
       {#if editable || removable}
         <div class="col-span-1 col-start-7 flex flex-col gap-2 self-center">

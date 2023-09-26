@@ -5,7 +5,7 @@
   import { state, getItem } from '@root/state';
   import { api } from '@root/api';
   import { getMeta, checkIfInstalled } from '@root/util';
-  import { ItemImage } from '@fragments';
+  import { DownloadIcon, ItemImage } from '@fragments';
 
   export let key: ItemKey;
 
@@ -54,8 +54,9 @@
               `${window.location.origin}/apps/grid/search/${ship}/apps`
             );
           }}
-          class="bg-black rounded-md text-xs font-bold px-2 py-1 text-white"
-          >Install
+          class="bg-black rounded-md text-xs font-bold px-2 py-1 text-white flex items-center gap-2"
+          ><div class="w-5 h-5 text-white"><DownloadIcon /></div>
+          <div>Install</div>
         </button>
       {/if}
     </div>

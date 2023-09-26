@@ -10,9 +10,9 @@
     ItemImage,
     StarRating,
     IconButton,
-    EthereumIcon,
+    ETHIcon,
     PlusIcon,
-    InstallIcon,
+    DownloadIcon,
   } from '@fragments';
 
   export let cover = '';
@@ -129,7 +129,7 @@
       <div class="flex gap-3">
         {#if window.ethereum && me !== patp}
           <IconButton
-            icon={EthereumIcon}
+            icon={ETHIcon}
             class="bg-panels dark:bg-transparent hover:bg-panels-hover dark:hover:border-white dark:border border"
             on:click={() => handleTipRequest(key)}>Tip</IconButton
           >
@@ -148,7 +148,7 @@
           {#if type === 'app'}
             <div class="flex md:hidden">
               <IconButton
-                icon={InstallIcon}
+                icon={DownloadIcon}
                 on:click={() => {
                   window.open(
                     `${window.location.origin}/apps/grid/search/${patp}/apps`

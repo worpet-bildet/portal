@@ -1,11 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import {
-    IconButton,
-    LeftArrowIcon,
-    RightArrowIcon,
-    CheckIcon,
-  } from '@fragments';
+  import { IconButton, ArrowBackIcon, PlusIcon } from '@fragments';
   const dispatch = createEventDispatcher();
 
   export let formstep;
@@ -34,7 +29,7 @@
     <div class="flex justify-between w-full">
       {#if !isFirstStep}
         <IconButton
-          icon={LeftArrowIcon}
+          icon={ArrowBackIcon}
           on:click={back}
           class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
           >Back</IconButton
@@ -43,15 +38,14 @@
         <div />
       {/if}
       {#if !isLastStep}
-        <IconButton
-          icon={RightArrowIcon}
+        <button
           on:click={next}
           class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
-          >Next</IconButton
+          >Next</button
         >
       {:else}
         <IconButton
-          icon={CheckIcon}
+          icon={PlusIcon}
           on:click={save}
           class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
           >Save</IconButton

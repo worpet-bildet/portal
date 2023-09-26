@@ -13,8 +13,8 @@
     OtherItemForm,
     ItemImage,
     IconButton,
-    LeftArrowIcon,
-    CheckIcon,
+    ArrowBackIcon,
+    PlusIcon,
   } from '@fragments';
 
   export let collection;
@@ -109,7 +109,7 @@
           <div>You have already added all your apps to this collection</div>
           <div class="flex justify-between">
             <IconButton
-              icon={LeftArrowIcon}
+              icon={ArrowBackIcon}
               on:click={() => (formstep = 'type')}
               class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
               >Back</IconButton
@@ -138,7 +138,7 @@
           <div>You have already added all your groups to this collection</div>
           <div class="flex justify-between">
             <IconButton
-              icon={LeftArrowIcon}
+              icon={ArrowBackIcon}
               on:click={() => (formstep = 'type')}
               class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
               >Back</IconButton
@@ -174,13 +174,13 @@
         </div>
         <div class="col-span-12 flex justify-between">
           <IconButton
-            icon={LeftArrowIcon}
+            icon={ArrowBackIcon}
             on:click={() => (formstep = 'type')}
             class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
             >Back</IconButton
           >
           <IconButton
-            icon={CheckIcon}
+            icon={PlusIcon}
             on:click={lastValidShip !== newShip || !newShip ? null : saveShip}
             disabled={lastValidShip !== newShip || !newShip}
             class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
@@ -191,13 +191,13 @@
         <OtherItemForm bind:item={newOtherItem} />
         <div class="col-span-12 flex justify-between">
           <IconButton
-            icon={LeftArrowIcon}
+            icon={ArrowBackIcon}
             on:click={() => (formstep = 'type')}
             class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
             >Back</IconButton
           >
           <IconButton
-            icon={CheckIcon}
+            icon={PlusIcon}
             on:click={() => saveOtherItem()}
             class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
             >Save</IconButton

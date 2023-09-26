@@ -7,7 +7,12 @@
   import { Feed, Group, App, Other, Explore, Api } from './pages';
   import { Curator, EditCurator } from './pages/Curator';
   import { Collection, EditCollection } from './pages/Collection';
-  import { Navbar, GlobalSearch } from '@components';
+  import {
+    VerticalNavbar,
+    HorizontalNavbar,
+    MobileHeader,
+    GlobalSearch,
+  } from '@components';
 
   const routes = {
     '/': Feed,
@@ -23,7 +28,6 @@
     '/:patp/edit': EditCurator,
   };
 
-  let navCollapsed: boolean = false;
   let main: HTMLDivElement;
 
   console.log('ENV', config.env);
@@ -66,26 +70,26 @@
 </script>
 
 <main class:dark={$state.darkmode}>
-  <div class="grid grid-cols-12 dark:text-white h-screen">
+  <div class="grid grid-cols-12 dark:text-white h-screen overflow-hidden">
     <GoogleAnalytics properties={[config.googleAnalyticsId]} />
-    <div class:col-span-2={!navCollapsed} class:col-span-1={navCollapsed}>
-      <Navbar bind:navCollapsed />
+    <div class="hidden sm:block sm:col-span-1 lg:col-span-2">
+      <VerticalNavbar />
     </div>
     <div
       bind:this={main}
       id="main"
-      class="px-10 bg-white overflow-y-auto grid grid-cols-12 relative"
-      class:col-span-10={!navCollapsed}
-      class:col-span-11={navCollapsed}
+      class="px-3 lg:px-10 bg-white overflow-y-auto grid grid-cols-12 relative col-span-12 sm:col-span-11 lg:col-span-10"
     >
-      <div class="pt-4 col-span-12 grid grid-cols-12">
-        <div class="col-span-7 pr-3">
-          <GlobalSearch isGlassy={isSearchGlassy} />
-        </div>
+      <div class="sm:hidden pt-4 col-span-12">
+        <MobileHeader />
       </div>
-      <div class="col-span-12 min-h-screen pb-8">
+      <div class="pt-4 col-span-12 md:col-span-7 md:pr-3">
+        <GlobalSearch isGlassy={isSearchGlassy} />
+      </div>
+      <div class="col-span-12 min-h-screen pb-8 mb-28">
         <Router {routes} on:routeLoaded={handleRouteLoaded} />
       </div>
+      <div class="sm:hidden"><HorizontalNavbar /></div>
     </div>
   </div>
 </main>

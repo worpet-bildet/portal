@@ -16,7 +16,7 @@
   } from '@root/state';
   import { getMeta, fromUrbitTime, getAnyLink, isValidPatp } from '@root/util';
   import { ItemPreview, InlineShip } from '@components';
-  import { ChatIcon, LikeIcon, LikedIcon, LinkPreview } from '@fragments';
+  import { CommentIcon, LikeIcon, LinkPreview } from '@fragments';
   import InlineItem from '../InlineItem.svelte';
 
   export let key: ItemKey;
@@ -149,18 +149,25 @@
           {/each}
         </p>
         {#if ref}
-          <ItemPreview key={ref} {expandPreview} on:expand={previewNavigate} />
+          <ItemPreview key={ref} on:expand={previewNavigate} />
         {/if}
         {#if blurbLink}
           <LinkPreview url={blurbLink} />
         {/if}
-        <div class="grid grid-cols-8">
+        <div class="grid grid-cols-6 lg:grid-cols-10">
           <div class="col-span-1 flex items-center gap-2">
             {#if isLikedByMe}
-              <div class="w-6 h-6 text-greyicon"><LikedIcon /></div>
+              <div class="w-5 h-5 text-error">
+                <LikeIcon />
+              </div>
               <div class="text-light">{numLikes}</div>
             {:else}
-              <div class="w-6 h-6 text-greyicon"><LikeIcon /></div>
+              <button
+                class="w-5 h-5 text-transparent stroke-panelicon"
+                on:click={likePost}
+              >
+                <LikeIcon />
+              </button>
               <div class="text-light">{numLikes}</div>
             {/if}
           </div>
@@ -169,7 +176,7 @@
             href={keyStrFromObj(item.keyObj)}
             class="col-span-1 flex items-center gap-2"
           >
-            <div class="w-6 h-6 text-darkgreyicon"><ChatIcon /></div>
+            <div class="w-5 h-5 text-darkgreyicon"><CommentIcon /></div>
             <div class="text-light">{replies.length}</div>
           </a>
         </div>

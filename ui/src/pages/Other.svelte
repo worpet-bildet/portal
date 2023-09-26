@@ -74,8 +74,8 @@
   $: postOfInterest?.scrollIntoView();
 </script>
 
-<div class="grid grid-cols-9 gap-8 mb-4">
-  <div class="flex flex-col gap-8 rounded-t-2xl col-span-12 md:col-span-6">
+<div class="grid grid-cols-12 gap-8 mb-4">
+  <div class="flex flex-col gap-8 rounded-t-2xl col-span-12 md:col-span-7">
     <div>
       <a use:link href="/" class="hover:underline">&lt; Feed</a>
     </div>
@@ -88,7 +88,11 @@
       {#if postChain.length === 1}
         <div class="mb-6">
           <FeedPost key={postChain[0]} isReplyFormOpen={true} />
-          <FeedPostForm {replyingToNames} replyTo={postChain[0]} />
+          <FeedPostForm
+            {replyingToNames}
+            replyTo={postChain[0]}
+            placeholder={`Respond to ${replyingToNames[0]}`}
+          />
         </div>
         {#each replies as reply}
           <div class="pb-6">
@@ -105,7 +109,11 @@
                 keyStrFromObj(item.keyObj)}
             />
             {#if i === postChain.length - 1}
-              <FeedPostForm {replyingToNames} replyTo={key} />
+              <FeedPostForm
+                {replyingToNames}
+                replyTo={key}
+                placeholder={`Respond to ${replyingToNames[0]}`}
+              />
             {/if}
           </div>
         {/each}

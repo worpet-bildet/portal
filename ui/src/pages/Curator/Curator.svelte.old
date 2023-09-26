@@ -11,7 +11,7 @@
   import { api, me } from '@root/api';
   import { getMeta } from '@root/util';
   import {
-    CollectionsGrid,
+    CollectionsList,
     Feed,
     ItemDetail,
     ItemPreview,
@@ -20,10 +20,10 @@
   } from '@components';
   import {
     Tabs,
-    AddPalIcon,
+    ProfileIcon,
     RemovePalIcon,
-    EditIcon,
-    ChatIcon,
+    PostIcon,
+    CommentIcon,
     RightSidebar,
     SidebarGroup,
     IconButton,
@@ -107,7 +107,7 @@
               </div>
             {/if}
           {:else if activeTab === 'Collections'}
-            <CollectionsGrid {patp} />
+            <CollectionsList {patp} />
           {/if}
         </div>
       </div>
@@ -118,7 +118,7 @@
           <div class="flex flex-col gap-4">
             <CollectionsAdd on:add={() => (activeTab = 'Collections')} />
             <IconButton
-              icon={EditIcon}
+              icon={PostIcon}
               on:click={() => push(`/${patp}/edit`)}
               class="bg-panels hover:bg-panels-hover dark:fill-white dark:bg-transparent dark:border dark:hover:border-white dark:hover:bg-transparent"
               >Edit Profile</IconButton
@@ -134,7 +134,7 @@
           >
         {:else}
           <IconButton
-            icon={AddPalIcon}
+            icon={ProfileIcon}
             on:click={togglePal}
             async
             class="bg-panels hover:bg-panels-hover dark:fill-white dark:bg-transparent dark:border dark:hover:border-white dark:hover:bg-transparent"
@@ -143,7 +143,7 @@
         {/if}
         {#if me !== patp}
           <IconButton
-            icon={ChatIcon}
+            icon={CommentIcon}
             on:click={() =>
               window.open(`${window.location.origin}/apps/talk/dm/${patp}`)}
             class="bg-panels hover:bg-panels-hover dark:fill-white dark:bg-transparent dark:border dark:hover:border-white dark:hover:bg-transparent"

@@ -31,9 +31,13 @@
 <div class="flex flex-col justify-between bg-panel h-full border-r-2 h-screen">
   <div>
     <div class="p-2">
-      <a use:link href="#/" class="flex items-center gap-3 p-2 mt-3 mb-3">
+      <a
+        use:link
+        href="#/"
+        class="flex items-center justify-center lg:justify-start gap-3 md:p-2 mt-3 mb-3"
+      >
         <img src={logo} class="w-10 h-10" alt="logo" />
-        <div class="text-l font-bold">Portal</div>
+        <div class="hidden lg:block text-l font-bold">Portal</div>
       </a>
       <div>
         <NavItem
@@ -90,10 +94,10 @@
     <a
       use:link
       href={`/${me}`}
-      class="flex items-center gap-3 bg-white w-full py-2 px-3 rounded-lg"
+      class="flex items-center justify-center gap-3 bg-transparent lg:bg-white w-full py-2 lg:px-3 rounded-lg"
     >
       <div class="w-6 h-6 rounded-sm overflow-hidden"><Sigil patp={me} /></div>
-      <div>{formatPatp(me)}</div>
+      <div class="hidden lg:block">{formatPatp(me)}</div>
     </a>
   </div>
 </div>

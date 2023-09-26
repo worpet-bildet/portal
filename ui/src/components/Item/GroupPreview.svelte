@@ -10,7 +10,7 @@
   } from '@root/state';
   import { api } from '@root/api';
   import { getMeta } from '@root/util';
-  import { ItemImage } from '@fragments';
+  import { ItemImage, LogOutIcon } from '@fragments';
 
   export let key: ItemKey;
 
@@ -54,8 +54,9 @@
             event.currentTarget.innerHTML = 'Joining...';
             await api.urbit.do.joinGroup(groupKey).then(refreshGroups);
           }}
-          class="bg-black rounded-md text-xs font-bold px-2 py-1 text-white"
-          >Join
+          class="bg-black rounded-md text-xs font-bold px-2 py-1 text-white flex items-center gap-2"
+          ><div class="w-5 h-5 text-white"><LogOutIcon /></div>
+          <div>Join</div>
         </button>
       {/if}
     </div>

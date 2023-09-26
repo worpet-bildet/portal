@@ -22,7 +22,9 @@
     contentContainer.scrollHeight > contentContainer.clientHeight;
 </script>
 
-<div class="col-span-6 p-1 rounded-lg gap-2 break-words flex h-full">
+<div
+  class="col-span-6 p-1 rounded-lg gap-2 break-words [word-break:break-word] flex h-full"
+>
   <div class="h-full w-1 border-2 border-black" />
   <div class="flex flex-col w-full pr-2">
     <div class="flex gap-1 text-grey">

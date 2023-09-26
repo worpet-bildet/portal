@@ -11,11 +11,11 @@
   import { getMeta } from '@root/util';
   import { ItemDetail, RecommendModal, ItemPreview } from '@components';
   import {
-    ChatIcon,
-    DiaryIcon,
-    HeapIcon,
-    PersonIcon,
-    ShareIcon,
+    CommentIcon,
+    // DiaryIcon,
+    // HeapIcon,
+    ProfileIcon,
+    RepostIcon,
     RightSidebar,
     SidebarGroup,
     PlusIcon,
@@ -108,11 +108,11 @@
                         >
                           <div class="col-span-1 dark:fill-white">
                             {#if type === 'chat'}
-                              <ChatIcon />
+                              <CommentIcon />
                             {:else if type === 'diary'}
-                              <DiaryIcon />
+                              <!-- <DiaryIcon /> -->
                             {:else if type === 'heap'}
-                              <HeapIcon />
+                              <!-- <HeapIcon /> -->
                             {/if}
                           </div>
                           <div class="col-span-11">
@@ -152,7 +152,7 @@
             <div class="font-bold">Members</div>
             <div class="flex items-center gap-2">
               <div class="w-5 h-5 mb-1 dark:fill-white">
-                <PersonIcon />
+                <ProfileIcon />
               </div>
               {Object.keys(joinedDetails.fleet).length}
             </div>
@@ -166,7 +166,7 @@
           >
         {/if}
         <IconButton
-          icon={ShareIcon}
+          icon={RepostIcon}
           on:click={() => (recommendModalOpen = true)}
           class="bg-panels dark:bg-transparent hover:bg-panels-hover dark:hover:border-white dark:border"
           >Recommend</IconButton

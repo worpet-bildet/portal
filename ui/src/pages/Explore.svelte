@@ -12,9 +12,9 @@
   import { ItemPreview } from '@components';
   import {
     IconButton,
-    SparklesIcon,
-    AppIcon,
-    PeopleIcon,
+    SparkleIcon,
+    AppsIcon,
+    GroupsIcon,
     LoadingIcon,
     CollectionIcon,
     SearchIcon,
@@ -123,14 +123,14 @@
   </div>
   <div class="flex gap-1 md:gap-8">
     <IconButton
-      icon={SparklesIcon}
+      icon={SparkleIcon}
       active={filters.has('new')}
       on:click={() => toggleFilter('new')}
       class="bg-panels text-xs md:text-lg dark:fill-white dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
       >New to me
     </IconButton>
     <IconButton
-      icon={AppIcon}
+      icon={AppsIcon}
       active={filters.has('apps')}
       on:click={() => {
         toggleFilter('apps');
@@ -139,7 +139,7 @@
       >Apps</IconButton
     >
     <IconButton
-      icon={PeopleIcon}
+      icon={GroupsIcon}
       active={filters.has('groups')}
       on:click={() => {
         toggleFilter('groups');

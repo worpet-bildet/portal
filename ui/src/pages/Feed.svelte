@@ -26,7 +26,7 @@
     RightSidebar,
     SidebarGroup,
     SearchIcon,
-    PersonIcon,
+    ProfileIcon,
     LoadingIcon,
   } from '@fragments';
 
@@ -271,12 +271,12 @@
                   </div>
                 </div>
                 <div class="flex items-center gap-2">
-                  <div class="flex gap-2">
-                    <div class="w-4 dark:fill-white"><PersonIcon /></div>
+                  <div class="flex items-center gap-2">
+                    <div class="w-4 dark:fill-white"><ProfileIcon /></div>
                     <div>{viewers}</div>
                   </div>
                   <button
-                    class="text-white text-sm bg-black rounded-md px-2 py-1"
+                    class="text-white text-xs bg-black rounded-md px-2 py-1"
                     on:click={() => tuneRadio(location)}>Watch</button
                   >
                 </div>

@@ -16,8 +16,8 @@
     TextArea,
     SortableList,
     RightSidebar,
-    LeftArrowIcon,
-    CheckIcon,
+    ArrowBackIcon,
+    PlusIcon,
     IconButton,
     SidebarGroup,
   } from '@fragments';
@@ -164,7 +164,7 @@
   <RightSidebar>
     <SidebarGroup>
       <IconButton
-        icon={CheckIcon}
+        icon={PlusIcon}
         on:click={() => {
           switch (activeTab) {
             case 'Profile':
@@ -182,7 +182,7 @@
         Save</IconButton
       >
       <IconButton
-        icon={LeftArrowIcon}
+        icon={ArrowBackIcon}
         on:click={pop}
         class="bg-panels dark:bg-transparent dark:hover:border-white dark:border hover:bg-panels-hover"
         >Back</IconButton

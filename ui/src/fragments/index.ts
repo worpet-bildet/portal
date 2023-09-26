@@ -44,6 +44,7 @@ export { default as SparkleIcon } from './Icons/Sparkle.svelte';
 export { default as TipIcon } from './Icons/Tip.svelte';
 export { default as UrbitIcon } from './Icons/Urbit.svelte';
 export { default as XIcon } from './Icons/X.svelte';
-export { default as likeIcon } from './Icons/Like.svelte';
+export { default as LikeIcon } from './Icons/Like.svelte';
+export { default as LoadingIcon } from './Icons/Loading.svelte';
 
 export { default as NavItem } from './NavItem.svelte';

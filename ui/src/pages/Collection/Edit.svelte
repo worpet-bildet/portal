@@ -17,9 +17,9 @@
     Modal,
     OtherItemForm,
     IconButton,
-    LeftArrowIcon,
+    ArrowBackIcon,
     PlusIcon,
-    CheckIcon,
+    PlusIcon,
     SidebarGroup,
   } from '@fragments';
   export let params;
@@ -137,13 +137,13 @@
           >Add Item</IconButton
         >
         <IconButton
-          icon={CheckIcon}
+          icon={PlusIcon}
           on:click={save}
           class="dark:hover:border-white dark:border hover:bg-panels-hover"
           >Save</IconButton
         >
         <IconButton
-          icon={LeftArrowIcon}
+          icon={ArrowBackIcon}
           on:click={pop}
           class="dark:hover:border-white dark:border hover:bg-panels-hover"
           >Back</IconButton
@@ -165,10 +165,10 @@
       </div>
       <div class="flex justify-between">
         <IconButton
-          icon={LeftArrowIcon}
+          icon={ArrowBackIcon}
           on:click={() => (editModalOpen = false)}>Back</IconButton
         >
-        <IconButton icon={CheckIcon} on:click={saveEdits}>Save</IconButton>
+        <IconButton icon={PlusIcon} on:click={saveEdits}>Save</IconButton>
       </div>
     </div>
   </Modal>

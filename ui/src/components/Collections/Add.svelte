@@ -14,7 +14,7 @@
     PlusIcon,
     IconButton,
     CancelIcon,
-    CheckIcon,
+    PlusIcon,
     OtherItemForm,
   } from '@fragments';
   import { toUrbitTime } from '@root/util';
@@ -231,7 +231,7 @@
             >Cancel</IconButton
           >
           <IconButton
-            icon={CheckIcon}
+            icon={PlusIcon}
             on:click={() => {
               saveShip();
               formstep = 'ships';
@@ -270,7 +270,7 @@
             >Cancel</IconButton
           >
           <IconButton
-            icon={CheckIcon}
+            icon={PlusIcon}
             on:click={() => {
               saveOtherItem();
               formstep = 'other';

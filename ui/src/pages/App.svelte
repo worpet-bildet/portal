@@ -31,15 +31,15 @@
     Modal,
     RightSidebar,
     IconButton,
-    ShareIcon,
+    RepostIcon,
     CancelIcon,
-    InstallIcon,
-    GlobeIcon,
-    ExternalDestinationIcon,
+    DownloadIcon,
+    AppsIcon,
+    LinkIcon,
     SidebarGroup,
-    ImageIcon,
+    PlusIcon,
     LoadingIcon,
-    EthereumIcon,
+    ETHIcon,
     Tabs,
   } from '@fragments';
 
@@ -330,7 +330,7 @@
                 on:change={handleImageSelect}
               />
               <IconButton
-                icon={ImageIcon}
+                icon={PlusIcon}
                 tooltip="Configure S3 storage for image support"
                 on:click={() => {
                   if (!$state.s3 || !$state.s3.configuration?.currentBucket) {
@@ -409,7 +409,7 @@
       <SidebarGroup>
         {#if isInstalled}
           <IconButton
-            icon={ExternalDestinationIcon}
+            icon={AppsIcon}
             on:click={() =>
               window.open(`${window.location.origin}${servedFrom}/`)}
             class="bg-panels dark:fill-white dark:bg-transparent dark:border hover:bg-panels-hover dark:hover:border-white"
@@ -421,14 +421,14 @@
           >
         {:else if ethPrice && !purchased}
           <IconButton
-            icon={EthereumIcon}
+            icon={ETHIcon}
             on:click={purchase}
             class="bg-panels dark:bg-transparent dark:border hover:bg-panels-hover dark:hover:border-white"
             >Purchase</IconButton
           >
         {:else}
           <IconButton
-            icon={InstallIcon}
+            icon={DownloadIcon}
             on:click={install}
             class="bg-panels dark:bg-transparent dark:border hover:bg-panels-hover dark:hover:border-white"
             >Install</IconButton
@@ -436,14 +436,14 @@
         {/if}
         {#if link}
           <IconButton
-            icon={GlobeIcon}
+            icon={LinkIcon}
             on:click={() => window.open(link)}
             class="bg-panels dark:bg-transparent dark:border hover:bg-panels-hover dark:hover:border-white"
             >View Website</IconButton
           >
         {/if}
         <IconButton
-          icon={ShareIcon}
+          icon={RepostIcon}
           on:click={() => (recommendModalOpen = true)}
           class="bg-panels dark:bg-transparent dark:border hover:bg-panels-hover dark:hover:border-white"
           >Recommend</IconButton
@@ -506,11 +506,11 @@
           </div>
         </div>
         <div class="flex justify-end w-full gap-8">
-          <IconButton icon={InstallIcon} on:click={provePurchase}
+          <IconButton icon={DownloadIcon} on:click={provePurchase}
             >I already paid!</IconButton
           >
           <IconButton
-            icon={EthereumIcon}
+            icon={ETHIcon}
             loading={!$state.payment}
             disabled={!$state.payment}
             async

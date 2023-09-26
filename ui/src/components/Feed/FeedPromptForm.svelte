@@ -6,11 +6,11 @@
 
   import { getItem, reScoreItems } from '@root/state';
 
-  import {
-    OpenAIIcon,
-    VerticalExpandIcon,
-    VerticalCollapseIcon,
-  } from '@fragments';
+  // import {
+  //   OpenAIIcon,
+  //   VerticalExpandIcon,
+  //   VerticalCollapseIcon,
+  // } from '@fragments';
 
   const dispatch = createEventDispatcher();
 
@@ -56,7 +56,7 @@
   };
 </script>
 
-<svelte:window on:keydown={handleSearchKeydown} />
+<!-- <svelte:window on:keydown={handleSearchKeydown} />
 <div
   class="flex gap-2 border p-4 flex-col rounded-2xl col-span-12 md:col-span-6"
 >
@@ -242,4 +242,4 @@
       {/if}
     </button>
   </div>
-</div>
+</div> -->

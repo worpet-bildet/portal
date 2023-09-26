@@ -186,7 +186,9 @@
     class:backdrop-blur-md={glass}
   >
     <div class="flex items-center gap-4 w-full" class:text-glasstext={glass}>
-      <SearchIcon />
+      <div class="w-6 h-6 flex items-center">
+        <SearchIcon />
+      </div>
       <input
         on:focus={() => (focused = true)}
         on:blur={reset}
@@ -200,7 +202,7 @@
       />
     </div>
     <div
-      class="text-xs px-2 py-1 rounded-md"
+      class="hidden sm:block text-xs px-2 py-1 rounded-md"
       class:bg-indicator={!glass}
       class:text-indicatortext={!glass}
       class:bg-glass={glass}
@@ -316,7 +318,7 @@
               >
                 <div class="flex items-center gap-4">
                   <div class="w-7 h-full overflow-hidden rounded-sm">
-                    <SearchIcon />
+                    <svelte:component this={page.icon} />
                   </div>
                   <div>{page.title}</div>
                 </div>

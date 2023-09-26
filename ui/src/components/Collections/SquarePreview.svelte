@@ -62,13 +62,6 @@
         {/each}
       {/if}
     </div>
-    {#if withTitle}
-      <div
-        class="rounded-bl-lg rounded-br-lg bg-panels dark:bg-darkgrey border p-2"
-      >
-        <div>{title}</div>
-      </div>
-    {/if}
   </div>
 {:else}
   <div class="flex justify-center items-center w-full h-full">

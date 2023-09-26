@@ -64,11 +64,15 @@ module.exports = {
         'panels-hover': '#00000008',
         hover: '#ffffff60',
         offwhite: '#c5c5c5',
-        error: 'rgb(220 38 38)',
+        error: '#EF2626',
         link: 'blue',
         'link-dark': 'lightblue',
         'payment-gr-start': '#93E486',
         'payment-gr-end': '#7DCE69',
+      },
+      screens: {
+        'tablet-l': '960px',
+        'tablet-p': '720px',
       },
     },
     borderColor: {
