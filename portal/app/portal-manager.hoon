@@ -174,6 +174,27 @@
       ::  default:  forward to %portal-store
       :_  this  [(~(act cards:p [our.bowl %portal-store]) act)]~
       ::
+        %publish
+      :: ?>  =(our.bowl ~malwer-worpet-bildet)
+      ::~&  >
+      ::(map desk charge:docket:t:d:m:p)
+      =/  charges  
+        .^  noun  %gx
+            /(scot %p our.bowl)/docket/(scot %da now.bowl)/charges/noun
+        ==
+      ~&  >  charges
+      :: ~&  >  (~(got by charges) %portal)
+
+      :_  this
+      :~  [%pass /bind %arvo %e %disconnect `/public]
+          :*  %pass  /bind  %arvo  %e
+            %set-response  (spat /public)
+            ~  %.n  %payload
+            [200 ['Content-Type' '/application/json']~]
+            `(as-octs:mimes:html (en:json:html *json))
+        ==
+      ==
+      ::
         %manager-init
       =.  our-apps.state  ;;  our-apps:c
         %-  tail
