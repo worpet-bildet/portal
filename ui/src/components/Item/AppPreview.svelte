@@ -26,7 +26,8 @@
 </script>
 
 {#if item}
-  {@const { title, blurb, description, image, color, ship } = getMeta(item)}
+  {@const { title, blurb, description, image, color, ship, distShip } =
+    getMeta(item)}
   <button
     on:click
     on:click={() => push(item.keyStr)}
@@ -51,7 +52,9 @@
           on:click|stopPropagation={(event) => {
             event.stopPropagation();
             window.open(
-              `${window.location.origin}/apps/grid/search/${ship}/apps`
+              `${window.location.origin}/apps/grid/search/${
+                distShip || ship
+              }/apps`
             );
           }}
           class="bg-black rounded-md text-xs font-bold px-2 py-1 text-white flex items-center gap-2"
