@@ -21,8 +21,6 @@
     !isExpanded &&
     contentContainer &&
     contentContainer.scrollHeight > contentContainer.clientHeight;
-
-  $: console.log({ isExpanded });
 </script>
 
 <div

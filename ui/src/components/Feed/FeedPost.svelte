@@ -25,7 +25,6 @@
   export let showRating = false;
   export let indent = false;
   export let isReplyFormOpen = false;
-  export let isExpanded: boolean = false;
 
   let item: Item;
   let replies: ItemKey[] = [];
@@ -214,6 +213,9 @@
         </div>
       </div>
     </div>
+    {#if group}
+      <div class="text-tertiary">Visible only to you</div>
+    {/if}
   </div>
 {:else}
   <div class="p-5 border-b border-x text-grey" in:fade>
