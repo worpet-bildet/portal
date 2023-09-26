@@ -179,9 +179,11 @@
 
   const install = () => {
     // FIXME: stopgap
-    window.open(`${window.location.origin}/apps/grid/search/${ship}/apps`);
-    isInstalling = true;
     let installShip = distShip && distShip !== '~zod' ? distShip : ship;
+    isInstalling = true;
+    window.open(
+      `${window.location.origin}/apps/grid/search/${installShip}/apps`
+    );
     api.urbit.do.installApp(installShip, desk).then(refreshApps);
   };
 
