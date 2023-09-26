@@ -42,7 +42,7 @@
 ::
 =/  [notes-from=@da notes-count=@t notes-exists=? actual-notes-feed=feed:d:mov]
   ?~  notes-exists=+.notes-feed
-    [(sub now ~d14) '1.000' %.n ~]
+    [(sub now ~d1) '1.000' %.n ~]
   =/  notes  ;;(item:d:mov +.notes-feed)
   ?>  ?=([%feed *] bespoke.notes)
   ?~  feed.bespoke.notes
@@ -51,7 +51,7 @@
 ::
 =/  [curios-from=@dr curios-count=@t curios-exists=? actual-curios-feed=feed:d:mov]
   ?~  curios-exists=+.curios-feed
-    [(sub now ~d14) '1.000' %.n ~]
+    [(sub now ~d1) '1.000' %.n ~]
   =/  curios  ;;(item:d:mov +.curios-feed)
   ?>  ?=([%feed *] bespoke.curios)
   ?~  feed.bespoke.curios
@@ -60,7 +60,7 @@
 ::
 =/  [msgs-from=@dr msgs-count=@t msgs-exists=? actual-msgs-feed=feed:d:mov]
   ?~  msgs-exists=+.msgs-feed
-    [(sub now ~d14) '1.000' %.n ~]
+    [(sub now ~d1) '1.000' %.n ~]
   =/  msgs  ;;(item:d:mov +.msgs-feed)
   ?>  ?=([%feed *] bespoke.msgs)
   ?~  feed.bespoke.msgs
