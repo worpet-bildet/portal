@@ -178,22 +178,17 @@
       :: ?>  =(our.bowl ~malwer-worpet-bildet)
       ::~&  >
       ::(map desk charge:docket:t:d:m:p)
-      =/  charges  
+      =/  charges  ;;  (map desk charge:docket:t:d:m:p)
+        =<  +
         .^  noun  %gx
             /(scot %p our.bowl)/docket/(scot %da now.bowl)/charges/noun
         ==
-      ~&  >  charges
-      :: ~&  >  (~(got by charges) %portal)
-
-      :_  this
-      :~  [%pass /bind %arvo %e %disconnect `/public]
-          :*  %pass  /bind  %arvo  %e
-            %set-response  (spat /public)
-            ~  %.n  %payload
-            [200 ['Content-Type' '/application/json']~]
-            `(as-octs:mimes:html (en:json:html *json))
-        ==
-      ==
+      =/  charge  ;;  charge:docket:t:d:m:p  (~(got by charges) %portal)
+      ?>  ?=([%glob *] chad.charge)
+      ~&  >  glob.chad.charge
+      ::[%serve-glob /public glob %.y]
+      ::  /apps/portal?
+      `this
       ::
         %manager-init
       =.  our-apps.state  ;;  our-apps:c
