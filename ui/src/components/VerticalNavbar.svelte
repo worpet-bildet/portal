@@ -44,9 +44,9 @@
           icon={FeedIcon}
           title={'Feed'}
           collapsed={navCollapsed}
-          on:click={() => {}}
+          on:click={() => push('#/feed')}
         />
-        <NavItem
+        <!-- <NavItem
           icon={ExploreIcon}
           title={'Explore'}
           collapsed={navCollapsed}
@@ -65,30 +65,16 @@
           unreadCount={2}
           collapsed={navCollapsed}
           on:click={() => {}}
-        />
+        /> -->
         <NavItem
           icon={FeedbackIcon}
           title={'Feedback'}
           collapsed={navCollapsed}
-          on:click={() => {}}
+          on:click={() => window.open('/apps/talk/dm/~foddur-hodler')}
         />
       </div>
     </div>
     <div class="border w-full my-2" />
-    <div class="p-2">
-      <NavItem
-        icon={ProfileIcon}
-        title={'Profile'}
-        collapsed={navCollapsed}
-        on:click={() => {}}
-      />
-      <NavItem
-        icon={SettingsIcon}
-        title={'Settings'}
-        collapsed={navCollapsed}
-        on:click={() => {}}
-      />
-    </div>
   </div>
   <div class="p-2">
     <a

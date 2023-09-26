@@ -203,8 +203,8 @@
     </div>
     <div
       class="hidden sm:block text-xs px-2 py-1 rounded-md"
-      class:bg-indicator={!glass}
-      class:text-indicatortext={!glass}
+      class:bg-panelhover={!glass}
+      class:text-panelicon={!glass}
       class:bg-glass={glass}
       class:text-glasstext={glass}
     >

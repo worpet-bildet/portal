@@ -55,7 +55,7 @@
             );
           }}
           class="bg-black rounded-md text-xs font-bold px-2 py-1 text-white flex items-center gap-2"
-          ><div class="w-5 h-5 text-white"><DownloadIcon /></div>
+          ><div class="w-4 h-4 text-white"><DownloadIcon /></div>
           <div>Install</div>
         </button>
       {/if}
