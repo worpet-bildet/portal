@@ -13,13 +13,7 @@
   } from '@root/state';
   import { api } from '@root/api';
   import { getMeta, checkIfInstalled } from '@root/util';
-  import {
-    CollectionsSquarePreview,
-    Sigil,
-    GroupsChatMessage,
-    GroupsHeapCurio,
-    GroupsDiaryNote,
-  } from '@components';
+  import { CollectionsSquarePreview, Sigil, GroupsItem } from '@components';
   import { BinIcon, ItemImage, LinkIcon, PostIcon } from '@fragments';
 
   import GroupPreview from './GroupPreview.svelte';
@@ -142,22 +136,8 @@
     class:dark:border-white={selected}
     class:bg-white={isGroupsItem}
   >
-    {#if struc === 'groups-chat-msg'}
-      {@const {
-        bespoke: { content, id, group },
-      } = item}
-      {@const author = id.split('/')[0]}
-      <GroupsChatMessage {author} {group} {content} on:expand />
-    {:else if struc === 'groups-heap-curio'}
-      {@const {
-        bespoke: { heart, group },
-      } = item}
-      <GroupsHeapCurio {heart} {group} on:expand />
-    {:else if struc === 'groups-diary-note'}
-      {@const {
-        bespoke: { essay, group },
-      } = item}
-      <GroupsDiaryNote {essay} {group} on:expand />
+    {#if isGroupsItem}
+      <GroupsItem {item} />
     {:else if struc === 'app'}
       <AppPreview key={item.keyObj} />
     {:else if struc === 'group'}
@@ -170,7 +150,7 @@
               <Sigil patp={ship} />
             {:else if struc === 'collection' && !image}
               <CollectionsSquarePreview {key} withTitle={false} />
-            {:else if !image && link && struc !== 'app'}
+            {:else if !image && link}
               {#await api.link.get.metadata(link)}
                 <ItemImage {image} {title} {color} />
               {:then data}

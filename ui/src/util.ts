@@ -18,9 +18,9 @@ export const checkIfInstalled = (s, desk, cord, isInstalling = false) => {
 export const getMeta = (item) => {
   return {
     title: getTitle(item) || item?.keyObj?.cord,
-    nickname: getNickname(item),
-    description: getDescription(item),
-    blurb: getBlurb(item),
+    nickname: getNickname(item) || '',
+    description: getDescription(item) || '',
+    blurb: getBlurb(item) || '',
     image: getImage(item),
     screenshots: getScreenshots(item),
     cover: getCover(item),
@@ -36,6 +36,7 @@ export const getMeta = (item) => {
     ref: getRef(item),
     lens: getLens(item),
     distShip: getDistShip(item),
+    group: getGroup(item),
     keyStr: item?.keyStr,
     rating: item?.bespoke?.rating,
   };
@@ -137,6 +138,12 @@ export const getShip = (item) => {
     case 'app':
       if (item?.lens === 'def') return item?.keyObj?.ship;
       return item?.bespoke?.treaty?.ship;
+    case 'groups-chat-msg':
+      return item?.bespoke?.id?.split('/')[0];
+    case 'groups-heap-curio':
+      return item?.bespoke?.heart?.author;
+    case 'groups-diary-note':
+      return item?.bespoke?.essay?.author;
     default:
       return item?.keyObj?.ship;
   }
@@ -182,7 +189,19 @@ export const getStruc = (item) => item?.keyObj?.struc;
 export const getRef = (item) => item?.bespoke?.ref;
 export const getLens = (item) => item?.lens;
 export const getDistShip = (item) => item?.bespoke?.signature?.ship;
-export const getAnyLink = (string) => {
+export const getGroup = (item) => {
+  switch (item?.keyObj?.struc) {
+    case 'groups-chat-msg':
+      return item?.bespoke?.group;
+    case 'groups-heap-curio':
+      return item?.bespoke?.group;
+    case 'groups-diary-note':
+      return item?.bespoke?.group;
+    default:
+      return '';
+  }
+};
+export const getAnyLink = (string = '') => {
   return linkify.find(string)?.[0]?.href;
 };
 export const getAllLinks = (string) => {
@@ -554,6 +573,13 @@ function normalizeText(text: string): string {
   const DISALLOWED_MENTION_CHARS = /[^\w\d-]/g;
   return text.replace(DISALLOWED_MENTION_CHARS, '');
 }
+
+export const dropTrailingBreaks = (i) => {
+  if (Array.isArray(i) && i[i.length - 1]?.hasOwnProperty('break')) {
+    return i.slice(0, i.length - 1);
+  }
+  return i;
+};
 
 // assumes already lowercased
 function scoreEntry(filter: string, entry: fuzzy.FilterResult<string>): number {

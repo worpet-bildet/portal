@@ -45,11 +45,21 @@
   const loadItem = (_k) => {
     const keyStr = window.location.hash.includes('/other/')
       ? `/other/${params.wild}`
-      : `/retweet/${params.wild}`;
+      : window.location.hash.includes('/retweet/')
+      ? `/retweet/${params.wild}`
+      : window.location.hash.includes('/groups-chat-msg/')
+      ? `/groups-chat-msg/${params.wild}`
+      : window.location.hash.includes('/groups-heap-curio/')
+      ? `/groups-heap-curio/${params.wild}`
+      : window.location.hash.includes('/groups-diary-note/')
+      ? `/groups-diary-note/${params.wild}`
+      : '';
     const keyObj = keyStrToObj(keyStr);
     // we don't want to clickjack after finding social connections
     if (!$state.social) return;
     item = getItem(keyStr);
+    console.log({ keyStr, item });
+    if (!item) return;
     replies = [
       ...(getReplies(keyObj) || []),
       ...(getRepliesByTo(me, keyObj) || []),

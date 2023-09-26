@@ -12,6 +12,7 @@
     getCuratorFeed,
     keyStrToObj,
     getCollectedItemLeaderboard,
+    getGroupsFeed,
   } from '@root/state';
   import { fromUrbitTime, isValidPatp, formatPatp } from '@root/util';
   import {
@@ -53,7 +54,7 @@
   }
 
   const globalFeed = (): FeedItem[] =>
-    getGlobalFeed().concat(getCuratorFeed(me));
+    getGlobalFeed().concat(getCuratorFeed(me)).concat(getGroupsFeed(me));
 
   state.subscribe((s) => {
     let { pals } = s;
@@ -64,17 +65,16 @@
 
     feed = globalFeed()
       .filter((a) => !!a)
-      .filter((a, idx) => {
-        return globalFeed().findIndex((b) => b.time === a.time) === idx;
-      })
-      .filter((a) => {
-        return (
-          fromUrbitTime(a.key.time) > Date.now() - 1000 * 60 * 60 * 24 * 14
-        );
-      })
-      .sort((a, b) => {
-        return fromUrbitTime(b.key.time) - fromUrbitTime(a.key.time);
-      });
+      .filter(
+        (a, idx) => globalFeed().findIndex((b) => b.time === a.time) === idx
+      )
+      .filter(
+        (a) => fromUrbitTime(a.time) > Date.now() - 1000 * 60 * 60 * 24 * 14
+      )
+      .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
+
+    console.log(getGroupsFeed(me));
+    console.log({ feed });
 
     // Get the latest post, if it was more than six hours ago, send another sub
     if (

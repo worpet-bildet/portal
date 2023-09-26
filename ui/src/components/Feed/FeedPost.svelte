@@ -13,10 +13,11 @@
     getReplies,
     getRepliesByTo,
     getLikes,
+    getGroup,
   } from '@root/state';
   import { getMeta, fromUrbitTime, getAnyLink, isValidPatp } from '@root/util';
-  import { ItemPreview, InlineShip } from '@components';
-  import { CommentIcon, LikeIcon, LinkPreview } from '@fragments';
+  import { ItemPreview, InlineShip, GroupsItem } from '@components';
+  import { CommentIcon, LikeIcon, LinkPreview, ItemImage } from '@fragments';
   import InlineItem from '../InlineItem.svelte';
 
   export let key: ItemKey;
@@ -24,12 +25,21 @@
   export let showRating = false;
   export let indent = false;
   export let isReplyFormOpen = false;
+  export let isExpanded: boolean = false;
 
   let item: Item;
   let replies: ItemKey[] = [];
   let numLikes: number;
   let isLikedByMe: boolean;
   let showReplies = false;
+
+  const isGroupsItem = (struc) => {
+    return [
+      'groups-chat-msg',
+      'groups-heap-curio',
+      'groups-diary-note',
+    ].includes(struc);
+  };
 
   const loadPost = (_k) => {
     item = getItem(key);
@@ -116,17 +126,30 @@
       postContainer.classList.add('max-h-96');
     }
   }
-  $: expandPreview = $location.includes(keyStrFromObj(key));
+  $: expandPreview =
+    $location.includes(keyStrFromObj(key)) ||
+    key.struc === 'groups-heap-curio' ||
+    key.struc === 'groups-chat-msg';
   $: previewNavigate = () => push(keyStrFromObj(key));
 </script>
 
 {#if item}
-  {@const { blurb, ship, createdAt, ref, image, rating } = getMeta(item)}
+  {@const { blurb, ship, createdAt, ref, image, rating, group } = getMeta(item)}
   {@const blurbLink = getAnyLink(blurb)}
   <div class="flex flex-col gap-2 w-full" in:fade>
     <div class="flex items-center justify-between px-3">
       <div class="flex items-center gap-1">
         <InlineShip patp={ship} />
+        {#if group}
+          {@const { title, image, color } = getMeta(getGroup(group))}
+          <span>in</span>
+          <a use:link href={`/group/${group}/`} class="flex gap-1 text-black">
+            <div class="w-5 h-5">
+              <ItemImage {title} {image} {color} />
+            </div>
+            {title}
+          </a>
+        {/if}
       </div>
       <div class="text-xs text-light">{format(createdAt)}</div>
     </div>
@@ -139,17 +162,26 @@
         class:rounded-t-xl={isReplyFormOpen}
         class:rounded-xl={!isReplyFormOpen}
       >
-        <p>
-          {#each blurb.split(/(\s)/) as word}
-            {#if getRef(word)}
-              <InlineItem keyStr={getRef(word)} />
-            {:else}
-              {word}
-            {/if}
-          {/each}
-        </p>
+        {#if blurb}
+          <p>
+            {#each blurb.split(/(\s)/) as word}
+              {#if getRef(word)}
+                <InlineItem keyStr={getRef(word)} />
+              {:else}
+                {word}
+              {/if}
+            {/each}
+          </p>
+        {/if}
         {#if ref}
           <ItemPreview key={ref} on:expand={previewNavigate} />
+        {:else if group}
+          <GroupsItem
+            {item}
+            headless
+            isExpanded={expandPreview}
+            on:expand={previewNavigate}
+          />
         {/if}
         {#if blurbLink}
           <LinkPreview url={blurbLink} />

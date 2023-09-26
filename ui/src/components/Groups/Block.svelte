@@ -1,6 +1,7 @@
 <script lang="ts">
   import { groupKeyToItemKey, deskKeyToItemKey } from '@root/state';
   import { ItemPreview } from '@components';
+  import { ImageLoader } from '@fragments';
 
   export let block;
 </script>
@@ -14,10 +15,10 @@
   {/if}
 {:else if block['image']}
   <a href={block['image']['src']} target="_blank">
-    <img
+    <ImageLoader
       src={block['image']['src']}
       alt={block['image']['alt']}
-      class="object-cover rounded-xl my-2"
+      class="w-full h-full object-cover rounded-xl my-2"
     />
   </a>
 {:else if block.hasOwnProperty('rule')}

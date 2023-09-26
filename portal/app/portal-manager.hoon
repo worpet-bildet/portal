@@ -1,9 +1,9 @@
 /-  c=portal-config, portal-devs, blog-paths
 /+  default-agent, p=portal, sss, dbug
-/$  json-to-action  %json  %portal-action
-/$  msg-to-json  %portal-message  %json
-/$  dev-map-to-json  %portal-dev-map  %json
-/$  portal-manager-result-to-json  %portal-manager-result  %json
+:: /$  json-to-action  %json  %portal-action
+:: /$  msg-to-json  %portal-message  %json
+:: /$  dev-map-to-json  %portal-dev-map  %json
+:: /$  portal-manager-result-to-json  %portal-manager-result  %json
 |%
 +$  versioned-state
   $+  manager-versioned-state
@@ -164,9 +164,140 @@
       %portal-action
     ?>  =(our.bowl src.bowl)
     =/  act  !<(action:m:p vase)
-    ?+    -.act
-      ::  default:  forward to %portal-store
-      :_  this  [(~(act cards:p [our.bowl %portal-store]) act)]~
+    ?-    -.act
+      ::  in many of the following actions, we use to-key:conv:p to convert 
+      ::  all unhashed keys which should be hashed to hashed
+      ::
+        %create
+      =/  new-key  ^-  key:d:m:p
+        %:  to-key:conv:p
+          -:(fall bespoke.act *bespoke:d:m:p) 
+          (fall ship.act our.bowl) 
+          (fall cord.act '') 
+          (fall time.act (scot %da now.bowl))
+        ==
+      :_  this  :_  ~
+      %-  ~(act cards:p [our.bowl %portal-store])
+      %=  act
+        ship             `ship.new-key
+        cord             `cord.new-key
+        time             `time.new-key
+        ::
+          bespoke
+        ?~  bespoke.act  ~
+        ?+    -.u.bespoke.act
+            bespoke.act
+          ::
+            %collection
+          :-  ~
+          %=    u.bespoke.act
+              key-list
+            (to-key-list:conv:p key-list.u.bespoke.act)
+          ==
+          ::
+            %feed
+          :-  ~
+          %=    u.bespoke.act
+              feed
+            (to-feed:conv:p feed.u.bespoke.act)
+          ==
+          ::
+            %retweet
+          :-  ~
+          %=    u.bespoke.act
+              ref
+            (to-key:conv:p ref.u.bespoke.act)
+          ==
+        ==    
+        ::
+          append-to
+        ;;  (list [%collection =ship =cord time=cord])
+        (to-key-list:conv:p append-to.act)
+        ::
+          prepend-to-feed
+        ;;  (list [%feed =ship =cord time=cord])
+        (to-key-list:conv:p prepend-to-feed.act)
+        ::
+          tags-to
+        %+  turn  tags-to.act
+        |=  [=key:d:m:p tag-to=path tag-from=path]
+        [(to-key:conv:p key) tag-to tag-from]
+      ==
+      ::
+        %edit
+      :_  this  :_  ~
+      %-  ~(act cards:p [our.bowl %portal-store])
+      %=    act
+        key       (to-key:conv:p key.act)
+        ::
+          bespoke
+        ?~  bespoke.act  ~
+        ?+    -.u.bespoke.act    bespoke.act
+            %collection
+          :-  ~
+          %=    u.bespoke.act
+              key-list
+            =,  u.bespoke.act
+            ?~  key-list  key-list
+            `(to-key-list:conv:p +:key-list)
+          ==
+          ::
+            %feed
+          :-  ~
+          %=    u.bespoke.act
+              feed
+            =,  u.bespoke.act
+            ?~  feed  feed
+            `(to-feed:conv:p +:feed)
+          ==
+          ::
+            %retweet
+          :-  ~
+          %=    u.bespoke.act
+              ref
+            =,  u.bespoke.act
+            ?~  ref  ref
+            `(to-key:conv:p +:ref)
+          ==
+        ==
+      ==
+      ::
+        %add-tag-request
+      :_  this  :_  ~
+      %-  ~(act cards:p [our.bowl %portal-store])
+      %=    act
+        our    (to-key:conv:p our.act)
+        their  (to-key:conv:p their.act)
+      ==
+      ::
+        ?(%append %remove)
+      :_  this  :_  ~
+      %-  ~(act cards:p [our.bowl %portal-store])
+      %=    act
+        key-list  (to-key-list:conv:p key-list.act)
+          col-key   
+        ;;  [%collection =ship =cord time=cord]
+        (to-key:conv:p col-key.act)
+      ==
+      ::
+        %destroy
+      :_  this  :_  ~
+      %-  ~(act cards:p [our.bowl %portal-store])
+      act(key (to-key:conv:p key.act))
+      ::
+        %prepend-to-feed
+      :_  this  :_  ~
+      %-  ~(act cards:p [our.bowl %portal-store])
+      %=    act
+        feed  (to-feed:conv:p feed.act)
+          feed-key   
+        ;;  [%feed =ship =cord time=cord]
+        (to-key:conv:p feed-key.act)
+      ==
+      ::
+        %aggregate
+      :_  this
+      aggregate-cards:helper
       ::
         %manager-init
       =.  our-apps.state  ;;  our-apps:c
@@ -184,11 +315,25 @@
         :*  %pass  /our-treaty/(scot %p ship)/[desk]  %agent
             [our.bowl %treaty]  %watch  /treaty/(scot %p ship)/[desk]
         ==
+      ::
+      =/  timers  .^((list [@da =duct]) %bx /(scot %p our.bowl)//(scot %da now.bowl)/debug/timers)
+      =/  timer-exists
+        %+  lien  timers
+        |=  [@da =duct]   ::  duct is (list wire)
+        =(%portal-aggregate-timer (rear ;;(path -:duct)))
+      ::
       :_  this
-      %+  welp  `(list card)`cards
-      ?:  (~(has by wex.bowl) [/our-apps our.bowl %treaty])
-          ~
-      [%pass /our-apps %agent [our.bowl %treaty] %watch /alliance]~
+      ;:  welp  
+          `(list card)`cards
+          ?:  (~(has by wex.bowl) [/our-apps our.bowl %treaty])
+              ~
+            [%pass /our-apps %agent [our.bowl %treaty] %watch /alliance]~
+          ?:  timer-exists
+              ~
+            %+  welp  
+            aggregate-timer-cards:helper
+            aggregate-cards:helper
+      ==
       ::
         %sub-to-many
       ::  %def sent to portal-store
@@ -203,7 +348,7 @@
         :_  state.q  (welp cards cards.q)
       :_  this
       %+  snoc  cards
-      (~(act cards:p [our.bowl %portal-store]) [%sub-to-many def.keys])
+      (~(act cards:p [our.bowl %portal-store]) [%sub-to-many (to-key-list:conv:p def.keys)])
       ::
         %sub
       =^  cards  state  (sub:helper [%sub key.act])
@@ -212,7 +357,7 @@
         %blog-sub
       =^  cards  sub-blog-paths  (surf:da-blog-paths our.bowl %blog [%paths ~])
       [cards this]
-
+      ::
         %onboarded
       `this(onboarded toggle.act)
       ::
@@ -247,9 +392,12 @@
       [%give %fact [/updates]~ %portal-manager-result !>([%rpc-endpoint rpc-endpoint.act])]~
       ::
         %tip-request
+      ?~  time.key.act
+        ~&  >>  "%portal-manager: don't tip a %temp item."
+        `this
       :_  this  :_  ~
       :*  %pass  /tip-req  %agent  [ship.key.act %portal-manager]  %poke
-          %portal-message  !>(act)
+          %portal-message  !>(act(key (to-key:conv:p key.act)))
       ==
       ::
         %tip-tx-hash
@@ -496,6 +644,22 @@
   |=  [=wire sign=sign-arvo]
   ^-  (quip card:agent:gall _this)
   ?+  wire  `this
+      [%portal-aggregate-timer ~]
+    ?>  ?=([%behn %wake *] sign)
+    ~&  >  "got aggregate timer"
+    :_  this
+    %+  welp
+      aggregate-timer-cards:helper 
+      aggregate-cards:helper
+    ::
+      [%aggregate ~]
+    ?>  ?=([%khan %arow *] sign)
+    ?.  ?=(%.y -.p.sign)
+      ~&  >>  "%portal-manager: aggregate thread failed"
+      `this
+    ~&  >  "%portal-manager: aggregate thread succeeded"
+    `this
+    ::
       [%get-tx ~]
     ?>  ?=([%khan %arow *] sign)
     ?.  ?=(%.y -.p.sign)
@@ -729,6 +893,12 @@
       (~(act cards:p [our.bowl %portal-manager]) [%manager-init ~])
   ==
 ::
+++  aggregate-timer-cards
+  [%pass /portal-aggregate-timer %arvo %b [%wait (add now.bowl ~h4)]]^~
+::
+++  aggregate-cards
+  [%pass /aggregate %arvo %k %fard q.byk.bowl %aggregate noun+!>(~)]^~
+::
 ++  dev-map-upd
   |=  =_dev-map
   ^-  (list card)
@@ -770,15 +940,43 @@
     (snap p 0 (^sub -.p 32))
   (crip p)
 ::
+::  used in groups-heap-curio and groups-diary-note %temp item keys
+++  cord-to-channel-time
+  |=  =cord
+  ^-  [channel-name=term =time]
+  =+  tap=(trip cord)
+  =+  (find ['/']~ tap)
+  ?~  -  ~|("invalid cord in key for %groups-diary-note/%groups-heap-curio" !!)
+  =/  almost-flag  (trim u.- tap)
+  :-  (crip p.almost-flag)
+  `@da`(slav %ud (crip (slag 1 q.almost-flag)))
+::
+::  used in groups-chat-msg %temp item keys
+++  cord-to-channel-id
+  |=  =cord
+  ^-  [channel-name=term =ship =time]
+  =+  tap=(trip cord)
+  =+  (find ['/']~ tap)
+  ?~  -  ~|("invalid cord in key for %groups-chat-msg" !!)
+  =/  [channel=tape ship-time=tape]  (trim u.- tap)
+  =+  new-tap=(slag 1 ship-time)
+  =+  (find ['/']~ new-tap)
+  ?~  -  ~|("invalid cord in key for %groups-chat-msg" !!)
+  =/  [ship=tape time=tape]  (trim u.- new-tap)
+  :+  (crip channel)
+    `@p`(slav %p (crip ship))
+  `@da`(slav %ud (crip (slag 1 time)))
+::
 ::  portal-manager only needs to do funky stuff with %temp items
 ++  sub
   |=  [act=action:m:p]
   ^+  [*(list card) state]
   ?>  ?=([%sub *] act)
+  =/  new-key  ;;  key:d:m:p  (to-key:conv:p key.act)
   ?.  =(time.key.act '')   ::  branch on whether is %temp (empty time.key)
     :: if not temp
     :_  state
-    (~(act cards:p [our.bowl %portal-store]) act)^~    
+    (~(act cards:p [our.bowl %portal-store]) act(key new-key))^~    
   ::  if temp
   =;  cards
     ?:  ?=(%app struc.key.act)  ::  temp app
@@ -786,27 +984,49 @@
       :: where it subs to the actual %def app
       ::  is this too much spam?
       =^  cards-1  sub-portal-devs
-        (surf:da-portal-devs ship.key.act %portal-app-publisher [%portal-devs ~])
+        (surf:da-portal-devs ship.new-key %portal-app-publisher [%portal-devs ~])
       [(welp cards cards-1) state]
     [cards state]
-  ?:  (~(item-exists scry:p our.bowl now.bowl) key.act)  ~
+  ?:  (~(item-exists scry:p our.bowl now.bowl) new-key)  ~
   =|  bespoke=bespoke:d:m:p
   =/  reach=reach:d:m:p  [%public ~]
   =*  create-empty-temp  ^-  action:m:p  :*  %create
-                              `ship.key.act
-                              `cord.key.act
+                              `ship.new-key
+                              `cord.new-key
                               `''
                               `%temp
                               `reach
                               `bespoke
-                              ?:  ?|  =(%app struc.key.act)
-                                      =(%group struc.key.act)  ==
+                              ?:  ?|  =(%app struc.new-key)
+                                      =(%group struc.new-key)  
+                                      =(%groups-diary-note struc.new-key)
+                                      =(%groups-heap-curio struc.new-key)
+                                      =(%groups-chat-msg struc.new-key)
+                                  ==
                                 [%collection our.bowl '' 'all']~
                               ~
                               ~
                               ~
                           ==
-  ?+    struc.key.act    !!
+  ?+    struc.new-key    !!    
+    ::  
+      %groups-chat-msg
+    =+  (cord-to-channel-id cord.key.act)
+    =.  bespoke  =,  d:m:p
+      [%groups-chat-msg *flag:n [ship.key.act -.-] +.- *content:w 0 0]
+    (~(act cards:p [our.bowl %portal-store]) create-empty-temp)^~
+    ::
+      %groups-diary-note
+    =+  (cord-to-channel-time cord.key.act)
+    =.  bespoke  =,  d:m:p
+      [%groups-diary-note *flag:n [ship.key.act -.-] +.- *essay:n 0 0]
+    (~(act cards:p [our.bowl %portal-store]) create-empty-temp)^~
+    ::
+      %groups-heap-curio
+    =+  (cord-to-channel-time cord.key.act)
+    =.  bespoke  =,  d:m:p
+      [%groups-heap-curio *flag:cur [ship.key.act -.-] +.- *heart:cur 0 0]
+    (~(act cards:p [our.bowl %portal-store]) create-empty-temp)^~
     ::
       %ship
     =.  bespoke  [%ship ~]

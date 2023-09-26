@@ -1,7 +1,7 @@
 <script lang="ts">
   import { ChatMessage } from '$types/landscape/chat';
 
-  import { preSig } from '@root/util';
+  import { preSig, dropTrailingBreaks } from '@root/util';
 
   import GroupsWrapper from './GroupsWrapper.svelte';
   import Inline from './Inline.svelte';
@@ -11,19 +11,13 @@
   export let author: string = '';
   export let content: ChatMessage;
   export let isExpanded: boolean = false;
-
-  const dropTrailingBreaks = (i) => {
-    if (Array.isArray(i) && i[i.length - 1]?.hasOwnProperty('break')) {
-      return i.slice(0, i.length - 1);
-    }
-    return i;
-  };
+  export let headless: boolean = false;
 </script>
 
 {#if !content}
   <div>Contacting {preSig(author)}...</div>
 {:else}
-  <GroupsWrapper {group} {author} {isExpanded} on:expand>
+  <GroupsWrapper {group} {author} {isExpanded} {headless} on:expand>
     {#if 'story' in content}
       {#if content.story?.inline}
         {#each dropTrailingBreaks(content.story.inline) as inline}

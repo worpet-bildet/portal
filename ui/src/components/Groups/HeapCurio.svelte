@@ -1,7 +1,7 @@
 <script lang="ts">
   import { CurioHeart } from '$types/landscape/heap';
 
-  import { preSig } from '@root/util';
+  import { preSig, dropTrailingBreaks } from '@root/util';
 
   import GroupsWrapper from './GroupsWrapper.svelte';
   import Block from './Block.svelte';
@@ -10,6 +10,7 @@
   export let heart: CurioHeart;
   export let group: string = '';
   export let isExpanded: boolean = false;
+  export let headless: boolean = false;
 
   let { author, content } = heart;
 
@@ -31,14 +32,14 @@
 {:else if !content}
   <div>Contacting {preSig(author)}...</div>
 {:else}
-  <GroupsWrapper {author} {group} {isExpanded} on:expand>
+  <GroupsWrapper {author} {group} {isExpanded} {headless} on:expand>
     {#if content?.inline}
-      {#each content.inline as inline}
+      {#each dropTrailingBreaks(content.inline) as inline}
         <Inline {inline} />
       {/each}
     {/if}
     {#if content?.block}
-      {#each content.block as block}
+      {#each dropTrailingBreaks(content.block) as block}
         <Block {block} />
       {/each}
     {/if}

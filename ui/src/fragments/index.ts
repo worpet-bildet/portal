@@ -12,6 +12,8 @@ export { default as StarRating } from './StarRating/StarRating.svelte';
 export { default as IconButton } from './IconButton.svelte';
 export { default as LinkPreview } from './LinkPreview.svelte';
 
+export { default as ImageLoader } from './Image/ImageLoader.svelte';
+
 export { default as ActivityIcon } from './Icons/Activity.svelte';
 export { default as AppsIcon } from './Icons/Apps.svelte';
 export { default as ArrowBackIcon } from './Icons/ArrowBack.svelte';

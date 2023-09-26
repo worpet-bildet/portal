@@ -8,11 +8,20 @@
   export let essay: NoteEssay;
   export let group: string = '';
   export let isExpanded: boolean = false;
+  export let headless: boolean = false;
 
   const { author, content, title, image, sent } = essay;
 </script>
 
-<GroupsWrapper {group} {author} {image} {title} {isExpanded} on:expand>
+<GroupsWrapper
+  {group}
+  {author}
+  {image}
+  {title}
+  {isExpanded}
+  {headless}
+  on:expand
+>
   {#if content?.length > 0}
     {#each content as c}
       {#if 'inline' in c}

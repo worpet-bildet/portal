@@ -232,6 +232,14 @@ export const getCuratorFeed = (patp: string): FeedItem[] => {
   return items()[feedKey(patp)]?.bespoke?.feed;
 };
 
+export const getGroupsFeed = (patp: string): FeedItem[] => {
+  return [
+    ...items()[chatMessageKey(patp)]?.bespoke?.feed,
+    ...items()[heapCurioKey(patp)]?.bespoke?.feed,
+    ...items()[diaryNoteKey(patp)]?.bespoke?.feed,
+  ];
+};
+
 export const getGlobalFeed = (): FeedItem[] => {
   return items()[globalFeedKey(config.indexer)]?.bespoke?.feed;
 };
@@ -566,6 +574,9 @@ const mainCollectionKey = (patp: string): string =>
 const allCollectionKey = (patp: string): string => `/collection/${patp}//all`;
 const feedKey = (patp: string): string => `/feed/${patp}//~2000.1.1`;
 const globalFeedKey = (indexer: string): string => `/feed/${indexer}//global`;
+const chatMessageKey = (patp: string): string => `/feed/${patp}//groups-msgs`;
+const heapCurioKey = (patp: string): string => `/feed/${patp}//groups-curios`;
+const diaryNoteKey = (patp: string): string => `/feed/${patp}//groups-notes`;
 
 export const refreshAll = (): void => {
   refreshPortalItems();
