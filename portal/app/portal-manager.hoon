@@ -184,8 +184,15 @@
             /(scot %p our.bowl)/docket/(scot %da now.bowl)/charges/noun
         ==
       =/  charge  ;;  charge:docket:t:d:m:p  (~(got by charges) %portal)
-      ?>  ?=([%glob *] chad.charge)
-      ~&  >  glob.chad.charge
+      ?>  ?=([%glob *] href.docket.charge)
+      :*  %pass  /glob-web2  %agent  [our.bowl %docket]  %watch
+        =,  glob-reference.href.docket.charge
+        :+  %glob  (scot %uv hash)
+          ?-  -.location
+            %http  /http/(scot %t url.location)
+            %ames  /ames/(scot %p ship.location)
+          ==
+      ==
       ::[%serve-glob /public glob %.y]
       ::  /apps/portal?
       `this
