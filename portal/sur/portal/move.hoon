@@ -12,9 +12,7 @@
 ::  units are optional args
 +$  action
   $+  action
-  $%  [%publish ~]
-  ::
-      $+  create
+  $%  $+  create
       $:  %create
          ship=(unit ship)
          cord=(unit cord)

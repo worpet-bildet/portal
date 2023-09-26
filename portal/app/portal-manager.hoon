@@ -174,29 +174,6 @@
       ::  default:  forward to %portal-store
       :_  this  [(~(act cards:p [our.bowl %portal-store]) act)]~
       ::
-        %publish
-      :: ?>  =(our.bowl ~malwer-worpet-bildet)
-      ::~&  >
-      ::(map desk charge:docket:t:d:m:p)
-      =/  charges  ;;  (map desk charge:docket:t:d:m:p)
-        =<  +
-        .^  noun  %gx
-            /(scot %p our.bowl)/docket/(scot %da now.bowl)/charges/noun
-        ==
-      =/  charge  ;;  charge:docket:t:d:m:p  (~(got by charges) %portal)
-      ?>  ?=([%glob *] href.docket.charge)
-      :*  %pass  /glob-web2  %agent  [our.bowl %docket]  %watch
-        =,  glob-reference.href.docket.charge
-        :+  %glob  (scot %uv hash)
-          ?-  -.location
-            %http  /http/(scot %t url.location)
-            %ames  /ames/(scot %p ship.location)
-          ==
-      ==
-      ::[%serve-glob /public glob %.y]
-      ::  /apps/portal?
-      `this
-      ::
         %manager-init
       =.  our-apps.state  ;;  our-apps:c
         %-  tail
