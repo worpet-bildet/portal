@@ -126,30 +126,6 @@
   ^-  action:mov
   [%sub-to-many (turn feed |=([* * =key:d:mov] key))]
 ::
-=/  create-groups-item-card
-  |=  [=cord =bespoke]
-  ^-  card:agent:gall
-  %-  ~(poke pass:io /create) 
-  :-  [our %portal-manager] 
-  :-  %portal-action
-  !>  [%create `indexer `cord `'' `%temp `[%private ~] `bespoke ~ ~ ~]
-::
-:: =/  create-diary-cards
-::   |=  notes=(list [=time =ship =key])
-::   %+  turn  notes
-::   |=  [=time =note:n:d]
-::   %-  create-groups-item-card
-::   (to-cord  time.note
-::     (list [time=cord =ship =key:d:mov])
-::   cord - `can be hashed or the normal one
-::   %groups-diary-note / %groups-heap-curio / %groups-chat-msg
-::   group-flag
-::   channel
-::   time  / time  / id
-::   essay / heart / content
-::   feels
-::   replies
-::
 ;<  ~  bind:m
   |-
   ?~  diary-flags
