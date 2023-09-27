@@ -31,9 +31,12 @@
     SidebarGroup,
     IconButton,
     SendIcon,
+    FeedIcon,
+    CollectionIcon,
   } from '@fragments';
   import gradient from '@assets/gradient.svg';
   import AppPreview from '@root/components/Item/AppPreview.svelte';
+  import { slide } from 'svelte/transition';
 
   export let params;
   let { patp } = params;
@@ -77,19 +80,22 @@
   };
 
   let activeTab = 'Activity';
-  let tabs = ['Activity', 'Collections'];
+  let tabs = [
+    { tab: 'Activity', icon: FeedIcon },
+    { tab: 'Collections', icon: CollectionIcon },
+  ];
 </script>
 
 {#if curator}
   {@const { title, nickname, cover, image, description, color } =
     getMeta(curator)}
   <div class="grid grid-cols-12 gap-8">
-    <div class="col-span-12 w-full h-48">
+    <div class="col-span-12 w-full sm:h-48">
       {#if cover}
         <img
           src={cover}
           alt="profile banner"
-          class="absolute top-0 left-0 w-full h-72 object-cover"
+          class="relative sm:absolute sm:top-0 left-0 w-full h-48 sm:h-72 object-cover"
         />
       {:else}
         <!-- <div
@@ -98,37 +104,15 @@
         <img
           src={gradient}
           alt="default profile banner"
-          class="absolute top-0 left-0 w-full h-72 object-cover"
+          class="relative sm:absolute sm:top-0 left-0 w-full h-48 sm:h-72 object-cover"
         />
       {/if}
       <div
-        class="absolute top-0 left-0 w-full h-72 bg-gradient-to-t from-coverPhotoBottom to-coverPhotoTop"
+        class="hidden sm:absolute sm:top-0 left-0 w-full h-48 sm:h-72 bg-gradient-to-t from-coverPhotoBottom to-coverPhotoTop"
       />
     </div>
 
-    <div class="col-span-7 gap-x-8">
-      <Tabs {tabs} bind:activeTab />
-      <div class="pt-4">
-        <div class="flex flex-col gap-8">
-          {#if activeTab === 'Activity'}
-            {#if me === patp}
-              <FeedPostForm placeholder="Share a limerick, maybe..." />
-            {/if}
-            {#if !feed || feed.length === 0}
-              <div class="col-span-12">
-                {patp} hasn't made any posts on Portal yet.
-              </div>
-            {:else}
-              <Feed feed={feed || []} />
-            {/if}
-          {:else if activeTab === 'Collections'}
-            <CollectionsList {patp} />
-          {/if}
-        </div>
-      </div>
-    </div>
-
-    <div class="col-span-5">
+    <div class="col-span-12 sm:col-span-5">
       <div class="flex flex-col gap-3 p-6 border rounded-xl">
         <div class="flex flex-col gap-2">
           <div class="w-24 overflow-hidden rounded-xl">
@@ -192,6 +176,28 @@
           </div>
         {/if}
         <MoreFrom {patp} />
+      </div>
+    </div>
+
+    <div class="col-span-12 sm:col-span-7 gap-x-8">
+      <Tabs {tabs} bind:activeTab />
+      <div class="pt-4">
+        <div class="flex flex-col gap-8">
+          {#if activeTab === 'Activity'}
+            {#if me === patp}
+              <FeedPostForm placeholder="Share a limerick, maybe..." />
+            {/if}
+            {#if !feed || feed.length === 0}
+              <div class="col-span-12">
+                {patp} hasn't made any posts on Portal yet.
+              </div>
+            {:else}
+              <Feed feed={feed || []} />
+            {/if}
+          {:else if activeTab === 'Collections'}
+            <CollectionsList {patp} />
+          {/if}
+        </div>
       </div>
     </div>
 

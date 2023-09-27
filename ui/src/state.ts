@@ -191,6 +191,14 @@ export const setReferredTo = (key: HarkNotificationDestination): void => {
   state.update((s) => ({ ...s, referredTo: key }));
 };
 
+export const setIsComposing = (isComposing: boolean): void => {
+  state.update((s) => ({ ...s, isComposing }));
+};
+
+export const setIsSearching = (isSearching: boolean): void => {
+  state.update((s) => ({ ...s, isSearching }));
+};
+
 export const itemInState = (item: ItemKey): Promise<void> => {
   return new Promise((resolve, reject) => {
     const unsubscribe = state.subscribe((s) => {

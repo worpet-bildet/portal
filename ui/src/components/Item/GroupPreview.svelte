@@ -28,9 +28,7 @@
 
 {#if item}
   {@const { title, blurb, description, image, color } = getMeta(item)}
-  <button
-    on:click
-    on:click={() => push(item.keyStr)}
+  <div
     class="grid grid-cols-6 w-full items-start gap-2 hover:duration-500 rounded-lg text-sm text-left"
   >
     <div class="col-span-1 overflow-hidden rounded-md self-center">
@@ -60,7 +58,7 @@
         </button>
       {/if}
     </div>
-  </button>
+  </div>
 {:else}
   <div class="p-4 hover:bg-hover rounded-lg">Contacting {key.ship}...</div>
 {/if}

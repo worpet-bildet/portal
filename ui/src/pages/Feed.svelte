@@ -195,23 +195,29 @@
   ];
 </script>
 
-<div class="grid grid-cols-12 gap-8 mb-4">
+<div class="grid grid-cols-12 gap-8 mb-4 h-full">
   <div class="flex flex-col gap-8 rounded-t-2xl col-span-12 md:col-span-7">
-    <div class="hidden sm:block">
+    <div
+      class="sm:block w-full h-full"
+      class:hidden={!$state.isComposing}
+      class:block={$state.isComposing}
+    >
       <FeedPostForm
         on:post={handlePost}
         placeholder="Type '~' to insert a reference"
       />
     </div>
-    <div>
-      {#if loading}
-        <div class="flex justify-center dark:fill-white items-center py-20">
-          <div class="w-10 h-10"><LoadingIcon /></div>
-        </div>
-      {:else}
-        <Feed feed={promptedFeed.length > 0 ? promptedFeed : feed} />
-      {/if}
-    </div>
+    {#if !$state.isComposing}
+      <div>
+        {#if loading}
+          <div class="flex justify-center dark:fill-white items-center py-20">
+            <div class="w-10 h-10"><LoadingIcon /></div>
+          </div>
+        {:else}
+          <Feed feed={promptedFeed.length > 0 ? promptedFeed : feed} />
+        {/if}
+      </div>
+    {/if}
   </div>
   <RightSidebar>
     <!-- {#if sortedRecommendations.length > 0}

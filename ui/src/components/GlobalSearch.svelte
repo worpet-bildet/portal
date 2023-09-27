@@ -2,7 +2,7 @@
   import { Item } from '$types/portal/item';
 
   import { push, location } from 'svelte-spa-router';
-  import { fade } from 'svelte/transition';
+  import { fade, slide } from 'svelte/transition';
 
   import { me } from '@root/api';
   import {
@@ -15,6 +15,7 @@
     contacts,
     getCurator,
     getGlobalFeed,
+    setIsSearching,
   } from '@root/state';
   import {
     getMeta,
@@ -29,6 +30,7 @@
   import ItemImage from '@root/fragments/ItemImage.svelte';
 
   export let isGlassy: boolean = false;
+  export let isSearching: boolean = false;
 
   let searchResults: {
     items: Item[];
@@ -79,7 +81,7 @@
   });
 
   const reset = () => {
-    focused = false;
+    setIsSearching(false);
     selectedIndex = -1;
     searchString = '';
     setDefaultResults();
@@ -147,7 +149,6 @@
 
   let searchString: string = '';
   let searchInput: HTMLInputElement;
-  let focused: boolean = false;
   let selectedIndex: number = -1;
   let buttons: HTMLButtonElement[] = [];
 
@@ -171,48 +172,65 @@
 
 <svelte:window on:keydown={handleKeydownGlobal} />
 
-{#if focused}
+{#if isSearching}
   <div
     class="absolute top-0 left-0 w-full h-full bg-white/30 dark:opacity-40 z-10 backdrop-blur-xs"
     in:fade
   />
 {/if}
-<div class="flex flex-col w-full gap-4 relative z-20">
-  <div
-    class="flex w-full justify-between rounded-lg border p-3"
-    class:z-20={focused}
-    class:bg-input={!glass}
-    class:bg-glass={glass}
-    class:backdrop-blur-md={glass}
-  >
-    <div class="flex items-center gap-4 w-full" class:text-glasstext={glass}>
-      <div class="w-6 h-6 flex items-center">
-        <SearchIcon />
-      </div>
-      <input
-        on:focus={() => (focused = true)}
-        on:blur={reset}
-        bind:value={searchString}
-        type="text"
-        class="w-full bg-transparent outline-none mr-2"
-        class:placeholder:text-glasstext={glass}
-        placeholder="Search Portal..."
-        bind:this={searchInput}
-        on:keydown|capture={handleKeydownInput}
-      />
-    </div>
+<div class="flex flex-col w-full relative z-20">
+  <div class="flex flex-row items-center mb-4" class:px-3={isSearching}>
     <div
-      class="hidden sm:block text-xs px-2 py-1 rounded-md"
-      class:bg-panelhover={!glass}
-      class:text-panelicon={!glass}
-      class:bg-glass={glass}
-      class:text-glasstext={glass}
+      transition:slide={{ duration: $state.isComposing ? 0 : 150 }}
+      class="flex bg-input w-full justify-between rounded-lg border p-3"
+      class:z-20={isSearching}
+      class:sm:bg-input={!glass}
+      class:sm:bg-glass={glass}
+      class:sm:backdrop-blur-md={glass}
     >
-      ⌘K
+      <div
+        class="flex items-center gap-4 w-full"
+        class:sm:text-glasstext={glass}
+      >
+        <div class="w-6 h-6 flex items-center">
+          <SearchIcon />
+        </div>
+        <input
+          on:focus={() => setIsSearching(true)}
+          on:blur={reset}
+          bind:value={searchString}
+          type="text"
+          class="w-full bg-transparent outline-none mr-2"
+          class:placeholder:sm:text-glasstext={glass}
+          placeholder="Search Portal..."
+          bind:this={searchInput}
+          on:keydown|capture={handleKeydownInput}
+        />
+      </div>
+      <div
+        class="hidden sm:block text-xs px-2 py-1 rounded-md"
+        class:bg-panelhover={!glass}
+        class:text-panelicon={!glass}
+        class:sm:bg-glass={glass}
+        class:sm:text-glasstext={glass}
+      >
+        ⌘K
+      </div>
     </div>
+    {#if isSearching}
+      <div class="p-1">
+        <button
+          class="sm:hidden text-tertiary"
+          on:click={() => {
+            searchInput.blur();
+          }}
+          transition:slide={{ axis: 'x', duration: 200 }}>Cancel</button
+        >
+      </div>
+    {/if}
   </div>
-  <div class="relative">
-    {#if focused}
+  {#if isSearching}
+    <div class="relative">
       <div
         class="flex flex-col border rounded-lg p-3 z-20 absolute bg-white w-full gap-3 drop-shadow-search"
       >
@@ -334,6 +352,6 @@
           </div>
         {/if}
       </div>
-    {/if}
-  </div>
+    </div>
+  {/if}
 </div>

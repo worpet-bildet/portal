@@ -89,7 +89,7 @@
       </div>
     </div>
     <div class="col-span-12 pt-4">
-      <Tabs activeTab={'Links'} tabs={['Links']} />
+      <Tabs activeTab={'Links'} tabs={[{ tab: 'Links' }]} />
     </div>
     <div class="col-span-8 pt-4 pr-4 border-r">
       <div class="grid gap-y-4 rounded-lg">

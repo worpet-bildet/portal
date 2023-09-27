@@ -22,6 +22,7 @@
     MobileHeader,
     GlobalSearch,
   } from '@components';
+  import { slide } from 'svelte/transition';
 
   const routes = {
     '/': Feed,
@@ -49,8 +50,11 @@
     routes['/dev/api'] = Api;
   }
 
+  let isComposing: boolean = false;
+  let isSearching: boolean = false;
   state.subscribe((s) => {
     console.log({ state: s });
+    ({ isSearching, isComposing } = s);
   });
 
   location.subscribe(() => {
@@ -77,11 +81,13 @@
     push(`${key}`);
   }
 
-  let isSearchGlassy = false;
-  let isComposing = false;
+  let isSearchGlassy: boolean = false;
+  let isHome: boolean = false;
   const handleRouteLoaded = ({ detail: { route } }) => {
     isSearchGlassy = route === '/:patp';
-    isComposing = route === '/compose';
+    // isComposing = route === '/compose';
+    // isSearching = route === '/search';
+    isHome = route === '/';
   };
 </script>
 
@@ -94,21 +100,32 @@
     <div
       bind:this={main}
       id="main"
-      class="lg:px-10 bg-white overflow-y-auto grid grid-cols-12 relative col-span-12 sm:col-span-11 lg:col-span-10"
-      class:px-3={!isComposing}
+      class="lg:px-10 sm:px-3 bg-white overflow-y-auto grid grid-cols-12 relative col-span-12 sm:col-span-11 lg:col-span-10"
+      class:px-3={!isComposing && !isSearching}
+      class:overflow-hidden={isSearching}
     >
       {#if !isComposing}
-        <div class="sm:hidden pt-4 col-span-12">
-          <MobileHeader />
-        </div>
+        {#if !isSearching}
+          <div
+            class="sm:hidden pt-4 col-span-12"
+            transition:slide={{ duration: isComposing ? 0 : 150 }}
+          >
+            <MobileHeader />
+          </div>
+        {/if}
         <div class="pt-4 col-span-12 md:col-span-7 md:pr-3">
-          <GlobalSearch isGlassy={isSearchGlassy} />
+          <GlobalSearch isGlassy={isSearchGlassy} {isSearching} />
         </div>
       {/if}
-      <div class="col-span-12 min-h-screen" class:pb-8={!isComposing}>
+      <div
+        class="col-span-12 min-h-screen mb-24 sm:block"
+        class:pb-8={!isComposing}
+        class:overflow-hidden={isSearching}
+        class:mb-0={isSearching}
+      >
         <Router {routes} on:routeLoaded={handleRouteLoaded} />
       </div>
-      <div class="sm:hidden"><HorizontalNavbar bind:isComposing /></div>
+      <div class="sm:hidden"><HorizontalNavbar {isHome} /></div>
     </div>
   </div>
 </main>

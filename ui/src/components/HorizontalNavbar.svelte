@@ -9,6 +9,7 @@
     updateNotificationsLastChecked,
     toggleMuteNotifications,
     keyStrFromObj,
+    setIsComposing,
   } from '@root/state';
   import { me } from '@root/api';
   import { formatPatp } from '@root/util';
@@ -26,10 +27,11 @@
   } from '@fragments';
   import logo from '@assets/logo.svg';
 
-  export let isComposing: boolean = false;
+  export let isHome: boolean = false;
+
   const handleNewPostClick = () => {
-    isComposing = true;
-    push('/compose');
+    setIsComposing(true);
+    // push('/compose');
   };
 </script>
 
@@ -63,7 +65,7 @@
     on:click={() => {}}
   />
 </div> -->
-{#if !isComposing}
+{#if !$state.isComposing && isHome}
   <button
     class="fixed rounded-full bottom-4 right-4 h-20 w-20 bg-black text-white"
     on:click={handleNewPostClick}

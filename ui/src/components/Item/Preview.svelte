@@ -22,7 +22,7 @@
 
   export let key: ItemKey | string;
 
-  export let clickable = true;
+  export let clickable = false;
   export let removable = false;
   export let editable = false;
   export let selectable = false;

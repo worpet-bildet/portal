@@ -16,6 +16,7 @@
     getGroup,
     getApp,
     itemInState,
+    setIsComposing,
   } from '@root/state';
   import {
     getAnyLink,
@@ -85,7 +86,6 @@
     const time = toUrbitTime(Date.now());
     if (chatDetails) {
       const { host, channel, poster, id } = chatDetails;
-      console.log({ poster });
       ref = { struc: 'groups-chat-msg', ship: me, cord: '', time };
       api.portal.do.createGroupsChatMsg(host, channel, poster, id, time);
     }
@@ -190,6 +190,7 @@
     noteDetails = undefined;
     diaryNote = undefined;
     rating = undefined;
+    setIsComposing(false);
   };
 
   // TODO: Factor out the selection of groups/apps into its own component
@@ -294,7 +295,7 @@
     <InlineShip patp={me} isExpanded />
   </div>
   {#if replyTo}
-    <div class="flex w-full gap-1 line-clamp-1">
+    <div class="flex w-full gap-1">
       <div class="text-posttext">Replying to</div>
       <div class="text-black">{collapseNames(replyingToNames)}</div>
     </div>
@@ -332,7 +333,7 @@
     <div>
       <button
         class="px-3 py-2 sm:hidden rounded-lg text-tertiary border border-mute"
-        on:click={pop}>Cancel</button
+        on:click={() => setIsComposing(false)}>Cancel</button
       >
     </div>
     <div class="flex items-center gap-4">

@@ -45,7 +45,7 @@
   });
 
   let activeTab = 'Profile';
-  let tabs = ['Profile', 'Collections'];
+  let tabs = [{ tab: 'Profile' }, { tab: 'Collections' }];
 
   let publishBlog = true;
   let publishRadio = false;
@@ -90,7 +90,7 @@
       </div>
       <div class="flex flex-col gap-2">
         <div>Bio</div>
-        <TextArea bind:value={bio} />
+        <TextArea bind:content={bio} />
       </div>
       <div class="flex flex-col gap-2">
         <div>Avatar</div>
