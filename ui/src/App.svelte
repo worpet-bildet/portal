@@ -4,7 +4,16 @@
   import { state, setReferredTo } from '@root/state';
   import config from '@root/config';
 
-  import { Feed, Group, App, Other, Explore, Api } from './pages';
+  import {
+    Feed,
+    Group,
+    App,
+    Other,
+    Explore,
+    Api,
+    Compose,
+    Search,
+  } from './pages';
   import { Curator, EditCurator } from './pages/Curator';
   import { Collection, EditCollection } from './pages/Collection';
   import {
@@ -27,6 +36,8 @@
     '/groups-diary-note/*': Other,
     '/collection/*': Collection,
     '/collection-edit/*': EditCollection,
+    '/compose': Compose,
+    '/search': Search,
     '/:patp': Curator,
     '/:patp/edit': EditCurator,
   };
@@ -67,8 +78,10 @@
   }
 
   let isSearchGlassy = false;
+  let isComposing = false;
   const handleRouteLoaded = ({ detail: { route } }) => {
     isSearchGlassy = route === '/:patp';
+    isComposing = route === '/compose';
   };
 </script>
 
@@ -81,18 +94,21 @@
     <div
       bind:this={main}
       id="main"
-      class="px-3 lg:px-10 bg-white overflow-y-auto grid grid-cols-12 relative col-span-12 sm:col-span-11 lg:col-span-10"
+      class="lg:px-10 bg-white overflow-y-auto grid grid-cols-12 relative col-span-12 sm:col-span-11 lg:col-span-10"
+      class:px-3={!isComposing}
     >
-      <div class="sm:hidden pt-4 col-span-12">
-        <MobileHeader />
-      </div>
-      <div class="pt-4 col-span-12 md:col-span-7 md:pr-3">
-        <GlobalSearch isGlassy={isSearchGlassy} />
-      </div>
-      <div class="col-span-12 min-h-screen pb-8 mb-28">
+      {#if !isComposing}
+        <div class="sm:hidden pt-4 col-span-12">
+          <MobileHeader />
+        </div>
+        <div class="pt-4 col-span-12 md:col-span-7 md:pr-3">
+          <GlobalSearch isGlassy={isSearchGlassy} />
+        </div>
+      {/if}
+      <div class="col-span-12 min-h-screen" class:pb-8={!isComposing}>
         <Router {routes} on:routeLoaded={handleRouteLoaded} />
       </div>
-      <div class="sm:hidden"><HorizontalNavbar /></div>
+      <div class="sm:hidden"><HorizontalNavbar bind:isComposing /></div>
     </div>
   </div>
 </main>

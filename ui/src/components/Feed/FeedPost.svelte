@@ -17,7 +17,13 @@
   } from '@root/state';
   import { getMeta, fromUrbitTime, getAnyLink, isValidPatp } from '@root/util';
   import { ItemPreview, InlineShip, GroupsItem } from '@components';
-  import { CommentIcon, LikeIcon, LinkPreview, ItemImage } from '@fragments';
+  import {
+    CommentIcon,
+    LikeIcon,
+    LinkPreview,
+    ItemImage,
+    ImageLoader,
+  } from '@fragments';
   import InlineItem from '../InlineItem.svelte';
 
   export let key: ItemKey;
@@ -172,6 +178,15 @@
             {/each}
           </p>
         {/if}
+        {#if image}
+          <a href={image} target="_blank" class="w-full">
+            <ImageLoader
+              src={image}
+              alt="attachment"
+              class="rounded-xl w-full h-full object-cover"
+            />
+          </a>
+        {/if}
         {#if ref}
           <ItemPreview key={ref} on:expand={previewNavigate} />
         {:else if group}
@@ -213,9 +228,6 @@
         </div>
       </div>
     </div>
-    {#if group}
-      <div class="text-tertiary">Visible only to you</div>
-    {/if}
   </div>
 {:else}
   <div class="p-5 border-b border-x text-grey" in:fade>

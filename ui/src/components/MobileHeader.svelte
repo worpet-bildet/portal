@@ -9,8 +9,9 @@
 </script>
 
 <div class="flex items-center justify-between">
-  <a use:link href="#/">
+  <a use:link href="#/" class="flex items-center gap-2">
     <img src={logo} class="w-12 h-12" alt="logo" />
+    <div class="font-bold text-xl">Portal</div>
   </a>
   <a use:link href="#/{me}" class="w-12 h-12 overflow-hidden rounded-md">
     <Sigil patp={me} />

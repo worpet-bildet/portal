@@ -14,7 +14,6 @@
     PlusIcon,
     IconButton,
     CancelIcon,
-    PlusIcon,
     OtherItemForm,
   } from '@fragments';
   import { toUrbitTime } from '@root/util';

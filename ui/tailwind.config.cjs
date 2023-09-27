@@ -42,6 +42,7 @@ module.exports = {
         coverDefaultGradientTop: '#FA71CD',
         glass: '#FFFFFF30',
         glasstext: '#FFFFFFCC',
+        secondary: '#6D6D6D',
         tertiary: '#909090',
         flavour: '#6D6D6D',
 
@@ -85,6 +86,7 @@ module.exports = {
       darkgrey: '#181A1C',
       error: 'rgb(220 38 38)',
       spacer: '#696969',
+      mute: '#EFEFEF',
     },
     boxShadow: {
       DEFAULT: '0 0 20px 0 #69696920',

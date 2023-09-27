@@ -7,6 +7,7 @@
   import { DiaryNote } from '$types/landscape/diary';
   import { HeapCurio } from '$types/landscape/heap';
 
+  import { pop } from 'svelte-spa-router';
   import { createEventDispatcher } from 'svelte';
   import { api, me } from '@root/api';
   import {
@@ -51,6 +52,8 @@
     StarRating,
     LinkPreview,
     SearchIcon,
+    ImageIcon,
+    ImageLoader,
   } from '@fragments';
   import { Editor } from '@tiptap/core';
 
@@ -61,6 +64,7 @@
   export let placeholder = '';
   export let buttonText = 'Post';
   export let replyingToNames: string[] = [];
+  export let editor: Editor = undefined;
 
   let dispatch = createEventDispatcher();
   let content: string;
@@ -170,7 +174,9 @@
       });
       submitting = false;
     } catch (e) {
-      alert('Posting failed, please refresh the page and try again.');
+      alert(
+        'Posting might have failed. Please save your work, then refresh the page and try again.'
+      );
       return;
     }
 
@@ -193,8 +199,6 @@
   let selectedKey: ItemKey;
   let fileInput: HTMLInputElement;
   let uploadedImageUrl: string;
-
-  let editor: Editor;
 
   let groups: Groups = {};
   let apps: { [key: string]: DocketApp } = {};
@@ -272,7 +276,7 @@
 </script>
 
 <div
-  class="flex flex-col w-full border-l border-r border-b p-4 gap-4 rounded-b-xl"
+  class="flex flex-col w-full h-full sm:h-auto border-l border-r border-b p-4 gap-4 rounded-b-xl"
   class:relative={submitting}
   class:border-t={!replyTo}
   class:rounded-t-xl={!replyTo}
@@ -295,7 +299,7 @@
       <div class="text-black">{collapseNames(replyingToNames)}</div>
     </div>
   {/if}
-  <div class="flex w-full">
+  <div class="flex w-full h-full sm:h-auto">
     <RichTextArea
       bind:editor
       bind:content
@@ -315,9 +319,38 @@
   {#if linkToPreview}
     <LinkPreview url={linkToPreview} />
   {/if}
-  <div class="flex justify-end w-full">
-    <button class="py-2 px-3 rounded-lg bg-black text-white" on:click={post}>
-      {#if replyTo}Reply{:else}Post{/if}
-    </button>
+  {#if uploadedImageUrl}
+    <div class="flex w-full items-center justify-center">
+      <img
+        src={uploadedImageUrl}
+        alt="attachment"
+        class="w-full h-full object-cover rounded-xl"
+      />
+    </div>
+  {/if}
+  <div class="flex justify-between items-center w-full">
+    <div>
+      <button
+        class="px-3 py-2 sm:hidden rounded-lg text-tertiary border border-mute"
+        on:click={pop}>Cancel</button
+      >
+    </div>
+    <div class="flex items-center gap-4">
+      <button
+        class="w-10 p-2 rounded-lg"
+        class:text-tertiary={!$state.s3}
+        on:click={() => fileInput.click()}><ImageIcon /></button
+      >
+      <input
+        type="file"
+        class="hidden"
+        accept="image/*"
+        bind:this={fileInput}
+        on:change={handleImageSelect}
+      />
+      <button class="py-2 px-3 rounded-lg bg-black text-white" on:click={post}>
+        {#if replyTo}Reply{:else}Post{/if}
+      </button>
+    </div>
   </div>
 </div>

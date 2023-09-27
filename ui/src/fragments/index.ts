@@ -48,5 +48,6 @@ export { default as UrbitIcon } from './Icons/Urbit.svelte';
 export { default as XIcon } from './Icons/X.svelte';
 export { default as LikeIcon } from './Icons/Like.svelte';
 export { default as LoadingIcon } from './Icons/Loading.svelte';
+export { default as ImageIcon } from './Icons/Image.svelte';
 
 export { default as NavItem } from './NavItem.svelte';

@@ -80,6 +80,11 @@
           placeholder: placeholder ?? "Type '~' to insert a reference",
         }),
       ],
+      editorProps: {
+        attributes: {
+          class: 'h-full sm:h-auto',
+        },
+      },
       onTransaction: () => {
         // force re-render so `editor.isActive` works as expected
         editor = editor;

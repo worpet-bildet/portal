@@ -336,7 +336,13 @@ export const getMoreFromThisShip = (
         b?.bespoke?.['key-list']
           .filter(
             (k: ItemKey) =>
-              !['collection', 'ship'].includes(k?.struc) &&
+              ![
+                'collection',
+                'ship',
+                'groups-chat-msg',
+                'groups-heap-curio',
+                'groups-diary-note',
+              ].includes(k?.struc) &&
               k?.ship === patp &&
               k?.cord !== cord &&
               !(

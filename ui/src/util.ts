@@ -184,7 +184,18 @@ export const getServedFrom = (item) => {
       return '';
   }
 };
-export const getCreatedAt = (item) => fromUrbitTime(item?.meta?.createdAt);
+export const getCreatedAt = (item) => {
+  switch (item?.keyObj?.struc) {
+    case 'groups-chat-msg':
+      return fromUrbitTime(item?.bespoke?.['time-created']);
+    case 'groups-heap-curio':
+      return fromUrbitTime(item?.bespoke?.['time-created']);
+    case 'groups-diary-note':
+      return fromUrbitTime(item?.bespoke?.['time-created']);
+    default:
+      return fromUrbitTime(item?.meta?.createdAt);
+  }
+};
 export const getStruc = (item) => item?.keyObj?.struc;
 export const getRef = (item) => item?.bespoke?.ref;
 export const getLens = (item) => item?.lens;

@@ -30,8 +30,6 @@
         return c;
       });
 
-    console.log({ subbingTo, curatorCollections, collections });
-
     if (collections.length > 0 || subbingTo.size === 0) {
       loading = false;
     }

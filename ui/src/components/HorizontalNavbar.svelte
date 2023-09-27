@@ -19,16 +19,21 @@
     FeedIcon,
     FeedbackIcon,
     NavItem,
+    PlusIcon,
     ProfileIcon,
     SettingsIcon,
     TipIcon,
   } from '@fragments';
   import logo from '@assets/logo.svg';
 
-  export let navCollapsed: boolean = false;
+  export let isComposing: boolean = false;
+  const handleNewPostClick = () => {
+    isComposing = true;
+    push('/compose');
+  };
 </script>
 
-<div
+<!-- <div
   class="fixed left-0 h-24 bottom-0 flex w-full justify-between bg-white/80 backdrop-blur-xs"
 >
   <NavItem
@@ -57,4 +62,16 @@
     collapsed={navCollapsed}
     on:click={() => {}}
   />
-</div>
+</div> -->
+{#if !isComposing}
+  <button
+    class="fixed rounded-full bottom-4 right-4 h-20 w-20 bg-black text-white"
+    on:click={handleNewPostClick}
+  >
+    <div class="flex w-full h-full items-center justify-center">
+      <div class="w-8 h-8">
+        <PlusIcon />
+      </div>
+    </div>
+  </button>
+{/if}

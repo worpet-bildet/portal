@@ -71,10 +71,8 @@
       .filter(
         (a) => fromUrbitTime(a.time) > Date.now() - 1000 * 60 * 60 * 24 * 14
       )
-      .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
-
-    console.log(getGroupsFeed(me));
-    console.log({ feed });
+      .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time))
+      .slice(0, 100);
 
     // Get the latest post, if it was more than six hours ago, send another sub
     if (
@@ -199,7 +197,7 @@
 
 <div class="grid grid-cols-12 gap-8 mb-4">
   <div class="flex flex-col gap-8 rounded-t-2xl col-span-12 md:col-span-7">
-    <div>
+    <div class="hidden sm:block">
       <FeedPostForm
         on:post={handlePost}
         placeholder="Type '~' to insert a reference"
@@ -256,7 +254,7 @@
                     <Sigil patp={location} />
                   </div>
                   <div class="flex flex-col">
-                    <div>{description}</div>
+                    <div class="line-clamp-1">{description}</div>
                     <div
                       class="flex items-center w-full justify-between gap-2 text-xs"
                     >

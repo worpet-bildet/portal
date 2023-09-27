@@ -30,6 +30,7 @@
     RightSidebar,
     SidebarGroup,
     IconButton,
+    SendIcon,
   } from '@fragments';
   import gradient from '@assets/gradient.svg';
   import AppPreview from '@root/components/Item/AppPreview.svelte';
@@ -57,8 +58,6 @@
         cord: '',
       });
     }
-
-    console.log({ curator });
   };
 
   $: {
@@ -77,7 +76,7 @@
     api.pals.do.add(ship).then(refreshPals);
   };
 
-  let activeTab = 'Collections';
+  let activeTab = 'Activity';
   let tabs = ['Activity', 'Collections'];
 </script>
 
@@ -146,12 +145,36 @@
           </div>
         </div>
 
-        <a
-          use:link
-          href={`/${me}/edit`}
-          class="w-full py-2 border rounded-lg text-center text-tertiary hover:text-black hover:underline"
-          >Edit Profile</a
-        >
+        {#if me !== patp}
+          <IconButton
+            icon={SendIcon}
+            on:click={() =>
+              window.open(`${window.location.origin}/apps/talk/dm/${patp}`)}
+            class="bg-black text-white w-fit">Message</IconButton
+          >
+        {/if}
+        {#if me === patp}
+          <a
+            use:link
+            href={`/${me}/edit`}
+            class="w-full py-2 border rounded-lg text-center text-tertiary hover:text-black hover:underline"
+            >Edit Profile</a
+          >
+        {:else if isMyPal}
+          <IconButton
+            icon={ProfileIcon}
+            on:click={togglePal}
+            async
+            class="text-xs text-tertiary bg-panel w-fit">Remove Pal</IconButton
+          >
+        {:else}
+          <IconButton
+            icon={ProfileIcon}
+            on:click={togglePal}
+            async
+            class="bg-panelhover text-secondary w-fit">Add Pal</IconButton
+          >
+        {/if}
 
         <div class="border-b w-full" />
         {#if curator?.bespoke?.groups?.length > 0}
@@ -172,7 +195,7 @@
       </div>
     </div>
 
-    <div class="col-span-5 flex items-start justify-end gap-2">
+    <!-- <div class="col-span-5 flex items-start justify-end gap-2">
       {#if me === patp}
         <div class="flex flex-col gap-4">
           <CollectionsAdd on:add={() => (activeTab = 'Collections')} />
@@ -201,7 +224,7 @@
           >Message</IconButton
         >
       {/if}
-    </div>
+    </div> -->
   </div>
 {:else}
   Loading...
