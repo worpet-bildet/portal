@@ -54,7 +54,7 @@
   }
 
   const globalFeed = (): FeedItem[] =>
-    getGlobalFeed().concat(getCuratorFeed(me)).concat(getGroupsFeed(me));
+    getGlobalFeed().concat(getCuratorFeed(me));
 
   state.subscribe((s) => {
     let { pals } = s;

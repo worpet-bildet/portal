@@ -22,7 +22,7 @@
   };
 
   $: $state && loadItem(key);
-  $: groupKey = `${item.keyObj.ship}/${item.keyObj.cord}`;
+  $: groupKey = item && `${item.keyObj.ship}/${item.keyObj.cord}`;
   $: joinedDetails = getJoinedGroupDetails(groupKey);
 </script>
 

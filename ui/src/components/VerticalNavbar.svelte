@@ -52,13 +52,14 @@
           collapsed={navCollapsed}
           on:click={() => {}}
         />
+        -->
         <NavItem
           icon={ActivityIcon}
           title={'Activity'}
-          unreadCount={4}
           collapsed={navCollapsed}
-          on:click={() => {}}
+          on:click={() => push('#/activity')}
         />
+        <!--
         <NavItem
           icon={TipIcon}
           title={'Tips'}

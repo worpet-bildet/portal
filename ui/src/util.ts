@@ -219,6 +219,22 @@ export const getAllLinks = (string) => {
   return linkify.find(string).map((l) => l.href);
 };
 
+export const getGroupsLink = (item) => {
+  console.log(item);
+  // http://localhost/apps/groups/groups/~tommur-dostyn/tlon-studio/channels/chat/~tommur-dostyn/support?msg=170141184506435544337432278891006787584
+  const prefix = `/apps/groups/`;
+  let suffix = '';
+  switch (item?.keyObj?.struc) {
+    case 'groups-chat-msg':
+      suffix = `groups/${item?.bespoke?.group}/channels/chat/${
+        item?.bespoke?.channel
+      }?msg=${removeDotsFromId(item?.bespoke?.id?.split('/')[1])}`;
+  }
+  if (suffix) {
+    return `${prefix}${suffix}`;
+  }
+};
+
 export const isUrl = (s) => {
   if (
     /^(http[s]*:\/\/.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=,]*)$/g.test(
@@ -447,7 +463,7 @@ export const matchItem = (i: Item, needle: string) => {
   );
 };
 
-export const formatId = (id) => {
+export const addDotsToId = (id) => {
   // add dots after every third character, starting from the end. first we strip
   // any dots from the string just to make sure
   const reversed = id.replace(/\./g, '').split('').reverse().join('');
@@ -455,6 +471,10 @@ export const formatId = (id) => {
   const joined = groups.join('.');
   const reversedAgain = joined.split('').reverse().join('');
   return reversedAgain;
+};
+
+export const removeDotsFromId = (id) => {
+  return id.replace(/\./g, '');
 };
 
 //  /1/chan/chat/~sampel-dilryd-mopreg/new-channel/msg/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749
@@ -492,7 +512,7 @@ export const getChatDetails = (path) => {
     host: splut[4],
     channel: splut[5],
     poster: splut[7],
-    id: formatId(splut[8]),
+    id: addDotsToId(splut[8]),
   };
 };
 
@@ -502,7 +522,7 @@ export const getCurioDetails = (path) => {
   return {
     host: splut[4],
     channel: splut[5],
-    id: formatId(splut[7]),
+    id: addDotsToId(splut[7]),
   };
 };
 
@@ -512,7 +532,7 @@ export const getNoteDetails = (path) => {
   return {
     host: splut[4],
     channel: splut[5],
-    id: formatId(splut[7]),
+    id: addDotsToId(splut[7]),
   };
 };
 
@@ -532,7 +552,7 @@ export const formatCurioPath = (path) => {
   const p = path.replace('/1/chan', '').replace('/curio/', '/curios/curio/id/');
   const splut = p.split('/');
   // replace the last element in the path with the formatted id
-  splut[splut.length - 1] = formatId(splut[splut.length - 1]);
+  splut[splut.length - 1] = addDotsToId(splut[splut.length - 1]);
   return splut.join('/');
 };
 
@@ -544,7 +564,7 @@ export const formatNotePath = (path) => {
   const p = path.replace('/1/chan', '').replace('/note/', '/notes/note/');
   const splut = p.split('/');
   // replace the last element in the path with the formatted id
-  splut[splut.length - 1] = formatId(splut[splut.length - 1]);
+  splut[splut.length - 1] = addDotsToId(splut[splut.length - 1]);
   return splut.join('/');
 };
 

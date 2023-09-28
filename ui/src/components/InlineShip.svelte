@@ -12,8 +12,10 @@
 
 <a use:link href={`/${patp}`} class="flex items-center gap-2">
   <div class="w-7 h-7 overflow-hidden rounded-md"><Sigil {patp} /></div>
-  <div>{nickname ? nickname : formatPatp(patp)}</div>
+  <div class="text-sm sm:text-base">
+    {nickname ? nickname : formatPatp(patp)}
+  </div>
   {#if isExpanded && nickname}
-    <div class="text-tertiary">{formatPatp(patp)}</div>
+    <div class="text-tertiary text-sm sm:text-base">{formatPatp(patp)}</div>
   {/if}
 </a>

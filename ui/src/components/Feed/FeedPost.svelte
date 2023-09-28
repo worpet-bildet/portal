@@ -15,7 +15,13 @@
     getLikes,
     getGroup,
   } from '@root/state';
-  import { getMeta, fromUrbitTime, getAnyLink, isValidPatp } from '@root/util';
+  import {
+    getMeta,
+    fromUrbitTime,
+    getAnyLink,
+    isValidPatp,
+    getGroupsLink,
+  } from '@root/util';
   import { ItemPreview, InlineShip, GroupsItem } from '@components';
   import {
     CommentIcon,
@@ -84,6 +90,15 @@
     });
   };
 
+  export const getLink = () => {
+    console.log(getGroupsLink(item));
+    if (isGroupsItem(item?.keyObj?.struc)) {
+      return getGroupsLink(item);
+    } else {
+      return `#${keyStrFromObj(item?.keyObj)}`;
+    }
+  };
+
   // TODO: this is quite not good
   const linkifyMentions = (html) => {
     return html
@@ -141,14 +156,18 @@
 {#if item}
   {@const { blurb, ship, createdAt, ref, image, rating, group } = getMeta(item)}
   {@const blurbLink = getAnyLink(blurb)}
-  <div class="flex flex-col gap-2 w-full" in:fade>
+  <div class="flex flex-col text-left gap-2 w-full" in:fade>
     <div class="flex items-center justify-between px-3">
       <div class="flex items-center gap-1">
         <InlineShip patp={ship} />
         {#if group}
           {@const { title, image, color } = getMeta(getGroup(group))}
-          <span>in</span>
-          <a use:link href={`/group/${group}/`} class="flex gap-1 text-black">
+          <span class="text-xs sm:text-base">in</span>
+          <a
+            use:link
+            href={`/group/${group}/`}
+            class="flex items-center gap-1 text-black text-xs sm:text-base"
+          >
             <div class="w-5 h-5">
               <ItemImage {title} {image} {color} />
             </div>
@@ -162,10 +181,14 @@
       {#if indent}
         <div class="border-2 ml-6 mr-1" />
       {/if}
-      <div
+      <a
         class="flex flex-col w-full bg-panel text-posttext px-3 py-5 whitespace-pre-wrap break-words gap-5"
         class:rounded-t-xl={isReplyFormOpen}
         class:rounded-xl={!isReplyFormOpen}
+        class:hover:bg-panelhover={!isReplyFormOpen}
+        class:cursor-default={isReplyFormOpen}
+        href={getLink()}
+        target={group ? '_blank' : '_self'}
       >
         {#if blurb}
           <p>
@@ -210,7 +233,7 @@
             {:else}
               <button
                 class="w-5 h-5 text-transparent stroke-panelicon"
-                on:click={likePost}
+                on:click|stopPropagation={likePost}
               >
                 <LikeIcon />
               </button>
@@ -226,7 +249,7 @@
             <div class="text-light">{replies.length}</div>
           </a>
         </div>
-      </div>
+      </a>
     </div>
   </div>
 {:else}

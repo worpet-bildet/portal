@@ -179,7 +179,7 @@
   />
 {/if}
 <div class="flex flex-col w-full relative z-20">
-  <div class="flex flex-row items-center mb-4" class:px-3={isSearching}>
+  <div class="flex flex-row items-center mb-4 sm:px-0" class:px-3={isSearching}>
     <div
       transition:slide={{ duration: $state.isComposing ? 0 : 150 }}
       class="flex bg-input w-full justify-between rounded-lg border p-3"
@@ -218,7 +218,7 @@
       </div>
     </div>
     {#if isSearching}
-      <div class="p-1">
+      <div class="sm:hidden p-1">
         <button
           class="sm:hidden text-tertiary"
           on:click={() => {
@@ -232,7 +232,7 @@
   {#if isSearching}
     <div class="relative">
       <div
-        class="flex flex-col border rounded-lg p-3 z-20 absolute bg-white w-full gap-3 drop-shadow-search"
+        class="flex flex-col border rounded-lg p-3 z-20 absolute bg-white w-full gap-3 drop-shadow-search overflow-y-auto h-screen"
       >
         {#if numResults === 0}
           <div

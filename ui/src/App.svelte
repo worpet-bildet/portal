@@ -6,6 +6,7 @@
 
   import {
     Feed,
+    Activity,
     Group,
     App,
     Other,
@@ -27,6 +28,7 @@
   const routes = {
     '/': Feed,
     '/feed': Feed,
+    '/activity': Activity,
     '/explore': Explore,
     '/group/:host/:cord': Group,
     '/app/*': App,
@@ -100,9 +102,10 @@
     <div
       bind:this={main}
       id="main"
-      class="lg:px-10 sm:px-3 bg-white overflow-y-auto grid grid-cols-12 relative col-span-12 sm:col-span-11 lg:col-span-10"
+      class="lg:px-10 sm:px-3 bg-white grid grid-cols-12 relative col-span-12 sm:col-span-11 lg:col-span-10"
       class:px-3={!isComposing && !isSearching}
       class:overflow-hidden={isSearching}
+      class:overflow-y-auto={!isSearching}
     >
       {#if !isComposing}
         {#if !isSearching}
@@ -120,7 +123,6 @@
       <div
         class="col-span-12 min-h-screen mb-24 sm:block"
         class:pb-8={!isComposing}
-        class:overflow-hidden={isSearching}
         class:mb-0={isSearching}
       >
         <Router {routes} on:routeLoaded={handleRouteLoaded} />
