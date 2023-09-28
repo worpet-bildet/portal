@@ -16,7 +16,7 @@
   } from '@root/state';
   import { fromUrbitTime, getMeta } from '@root/util';
 
-  import { FeedPost, FeedPostForm } from '@components';
+  import { FeedPost, FeedPostForm, ProfileCard } from '@components';
 
   import { LoadingIcon, RightSidebar } from '@fragments';
 
@@ -47,6 +47,8 @@
       ? `/other/${params.wild}`
       : window.location.hash.includes('/retweet/')
       ? `/retweet/${params.wild}`
+      : window.location.hash.includes('/tip/')
+      ? `/tip/${params.wild}`
       : window.location.hash.includes('/groups-chat-msg/')
       ? `/groups-chat-msg/${params.wild}`
       : window.location.hash.includes('/groups-heap-curio/')
@@ -58,7 +60,6 @@
     // we don't want to clickjack after finding social connections
     if (!$state.social) return;
     item = getItem(keyStr);
-    console.log({ keyStr, item });
     if (!item) return;
     replies = [
       ...(getReplies(keyObj) || []),
@@ -135,5 +136,10 @@
       {/if}
     {/if}
   </div>
-  <RightSidebar />
+
+  <div class="hidden md:block md:col-span-5">
+    <div class="sticky top-4">
+      <ProfileCard patp={item?.keyObj?.ship} />
+    </div>
+  </div>
 </div>

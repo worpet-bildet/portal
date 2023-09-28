@@ -1,13 +1,13 @@
 <script lang="ts">
   import { link } from 'svelte-spa-router';
-  import { getProfile } from '@root/state';
+  import { state, getProfile } from '@root/state';
   import { formatPatp } from '@root/util';
   import { Sigil } from '@components';
 
   export let patp: string;
   export let isExpanded: boolean = false;
 
-  $: nickname = getProfile(patp)?.nickname;
+  $: nickname = $state && getProfile(patp)?.nickname;
 </script>
 
 <a use:link href={`/${patp}`} class="flex items-center gap-2">

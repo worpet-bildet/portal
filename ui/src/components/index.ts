@@ -5,6 +5,7 @@ export { default as GlobalSearch } from './GlobalSearch.svelte';
 export { default as InlineShip } from './InlineShip.svelte';
 export { default as InlineItem } from './InlineItem.svelte';
 
+export { default as ProfileCard } from './ProfileCard.svelte';
 export { default as MoreFrom } from './MoreFrom.svelte';
 
 export { default as AppPreview } from './Item/AppPreview.svelte';

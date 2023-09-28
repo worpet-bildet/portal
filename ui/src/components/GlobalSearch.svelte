@@ -63,11 +63,6 @@
           unreadCount: 4,
           action: () => push('/activity'),
         },
-        {
-          title: 'Explore',
-          icon: ExploreIcon,
-          action: () => push('/explore'),
-        },
       ],
     };
   };
@@ -232,7 +227,7 @@
   {#if isSearching}
     <div class="relative">
       <div
-        class="flex flex-col border rounded-lg p-3 z-20 absolute bg-white w-full gap-3 drop-shadow-search overflow-y-auto h-screen"
+        class="flex flex-col border rounded-lg p-3 z-20 absolute bg-white w-full gap-3 drop-shadow-search"
       >
         {#if numResults === 0}
           <div

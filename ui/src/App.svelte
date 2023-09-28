@@ -37,6 +37,7 @@
     '/groups-chat-msg/*': Other,
     '/groups-heap-curio/*': Other,
     '/groups-diary-note/*': Other,
+    '/tip/*': Other,
     '/collection/*': Collection,
     '/collection-edit/*': EditCollection,
     '/compose': Compose,
