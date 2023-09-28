@@ -1,4 +1,5 @@
-/-  portal-data-0, portal-data-1, portal-data-2, d=portal-data, portal-item
+/-  portal-data-0, portal-data-1, portal-data-2, d3=portal-data-3, d=portal-data
+/-  portal-item, portal-item-3
 /+  sss 
 |%
 +$  versioned-state
@@ -7,6 +8,7 @@
       state-1
       state-2
       state-3
+      state-4
   ==
 +$  state-0
   $+  store-state-0
@@ -30,6 +32,13 @@
 +$  state-3
   $+  store-state-3
   $:  %3
+      =items:d3
+      item-sub=_(mk-subs:sss portal-item-3 ,[%item @ @ @ @ ~])
+      item-pub=_(mk-pubs:sss portal-item-3 ,[%item @ @ @ @ ~])
+  ==
++$  state-4
+  $+  store-state-4
+  $:  %4
       =items:d
       item-sub=_(mk-subs:sss portal-item ,[%item @ @ @ @ ~])
       item-pub=_(mk-pubs:sss portal-item ,[%item @ @ @ @ ~])

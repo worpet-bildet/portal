@@ -412,6 +412,7 @@
             group-flag
             channel:bespoke
             id:bespoke
+            *time
             content:writ
             ~(wyt by feels:writ)
             ~(wyt in replied:writ)
@@ -433,6 +434,7 @@
             group-flag
             channel:bespoke
             time:bespoke
+            *time
             essay:note
             ~(wyt by feels:note)
             (wyt:on:quips:n:d:m quips:note)
@@ -454,6 +456,7 @@
             group-flag
             channel:bespoke
             time:bespoke
+            *time
             heart:curio
             ~(wyt by feels:curio)
             ~(wyt in replied:curio)
