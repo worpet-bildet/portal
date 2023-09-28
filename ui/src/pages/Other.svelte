@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Item, ItemKey } from '$types/portal/item';
 
-  import { link } from 'svelte-spa-router';
+  import { pop } from 'svelte-spa-router';
 
   import { me } from '@root/api';
   import {
@@ -76,10 +76,12 @@
   };
 
   $: $state && loadItem(params.wild);
+  $: console.log({ item });
   $: postChain = item && [item.keyObj, ...getPostChain(item.keyObj)].reverse();
   $: replyingToNames = postChain
     ?.map(getItem)
-    ?.map((i) => getCurator(i?.keyObj?.ship))
+    ?.map((i) => getMeta(i).ship)
+    ?.map(getCurator)
     ?.map(getMeta)
     ?.map((m) => m.nickname || m.ship);
   $: postOfInterest?.scrollIntoView();
@@ -88,7 +90,7 @@
 <div class="grid grid-cols-12 gap-8 mb-4">
   <div class="flex flex-col gap-8 rounded-t-2xl col-span-12 md:col-span-7">
     <div>
-      <a use:link href="/" class="hover:underline">&lt; Feed</a>
+      <button on:click={pop} class="hover:underline">&lt; Feed</button>
     </div>
     {#if !item || (postChain && postChain.length === 0)}
       <div class="flex items-center justify-center w-full h-1/2">
@@ -139,7 +141,7 @@
 
   <div class="hidden md:block md:col-span-5">
     <div class="sticky top-4">
-      <ProfileCard patp={item?.keyObj?.ship} />
+      <ProfileCard patp={getMeta(item).ship} />
     </div>
   </div>
 </div>

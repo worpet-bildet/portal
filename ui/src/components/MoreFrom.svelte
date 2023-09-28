@@ -4,6 +4,7 @@
     getMoreFromThisShip,
     keyStrToObj,
     getCurator,
+    keyStrFromObj,
   } from '@root/state';
   import { getMeta } from '@root/util';
 
@@ -11,9 +12,14 @@
   import { CollectionIcon } from '@root/fragments';
 
   export let patp;
+  export let exclude = [];
 
   $: sortedRecommendations =
-    ($state && getMoreFromThisShip(patp).slice(0, 4)) || [];
+    ($state &&
+      getMoreFromThisShip(patp)
+        .filter((a) => !exclude.includes(a[0]))
+        .slice(0, 4)) ||
+    [];
   $: nickname = $state && getMeta(getCurator(patp))?.nickname;
 </script>
 

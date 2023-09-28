@@ -36,6 +36,7 @@ export const getMeta = (item) => {
     ref: getRef(item),
     lens: getLens(item),
     distShip: getDistShip(item),
+    desk: getDesk(item),
     group: getGroup(item),
     keyStr: item?.keyStr,
     rating: item?.bespoke?.rating,
@@ -199,7 +200,12 @@ export const getCreatedAt = (item) => {
 export const getStruc = (item) => item?.keyObj?.struc;
 export const getRef = (item) => item?.bespoke?.ref;
 export const getLens = (item) => item?.lens;
-export const getDistShip = (item) => item?.bespoke?.signature?.ship;
+export const getDistShip = (item) => {
+  if (item?.bespoke?.signature?.ship !== '~zod')
+    return item?.bespoke?.signature?.ship;
+  return item?.keyObj?.ship;
+};
+export const getDesk = (item) => item?.keyObj?.cord || item?.keyObj?.time;
 export const getGroup = (item) => {
   switch (item?.keyObj?.struc) {
     case 'groups-chat-msg':
@@ -220,7 +226,6 @@ export const getAllLinks = (string) => {
 };
 
 export const getGroupsLink = (item) => {
-  console.log(item);
   // http://localhost/apps/groups/groups/~tommur-dostyn/tlon-studio/channels/chat/~tommur-dostyn/support?msg=170141184506435544337432278891006787584
   const prefix = `/apps/groups/`;
   let suffix = '';
@@ -228,7 +233,11 @@ export const getGroupsLink = (item) => {
     case 'groups-chat-msg':
       suffix = `groups/${item?.bespoke?.group}/channels/chat/${
         item?.bespoke?.channel
-      }?msg=${removeDotsFromId(item?.bespoke?.id?.split('/')[1])}`;
+      }?msg=${removeDotsFromId(item?.bespoke?.['time-ref'])}`;
+    case 'groups-heap-curio':
+      suffix = `groups/${item?.bespoke?.group}/channels/heap/${
+        item?.bespoke?.channel
+      }/curio/${removeDotsFromId(item?.bespoke?.time)}`;
   }
   if (suffix) {
     return `${prefix}${suffix}`;
@@ -474,7 +483,7 @@ export const addDotsToId = (id) => {
 };
 
 export const removeDotsFromId = (id) => {
-  return id.replace(/\./g, '');
+  return id?.replace(/\./g, '');
 };
 
 //  /1/chan/chat/~sampel-dilryd-mopreg/new-channel/msg/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749

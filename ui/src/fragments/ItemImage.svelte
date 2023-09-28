@@ -9,6 +9,7 @@
 
   let container;
   const squareImage = () => {
+    if (!container) return;
     container.style.height = `${container.clientWidth}px`;
   };
 

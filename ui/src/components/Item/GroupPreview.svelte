@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Item, ItemKey } from '$types/portal/item';
 
-  import { push } from 'svelte-spa-router';
+  import { link } from 'svelte-spa-router';
   import {
     state,
     getItem,
@@ -28,7 +28,9 @@
 
 {#if item}
   {@const { title, blurb, description, image, color } = getMeta(item)}
-  <div
+  <a
+    use:link
+    href={item.keyStr}
     class="grid grid-cols-6 w-full items-start gap-2 hover:duration-500 rounded-lg text-sm text-left"
   >
     <div class="col-span-1 overflow-hidden rounded-md self-center">
@@ -52,13 +54,13 @@
             event.currentTarget.innerHTML = 'Joining...';
             await api.urbit.do.joinGroup(groupKey).then(refreshGroups);
           }}
-          class="bg-black rounded-md text-xs font-bold px-2 py-1 text-white flex items-center gap-2"
+          class="bg-black rounded-md text-xs font-bold px-2 py-1 text-white flex items-center gap-2 min-w-fit"
           ><div class="w-4 h-4 text-white"><LogOutIcon /></div>
           <div>Join</div>
         </button>
       {/if}
     </div>
-  </div>
+  </a>
 {:else}
   <div class="p-4 hover:bg-hover rounded-lg">Contacting {key.ship}...</div>
 {/if}

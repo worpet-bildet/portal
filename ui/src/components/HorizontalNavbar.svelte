@@ -35,39 +35,30 @@
   };
 </script>
 
-<!-- <div
-  class="fixed left-0 h-24 bottom-0 flex w-full justify-between bg-white/80 backdrop-blur-xs"
->
-  <NavItem
-    icon={FeedIcon}
-    title={'Feed'}
-    collapsed={navCollapsed}
-    on:click={() => {}}
-  />
-  <NavItem
+{#if !$state.isComposing}
+  <div
+    class="fixed left-0 h-24 bottom-0 flex w-full justify-between bg-white/80 backdrop-blur-xs"
+  >
+    <NavItem icon={FeedIcon} title={'Feed'} on:click={() => {}} />
+    <!-- <NavItem
     icon={ExploreIcon}
     title={'Explore'}
     collapsed={navCollapsed}
     on:click={() => {}}
-  />
-  <NavItem
-    icon={ActivityIcon}
-    title={'Activity'}
-    unreadCount={4}
-    collapsed={navCollapsed}
-    on:click={() => {}}
-  />
-  <NavItem
+  /> -->
+    <NavItem icon={ActivityIcon} title={'Activity'} on:click={() => {}} />
+    <!-- <NavItem
     icon={TipIcon}
     title={'Tips'}
     unreadCount={2}
     collapsed={navCollapsed}
     on:click={() => {}}
-  />
-</div> -->
+  /> -->
+  </div>
+{/if}
 {#if !$state.isComposing && isHome}
   <button
-    class="fixed rounded-full bottom-4 right-4 h-20 w-20 bg-black text-white"
+    class="fixed rounded-full bottom-28 right-4 h-20 w-20 bg-black text-white"
     on:click={handleNewPostClick}
   >
     <div class="flex w-full h-full items-center justify-center">

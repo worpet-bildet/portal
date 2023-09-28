@@ -6,6 +6,8 @@ export { default as InlineShip } from './InlineShip.svelte';
 export { default as InlineItem } from './InlineItem.svelte';
 
 export { default as ProfileCard } from './ProfileCard.svelte';
+export { default as GroupCard } from './GroupCard.svelte';
+export { default as AppCard } from './AppCard.svelte';
 export { default as MoreFrom } from './MoreFrom.svelte';
 
 export { default as AppPreview } from './Item/AppPreview.svelte';

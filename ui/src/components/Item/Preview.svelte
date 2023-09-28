@@ -112,22 +112,22 @@
   <button
     on:click
     on:click={() => {
-      if (clickable) {
-        if (struc === 'ship') {
-          push(`/${ship}`);
-        } else if ((struc === 'other' || struc === 'blog') && link) {
-          window.open(link);
-        } else if (struc === 'retweet') {
-          window.location.href = `#${createdAt}`;
-        } else {
-          push(item.keyStr);
-        }
-      } else if (selectable) {
+      // if (clickable) {
+      if (selectable) {
         selected = !selected;
         dispatch('selected', { key, selected });
+      } else if (struc === 'ship') {
+        push(`/${ship}`);
+      } else if ((struc === 'other' || struc === 'blog') && link) {
+        window.open(link);
       }
+      // } else if (struc === 'retweet') {
+      // window.location.href = `#${createdAt}`;
+      // } else {
+      // push(item.keyStr);
+      // }
     }}
-    class={`flex w-full items-start gap-2 p-2 dark:hover:bg-transparent hover:duration-500 rounded-lg text-sm text-left ${$$props.class}`}
+    class={`flex w-full items-start gap-2 p-2 dark:hover:bg-transparent hover:duration-500 rounded-lg text-sm text-left hover:bg-white ${$$props.class}`}
     class:cursor-default={!clickable}
     class:hover:bg-panels-hover={clickable}
     class:dark:hover:border-white={clickable}
@@ -164,9 +164,11 @@
               <ItemImage {image} {title} {color} />
             {/if}
           </div>
-          <div class="flex flex-col grow break-words [word-break:break-word]">
+          <div
+            class="flex flex-col grow break-words [word-break:break-word] w-fit"
+          >
             <div class="flex items-center gap-2">
-              <div class="font-bold line-clamp-1">
+              <div class="font-bold line-clamp-1 w-fit">
                 {title || ship}
               </div>
               {#if (struc === 'other' && link) || struc === 'blog'}

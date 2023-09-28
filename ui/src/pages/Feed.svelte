@@ -315,22 +315,24 @@
         Loading...
       {/if}
     </SidebarGroup> -->
-    <SidebarGroup>
-      <div class="flex flex-col gap-2">
-        <div class="flex flex-col gap-1 px-2">
-          <div class="flex items-start justify-between">
-            <div>Discover Portal</div>
-            <!-- <a use:link href={'#/explore'} class="text-flavour text-xs"
-              >See all</a
-            > -->
+    {#if sortedRecommendations.length}
+      <SidebarGroup>
+        <div class="flex flex-col gap-2">
+          <div class="flex flex-col gap-1 px-2">
+            <div class="flex items-start justify-between">
+              <div>Discover Portal</div>
+              <!-- <a use:link href={'#/explore'} class="text-flavour text-xs"
+                >See all</a
+              > -->
+            </div>
+            <div class="text-flavour text-xs">Apps, Groups & Collections</div>
           </div>
-          <div class="text-flavour text-xs">Apps, Groups & Collections</div>
+          {#each sortedRecommendations as item}
+            <ItemPreview key={item[0]} keyStr={item[0]} />
+          {/each}
         </div>
-        {#each sortedRecommendations as item}
-          <ItemPreview key={item[0]} keyStr={item[0]} />
-        {/each}
-      </div>
-      <div class="flex flex-col gap-4" />
-    </SidebarGroup>
+        <div class="flex flex-col gap-4" />
+      </SidebarGroup>
+    {/if}
   </RightSidebar>
 </div>

@@ -88,6 +88,7 @@
   let isHome: boolean = false;
   const handleRouteLoaded = ({ detail: { route } }) => {
     isSearchGlassy = route === '/:patp';
+    isSearchGlassy = route === '/group/:host/:cord';
     // isComposing = route === '/compose';
     // isSearching = route === '/search';
     isHome = route === '/';

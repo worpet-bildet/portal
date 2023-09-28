@@ -14,6 +14,7 @@
     getRepliesByTo,
     getLikes,
     getGroup,
+    keyStrToObj,
   } from '@root/state';
   import {
     getMeta,
@@ -90,13 +91,8 @@
     });
   };
 
-  export const getLink = () => {
-    console.log(getGroupsLink(item));
-    if (isGroupsItem(item?.keyObj?.struc)) {
-      return getGroupsLink(item);
-    } else {
-      return `#${keyStrFromObj(item?.keyObj)}`;
-    }
+  export const getExternalLink = () => {
+    return getGroupsLink(item);
   };
 
   // TODO: this is quite not good
@@ -187,8 +183,9 @@
         class:rounded-xl={!isReplyFormOpen}
         class:hover:bg-panelhover={!isReplyFormOpen}
         class:cursor-default={isReplyFormOpen}
-        href={getLink()}
-        target={group ? '_blank' : '_self'}
+        href={getExternalLink() ||
+          `/apps/portal/#${keyStrFromObj(item?.keyObj)}`}
+        target={getExternalLink() ? '_blank' : '_self'}
       >
         {#if blurb}
           <p>

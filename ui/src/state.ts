@@ -122,7 +122,9 @@ export const refreshContacts = (): void => {
 };
 
 export const refreshGroups = (): void => {
+  console.log('refreshing groups');
   api.urbit.get.joinedGroups().then((groups: Groups) => {
+    console.log({ groups });
     let _groups = {} as Groups;
     state.update((s) => {
       Object.entries(groups || {}).forEach(([key, data]) => {
@@ -346,7 +348,7 @@ export const getMoreFromThisShip = (
           .filter(
             (k: ItemKey) =>
               ![
-                'collection',
+                // 'collection',
                 'ship',
                 'groups-chat-msg',
                 'groups-heap-curio',
@@ -524,7 +526,10 @@ export const handleSubscriptionEvent = (event, type: string) => {
     case 'charge-update':
       refreshApps();
       break;
-    case 'group-action-0' || 'group-leave' || 'group-action-2':
+    case 'group-action-0':
+    case 'group-leave':
+    case 'group-action-2':
+    case 'gang-gone':
       refreshGroups();
       break;
     case 'greg-event':
@@ -537,6 +542,7 @@ export const handleSubscriptionEvent = (event, type: string) => {
       }));
       break;
     default:
+      console.log('DEFAULT', type);
       break;
   }
 };

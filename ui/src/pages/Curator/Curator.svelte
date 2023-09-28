@@ -36,8 +36,6 @@
     CollectionIcon,
   } from '@fragments';
   import gradient from '@assets/gradient.svg';
-  import AppPreview from '@root/components/Item/AppPreview.svelte';
-  import { slide } from 'svelte/transition';
 
   export let params;
   let { patp } = params;
