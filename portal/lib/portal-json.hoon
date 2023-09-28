@@ -290,6 +290,7 @@
                              ['channel' s+(flag:enjs-writ channel.bespoke)]
                              ['id' (id:enjs-writ id.bespoke)]
                              ['time-created' s+(scot %da q.id.bespoke)]
+                             ['time-ref' s+(scot %ud time-ref.bespoke)]                             
                              ['content' (content:enjs-writ content.bespoke)]
                              ['feels' n+(scot %ud feels.bespoke)]
                              ['replies' n+(scot %ud replies.bespoke)]
@@ -944,6 +945,7 @@
       %-  ot-raw  :~  group+dejs-soft-null-flag
                       channel+dejs-soft-flag:dejs-writ
                       id+dejs-soft-id:dejs-writ
+                      time-ref+dejs-soft-null-time
                       content+dejs-soft-null-content
                       feels+dejs-soft-null-num
                       replies+dejs-soft-null-num
@@ -956,6 +958,7 @@
       %-  ot-raw  :~  group+dejs-soft-null-flag
                       channel+dejs-soft-flag:dejs-writ
                       time+dejs-soft-time:dejs-writ
+                      time-ref+dejs-soft-null-time
                       essay+dejs-soft-null-essay
                       feels+dejs-soft-null-num
                       replies+dejs-soft-null-num
@@ -968,6 +971,7 @@
       %-  ot-raw  :~  group+dejs-soft-null-flag
                       channel+dejs-soft-flag:dejs-writ
                       time+dejs-soft-time:dejs-writ
+                      time-ref+dejs-soft-null-time
                       heart+dejs-soft-null-heart
                       feels+dejs-soft-null-num
                       replies+dejs-soft-null-num
@@ -1077,6 +1081,10 @@
     |=  jon=json
     ^-  (unit @ud)
     ~
+  ++  dejs-soft-null-time
+    |=  jon=json
+    ^-  (unit @da)
+    `*@da
   ++  dejs-soft-s-list
     |=  jon=json
     ^-  (unit (list @t))
