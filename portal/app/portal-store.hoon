@@ -1,5 +1,5 @@
-/-  portal-item::, st=portal-states
-/+  default-agent, p=portal, sss::, tr=portal-transition, dbug
+/-  portal-item, st=portal-states
+/+  default-agent, p=portal, sss, tr=portal-transition, dbug
 :: /$  items-to-json  %portal-items  %json
 :: /$  item-to-json  %portal-item  %json
 :: /$  store-result-to-json  %portal-store-result  %json
@@ -7,16 +7,16 @@
 /*  indexer  %ship  /desk/ship
 |%
 +$  card  $+  gall-card  card:agent:gall
-+$  state-3
-  $+  store-state-3
-  $:  %3
++$  state-4
+  $+  store-state-4
+  $:  %4
       =items:d:m:p
       item-sub=_(mk-subs:sss portal-item ,[%item @ @ @ @ ~])
       item-pub=_(mk-pubs:sss portal-item ,[%item @ @ @ @ ~])
   ==
 --
 ::%-  agent:dbug
-=|  state-3
+=|  state-4
 =*  state  -
 ^-  agent:gall
 =<
@@ -24,14 +24,14 @@
 +*  this      .
     default   ~(. (default-agent this %|) bowl)
     stor      ~(. +> bowl)
-    :: state-transition  ~(. tr bowl)
+    tran  ~(. tr bowl)
     du-item   =/  du  (du:sss portal-item ,[%item @ @ @ @ ~])
               (du item-pub bowl -:!>(*result:du))
     da-item   =/  da  (da:sss portal-item ,[%item @ @ @ @ ~])
               (da item-sub bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
 ++  on-init
   ^-  (quip card _this)
-  =.  state  *state-3
+  =.  state  *state-4
   =^  cards  state  init-sequence:stor
   [cards this]
 ::
@@ -40,21 +40,25 @@
 ++  on-load
   |=  =vase
   ^-  (quip card _this)
-  =/  old  !<(state-3 vase) ::!<(versioned-state:st vase)
+  =/  old  !<(versioned-state:st vase)
   ::  -  get state up to date!
-  :: =/  old
-  ::   ?:  ?=(%0 -.old)
-  ::     (state-0-to-1:tr old)
-  ::   old
-  :: =/  old
-  ::   ?:  ?=(%1 -.old)
-  ::     (state-1-to-2:tr old)
-  ::   old
-  :: =/  old
-  ::   ?:  ?=(%2 -.old)
-  ::     (state-2-to-3:tr old)
-  ::   old
-  ?>  ?=(%3 -.old)
+  =/  old
+    ?:  ?=(%0 -.old)
+      (state-0-to-1:tran old)
+    old
+  =/  old
+    ?:  ?=(%1 -.old)
+      (state-1-to-2:tran old)
+    old
+  =/  old
+    ?:  ?=(%2 -.old)
+      (state-2-to-3:tran old)
+    old
+  =/  old
+    ?:  ?=(%3 -.old)
+      (state-3-to-4:tran old)
+    old
+  ?>  ?=(%4 -.old)
   =.  state  old
   `this
   ::
@@ -62,7 +66,7 @@
   :: =/  output
   ::   =+  ~(tap by items.state)
   ::   %-  tail  %^  spin  -  [*key-list:d:m:p *(list card) state]
-  ::   |=  [p=[=key:d:m:p =item:d:m:p] q=[to-remove=key-list:d:m:p cards=(list card) state=state-3]]
+  ::   |=  [p=[=key:d:m:p =item:d:m:p] q=[to-remove=key-list:d:m:p cards=(list card) state=state-4]]
   ::   :-  p
   ::   =.  state  state.q
   ::   ?:  ?=([%collection *] bespoke.item.p)
@@ -90,7 +94,7 @@
   :: =+  ~(val by items.state)
   :: =^  cards-4  state
   ::   %-  tail  %^  spin  -  [*(list card) state]
-  ::   |=  [=item:d:m:p q=[cards=(list card) state=state-3]]
+  ::   |=  [=item:d:m:p q=[cards=(list card) state=state-4]]
   ::   :-  item
   ::   =/  path  [%item (key-to-path:conv:p)]
   ::   =.  state  state.q
@@ -110,7 +114,7 @@
   ::   =+  ~(tap in ~(key by read:da-item))
   ::   %-  tail
   ::   %^  spin  -  state
-  ::   |=  [p=[=ship =dude:gall =path] q=[state=state-3]]
+  ::   |=  [p=[=ship =dude:gall =path] q=[state=state-4]]
   ::   =/  key  (path-to-key:conv:^p +:path.p)
   ::   =.  state  state.q
   ::   ?.  ?=(?(%feed %collection %app %blog) struc.key)
@@ -443,7 +447,7 @@
       ^+  [*(list card) state]
       ?>  ?=([%sub-to-many *] act)
       %-  tail  %^  spin  key-list.act  [*(list card) state]
-      |=  [=key:d:m:p q=[cards=(list card) state=state-3]]
+      |=  [=key:d:m:p q=[cards=(list card) state=state-4]]
       :-  key
       =.  state  state.q
       =^  cards  state.q  (sub [%sub key])
@@ -492,7 +496,7 @@
       ::  add to collections
       =^  cards-1  state
         %-  tail  %^  spin  `key-list:d:m:p`append-to.act  [cards state]
-        |=  [col-key=key:d:m:p q=[cards=(list card) state=state-3]]
+        |=  [col-key=key:d:m:p q=[cards=(list card) state=state-4]]
         :-  col-key
         ?>  ?=(%collection struc.col-key)
         =.  state  state.q  ::  append takes state from subj, so it is modified
@@ -501,7 +505,7 @@
       ::  add to feeds
       =^  cards-2  state
         %-  tail  %^  spin  `key-list:d:m:p`prepend-to-feed.act  [cards state]
-        |=  [feed-key=key:d:m:p q=[cards=(list card) state=state-3]]
+        |=  [feed-key=key:d:m:p q=[cards=(list card) state=state-4]]
         :-  feed-key
         ?>  ?=(%feed struc.feed-key)
         =.  state  state.q
@@ -513,7 +517,7 @@
       =^  cards-3  state
         %-  tail  %^  spin
         `(list [=key:d:m:p tag-to=^path tag-from=^path])`tags-to.act  [cards state]
-        |=  [[=key:d:m:p tag-to=^path tag-from=^path] q=[cards=(list card) state=state-3]]
+        |=  [[=key:d:m:p tag-to=^path tag-from=^path] q=[cards=(list card) state=state-4]]
         :-  [key tag-to tag-from]
         =/  our  (key-to-node:conv:p key.item)
         =/  their    (key-to-node:conv:p key)

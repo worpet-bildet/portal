@@ -1013,19 +1013,19 @@
       %groups-chat-msg
     =+  (cord-to-channel-id cord.key.act)
     =.  bespoke  =,  d:m:p
-      [%groups-chat-msg *flag:n [ship.key.act -.-] +.- *content:w 0 0]
+      [%groups-chat-msg *flag:n [ship.key.act -.-] +.- *time *content:w 0 0]
     (~(act cards:p [our.bowl %portal-store]) create-empty-temp)^~
     ::
       %groups-diary-note
     =+  (cord-to-channel-time cord.key.act)
     =.  bespoke  =,  d:m:p
-      [%groups-diary-note *flag:n [ship.key.act -.-] +.- *essay:n 0 0]
+      [%groups-diary-note *flag:n [ship.key.act -.-] +.- *time *essay:n 0 0]
     (~(act cards:p [our.bowl %portal-store]) create-empty-temp)^~
     ::
       %groups-heap-curio
     =+  (cord-to-channel-time cord.key.act)
     =.  bespoke  =,  d:m:p
-      [%groups-heap-curio *flag:cur [ship.key.act -.-] +.- *heart:cur 0 0]
+      [%groups-heap-curio *flag:cur [ship.key.act -.-] +.- *time *heart:cur 0 0]
     (~(act cards:p [our.bowl %portal-store]) create-empty-temp)^~
     ::
       %ship
