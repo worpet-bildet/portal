@@ -12,14 +12,14 @@
 ::  these 2 can be adjusted
 ::  the lesser the num, the more relevant stuff you will get
 ::  the higher, the less relevant (but there will be more)
-=/  msgs-per-feels  5
-=/  msgs-per-replies  5
+=/  msgs-per-feels  1 :: take the top 5 messages by feels of all groups messages in the past day. deduped
+=/  msgs-per-replies  1
 ::
-;<  diarymap=(map flag:d diary:d)  bind:m  
+;<  diarymap=(map flag:d diary:d)  bind:m
     (scry (map flag:d diary:d) /gx/diary/shelf/noun)
-;<  heapmap=(map flag:h heap:h)  bind:m  
+;<  heapmap=(map flag:h heap:h)  bind:m
     (scry (map flag:h heap:h) /gx/heap/stash/noun)
-;<  chatmap=(map flag:ch chat:ch)  bind:m  
+;<  chatmap=(map flag:ch chat:ch)  bind:m
     (scry (map flag:ch chat:ch) /gx/chat/chats/noun)
 ::
 ;<  notes-feed=store-result:d:mov  bind:m
@@ -42,11 +42,11 @@
 ::
 =/  [notes-from=@da notes-count=@t notes-exists=? actual-notes-feed=feed:d:mov]
   ?~  notes-exists=+.notes-feed
-    [(sub now ~d1) '1.000' %.n ~]
+    [(sub now ~d1) '1.000' %.n ~] :: check from the past day when you run for the first time
   =/  notes  ;;(item:d:mov +.notes-feed)
   ?>  ?=([%feed *] bespoke.notes)
   ?~  feed.bespoke.notes
-    [(sub now ~h4.m5) '100' %.y ~]
+    [(sub now ~h4.m5) '100' %.y ~] :: run every 4 hours
   [(slav %da -:-:feed.bespoke.notes) '100' %.y feed.bespoke.notes]
 ::
 =/  [curios-from=@dr curios-count=@t curios-exists=? actual-curios-feed=feed:d:mov]
@@ -82,10 +82,10 @@
   |=  [=term =ship =time]
   ^-  cord
   %-  crip
-  ;:  weld 
+  ;:  weld
       (trip term)     "/"
       (scow %p ship)  "/"
-      (scow %ud time) 
+      (scow %ud time)
   ==
 ::
 =/  compare-feed
@@ -97,32 +97,32 @@
 =/  create-feed-card
   |=  [feed-name=cord =feed:d:mov]
   ^-  card:agent:gall
-  %-  ~(poke pass:io /make-feed) 
-  :-  [our %portal-manager] 
+  %-  ~(poke pass:io /make-feed)
+  :-  [our %portal-manager]
   :-  %portal-action
-  !>  
+  !>
   ^-  action:mov
   [%create `our ~ `feed-name ~ ~ `[%feed feed] ~ ~ ~]
 ::
 =/  edit-feed-card
   |=  [feed-name=cord =feed:d:mov]
   ^-  card:agent:gall
-  %-  ~(poke pass:io /make-feed) 
-  :-  [our %portal-manager] 
+  %-  ~(poke pass:io /make-feed)
+  :-  [our %portal-manager]
   :-  %portal-action
-  !>  
+  !>
   ^-  action:mov
   [%edit [%feed our '' feed-name] ~ ~ `[%feed `feed]]
 ::
-::  inefficient that I'm subbing, 
+::  inefficient that I'm subbing,
 ::  should be creating from here because we have all the data already
 =/  sub-to-many-card
   |=  =feed:d:mov
   ^-  card:agent:gall
-  %-  ~(poke pass:io /sub-to-many) 
-  :-  [our %portal-manager] 
+  %-  ~(poke pass:io /sub-to-many)
+  :-  [our %portal-manager]
   :-  %portal-action
-  !>  
+  !>
   ^-  action:mov
   [%sub-to-many (turn feed |=([* * =key:d:mov] key))]
 ::
@@ -140,7 +140,7 @@
     :~  (create-feed-card 'groups-notes' sorted-new)
         (sub-to-many-card sorted-new)
     ==
-  ::    
+  ::
   =/  =flag:d  -:diary-flags
   ::
   =/  m  (strand ,~)
@@ -171,7 +171,7 @@
     :~  (create-feed-card 'groups-curios' sorted-new)
         (sub-to-many-card sorted-new)
     ==
-  ::    
+  ::
   =/  =flag:h  -:heap-flags
   ::
   =/  m  (strand ,~)
@@ -199,7 +199,7 @@
       |=  [=flag:ch =time =writ:w:d:mov]
       :+  (scot %da q.id.writ)  our
         [%groups-chat-msg p.flag (to-cord-msg q.flag p.id.writ q.id.writ) '']
-    =/  aggregated-msgs  
+    =/  aggregated-msgs
       ^-  (set [=time =ship =key:d:mov])
       ::  need to sort by feels and replies to know what to add to feed
       %-  ~(run in (sort-lists aggregate))
@@ -207,9 +207,9 @@
       :+  q.id.writ  our
         %-  to-key:conv:p
         [%groups-chat-msg p.flag (to-cord-msg q.flag p.id.writ q.id.writ) '']
-    =/  feed-to-set  
+    =/  feed-to-set
       ;;  (set [=time =ship =key:d:mov])
-      %-  silt 
+      %-  silt
       %+  turn  actual-msgs-feed
       |=  [time=cord =ship =key:d:mov]
       [(slav %da time) ship key]
@@ -221,7 +221,7 @@
       ~(tap in aggregated-msgs)
     =/  sorted
       ^-  (list [=time =ship =key:d:mov])
-      %+  sort  
+      %+  sort
         ?:  msgs-exists
           %~  tap  in
           (~(uni in aggregated-msgs) feed-to-set)
@@ -241,7 +241,7 @@
     :~  (create-feed-card 'groups-msgs' sorted-to-feed)
         (sub-to-many-card ~(tap in to-sub))
     ==
-  ::    
+  ::
   =/  =flag:d  -:chat-flags
   ::
   =/  m  (strand ,~)
@@ -265,7 +265,7 @@
       =/  second  ~(wyt by feels.writ.b)
       ?:  =(first second)
         (gte q.id.writ.a q.id.writ.b)
-      (gth first second) 
+      (gth first second)
     =/  by-replies
       %+  swag  [0 msgs-per-replies]
       %+  sort  msgs
@@ -279,12 +279,14 @@
   ++  deduplicate
     |=  [a=(list [=flag:ch =time =writ:w:d:mov])]
     %-  flop  %-  tail
-    %^  spin  a  *(list [=flag:ch =time =writ:w:d:mov])  
+    %^  spin  a  *(list [=flag:ch =time =writ:w:d:mov])
     |=  [el=[=flag:ch =time =writ:w:d:mov] st=(list [=flag:ch =time =writ:w:d:mov])]
     ?~  (find [el]~ st)
       el^[el st]
-    [el st]  
+    [el st]
   --
+::~&  msgs-by-replies
+:: ~&  msgs-by-feels
 ::
 ::
 (pure:m !>(~))
