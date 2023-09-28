@@ -229,15 +229,18 @@ export const getGroupsLink = (item) => {
   // http://localhost/apps/groups/groups/~tommur-dostyn/tlon-studio/channels/chat/~tommur-dostyn/support?msg=170141184506435544337432278891006787584
   const prefix = `/apps/groups/`;
   let suffix = '';
+  console.log(item);
   switch (item?.keyObj?.struc) {
     case 'groups-chat-msg':
       suffix = `groups/${item?.bespoke?.group}/channels/chat/${
         item?.bespoke?.channel
       }?msg=${removeDotsFromId(item?.bespoke?.['time-ref'])}`;
+      break;
     case 'groups-heap-curio':
       suffix = `groups/${item?.bespoke?.group}/channels/heap/${
         item?.bespoke?.channel
       }/curio/${removeDotsFromId(item?.bespoke?.time)}`;
+      break;
   }
   if (suffix) {
     return `${prefix}${suffix}`;
