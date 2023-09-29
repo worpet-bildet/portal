@@ -17,12 +17,12 @@
   <div
     class="flex gap-3 items-center flex-col md:flex-row"
     class:text-navtext={!active && !hovering}
-    class:text-navtextactive={active && !hovering}
+    class:text-navtextactive={active || hovering}
   >
     <div
       class="w-5 h-5 relative"
       class:text-panelicon={!active && !hovering}
-      class:text-navtextactive={active && !hovering}
+      class:text-navtextactive={active || hovering}
     >
       <svelte:component this={icon} />
       {#if unreadCount > 0}
