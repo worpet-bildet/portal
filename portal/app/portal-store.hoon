@@ -1,9 +1,9 @@
 /-  portal-item, st=portal-states
 /+  default-agent, p=portal, sss, tr=portal-transition, dbug
-:: /$  items-to-json  %portal-items  %json
-:: /$  item-to-json  %portal-item  %json
-:: /$  store-result-to-json  %portal-store-result  %json
-:: /$  portal-update-to-json  %portal-update  %json
+/$  items-to-json  %portal-items  %json
+/$  item-to-json  %portal-item  %json
+/$  store-result-to-json  %portal-store-result  %json
+/$  portal-update-to-json  %portal-update  %json
 /*  indexer  %ship  /desk/ship
 |%
 +$  card  $+  gall-card  card:agent:gall
@@ -15,7 +15,7 @@
       item-pub=_(mk-pubs:sss portal-item ,[%item @ @ @ @ ~])
   ==
 --
-::%-  agent:dbug
+%-  agent:dbug
 =|  state-4
 =*  state  -
 ^-  agent:gall
@@ -60,69 +60,76 @@
     old
   ?>  ?=(%4 -.old)
   =.  state  old
-  `this
   ::
-  ::  -  destroy empty collections
-  :: =/  output
-  ::   =+  ~(tap by items.state)
-  ::   %-  tail  %^  spin  -  [*key-list:d:m:p *(list card) state]
-  ::   |=  [p=[=key:d:m:p =item:d:m:p] q=[to-remove=key-list:d:m:p cards=(list card) state=state-4]]
-  ::   :-  p
-  ::   =.  state  state.q
-  ::   ?:  ?=([%collection *] bespoke.item.p)
-  ::     ?~  key-list.bespoke.item.p
-  ::       ~&  >  "destroying {<key.p>}!"
-  ::       =^  cards  state  (destroy:handle-poke:stor [%destroy key.p])
-  ::       [(snoc to-remove.q key.p) ;:(welp cards cards.q) state]
-  ::     [to-remove.q cards.q state]
-  ::   [to-remove.q cards.q state]
-  :: =^  cards-1  state  +.output
-  :: ::  -  remove empty collections + ~2000.1.2 from main collection
-  :: =^  cards-2  state
-  ::   ?.  (~(has by items) [%collection our.bowl '' '~2000.1.1'])
-  ::     `state
-  ::   %-  remove:handle-poke:stor  :+  %remove
-  ::   (snoc -.output [%collection our.bowl '' '~2000.1.2'])
-  ::   [%collection our.bowl '' '~2000.1.1']
-  :: ::  - init-sequence to create and sub if sth was missed previously
-  :: =^  cards-3  state  init-sequence:stor
-  :: ::  - cleanup past mistakes
-  :: ::  - publish all items which are unpublished
-  :: ::    ->  either to rem scry or sss
-  :: :: =/  item-paths
-  :: ::   .^((list path) %gt /(scot %p our.bowl)/portal-store/(scot %da now.bowl)//item)
-  :: =+  ~(val by items.state)
-  :: =^  cards-4  state
-  ::   %-  tail  %^  spin  -  [*(list card) state]
-  ::   |=  [=item:d:m:p q=[cards=(list card) state=state-4]]
-  ::   :-  item
-  ::   =/  path  [%item (key-to-path:conv:p)]
-  ::   =.  state  state.q
-  ::   ?:  =(lens.item %temp)  q                        ::  if %temp, no need
-  ::   ?.  ?=(?(%collection %feed %app %blog) struc.key.item)      ::  if not %col or %feed or %app
-  ::     q
-  ::     :: ?~  (find [path]~ item-paths)
-  ::       :: :_  state.q
-  ::       :: (welp cards.q (gro:cards-methods item))
-  ::     :: :_  state.q
-  ::     :: (welp cards.q (cul:cards-methods key.item 0))
-  ::   ?:  (~(has by read:du-item) path)  q   ::  if already published, no need
-  ::   =^  cards  item-pub.state.q  (give:du-item path [%whole item])
-  ::   [(welp cards.q cards) state.q]
-  :: ::  - unsub from all which are not %feed or %col because of rem scry transition
-  :: =.  state
-  ::   =+  ~(tap in ~(key by read:da-item))
-  ::   %-  tail
-  ::   %^  spin  -  state
-  ::   |=  [p=[=ship =dude:gall =path] q=[state=state-4]]
-  ::   =/  key  (path-to-key:conv:^p +:path.p)
-  ::   =.  state  state.q
-  ::   ?.  ?=(?(%feed %collection %app %blog) struc.key)
-  ::     =.  item-sub.state.q  (quit:da-item ship.key %portal-store path.p)
-  ::     [p state.q]
-  ::   [p state.q]
-  :: :_  this
-  :: ;:(welp cards-1 cards-2 cards-3 cards-4)
+  :: -  destroy empty collections
+  =/  output
+    =+  ~(tap by items.state)
+    %-  tail  %^  spin  -  [*key-list:d:m:p *(list card) state]
+    |=  [p=[=key:d:m:p =item:d:m:p] q=[to-remove=key-list:d:m:p cards=(list card) state=state-4]]
+    :-  p
+    =.  state  state.q
+    ?:  ?=([%collection *] bespoke.item.p)
+      ?~  key-list.bespoke.item.p
+        ~&  >  "destroying {<key.p>}!"
+        =^  cards  state  (destroy:handle-poke:stor [%destroy key.p])
+        [(snoc to-remove.q key.p) ;:(welp cards cards.q) state]
+      [to-remove.q cards.q state]
+    [to-remove.q cards.q state]
+  =^  cards-1  state  +.output
+  ::  -  remove empty collections + ~2000.1.2 from main collection
+  =^  cards-2  state
+    ?.  (~(has by items) [%collection our.bowl '' '~2000.1.1'])
+      `state
+    %-  remove:handle-poke:stor  :+  %remove
+    (snoc -.output [%collection our.bowl '' '~2000.1.2'])
+    [%collection our.bowl '' '~2000.1.1']
+  ::  - init-sequence to create and sub if sth was missed previously
+  =^  cards-3  state  init-sequence:stor
+  ::  - cleanup past mistakes
+  ::  - publish all items which are unpublished
+  ::    ->  either to rem scry or sss
+  :: =/  item-paths
+  ::   .^((list path) %gt /(scot %p our.bowl)/portal-store/(scot %da now.bowl)//item)
+  =+  ~(val by items.state)
+  =^  cards-4  state
+    %-  tail  %^  spin  -  [*(list card) state]
+    |=  [=item:d:m:p q=[cards=(list card) state=state-4]]
+    :-  item
+    =/  path  [%item (key-to-path:conv:p key.item)]
+    =.  state  state.q
+    ?:  =(lens.item %temp)  q                        ::  if %temp, no need
+    ?.  ?=(?(%collection %feed %app %blog) struc.key.item)      ::  if not %col or %feed or %app
+      q
+      :: ?~  (find [path]~ item-paths)
+        :: :_  state.q
+        :: (welp cards.q (gro:cards-methods item))
+      :: :_  state.q
+      :: (welp cards.q (cul:cards-methods key.item 0))
+    ::?:  (~(has by read:du-item) path)  q   ::  if already published, no need
+    =^  cards-1  item-pub.state.q  (kill:du-item ~[path])
+    =^  cards-2  item-pub.state.q  (give:du-item path [%whole item])
+    [;:(welp cards.q cards-1 cards-2) state.q]
+  ::  - unsub from all which are not %feed or %col because of rem scry transition
+  =.  state
+    =+  ~(tap in ~(key by read:da-item))
+    %-  tail
+    %^  spin  -  state
+    |=  [p=[=ship =dude:gall =path] q=[state=state-4]]
+    =/  key  (path-to-key:conv:^p +:path.p)
+    =.  state  state.q
+    ?.  ?=(?(%feed %collection %app %blog) struc.key)
+      =.  item-sub.state.q  (quit:da-item ship.key %portal-store path.p)
+      [p state.q]
+    [p state.q]
+  ::  resub to main feed after problem with sss
+  =/  pat  ;;  [%item @ @ @ @ ~]  /item/feed/(scot %p indexer)//global
+  =.  item-sub  (quit:da-item indexer %portal-store pat)
+  =/  cards-5  :_  ~
+    :*  %pass  /resub  %agent  [our.bowl %portal-store]  %poke
+        %portal-action  !>([%sub [%feed indexer '' 'global']])
+    ==
+  :_  this
+  ;:(welp cards-1 cards-2 cards-3 cards-4 cards-5)
 ::
 ++  on-poke
   |=  [=mark =vase]
