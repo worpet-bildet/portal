@@ -67,7 +67,7 @@
     <div class="border w-full my-2" />
     <div class="p-2">
       <button
-        class="flex gap-3 items-center justify-start py-2 px-3 rounded-lg w-full relative bg-black text-white"
+        class="flex gap-3 items-center justify-center lg:justify-start py-2 px-3 rounded-lg w-full relative bg-black text-white"
         on:click={() => {
           push('/');
         }}
@@ -75,7 +75,7 @@
         <div class="w-5 h-5">
           <PostIcon />
         </div>
-        Post
+        <div class="hidden lg:block">Post</div>
       </button>
     </div>
   </div>
