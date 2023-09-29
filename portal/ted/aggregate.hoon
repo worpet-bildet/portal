@@ -12,8 +12,8 @@
 ::  these 2 can be adjusted
 ::  the lesser the num, the more relevant stuff you will get
 ::  the higher, the less relevant (but there will be more)
-=/  msgs-per-feels  50
-=/  msgs-per-replies  50
+=/  msgs-per-feels  100
+=/  msgs-per-replies  100
 ::
 ::  one of these needs to be satisfied for a msg to be aggregated
 =/  min-feels-req  3
@@ -46,7 +46,7 @@
 ::
 =/  [notes-from=@da notes-count=@t notes-exists=? actual-notes-feed=feed:d:mov]
   ?~  notes-exists=+.notes-feed
-    [(sub now ~d2) '1.000' %.n ~]
+    [(sub now ~d40) '1.000' %.n ~]
   =/  notes  ;;(item:d:mov +.notes-feed)
   ?>  ?=([%feed *] bespoke.notes)
   ?~  feed.bespoke.notes
@@ -55,7 +55,7 @@
 ::
 =/  [curios-from=@dr curios-count=@t curios-exists=? actual-curios-feed=feed:d:mov]
   ?~  curios-exists=+.curios-feed
-    [(sub now ~d2) '1.000' %.n ~]
+    [(sub now ~d40) '1.000' %.n ~]
   =/  curios  ;;(item:d:mov +.curios-feed)
   ?>  ?=([%feed *] bespoke.curios)
   ?~  feed.bespoke.curios
@@ -64,7 +64,7 @@
 ::
 =/  [msgs-from=@dr msgs-count=@t msgs-exists=? actual-msgs-feed=feed:d:mov]
   ?~  msgs-exists=+.msgs-feed
-    [(sub now ~d2) '1.000' %.n ~]
+    [(sub now ~d40) '1.000' %.n ~]
   =/  msgs  ;;(item:d:mov +.msgs-feed)
   ?>  ?=([%feed *] bespoke.msgs)
   ?~  feed.bespoke.msgs
@@ -161,6 +161,9 @@
   =.  new-notes-feed  (weld fed new-notes-feed)
   $(diary-flags +:diary-flags)
 ::
+;<  ~  bind:m
+  %-  send-raw-card
+  (create-feed-card 'groups-curios' ~)
 :: ;<  ~  bind:m
 ::   |-
 ::   ?~  heap-flags

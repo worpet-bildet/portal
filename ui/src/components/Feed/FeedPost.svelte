@@ -221,6 +221,14 @@
           <LinkPreview url={blurbLink} />
         {/if}
         <div class="grid grid-cols-6 lg:grid-cols-10">
+          <a
+            use:link
+            href={keyStrFromObj(item.keyObj)}
+            class="col-span-1 flex items-center gap-2"
+          >
+            <div class="w-5 h-5 text-panelicon"><ChatIcon /></div>
+            <div class="text-light">{replies.length}</div>
+          </a>
           <div class="col-span-1 flex items-center gap-2">
             {#if isLikedByMe}
               <div class="w-5 h-5 text-error">
@@ -237,14 +245,6 @@
               <div class="text-light">{numLikes}</div>
             {/if}
           </div>
-          <a
-            use:link
-            href={keyStrFromObj(item.keyObj)}
-            class="col-span-1 flex items-center gap-2"
-          >
-            <div class="w-5 h-5 text-panelicon"><ChatIcon /></div>
-            <div class="text-light">{replies.length}</div>
-          </a>
         </div>
       </a>
     </div>
