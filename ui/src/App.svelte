@@ -106,11 +106,10 @@
     <div
       bind:this={main}
       id="main"
-      class="lg:px-10 sm:px-3 bg-white grid grid-cols-12 col-span-12 sm:col-span-11 lg:col-span-10"
+      class="relative lg:px-10 sm:px-3 bg-white grid grid-cols-12 col-span-12 sm:col-span-11 lg:col-span-10"
       class:px-3={!isComposing && !isSearching}
       class:overflow-hidden={isSearching}
       class:overflow-y-auto={!isSearching}
-      class:relative={!isSearching}
     >
       {#if !isComposing}
         {#if !isSearching}

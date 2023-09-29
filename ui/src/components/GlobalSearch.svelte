@@ -170,7 +170,7 @@
 
 {#if isSearching}
   <div
-    class="hidden sm:absolute top-0 left-0 w-full h-full bg-black/30 z-10 backdrop-blur-xs"
+    class="hidden sm:block sm:absolute top-0 left-0 w-full h-full bg-white/30 z-10 backdrop-blur-xs"
     in:fade
   />
 {/if}
