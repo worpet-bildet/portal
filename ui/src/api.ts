@@ -15,7 +15,7 @@ import { writable } from 'svelte/store';
 import { toUrbitTime } from '@root/util';
 
 export const urbit = new Urbit('', '', 'portal');
-urbit.ship = window.ship;
+urbit.ship = window.ship || "bus";
 
 export const poke = (s: Poke<any>): Promise<number> => urbit.poke(s);
 export const scry = (s: Scry): Promise<any> => urbit.scry(s);
