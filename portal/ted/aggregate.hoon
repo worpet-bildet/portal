@@ -15,6 +15,10 @@
 =/  msgs-per-feels  5
 =/  msgs-per-replies  5
 ::
+::  one of these needs to be satisfied for a msg to be aggregated
+=/  min-feels-req  2
+=/  min-replies-req  2
+::
 ;<  diarymap=(map flag:d diary:d)  bind:m  
     (scry (map flag:d diary:d) /gx/diary/shelf/noun)
 ;<  heapmap=(map flag:h heap:h)  bind:m  
@@ -251,7 +255,15 @@
     /gx/chat/chat/(scot %p p.flag)/[q.flag]/writs/newer/(scot %ud msgs-from)/[msgs-count]/noun
   ?:  =(writs *writs:ch)
     $(chat-flags +:chat-flags)
-  =.  aggregate  (~(put by aggregate) flag writs)
+  =/  filtered-writs
+    %-  malt
+    =+  (tap:on:writs:ch writs)
+    %+  skim  -  
+    |=  [=time =writ:w:d:mov]
+    ?|  (gte ~(wyt by feels.writ) min-feels-req)
+        (gte ~(wyt in replied.writ) min-replies-req)
+    ==
+  =.  aggregate  (~(put by aggregate) flag filtered-writs)
   $(chat-flags +:chat-flags)
   ++  sort-lists
     |=  aggregate=(mip:mip flag:ch time writ:w:d:mov)
