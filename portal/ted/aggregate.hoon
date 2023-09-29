@@ -12,18 +12,18 @@
 ::  these 2 can be adjusted
 ::  the lesser the num, the more relevant stuff you will get
 ::  the higher, the less relevant (but there will be more)
-=/  msgs-per-feels  5
-=/  msgs-per-replies  5
+=/  msgs-per-feels  50
+=/  msgs-per-replies  50
 ::
 ::  one of these needs to be satisfied for a msg to be aggregated
-=/  min-feels-req  2
-=/  min-replies-req  2
+=/  min-feels-req  3
+=/  min-replies-req  200
 ::
-;<  diarymap=(map flag:d diary:d)  bind:m  
+;<  diarymap=(map flag:d diary:d)  bind:m
     (scry (map flag:d diary:d) /gx/diary/shelf/noun)
-;<  heapmap=(map flag:h heap:h)  bind:m  
+;<  heapmap=(map flag:h heap:h)  bind:m
     (scry (map flag:h heap:h) /gx/heap/stash/noun)
-;<  chatmap=(map flag:ch chat:ch)  bind:m  
+;<  chatmap=(map flag:ch chat:ch)  bind:m
     (scry (map flag:ch chat:ch) /gx/chat/chats/noun)
 ::
 ;<  notes-feed=store-result:d:mov  bind:m
@@ -46,7 +46,7 @@
 ::
 =/  [notes-from=@da notes-count=@t notes-exists=? actual-notes-feed=feed:d:mov]
   ?~  notes-exists=+.notes-feed
-    [(sub now ~d1) '1.000' %.n ~]
+    [(sub now ~d2) '1.000' %.n ~]
   =/  notes  ;;(item:d:mov +.notes-feed)
   ?>  ?=([%feed *] bespoke.notes)
   ?~  feed.bespoke.notes
@@ -55,7 +55,7 @@
 ::
 =/  [curios-from=@dr curios-count=@t curios-exists=? actual-curios-feed=feed:d:mov]
   ?~  curios-exists=+.curios-feed
-    [(sub now ~d1) '1.000' %.n ~]
+    [(sub now ~d2) '1.000' %.n ~]
   =/  curios  ;;(item:d:mov +.curios-feed)
   ?>  ?=([%feed *] bespoke.curios)
   ?~  feed.bespoke.curios
@@ -64,7 +64,7 @@
 ::
 =/  [msgs-from=@dr msgs-count=@t msgs-exists=? actual-msgs-feed=feed:d:mov]
   ?~  msgs-exists=+.msgs-feed
-    [(sub now ~d1) '1.000' %.n ~]
+    [(sub now ~d2) '1.000' %.n ~]
   =/  msgs  ;;(item:d:mov +.msgs-feed)
   ?>  ?=([%feed *] bespoke.msgs)
   ?~  feed.bespoke.msgs
@@ -86,10 +86,10 @@
   |=  [=term =ship =time]
   ^-  cord
   %-  crip
-  ;:  weld 
+  ;:  weld
       (trip term)     "/"
       (scow %p ship)  "/"
-      (scow %ud time) 
+      (scow %ud time)
   ==
 ::
 =/  compare-feed
@@ -101,32 +101,32 @@
 =/  create-feed-card
   |=  [feed-name=cord =feed:d:mov]
   ^-  card:agent:gall
-  %-  ~(poke pass:io /make-feed) 
-  :-  [our %portal-manager] 
+  %-  ~(poke pass:io /make-feed)
+  :-  [our %portal-manager]
   :-  %portal-action
-  !>  
+  !>
   ^-  action:mov
   [%create `our ~ `feed-name ~ ~ `[%feed feed] ~ ~ ~]
 ::
 =/  edit-feed-card
   |=  [feed-name=cord =feed:d:mov]
   ^-  card:agent:gall
-  %-  ~(poke pass:io /make-feed) 
-  :-  [our %portal-manager] 
+  %-  ~(poke pass:io /make-feed)
+  :-  [our %portal-manager]
   :-  %portal-action
-  !>  
+  !>
   ^-  action:mov
   [%edit [%feed our '' feed-name] ~ ~ `[%feed `feed]]
 ::
-::  inefficient that I'm subbing, 
+::  inefficient that I'm subbing,
 ::  should be creating from here because we have all the data already
 =/  sub-to-many-card
   |=  =feed:d:mov
   ^-  card:agent:gall
-  %-  ~(poke pass:io /sub-to-many) 
-  :-  [our %portal-manager] 
+  %-  ~(poke pass:io /sub-to-many)
+  :-  [our %portal-manager]
   :-  %portal-action
-  !>  
+  !>
   ^-  action:mov
   [%sub-to-many (turn feed |=([* * =key:d:mov] key))]
 ::
@@ -144,7 +144,7 @@
     :~  (create-feed-card 'groups-notes' sorted-new)
         (sub-to-many-card sorted-new)
     ==
-  ::    
+  ::
   =/  =flag:d  -:diary-flags
   ::
   =/  m  (strand ,~)
@@ -161,37 +161,37 @@
   =.  new-notes-feed  (weld fed new-notes-feed)
   $(diary-flags +:diary-flags)
 ::
-;<  ~  bind:m
-  |-
-  ?~  heap-flags
-    =+  sorted-new=(sort new-curios-feed compare-feed)
-    ?:  curios-exists  :: if feed item exists
-      =/  merged-feed  (weld sorted-new actual-curios-feed)
-      %-  send-raw-cards
-      :~  (edit-feed-card 'groups-curios' merged-feed)
-          (sub-to-many-card sorted-new)
-      ==
-    %-  send-raw-cards
-    :~  (create-feed-card 'groups-curios' sorted-new)
-        (sub-to-many-card sorted-new)
-    ==
-  ::    
-  =/  =flag:h  -:heap-flags
-  ::
-  =/  m  (strand ,~)
-  ^-  form:m
-  ;<  =curios:h  bind:m
-    %+  scry  curios:h
-    /gx/heap/heap/(scot %p p.flag)/[q.flag]/curios/newer/(scot %ud curios-from)/[curios-count]/noun
-  =/  lis=(list [time curio:c:h])  (tap:on:curios:h curios)
-  =/  fed=feed:d:mov
-    %+  turn  lis
-    |=  [=time =curio:c:h]
-    :+  (scot %da time.curio)  our
-    [%groups-heap-curio p.flag (to-cord q.flag time.curio) '']
-  =.  new-curios-feed  (weld fed new-curios-feed)
-  $(heap-flags +:heap-flags)
-::
+:: ;<  ~  bind:m
+::   |-
+::   ?~  heap-flags
+::     =+  sorted-new=(sort new-curios-feed compare-feed)
+::     ?:  curios-exists  :: if feed item exists
+::       =/  merged-feed  (weld sorted-new actual-curios-feed)
+::       %-  send-raw-cards
+::       :~  (edit-feed-card 'groups-curios' merged-feed)
+::           (sub-to-many-card sorted-new)
+::       ==
+::     %-  send-raw-cards
+::     :~  (create-feed-card 'groups-curios' sorted-new)
+::         (sub-to-many-card sorted-new)
+::     ==
+::   ::
+::   =/  =flag:h  -:heap-flags
+::   ::
+::   =/  m  (strand ,~)
+::   ^-  form:m
+::   ;<  =curios:h  bind:m
+::     %+  scry  curios:h
+::     /gx/heap/heap/(scot %p p.flag)/[q.flag]/curios/newer/(scot %ud curios-from)/[curios-count]/noun
+::   =/  lis=(list [time curio:c:h])  (tap:on:curios:h curios)
+::   =/  fed=feed:d:mov
+::     %+  turn  lis
+::     |=  [=time =curio:c:h]
+::     :+  (scot %da time.curio)  our
+::     [%groups-heap-curio p.flag (to-cord q.flag time.curio) '']
+::   =.  new-curios-feed  (weld fed new-curios-feed)
+::   $(heap-flags +:heap-flags)
+:: ::
 ;<  ~  bind:m
   |^
   ?~  chat-flags
@@ -203,7 +203,7 @@
       |=  [=flag:ch =time =writ:w:d:mov]
       :+  (scot %da q.id.writ)  our
         [%groups-chat-msg p.flag (to-cord-msg q.flag p.id.writ q.id.writ) '']
-    =/  aggregated-msgs  
+    =/  aggregated-msgs
       ^-  (set [=time =ship =key:d:mov])
       ::  need to sort by feels and replies to know what to add to feed
       %-  ~(run in (sort-lists aggregate))
@@ -211,9 +211,9 @@
       :+  q.id.writ  our
         %-  to-key:conv:p
         [%groups-chat-msg p.flag (to-cord-msg q.flag p.id.writ q.id.writ) '']
-    =/  feed-to-set  
+    =/  feed-to-set
       ;;  (set [=time =ship =key:d:mov])
-      %-  silt 
+      %-  silt
       %+  turn  actual-msgs-feed
       |=  [time=cord =ship =key:d:mov]
       [(slav %da time) ship key]
@@ -225,7 +225,7 @@
       ~(tap in aggregated-msgs)
     =/  sorted
       ^-  (list [=time =ship =key:d:mov])
-      %+  sort  
+      %+  sort
         ?:  msgs-exists
           %~  tap  in
           (~(uni in aggregated-msgs) feed-to-set)
@@ -245,7 +245,7 @@
     :~  (create-feed-card 'groups-msgs' sorted-to-feed)
         (sub-to-many-card ~(tap in to-sub))
     ==
-  ::    
+  ::
   =/  =flag:d  -:chat-flags
   ::
   =/  m  (strand ,~)
@@ -258,7 +258,7 @@
   =/  filtered-writs
     %-  malt
     =+  (tap:on:writs:ch writs)
-    %+  skim  -  
+    %+  skim  -
     |=  [=time =writ:w:d:mov]
     ?|  (gte ~(wyt by feels.writ) min-feels-req)
         (gte ~(wyt in replied.writ) min-replies-req)
@@ -277,7 +277,7 @@
       =/  second  ~(wyt by feels.writ.b)
       ?:  =(first second)
         (gte q.id.writ.a q.id.writ.b)
-      (gth first second) 
+      (gth first second)
     =/  by-replies
       %+  swag  [0 msgs-per-replies]
       %+  sort  msgs
@@ -291,11 +291,11 @@
   ++  deduplicate
     |=  [a=(list [=flag:ch =time =writ:w:d:mov])]
     %-  flop  %-  tail
-    %^  spin  a  *(list [=flag:ch =time =writ:w:d:mov])  
+    %^  spin  a  *(list [=flag:ch =time =writ:w:d:mov])
     |=  [el=[=flag:ch =time =writ:w:d:mov] st=(list [=flag:ch =time =writ:w:d:mov])]
     ?~  (find [el]~ st)
       el^[el st]
-    [el st]  
+    [el st]
   --
 ::
 ::
