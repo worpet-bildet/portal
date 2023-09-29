@@ -289,6 +289,8 @@
                          :~  ['group' s+(flag:enjs-writ group.bespoke)]
                              ['channel' s+(flag:enjs-writ channel.bespoke)]
                              ['id' (id:enjs-writ id.bespoke)]
+                             ['time-created' s+(scot %da q.id.bespoke)]
+                             ['time-ref' s+(scot %ud time-ref.bespoke)]                             
                              ['content' (content:enjs-writ content.bespoke)]
                              ['feels' n+(scot %ud feels.bespoke)]
                              ['replies' n+(scot %ud replies.bespoke)]
@@ -298,6 +300,7 @@
                           :~  ['group' s+(flag:enjs-note group.bespoke)]
                               ['channel' s+(flag:enjs-note channel.bespoke)]
                               ['time' s+(scot %ud time.bespoke)]
+                              ['time-created' s+(scot %da time.bespoke)]
                               ['essay' (essay:enjs-note essay.bespoke)]
                               ['feels' n+(scot %ud feels.bespoke)]
                               ['replies' n+(scot %ud replies.bespoke)]
@@ -307,6 +310,7 @@
                           :~  ['group' s+(flag:enjs-curio group.bespoke)]
                               ['channel' s+(flag:enjs-curio channel.bespoke)]
                               ['time' s+(scot %ud time.bespoke)]
+                              ['time-created' s+(scot %da time.bespoke)]
                               ['heart' (heart:enjs-curio heart.bespoke)]
                               ['feels' n+(scot %ud feels.bespoke)]
                               ['replies' n+(scot %ud replies.bespoke)]
@@ -811,6 +815,7 @@
                 [%prepend-to-feed (ot:dejs ~[key+dejs-key feed+dejs-feed])]
                 [%add-tag-request (ot:dejs ~[our+dejs-key their+dejs-key tag-to+dejs-path tag-from+dejs-path])]
                 [%blog-sub ul:dejs]
+                [%aggregate-chats ul:dejs]
                 [%payment-request (ot:dejs ~[seller+dejs-ship desk+so:dejs])]
                 [%payment-tx-hash (ot:dejs ~[seller+dejs-ship tx-hash+so:dejs])]
                 [%tip-request (ot:dejs ~[key+dejs-key])]
@@ -940,6 +945,7 @@
       %-  ot-raw  :~  group+dejs-soft-null-flag
                       channel+dejs-soft-flag:dejs-writ
                       id+dejs-soft-id:dejs-writ
+                      time-ref+dejs-soft-null-time
                       content+dejs-soft-null-content
                       feels+dejs-soft-null-num
                       replies+dejs-soft-null-num
@@ -952,6 +958,7 @@
       %-  ot-raw  :~  group+dejs-soft-null-flag
                       channel+dejs-soft-flag:dejs-writ
                       time+dejs-soft-time:dejs-writ
+                      time-ref+dejs-soft-null-time
                       essay+dejs-soft-null-essay
                       feels+dejs-soft-null-num
                       replies+dejs-soft-null-num
@@ -964,6 +971,7 @@
       %-  ot-raw  :~  group+dejs-soft-null-flag
                       channel+dejs-soft-flag:dejs-writ
                       time+dejs-soft-time:dejs-writ
+                      time-ref+dejs-soft-null-time
                       heart+dejs-soft-null-heart
                       feels+dejs-soft-null-num
                       replies+dejs-soft-null-num
@@ -1073,6 +1081,10 @@
     |=  jon=json
     ^-  (unit @ud)
     ~
+  ++  dejs-soft-null-time
+    |=  jon=json
+    ^-  (unit @da)
+    `*@da
   ++  dejs-soft-s-list
     |=  jon=json
     ^-  (unit (list @t))
