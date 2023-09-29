@@ -2,49 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: opensaucesans;
-  src: url("./assets/opensaucesans-medium.woff2");
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: opensaucesans;
-  src: url("./assets/opensaucesans-black.woff2");
-  font-weight: bold;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: opensaucesans;
-  src: url("./assets/opensaucesans-mediumitalic.woff2");
-  font-weight: normal;
-  font-style: italic;
-}
-
-@font-face {
-  font-family: opensaucesans;
-  src: url("./assets/opensaucesans-blackitalic.woff2");
-  font-weight: bold;
-  font-style: italic;
-}
-
-@font-face {
-  font-family: krona;
-  src: url("./assets/kronaone-regular.woff2");
-}
-
 :root {
-  font-family: opensaucesans, Inter, Avenir, Helvetica, Arial, sans-serif;
+  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   font-size: 16px;
   line-height: 24px;
-  font-weight: 400;
+  font-weight: 500;
   color: #000000;
-  background: #f9f9f9;
-  height: 100%;
-  min-height: 100vh;
-  overflow: auto;
+  height: 100vh;
+  overflow: hidden;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -55,11 +20,6 @@
 body {
   margin: 0;
   backdrop-filter: blur(50px);
-  height: 100%;
-}
-
-main {
-  min-height: 100vh;
 }
 
 input {

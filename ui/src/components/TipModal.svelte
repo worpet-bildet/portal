@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { Confetti } from 'svelte-confetti';
   import { onMount } from 'svelte';
+  import { Confetti } from 'svelte-confetti';
 
-  import config from '@root/config';
-  import { state, resetTip } from '@root/state';
+  import { LoadingIcon, Modal } from '@fragments';
   import { api } from '@root/api';
-  import { Modal, LoadingIcon } from '@fragments';
+  import config from '@root/config';
+  import { resetTip, state } from '@root/state';
   import { ethToWei, sendTransaction } from '@root/util';
 
   let tipAmount = 0.001;

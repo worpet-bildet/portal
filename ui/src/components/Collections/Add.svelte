@@ -1,23 +1,22 @@
 <script lang="ts">
-  import { Other, ItemKey } from '$types/portal/item';
-  import { Groups } from '$types/landscape/groups';
   import { DocketApps } from '$types/apps/app';
+  import { Groups } from '$types/landscape/groups';
+  import { ItemKey, Other } from '$types/portal/item';
 
-  import { createEventDispatcher } from 'svelte';
-  import { state, keyStrToObj, keyStrFromObj } from '@root/state';
-  import { api, me } from '@root/api';
   import { ItemPreview, ShipForm } from '@components';
   import {
+    CancelIcon,
+    IconButton,
     Modal,
+    OtherItemForm,
+    PlusIcon,
     StepForm,
     TextArea,
-    PlusIcon,
-    IconButton,
-    CrossIcon,
-    CheckIcon,
-    OtherItemForm,
   } from '@fragments';
+  import { api, me } from '@root/api';
+  import { keyStrFromObj, keyStrToObj, state } from '@root/state';
   import { toUrbitTime } from '@root/util';
+  import { createEventDispatcher } from 'svelte';
   let dispatch = createEventDispatcher();
 
   let groups: Groups = {};
@@ -222,7 +221,7 @@
         <ShipForm bind:ship={newShip} />
         <div class="flex justify-between">
           <IconButton
-            icon={CrossIcon}
+            icon={CancelIcon}
             on:click={() => {
               formstep = 'ships';
               showFormNav = true;
@@ -231,7 +230,7 @@
             >Cancel</IconButton
           >
           <IconButton
-            icon={CheckIcon}
+            icon={PlusIcon}
             on:click={() => {
               saveShip();
               formstep = 'ships';
@@ -261,7 +260,7 @@
         <OtherItemForm bind:item={newOtherItem} />
         <div class="flex justify-between">
           <IconButton
-            icon={CrossIcon}
+            icon={CancelIcon}
             on:click={() => {
               formstep = 'other';
               showFormNav = true;
@@ -270,7 +269,7 @@
             >Cancel</IconButton
           >
           <IconButton
-            icon={CheckIcon}
+            icon={PlusIcon}
             on:click={() => {
               saveOtherItem();
               formstep = 'other';

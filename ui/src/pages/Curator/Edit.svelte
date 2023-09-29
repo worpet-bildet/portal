@@ -1,26 +1,26 @@
 <script lang="ts">
-  import { ItemKey, Item } from '$types/portal/item';
+  import { ItemKey } from '$types/portal/item';
 
-  import { link, pop } from 'svelte-spa-router';
+  import { CollectionsSquarePreview } from '@components';
+  import {
+    ArrowBackIcon,
+    IconButton,
+    PlusIcon,
+    RightSidebar,
+    SidebarGroup,
+    SortableList,
+    Tabs,
+    TextArea,
+  } from '@fragments';
   import { api } from '@root/api';
   import {
-    state,
     getCurator,
     getCuratorCollections,
     getItem,
     keyStrFromObj,
+    state,
   } from '@root/state';
-  import { CollectionsSquarePreview } from '@components';
-  import {
-    Tabs,
-    TextArea,
-    SortableList,
-    RightSidebar,
-    LeftArrowIcon,
-    CheckIcon,
-    IconButton,
-    SidebarGroup,
-  } from '@fragments';
+  import { link, pop } from 'svelte-spa-router';
 
   export let params;
 
@@ -45,7 +45,7 @@
   });
 
   let activeTab = 'Profile';
-  let tabs = ['Profile', 'Collections'];
+  let tabs = [{ tab: 'Profile' }, { tab: 'Collections' }];
 
   let publishBlog = true;
   let publishRadio = false;
@@ -90,7 +90,9 @@
       </div>
       <div class="flex flex-col gap-2">
         <div>Bio</div>
-        <TextArea bind:value={bio} />
+        <div class="border-b">
+          <TextArea bind:content={bio} />
+        </div>
       </div>
       <div class="flex flex-col gap-2">
         <div>Avatar</div>
@@ -164,7 +166,7 @@
   <RightSidebar>
     <SidebarGroup>
       <IconButton
-        icon={CheckIcon}
+        icon={PlusIcon}
         on:click={() => {
           switch (activeTab) {
             case 'Profile':
@@ -182,7 +184,7 @@
         Save</IconButton
       >
       <IconButton
-        icon={LeftArrowIcon}
+        icon={ArrowBackIcon}
         on:click={pop}
         class="bg-panels dark:bg-transparent dark:hover:border-white dark:border hover:bg-panels-hover"
         >Back</IconButton

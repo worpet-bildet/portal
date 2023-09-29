@@ -1,16 +1,17 @@
 <script lang="ts">
-  import { sigil, stringRenderer } from '@tlon/sigil-js';
-  import { state, getCurator } from '@root/state';
+  import { getCurator, state } from '@root/state';
   import { formatColor, isLightColor, isUrl } from '@root/util';
+  import { sigil, stringRenderer } from '@tlon/sigil-js';
   export let patp,
     size = 50;
   export let color = '0x0';
 
   let avatar;
-  state.subscribe(() => {
+  const loadSigil = (_p) => {
     ({ color, avatar } = getCurator(patp).bespoke || {});
-  });
+  };
 
+  $: $state && loadSigil(patp);
   $: primaryColor = formatColor(color);
   $: secondaryColor = isLightColor(primaryColor) ? '000000' : 'ffffff';
   $: if (primaryColor.length < 6) {

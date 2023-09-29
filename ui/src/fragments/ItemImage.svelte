@@ -1,10 +1,17 @@
 <script lang="ts">
-  import { isUrl, invertHex, formatColor } from '@root/util';
+  import { formatColor, invertHex, isUrl } from '@root/util';
+
   import placeholder from '@assets/placeholder.svg';
 
   export let image = '';
   export let title = '';
   export let color = '#000000';
+
+  let container;
+  const squareImage = () => {
+    if (!container) return;
+    container.style.height = `${container.clientWidth}px`;
+  };
 
   let primaryColor, secondaryColor;
   $: {
@@ -13,17 +20,18 @@
   }
 </script>
 
-<div class="relative h-full">
+<div class="relative h-full" bind:this={container}>
   <img alt="n/a" src={placeholder} class="w-full h-full object-cover" on:load />
   {#if isUrl(image)}
     <img
       src={image}
       class="w-full h-full object-cover absolute top-0 left-0"
       alt={title}
+      on:load={squareImage}
     />
   {:else}
     <div
-      class="absolute top-0 left-0 flex items-center justify-center text-xs md:text-2xl text-clip w-full h-full"
+      class="absolute top-0 left-0 flex items-center justify-center text-xs text-clip w-full h-full"
       style="background-color: #{primaryColor ||
         '000000'}; color: #{secondaryColor || '000000'};"
     >

@@ -1,35 +1,26 @@
 <script lang="ts">
-  import { Create as PortalCreate } from '$types/portal/poke';
-  import { FeedItem, ItemKey } from '$types/portal/item';
   import { RadioStation } from '$types/apps/radio';
+  import { FeedItem, ItemKey } from '$types/portal/item';
 
-  import { push } from 'svelte-spa-router';
+  import { link, push } from 'svelte-spa-router';
 
-  import config from '@root/config';
-  import { api, me } from '@root/api';
+  import { Feed, FeedPostForm, ItemPreview, Sigil } from '@components';
   import {
-    state,
-    getGlobalFeed,
-    getCuratorFeed,
-    keyStrToObj,
-    getCollectedItemLeaderboard,
-  } from '@root/state';
-  import { fromUrbitTime, isValidPatp } from '@root/util';
-  import {
-    Feed,
-    ItemPreview,
-    SidebarPal,
-    FeedPostForm,
-    Sigil,
-    FeedPromptForm,
-  } from '@components';
-  import {
+    LoadingIcon,
+    ProfileIcon,
     RightSidebar,
     SidebarGroup,
-    SearchIcon,
-    PersonIcon,
-    LoadingIcon,
   } from '@fragments';
+  import { api, me } from '@root/api';
+  import config from '@root/config';
+  import {
+    getCollectedItemLeaderboard,
+    getCuratorFeed,
+    getGlobalFeed,
+    keyStrToObj,
+    state,
+  } from '@root/state';
+  import { formatPatp, fromUrbitTime, isValidPatp } from '@root/util';
 
   let sortedPals: string[] = [];
   let sortedRecommendations: [string, number][] = [];
@@ -47,12 +38,6 @@
     });
   };
 
-  function handleShipSearchKeydown(event: KeyboardEvent) {
-    if (event.key === 'Enter') {
-      search();
-    }
-  }
-
   const globalFeed = (): FeedItem[] =>
     getGlobalFeed().concat(getCuratorFeed(me));
 
@@ -65,10 +50,14 @@
 
     feed = globalFeed()
       .filter((a) => !!a)
-      .filter((a, idx) => {
-        return globalFeed().findIndex((b) => b.time === a.time) === idx;
-      })
-      .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time));
+      .filter(
+        (a, idx) => globalFeed().findIndex((b) => b.time === a.time) === idx
+      )
+      .filter(
+        (a) => fromUrbitTime(a.time) > Date.now() - 1000 * 60 * 60 * 24 * 14
+      )
+      .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time))
+      .slice(0, 100);
 
     // Get the latest post, if it was more than six hours ago, send another sub
     if (
@@ -95,71 +84,10 @@
       });
     }
 
-    sortedRecommendations = getCollectedItemLeaderboard(me).slice(0, 4);
+    sortedRecommendations = getCollectedItemLeaderboard(me)
+      .filter((a) => !a[0].includes('ship'))
+      .slice(0, 4);
   });
-
-  const handlePost = ({
-    detail: { content, uploadedImageUrl, ref, time },
-  }): void => {
-    let post = { time } as PortalCreate;
-    if (ref) {
-      // Here we need to create the retweet post instead of the type "other"
-      post = {
-        ...post,
-        bespoke: {
-          retweet: {
-            ref: ref,
-            blurb: content || '',
-          },
-        },
-      };
-    } else {
-      post = {
-        ...post,
-        bespoke: {
-          other: {
-            title: '',
-            blurb: content || '',
-            link: '',
-            image: uploadedImageUrl || '',
-          },
-        },
-      };
-    }
-    post = {
-      ...post,
-      'prepend-to-feed': [
-        {
-          ship: me,
-          struc: 'feed',
-          time: '~2000.1.1',
-          cord: '',
-        },
-      ],
-      'tags-to': [],
-    };
-
-    // check each word of the content for a mention, and if so, create a social
-    // graph tag for the mention
-    content
-      .split(' ')
-      .filter((word) => word.substr(0, 1) === '~' && isValidPatp(word))
-      .forEach((word) => {
-        post = {
-          ...post,
-          'tags-to': [
-            ...post['tags-to'],
-            {
-              key: { struc: 'ship', ship: word, cord: '', time: '' },
-              'tag-to': `/${me}/mention-to`,
-              'tag-from': `/${word}/mention-from`,
-            },
-          ],
-        };
-      });
-
-    api.portal.do.create(post);
-  };
 
   let searchShip: string;
   let lastValidShip: string | false = searchShip;
@@ -176,8 +104,7 @@
     return stations
       .sort((a, b) => b.time - a.time)
       .filter((s) => s.viewers > 0)
-      .filter((s) => !!s.description)
-      .slice(0, 4);
+      .filter((s) => !!s.description);
   };
 
   const tuneRadio = (patp: string) => {
@@ -192,87 +119,86 @@
   ];
 </script>
 
-<div class="grid grid-cols-9 gap-8 mb-4">
-  <div class="flex flex-col gap-8 rounded-t-2xl col-span-12 md:col-span-6">
-    {#if config.aiEnabled !== 'false'}
-      <FeedPromptForm {feed} bind:promptedFeed bind:loading />
-    {/if}
-    <div>
-      <FeedPostForm
-        on:post={handlePost}
-        placeholder="Share a limerick, maybe..."
-        class="rounded-tl-lg rounded-tr-lg border-t"
-      />
-      {#if loading}
-        <div class="flex justify-center dark:fill-white items-center py-20">
-          <LoadingIcon />
-        </div>
-      {:else}
-        <Feed feed={promptedFeed.length > 0 ? promptedFeed : feed} />
-      {/if}
+<div class="grid grid-cols-12 gap-8 mb-4 h-full">
+  <div class="flex flex-col gap-8 rounded-t-2xl col-span-12 md:col-span-7">
+    <div
+      class="sm:block w-full h-full"
+      class:hidden={!$state.isComposing}
+      class:block={$state.isComposing}
+    >
+      <FeedPostForm placeholder="Type '~' to insert a reference" />
     </div>
+    {#if !$state.isComposing}
+      <div>
+        {#if loading}
+          <div class="flex justify-center dark:fill-white items-center py-20">
+            <div class="w-10 h-10"><LoadingIcon /></div>
+          </div>
+        {:else}
+          <Feed feed={promptedFeed.length > 0 ? promptedFeed : feed} />
+        {/if}
+      </div>
+    {/if}
   </div>
   <RightSidebar>
-    <SidebarGroup>
-      <div class="flex flex-col gap-4 mx-2 mb-2 overflow-hidden">
-        <div class="text-xl font-bold">Find a ship</div>
-        <div
-          class="flex w-full gap-4 items-center rounded-lg p-4 justify-between"
-        >
-          <div class="flex gap-4">
-            <div class="w-6"><Sigil patp={lastValidShip || '~zod'} /></div>
-            <input
-              type="text"
-              class="border-b focus:outline-none placeholder-grey"
-              placeholder="~worpet-bildet"
-              bind:value={searchShip}
-              on:keydown={handleShipSearchKeydown}
-            />
-          </div>
-          <button class="w-5" on:click={search}><SearchIcon /></button>
-        </div>
-      </div>
-    </SidebarGroup>
-    {#if sortedRecommendations.length > 0}
-      <SidebarGroup>
-        <div class="text-xl font-bold mx-2">Most recommended</div>
-        {#each sortedRecommendations as [recommendation]}
-          <ItemPreview key={keyStrToObj(recommendation)} small />
-        {/each}
-        <button
-          class="text-left rounded-lg text-grey hover:text-black dark:hover:text-white px-4"
-          on:click={() => push('/explore')}
-        >
-          Show more
-        </button>
-      </SidebarGroup>
-    {/if}
     {#if $state.radioStations}
       <SidebarGroup>
-        <div class="text-xl font-bold mx-2">Jump into %radio 📻</div>
-        <div class="flex flex-col gap-4">
-          {#each sortRadioStations($state.radioStations) as { description, viewers, location }}
-            <button
-              class="flex flex-col gap-2 rounded-md p-2 hover:bg-panels-hover dark:hover:bg-transparent dark:border dark:border-transparent dark:hover:border-white hover:duration-500 text-left"
-              on:click={() => tuneRadio(location)}
-            >
-              <div>{description}</div>
-              <div
-                class="flex items-center w-full justify-between gap-2 text-xs"
+        <div class="flex flex-col gap-1 px-2">
+          <div class="flex flex-col gap-1 px-2">
+            <div class="flex items-start justify-between">
+              <div>📻 Urbit Radio</div>
+              <a
+                href={'/apps/radio'}
+                target="_blank"
+                class="text-flavour text-xs hover:underline">See all</a
               >
-                <div>by {location}</div>
-                <div class="flex items-center gap-1">
-                  <div class="w-4 dark:fill-white"><PersonIcon /></div>
-                  <div>{viewers}</div>
+            </div>
+            <div class="text-flavour text-xs">
+              Like Twitch without the children
+            </div>
+          </div>
+          <div class="flex flex-col gap-4">
+            {#each sortRadioStations($state.radioStations).slice(0, 3) as { description, viewers, location }}
+              <div
+                class="flex items-center justify-between rounded-md p-2 text-left"
+              >
+                <div class="flex items-center gap-2">
+                  <div class="rounded-md overflow-hidden w-8">
+                    <Sigil patp={location} />
+                  </div>
+                  <div class="flex flex-col">
+                    <div class="line-clamp-1">{description}</div>
+                    <div
+                      class="flex items-center w-full justify-between gap-2 text-xs"
+                    >
+                      <div>
+                        by <a
+                          use:link
+                          href={`/${location}`}
+                          class="hover:underline">{formatPatp(location)}</a
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <div class="flex items-center gap-2">
+                    <div class="w-4 dark:fill-white"><ProfileIcon /></div>
+                    <div>{viewers}</div>
+                  </div>
+                  <button
+                    class="text-white text-xs bg-black rounded-md px-2 py-1"
+                    on:click={() => tuneRadio(location)}>Watch</button
+                  >
                 </div>
               </div>
-            </button>
-          {/each}
-        </div>
-      </SidebarGroup>
+            {/each}
+          </div>
+        </div></SidebarGroup
+      >
     {/if}
-    <SidebarGroup>
-      {#if $state.palsLoaded && !$state.pals}
+    {#if $state.palsLoaded && !$state.pals}
+      <SidebarGroup>
         <div>
           <div class="text-xl font-bold pb-4 px-2">
             Portal is better with %pals
@@ -283,18 +209,26 @@
             {/each}
           </div>
         </div>
-      {:else if sortedPals && sortedPals.length > 0}
-        <div class="flex flex-col gap-4 px-2">
-          <div class="text-xl font-bold">Your pals</div>
-          <div class="flex flex-col gap-2">
-            {#each sortedPals as pal (pal)}
-              <SidebarPal pal={`~${pal}`} score={patpItemCount[`~${pal}`]} />
-            {/each}
+      </SidebarGroup>
+    {/if}
+    {#if sortedRecommendations.length}
+      <SidebarGroup>
+        <div class="flex flex-col gap-2">
+          <div class="flex flex-col gap-1 px-2">
+            <div class="flex items-start justify-between">
+              <div>Discover Portal</div>
+              <!-- <a use:link href={'#/explore'} class="text-flavour text-xs"
+                >See all</a
+              > -->
+            </div>
+            <div class="text-flavour text-xs">Apps, Groups & Collections</div>
           </div>
+          {#each sortedRecommendations as item}
+            <ItemPreview key={item[0]} keyStr={item[0]} />
+          {/each}
         </div>
-      {:else}
-        Loading...
-      {/if}
-    </SidebarGroup>
+        <div class="flex flex-col gap-4" />
+      </SidebarGroup>
+    {/if}
   </RightSidebar>
 </div>

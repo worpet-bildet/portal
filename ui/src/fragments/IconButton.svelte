@@ -1,17 +1,16 @@
 <script lang="ts">
-  import { SvelteComponent } from 'svelte';
   import { LoadingIcon } from '@fragments';
   export let loading = false;
   export let async = false;
   export let disabled = false;
   export let tooltip = '';
   export let active = false;
-  export let icon = SvelteComponent;
+  export let icon: ConstructorOfATypedSvelteComponent | undefined = undefined;
 </script>
 
 <button
   class="
-    py-2 px-2 flex items-center gap-4 hover:duration-500
+    py-2 px-2 flex items-center gap-2 hover:duration-500
     overflow-hidden rounded-lg
     {$$props.class}
   "
