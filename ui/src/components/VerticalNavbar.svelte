@@ -1,14 +1,18 @@
 <script lang="ts">
   import logo from '@assets/logo.svg';
   import { Sigil } from '@components';
-  import { ActivityIcon, FeedIcon, FeedbackIcon, NavItem } from '@fragments';
+  import {
+    ActivityIcon,
+    FeedIcon,
+    FeedbackIcon,
+    NavItem,
+    PostIcon,
+  } from '@fragments';
   import { me } from '@root/api';
   import { formatPatp } from '@root/util';
   import { link, location, push } from 'svelte-spa-router';
 
   export let navCollapsed: boolean = false;
-
-  location.subscribe((l) => console.log({ l }));
 </script>
 
 <div class="flex flex-col justify-between bg-panel h-full border-r-2 h-screen">
@@ -61,6 +65,19 @@
       </div>
     </div>
     <div class="border w-full my-2" />
+    <div class="p-2">
+      <button
+        class="flex gap-3 items-center justify-start py-2 px-3 rounded-lg w-full relative bg-black text-white"
+        on:click={() => {
+          push('/');
+        }}
+      >
+        <div class="w-5 h-5">
+          <PostIcon />
+        </div>
+        Post
+      </button>
+    </div>
   </div>
   <div class="p-2">
     <a

@@ -38,12 +38,6 @@
     });
   };
 
-  function handleShipSearchKeydown(event: KeyboardEvent) {
-    if (event.key === 'Enter') {
-      search();
-    }
-  }
-
   const globalFeed = (): FeedItem[] =>
     getGlobalFeed().concat(getCuratorFeed(me));
 
@@ -95,67 +89,6 @@
       .slice(0, 4);
   });
 
-  const handlePost = ({
-    detail: { content, uploadedImageUrl, ref, time },
-  }): void => {
-    // let post = { time } as PortalCreate;
-    // if (ref) {
-    //   // Here we need to create the retweet post instead of the type "other"
-    //   post = {
-    //     ...post,
-    //     bespoke: {
-    //       retweet: {
-    //         ref: ref,
-    //         blurb: content || '',
-    //       },
-    //     },
-    //   };
-    // } else {
-    //   post = {
-    //     ...post,
-    //     bespoke: {
-    //       other: {
-    //         title: '',
-    //         blurb: content || '',
-    //         link: '',
-    //         image: uploadedImageUrl || '',
-    //       },
-    //     },
-    //   };
-    // }
-    // post = {
-    //   ...post,
-    //   'prepend-to-feed': [
-    //     {
-    //       ship: me,
-    //       struc: 'feed',
-    //       time: '~2000.1.1',
-    //       cord: '',
-    //     },
-    //   ],
-    //   'tags-to': [],
-    // };
-    // // check each word of the content for a mention, and if so, create a social
-    // // graph tag for the mention
-    // content
-    //   .split(' ')
-    //   .filter((word) => word.substr(0, 1) === '~' && isValidPatp(word))
-    //   .forEach((word) => {
-    //     post = {
-    //       ...post,
-    //       'tags-to': [
-    //         ...post['tags-to'],
-    //         {
-    //           key: { struc: 'ship', ship: word, cord: '', time: '' },
-    //           'tag-to': `/${me}/mention-to`,
-    //           'tag-from': `/${word}/mention-from`,
-    //         },
-    //       ],
-    //     };
-    //   });
-    // api.portal.do.create(post);
-  };
-
   let searchShip: string;
   let lastValidShip: string | false = searchShip;
   $: {
@@ -193,10 +126,7 @@
       class:hidden={!$state.isComposing}
       class:block={$state.isComposing}
     >
-      <FeedPostForm
-        on:post={handlePost}
-        placeholder="Type '~' to insert a reference"
-      />
+      <FeedPostForm placeholder="Type '~' to insert a reference" />
     </div>
     {#if !$state.isComposing}
       <div>
@@ -211,20 +141,6 @@
     {/if}
   </div>
   <RightSidebar>
-    <!-- {#if sortedRecommendations.length > 0}
-      <SidebarGroup>
-        <div class="text-xl font-bold mx-2">Most recommended</div>
-        {#each sortedRecommendations as [recommendation]}
-          <ItemPreview key={recommendation} small />
-        {/each}
-        <button
-          class="text-left rounded-lg text-grey hover:text-black dark:hover:text-white px-4"
-          on:click={() => push('/explore')}
-        >
-          Show more
-        </button>
-      </SidebarGroup>
-    {/if} -->
     {#if $state.radioStations}
       <SidebarGroup>
         <div class="flex flex-col gap-1 px-2">
@@ -281,8 +197,8 @@
         </div></SidebarGroup
       >
     {/if}
-    <!-- <SidebarGroup>
-      {#if $state.palsLoaded && !$state.pals}
+    {#if $state.palsLoaded && !$state.pals}
+      <SidebarGroup>
         <div>
           <div class="text-xl font-bold pb-4 px-2">
             Portal is better with %pals
@@ -293,19 +209,8 @@
             {/each}
           </div>
         </div>
-      {:else if sortedPals && sortedPals.length > 0}
-        <div class="flex flex-col gap-4 px-2">
-          <div class="text-xl font-bold">Your pals</div>
-          <div class="flex flex-col gap-2">
-            {#each sortedPals as pal (pal)}
-              <SidebarPal pal={`~${pal}`} score={patpItemCount[`~${pal}`]} />
-            {/each}
-          </div>
-        </div>
-      {:else}
-        Loading...
-      {/if}
-    </SidebarGroup> -->
+      </SidebarGroup>
+    {/if}
     {#if sortedRecommendations.length}
       <SidebarGroup>
         <div class="flex flex-col gap-2">

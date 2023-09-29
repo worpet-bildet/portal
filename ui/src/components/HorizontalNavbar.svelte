@@ -4,6 +4,7 @@
   import { push } from 'svelte-spa-router';
 
   export let isHome: boolean = false;
+  export let main: HTMLDivElement;
 
   const handleNewPostClick = () => {
     setIsComposing(true);
@@ -15,7 +16,14 @@
   <div
     class="fixed left-0 h-20 bottom-0 flex w-full justify-between bg-white/80 backdrop-blur-xs"
   >
-    <NavItem icon={FeedIcon} title={'Feed'} on:click={() => push('#/')} />
+    <NavItem
+      icon={FeedIcon}
+      title={'Feed'}
+      on:click={() => {
+        if (isHome) main.scrollTo({ top: 0, behavior: 'smooth' });
+        push('#/');
+      }}
+    />
     <!-- <NavItem
     icon={ExploreIcon}
     title={'Explore'}

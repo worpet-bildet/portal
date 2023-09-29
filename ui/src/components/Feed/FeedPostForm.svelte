@@ -24,7 +24,6 @@
     isValidPatp,
     toUrbitTime,
   } from '@root/util';
-  import { createEventDispatcher } from 'svelte';
 
   import {
     GroupsChatMessage,
@@ -45,7 +44,6 @@
   export let replyingToNames: string[] = [];
   export let editor: Editor = undefined;
 
-  let dispatch = createEventDispatcher();
   let content: string;
   let rating: number;
 
@@ -171,11 +169,6 @@
     setIsComposing(false);
   };
 
-  // TODO: Factor out the selection of groups/apps into its own component
-  let groupModalOpen: boolean;
-  let appModalOpen: boolean;
-  let recommendModalOpen: boolean;
-  let selectedKey: ItemKey;
   let fileInput: HTMLInputElement;
   let uploadedImageUrl: string;
 

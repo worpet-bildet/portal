@@ -38,8 +38,6 @@
   };
 
   let recommendModalOpen;
-
-  $: console.log({ app });
 </script>
 
 {#if app}

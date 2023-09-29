@@ -76,7 +76,6 @@
   };
 
   $: $state && loadItem(params.wild);
-  $: console.log({ item });
   $: postChain = item && [item.keyObj, ...getPostChain(item.keyObj)].reverse();
   $: replyingToNames = postChain
     ?.map(getItem)

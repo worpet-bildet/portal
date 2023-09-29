@@ -147,8 +147,6 @@
     key.struc === 'groups-heap-curio' ||
     key.struc === 'groups-chat-msg';
   $: previewNavigate = () => push(keyStrFromObj(key));
-
-  $: console.log({ $location, expandPreview });
 </script>
 
 {#if item}

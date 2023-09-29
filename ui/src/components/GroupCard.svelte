@@ -23,8 +23,6 @@
   let recommendModalOpen;
 
   $: groupKey = group && `${group?.keyObj?.ship}/${group?.keyObj?.cord}`;
-
-  $: console.log({ joinedDetails });
 </script>
 
 {#if group}

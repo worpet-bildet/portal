@@ -33,6 +33,7 @@ export const getMeta = (item) => {
     servedFrom: getServedFrom(item),
     createdAt: getCreatedAt(item),
     struc: getStruc(item),
+    displayStruc: getDisplayStruc(item),
     ref: getRef(item),
     lens: getLens(item),
     distShip: getDistShip(item),
@@ -198,6 +199,18 @@ export const getCreatedAt = (item) => {
   }
 };
 export const getStruc = (item) => item?.keyObj?.struc;
+export const getDisplayStruc = (item) => {
+  switch (item?.keyObj?.struc) {
+    case 'groups-chat-msg':
+      return 'chat';
+    case 'groups-heap-curio':
+      return 'curio';
+    case 'groups-diary-note':
+      return 'note';
+    default:
+      return item?.keyObj?.struc;
+  }
+};
 export const getRef = (item) => item?.bespoke?.ref;
 export const getLens = (item) => item?.lens;
 export const getDistShip = (item) => {
@@ -229,7 +242,7 @@ export const getGroupsLink = (item) => {
   // http://localhost/apps/groups/groups/~tommur-dostyn/tlon-studio/channels/chat/~tommur-dostyn/support?msg=170141184506435544337432278891006787584
   const prefix = `/apps/groups/`;
   let suffix = '';
-  // console.log(item);
+
   switch (item?.keyObj?.struc) {
     case 'groups-chat-msg':
       suffix = `groups/${item?.bespoke?.group}/channels/chat/${
@@ -518,7 +531,6 @@ export const isShortcode = (path) => {
 
 //  /1/chan/chat/~sampel-dilryd-mopreg/new-channel/msg/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749
 export const getChatDetails = (path) => {
-  console.log({ path });
   const splut = path.split('/');
   return {
     host: splut[4],

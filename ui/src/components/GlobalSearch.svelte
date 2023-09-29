@@ -60,7 +60,6 @@
         {
           title: 'Activity',
           icon: ActivityIcon,
-          unreadCount: 4,
           action: () => push('/activity'),
         },
       ],
@@ -171,7 +170,7 @@
 
 {#if isSearching}
   <div
-    class="absolute top-0 left-0 w-full h-full bg-black/30 z-10 backdrop-blur-xs"
+    class="hidden sm:absolute top-0 left-0 w-full h-full bg-black/30 z-10 backdrop-blur-xs"
     in:fade
   />
 {/if}
@@ -243,7 +242,7 @@
           <div class="flex flex-col gap-2">
             <div class="text-light">Apps, Groups & Collections</div>
             {#each searchResults.items as item, i (keyStrFromObj(item.keyObj))}
-              {@const { title, image, struc, color } = getMeta(item)}
+              {@const { title, image, displayStruc, color } = getMeta(item)}
               <button
                 on:mousedown={() => push(keyStrFromObj(item.keyObj))}
                 class="flex justify-between items-center px-2 py-1 rounded-md hover:bg-panel"
@@ -254,14 +253,16 @@
                   <div class="w-7 h-7 overflow-hidden rounded-md">
                     <ItemImage {image} {title} {color} />
                   </div>
-                  <div class="text-left line-clamp-1 overflow-ellipsis">
+                  <div
+                    class="text-left line-clamp-1 overflow-ellipsis break-all"
+                  >
                     {title}
                   </div>
                 </div>
                 <div
                   class="text-xs text-strucpilltext bg-strucpill rounded-full px-3 py-1"
                 >
-                  {struc.toUpperCase()}
+                  {displayStruc.toUpperCase()}
                 </div>
               </button>
             {/each}

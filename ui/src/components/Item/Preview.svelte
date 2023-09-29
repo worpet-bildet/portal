@@ -1,23 +1,22 @@
 <script lang="ts">
   import { Item, ItemKey } from '$types/portal/item';
 
-  import { createEventDispatcher } from 'svelte';
-  import { push } from 'svelte-spa-router';
+  import { CollectionsSquarePreview, GroupsItem, Sigil } from '@components';
+  import { BinIcon, ItemImage, LinkIcon, PostIcon } from '@fragments';
+  import { api } from '@root/api';
   import {
-    state,
-    keyStrFromObj,
-    keyStrToObj,
     getItem,
     getJoinedGroupDetails,
-    refreshGroups,
+    keyStrFromObj,
+    keyStrToObj,
+    state,
   } from '@root/state';
-  import { api } from '@root/api';
-  import { getMeta, checkIfInstalled } from '@root/util';
-  import { CollectionsSquarePreview, Sigil, GroupsItem } from '@components';
-  import { BinIcon, ItemImage, LinkIcon, PostIcon } from '@fragments';
+  import { checkIfInstalled, getMeta } from '@root/util';
+  import { createEventDispatcher } from 'svelte';
+  import { push } from 'svelte-spa-router';
 
-  import GroupPreview from './GroupPreview.svelte';
   import AppPreview from './AppPreview.svelte';
+  import GroupPreview from './GroupPreview.svelte';
   import SidebarPreview from './SidebarPreview.svelte';
 
   export let key: ItemKey | string;
@@ -94,7 +93,6 @@
         item?.keyObj?.ship,
         item?.keyObj?.cord
       );
-    console.log({ item });
   };
 
   $: $state && loadItem(key);

@@ -130,10 +130,13 @@
         class:mb-24={!isComposing && !isSearching}
         class:pb-8={!isComposing}
         class:mb-0={isSearching || isComposing}
+        class:hidden={isSearching}
       >
         <Router {routes} on:routeLoaded={handleRouteLoaded} />
       </div>
-      <div class="sm:hidden"><HorizontalNavbar {isHome} /></div>
+      <div class="sm:hidden" class:hidden={isSearching}>
+        <HorizontalNavbar {isHome} {main} />
+      </div>
     </div>
   </div>
 </main>

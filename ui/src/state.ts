@@ -122,9 +122,7 @@ export const refreshContacts = (): void => {
 };
 
 export const refreshGroups = (): void => {
-  console.log('refreshing groups');
   api.urbit.get.joinedGroups().then((groups: Groups) => {
-    console.log({ groups });
     let _groups = {} as Groups;
     state.update((s) => {
       Object.entries(groups || {}).forEach(([key, data]) => {
