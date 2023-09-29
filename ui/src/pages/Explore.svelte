@@ -1,24 +1,23 @@
 <script lang="ts">
-  import { me } from '@root/api';
-  import {
-    state,
-    getCuratorAllCollectionItems,
-    groupKeyToItemKey,
-    collectionKeyToItemKey,
-    keyStrFromObj,
-    getItem,
-  } from '@root/state';
-  import { getMeta } from '@root/util';
   import { ItemPreview } from '@components';
   import {
-    IconButton,
-    SparkleIcon,
     AppsIcon,
-    GroupsIcon,
-    LoadingIcon,
     CollectionIcon,
-    SearchIcon,
+    GroupsIcon,
+    IconButton,
+    LoadingIcon,
+    SparkleIcon,
   } from '@fragments';
+  import { me } from '@root/api';
+  import {
+    collectionKeyToItemKey,
+    getCuratorAllCollectionItems,
+    getItem,
+    groupKeyToItemKey,
+    keyStrFromObj,
+    state,
+  } from '@root/state';
+  import { getMeta } from '@root/util';
 
   let items, activeItems, myItems, urlQuery, searchString;
   const refreshItems = () => {

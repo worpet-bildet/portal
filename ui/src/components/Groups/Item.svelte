@@ -1,7 +1,7 @@
 <script lang="ts">
   import ChatMessage from './ChatMessage.svelte';
-  import HeapCurio from './HeapCurio.svelte';
   import DiaryNote from './DiaryNote.svelte';
+  import HeapCurio from './HeapCurio.svelte';
 
   export let item;
   export let headless: boolean = false;

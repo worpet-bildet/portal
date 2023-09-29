@@ -2,10 +2,10 @@
   import { link } from 'svelte-spa-router';
 
   import { api } from '@root/api';
-  import { state, getItem, keyStrToObj } from '@root/state';
+  import { getItem, keyStrToObj, state } from '@root/state';
   import { getMeta } from '@root/util';
 
-  import { LoadingIcon, ItemImage } from '@fragments';
+  import { ItemImage, LoadingIcon } from '@fragments';
 
   export let keyStr;
 

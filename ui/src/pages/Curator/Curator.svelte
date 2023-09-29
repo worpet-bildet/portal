@@ -1,41 +1,10 @@
 <script lang="ts">
-  import { link, push } from 'svelte-spa-router';
-  import {
-    state,
-    getCurator,
-    getCuratorFeed,
-    refreshPals,
-    keyStrToObj,
-    groupKeyToItemKey,
-  } from '@root/state';
-  import { api, me } from '@root/api';
-  import { getMeta } from '@root/util';
-  import {
-    CollectionsList,
-    Feed,
-    ItemDetail,
-    ItemPreview,
-    GroupPreview,
-    CollectionsAdd,
-    FeedPostForm,
-    Sigil,
-    MoreFrom,
-    ProfileCard,
-  } from '@components';
-  import {
-    Tabs,
-    ProfileIcon,
-    GroupsIcon,
-    PostIcon,
-    CommentIcon,
-    RightSidebar,
-    SidebarGroup,
-    IconButton,
-    SendIcon,
-    FeedIcon,
-    CollectionIcon,
-  } from '@fragments';
   import gradient from '@assets/gradient.svg';
+  import { CollectionsList, Feed, ProfileCard } from '@components';
+  import { CollectionIcon, FeedIcon, Tabs } from '@fragments';
+  import { api } from '@root/api';
+  import { getCurator, getCuratorFeed, state } from '@root/state';
+  import { getMeta } from '@root/util';
 
   export let params;
   let { patp } = params;
@@ -112,9 +81,6 @@
       <div class="pt-4">
         <div class="flex flex-col gap-8">
           {#if activeTab === 'Activity'}
-            {#if me === patp}
-              <FeedPostForm placeholder="Share a limerick, maybe..." />
-            {/if}
             {#if !feed || feed.length === 0}
               <div class="col-span-12">
                 {patp} hasn't made any posts on Portal yet.

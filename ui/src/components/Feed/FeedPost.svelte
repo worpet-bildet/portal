@@ -1,36 +1,35 @@
 <script lang="ts">
-  import { ItemKey, Item } from '$types/portal/item';
+  import { Item, ItemKey } from '$types/portal/item';
 
-  import { link, location, push } from 'svelte-spa-router';
-  import { format } from 'timeago.js';
-  import { fade } from 'svelte/transition';
-  import { createEventDispatcher } from 'svelte';
-  import { api, me } from '@root/api';
+  import { GroupsItem, InlineShip, ItemPreview } from '@components';
   import {
-    state,
-    getItem,
-    keyStrFromObj,
-    getReplies,
-    getRepliesByTo,
-    getLikes,
-    getGroup,
-    keyStrToObj,
-  } from '@root/state';
-  import {
-    getMeta,
-    fromUrbitTime,
-    getAnyLink,
-    isValidPatp,
-    getGroupsLink,
-  } from '@root/util';
-  import { ItemPreview, InlineShip, GroupsItem } from '@components';
-  import {
-    CommentIcon,
+    ChatIcon,
+    ImageLoader,
+    ItemImage,
     LikeIcon,
     LinkPreview,
-    ItemImage,
-    ImageLoader,
   } from '@fragments';
+  import { api, me } from '@root/api';
+  import {
+    getGroup,
+    getItem,
+    getLikes,
+    getReplies,
+    getRepliesByTo,
+    keyStrFromObj,
+    state,
+  } from '@root/state';
+  import {
+    fromUrbitTime,
+    getAnyLink,
+    getGroupsLink,
+    getMeta,
+    isValidPatp,
+  } from '@root/util';
+  import { createEventDispatcher } from 'svelte';
+  import { link, location, push } from 'svelte-spa-router';
+  import { fade } from 'svelte/transition';
+  import { format } from 'timeago.js';
   import InlineItem from '../InlineItem.svelte';
 
   export let key: ItemKey;
@@ -144,9 +143,12 @@
   }
   $: expandPreview =
     $location.includes(keyStrFromObj(key)) ||
+    $location.includes('retweet') ||
     key.struc === 'groups-heap-curio' ||
     key.struc === 'groups-chat-msg';
   $: previewNavigate = () => push(keyStrFromObj(key));
+
+  $: console.log({ $location, expandPreview });
 </script>
 
 {#if item}
@@ -208,7 +210,7 @@
           </a>
         {/if}
         {#if ref}
-          <ItemPreview key={ref} on:expand={previewNavigate} />
+          <ItemPreview key={ref} on:expand={previewNavigate} {expandPreview} />
         {:else if group}
           <GroupsItem
             {item}
@@ -242,7 +244,7 @@
             href={keyStrFromObj(item.keyObj)}
             class="col-span-1 flex items-center gap-2"
           >
-            <div class="w-5 h-5 text-darkgreyicon"><CommentIcon /></div>
+            <div class="w-5 h-5 text-panelicon"><ChatIcon /></div>
             <div class="text-light">{replies.length}</div>
           </a>
         </div>
@@ -250,7 +252,7 @@
     </div>
   </div>
 {:else}
-  <div class="p-5 border-b border-x text-grey" in:fade>
+  <div class="p-5 rounded-xl bg-panel text-grey" in:fade>
     Contacting {key.ship}...
   </div>
 {/if}

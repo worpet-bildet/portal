@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { groupKeyToItemKey, deskKeyToItemKey } from '@root/state';
   import { ItemPreview } from '@components';
   import { ImageLoader } from '@fragments';
+  import { deskKeyToItemKey, groupKeyToItemKey } from '@root/state';
 
   export let block;
 </script>

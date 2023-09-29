@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { isImage } from '@root/util';
   import { ImageLoader } from '@fragments';
+  import { isImage } from '@root/util';
   export let inline;
 </script>
 

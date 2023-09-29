@@ -5,11 +5,11 @@
 
   import { MoreFrom, RecommendModal } from '@components';
   import {
+    CancelIcon,
     IconButton,
-    ProfileIcon,
     ItemImage,
     PlusIcon,
-    CancelIcon,
+    ProfileIcon,
     RepostIcon,
   } from '@fragments';
   import { link } from 'svelte-spa-router';

@@ -1,8 +1,8 @@
 <script lang="ts">
   import { NoteEssay } from '$types/landscape/diary';
 
-  import GroupsWrapper from './GroupsWrapper.svelte';
   import Block from './Block.svelte';
+  import GroupsWrapper from './GroupsWrapper.svelte';
   import Inline from './Inline.svelte';
 
   export let essay: NoteEssay;

@@ -1,61 +1,39 @@
 <script lang="ts">
-  import { Create } from '$types/portal/poke';
-  import { ItemKey, Item } from '$types/portal/item';
   import { DocketApp } from '$types/apps/app';
-  import { Groups } from '$types/landscape/groups';
   import { ChatWrit } from '$types/landscape/chat';
   import { DiaryNote } from '$types/landscape/diary';
+  import { Groups } from '$types/landscape/groups';
   import { HeapCurio } from '$types/landscape/heap';
+  import { ItemKey } from '$types/portal/item';
+  import { Create } from '$types/portal/poke';
 
-  import { pop } from 'svelte-spa-router';
-  import { createEventDispatcher } from 'svelte';
   import { api, me } from '@root/api';
+  import { itemInState, setIsComposing, state } from '@root/state';
   import {
-    state,
-    keyStrToObj,
-    getGroup,
-    getApp,
-    itemInState,
-    setIsComposing,
-  } from '@root/state';
-  import {
-    getAnyLink,
-    isChatPath,
-    isCurioPath,
-    isNotePath,
-    isShortcode,
+    collapseNames,
     formatChatPath,
     formatCurioPath,
     formatNotePath,
+    getAnyLink,
     getChatDetails,
     getCurioDetails,
     getNoteDetails,
-    toUrbitTime,
+    isChatPath,
+    isCurioPath,
+    isNotePath,
     isValidPatp,
-    collapseNames,
-    formatPatp,
+    toUrbitTime,
   } from '@root/util';
+  import { createEventDispatcher } from 'svelte';
 
   import {
-    RecommendModal,
-    Sigil,
-    ItemPreview,
     GroupsChatMessage,
-    GroupsHeapCurio,
     GroupsDiaryNote,
+    GroupsHeapCurio,
     InlineShip,
     RichTextArea,
   } from '@components';
-  import {
-    IconButton,
-    Modal,
-    ItemImage,
-    StarRating,
-    LinkPreview,
-    SearchIcon,
-    ImageIcon,
-    ImageLoader,
-  } from '@fragments';
+  import { ImageIcon, LinkPreview, LoadingIcon } from '@fragments';
   import { Editor } from '@tiptap/core';
 
   export let replyTo: ItemKey | undefined = undefined;
@@ -277,16 +255,17 @@
 </script>
 
 <div
-  class="flex flex-col w-full h-full sm:h-auto border-l border-r border-b p-4 gap-4 rounded-b-xl"
+  class="flex flex-col w-full sm:h-auto border-l border-r border-b p-4 gap-4 rounded-b-xl"
   class:relative={submitting}
   class:border-t={!replyTo}
   class:rounded-t-xl={!replyTo}
+  class:h-full={!replyTo}
 >
   {#if submitting}
     <div class="absolute top-0 left-0 w-full h-full bg-white/70 z-10">
       <div class="flex w-full h-full items-center justify-center opacity-100">
         <div class="w-10 h-10">
-          <SearchIcon />
+          <LoadingIcon />
         </div>
       </div>
     </div>
@@ -333,6 +312,7 @@
     <div>
       <button
         class="px-3 py-2 sm:hidden rounded-lg text-tertiary border border-mute"
+        class:hidden={!!replyTo}
         on:click={() => setIsComposing(false)}>Cancel</button
       >
     </div>

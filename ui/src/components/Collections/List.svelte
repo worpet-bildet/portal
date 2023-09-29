@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { link } from 'svelte-spa-router';
-  import { api, me } from '@root/api';
-  import { state, getCuratorCollections, getItem } from '@root/state';
-  import { getMeta } from '@root/util';
   import { RepostIcon } from '@fragments';
+  import { api, me } from '@root/api';
+  import { getCuratorCollections, getItem, state } from '@root/state';
+  import { getMeta } from '@root/util';
+  import { link } from 'svelte-spa-router';
   import SquarePreview from './SquarePreview.svelte';
 
   export let patp;

@@ -1,21 +1,21 @@
 <script lang="ts">
-  import { ItemKey, Other } from '$types/portal/item';
-  import { Groups } from '$types/landscape/groups';
   import { DocketApps } from '$types/apps/app';
+  import { Groups } from '$types/landscape/groups';
+  import { ItemKey, Other } from '$types/portal/item';
 
-  import { createEventDispatcher } from 'svelte';
-  import { api } from '@root/api';
-  import { state, keyStrFromObj, getItem } from '@root/state';
-  import { isValidPatp } from '@root/util';
   import { Sigil } from '@components';
   import {
-    StepForm,
-    OtherItemForm,
-    ItemImage,
-    IconButton,
     ArrowBackIcon,
+    IconButton,
+    ItemImage,
+    OtherItemForm,
     PlusIcon,
+    StepForm,
   } from '@fragments';
+  import { api } from '@root/api';
+  import { getItem, keyStrFromObj, state } from '@root/state';
+  import { isValidPatp } from '@root/util';
+  import { createEventDispatcher } from 'svelte';
 
   export let collection;
 

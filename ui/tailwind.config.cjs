@@ -87,6 +87,7 @@ module.exports = {
       error: 'rgb(220 38 38)',
       spacer: '#696969',
       mute: '#EFEFEF',
+      glass: '#FFFFFF26',
     },
     boxShadow: {
       DEFAULT: '0 0 20px 0 #69696920',

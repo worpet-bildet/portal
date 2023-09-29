@@ -1,11 +1,11 @@
-import { Item } from '$types/portal/item';
 import { ContactRolodex } from '$types/landscape/contact';
+import { Item } from '$types/portal/item';
 
+import { deSig } from '@urbit/api';
+import BigNumber from 'bignumber.js';
+import { ethers } from 'ethers';
 import fuzzy from 'fuzzy';
 import * as linkify from 'linkifyjs';
-import { ethers } from 'ethers';
-import BigNumber from 'bignumber.js';
-import { deSig } from '@urbit/api';
 
 export const isSubmitHotkey = (e: KeyboardEvent) => {
   if (e.key === 'Enter' && e.metaKey) return true;
@@ -229,7 +229,7 @@ export const getGroupsLink = (item) => {
   // http://localhost/apps/groups/groups/~tommur-dostyn/tlon-studio/channels/chat/~tommur-dostyn/support?msg=170141184506435544337432278891006787584
   const prefix = `/apps/groups/`;
   let suffix = '';
-  console.log(item);
+  // console.log(item);
   switch (item?.keyObj?.struc) {
     case 'groups-chat-msg':
       suffix = `groups/${item?.bespoke?.group}/channels/chat/${

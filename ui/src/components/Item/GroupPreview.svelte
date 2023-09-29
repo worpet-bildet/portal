@@ -50,7 +50,7 @@
       {#if !joinedDetails}
         <button
           on:click|stopPropagation={async (event) => {
-            event.stopPropagation();
+            event.preventDefault();
             event.currentTarget.innerHTML = 'Joining...';
             await api.urbit.do.joinGroup(groupKey).then(refreshGroups);
           }}

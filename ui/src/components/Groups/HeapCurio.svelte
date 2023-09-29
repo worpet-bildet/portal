@@ -1,10 +1,10 @@
 <script lang="ts">
   import { CurioHeart } from '$types/landscape/heap';
 
-  import { preSig, dropTrailingBreaks } from '@root/util';
+  import { dropTrailingBreaks, preSig } from '@root/util';
 
-  import GroupsWrapper from './GroupsWrapper.svelte';
   import Block from './Block.svelte';
+  import GroupsWrapper from './GroupsWrapper.svelte';
   import Inline from './Inline.svelte';
 
   export let heart: CurioHeart;

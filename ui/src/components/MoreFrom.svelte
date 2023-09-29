@@ -1,10 +1,9 @@
 <script lang="ts">
   import {
-    state,
+    getCurator,
     getMoreFromThisShip,
     keyStrToObj,
-    getCurator,
-    keyStrFromObj,
+    state,
   } from '@root/state';
   import { getMeta } from '@root/util';
 

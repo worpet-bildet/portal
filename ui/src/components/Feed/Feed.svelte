@@ -1,9 +1,9 @@
 <script lang="ts">
   import { FeedItem, ItemKey } from '$types/portal/item';
 
-  import { keyStrFromObj } from '@root/state';
   import { FeedPost, TipModal } from '@components';
   import { LoadingIcon } from '@fragments';
+  import { keyStrFromObj } from '@root/state';
 
   export let feed: FeedItem[] = [];
 

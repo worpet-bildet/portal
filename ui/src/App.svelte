@@ -1,29 +1,29 @@
 <script lang="ts">
-  import Router, { location, push } from 'svelte-spa-router';
-  import { GoogleAnalytics, ga } from '@beyonk/svelte-google-analytics';
-  import { state, setReferredTo } from '@root/state';
+  import { GoogleAnalytics } from '@beyonk/svelte-google-analytics';
   import config from '@root/config';
+  import { setReferredTo, state } from '@root/state';
+  import Router, { location, push } from 'svelte-spa-router';
 
   import {
-    Feed,
-    Activity,
-    Group,
-    App,
-    Other,
-    Explore,
-    Api,
-    Compose,
-    Search,
-  } from './pages';
-  import { Curator, EditCurator } from './pages/Curator';
-  import { Collection, EditCollection } from './pages/Collection';
-  import {
-    VerticalNavbar,
+    GlobalSearch,
     HorizontalNavbar,
     MobileHeader,
-    GlobalSearch,
+    VerticalNavbar,
   } from '@components';
   import { slide } from 'svelte/transition';
+  import {
+    Activity,
+    Api,
+    App,
+    Compose,
+    Explore,
+    Feed,
+    Group,
+    Other,
+    Search,
+  } from './pages';
+  import { Collection, EditCollection } from './pages/Collection';
+  import { Curator, EditCurator } from './pages/Curator';
 
   const routes = {
     '/': Feed,
@@ -87,8 +87,10 @@
   let isSearchGlassy: boolean = false;
   let isHome: boolean = false;
   const handleRouteLoaded = ({ detail: { route } }) => {
-    isSearchGlassy = route === '/:patp';
-    isSearchGlassy = route === '/group/:host/:cord';
+    isSearchGlassy =
+      route === '/:patp' ||
+      route === '/group/:host/:cord' ||
+      route === '/app/*';
     // isComposing = route === '/compose';
     // isSearching = route === '/search';
     isHome = route === '/';
@@ -104,10 +106,11 @@
     <div
       bind:this={main}
       id="main"
-      class="lg:px-10 sm:px-3 bg-white grid grid-cols-12 relative col-span-12 sm:col-span-11 lg:col-span-10"
+      class="lg:px-10 sm:px-3 bg-white grid grid-cols-12 col-span-12 sm:col-span-11 lg:col-span-10"
       class:px-3={!isComposing && !isSearching}
       class:overflow-hidden={isSearching}
       class:overflow-y-auto={!isSearching}
+      class:relative={!isSearching}
     >
       {#if !isComposing}
         {#if !isSearching}
@@ -123,9 +126,10 @@
         </div>
       {/if}
       <div
-        class="col-span-12 min-h-screen mb-24 sm:block"
+        class="col-span-12 min-h-screen sm:block"
+        class:mb-24={!isComposing && !isSearching}
         class:pb-8={!isComposing}
-        class:mb-0={isSearching}
+        class:mb-0={isSearching || isComposing}
       >
         <Router {routes} on:routeLoaded={handleRouteLoaded} />
       </div>

@@ -1,50 +1,36 @@
 <script lang="ts">
-  import { Confetti } from 'svelte-confetti';
-  import config from '@root/config';
-  import { api, me } from '@root/api';
+  import gradient from '@assets/gradient.svg';
+  import { AppCard, FeedPost, FeedPostForm } from '@components';
   import {
-    state,
-    getItem,
-    refreshApps,
-    keyStrToObj,
-    keyStrFromObj,
-    getReviews,
-    getReviewsByTo,
-    getMoreFromThisShip,
-  } from '@root/state';
-  import {
-    isImage,
-    getMeta,
-    fromUrbitTime,
-    isValidTxHash,
-    weiToEth,
-    sendTransaction,
-    checkIfInstalled,
-  } from '@root/util';
-  import {
-    ItemDetail,
-    AppCard,
-    RecommendModal,
-    FeedPost,
-    FeedPostForm,
-    ItemPreview,
-  } from '@components';
-  import {
-    Modal,
-    RightSidebar,
-    IconButton,
-    RepostIcon,
-    CancelIcon,
     DownloadIcon,
-    AppsIcon,
-    LinkIcon,
-    SidebarGroup,
-    PlusIcon,
-    LoadingIcon,
     ETHIcon,
+    IconButton,
+    LoadingIcon,
+    Modal,
+    PlusIcon,
     Tabs,
   } from '@fragments';
-  import gradient from '@assets/gradient.svg';
+  import { api, me } from '@root/api';
+  import config from '@root/config';
+  import {
+    getItem,
+    getMoreFromThisShip,
+    getReviews,
+    getReviewsByTo,
+    keyStrFromObj,
+    keyStrToObj,
+    state,
+  } from '@root/state';
+  import {
+    checkIfInstalled,
+    fromUrbitTime,
+    getMeta,
+    isImage,
+    isValidTxHash,
+    sendTransaction,
+    weiToEth,
+  } from '@root/util';
+  import { Confetti } from 'svelte-confetti';
 
   // TODO: there must be a better way
   let cord;

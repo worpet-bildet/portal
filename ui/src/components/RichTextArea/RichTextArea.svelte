@@ -68,7 +68,13 @@
     editor = new Editor({
       element: element,
       extensions: [
-        StarterKit,
+        StarterKit.configure({
+          // paragraph: {
+          //   HTMLAttributes: {
+          //     class: 'flex grow items-center',
+          //   },
+          // },
+        }),
         KeyboardShortcuts,
         // BlockGroupsReference,
         CharacterCount,

@@ -7,19 +7,15 @@
 
   import { MoreFrom, RecommendModal } from '@components';
   import {
-    IconButton,
-    ProfileIcon,
-    ItemImage,
-    PlusIcon,
-    CancelIcon,
-    RepostIcon,
     AppsIcon,
-    ETHIcon,
+    CancelIcon,
     DownloadIcon,
+    ETHIcon,
+    IconButton,
+    ItemImage,
     LinkIcon,
+    RepostIcon,
   } from '@fragments';
-  import InlineShip from './InlineShip.svelte';
-  import { link } from 'svelte-spa-router';
 
   export let app;
   export let isInstalled;

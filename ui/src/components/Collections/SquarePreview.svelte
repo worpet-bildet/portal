@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { api } from '@root/api';
-  import { state, getItem, keyStrFromObj } from '@root/state';
-  import { getMeta } from '@root/util';
-  import { Sigil } from '@components';
-  import { ItemImage, SearchIcon } from '@fragments';
   import placeholder from '@assets/placeholder.svg';
+  import { Sigil } from '@components';
+  import { ItemImage, LoadingIcon } from '@fragments';
+  import { api } from '@root/api';
+  import { getItem, state } from '@root/state';
+  import { getMeta } from '@root/util';
 
   export let key;
   export let withTitle = true;
@@ -66,7 +66,7 @@
 {:else}
   <div class="flex justify-center items-center w-full h-full">
     <div class="w-8 h-8">
-      <SearchIcon />
+      <LoadingIcon />
     </div>
   </div>
 {/if}

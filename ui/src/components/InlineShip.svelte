@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { link } from 'svelte-spa-router';
-  import { state, getProfile } from '@root/state';
-  import { formatPatp } from '@root/util';
   import { Sigil } from '@components';
+  import { getProfile, state } from '@root/state';
+  import { formatPatp } from '@root/util';
+  import { link } from 'svelte-spa-router';
 
   export let patp: string;
   export let isExpanded: boolean = false;

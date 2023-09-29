@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { isUrl, invertHex, formatColor } from '@root/util';
+  import { formatColor, invertHex, isUrl } from '@root/util';
 
   import placeholder from '@assets/placeholder.svg';
 

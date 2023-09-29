@@ -5,20 +5,20 @@
 
   import { me } from '@root/api';
   import {
-    state,
+    getCurator,
     getItem,
     getPostChain,
     getReplies,
     getRepliesByTo,
-    getCurator,
-    keyStrToObj,
     keyStrFromObj,
+    keyStrToObj,
+    state,
   } from '@root/state';
   import { fromUrbitTime, getMeta } from '@root/util';
 
   import { FeedPost, FeedPostForm, ProfileCard } from '@components';
 
-  import { LoadingIcon, RightSidebar } from '@fragments';
+  import { ArrowBackIcon, LoadingIcon } from '@fragments';
 
   export let params;
 
@@ -90,7 +90,14 @@
 <div class="grid grid-cols-12 gap-8 mb-4">
   <div class="flex flex-col gap-8 rounded-t-2xl col-span-12 md:col-span-7">
     <div>
-      <button on:click={pop} class="hover:underline">&lt; Feed</button>
+      <button
+        on:click={pop}
+        class="flex gap-2 items-center border rounded-lg text-tertiary px-2 py-1"
+        ><div class="w-4 h-4">
+          <ArrowBackIcon />
+        </div>
+        <div>Feed</div></button
+      >
     </div>
     {#if !item || (postChain && postChain.length === 0)}
       <div class="flex items-center justify-center w-full h-1/2">
@@ -99,7 +106,7 @@
     {/if}
     {#if postChain}
       {#if postChain.length === 1}
-        <div class="mb-6">
+        <div class="mb-28 sm:mb-6">
           <FeedPost key={postChain[0]} isReplyFormOpen={true} />
           <FeedPostForm
             {replyingToNames}

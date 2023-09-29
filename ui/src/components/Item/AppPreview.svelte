@@ -50,7 +50,7 @@
       {#if !isInstalled}
         <button
           on:click|stopPropagation={(event) => {
-            event.stopPropagation();
+            event.preventDefault();
             window.open(
               `${window.location.origin}/apps/grid/search/${
                 distShip || ship

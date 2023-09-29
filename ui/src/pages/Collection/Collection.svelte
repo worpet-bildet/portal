@@ -1,33 +1,22 @@
 <script lang="ts">
   import { Item } from '$types/portal/item';
 
-  import { push, pop } from 'svelte-spa-router';
-  import { me } from '@root/api';
-  import {
-    state,
-    getItem,
-    getCollectionItems,
-    getCurator,
-    keyStrToObj,
-    getMoreFromThisShip,
-  } from '@root/state';
-  import { getMeta, formatPatp } from '@root/util';
   import {
     CollectionsSquarePreview,
-    ItemDetail,
     ItemPreview,
-    RecommendModal,
     MoreFrom,
+    RecommendModal,
   } from '@components';
+  import { IconButton, PostIcon, RepostIcon, Tabs } from '@fragments';
+  import { me } from '@root/api';
   import {
-    PostIcon,
-    RightSidebar,
-    IconButton,
-    ArrowBackIcon,
-    RepostIcon,
-    SidebarGroup,
-    Tabs,
-  } from '@fragments';
+    getCollectionItems,
+    getItem,
+    getMoreFromThisShip,
+    state,
+  } from '@root/state';
+  import { getMeta } from '@root/util';
+  import { push } from 'svelte-spa-router';
 
   export let params;
 

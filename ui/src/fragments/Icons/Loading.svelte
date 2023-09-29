@@ -1,15 +1,22 @@
+<!-- By Sam Herbert (@sherb), for everyone. More @ http://goo.gl/7AJzbL -->
 <svg
-  width="48"
-  height="48"
-  viewBox="0 0 48 48"
-  fill="none"
+  viewBox="0 0 38 38"
   xmlns="http://www.w3.org/2000/svg"
+  stroke="currentColor"
 >
-  <path
-    d="M24 4V8M34 6.68L32 10.144M41.32 14L37.856 16M44 24H40M41.32 34L37.856 32M34 41.32L32 37.856M24 44V40M14 41.32L16 37.856M6.68 34L10.144 32M4 24H8M6.68 14L10.144 16M14 6.68L16 10.144"
-    stroke="#B1B1B1"
-    stroke-width="4"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-  />
+  <g fill="none" fill-rule="evenodd">
+    <g transform="translate(1 1)" stroke-width="2">
+      <circle stroke-opacity=".5" cx="18" cy="18" r="18" />
+      <path d="M36 18c0-9.94-8.06-18-18-18">
+        <animateTransform
+          attributeName="transform"
+          type="rotate"
+          from="0 18 18"
+          to="360 18 18"
+          dur="1s"
+          repeatCount="indefinite"
+        />
+      </path>
+    </g>
+  </g>
 </svg>

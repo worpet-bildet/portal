@@ -25,7 +25,10 @@ export default {
                 to: range.to + query.length,
               },
               [
-                { type: 'inline-item-reference', attrs: { ...i } },
+                {
+                  type: 'inline-item-reference',
+                  attrs: { ...i },
+                },
                 { type: 'text', text: ' ' },
               ]
             )

@@ -2,7 +2,6 @@
   import { FeedItem } from '$types/portal/item';
 
   import { createEventDispatcher } from 'svelte';
-  import { slide } from 'svelte/transition';
 
   import { getItem, reScoreItems } from '@root/state';
 

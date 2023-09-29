@@ -1,35 +1,26 @@
 <script lang="ts">
-  import { FeedItem, ItemKey } from '$types/portal/item';
   import { RadioStation } from '$types/apps/radio';
+  import { FeedItem, ItemKey } from '$types/portal/item';
 
-  import { push, link } from 'svelte-spa-router';
+  import { link, push } from 'svelte-spa-router';
 
-  import config from '@root/config';
-  import { api, me } from '@root/api';
+  import { Feed, FeedPostForm, ItemPreview, Sigil } from '@components';
   import {
-    state,
-    getGlobalFeed,
-    getCuratorFeed,
-    keyStrToObj,
-    getCollectedItemLeaderboard,
-    getGroupsFeed,
-  } from '@root/state';
-  import { fromUrbitTime, isValidPatp, formatPatp } from '@root/util';
-  import {
-    Feed,
-    ItemPreview,
-    SidebarPal,
-    FeedPostForm,
-    Sigil,
-    FeedPromptForm,
-  } from '@components';
-  import {
+    LoadingIcon,
+    ProfileIcon,
     RightSidebar,
     SidebarGroup,
-    SearchIcon,
-    ProfileIcon,
-    LoadingIcon,
   } from '@fragments';
+  import { api, me } from '@root/api';
+  import config from '@root/config';
+  import {
+    getCollectedItemLeaderboard,
+    getCuratorFeed,
+    getGlobalFeed,
+    keyStrToObj,
+    state,
+  } from '@root/state';
+  import { formatPatp, fromUrbitTime, isValidPatp } from '@root/util';
 
   let sortedPals: string[] = [];
   let sortedRecommendations: [string, number][] = [];

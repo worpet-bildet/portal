@@ -1,27 +1,26 @@
 <script lang="ts">
-  import { pop } from 'svelte-spa-router';
+  import { CollectionsAddItemForm, ItemPreview } from '@components';
   import {
-    state,
-    getItem,
-    getCurator,
-    getCollectionItems,
-    keyStrToObj,
-    keyStrFromObj,
-  } from '@root/state';
-  import { api } from '@root/api';
-  import { ItemPreview, CollectionsAddItemForm } from '@components';
-  import {
-    TextArea,
-    SortableList,
-    RightSidebar,
+    ArrowBackIcon,
+    IconButton,
     Modal,
     OtherItemForm,
-    IconButton,
-    ArrowBackIcon,
     PlusIcon,
-    PlusIcon,
+    RightSidebar,
     SidebarGroup,
+    SortableList,
+    TextArea,
   } from '@fragments';
+  import { api } from '@root/api';
+  import {
+    getCollectionItems,
+    getCurator,
+    getItem,
+    keyStrFromObj,
+    keyStrToObj,
+    state,
+  } from '@root/state';
+  import { pop } from 'svelte-spa-router';
   export let params;
   let { wild } = params;
   let collectionKey = `/collection/${wild}`;

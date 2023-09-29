@@ -22,7 +22,9 @@ export default Node.create<ReferenceOptions>({
   renderHTML({ HTMLAttributes }) {
     return [
       'inline-item-reference',
-      mergeAttributes(HTMLAttributes, { contenteditable: false }),
+      mergeAttributes(HTMLAttributes, {
+        contenteditable: false,
+      }),
       0,
     ];
   },
@@ -41,6 +43,12 @@ export default Node.create<ReferenceOptions>({
       image: { default: null },
       keyStr: { default: null },
       color: { default: null },
+    };
+  },
+
+  addOptions() {
+    return {
+      HTMLAttributes: {},
     };
   },
 });

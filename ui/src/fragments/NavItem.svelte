@@ -3,8 +3,8 @@
   export let title: string;
   export let unreadCount: number = 0;
   export let collapsed: boolean = false;
+  export let active: boolean = false;
 
-  // a bit ugly
   let hovering: boolean = false;
 </script>
 
@@ -16,13 +16,13 @@
 >
   <div
     class="flex gap-3 items-center flex-col md:flex-row"
-    class:text-navtext={!hovering}
-    class:text-navtextactive={hovering}
+    class:text-navtext={!active && !hovering}
+    class:text-navtextactive={active && !hovering}
   >
     <div
       class="w-5 h-5 relative"
-      class:text-panelicon={!hovering}
-      class:text-navtextactive={hovering}
+      class:text-panelicon={!active && !hovering}
+      class:text-navtextactive={active && !hovering}
     >
       <svelte:component this={icon} />
       {#if unreadCount > 0}

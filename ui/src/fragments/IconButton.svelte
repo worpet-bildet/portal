@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { SearchIcon } from '@fragments';
+  import { LoadingIcon } from '@fragments';
   export let loading = false;
   export let async = false;
   export let disabled = false;
@@ -27,7 +27,7 @@
 >
   <span class="w-5">
     {#if loading}
-      <svelte:component this={SearchIcon} />
+      <svelte:component this={LoadingIcon} />
     {:else}
       <svelte:component this={icon} />
     {/if}

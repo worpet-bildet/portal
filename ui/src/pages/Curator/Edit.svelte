@@ -1,26 +1,26 @@
 <script lang="ts">
-  import { ItemKey, Item } from '$types/portal/item';
+  import { ItemKey } from '$types/portal/item';
 
-  import { link, pop } from 'svelte-spa-router';
+  import { CollectionsSquarePreview } from '@components';
+  import {
+    ArrowBackIcon,
+    IconButton,
+    PlusIcon,
+    RightSidebar,
+    SidebarGroup,
+    SortableList,
+    Tabs,
+    TextArea,
+  } from '@fragments';
   import { api } from '@root/api';
   import {
-    state,
     getCurator,
     getCuratorCollections,
     getItem,
     keyStrFromObj,
+    state,
   } from '@root/state';
-  import { CollectionsSquarePreview } from '@components';
-  import {
-    Tabs,
-    TextArea,
-    SortableList,
-    RightSidebar,
-    ArrowBackIcon,
-    PlusIcon,
-    IconButton,
-    SidebarGroup,
-  } from '@fragments';
+  import { link, pop } from 'svelte-spa-router';
 
   export let params;
 
@@ -90,7 +90,9 @@
       </div>
       <div class="flex flex-col gap-2">
         <div>Bio</div>
-        <TextArea bind:content={bio} />
+        <div class="border-b">
+          <TextArea bind:content={bio} />
+        </div>
       </div>
       <div class="flex flex-col gap-2">
         <div>Avatar</div>

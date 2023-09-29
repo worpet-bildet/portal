@@ -1,25 +1,25 @@
-import {
-  ItemKey,
-  Item,
-  ItemCollection,
-  FeedItem,
-  ItemStruc,
-} from '$types/portal/item';
-import { HarkNotificationDestination } from '$types/portal/notification';
-import { SocialGraph } from '$types/portal/graph';
 import { DocketApps } from '$types/apps/app';
 import { OutgoingPals } from '$types/apps/pals';
 import { Contact, ContactRolodex } from '$types/landscape/contact';
 import { Group, Groups } from '$types/landscape/groups';
+import { SocialGraph } from '$types/portal/graph';
+import {
+  FeedItem,
+  Item,
+  ItemCollection,
+  ItemKey,
+  ItemStruc,
+} from '$types/portal/item';
+import { HarkNotificationDestination } from '$types/portal/notification';
 import { State } from '$types/state';
 
 import { uniqBy } from 'lodash';
 import { get, writable } from 'svelte/store';
 
-import config from '@root/config';
-import { save, load } from '@root/storage';
-import { api } from '@root/api';
 import { scoreItems } from '@root/ai';
+import { api } from '@root/api';
+import config from '@root/config';
+import { load, save } from '@root/storage';
 import { fromUrbitTime } from '@root/util';
 
 export const state = writable<State>({ ...load() });

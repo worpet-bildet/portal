@@ -1,31 +1,14 @@
 <script lang="ts">
-  import { push, link, location } from 'svelte-spa-router';
-  import { format } from 'timeago.js';
-  import {
-    state,
-    toggleDarkmode,
-    getNotifications,
-    getItem,
-    updateNotificationsLastChecked,
-    toggleMuteNotifications,
-    keyStrFromObj,
-  } from '@root/state';
+  import logo from '@assets/logo.svg';
+  import { Sigil } from '@components';
+  import { ActivityIcon, FeedIcon, FeedbackIcon, NavItem } from '@fragments';
   import { me } from '@root/api';
   import { formatPatp } from '@root/util';
-  import { Sigil } from '@components';
-  import {
-    ActivityIcon,
-    ExploreIcon,
-    FeedIcon,
-    FeedbackIcon,
-    NavItem,
-    ProfileIcon,
-    SettingsIcon,
-    TipIcon,
-  } from '@fragments';
-  import logo from '@assets/logo.svg';
+  import { link, location, push } from 'svelte-spa-router';
 
   export let navCollapsed: boolean = false;
+
+  location.subscribe((l) => console.log({ l }));
 </script>
 
 <div class="flex flex-col justify-between bg-panel h-full border-r-2 h-screen">
@@ -44,7 +27,8 @@
           icon={FeedIcon}
           title={'Feed'}
           collapsed={navCollapsed}
-          on:click={() => push('#/feed')}
+          active={$location === '/'}
+          on:click={() => push('#/')}
         />
         <!-- <NavItem
           icon={ExploreIcon}
@@ -57,6 +41,7 @@
           icon={ActivityIcon}
           title={'Activity'}
           collapsed={navCollapsed}
+          active={$location === '/activity'}
           on:click={() => push('#/activity')}
         />
         <!--
@@ -81,7 +66,7 @@
     <a
       use:link
       href={`/${me}`}
-      class="flex items-center justify-center gap-3 bg-transparent lg:bg-white w-full py-2 lg:px-3 rounded-lg"
+      class="flex items-center justify-center md:justify-start border gap-3 bg-transparent lg:bg-white w-full py-2 lg:px-3 rounded-lg"
     >
       <div class="w-6 h-6 rounded-sm overflow-hidden"><Sigil patp={me} /></div>
       <div class="hidden lg:block">{formatPatp(me)}</div>

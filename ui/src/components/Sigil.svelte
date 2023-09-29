@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { sigil, stringRenderer } from '@tlon/sigil-js';
-  import { state, getCurator } from '@root/state';
+  import { getCurator, state } from '@root/state';
   import { formatColor, isLightColor, isUrl } from '@root/util';
+  import { sigil, stringRenderer } from '@tlon/sigil-js';
   export let patp,
     size = 50;
   export let color = '0x0';

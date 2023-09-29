@@ -1,22 +1,22 @@
 <script lang="ts">
-  import { Other, ItemKey } from '$types/portal/item';
-  import { Groups } from '$types/landscape/groups';
   import { DocketApps } from '$types/apps/app';
+  import { Groups } from '$types/landscape/groups';
+  import { ItemKey, Other } from '$types/portal/item';
 
-  import { createEventDispatcher } from 'svelte';
-  import { state, keyStrToObj, keyStrFromObj } from '@root/state';
-  import { api, me } from '@root/api';
   import { ItemPreview, ShipForm } from '@components';
   import {
+    CancelIcon,
+    IconButton,
     Modal,
+    OtherItemForm,
+    PlusIcon,
     StepForm,
     TextArea,
-    PlusIcon,
-    IconButton,
-    CancelIcon,
-    OtherItemForm,
   } from '@fragments';
+  import { api, me } from '@root/api';
+  import { keyStrFromObj, keyStrToObj, state } from '@root/state';
   import { toUrbitTime } from '@root/util';
+  import { createEventDispatcher } from 'svelte';
   let dispatch = createEventDispatcher();
 
   let groups: Groups = {};

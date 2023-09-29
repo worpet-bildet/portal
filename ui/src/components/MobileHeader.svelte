@@ -13,7 +13,7 @@
     <img src={logo} class="w-12 h-12" alt="logo" />
     <div class="font-bold text-xl">Portal</div>
   </a>
-  <a use:link href="#/{me}" class="w-12 h-12 overflow-hidden rounded-md">
+  <a use:link href="#/{me}" class="w-10 h-10 overflow-hidden rounded-md">
     <Sigil patp={me} />
   </a>
 </div>

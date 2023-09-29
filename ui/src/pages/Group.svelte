@@ -1,33 +1,16 @@
 <script lang="ts">
+  import gradient from '@assets/gradient.svg';
+  import { GroupCard, ItemPreview } from '@components';
+  import { CommentIcon, RightSidebar, SidebarGroup } from '@fragments';
+  import { api } from '@root/api';
   import {
-    state,
     getGroup,
     getJoinedGroupDetails,
-    refreshGroups,
-    keyStrToObj,
     getMoreFromThisShip,
+    keyStrToObj,
+    state,
   } from '@root/state';
-  import { api } from '@root/api';
   import { getMeta, isImage } from '@root/util';
-  import {
-    ItemDetail,
-    RecommendModal,
-    ItemPreview,
-    GroupCard,
-  } from '@components';
-  import {
-    CommentIcon,
-    // DiaryIcon,
-    // HeapIcon,
-    ProfileIcon,
-    RepostIcon,
-    RightSidebar,
-    SidebarGroup,
-    PlusIcon,
-    CancelIcon,
-    IconButton,
-  } from '@fragments';
-  import gradient from '@assets/gradient.svg';
 
   export let params;
 

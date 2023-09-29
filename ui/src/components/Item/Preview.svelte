@@ -94,6 +94,7 @@
         item?.keyObj?.ship,
         item?.keyObj?.cord
       );
+    console.log({ item });
   };
 
   $: $state && loadItem(key);
@@ -137,7 +138,7 @@
     class:bg-white={isGroupsItem}
   >
     {#if isGroupsItem}
-      <GroupsItem {item} />
+      <GroupsItem {item} isExpanded={expandPreview} />
     {:else if struc === 'app'}
       <AppPreview key={item.keyObj} />
     {:else if struc === 'group'}

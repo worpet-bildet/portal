@@ -1,19 +1,19 @@
 <script lang="ts">
   import { link } from 'svelte-spa-router';
 
-  import { me, api } from '@root/api';
+  import { api, me } from '@root/api';
   import {
-    state,
     contacts,
     getCurator,
-    refreshPals,
     groupKeyToItemKey,
     keyStrToObj,
+    refreshPals,
+    state,
   } from '@root/state';
   import { getMeta } from '@root/util';
 
-  import { Sigil, GroupPreview, MoreFrom } from '@components';
-  import { IconButton, SendIcon, ProfileIcon, GroupsIcon } from '@fragments';
+  import { GroupPreview, MoreFrom, Sigil } from '@components';
+  import { GroupsIcon, IconButton, ProfileIcon, SendIcon } from '@fragments';
 
   export let patp;
 
@@ -41,9 +41,11 @@
           <Sigil {patp} />
         </div>
         <div class="flex flex-col">
-          <div class="font-bold text-xl">{nickname ? nickname : patp}</div>
+          <a use:link href={`/${patp}`} class="font-bold text-xl"
+            >{nickname ? nickname : patp}</a
+          >
           {#if nickname}
-            <div class="text-sm text-grey">{patp}</div>
+            <a use:link href={`/${patp}`} class="text-sm text-grey">{patp}</a>
           {/if}
         </div>
         <div>
@@ -51,37 +53,38 @@
         </div>
       </div>
 
-      {#if me !== patp}
-        <IconButton
-          icon={SendIcon}
-          on:click={() =>
-            window.open(`${window.location.origin}/apps/talk/dm/${patp}`)}
-          class="bg-black text-white w-fit">Message</IconButton
-        >
-      {/if}
-      {#if me === patp}
-        <a
-          use:link
-          href={`/${me}/edit`}
-          class="w-full py-2 border rounded-lg text-center text-tertiary hover:text-black hover:underline"
-          >Edit Profile</a
-        >
-      {:else if isMyPal}
-        <IconButton
-          icon={ProfileIcon}
-          on:click={togglePal}
-          async
-          class="text-xs text-tertiary bg-panel w-fit">Remove Pal</IconButton
-        >
-      {:else}
-        <IconButton
-          icon={ProfileIcon}
-          on:click={togglePal}
-          async
-          class="bg-panelhover text-secondary w-fit">Add Pal</IconButton
-        >
-      {/if}
-
+      <div class="flex flex-wrap gap-4">
+        {#if me !== patp}
+          <IconButton
+            icon={SendIcon}
+            on:click={() =>
+              window.open(`${window.location.origin}/apps/talk/dm/${patp}`)}
+            class="bg-black text-white w-fit">Message</IconButton
+          >
+        {/if}
+        {#if me === patp}
+          <a
+            use:link
+            href={`/${me}/edit`}
+            class="w-full py-2 border rounded-lg text-center text-tertiary hover:text-black hover:underline"
+            >Edit Profile</a
+          >
+        {:else if isMyPal}
+          <IconButton
+            icon={ProfileIcon}
+            on:click={togglePal}
+            async
+            class="text-xs text-tertiary bg-panel w-fit">Remove Pal</IconButton
+          >
+        {:else}
+          <IconButton
+            icon={ProfileIcon}
+            on:click={togglePal}
+            async
+            class="bg-panelhover text-secondary w-fit">Add Pal</IconButton
+          >
+        {/if}
+      </div>
       {#if curator?.bespoke?.groups?.length > 0}
         <div class="border-b w-full" />
         <div class="flex flex-col gap-3">

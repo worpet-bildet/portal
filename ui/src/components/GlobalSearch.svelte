@@ -1,32 +1,32 @@
 <script lang="ts">
   import { Item } from '$types/portal/item';
 
-  import { push, location } from 'svelte-spa-router';
+  import { push } from 'svelte-spa-router';
   import { fade, slide } from 'svelte/transition';
 
   import { me } from '@root/api';
   import {
-    state,
-    getItem,
-    getCuratorAllCollectionItems,
-    keyStrFromObj,
-    items,
-    pals,
     contacts,
     getCurator,
+    getCuratorAllCollectionItems,
     getGlobalFeed,
+    getItem,
+    items,
+    keyStrFromObj,
+    pals,
     setIsSearching,
+    state,
   } from '@root/state';
   import {
-    getMeta,
+    contains,
     formatPatp,
+    getMeta,
     getPossiblePatps,
     matchItem,
-    contains,
   } from '@root/util';
 
   import { Sigil } from '@components';
-  import { ActivityIcon, ExploreIcon, FeedIcon, SearchIcon } from '@fragments';
+  import { ActivityIcon, FeedIcon, SearchIcon } from '@fragments';
   import ItemImage from '@root/fragments/ItemImage.svelte';
 
   export let isGlassy: boolean = false;
@@ -137,6 +137,8 @@
     if (e.key === 'Enter') {
       if (selectedIndex !== -1) {
         buttons[selectedIndex].dispatchEvent(new Event('mousedown'));
+      } else {
+        return;
       }
       return searchInput.blur();
     }
@@ -169,7 +171,7 @@
 
 {#if isSearching}
   <div
-    class="absolute top-0 left-0 w-full h-full bg-white/30 dark:opacity-40 z-10 backdrop-blur-xs"
+    class="absolute top-0 left-0 w-full h-full bg-black/30 z-10 backdrop-blur-xs"
     in:fade
   />
 {/if}
@@ -182,6 +184,7 @@
       class:sm:bg-input={!glass}
       class:sm:bg-glass={glass}
       class:sm:backdrop-blur-md={glass}
+      class:border-glass={glass}
     >
       <div
         class="flex items-center gap-4 w-full"

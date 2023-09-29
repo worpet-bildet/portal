@@ -1,11 +1,11 @@
 <script lang="ts">
   import { ChatMessage } from '$types/landscape/chat';
 
-  import { preSig, dropTrailingBreaks } from '@root/util';
+  import { dropTrailingBreaks, preSig } from '@root/util';
 
+  import Block from './Block.svelte';
   import GroupsWrapper from './GroupsWrapper.svelte';
   import Inline from './Inline.svelte';
-  import Block from './Block.svelte';
 
   export let group: string = '';
   export let author: string = '';

@@ -14,3 +14,10 @@
 >
   <InlineItem keyStr={node.attrs.keyStr} />
 </NodeViewWrapper>
+
+<style>
+  :global(.node-inline-item-reference) {
+    display: inline-flex;
+    align-items: center;
+  }
+</style>
