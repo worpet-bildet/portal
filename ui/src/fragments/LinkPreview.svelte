@@ -3,10 +3,6 @@
 
   export let url;
 
-  function clickHandler() {
-    window.open(url, '_blank');
-  }
-
   const placeholderImg = 'https://i.imgur.com/UeDNBNQ.jpeg';
 
   $: metadata = api.link.get.metadata(url);
@@ -14,9 +10,10 @@
 
 {#await metadata then data}
   {#if data}
-    <div
+    <a
       class={`flex flex-col rounded-md border text-left bg-panels dark:bg-darkgrey cursor-pointer`}
-      on:click={clickHandler}
+      href={url}
+      target="_blank"
     >
       <div
         class="w-full h-64 bg-center bg-cover bg-no-repeat"
@@ -36,7 +33,7 @@
           <span>{data.hostname || ''}</span>
         </div>
       </div>
-    </div>
+    </a>
   {:else}
     <div />
   {/if}

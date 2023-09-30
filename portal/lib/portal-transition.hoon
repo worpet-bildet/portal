@@ -1,10 +1,39 @@
-/-  portal-data-0, portal-data-1, portal-data-2, d=portal-data, st=portal-states
+/-  portal-data-0, portal-data-1, portal-data-2, d3=portal-data-3, d=portal-data, st=portal-states
 |_  [=bowl:gall]
+++  state-3-to-4
+  |=  =state-3:st
+  ^-  state-4:st
+  =+  ~(tap by items.state-3)
+  =/  new-items  ^-  items:d  %-  malt  %+  murn  -
+    |=  [key-3=key:d3 item-3=item:d3]
+    (key-item-3-to-4 key-3 item-3)
+  =/  s4  *state-4:st
+  s4(items new-items)
+::
+++  key-item-3-to-4  :: adding time ref to groups- stuff
+  |=  [key-3=key:d3 item-3=item:d3]
+  ^-  (unit [key:d item:d])
+  :+  ~  key-3
+  =>  item-3
+  :^  key
+      lens
+      ?+    bespoke    bespoke
+          [%groups-chat-msg *]
+        [%groups-chat-msg group channel id *@da content feels replies]:bespoke
+        ::
+          [%groups-diary-note *]
+        [%groups-diary-note group channel time *@da essay feels replies]:bespoke
+        ::
+          [%groups-heap-curio *]
+        [%groups-heap-curio group channel time *@da heart feels replies]:bespoke
+      ==
+      meta
+
 ++  state-2-to-3
   |=  =state-2:st
   ^-  state-3:st
   =+  ~(tap by items.state-2)
-  =/  new-items  ^-  items:d  %-  malt  %+  murn  -
+  =/  new-items  ^-  items:d3  %-  malt  %+  murn  -
     |=  [key-2=key:portal-data-2 item-2=item:portal-data-2]
     (key-item-2-to-3 key-2 item-2)
   =/  s3  *state-3:st
@@ -12,7 +41,7 @@
 ::
 ++  key-item-2-to-3  :: just adding app price lol
   |=  [key-2=key:portal-data-2 item-2=item:portal-data-2]
-  ^-  (unit [key:d item:d])
+  ^-  (unit [key:d3 item:d3])
   :+  ~  key-2
   =>  item-2
   :^  key

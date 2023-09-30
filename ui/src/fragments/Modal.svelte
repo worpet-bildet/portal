@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { CrossIcon, IconButton } from '@fragments';
+  import { CancelIcon, IconButton } from '@fragments';
   export let open = false;
 
   // this feels suboptimal but it does the job
@@ -29,7 +29,7 @@
     >
       <div class="w-full h-full p-4 relative">
         <IconButton
-          icon={CrossIcon}
+          icon={CancelIcon}
           on:click={() => (open = false)}
           class="absolute right-5 top-5"
         />

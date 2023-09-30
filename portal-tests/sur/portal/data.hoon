@@ -98,6 +98,7 @@
           group=flag:w
           channel=flag:w
           =id:w
+          time-ref=@da
           content=content:w
           feels=@ud :: number of reacts at the time of sharing
           replies=@ud :: number of replies at the time of sharing
@@ -107,6 +108,7 @@
           group=flag:n
           channel=flag:n
           =time
+          time-ref=@da
           =essay:n
           feels=@ud
           replies=@ud
@@ -116,6 +118,7 @@
           group=flag:cur
           channel=flag:cur
           =time
+          time-ref=@da
           =heart:cur
           feels=@ud
           replies=@ud

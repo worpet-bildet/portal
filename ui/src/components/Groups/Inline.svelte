@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { ImageLoader } from '@fragments';
   import { isImage } from '@root/util';
   export let inline;
 </script>
@@ -20,7 +21,11 @@
     class="hover:underline text-link dark:text-link-dark"
   >
     {#if isImage(inline['link'].href)}
-      <img src={inline['link'].href} alt={inline['link'].content} />
+      <ImageLoader
+        src={inline['link'].href}
+        alt={inline['link'].content}
+        class="w-full h-full object-cover rounded-xl"
+      />
     {:else}
       {inline['link'].content || inline['link'].href}
     {/if}

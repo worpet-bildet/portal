@@ -1,10 +1,44 @@
 /-  m=portal-move
 /+  io=agentio, ethereum
+/*  indexer  %ship  /desk/ship
 |%
 +$  card  card:agent:gall
 ::
 ++  conv
   |%
+  ::  uniformizes unhashed and hashed to hashed keys
+  ::  expected to be idempotent
+  ++  to-key
+    |=  [=struc:d:m =ship =cord time=cord]
+    ?+    struc
+      [struc ship cord time]
+      ::
+        ?(%groups-chat-msg %groups-diary-note %groups-heap-curio)
+      ?:  =(cord '')              ::  if not temp
+        [struc ship cord time]
+      ::
+      ?:  ?&  =(ship indexer)
+              =((scag 2 (trip cord)) "0v")
+          ==
+        [struc ship cord time]
+      ::
+      :^  struc
+          indexer
+          (scot %uv (shax (jam [ship cord])))
+          ''
+    ==
+  ::
+  ::  runs to-key over key-list
+  ++  to-key-list
+    |=  [=key-list:d:m]
+    (turn key-list to-key)
+  ::
+  ::  runs to-key over feed
+  ++  to-feed
+    |=  [=feed:d:m]
+    %+  turn  feed
+    |=  [time=cord =ship =key:d:m]
+    [time ship (to-key key)]
   ::
   ::  TODO what if time looks like '/some-blog-path'
   ::  or '/some/blog/path'
@@ -359,11 +393,16 @@
         ::
         ?+    -.bespoke    bespoke
             %groups-chat-msg  :: path: '/chat/~sampel-dilryd-mopreg/new-channel/writs/writ/id/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749'
+          ?.  ?|  =(*flag:w:d:m group.bespoke)
+                  =(*content:w:d:m content.bespoke)
+                  =(*time time-ref.bespoke)
+              ==
+            bespoke
           =/  =path
             =,  bespoke
             /chat/(scot %p p.channel)/[q.channel]/writs/writ/id/(scot %p p.id)/(scot %ud `@`q.id)/writ
-          =/  writ
-            .^(writ:w:d:m (~(construct scry [our now]) %gx %portal-manager path))
+          =/  writt
+            .^([=time =writ:w:d:m] (~(construct scry [our now]) %gx %chat path))
           =/  chatmap
             .^  (map flag:w:d:m [* * * perm=[* group=flag:w:d:m] *])
                 %gx
@@ -374,9 +413,10 @@
             group-flag
             channel:bespoke
             id:bespoke
-            content:writ
-            ~(wyt by feels:writ)
-            ~(wyt in replied:writ)
+            time:writt
+            content:writ:writt
+            ~(wyt by feels:writ:writt)
+            ~(wyt in replied:writ:writt)
           ==
           ::
             %groups-diary-note  :: path: '/diary/~worpet-bildet/announcements/notes/note/170.141.184.506.311.745.994.155.289.567.817.629.696'
@@ -395,6 +435,7 @@
             group-flag
             channel:bespoke
             time:bespoke
+            *time
             essay:note
             ~(wyt by feels:note)
             (wyt:on:quips:n:d:m quips:note)
@@ -416,6 +457,7 @@
             group-flag
             channel:bespoke
             time:bespoke
+            *time
             heart:curio
             ~(wyt by feels:curio)
             ~(wyt in replied:curio)

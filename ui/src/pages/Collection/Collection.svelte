@@ -1,26 +1,22 @@
 <script lang="ts">
   import { Item } from '$types/portal/item';
 
-  import { push, pop } from 'svelte-spa-router';
+  import {
+    CollectionsSquarePreview,
+    ItemPreview,
+    MoreFrom,
+    RecommendModal,
+  } from '@components';
+  import { IconButton, PostIcon, RepostIcon, Tabs } from '@fragments';
   import { me } from '@root/api';
   import {
-    state,
-    getItem,
     getCollectionItems,
-    getCurator,
-    keyStrToObj,
+    getItem,
     getMoreFromThisShip,
+    state,
   } from '@root/state';
   import { getMeta } from '@root/util';
-  import { ItemDetail, ItemPreview, RecommendModal } from '@components';
-  import {
-    EditIcon,
-    RightSidebar,
-    IconButton,
-    LeftArrowIcon,
-    ShareIcon,
-    SidebarGroup,
-  } from '@fragments';
+  import { push } from 'svelte-spa-router';
 
   export let params;
 
@@ -46,57 +42,54 @@
 
 {#if collection}
   {@const { title, ship, blurb, image } = getMeta(collection)}
-  {@const { cover } = getCurator(collection?.keyObj?.ship)?.bespoke}
-  <div class="grid grid-cols-12 gap-x-8 mb-4">
-    <ItemDetail
-      patp={ship}
-      {cover}
-      {title}
-      description={blurb}
-      avatar={image}
-      key={collection.keyObj}
-      type="collection"
-    >
-      <div
-        class="grid gap-y-4 bg-panels dark:bg-darkgrey border p-4 rounded-lg"
-      >
-        {#each items as key}
-          <ItemPreview {key} />
-        {/each}
+  <div class="grid grid-cols-12">
+    <div class="col-span-12 flex justify-between">
+      <div class="flex items-center gap-4">
+        <div class="w-28">
+          {#if image}
+            <img src={image} alt="collection preview" />
+          {:else}
+            <CollectionsSquarePreview
+              key={collection.keyObj}
+              withTitle={false}
+            />
+          {/if}
+        </div>
+        <div class="flex flex-col">
+          <div class="text-4xl">{title}</div>
+          <div class="text-sm text-tertiary">{title}</div>
+        </div>
       </div>
-    </ItemDetail>
-    <RightSidebar>
-      <SidebarGroup>
+      <div class="flex items-start gap-4">
         <IconButton
-          icon={LeftArrowIcon}
-          on:click={pop}
-          class="bg-panels dark:bg-transparent hover:bg-panels-hover dark:hover:bg-transparent dark:hover:border-white dark:border"
-          >Back</IconButton
-        >
-        <IconButton
-          icon={ShareIcon}
+          icon={RepostIcon}
           on:click={() => (recommendModalOpen = true)}
           class="bg-panels dark:bg-transparent hover:bg-panels-hover dark:hover:bg-transparent dark:hover:border-white dark:border"
           >Recommend</IconButton
         >
         {#if me === ship}
           <IconButton
-            icon={EditIcon}
+            icon={PostIcon}
             on:click={() => push(`/collection-edit/${wild}`)}
             class="bg-panels dark:bg-transparent hover:bg-panels-hover dark:hover:bg-transparent dark:hover:border-white dark:border"
             >Edit</IconButton
           >
         {/if}
-      </SidebarGroup>
-      {#if sortedRecommendations.length > 0}
-        <SidebarGroup>
-          <div class="text-lg mx-1">More from {ship}</div>
-          {#each sortedRecommendations as [recommendation, count]}
-            <ItemPreview key={keyStrToObj(recommendation)} small />
-          {/each}
-        </SidebarGroup>
-      {/if}
-    </RightSidebar>
+      </div>
+    </div>
+    <div class="col-span-12 pt-4">
+      <Tabs activeTab={'Links'} tabs={[{ tab: 'Links' }]} />
+    </div>
+    <div class="col-span-8 pt-4 pr-4 border-r">
+      <div class="grid gap-y-4 rounded-lg">
+        {#each items as key}
+          <ItemPreview {key} class="bg-panel" />
+        {/each}
+      </div>
+    </div>
+    <div class="col-span-4 p-4">
+      <MoreFrom patp={ship} />
+    </div>
   </div>
   <RecommendModal bind:open={recommendModalOpen} key={collection.keyObj} />
 {/if}
