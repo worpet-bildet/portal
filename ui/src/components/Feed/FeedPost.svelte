@@ -193,7 +193,9 @@
               {#if getRef(word)}
                 <InlineItem keyStr={getRef(word)} />
               {:else if getAnyLink(word)}
-                <a href={getAnyLink(word)} class="text-link">{word}</a>
+                <a href={getAnyLink(word)} class="text-link" target="_blank"
+                  >{word}</a
+                >
               {:else}
                 {word}
               {/if}
