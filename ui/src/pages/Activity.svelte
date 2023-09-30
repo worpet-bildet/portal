@@ -3,8 +3,11 @@
   import { getGroupsFeed, state } from '@root/state';
 
   import { Feed } from '@components';
+  import { fromUrbitTime } from '@root/util';
 
-  $: feed = $state ? getGroupsFeed(me) : [];
+  $: feed = ($state ? getGroupsFeed(me) : []).sort(
+    (a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time)
+  );
 </script>
 
 <div class="grid grid-cols-12">
