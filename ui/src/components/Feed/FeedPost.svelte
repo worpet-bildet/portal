@@ -192,6 +192,8 @@
             {#each blurb.split(/(\s)/) as word}
               {#if getRef(word)}
                 <InlineItem keyStr={getRef(word)} />
+              {:else if getAnyLink(word)}
+                <a href={getAnyLink(word)} class="text-link">{word}</a>
               {:else}
                 {word}
               {/if}

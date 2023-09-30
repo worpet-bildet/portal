@@ -231,6 +231,7 @@ export const getGroup = (item) => {
       return '';
   }
 };
+
 export const getAnyLink = (string = '') => {
   return linkify.find(string)?.[0]?.href;
 };
