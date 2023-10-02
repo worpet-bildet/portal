@@ -33,8 +33,8 @@
   $+  store-state-3
   $:  %3
       =items:d3
-      item-sub=_(mk-subs:sss portal-item-3 ,[%item @ @ @ @ ~])
-      item-pub=_(mk-pubs:sss portal-item-3 ,[%item @ @ @ @ ~])
+      item-sub=*
+      item-pub=*
   ==
 +$  state-4
   $+  store-state-4
