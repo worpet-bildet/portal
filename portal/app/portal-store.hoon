@@ -106,9 +106,13 @@
       :: :_  state.q
       :: (welp cards.q (cul:cards-methods key.item 0))
     ::?:  (~(has by read:du-item) path)  q   ::  if already published, no need
-    =^  cards-1  item-pub.state.q  (kill:du-item ~[path])
-    =^  cards-2  item-pub.state.q  (give:du-item path [%whole item])
-    [;:(welp cards.q cards-1 cards-2) state.q]
+    q
+    :: =^  cards-1  item-pub.state.q  (kill:du-item ~[path])
+    :: =/  cards-2  :_  ~
+    ::   :*  %pass  /repub  %agent  [our.bowl %portal-store]  %poke
+    ::       %portal-action  !>([%pub [%feed indexer '' 'global']])
+    ::   ==
+    :: [;:(welp cards.q cards-1 cards-2) state.q]
   ::  - unsub from all which are not %feed or %col because of rem scry transition
   =.  state
     =+  ~(tap in ~(key by read:da-item))
@@ -135,6 +139,23 @@
   |=  [=mark =vase]
   ^-  (quip card _this)
   ?+    mark    (on-poke:default mark vase)
+      %noun
+    =/  act  !<($%([%unsub =key:d:m:p] [%pub =key:d:m:p] [%unpub =key:d:m:p]) vase)
+    ?-    -.act
+        %unsub  
+      =.  item-sub  
+      (quit:da-item ship.key.act %portal-store [%item (key-to-path:conv:p key.act)])
+      `this
+      ::
+        %pub
+      =^  cards  item-pub  (give:du-item [%item (key-to-path:conv:p key.act)] [%whole (get-item:stor key.act)])
+      [cards this]
+      ::
+        %unpub
+      =^  cards  item-pub  (kill:du-item [%item (key-to-path:conv:p key.act)]~)
+      [cards this]
+    ==
+    ::
       %portal-action
     ?.  =(our.bowl src.bowl)  `this
     =/  act  !<(action:m:p vase)
@@ -354,7 +375,7 @@
   ?>  |(=(our.bowl ship.key.item) =(lens.item %temp))
   (~(put by items) key.item item)
 ::
-::  whether a ship is allowed to get/sub to an item
+::  whether a ship is allowed to gqet/sub to an item
 ++  ship-in-reach
   |=  [=ship =key:d:m:p]
   ^-  ?
