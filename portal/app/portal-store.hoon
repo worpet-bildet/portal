@@ -110,7 +110,7 @@
     :: =^  cards-1  item-pub.state.q  (kill:du-item ~[path])
     :: =/  cards-2  :_  ~
     ::   :*  %pass  /repub  %agent  [our.bowl %portal-store]  %poke
-    ::       %portal-action  !>([%pub [%feed indexer '' 'global']])
+    ::       %portal-action  !>([%pub key.item])
     ::   ==
     :: [;:(welp cards.q cards-1 cards-2) state.q]
   ::  - unsub from all which are not %feed or %col because of rem scry transition
@@ -140,6 +140,7 @@
   ^-  (quip card _this)
   ?+    mark    (on-poke:default mark vase)
       %noun
+    ?.  =(our.bowl src.bowl)  `this
     =/  act  !<($%([%unsub =key:d:m:p] [%pub =key:d:m:p] [%unpub =key:d:m:p]) vase)
     ?-    -.act
         %unsub  
@@ -148,7 +149,9 @@
       `this
       ::
         %pub
-      =^  cards  item-pub  (give:du-item [%item (key-to-path:conv:p key.act)] [%whole (get-item:stor key.act)])
+      =^  cards  item-pub  
+        %+  give:du-item  
+        [%item (key-to-path:conv:p key.act)]  [%whole (get-item:stor key.act)]
       [cards this]
       ::
         %unpub
