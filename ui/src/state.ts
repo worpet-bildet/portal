@@ -214,7 +214,7 @@ export const itemInState = (item: ItemKey): Promise<void> => {
     const rejectTimeout = setTimeout(() => {
       unsubscribe();
       reject();
-    }, 20000);
+    }, 60000);
   });
 };
 
