@@ -126,7 +126,7 @@
       class:hidden={!$state.isComposing}
       class:block={$state.isComposing}
     >
-      <FeedPostForm placeholder="Type '~' to insert a reference" />
+      <FeedPostForm placeholder="Penny for your thoughts? Type '~' to insert a reference" />
     </div>
     {#if !$state.isComposing}
       <div>

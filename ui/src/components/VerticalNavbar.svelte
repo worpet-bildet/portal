@@ -23,8 +23,8 @@
         href="#/"
         class="flex items-center justify-center lg:justify-start gap-3 md:p-2 mt-3 mb-3"
       >
-        <img src={logo} class="w-10 h-10" alt="logo" />
-        <div class="hidden lg:block text-l font-bold">Portal</div>
+        <img src={logo} class="w-10 h-10 p-1" alt="logo" />
+        <div class="hidden lg:block text-2xl font-bold">Portal</div>
       </a>
       <div>
         <NavItem

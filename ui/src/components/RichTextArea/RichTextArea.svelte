@@ -83,7 +83,7 @@
           suggestion,
         }),
         Placeholder.configure({
-          placeholder: placeholder ?? "Type '~' to insert a reference",
+          placeholder: placeholder ?? "Penny for your thoughts? Type '~' to insert a reference",
         }),
       ],
       editorProps: {
