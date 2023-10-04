@@ -12,4 +12,4 @@
   });
 </script>
 
-<FeedPostForm bind:editor />
+<FeedPostForm bind:editor class="md:pb-0 pb-4"/>
