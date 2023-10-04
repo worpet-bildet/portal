@@ -248,7 +248,7 @@
 </script>
 
 <div
-  class="flex flex-col w-full sm:h-auto border-l border-r border-b p-4 gap-4 rounded-b-xl"
+  class="flex flex-col w-full sm:h-auto border-l border-r border-b p-4 gap-4 rounded-b-xl {$$props.class}"
   class:relative={submitting}
   class:border-t={!replyTo}
   class:rounded-t-xl={!replyTo}
