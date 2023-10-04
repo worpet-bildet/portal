@@ -14,7 +14,7 @@
 
 {#if !$state.isComposing}
   <div
-    class="fixed left-0 h-20 bottom-0 flex w-full justify-between bg-white/80 backdrop-blur-xs safe-container"
+    class="fixed left-0 h-20 bottom-0 flex w-full justify-between bg-white/80 backdrop-blur-xs"
   >
     <NavItem
       icon={FeedIcon}
@@ -56,9 +56,3 @@
     </div>
   </button>
 {/if}
-
-<style>
-  .safe-container {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-</style>

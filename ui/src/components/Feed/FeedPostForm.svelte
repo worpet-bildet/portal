@@ -248,7 +248,7 @@
 </script>
 
 <div
-  class="flex flex-col w-full sm:h-auto border-l border-r border-b p-4 gap-4 rounded-b-xl {$$props.class}"
+  class="flex flex-col w-full sm:h-auto border-l border-r border-b p-4 gap-4 rounded-b-xl"
   class:relative={submitting}
   class:border-t={!replyTo}
   class:rounded-t-xl={!replyTo}
@@ -322,7 +322,7 @@
         bind:this={fileInput}
         on:change={handleImageSelect}
       />
-      <button class="py-2 px-3 rounded-lg bg-black text-white" on:click={post}>
+      <button class="py-1 px-3 rounded-lg bg-black text-white" on:click={post}>
         {#if replyTo}Reply{:else}Post{/if}
       </button>
     </div>

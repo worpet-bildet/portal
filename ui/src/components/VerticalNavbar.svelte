@@ -45,6 +45,7 @@
           icon={ActivityIcon}
           title={'Activity'}
           collapsed={navCollapsed}
+          newFeature
           active={$location === '/activity'}
           on:click={() => push('#/activity')}
         />

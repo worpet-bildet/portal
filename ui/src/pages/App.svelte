@@ -1,5 +1,4 @@
 <script lang="ts">
-  import gradient from '@assets/gradient.svg';
   import { AppCard, FeedPost, FeedPostForm } from '@components';
   import {
     DownloadIcon,
@@ -260,7 +259,7 @@
         />
       {:else}
         <img
-          src={gradient}
+          src=https://nyc3.digitaloceanspaces.com/toptyr-bilder/746f3d88a414b8633cbb807a1b6dc4d8%20(1).jpg
           alt="default profile banner"
           class="relative sm:absolute sm:top-0 left-0 w-full h-48 sm:h-72 object-cover"
         />

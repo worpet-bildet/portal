@@ -4,6 +4,7 @@
   export let unreadCount: number = 0;
   export let collapsed: boolean = false;
   export let active: boolean = false;
+  export let newFeature: boolean = false;
 
   let hovering: boolean = false;
 </script>
@@ -38,6 +39,13 @@
       class="bg-indicator text-navtextactive text-xs px-2 py-1 rounded-md hidden lg:block"
     >
       {unreadCount}
+    </div>
+  {/if}
+  {#if newFeature}
+    <div
+      class="bg-indicator text-navtextactive text-xs px-2 py-1 rounded-md hidden lg:block"
+    >
+      NEW
     </div>
   {/if}
 </button>

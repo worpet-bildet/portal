@@ -65,7 +65,7 @@
     }
   };
   $: if (!cover || !isUrl(cover)) {
-    cover = 'https://toptyr-bilder.nyc3.cdn.digitaloceanspaces.com/hills.jpg';
+    cover = 'https://nyc3.digitaloceanspaces.com/toptyr-bilder/746f3d88a414b8633cbb807a1b6dc4d8%20(1).jpg';
   }
 </script>
 
