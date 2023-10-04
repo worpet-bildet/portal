@@ -86,7 +86,7 @@
   ::  - init-sequence to create and sub if sth was missed previously
   =^  cards-3  state  init-sequence:stor
   ::  - cleanup past mistakes
-  ::  - publish all items which are unpublished
+  ::  - repub all sss stuff bcs of previous problems
   ::    ->  either to rem scry or sss
   :: =/  item-paths
   ::   .^((list path) %gt /(scot %p our.bowl)/portal-store/(scot %da now.bowl)//item)
@@ -100,32 +100,13 @@
     ?:  =(lens.item %temp)  q                        ::  if %temp, no need
     ?.  ?=(?(%collection %feed %app %blog) struc.key.item)      ::  if not %col or %feed or %app
       q
-      :: ?~  (find [path]~ item-paths)
-        :: :_  state.q
-        :: (welp cards.q (gro:cards-methods item))
-      :: :_  state.q
-      :: (welp cards.q (cul:cards-methods key.item 0))
-    ::?:  (~(has by read:du-item) path)  q   ::  if already published, no need
-    q
-    :: =^  cards-1  item-pub.state.q  (kill:du-item ~[path])
-    :: =/  cards-2  :_  ~
-    ::   :*  %pass  /repub  %agent  [our.bowl %portal-store]  %poke
-    ::       %portal-action  !>([%pub key.item])
-    ::   ==
-    :: [;:(welp cards.q cards-1 cards-2) state.q]
-  ::  - unsub from all which are not %feed or %col because of rem scry transition
-  =.  state
-    =+  ~(tap in ~(key by read:da-item))
-    %-  tail
-    %^  spin  -  state
-    |=  [p=[=ship =dude:gall =path] q=[state=state-4]]
-    =/  key  (path-to-key:conv:^p +:path.p)
-    =.  state  state.q
-    ?.  ?=(?(%feed %collection %app %blog) struc.key)
-      =.  item-sub.state.q  (quit:da-item ship.key %portal-store path.p)
-      [p state.q]
-    [p state.q]
-  ::  resub to main feed after problem with sss
+    =^  cards-1  item-pub.state.q  (kill:du-item ~[path])
+    =/  cards-2  :_  ~
+      :*  %pass  /repub  %agent  [our.bowl %portal-store]  %poke
+          %noun  !>([%pub key.item])
+      ==
+    [;:(welp cards.q cards-1 cards-2) state.q]
+  ::  - resub to main feed after problem with sss
   =/  pat  ;;  [%item @ @ @ @ ~]  /item/feed/(scot %p indexer)//global
   =.  item-sub  (quit:da-item indexer %portal-store pat)
   =/  cards-5  :_  ~
