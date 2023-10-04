@@ -59,7 +59,7 @@
   =/  curios  ;;(item:d:mov +.curios-feed)
   ?>  ?=([%feed *] bespoke.curios)
   ?~  feed.bespoke.curios
-    [(sub now ~h4.m5) '100' %.y ~]
+    [(sub now ~d365) '2.000' %.y ~]
   [(slav %da -:-:feed.bespoke.curios) '100' %.y feed.bespoke.curios]
 ::
 =/  [msgs-from=@dr msgs-count=@t msgs-exists=? actual-msgs-feed=feed:d:mov]
@@ -161,9 +161,6 @@
   =.  new-notes-feed  (weld fed new-notes-feed)
   $(diary-flags +:diary-flags)
 ::
-;<  ~  bind:m
-  %-  send-raw-card
-  (create-feed-card 'groups-curios' ~)
 ;<  ~  bind:m
   |-
   ?~  heap-flags
