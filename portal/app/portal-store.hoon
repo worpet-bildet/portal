@@ -1,5 +1,5 @@
 /-  portal-item, st=portal-states
-/+  default-agent, p=portal, sss, tr=portal-transition, dbug
+/+  default-agent, p=portal, sss, dbug, tr=portal-transition
 /$  items-to-json  %portal-items  %json
 /$  item-to-json  %portal-item  %json
 /$  store-result-to-json  %portal-store-result  %json
@@ -346,9 +346,7 @@
     =?  path  =('use_as_empty_path_slot' i.t.t.t.t.path)
       path(t.t.t.t ['' t.t.t.t.t.path])
     =/  key  ;;  key:d:m:p  (to-key:conv:p (path-to-key:conv:p t.path))
-    ?:  (~(has by items) key)
-      %.y
-    (~(has by read:da-item) [ship.key %portal-store [%item t.path]])
+    (item-exists key)
   ==
   ::
 ++  on-fail   on-fail:default
@@ -361,6 +359,13 @@
               (du item-pub bowl -:!>(*result:du))
     da-item   =/  da  (da:sss portal-item ,[%item @ @ @ @ ~])
               (da item-sub bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
+::
+++  item-exists
+  |=  =key:d:m:p
+  ^-  ?
+  ?:  (~(has by items) key)
+    %.y
+  (~(has by read:da-item) [ship.key %portal-store [%item (key-to-path:conv:p key)]])
 ::
 ++  get-item
   |=  =key:d:m:p
@@ -489,7 +494,11 @@
       ^+  [*(list card) state]
       ?>  ?=([%sub *] act)
       ::  don't subscribe to our item
-      ?:  &(=(ship.key.act our.bowl) =(cord.key.act ''))         `state
+      ?:  &(=(ship.key.act our.bowl) =(cord.key.act ''))
+        ?:  (item-exists key.act)
+          :_  state
+          (upd:cards-methods (get-item key.act))
+        `state
       =/  path  [%item (key-to-path:conv:p key.act)]
       ::  note SSS only for feeds and collections is also temporary fix
       ::  because it is not scalable as well
