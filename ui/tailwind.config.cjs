@@ -88,6 +88,7 @@ module.exports = {
       spacer: '#696969',
       mute: '#EFEFEF',
       glass: '#FFFFFF26',
+      panelicon: '#B1B1B1',
     },
     boxShadow: {
       DEFAULT: '0 0 20px 0 #69696920',

@@ -91,7 +91,7 @@
     <div>
       <button
         on:click={pop}
-        class="flex gap-2 items-center border rounded-lg text-tertiary px-2 py-1"
+        class="flex gap-2 items-center border border-panelicon rounded-lg text-panelicon px-2 py-1"
         ><div class="w-4 h-4">
           <ArrowBackIcon />
         </div>
