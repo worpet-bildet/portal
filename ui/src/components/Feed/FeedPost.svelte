@@ -235,7 +235,7 @@
               <div class="w-5 h-5 text-error">
                 <LikeIcon />
               </div>
-              <div class="text-secondary">{numLikes}</div>
+              <div class="text-error">{numLikes}</div>
             {:else}
               <button
                 class="w-5 h-5 text-transparent stroke-secondary"
