@@ -31,7 +31,7 @@
   let postOfInterest: HTMLDivElement;
 
   const byTime = (a: ItemKey, b: ItemKey) =>
-    fromUrbitTime(b.time) - fromUrbitTime(a.time);
+    fromUrbitTime(a.time) - fromUrbitTime(b.time);
   const byMine = (a: ItemKey, b: ItemKey) => {
     if (a.ship === me) {
       return -1;

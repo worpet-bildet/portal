@@ -197,7 +197,7 @@
           on:blur={reset}
           bind:value={searchString}
           type="text"
-          class="w-full bg-transparent outline-none mr-2"
+          class="w-full bg-transparent outline-none placeholder-secondary mr-2"
           class:placeholder:sm:text-glasstext={glass}
           placeholder="Search Portal..."
           bind:this={searchInput}
@@ -205,7 +205,7 @@
         />
       </div>
       <div
-        class="hidden sm:block text-xs px-2 py-1 rounded-md"
+        class="hidden sm:block text-xs px-2 py-1 rounded-md text-secondary"
         class:bg-panelhover={!glass}
         class:text-panelicon={!glass}
         class:sm:bg-glass={glass}

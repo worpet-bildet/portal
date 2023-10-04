@@ -322,7 +322,7 @@
         bind:this={fileInput}
         on:change={handleImageSelect}
       />
-      <button class="py-2 px-3 rounded-lg bg-black text-white" on:click={post}>
+      <button class="py-1 px-3 rounded-lg bg-black text-white" on:click={post}>
         {#if replyTo}Reply{:else}Post{/if}
       </button>
     </div>
