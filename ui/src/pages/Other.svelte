@@ -31,7 +31,7 @@
   let postOfInterest: HTMLDivElement;
 
   const byTime = (a: ItemKey, b: ItemKey) =>
-    fromUrbitTime(a.time) - fromUrbitTime(b.time);
+    fromUrbitTime(b.time) - fromUrbitTime(a.time);
   const byMine = (a: ItemKey, b: ItemKey) => {
     if (a.ship === me) {
       return -1;
@@ -86,7 +86,7 @@
   $: postOfInterest?.scrollIntoView();
 </script>
 
-<div class="grid grid-cols-12 gap-8 mb-4">
+<div class="grid grid-cols-12 gap-8 mb-4 pb-20">
   <div class="flex flex-col gap-8 rounded-t-2xl col-span-12 md:col-span-7">
     <div>
       <button
@@ -114,7 +114,7 @@
           />
         </div>
         {#each replies as reply}
-          <div class="pb-6">
+          <div>
             <FeedPost key={reply} />
           </div>
         {/each}
