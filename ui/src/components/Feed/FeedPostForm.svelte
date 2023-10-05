@@ -31,7 +31,7 @@
     InlineShip,
     RichTextArea,
   } from '@components';
-  import { UrbitIcon, CollectionIcon, LinkPreview, LoadingIcon } from '@fragments';
+  import { UrbitIcon, CollectionIcon, LinkPreview, LoadingIcon, ArrowBackIcon } from '@fragments';
   import { Editor } from '@tiptap/core';
 
   export let replyTo: ItemKey | undefined = undefined;
@@ -259,16 +259,31 @@
       </div>
     </div>
   {/if}
-  <div class="flex justify-between items-center w-full">
-    <div class="flex items-center gap-2">
-      <InlineShip patp={me} isExpanded noSigil/>
-    </div>
-    <div class="flex w-full h-10 justify-end">
+  <div class="flex justify-between items-center w-full"
+    class:hidden={!$state.isComposing}>
+    <button
+      class="px-3 py-2 rounded-lg text-tertiary border border-mute flex items-center gap-2"
+      on:click={() => setIsComposing(false)}>
+      <div class="w-4 h-4">
+        <ArrowBackIcon />
+      </div>
+      Back
+    </button>
+    <button class="py-2 px-3 ml-2 rounded-lg bg-black text-white font-bold"
+      on:click={post}>
+      {#if replyTo}Reply{:else}Post{/if}
+    </button>
+  </div>
+  <div class="flex items-center gap-2">
+    <InlineShip patp={me} isExpanded noSigil/>
+    <div class="flex w-full justify-end overflow-hidden">
       <RichTextArea
         bind:editor
         bind:content
         {placeholder}
         on:keyboardSubmit={post}
+        class="resize-y"
+        style="min-height: 10px; max-height: 500px;"
       />
     </div>
   </div>
@@ -294,16 +309,9 @@
     </div>
   {/if}
   <div class="flex justify-between items-center w-full">
-    <div>
+    <div class="flex items-center ml-12">
       <button
-        class="px-3 py-2 sm:hidden rounded-lg text-tertiary border border-mute"
-        class:hidden={!!replyTo}
-        on:click={() => setIsComposing(false)}>Cancel</button
-      >
-    </div>
-    <div class="flex items-center">
-      <button
-        class="w-10 p-2.5 rounded-lg text-black"
+        class="w-10 p-2 rounded-lg text-black"
         class:text-tertiary={!$state.s3}
         on:click={() => fileInput.click()}><CollectionIcon /></button
       >
@@ -318,9 +326,11 @@
         bind:this={fileInput}
         on:change={handleImageSelect}
       />
-      <button class="py-1 px-3 ml-2 rounded-lg bg-black text-white" on:click={post}>
-        {#if replyTo}Reply{:else}Post{/if}
-      </button>
     </div>
+    <button class="py-1 px-3 ml-2 rounded-lg bg-black text-white font-bold"
+      class:hidden={$state.isComposing}
+      on:click={post}>
+      {#if replyTo}Reply{:else}Post{/if}
+    </button>
   </div>
 </div>

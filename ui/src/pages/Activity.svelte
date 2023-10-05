@@ -7,7 +7,7 @@
 
   $: feed = ($state ? getGroupsFeed(me) : []).sort(
     (a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time)
-  );
+  ).slice(0, 60);
 </script>
 
 <div class="grid grid-cols-12">
