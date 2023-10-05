@@ -10,7 +10,6 @@
   import { api, me } from '@root/api';
   import { itemInState, setIsComposing, state } from '@root/state';
   import {
-    collapseNames,
     formatChatPath,
     formatCurioPath,
     formatNotePath,
@@ -32,7 +31,7 @@
     InlineShip,
     RichTextArea,
   } from '@components';
-  import { ImageIcon, LinkPreview, LoadingIcon } from '@fragments';
+  import { UrbitIcon, CollectionIcon, LinkPreview, LoadingIcon } from '@fragments';
   import { Editor } from '@tiptap/core';
 
   export let replyTo: ItemKey | undefined = undefined;
@@ -302,11 +301,15 @@
         on:click={() => setIsComposing(false)}>Cancel</button
       >
     </div>
-    <div class="flex items-center gap-4">
+    <div class="flex items-center">
       <button
-        class="w-10 p-2 rounded-lg"
+        class="w-10 p-2.5 rounded-lg text-black"
         class:text-tertiary={!$state.s3}
-        on:click={() => fileInput.click()}><ImageIcon /></button
+        on:click={() => fileInput.click()}><CollectionIcon /></button
+      >
+      <button
+        class="w-10 p-2.5 rounded-lg text-black"
+        on:click={() => { editor.chain().insertContent('~').run(); }}><UrbitIcon /></button
       >
       <input
         type="file"
@@ -315,7 +318,7 @@
         bind:this={fileInput}
         on:change={handleImageSelect}
       />
-      <button class="py-1 px-3 rounded-lg bg-black text-white" on:click={post}>
+      <button class="py-1 px-3 ml-2 rounded-lg bg-black text-white" on:click={post}>
         {#if replyTo}Reply{:else}Post{/if}
       </button>
     </div>
