@@ -149,6 +149,7 @@
       %prepend-to-feed  =^(cards state (prepend-to-feed:handle-poke:stor act) [cards this])
       %append   =^(cards state (append:handle-poke:stor act) [cards this])
       %remove   =^(cards state (remove:handle-poke:stor act) [cards this])
+      %remove-from-feed   =^(cards state (remove-from-feed:handle-poke:stor act) [cards this])
       %destroy  =^(cards state (destroy:handle-poke:stor act) [cards this])
       %sub      =^(cards state (sub:handle-poke:stor act) [cards this])
       %sub-to-many      =^(cards state (sub-to-many:handle-poke:stor act) [cards this])
@@ -597,6 +598,16 @@
       =^  cards  item-pub  (pub-item [%whole col])
       :_  state(items (put-item col))
       (welp cards (upd:cards-methods col))
+    ::
+    ++  remove-from-feed
+      |=  [act=action:m:p]
+      ^+  [*(list card) state]
+      ?>  ?=([%remove-from-feed *] act)
+      =/  path  [%item (key-to-path:conv:p feed-key.act)]
+      =/  feed  (remove-from-feed:itm (get-item feed-key.act) act)
+      =^  cards  item-pub  (pub-item [%whole feed])
+      :_  state(items (put-item feed))
+      (welp cards (upd:cards-methods feed))
     ::
     ++  destroy
       |=  [act=action:m:p]

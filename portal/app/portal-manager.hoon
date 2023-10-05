@@ -280,6 +280,16 @@
         (to-key:conv:p col-key.act)
       ==
       ::
+        %remove-from-feed
+      :_  this  :_  ~
+      %-  ~(act cards:p [our.bowl %portal-store])
+      %=    act
+        key  (to-key:conv:p key.act)
+          feed-key   
+        ;;  [%feed =ship =cord time=cord]
+        (to-key:conv:p feed-key.act)
+      ==
+      ::
         %destroy
       :_  this  :_  ~
       %-  ~(act cards:p [our.bowl %portal-store])

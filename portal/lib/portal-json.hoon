@@ -809,6 +809,7 @@
                 [%append (ot:dejs ~[item-key+dejs-key col-key+dejs-key])]
                 [%prepend (ot:dejs ~[item-key+dejs-key col-key+dejs-key])]
                 [%remove (ot:dejs ~[item-key+dejs-key col-key+dejs-key])]
+                [%remove-from-feed (ot:dejs ~[item-key+dejs-key feed-key+dejs-key])]
                 [%delete (ot:dejs ~[key+dejs-key])]
                 [%sub (ot:dejs ~[key+dejs-key])]
                 [%sub-to-many (ot:dejs ~[key-list+dejs-key-list])]
