@@ -1,5 +1,5 @@
 <script lang="ts">
-  import coverPhoto from '@assets/coverPhoto.jpg';
+  import coverPhoto from '@assets/coverPhoto.jpg'; // todo: make this work
   import { GroupCard, ItemPreview } from '@components';
   import { CommentIcon, RightSidebar, SidebarGroup } from '@fragments';
   import { api } from '@root/api';
@@ -55,7 +55,7 @@
         />
       {:else}
         <img
-          src={coverPhoto}
+          src=https://nyc3.digitaloceanspaces.com/toptyr-bilder/746f3d88a414b8633cbb807a1b6dc4d8%20(1).jpg
           alt="default profile banner"
           class="relative sm:absolute sm:top-0 left-0 w-full h-48 sm:h-72 object-cover"
         />

@@ -247,7 +247,7 @@
 </script>
 
 <div
-  class="flex flex-col w-full h-full sm:h-auto border p-3 gap-4 rounded-xl"
+  class="flex flex-col w-full h-full sm:h-auto border border-mute p-3 gap-4 rounded-xl"
   class:relative={submitting}
 >
   {#if submitting}
