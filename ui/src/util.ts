@@ -606,7 +606,7 @@ export function preSig(ship: string): string {
 }
 
 export const collapseNames = (names: string[]): string => {
-  names = Array.from(new Set(names));
+  names = Array.from(new Set(names.reverse()));
   if (names.length === 1) return names.join();
   if (names.length === 2) return names[0] + ' and ' + names[1];
   if (names.length > 2)

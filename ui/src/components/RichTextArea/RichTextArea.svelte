@@ -88,7 +88,7 @@
       ],
       editorProps: {
         attributes: {
-          class: 'h-full sm:h-auto',
+          class: 'h-full',
         },
       },
       onTransaction: () => {
@@ -108,7 +108,7 @@
 <div
   bind:this={element}
   on:keydown|capture={handleKeydown}
-  class="py-4 px-3 w-full text-lg placeholder-light resize-none leading-tight break-words focus:outline-none caret-black dark:caret-white bg-panel rounded-lg"
+  class="py-3 ml-2 px-3 w-full text-lg resize-none leading-tight break-words focus:outline-none caret-black dark:caret-white bg-panel rounded-lg"
 />
 <CommandList {selectedIndex} />
 
@@ -117,10 +117,11 @@
     outline: none;
   }
   :global(.tiptap p.is-editor-empty:first-child::before) {
-    color: #adb5bd;
+    color: #6D6D6D;
     content: attr(data-placeholder);
     float: left;
     height: 0;
     pointer-events: none;
+    white-space: nowrap;
   }
 </style>

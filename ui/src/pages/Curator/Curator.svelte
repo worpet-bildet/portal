@@ -50,7 +50,7 @@
 {#if curator}
   {@const { title, nickname, cover, image, description, color } =
     getMeta(curator)}
-  <div class="grid grid-cols-12 gap-8">
+  <div class="grid grid-cols-12 gap-4 sm:gap-8">
     <div class="col-span-12 w-full sm:h-48">
       {#if cover}
         <img
@@ -69,7 +69,7 @@
         />
       {/if}
       <div
-        class="sm:absolute sm:top-0 left-0 w-full h-48 sm:h-72 bg-gradient-to-t from-coverPhotoBottom to-coverPhotoTop"
+        class="hidden sm:block sm:absolute sm:top-0 left-0 w-full h-48 sm:h-72 bg-gradient-to-t from-coverPhotoBottom to-coverPhotoTop"
       />
     </div>
 

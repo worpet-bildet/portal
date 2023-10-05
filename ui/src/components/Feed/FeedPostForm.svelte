@@ -248,11 +248,8 @@
 </script>
 
 <div
-  class="flex flex-col w-full sm:h-auto border-l border-r border-b p-4 gap-4 rounded-b-xl"
+  class="flex flex-col w-full h-full sm:h-auto border p-3 gap-4 rounded-xl"
   class:relative={submitting}
-  class:border-t={!replyTo}
-  class:rounded-t-xl={!replyTo}
-  class:h-full={!replyTo}
 >
   {#if submitting}
     <div class="absolute top-0 left-0 w-full h-full bg-white/70 z-10">
@@ -263,22 +260,18 @@
       </div>
     </div>
   {/if}
-  <div class="flex items-center gap-2">
-    <InlineShip patp={me} isExpanded />
-  </div>
-  {#if replyTo}
-    <div class="flex w-full gap-1">
-      <div class="text-posttext">Replying to</div>
-      <div class="text-black">{collapseNames(replyingToNames)}</div>
+  <div class="flex justify-between items-center w-full">
+    <div class="flex items-center gap-2">
+      <InlineShip patp={me} isExpanded noSigil/>
     </div>
-  {/if}
-  <div class="flex w-full h-full sm:h-auto">
-    <RichTextArea
-      bind:editor
-      bind:content
-      {placeholder}
-      on:keyboardSubmit={post}
-    />
+    <div class="flex w-full h-10 justify-end">
+      <RichTextArea
+        bind:editor
+        bind:content
+        {placeholder}
+        on:keyboardSubmit={post}
+      />
+    </div>
   </div>
   {#if chatWrit}
     <GroupsChatMessage {...chatWrit.memo} />
