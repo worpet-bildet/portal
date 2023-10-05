@@ -179,9 +179,7 @@
       {/if}
       <a
         draggable="false"
-        class="flex flex-col w-full bg-panel text-black px-3 py-5 whitespace-pre-wrap break-words gap-5 select-text"
-        class:rounded-t-xl={isReplyFormOpen}
-        class:rounded-xl={!isReplyFormOpen}
+        class="flex flex-col w-full bg-panel text-black px-3 py-5 whitespace-pre-wrap break-words gap-5 select-text rounded-xl"
         class:hover:bg-panelhover={!isReplyFormOpen}
         class:cursor-default={isReplyFormOpen}
         href={getExternalLink() ||

@@ -55,11 +55,11 @@
 ::
 =/  [curios-from=@dr curios-count=@t curios-exists=? actual-curios-feed=feed:d:mov]
   ?~  curios-exists=+.curios-feed
-    [(sub now ~d1) '2.000' %.n ~]
+    [(sub now ~d60) '2.000' %.n ~]
   =/  curios  ;;(item:d:mov +.curios-feed)
   ?>  ?=([%feed *] bespoke.curios)
   ?~  feed.bespoke.curios
-    [(sub now ~d1) '2.000' %.y ~]
+    [(sub now ~d60) '2.000' %.y ~]
   [(slav %da -:-:feed.bespoke.curios) '100' %.y feed.bespoke.curios]
 ::
 =/  [msgs-from=@dr msgs-count=@t msgs-exists=? actual-msgs-feed=feed:d:mov]

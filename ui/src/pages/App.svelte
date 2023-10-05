@@ -1,4 +1,5 @@
 <script lang="ts">
+  import coverPhoto from '@assets/coverPhoto.jpg';
   import { AppCard, FeedPost, FeedPostForm } from '@components';
   import {
     DownloadIcon,
@@ -249,7 +250,7 @@
 {#if item}
   {@const { cover } = getMeta(item)}
 
-  <div class="grid grid-cols-12 gap-8">
+  <div class="grid grid-cols-12 gap-4 sm:gap-8">
     <div class="col-span-12 w-full sm:h-48">
       {#if isImage(cover)}
         <img
@@ -259,7 +260,7 @@
         />
       {:else}
         <img
-          src=https://nyc3.digitaloceanspaces.com/toptyr-bilder/746f3d88a414b8633cbb807a1b6dc4d8%20(1).jpg
+          src={coverPhoto}
           alt="default profile banner"
           class="relative sm:absolute sm:top-0 left-0 w-full h-48 sm:h-72 object-cover"
         />

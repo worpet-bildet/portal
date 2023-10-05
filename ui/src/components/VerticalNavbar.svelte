@@ -21,10 +21,9 @@
       <a
         use:link
         href="#/"
-        class="flex items-center justify-center lg:justify-start gap-1 md:p-2 mt-3 mb-3"
-      >
-        <img src=https://nyc3.digitaloceanspaces.com/toptyr-bilder/2023.10.04..22.20.48-Frame%20137.png class="w-10 h-10 mr-3" alt="logo" />
-        <div class="hidden lg:block text-2xl tracking-widest font-sans text-secondary mr-3">PORTAL</div>
+        class="flex items-center justify-center lg:justify-start gap-3 md:p-2 mt-3 mb-3">
+        <img src={logo} class="w-10 h-10" alt="logo" />
+        <div class="hidden lg:block text-2xl tracking-widest font-sans text-secondary">PORTAL</div>
       </a>
       <div>
         <NavItem
