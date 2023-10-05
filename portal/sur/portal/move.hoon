@@ -44,6 +44,9 @@
       $+  remove
       [%remove =key-list:d col-key=[struc=%collection =ship =cord time=cord]]
       ::
+      $+  remove-from-feed
+      [%remove-from-feed =key:d feed-key=[struc=%feed =ship =cord time=cord]]
+      ::
       $+  destroy
       [%destroy =key:d]  :: abolishes the item from the atmosphere
       ::
