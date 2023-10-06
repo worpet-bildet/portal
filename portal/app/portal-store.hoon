@@ -214,11 +214,19 @@
              !>([dist-desk.bespoke.item.u.wave.msg src.msg our.bowl now.bowl sig.bespoke.item.u.wave.msg item.u.wave.msg])
           ==
       =/  cards
-        ?.  ?&  =('global' time.key.item.u.wave.msg)
+        ?:  ?&  =('global' time.key.item.u.wave.msg)
                 ?=([%feed *] bespoke.item.u.wave.msg)
             ==
-          ~
-        [(~(act cards:p [our.bowl %portal-manager]) [%sub-to-many (feed-to-key-list:conv:p (scag 20 feed.bespoke.item.u.wave.msg))])]~
+          :~  %-  ~(act cards:p [our.bowl %portal-manager]) 
+              [%sub-to-many (feed-to-key-list:conv:p (scag 20 feed.bespoke.item.u.wave.msg))]
+          ==
+        ?:  ?&  =('~2000.1.1' time.key.item.u.wave.msg)
+                ?=([%feed *] bespoke.item.u.wave.msg)
+            ==
+          :~  %-  ~(act cards:p [our.bowl %portal-manager]) 
+              [%sub-to-many (feed-to-key-list:conv:p (scag 20 feed.bespoke.item.u.wave.msg))]
+          ==
+        ~
       :_  this  (welp cards (upd:cards-methods:stor item.u.wave.msg))
       ::
         %prepend-to-feed
