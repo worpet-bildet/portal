@@ -222,9 +222,36 @@
       :_  this  (welp cards (upd:cards-methods:stor item.u.wave.msg))
       ::
         %prepend-to-feed
-      :_  this
-      %+  welp  (upd:cards-methods:stor rock.msg)
-      [(~(act cards:p [our.bowl %portal-manager]) [%sub-to-many (feed-to-key-list:conv:p feed.u.wave.msg)])]~
+      =;  cards
+        :_  this
+        (welp (upd:cards-methods:stor rock.msg) cards)
+      ::
+      ?:  =(ship.key.rock.msg our.bowl)
+        ~
+      ?:  =('global' time.key.rock.msg)
+        =/  keys  (feed-to-key-list:conv:p feed.u.wave.msg)
+        =/  sub-to
+          %~  tap  in
+          %-  silt
+          %+  welp
+            %+  murn  keys
+            |=  =key:d:m:p
+            ?:  =(ship.key our.bowl)
+              ~
+            `[%feed ship.key '' '~2000.1.1']
+          %+  murn  keys
+          |=  =key:d:m:p
+          ?:  =(ship.key our.bowl)
+            ~
+          `[%collection ship.key '' '~2000.1.1']
+        :~  %-  ~(act cards:p [our.bowl %portal-manager]) 
+            [%sub-to-many (welp keys sub-to)]
+        ==
+      ?:  =('~2000.1.1' time.key.rock.msg)
+        =/  keys    (feed-to-key-list:conv:p feed.u.wave.msg)
+        =/  sub-to  ~(tap in (silt keys))
+        (~(act cards:p [our.bowl %portal-manager]) [%sub-to-many sub-to])^~
+      ~   
     ==
       %sss-fake-on-rock
     =/  msg  !<(from:da-item (fled:sss vase))
