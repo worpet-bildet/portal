@@ -475,7 +475,7 @@
     ?>  ?=([%prepend-to-feed *] act)
     ?>  ?=(%feed -.bespoke.feed)
     ?>  =(key.feed feed-key.act)
-    =/  new-feed  %+  oust  [1.000 (lent feed.act)]
+    =/  new-feed  %+  oust  [2.500 (lent feed.act)]
       (weld feed.act feed.bespoke.feed)
     (edit now feed [%edit key.feed ~ ~ `[%feed `new-feed]])
   ::

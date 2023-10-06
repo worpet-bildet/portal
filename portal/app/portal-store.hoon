@@ -579,6 +579,7 @@
         =/  our  (key-to-node:conv:p key.item)
         =/  their    (key-to-node:conv:p key)
         :_  state.q
+        %+  welp  cards.q
         %+  snoc  (gra:cards-methods portal-store+[%add-tag tag-to our their])
         %-  ~(msg cards:p [ship.key %portal-store])
             [%add-tag-request our.bowl tag-from their our]
