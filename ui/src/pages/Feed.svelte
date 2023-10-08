@@ -200,7 +200,7 @@
         </div></SidebarGroup
       >
     {/if}
-    {#if $state.palsLoaded && !$state.pals}
+    {#if ($state.palsLoaded && !$state.pals) || !$state.radioStations}
       <SidebarGroup>
         <div>
           <div class="text-xl font-bold pb-4 px-2">

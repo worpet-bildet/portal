@@ -6,14 +6,14 @@
 
   export let patp: string;
   export let isExpanded: boolean = false;
-  export let noSigil: boolean = false;
+  export let noName: boolean = false;
 
   $: nickname = $state && getProfile(patp)?.nickname;
 </script>
 
 <a use:link href={`/${patp}`} class="flex items-center gap-2">
-  <div class="w-10 h-10 overflow-hidden rounded-md"><Sigil {patp} /></div>
-  {#if !noSigil}
+  <div class="w-10 h-10 overflow-hidden rounded-md mr-1"><Sigil {patp} /></div>
+  {#if !noName}
     <div class="text-sm sm:text-base">
       {nickname ? nickname : formatPatp(patp)}
     </div>

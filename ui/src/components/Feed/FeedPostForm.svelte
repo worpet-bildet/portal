@@ -275,7 +275,7 @@
     </button>
   </div>
   <div class="flex items-center gap-2">
-    <InlineShip patp={me} isExpanded noSigil/>
+    <InlineShip patp={me} isExpanded noName/>
     <div class="flex w-full justify-end overflow-hidden">
       <RichTextArea
         bind:editor

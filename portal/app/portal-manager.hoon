@@ -115,16 +115,16 @@
       :*  %8  *processing-payments:c  *processed-payments:c
               *@ta  *receiving-address:c
               (sy ~[our.bowl])  *(map [ship desk] @t)
-              (mk-subs:sss blog-paths ,[%paths ~])  
-              (mk-subs:sss portal-devs ,[%portal-devs ~])  ~ 
+              (mk-subs:sss blog-paths ,[%paths ~])
+              (mk-subs:sss portal-devs ,[%portal-devs ~])  ~
               +:*state-4:c
       ==
       ::
         %4
       :*  %8  *processing-payments:c  *processed-payments:c
               *@ta  *receiving-address:c
-              (sy ~[our.bowl])  *(map [ship desk] @t)  
-              (mk-subs:sss blog-paths ,[%paths ~]) 
+              (sy ~[our.bowl])  *(map [ship desk] @t)
+              (mk-subs:sss blog-paths ,[%paths ~])
               (mk-subs:sss portal-devs ,[%portal-devs ~])  ~
               +.old
       ==
@@ -132,8 +132,8 @@
         %5
       :*  %8  *processing-payments:c  *processed-payments:c
               *@ta  *receiving-address:c
-              (sy ~[our.bowl])  *(map [ship desk] @t) 
-              (mk-subs:sss blog-paths ,[%paths ~]) 
+              (sy ~[our.bowl])  *(map [ship desk] @t)
+              (mk-subs:sss blog-paths ,[%paths ~])
               +.old
       ==
       ::
@@ -165,15 +165,15 @@
     ?>  =(our.bowl src.bowl)
     =/  act  !<(action:m:p vase)
     ?-    -.act
-      ::  in many of the following actions, we use to-key:conv:p to convert 
+      ::  in many of the following actions, we use to-key:conv:p to convert
       ::  all unhashed keys which should be hashed to hashed
       ::
         %create
       =/  new-key  ^-  key:d:m:p
         %:  to-key:conv:p
-          -:(fall bespoke.act *bespoke:d:m:p) 
-          (fall ship.act our.bowl) 
-          (fall cord.act '') 
+          -:(fall bespoke.act *bespoke:d:m:p)
+          (fall ship.act our.bowl)
+          (fall cord.act '')
           (fall time.act (scot %da now.bowl))
         ==
       :_  this  :_  ~
@@ -208,7 +208,7 @@
               ref
             (to-key:conv:p ref.u.bespoke.act)
           ==
-        ==    
+        ==
         ::
           append-to
         ;;  (list [%collection =ship =cord time=cord])
@@ -275,7 +275,7 @@
       %-  ~(act cards:p [our.bowl %portal-store])
       %=    act
         key-list  (to-key-list:conv:p key-list.act)
-          col-key   
+          col-key
         ;;  [%collection =ship =cord time=cord]
         (to-key:conv:p col-key.act)
       ==
@@ -285,7 +285,7 @@
       %-  ~(act cards:p [our.bowl %portal-store])
       %=    act
         key  (to-key:conv:p key.act)
-          feed-key   
+          feed-key
         ;;  [%feed =ship =cord time=cord]
         (to-key:conv:p feed-key.act)
       ==
@@ -300,7 +300,7 @@
       %-  ~(act cards:p [our.bowl %portal-store])
       %=    act
         feed  (to-feed:conv:p feed.act)
-          feed-key   
+          feed-key
         ;;  [%feed =ship =cord time=cord]
         (to-key:conv:p feed-key.act)
       ==
@@ -333,14 +333,14 @@
         =(%portal-aggregate-timer (rear ;;(path -:duct)))
       ::
       :_  this
-      ;:  welp  
+      ;:  welp
           `(list card)`cards
           ?:  (~(has by wex.bowl) [/our-apps our.bowl %treaty])
               ~
             [%pass /our-apps %agent [our.bowl %treaty] %watch /alliance]~
           ?:  timer-exists
               ~
-            %+  welp  
+            %+  welp
             aggregate-timer-cards:helper
             aggregate-cards:helper
       ==
@@ -430,7 +430,7 @@
       :_  ~
       %-  ~(act cards:p [our.bowl %portal-store])
       :+  %remove
-        [%app our.bowl '' desk.msg]^~ 
+        [%app our.bowl '' desk.msg]^~
       [%collection our.bowl '' 'published-apps']
       ::
         %sign-app
@@ -465,8 +465,8 @@
               `[%app ~ ~ `dist-desk.msg `sig.msg `treaty.msg eth-price.msg]
               ==
               %-  ~(act cards:p [our.bowl %portal-store])
-              :+  %append 
-                [%app our.bowl '' desk-name.u.dist-desk]^~ 
+              :+  %append
+                [%app our.bowl '' desk-name.u.dist-desk]^~
               [%collection our.bowl '' 'published-apps']
           ==
         :_  ~  %-  ~(act cards:p [our.bowl %portal-store])
@@ -497,9 +497,9 @@
         (~(put by processing-payments) hex [src.bowl key.msg receiving-address])
       :_  this
       :~  :*  %give  %fact  [/updates]~  %portal-manager-result  !>
-          [%processing-payments processing-payments]  
+          [%processing-payments processing-payments]
           ==
-          :*  %pass  /payment-ref  %agent  [src.bowl %portal-manager]  %poke  
+          :*  %pass  /payment-ref  %agent  [src.bowl %portal-manager]  %poke
           %portal-message  !>([%tip-reference hex receiving-address])
       ==  ==
       ::
@@ -513,19 +513,19 @@
       ~&  >  "received hash"
       =/  tx-hash-msg  (crip (cass (trip tx-hash.msg)))
       ::  check if in processed payments
-      =/  processed  ^-  processed-payments:c  %+  skim  
+      =/  processed  ^-  processed-payments:c  %+  skim
           processed-payments
         |=  [buyer=ship =key:d:m:p tx-hash=@t =time note=@t]
         ?&  =(buyer src.bowl)
             =(tx-hash tx-hash-msg)
         ==
       ^-  (list card)
-      ?~  processed 
+      ?~  processed
         ::  if not in processed payments, validate transaction
         ::  dap.bowl should be desk
         [%pass /get-tx %arvo %k %fard q.byk.bowl %get-tx-by-hash %noun !>([rpc-endpoint src.bowl tx-hash-msg note.msg])]~
       ::  if in processed payments
-      :~  :*  %pass  /tip-confirm  %agent  [src.bowl %portal-manager]  %poke  
+      :~  :*  %pass  /tip-confirm  %agent  [src.bowl %portal-manager]  %poke
               %portal-message  !>([%tip-confirmed tx-hash-msg key:(snag 0 `processed-payments:c`processed)])
       ==  ==
       ::
@@ -659,7 +659,7 @@
     ~&  >  "got aggregate timer"
     :_  this
     %+  welp
-      aggregate-timer-cards:helper 
+      aggregate-timer-cards:helper
       aggregate-cards:helper
     ::
       [%aggregate ~]
@@ -698,25 +698,25 @@
     =.  processed-payments  %+  snoc  processed-payments
       [buyer.u.processing-data key.u.processing-data (crip (cass (trip tx-hash))) now.bowl note]
     :_  this
-    :~  :*  %pass  /payment-confirm  %agent  [buyer.u.processing-data %portal-manager]  %poke  
+    :~  :*  %pass  /payment-confirm  %agent  [buyer.u.processing-data %portal-manager]  %poke
             %portal-message  !>([%tip-confirmed tx-hash key.u.processing-data])
         ==
         :*  %give  %fact  [/updates]~  %portal-manager-result  !>
-            [%processing-payments processing-payments]  
+            [%processing-payments processing-payments]
         ==
         :*  %give  %fact  [/updates]~  %portal-manager-result  !>
-            [%processed-payments processed-payments]  
+            [%processed-payments processed-payments]
         ==
-        :*  %pass  /tip-to-graph  %agent  [our.bowl %portal-manager]  %poke  
+        :*  %pass  /tip-to-graph  %agent  [our.bowl %portal-manager]  %poke
             %portal-action  !>
-            :*  %add-tag-request 
+            :*  %add-tag-request
                 key.u.processing-data
                 [%ship buyer.u.processing-data '' '']
                 /(scot %p ship.key.u.processing-data)/tip-from/(scot %da now.bowl)/[eth-paid]/[note]
                 /(scot %p buyer.u.processing-data)/tip-to/(scot %da now.bowl)/[eth-paid]/[note]
             ==
         ==
-        :*    %pass  /create-tip-item  %agent  [our.bowl %portal-store]  %poke  
+        :*    %pass  /create-tip-item  %agent  [our.bowl %portal-store]  %poke
               %portal-action  !>
               :*  %create  ~  ~  `(scot %da now.bowl)  ~  ~
                   `[%tip src our.bowl eth-paid (scot %da now.bowl) note tx-hash]
@@ -904,7 +904,7 @@
   ==
 ::
 ++  aggregate-timer-cards
-  [%pass /portal-aggregate-timer %arvo %b [%wait (add now.bowl ~h4)]]^~
+  [%pass /portal-aggregate-timer %arvo %b [%wait (add now.bowl ~h1)]]^~
 ::
 ++  aggregate-cards
   [%pass /aggregate %arvo %k %fard q.byk.bowl %aggregate noun+!>(~)]^~
@@ -986,7 +986,7 @@
   ?.  =(time.key.act '')   ::  branch on whether is %temp (empty time.key)
     :: if not temp
     :_  state
-    (~(act cards:p [our.bowl %portal-store]) act(key new-key))^~    
+    (~(act cards:p [our.bowl %portal-store]) act(key new-key))^~
   ::  if temp
   =;  cards
     ?:  ?=(%app struc.key.act)  ::  temp app
@@ -1008,7 +1008,7 @@
                               `reach
                               `bespoke
                               ?:  ?|  =(%app struc.new-key)
-                                      =(%group struc.new-key)  
+                                      =(%group struc.new-key)
                                       =(%groups-diary-note struc.new-key)
                                       =(%groups-heap-curio struc.new-key)
                                       =(%groups-chat-msg struc.new-key)
@@ -1018,8 +1018,8 @@
                               ~
                               ~
                           ==
-  ?+    struc.new-key    !!    
-    ::  
+  ?+    struc.new-key    !!
+    ::
       %groups-chat-msg
     =+  (cord-to-channel-id cord.key.act)
     =.  bespoke  =,  d:m:p
@@ -1060,5 +1060,5 @@
         [%pass wire %agent [ship.key.act %treaty] %watch path]
     ==
   ==
-  
+
 --
