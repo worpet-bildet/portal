@@ -43,10 +43,11 @@
     });
   };
 
+  $: groupsFeed = ($state ? getGroupsFeed(me) : []).sort(
+    (a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time)
+    ).slice(0, 100);
+
   const globalFeed = (): FeedItem[] =>
-    groupsFeed = getGroupsFeed(me).sort(
-      (a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time)
-      ).slice(0, 100);
     getGlobalFeed().concat(getCuratorFeed(me)).concat(groupsFeed);
 
   state.subscribe((s) => {
