@@ -1,24 +1,26 @@
-import * as linkify from 'linkifyjs';
-import { ethers } from 'ethers';
+import { ContactRolodex } from '$types/landscape/contact';
+import { Item } from '$types/portal/item';
+
+import { deSig } from '@urbit/api';
 import BigNumber from 'bignumber.js';
+import { ethers } from 'ethers';
+import fuzzy from 'fuzzy';
+import * as linkify from 'linkifyjs';
 
 export const isSubmitHotkey = (e: KeyboardEvent) => {
   if (e.key === 'Enter' && e.metaKey) return true;
 };
 
 export const checkIfInstalled = (s, desk, cord, isInstalling = false) => {
-  return (
-    (!isInstalling && !!s.apps?.[desk]) ||
-    (s.apps?.[cord]?.chad?.hasOwnProperty('site') && !!s.apps?.[desk])
-  );
+  return s.apps?.[desk] || s.apps?.[cord] || isInstalling;
 };
 
 export const getMeta = (item) => {
   return {
     title: getTitle(item) || item?.keyObj?.cord,
-    nickname: getNickname(item),
-    description: getDescription(item),
-    blurb: getBlurb(item),
+    nickname: getNickname(item) || '',
+    description: getDescription(item) || '',
+    blurb: getBlurb(item) || '',
     image: getImage(item),
     screenshots: getScreenshots(item),
     cover: getCover(item),
@@ -31,9 +33,12 @@ export const getMeta = (item) => {
     servedFrom: getServedFrom(item),
     createdAt: getCreatedAt(item),
     struc: getStruc(item),
+    displayStruc: getDisplayStruc(item),
     ref: getRef(item),
     lens: getLens(item),
     distShip: getDistShip(item),
+    desk: getDesk(item),
+    group: getGroup(item),
     keyStr: item?.keyStr,
     rating: item?.bespoke?.rating,
   };
@@ -135,6 +140,12 @@ export const getShip = (item) => {
     case 'app':
       if (item?.lens === 'def') return item?.keyObj?.ship;
       return item?.bespoke?.treaty?.ship;
+    case 'groups-chat-msg':
+      return item?.bespoke?.id?.split('/')[0];
+    case 'groups-heap-curio':
+      return item?.bespoke?.heart?.author;
+    case 'groups-diary-note':
+      return item?.bespoke?.essay?.author;
     default:
       return item?.keyObj?.ship;
   }
@@ -175,16 +186,78 @@ export const getServedFrom = (item) => {
       return '';
   }
 };
-export const getCreatedAt = (item) => fromUrbitTime(item?.meta?.createdAt);
+export const getCreatedAt = (item) => {
+  switch (item?.keyObj?.struc) {
+    case 'groups-chat-msg':
+      return fromUrbitTime(item?.bespoke?.['time-created']);
+    case 'groups-heap-curio':
+      return fromUrbitTime(item?.bespoke?.['time-created']);
+    case 'groups-diary-note':
+      return fromUrbitTime(item?.bespoke?.['time-created']);
+    default:
+      return fromUrbitTime(item?.meta?.createdAt);
+  }
+};
 export const getStruc = (item) => item?.keyObj?.struc;
+export const getDisplayStruc = (item) => {
+  switch (item?.keyObj?.struc) {
+    case 'groups-chat-msg':
+      return 'chat';
+    case 'groups-heap-curio':
+      return 'curio';
+    case 'groups-diary-note':
+      return 'note';
+    default:
+      return item?.keyObj?.struc;
+  }
+};
 export const getRef = (item) => item?.bespoke?.ref;
 export const getLens = (item) => item?.lens;
-export const getDistShip = (item) => item?.bespoke?.signature?.ship;
-export const getAnyLink = (string) => {
+export const getDistShip = (item) => {
+  if (item?.bespoke?.signature?.ship !== '~zod')
+    return item?.bespoke?.signature?.ship;
+  return item?.keyObj?.ship;
+};
+export const getDesk = (item) => item?.keyObj?.cord || item?.keyObj?.time;
+export const getGroup = (item) => {
+  switch (item?.keyObj?.struc) {
+    case 'groups-chat-msg':
+      return item?.bespoke?.group;
+    case 'groups-heap-curio':
+      return item?.bespoke?.group;
+    case 'groups-diary-note':
+      return item?.bespoke?.group;
+    default:
+      return '';
+  }
+};
+export const getAnyLink = (string = '') => {
   return linkify.find(string)?.[0]?.href;
 };
 export const getAllLinks = (string) => {
   return linkify.find(string).map((l) => l.href);
+};
+
+export const getGroupsLink = (item) => {
+  // http://localhost/apps/groups/groups/~tommur-dostyn/tlon-studio/channels/chat/~tommur-dostyn/support?msg=170141184506435544337432278891006787584
+  const prefix = `/apps/groups/`;
+  let suffix = '';
+
+  switch (item?.keyObj?.struc) {
+    case 'groups-chat-msg':
+      suffix = `groups/${item?.bespoke?.group}/channels/chat/${
+        item?.bespoke?.channel
+      }?msg=${removeDotsFromId(item?.bespoke?.['time-ref'])}`;
+      break;
+    case 'groups-heap-curio':
+      suffix = `groups/${item?.bespoke?.group}/channels/heap/${
+        item?.bespoke?.channel
+      }/curio/${removeDotsFromId(item?.bespoke?.time)}`;
+      break;
+  }
+  if (suffix) {
+    return `${prefix}${suffix}`;
+  }
 };
 
 export const isUrl = (s) => {
@@ -397,7 +470,25 @@ export const isHappeningSoon = (events) => {
   ];
 };
 
-export const formatId = (id) => {
+// Fetch from the state everything which contains the search string, and order
+// them by the most recent first
+export const lc = (s: string) => (s ? s.toLowerCase() : '');
+export const contains = (haystack: string, needle: string) =>
+  lc(haystack).includes(lc(needle.trim()));
+export const matchItem = (i: Item, needle: string) => {
+  return (
+    contains(i?.keyObj?.ship, needle) ||
+    contains(i?.keyObj?.cord, needle) ||
+    contains(i?.keyObj?.time, needle) ||
+    contains(i?.bespoke?.title, needle) ||
+    contains(i?.bespoke?.description, needle) ||
+    contains(i?.bespoke?.blurb, needle) ||
+    contains(i?.bespoke?.treaty?.title, needle) ||
+    contains(i?.bespoke?.treaty?.info, needle)
+  );
+};
+
+export const addDotsToId = (id) => {
   // add dots after every third character, starting from the end. first we strip
   // any dots from the string just to make sure
   const reversed = id.replace(/\./g, '').split('').reverse().join('');
@@ -405,6 +496,10 @@ export const formatId = (id) => {
   const joined = groups.join('.');
   const reversedAgain = joined.split('').reverse().join('');
   return reversedAgain;
+};
+
+export const removeDotsFromId = (id) => {
+  return id?.replace(/\./g, '');
 };
 
 //  /1/chan/chat/~sampel-dilryd-mopreg/new-channel/msg/~sampel-dilryd-mopreg/170.141.184.506.367.604.306.531.861.944.396.949.749
@@ -441,7 +536,7 @@ export const getChatDetails = (path) => {
     host: splut[4],
     channel: splut[5],
     poster: splut[7],
-    id: formatId(splut[8]),
+    id: addDotsToId(splut[8]),
   };
 };
 
@@ -451,7 +546,7 @@ export const getCurioDetails = (path) => {
   return {
     host: splut[4],
     channel: splut[5],
-    id: formatId(splut[7]),
+    id: addDotsToId(splut[7]),
   };
 };
 
@@ -461,7 +556,7 @@ export const getNoteDetails = (path) => {
   return {
     host: splut[4],
     channel: splut[5],
-    id: formatId(splut[7]),
+    id: addDotsToId(splut[7]),
   };
 };
 
@@ -481,7 +576,7 @@ export const formatCurioPath = (path) => {
   const p = path.replace('/1/chan', '').replace('/curio/', '/curios/curio/id/');
   const splut = p.split('/');
   // replace the last element in the path with the formatted id
-  splut[splut.length - 1] = formatId(splut[splut.length - 1]);
+  splut[splut.length - 1] = addDotsToId(splut[splut.length - 1]);
   return splut.join('/');
 };
 
@@ -493,7 +588,7 @@ export const formatNotePath = (path) => {
   const p = path.replace('/1/chan', '').replace('/note/', '/notes/note/');
   const splut = p.split('/');
   // replace the last element in the path with the formatted id
-  splut[splut.length - 1] = formatId(splut[splut.length - 1]);
+  splut[splut.length - 1] = addDotsToId(splut[splut.length - 1]);
   return splut.join('/');
 };
 
@@ -503,6 +598,109 @@ export const isValidDeskOrGroupPath = (path) => {
   return true;
 };
 
+// Most of the stuff below is stolen from Tlon's Landscape Apps repo
+export function preSig(ship: string): string {
+  if (!ship) return '';
+  if (ship.trim().startsWith('~')) return ship.trim();
+  return `~${ship.trim()}`;
+}
+
+export const collapseNames = (names: string[]): string => {
+  names = Array.from(new Set(names.reverse()));
+  if (names.length === 1) return names.join();
+  if (names.length === 2) return names[0] + ' and ' + names[1];
+  if (names.length > 2)
+    return names[0] + ' and ' + (names.length - 1) + ' others';
+};
+
+export const formatPatp = (patpLike) => {
+  if (!patpLike) return;
+  if (!isValidPatp(patpLike)) return;
+  if (patpLike.slice(0, 1) !== '~') patpLike = `~${patpLike}`;
+  const parts = patpLike.split('-');
+  if (parts.length === 3) return `~${parts[1]}^${parts[2]}`;
+  if (parts.length === 4) return `~${parts[2]}^${parts[3]}`;
+  if (parts.length > 4) return `${parts[0]}_${parts[parts.length - 1]}`;
+  return patpLike;
+};
+
+function normalizeText(text: string): string {
+  const DISALLOWED_MENTION_CHARS = /[^\w\d-]/g;
+  return text.replace(DISALLOWED_MENTION_CHARS, '');
+}
+
+export const dropTrailingBreaks = (i) => {
+  if (Array.isArray(i) && i[i.length - 1]?.hasOwnProperty('break')) {
+    return i.slice(0, i.length - 1);
+  }
+  return i;
+};
+
+// assumes already lowercased
+function scoreEntry(filter: string, entry: fuzzy.FilterResult<string>): number {
+  const parts = entry.string.split('~');
+
+  // shouldn't happen
+  if (parts.length === 1) {
+    return entry.score;
+  }
+
+  const [nickname, ship] = parts;
+  // downrank comets significantly
+  const score = ship.length > 28 ? entry.score * 0.25 : entry.score;
+
+  // making this highest because ships are unique, nicknames are not
+  // also prevents someone setting their nickname as someone else's
+  // patp taking over prime position
+  if (ship === filter) {
+    return score + 120;
+  }
+
+  if (nickname === filter) {
+    return score + 100;
+  }
+
+  // since ship is in the middle of the string we need to make it work
+  // as if it was at the beginning
+  if (nickname && ship.startsWith(filter)) {
+    return score + 80;
+  }
+
+  return score;
+}
+
+export const getPossiblePatps = (
+  query: string,
+  contacts: ContactRolodex
+): string[] => {
+  const sigged = preSig(query);
+  const valid = isValidPatp(sigged);
+
+  const contactNames = Object.keys(contacts);
+
+  // fuzzy search both nicknames and patps; fuzzy#filter only supports
+  // string comparision, so concat nickname + patp
+  const searchSpace = Object.entries(contacts).map(([patp, contact]) =>
+    `${normalizeText(contact?.nickname || '')}${patp}`.toLocaleLowerCase()
+  );
+
+  if (valid && !contactNames.includes(sigged)) {
+    contactNames.push(sigged);
+    searchSpace.push(sigged);
+  }
+
+  const normQuery = normalizeText(query).toLocaleLowerCase();
+  const fuzzyNames = fuzzy.filter(normQuery, searchSpace).sort((a, b) => {
+    const filter = deSig(query) || '';
+    const right = scoreEntry(filter, b);
+    const left = scoreEntry(filter, a);
+    return right - left;
+  });
+
+  const items = fuzzyNames.map((entry) => contactNames[entry.index]);
+
+  return items;
+};
 // Reference: https://github.com/mirtyl-wacdec/urbit_ex/blob/master/lib/api/utils.ex#LL260C14-L260C14
 export const isValidPatp = (patp) => {
   if (!patp) return false;

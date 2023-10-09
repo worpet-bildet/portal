@@ -1,45 +1,60 @@
 <script lang="ts">
   import { Item, ItemKey } from '$types/portal/item';
 
-  import { createEventDispatcher } from 'svelte';
-  import { push } from 'svelte-spa-router';
+  import { CollectionsSquarePreview, GroupsItem, Sigil } from '@components';
+  import { BinIcon, ItemImage, LinkIcon, PostIcon } from '@fragments';
+  import { api } from '@root/api';
   import {
-    state,
-    keyStrFromObj,
-    keyStrToObj,
     getItem,
     getJoinedGroupDetails,
-    refreshGroups,
+    keyStrFromObj,
+    keyStrToObj,
+    state,
   } from '@root/state';
-  import { api } from '@root/api';
-  import { getMeta, checkIfInstalled } from '@root/util';
-  import {
-    CollectionsSquarePreview,
-    Sigil,
-    GroupsChatMessage,
-    GroupsHeapCurio,
-    GroupsDiaryNote,
-  } from '@components';
-  import {
-    ItemImage,
-    TrashIcon,
-    EditIcon,
-    ExternalDestinationIcon,
-  } from '@fragments';
+  import { checkIfInstalled, getMeta } from '@root/util';
+  import { createEventDispatcher } from 'svelte';
+  import { push } from 'svelte-spa-router';
 
-  export let key: ItemKey;
+  import AppPreview from './AppPreview.svelte';
+  import GroupPreview from './GroupPreview.svelte';
+  import SidebarPreview from './SidebarPreview.svelte';
 
-  export let clickable = true;
+  export let key: ItemKey | string;
+
+  export let clickable = false;
   export let removable = false;
   export let editable = false;
   export let selectable = false;
   export let selected = false;
-  export let small = false;
+  export let expandPreview = false;
 
   let item: Item;
   let isInstalled: boolean;
   let joinedDetails;
   let groupKey: string;
+  let isGroupsItem: boolean = false;
+
+  // TODO: something like this instead of the ugly if statements
+  let previews = {
+    app: {
+      component: SidebarPreview,
+      action: () => {},
+      actionText: ['Install', 'Installing...'],
+      isActionEnabled: (item) => {
+        return !checkIfInstalled(state, item?.keyObj?.ship, item?.keyObj?.cord);
+      },
+    },
+    group: {
+      component: SidebarPreview,
+      action: () => {},
+      actionText: ['Join', 'Joining'],
+      isActionEnabled: (item) => {
+        return !getJoinedGroupDetails(
+          `${item?.keyObj?.ship}/${item?.keyObj?.cord}`
+        );
+      },
+    },
+  };
 
   let groupsStrucs = [
     'groups-chat-msg',
@@ -55,7 +70,7 @@
    * instead have a component for each type of item.
    */
 
-  const loadItem = (key: ItemKey) => {
+  const loadItem = (key: ItemKey | string) => {
     if (typeof key === 'string') {
       key = keyStrToObj(key);
       item = getItem(key);
@@ -65,7 +80,8 @@
     if ($state.isLoaded && !item) {
       return api.portal.do.subscribe(key);
     }
-    if (groupsStrucs.includes(item.keyObj.struc)) clickable = false;
+    if (groupsStrucs.includes(item.keyObj.struc)) isGroupsItem = true;
+    if (isGroupsItem) clickable = false;
 
     if (item.keyObj.struc === 'group') {
       groupKey = `${item.keyObj.ship}/${item.keyObj.cord}`;
@@ -73,15 +89,13 @@
     }
     if (item.keyObj.struc === 'app')
       isInstalled = checkIfInstalled(
-        state,
+        $state,
         item?.keyObj?.ship,
         item?.keyObj?.cord
       );
   };
 
-  state.subscribe(() => {
-    loadItem(key);
-  });
+  $: $state && loadItem(key);
 
   const dispatch = createEventDispatcher();
   const remove = () => dispatch('remove', item.keyStr);
@@ -97,121 +111,78 @@
   <button
     on:click
     on:click={() => {
-      if (clickable) {
-        if (struc === 'ship') {
-          push(`/${ship}`);
-        } else if ((struc === 'other' || struc === 'blog') && link) {
-          window.open(link);
-        } else if (struc === 'retweet') {
-          window.location.href = `#${createdAt}`;
-        } else {
-          push(item.keyStr);
-        }
-      } else if (selectable) {
+      // if (clickable) {
+      if (selectable) {
         selected = !selected;
         dispatch('selected', { key, selected });
+      } else if (struc === 'ship') {
+        push(`/${ship}`);
+      } else if ((struc === 'other' || struc === 'blog') && link) {
+        window.open(link);
       }
+      // } else if (struc === 'retweet') {
+      // window.location.href = `#${createdAt}`;
+      // } else {
+      // push(item.keyStr);
+      // }
     }}
-    class="grid grid-cols-6 w-full items-start gap-2 p-2 border dark:hover:bg-transparent hover:duration-500 rounded-lg text-sm text-left"
+    class={`flex w-full items-start gap-2 p-2 dark:hover:bg-transparent hover:duration-500 rounded-lg text-sm text-left hover:bg-white ${$$props.class}`}
     class:cursor-default={!clickable}
     class:hover:bg-panels-hover={clickable}
     class:dark:hover:border-white={clickable}
     class:bg-dark={selected}
     class:text-white={selected}
     class:dark:border-white={selected}
+    class:bg-white={isGroupsItem}
   >
-    {#if struc === 'groups-chat-msg'}
-      {@const {
-        bespoke: { content, id, group },
-      } = item}
-      {@const author = id.split('/')[0]}
-      <GroupsChatMessage {author} {group} {content} />
-    {:else if struc === 'groups-heap-curio'}
-      {@const {
-        bespoke: { heart, group },
-      } = item}
-      <GroupsHeapCurio {heart} {group} />
-    {:else if struc === 'groups-diary-note'}
-      {@const {
-        bespoke: { essay, group },
-      } = item}
-      <GroupsDiaryNote {essay} {group} />
+    {#if isGroupsItem}
+      <GroupsItem {item} isExpanded={expandPreview} />
+    {:else if struc === 'app'}
+      <AppPreview key={item.keyObj} />
+    {:else if struc === 'group'}
+      <GroupPreview key={item.keyObj} />
     {:else}
-      <div
-        class="border overflow-hidden rounded-md self-center"
-        class:col-span-1={!small}
-        class:col-span-2={small}
-      >
-        {#if (struc === 'ship' || struc === 'retweet') && !image}
-          <Sigil patp={ship} />
-        {:else if struc === 'collection' && !image}
-          <CollectionsSquarePreview {key} withTitle={false} />
-        {:else if !image && link && struc !== 'app'}
-          {#await api.link.get.metadata(link)}
-            <ItemImage {image} {title} {color} />
-          {:then data}
-            {#if !data}
-              <ItemImage {image} {title} {color} />
+      <div class="flex justify-between items-center w-full">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 overflow-hidden rounded-md self-center">
+            {#if (struc === 'ship' || struc === 'retweet') && !image}
+              <Sigil patp={ship} />
+            {:else if struc === 'collection' && !image}
+              <CollectionsSquarePreview {key} withTitle={false} />
+            {:else if !image && link}
+              {#await api.link.get.metadata(link)}
+                <ItemImage {image} {title} {color} />
+              {:then data}
+                {#if !data}
+                  <ItemImage {image} {title} {color} />
+                {:else}
+                  <ItemImage image={data.image} title={data.title} />
+                {/if}
+              {/await}
             {:else}
-              <ItemImage image={data.image} title={data.title} />
+              <ItemImage {image} {title} {color} />
             {/if}
-          {/await}
-        {:else}
-          <ItemImage {image} {title} {color} />
-        {/if}
-      </div>
-      <div
-        class="flex flex-col items-start gap-2 overflow-hidden self-center"
-        class:col-span-5={!small}
-        class:col-span-4={small}
-      >
-        <div class="flex items-center gap-2">
-          <div
-            class="font-bold line-clamp-1 hover:line-clamp-none"
-            class:text-sm={small}
-            class:text-xl={!small}
-          >
-            {title || ship}
           </div>
-          <div class="text-grey">·</div>
-          <div class="text-grey" class:text-white={selected}>{struc}</div>
-          {#if (struc === 'other' && link) || struc === 'blog'}
-            <div class="w-5">
-              <ExternalDestinationIcon />
+          <div
+            class="flex flex-col grow break-words [word-break:break-word] w-fit"
+          >
+            <div class="flex items-center gap-2">
+              <div class="font-bold line-clamp-1 w-fit">
+                {title || ship}
+              </div>
+              {#if (struc === 'other' && link) || struc === 'blog'}
+                <div class="w-5">
+                  <LinkIcon />
+                </div>
+              {/if}
             </div>
-          {/if}
+            <div class="line-clamp-2">
+              {blurb || description || ''}
+            </div>
+          </div>
         </div>
-        <div
-          class:line-clamp-1={small}
-          class="line-clamp-2 hover:line-clamp-none"
-        >
-          {blurb || description || ''}
-        </div>
-        {#if struc === 'app' && !isInstalled}
-          <button
-            on:click|stopPropagation={(event) => {
-              event.stopPropagation();
-              window.open(
-                `${window.location.origin}/apps/grid/search/${ship}/apps`
-              );
-            }}
-            class="bg-black rounded-md text-xs font-bold px-2 mr-2 dark:bg-white text-white dark:text-black hover:bg-grey dark:hover:bg-offwhite w-14 h-6"
-            >Install
-          </button>
-        {/if}
-        {#if struc === 'group' && !joinedDetails}
-          <button
-            on:click|stopPropagation={async (event) => {
-              event.stopPropagation();
-              event.currentTarget.innerHTML = 'Joining';
-              await api.urbit.do.joinGroup(groupKey).then(refreshGroups);
-            }}
-            class="bg-black rounded-md text-xs font-bold px-2 mr-2 dark:bg-white text-white dark:text-black hover:bg-grey dark:hover:bg-offwhite w-14 h-6"
-            >Join
-          </button>
-        {/if}
       </div>
-      {#if editable || removable || struc === 'app' || struc === 'group'}
+      {#if editable || removable}
         <div class="col-span-1 col-start-7 flex flex-col gap-2 self-center">
           {#if editable}
             <button
@@ -219,7 +190,7 @@
               on:click|stopPropagation
               on:click={edit}
             >
-              <EditIcon />
+              <PostIcon />
             </button>
           {/if}
           {#if removable}
@@ -228,7 +199,7 @@
               on:click|stopPropagation
               on:click={remove}
             >
-              <TrashIcon />
+              <BinIcon />
             </button>
           {/if}
         </div>

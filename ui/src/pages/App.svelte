@@ -1,47 +1,36 @@
 <script lang="ts">
-  import { Confetti } from 'svelte-confetti';
-  import config from '@root/config';
-  import { api, me } from '@root/api';
+  import coverPhoto from '@assets/coverPhoto.jpg';
+  import { AppCard, FeedPost, FeedPostForm } from '@components';
   import {
-    state,
-    getItem,
-    refreshApps,
-    keyStrToObj,
-    keyStrFromObj,
-    getReviews,
-    getReviewsByTo,
-    getMoreFromThisShip,
-  } from '@root/state';
-  import {
-    getMeta,
-    fromUrbitTime,
-    isValidTxHash,
-    weiToEth,
-    sendTransaction,
-    checkIfInstalled,
-  } from '@root/util';
-  import {
-    ItemDetail,
-    RecommendModal,
-    FeedPost,
-    FeedPostForm,
-    ItemPreview,
-  } from '@components';
-  import {
-    Modal,
-    RightSidebar,
+    DownloadIcon,
+    ETHIcon,
     IconButton,
-    ShareIcon,
-    CrossIcon,
-    InstallIcon,
-    GlobeIcon,
-    ExternalDestinationIcon,
-    SidebarGroup,
-    ImageIcon,
     LoadingIcon,
-    EthereumIcon,
+    Modal,
+    PlusIcon,
     Tabs,
   } from '@fragments';
+  import { api, me } from '@root/api';
+  import config from '@root/config';
+  import {
+    getItem,
+    getMoreFromThisShip,
+    getReviews,
+    getReviewsByTo,
+    keyStrFromObj,
+    keyStrToObj,
+    state,
+  } from '@root/state';
+  import {
+    checkIfInstalled,
+    fromUrbitTime,
+    getMeta,
+    isImage,
+    isValidTxHash,
+    sendTransaction,
+    weiToEth,
+  } from '@root/util';
+  import { Confetti } from 'svelte-confetti';
 
   // TODO: there must be a better way
   let cord;
@@ -50,7 +39,6 @@
   let desk;
   let defKey;
   let itemKey;
-  let isDefItem;
   let item;
   let lens;
   let image;
@@ -98,7 +86,6 @@
       desk = cord;
     }
     if (time) {
-      isDefItem = true;
       defKey = `/app/${ship}//${time}`;
       itemKey = defKey;
       desk = time;
@@ -176,20 +163,6 @@
     sortedRecommendations = getMoreFromThisShip(ship, cord).slice(0, 4);
     purchased = s?.['bought-apps']?.[`${ship ?? '~zod'}/${desk}`];
   });
-
-  const install = () => {
-    // FIXME: stopgap
-    let installShip = distShip && distShip !== '~zod' ? distShip : ship;
-    isInstalling = true;
-    window.open(
-      `${window.location.origin}/apps/grid/search/${installShip}/apps`
-    );
-    api.urbit.do.installApp(installShip, desk).then(refreshApps);
-  };
-
-  const uninstall = () => {
-    api.urbit.do.uninstallApp(desk).then(refreshApps);
-  };
 
   const purchase = () => {
     paymentModalOpen = true;
@@ -271,22 +244,44 @@
   };
 
   let activeTab = 'Reviews';
-  let tabs = ['Reviews', 'Screenshots', 'Info'];
+  let tabs = [{ tab: 'Reviews' }, { tab: 'Screenshots' }, { tab: 'Info' }];
 </script>
 
 {#if item}
-  <div class="grid grid-cols-12 gap-x-8 mb-4">
-    <ItemDetail
-      {title}
-      {description}
-      patp={ship}
-      {color}
-      avatar={image}
-      {reviews}
-      key={item.keyObj}
-      type="app"
-    >
-      <Tabs bind:activeTab {tabs} />
+  {@const { cover } = getMeta(item)}
+
+  <div class="grid grid-cols-12 gap-4 sm:gap-8">
+    <div class="col-span-12 w-full sm:h-48">
+      {#if isImage(cover)}
+        <img
+          src={cover}
+          alt="profile banner"
+          class="relative sm:absolute sm:top-0 left-0 w-full h-48 sm:h-72 object-cover"
+        />
+      {:else}
+        <img
+          src={coverPhoto}
+          alt="default profile banner"
+          class="relative sm:absolute sm:top-0 left-0 w-full h-48 sm:h-72 object-cover"
+        />
+      {/if}
+      <div
+        class="hidden sm:absolute sm:top-0 left-0 w-full h-48 sm:h-72 bg-gradient-to-t from-coverPhotoBottom to-coverPhotoTop"
+      />
+    </div>
+
+    <AppCard
+      app={item}
+      {isInstalled}
+      {isInstalling}
+      {purchased}
+      on:purchase={purchase}
+    />
+
+    <div class="col-span-12 md:col-span-7">
+      <div class="pb-4">
+        <Tabs bind:activeTab {tabs} />
+      </div>
       {#if activeTab === 'Screenshots'}
         <div class="grid grid-cols-9 gap-4">
           {#if screenshots.length === 0}
@@ -334,7 +329,7 @@
                 on:change={handleImageSelect}
               />
               <IconButton
-                icon={ImageIcon}
+                icon={PlusIcon}
                 tooltip="Configure S3 storage for image support"
                 on:click={() => {
                   if (!$state.s3 || !$state.s3.configuration?.currentBucket) {
@@ -379,18 +374,17 @@
             </div>
           {/if}
           {#if !isReviewedByMe}
-            <div class="flex flex-col gap-2">
+            <div class="flex flex-col gap-2 pb-8">
               <FeedPostForm
                 on:post={handlePostReview}
                 placeholder="What do you think of {title}?"
-                class="rounded-tl-lg rounded-tr-lg border-t"
                 showRecommendButtons={false}
                 showRatingStars={true}
               />
             </div>
           {/if}
           {#if reviews.length > 0}
-            <div class="flex flex-col">
+            <div class="flex flex-col gap-6">
               {#each reviews as review (keyStrFromObj(review))}
                 <div>
                   <FeedPost key={review} showRating={true} />
@@ -409,71 +403,8 @@
           </div>
         {/if}
       {/if}
-    </ItemDetail>
-    <RightSidebar>
-      <SidebarGroup>
-        {#if isInstalled}
-          <IconButton
-            icon={ExternalDestinationIcon}
-            on:click={() =>
-              window.open(`${window.location.origin}${servedFrom}/`)}
-            class="bg-panels dark:fill-white dark:bg-transparent dark:border hover:bg-panels-hover dark:hover:border-white"
-            >Open</IconButton
-          >
-        {:else if isInstalling}
-          <IconButton loading class="bg-panels dark:bg-transparent dark:border"
-            >Installing...</IconButton
-          >
-        {:else if ethPrice && !purchased}
-          <IconButton
-            icon={EthereumIcon}
-            on:click={purchase}
-            class="bg-panels dark:bg-transparent dark:border hover:bg-panels-hover dark:hover:border-white"
-            >Purchase</IconButton
-          >
-        {:else}
-          <IconButton
-            icon={InstallIcon}
-            on:click={install}
-            class="bg-panels dark:bg-transparent dark:border hover:bg-panels-hover dark:hover:border-white"
-            >Install</IconButton
-          >
-        {/if}
-        {#if link}
-          <IconButton
-            icon={GlobeIcon}
-            on:click={() => window.open(link)}
-            class="bg-panels dark:bg-transparent dark:border hover:bg-panels-hover dark:hover:border-white"
-            >View Website</IconButton
-          >
-        {/if}
-        <IconButton
-          icon={ShareIcon}
-          on:click={() => (recommendModalOpen = true)}
-          class="bg-panels dark:bg-transparent dark:border hover:bg-panels-hover dark:hover:border-white"
-          >Recommend</IconButton
-        >
-        {#if isInstalled}
-          <IconButton
-            icon={CrossIcon}
-            on:click={uninstall}
-            async
-            class="bg-panels dark:bg-transparent dark:border hover:bg-panels-hover dark:hover:border-white"
-            >Uninstall</IconButton
-          >
-        {/if}
-      </SidebarGroup>
-      {#if sortedRecommendations.length > 0}
-        <SidebarGroup>
-          <div class="text-lg mx-1">More from {ship}</div>
-          {#each sortedRecommendations as [recommendation, count]}
-            <ItemPreview key={keyStrToObj(recommendation)} small />
-          {/each}
-        </SidebarGroup>
-      {/if}
-    </RightSidebar>
+    </div>
   </div>
-  <RecommendModal bind:open={recommendModalOpen} key={keyStrToObj(itemKey)} />
   <Modal bind:open={provePurchaseModalOpen}>
     <div class="flex flex-col justify-between gap-4">
       {#if !tx}
@@ -511,11 +442,11 @@
           </div>
         </div>
         <div class="flex justify-end w-full gap-8">
-          <IconButton icon={InstallIcon} on:click={provePurchase}
+          <IconButton icon={DownloadIcon} on:click={provePurchase}
             >I already paid!</IconButton
           >
           <IconButton
-            icon={EthereumIcon}
+            icon={ETHIcon}
             loading={!$state.payment}
             disabled={!$state.payment}
             async
@@ -551,8 +482,8 @@
               y={[0, 0.1]}
               delay={[500, 2000]}
               infinite
-              duration="5000"
-              amount="200"
+              duration={5000}
+              amount={200}
               fallDistance="100vh"
             />
           </div>

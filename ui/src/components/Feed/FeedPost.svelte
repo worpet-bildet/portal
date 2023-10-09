@@ -1,55 +1,60 @@
 <script lang="ts">
-  import { ItemKey, Item } from '$types/portal/item';
+  import { Item, ItemKey } from '$types/portal/item';
 
-  import linkifyHtml from 'linkify-html';
-  import DOMPurify from 'dompurify';
-  import { link } from 'svelte-spa-router';
-  import { format } from 'timeago.js';
-  import { fade, slide } from 'svelte/transition';
-  import { createEventDispatcher } from 'svelte';
-  import { api, me } from '@root/api';
-  import {
-    state,
-    getItem,
-    keyStrFromObj,
-    getCurator,
-    getReplies,
-    getRepliesByTo,
-    getLikes,
-  } from '@root/state';
-  import {
-    getMeta,
-    fromUrbitTime,
-    getAnyLink,
-    isImage,
-    isValidPatp,
-  } from '@root/util';
-  import { ItemPreview, Sigil, FeedPostForm } from '@components';
+  import { GroupsItem, InlineShip, ItemPreview } from '@components';
   import {
     ChatIcon,
+    ImageLoader,
+    ItemImage,
     LikeIcon,
-    LikedIcon,
-    IconButton,
     LinkPreview,
-    StarRating,
-    EthereumIcon,
-    VerticalCollapseIcon,
-    VerticalExpandIcon,
   } from '@fragments';
+  import { api, me } from '@root/api';
+  import {
+    getGroup,
+    getItem,
+    getLikes,
+    getReplies,
+    getRepliesByTo,
+    keyStrFromObj,
+    state,
+  } from '@root/state';
+  import {
+    fromUrbitTime,
+    getAnyLink,
+    getGroupsLink,
+    getMeta,
+    isValidPatp,
+  } from '@root/util';
+  import { createEventDispatcher } from 'svelte';
+  import { link, location, push } from 'svelte-spa-router';
+  import { fade } from 'svelte/transition';
+  import { format } from 'timeago.js';
+  import InlineItem from '../InlineItem.svelte';
 
-  export let key;
+  export let key: ItemKey;
   export let allowRepliesDepth = 2;
   export let showRating = false;
+  export let indent = false;
+  export let isReplyFormOpen = false;
 
   let item: Item;
   let replies: ItemKey[] = [];
-  let likeCount: number;
-  let likedByMe: boolean;
+  let numLikes: number;
+  let isLikedByMe: boolean;
   let showReplies = false;
 
-  state.subscribe((s) => {
-    item = getItem(keyStrFromObj(key));
-    if (s.isLoaded && !item) {
+  const isGroupsItem = (struc) => {
+    return [
+      'groups-chat-msg',
+      'groups-heap-curio',
+      'groups-diary-note',
+    ].includes(struc);
+  };
+
+  const loadPost = (_k) => {
+    item = getItem(key);
+    if ($state.isLoaded && !item) {
       return api.portal.do.subscribe(key);
     }
 
@@ -57,10 +62,7 @@
     // with any comments that we have made ourselves on the post, which should
     // mean that our comment shows up instantly even if our connection to the
     // indexer is not good
-    replies = [
-      ...(getReplies(key.ship, key) || []),
-      ...(getRepliesByTo(me, key) || []),
-    ]
+    replies = [...(getReplies(key) || []), ...(getRepliesByTo(me, key) || [])]
       .filter((a, i, arr) => {
         return (
           i === arr.findIndex((i) => keyStrFromObj(i) === keyStrFromObj(a))
@@ -68,97 +70,28 @@
       })
       .sort((a, b) => fromUrbitTime(a.time) - fromUrbitTime(b.time));
 
-    // Open the comments if we've been referred to this specific reply
-    const referredTo = s.referredTo;
-    if (
-      referredTo &&
-      referredTo.key === keyStrFromObj(item.keyObj) &&
-      referredTo.type === 'reply'
-    ) {
-      showReplies = true;
-    } else if (
-      referredTo &&
-      replies.find((r) => keyStrFromObj(r) === referredTo?.key)
-    ) {
-      showReplies = true;
-    }
-
     let likes = [...(getLikes(key.ship, key) || [])];
 
-    likeCount = likes.length;
-    if (likedByMe && !likes.find((l) => l.ship === me)) likeCount++;
-    likedByMe = likedByMe || !!likes.find((l) => l.ship === me);
-  });
+    numLikes = likes.length;
+    if (isLikedByMe && !likes.find((l) => l.ship === me)) numLikes++;
+    isLikedByMe = isLikedByMe || !!likes.find((l) => l.ship === me);
+  };
 
-  function handlePostComment({
-    detail: { content, uploadedImageUrl, replyTo, ref, time },
-  }) {
-    // TODO: Merge this function with the one from /pages/Feed.svelte
-    let post = { 'tags-to': [], time } as any;
-    if (ref) {
-      // Here we need to create the retweet post instead of the type "other"
-      post = {
-        ...post,
-        bespoke: { retweet: { ref: ref, blurb: content || '' } },
-      };
-    } else {
-      post = {
-        ...post,
-        bespoke: {
-          other: {
-            title: '',
-            blurb: content || '',
-            link: '',
-            image: uploadedImageUrl || '',
-          },
-        },
-      };
-    }
-    // check each word of the content for a mention, and if so, create a social
-    // graph tag for the mention
-    content
-      .split(' ')
-      .filter(
-        (word: string) => word.substring(0, 1) === '~' && isValidPatp(word)
-      )
-      .forEach((taggedShip: string) => {
-        post = {
-          ...post,
-          'tags-to': [
-            ...post['tags-to'],
-            {
-              key: { struc: 'ship', ship: taggedShip, cord: '', time: '' },
-              'tag-to': `/${me}/mention-to`,
-              'tag-from': `/${taggedShip}/mention-from`,
-            },
-          ],
-        };
-      });
-
-    post = {
-      ...post,
-      'tags-to': [
-        ...post['tags-to'],
-        {
-          key: replyTo,
-          'tag-to': `/${me}/reply-to`,
-          'tag-from': `/${replyTo.ship}/reply-from`,
-        },
-      ],
-    };
-
-    return api.portal.do.create(post);
-  }
+  $: $state && loadPost(key);
 
   const likePost = () => {
-    likedByMe = true;
-    likeCount++;
+    isLikedByMe = true;
+    numLikes++;
     return api.portal.do.addTag({
       our: { struc: 'ship', ship: me, cord: '', time: '' },
       their: key,
       'tag-to': `/${me}/like-to`,
       'tag-from': `/${key.ship}/like-from`,
     });
+  };
+
+  export const getExternalLink = () => {
+    return getGroupsLink(item);
   };
 
   // TODO: this is quite not good
@@ -187,6 +120,15 @@
     showAll = false;
   };
 
+  const getRef = (s) => {
+    try {
+      const { ref } = JSON.parse(s.trim());
+      return ref;
+    } catch (e) {
+      return false;
+    }
+  };
+
   let postContainer;
   let longPost = false;
   let showAll = true;
@@ -199,193 +141,115 @@
       postContainer.classList.add('max-h-96');
     }
   }
+  $: expandPreview =
+    $location.includes(keyStrFromObj(key)) ||
+    $location.includes('retweet') ||
+    key.struc === 'groups-heap-curio' ||
+    key.struc === 'groups-chat-msg';
+  $: previewNavigate = () => push(keyStrFromObj(key));
 </script>
 
 {#if item}
-  {@const { blurb, ship, createdAt, ref, image, rating } = getMeta(item)}
-  {@const {
-    bespoke: { nickname },
-  } = getCurator(ship)}
+  {@const { blurb, ship, createdAt, ref, image, rating, group } = getMeta(item)}
   {@const blurbLink = getAnyLink(blurb)}
-  <div class="border-b border-x px-5 pt-5 overflow-hidden">
-    <div
-      id={keyStrFromObj(item.keyObj)}
-      class="grid grid-cols-12 bg-panels dark:bg-transparent gap-2 lg:gap-4 lg:gap-y-0"
-      in:fade
-    >
-      <div class="col-span-1">
-        <div class="rounded-md overflow-hidden">
-          <a href={`/${ship}`} use:link>
-            <Sigil patp={ship} />
-          </a>
-        </div>
-      </div>
-      <div
-        class="col-span-12 md:col-span-10 flex flex-col gap-2"
-        bind:this={postContainer}
-      >
-        <div class="flex gap-2 text-sm text-grey">
-          <a class="text-black dark:text-white" href={`/${ship}`} use:link
-            >{nickname || ship}</a
+  <div class="flex flex-col text-left gap-2 w-full" in:fade>
+    <div class="flex items-center justify-between px-3">
+      <div class="flex items-center gap-1">
+        <InlineShip patp={ship} />
+        {#if group}
+          {@const { title, image, color } = getMeta(getGroup(group))}
+          <span class="text-xs sm:text-base">in</span>
+          <a
+            use:link
+            href={`/group/${group}/`}
+            class="flex items-center gap-1 text-black text-xs sm:text-base"
           >
-          <span>·</span>
-          <span>{format(createdAt)}</span>
-        </div>
-        <div
-          class="whitespace-pre-wrap line-clamp-50 flex flex-col gap-2 break-words"
-        >
-          <div>
-            {@html linkifyMentions(
-              linkifyHtml(DOMPurify.sanitize(blurb), {
-                attributes: {
-                  class: 'text-link dark:text-link-dark',
-                  target: '_blank',
-                },
-              })
-            )}
-          </div>
-          {#if blurbLink}
-            {#if isImage(blurbLink)}
-              <img src={blurbLink} class="object-cover" alt={blurb} />
-            {:else}
-              <div>
-                <LinkPreview url={blurbLink} />
-              </div>
-            {/if}
-          {/if}
-        </div>
-        {#if image}
-          <a href={image} target="_blank">
-            <div class="flex justify-center border rounded-lg overflow-hidden">
-              <img src={image} class="object-cover" alt={blurb} />
+            <div class="w-5 h-5">
+              <ItemImage {title} {image} {color} />
             </div>
+            {title}
+          </a>
+        {/if}
+      </div>
+      <div class="text-xs text-secondary">{format(createdAt)}</div>
+    </div>
+    <div class="flex w-full gap-4">
+      {#if indent}
+        <div class="border-2 ml-6 mr-1" />
+      {/if}
+      <a
+        draggable="false"
+        class="flex flex-col w-full bg-panel text-black px-3 py-5 whitespace-pre-wrap break-words gap-5 select-text rounded-xl"
+        class:hover:bg-panelhover={!isReplyFormOpen}
+        class:cursor-default={isReplyFormOpen}
+        href={getExternalLink() ||
+          `/apps/portal/#${keyStrFromObj(item?.keyObj)}`}
+        target={getExternalLink() ? '_blank' : '_self'}
+      >
+        {#if blurb}
+          <p>
+            {#each blurb.split(/(\s)/) as word}
+              {#if getRef(word)}
+                <InlineItem keyStr={getRef(word)} />
+              {:else}
+                {word}
+              {/if}
+            {/each}
+          </p>
+        {/if}
+        {#if image}
+          <a href={image} target="_blank" class="w-full">
+            <ImageLoader
+              src={image}
+              alt="attachment"
+              class="rounded-xl w-full h-full object-cover"
+            />
           </a>
         {/if}
         {#if ref}
-          <div class="rounded-lg">
-            <ItemPreview key={ref} />
-          </div>
-        {/if}
-      </div>
-      {#if showRating}
-        <div class="flex justify-start col-span-12 col-start-2">
-          <StarRating
-            config={{
-              readOnly: true,
-              countStars: 5,
-              range: { min: 0, max: 5, step: 1 },
-              score: rating,
-            }}
+          <ItemPreview key={ref} on:expand={previewNavigate} {expandPreview} />
+        {:else if group}
+          <GroupsItem
+            {item}
+            headless
+            isExpanded={expandPreview}
+            on:expand={previewNavigate}
           />
-        </div>
-      {/if}
-      <div
-        class={`col-span-12 col-start-2 py-2 ${
-          longPost && !showAll
-            ? 'bg-gradient-to-t from-panels-solid dark:from-dark-background dark:via-dark-background via-panels-solid pt-14'
-            : ''
-        }`}
-      >
-        <div class="-ml-2.5 flex gap-8">
-          {#if allowRepliesDepth}
-            <div class="flex">
-              <div class="rounded-full overflow-hidden">
-                <IconButton
-                  icon={ChatIcon}
-                  on:click={() => (showReplies = !showReplies)}
-                  class="fill-grey hover:fill-black dark:hover:fill-white"
-                />
+        {/if}
+        {#if blurbLink}
+          <LinkPreview url={blurbLink} />
+        {/if}
+        <div class="grid grid-cols-6 lg:grid-cols-10">
+          <a
+            use:link
+            href={keyStrFromObj(item.keyObj)}
+            class="col-span-1 flex items-center gap-2"
+          >
+            <div class="w-5 h-5 text-secondary"><ChatIcon /></div>
+            <div class="text-secondary">{replies.length}</div>
+          </a>
+          <div class="col-span-1 flex items-center gap-2">
+            {#if isLikedByMe}
+              <div class="w-5 h-5 text-error">
+                <LikeIcon />
               </div>
-              <div class="pt-2 text-sm w-2 text-grey">
-                {#if replies.length > 0}
-                  {replies.length}
-                {/if}
-              </div>
-            </div>
-          {/if}
-          <div class="flex items-center">
-            {#if likedByMe}
-              <div class="w-5 h-5 ml-2 text-error">
-                <LikedIcon />
-              </div>
-              <span class="p-2 text-sm text-error">
-                {#if likeCount > 0}
-                  {likeCount}
-                {/if}
-              </span>
-            {:else}
-              <div class="rounded-full overflow-hidden">
-                <IconButton
-                  icon={LikeIcon}
-                  on:click={likePost}
-                  class="stroke-grey hover:stroke-error dark:hover:stroke-error"
-                />
-              </div>
-              <div class="pt-2 pb-2 text-sm text-grey">
-                {#if likeCount > 0}
-                  {likeCount}
-                {/if}
-              </div>
-            {/if}
-          </div>
-          <div class="flex items-center">
-            {#if me !== item.keyObj.ship}
-              <div class="flex items-center">
-                <IconButton
-                  icon={EthereumIcon}
-                  on:click={() => handleTipRequest(item.keyObj)}
-                  class="text-grey hover:text-ai-blue dark:hover:text-ai-blue"
-                />
-              </div>
-            {/if}
-          </div>
-          {#if longPost}
-            {#if showAll}
-              <button
-                class="flex items-center justify-center p-2 gap-4 text-grey"
-                on:click={showLess}>Show less <VerticalCollapseIcon /></button
-              >
+              <div class="text-error">{numLikes}</div>
             {:else}
               <button
-                class="flex items-center justify-center gap-4 text-grey"
-                on:click={showMore}>Show more <VerticalExpandIcon /></button
+                class="w-5 h-5 text-transparent stroke-secondary"
+                on:click|stopPropagation|preventDefault={likePost}
               >
+                <LikeIcon />
+              </button>
+              <div class="text-secondary">{numLikes}</div>
             {/if}
-          {/if}
+          </div>
         </div>
-      </div>
+      </a>
     </div>
   </div>
-  <div
-    class="grid grid-cols-12 bg-panels dark:bg-transparent gap-2 lg:gap-4 lg:gap-y-0"
-    in:fade
-  >
-    {#if showReplies}
-      <div class="flex flex-col col-span-12" transition:slide>
-        <FeedPostForm
-          replyTo={item.keyObj}
-          placeholder="Post your reply..."
-          buttonText="Reply"
-          showRecommendButtons={false}
-          on:post={handlePostComment}
-        />
-        {#each replies as replyKey (keyStrFromObj(replyKey))}
-          <svelte:self
-            key={replyKey}
-            allowRepliesDepth={allowRepliesDepth - 1}
-          />
-        {/each}
-      </div>
-      <button
-        class="flex flex-col col-span-12 border-x border-b flex py-3 items-center justify-center"
-        on:click={() => (showReplies = !showReplies)}
-      >
-        <VerticalCollapseIcon />
-      </button>
-    {/if}
-  </div>
 {:else}
-  <div class="p-5 border-b border-x text-grey" in:fade>
+  <div class="p-5 rounded-xl bg-panel text-grey" in:fade>
     Contacting {key.ship}...
   </div>
 {/if}

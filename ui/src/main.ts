@@ -1,6 +1,6 @@
-import './app.css';
 import App from './App.svelte';
 import { useSubscription } from './api';
+import './app.css';
 import { handleSubscriptionEvent } from './state';
 
 useSubscription('portal-store', '/updates', handleSubscriptionEvent);

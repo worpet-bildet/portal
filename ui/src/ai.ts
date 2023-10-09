@@ -1,8 +1,8 @@
-import { Item } from '$types/portal/item';
 import { OutgoingPals } from '$types/apps/pals';
+import { Item } from '$types/portal/item';
 
-import cosineSimilarity from 'compute-cosine-similarity';
 import config from '@root/config';
+import cosineSimilarity from 'compute-cosine-similarity';
 
 const extractStrings = (items) => {
   return items

@@ -1,25 +1,25 @@
-import {
-  ItemKey,
-  Item,
-  ItemCollection,
-  FeedItem,
-  ItemStruc,
-} from '$types/portal/item';
-import { HarkNotificationDestination } from '$types/portal/notification';
-import { SocialGraph } from '$types/portal/graph';
 import { DocketApps } from '$types/apps/app';
 import { OutgoingPals } from '$types/apps/pals';
 import { Contact, ContactRolodex } from '$types/landscape/contact';
 import { Group, Groups } from '$types/landscape/groups';
+import { SocialGraph } from '$types/portal/graph';
+import {
+  FeedItem,
+  Item,
+  ItemCollection,
+  ItemKey,
+  ItemStruc,
+} from '$types/portal/item';
+import { HarkNotificationDestination } from '$types/portal/notification';
 import { State } from '$types/state';
 
 import { uniqBy } from 'lodash';
 import { get, writable } from 'svelte/store';
 
-import config from '@root/config';
-import { save, load } from '@root/storage';
-import { api } from '@root/api';
 import { scoreItems } from '@root/ai';
+import { api } from '@root/api';
+import config from '@root/config';
+import { load, save } from '@root/storage';
 import { fromUrbitTime } from '@root/util';
 
 export const state = writable<State>({ ...load() });
@@ -191,6 +191,14 @@ export const setReferredTo = (key: HarkNotificationDestination): void => {
   state.update((s) => ({ ...s, referredTo: key }));
 };
 
+export const setIsComposing = (isComposing: boolean): void => {
+  state.update((s) => ({ ...s, isComposing }));
+};
+
+export const setIsSearching = (isSearching: boolean): void => {
+  state.update((s) => ({ ...s, isSearching }));
+};
+
 export const itemInState = (item: ItemKey): Promise<void> => {
   return new Promise((resolve, reject) => {
     const unsubscribe = state.subscribe((s) => {
@@ -206,14 +214,14 @@ export const itemInState = (item: ItemKey): Promise<void> => {
     const rejectTimeout = setTimeout(() => {
       unsubscribe();
       reject();
-    }, 10000);
+    }, 60000);
   });
 };
 
 // TODO: add a type for this return
 export const getCurator = (patp: string) => {
   return {
-    keyObj: { ship: patp, struc: 'ship', cord: '', time: '' },
+    keyObj: { ship: patp, struc: 'ship', cord: '', time: '' } as ItemKey,
     bespoke: { ...contacts()[patp] },
   };
 };
@@ -230,6 +238,15 @@ export const sortFeedItemsByTime = (items: FeedItem[]) => {
 
 export const getCuratorFeed = (patp: string): FeedItem[] => {
   return items()[feedKey(patp)]?.bespoke?.feed;
+};
+
+export const getGroupsFeed = (patp: string): FeedItem[] => {
+  if (!get(state).isLoaded) return [];
+  return [
+    ...items()[chatMessageKey(patp)]?.bespoke?.feed,
+    ...items()[heapCurioKey(patp)]?.bespoke?.feed,
+    ...items()[diaryNoteKey(patp)]?.bespoke?.feed,
+  ];
 };
 
 export const getGlobalFeed = (): FeedItem[] => {
@@ -267,13 +284,20 @@ export const getApp = (appKey: string): Item => {
   return items()[`/app/${appKey}/`];
 };
 
-export const getItem = (listKey: string | ItemKey): Item => {
-  if (typeof listKey === 'object') return items()[keyStrFromObj(listKey)];
-  return items()[listKey];
+const normaliseKeyObj = (key: string | ItemKey): ItemKey => {
+  if (typeof key === 'string') return keyStrToObj(key);
+  return key;
+};
+
+export const getItem = (key: string | ItemKey): Item => {
+  const keyObj = normaliseKeyObj(key);
+  if (keyObj.struc === 'ship') return getCurator(keyObj.ship) as Item;
+  if (typeof key === 'object') return items()[keyStrFromObj(key)];
+  return items()[key];
 };
 
 export const getCollectedItemLeaderboard = (
-  excludePatp: string
+  excludePatp?: string
 ): [string, number][] => {
   return Object.entries<number>(
     Object.values(items())
@@ -289,6 +313,7 @@ export const getCollectedItemLeaderboard = (
           .filter(
             (k: ItemKey) =>
               k?.struc !== 'collection' &&
+              k?.struc !== 'ship' &&
               !(
                 k?.cord === 'portal' &&
                 k?.ship === '~worpet-bildet' &&
@@ -320,7 +345,13 @@ export const getMoreFromThisShip = (
         b?.bespoke?.['key-list']
           .filter(
             (k: ItemKey) =>
-              !['collection', 'ship'].includes(k?.struc) &&
+              ![
+                // 'collection',
+                'ship',
+                'groups-chat-msg',
+                'groups-heap-curio',
+                'groups-diary-note',
+              ].includes(k?.struc) &&
               k?.ship === patp &&
               k?.cord !== cord &&
               !(
@@ -346,6 +377,7 @@ export const getAllCollectionsAndItems = (collectionKey: string): ItemKey[] => {
           .filter(([key]) => key.includes('/collection/'))
           .filter(([key]) => !key.includes('published'))
           .filter(([key]) => !key.includes('all'))
+          .filter(([key]) => !key.includes('index'))
       )
     ).map((item) => item.keyObj)
   );
@@ -359,8 +391,21 @@ export const getJoinedGroupDetails = (groupKey: string): Group => {
   return groups()[groupKey];
 };
 
-export const getReplies = (ship: string, key: ItemKey): ItemKey[] => {
-  return social()[`/${ship}/reply-from`]?.[keyStrFromObj(key)];
+export const getParent = (key: ItemKey): ItemKey => {
+  return social()[`/${key.ship}/reply-to`]?.[keyStrFromObj(key)]?.[0];
+};
+
+export const getPostChain = (key: ItemKey): ItemKey[] => {
+  const parent = getParent(key);
+  if (parent) {
+    return [parent, ...getPostChain(parent)];
+  } else {
+    return [];
+  }
+};
+
+export const getReplies = (key: ItemKey): ItemKey[] => {
+  return social()[`/${key.ship}/reply-from`]?.[keyStrFromObj(key)];
 };
 
 export const getRepliesByTo = (ship: string, key: ItemKey): ItemKey[] => {
@@ -422,7 +467,7 @@ export const getNotifications = (ship: string): [ItemKey, ItemKey][] => {
 
 // TODO: define SubscriptionEvent type
 export const handleSubscriptionEvent = (event, type: string) => {
-  console.log({ event, type });
+  console.log({ ...event, type });
   switch (type) {
     case 'portal-update':
       state.update((s) => ({
@@ -479,7 +524,10 @@ export const handleSubscriptionEvent = (event, type: string) => {
     case 'charge-update':
       refreshApps();
       break;
-    case 'group-action-0' || 'group-leave' || 'group-action-2':
+    case 'group-action-0':
+    case 'group-leave':
+    case 'group-action-2':
+    case 'gang-gone':
       refreshGroups();
       break;
     case 'greg-event':
@@ -492,6 +540,7 @@ export const handleSubscriptionEvent = (event, type: string) => {
       }));
       break;
     default:
+      console.log('DEFAULT', type);
       break;
   }
 };
@@ -544,6 +593,9 @@ const mainCollectionKey = (patp: string): string =>
 const allCollectionKey = (patp: string): string => `/collection/${patp}//all`;
 const feedKey = (patp: string): string => `/feed/${patp}//~2000.1.1`;
 const globalFeedKey = (indexer: string): string => `/feed/${indexer}//global`;
+const chatMessageKey = (patp: string): string => `/feed/${patp}//groups-msgs`;
+const heapCurioKey = (patp: string): string => `/feed/${patp}//groups-curios`;
+const diaryNoteKey = (patp: string): string => `/feed/${patp}//groups-notes`;
 
 export const refreshAll = (): void => {
   refreshPortalItems();

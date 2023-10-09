@@ -1,24 +1,23 @@
 <script lang="ts">
-  import { me } from '@root/api';
-  import {
-    state,
-    getCuratorAllCollectionItems,
-    groupKeyToItemKey,
-    collectionKeyToItemKey,
-    keyStrFromObj,
-    getItem,
-  } from '@root/state';
-  import { getMeta } from '@root/util';
   import { ItemPreview } from '@components';
   import {
-    IconButton,
-    SparklesIcon,
-    AppIcon,
-    PeopleIcon,
-    LoadingIcon,
+    AppsIcon,
     CollectionIcon,
-    SearchIcon,
+    GroupsIcon,
+    IconButton,
+    LoadingIcon,
+    SparkleIcon,
   } from '@fragments';
+  import { me } from '@root/api';
+  import {
+    collectionKeyToItemKey,
+    getCuratorAllCollectionItems,
+    getItem,
+    groupKeyToItemKey,
+    keyStrFromObj,
+    state,
+  } from '@root/state';
+  import { getMeta } from '@root/util';
 
   let items, activeItems, myItems, urlQuery, searchString;
   const refreshItems = () => {
@@ -110,27 +109,16 @@
 </script>
 
 <div class="flex flex-col gap-4 mb-4 items-center">
-  <div
-    class="flex bg-panels dark:bg-darkgrey border p-2 rounded-lg w-full md:w-2/3"
-  >
-    <div class="w-5 text-grey mt-[3px] ml-2"><SearchIcon /></div>
-    <input
-      type="text"
-      class="focus:outline-none placeholder-grey w-full ml-4"
-      placeholder="Search Portal"
-      bind:value={searchString}
-    />
-  </div>
   <div class="flex gap-1 md:gap-8">
     <IconButton
-      icon={SparklesIcon}
+      icon={SparkleIcon}
       active={filters.has('new')}
       on:click={() => toggleFilter('new')}
       class="bg-panels text-xs md:text-lg dark:fill-white dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
       >New to me
     </IconButton>
     <IconButton
-      icon={AppIcon}
+      icon={AppsIcon}
       active={filters.has('apps')}
       on:click={() => {
         toggleFilter('apps');
@@ -139,7 +127,7 @@
       >Apps</IconButton
     >
     <IconButton
-      icon={PeopleIcon}
+      icon={GroupsIcon}
       active={filters.has('groups')}
       on:click={() => {
         toggleFilter('groups');

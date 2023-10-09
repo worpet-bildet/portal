@@ -26,4 +26,6 @@ export type State = {
   payment: any; // TODO
   tip: any; // TODO
   appDevs: any; // TODO
+  isComposing: boolean;
+  isSearching: boolean;
 };

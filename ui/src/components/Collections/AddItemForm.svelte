@@ -1,21 +1,21 @@
 <script lang="ts">
-  import { ItemKey, Other } from '$types/portal/item';
-  import { Groups } from '$types/landscape/groups';
   import { DocketApps } from '$types/apps/app';
+  import { Groups } from '$types/landscape/groups';
+  import { ItemKey, Other } from '$types/portal/item';
 
-  import { createEventDispatcher } from 'svelte';
-  import { api } from '@root/api';
-  import { state, keyStrFromObj, getItem } from '@root/state';
-  import { isValidPatp } from '@root/util';
   import { Sigil } from '@components';
   import {
-    StepForm,
-    OtherItemForm,
-    ItemImage,
+    ArrowBackIcon,
     IconButton,
-    LeftArrowIcon,
-    CheckIcon,
+    ItemImage,
+    OtherItemForm,
+    PlusIcon,
+    StepForm,
   } from '@fragments';
+  import { api } from '@root/api';
+  import { getItem, keyStrFromObj, state } from '@root/state';
+  import { isValidPatp } from '@root/util';
+  import { createEventDispatcher } from 'svelte';
 
   export let collection;
 
@@ -109,7 +109,7 @@
           <div>You have already added all your apps to this collection</div>
           <div class="flex justify-between">
             <IconButton
-              icon={LeftArrowIcon}
+              icon={ArrowBackIcon}
               on:click={() => (formstep = 'type')}
               class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
               >Back</IconButton
@@ -138,7 +138,7 @@
           <div>You have already added all your groups to this collection</div>
           <div class="flex justify-between">
             <IconButton
-              icon={LeftArrowIcon}
+              icon={ArrowBackIcon}
               on:click={() => (formstep = 'type')}
               class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
               >Back</IconButton
@@ -174,13 +174,13 @@
         </div>
         <div class="col-span-12 flex justify-between">
           <IconButton
-            icon={LeftArrowIcon}
+            icon={ArrowBackIcon}
             on:click={() => (formstep = 'type')}
             class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
             >Back</IconButton
           >
           <IconButton
-            icon={CheckIcon}
+            icon={PlusIcon}
             on:click={lastValidShip !== newShip || !newShip ? null : saveShip}
             disabled={lastValidShip !== newShip || !newShip}
             class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
@@ -191,13 +191,13 @@
         <OtherItemForm bind:item={newOtherItem} />
         <div class="col-span-12 flex justify-between">
           <IconButton
-            icon={LeftArrowIcon}
+            icon={ArrowBackIcon}
             on:click={() => (formstep = 'type')}
             class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
             >Back</IconButton
           >
           <IconButton
-            icon={CheckIcon}
+            icon={PlusIcon}
             on:click={() => saveOtherItem()}
             class="hover:bg-panels-hover dark:border dark:hover:border-white dark:border-transparent"
             >Save</IconButton

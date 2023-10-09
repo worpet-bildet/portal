@@ -1,63 +1,48 @@
 <script lang="ts">
-  import { ItemKey, Item } from '$types/portal/item';
   import { DocketApp } from '$types/apps/app';
-  import { Groups } from '$types/landscape/groups';
   import { ChatWrit } from '$types/landscape/chat';
   import { DiaryNote } from '$types/landscape/diary';
+  import { Groups } from '$types/landscape/groups';
   import { HeapCurio } from '$types/landscape/heap';
+  import { ItemKey } from '$types/portal/item';
+  import { Create } from '$types/portal/poke';
 
-  import { createEventDispatcher } from 'svelte';
   import { api, me } from '@root/api';
+  import { itemInState, setIsComposing, state } from '@root/state';
   import {
-    state,
-    keyStrToObj,
-    getGroup,
-    getApp,
-    itemInState,
-  } from '@root/state';
-  import {
-    getAnyLink,
-    isChatPath,
-    isCurioPath,
-    isNotePath,
-    isShortcode,
     formatChatPath,
     formatCurioPath,
     formatNotePath,
+    getAnyLink,
     getChatDetails,
     getCurioDetails,
     getNoteDetails,
+    isChatPath,
+    isCurioPath,
+    isNotePath,
+    isValidPatp,
     toUrbitTime,
   } from '@root/util';
-  import {
-    RecommendModal,
-    Sigil,
-    ItemPreview,
-    GroupsChatMessage,
-    GroupsHeapCurio,
-    GroupsDiaryNote,
-  } from '@components';
-  import {
-    TextArea,
-    IconButton,
-    AppIcon,
-    PeopleIcon,
-    ImageIcon,
-    Modal,
-    ItemImage,
-    StarRating,
-    LinkPreview,
-    LoadingIcon,
-  } from '@fragments';
 
-  export let replyTo: ItemKey | boolean = false;
+  import {
+    GroupsChatMessage,
+    GroupsDiaryNote,
+    GroupsHeapCurio,
+    InlineShip,
+    RichTextArea,
+  } from '@components';
+  import { UrbitIcon, CollectionIcon, LinkPreview, LoadingIcon, ArrowBackIcon } from '@fragments';
+  import { Editor } from '@tiptap/core';
+
+  export let replyTo: ItemKey | undefined = undefined;
   export let showRecommendButtons = true;
   export let showRatingStars = false;
   export let error: string | boolean = false;
   export let placeholder = '';
   export let buttonText = 'Post';
+  export let replyingToNames: string[] = [];
+  export let editor: Editor = undefined;
 
-  let dispatch = createEventDispatcher();
   let content: string;
   let rating: number;
 
@@ -69,9 +54,6 @@
     }
     if ((showRatingStars && !rating) || Number(rating) === 0) {
       return (error = 'Please give a score.');
-    }
-    if (shortcodeItems && shortcodeItems.length > 1) {
-      return (error = 'Please select one of the items to recommend.');
     }
     // If we have some chat details here, we should generate the reference and
     // then send the reference back up with the post
@@ -92,12 +74,70 @@
       ref = { struc: 'groups-diary-note', ship: me, cord: '', time };
       api.portal.do.createGroupsDiaryNote(host, channel, id, time);
     }
-    if (shortcodeItems && shortcodeItems.length === 1) {
-      const { keyObj } = shortcodeItems[0];
-      ref = { ...keyObj };
+
+    // TODO: Split this out into a function
+    let post = { time, 'tags-to': [] } as Create;
+    if (ref) {
+      // Here we need to create the retweet post instead of the type "other"
+      post = {
+        ...post,
+        bespoke: { retweet: { ref: ref, blurb: content || '' } },
+      };
+    } else {
+      post = {
+        ...post,
+        bespoke: {
+          other: {
+            title: '',
+            blurb: content || '',
+            link: '',
+            image: uploadedImageUrl || '',
+          },
+        },
+      };
     }
 
-    dispatch('post', { content, uploadedImageUrl, replyTo, rating, ref, time });
+    if (replyTo) {
+      post = {
+        ...post,
+        'tags-to': [
+          ...post['tags-to'],
+          {
+            key: replyTo,
+            'tag-to': `/${me}/reply-to`,
+            'tag-from': `/${replyTo.ship}/reply-from`,
+          },
+        ],
+      };
+    } else {
+      post = {
+        ...post,
+        'prepend-to-feed': [
+          { ship: me, struc: 'feed', time: '~2000.1.1', cord: '' },
+        ],
+      };
+    }
+
+    // check each word of the content for a mention, and if so, create a social
+    // graph tag for the mention
+    content
+      .split(' ')
+      .filter((word) => word.substring(0, 1) === '~' && isValidPatp(word))
+      .forEach((word) => {
+        post = {
+          ...post,
+          'tags-to': [
+            ...post['tags-to'],
+            {
+              key: { struc: 'ship', ship: word, cord: '', time: '' },
+              'tag-to': `/${me}/mention-to`,
+              'tag-from': `/${word}/mention-from`,
+            },
+          ],
+        };
+      });
+
+    api.portal.do.create(post);
 
     submitting = true;
     try {
@@ -109,11 +149,13 @@
       });
       submitting = false;
     } catch (e) {
-      alert('Posting failed, please refresh the page and try again.');
+      alert(
+        'Posting might have failed. Please save your work, then refresh the page and try again.'
+      );
       return;
     }
 
-    content = '';
+    editor.commands.clearContent();
     uploadedImageUrl = '';
     error = '';
     chatDetails = undefined;
@@ -122,16 +164,10 @@
     heapCurio = undefined;
     noteDetails = undefined;
     diaryNote = undefined;
-    shortcodeToPreview = undefined;
-    shortcodeItems = undefined;
     rating = undefined;
+    setIsComposing(false);
   };
 
-  // TODO: Factor out the selection of groups/apps into its own component
-  let groupModalOpen: boolean;
-  let appModalOpen: boolean;
-  let recommendModalOpen: boolean;
-  let selectedKey: ItemKey;
   let fileInput: HTMLInputElement;
   let uploadedImageUrl: string;
 
@@ -163,14 +199,18 @@
     rating = Number((event.target as HTMLInputElement).value);
   };
 
+  const removeText = (str: string) => {
+    let to = editor.state.doc.content.size;
+    let from = to - str.length - 1;
+    editor.commands.deleteRange({ from, to });
+  };
+
   const getAnyChatMessage = (content: string): string =>
     content.split(/[\r\n|\s]+/).find((word) => isChatPath(word));
   const getAnyCurio = (content: string): string =>
     content.split(/[\r\n|\s]+/).find((word) => isCurioPath(word));
   const getAnyNote = (content: string): string =>
     content.split(/[\r\n|\s]+/).find((word) => isNotePath(word));
-  const getAnyShortcode = (content: string): string =>
-    content.split(/[\r\n|\s]+/).find((word) => isShortcode(word));
 
   $: linkToPreview = getAnyLink(content || '');
 
@@ -179,7 +219,7 @@
   const getChatWrit = async (chatPath: string) => {
     chatWrit = await api.portal.get.chatWrit(formatChatPath(chatPath));
     chatDetails = getChatDetails(chatPath);
-    content = content.replace(chatPath, '');
+    removeText(chatPath);
   };
 
   let heapCurio: HeapCurio;
@@ -187,7 +227,7 @@
   const getHeapCurio = async (curioPath: string) => {
     heapCurio = await api.portal.get.heapCurio(formatCurioPath(curioPath));
     curioDetails = getCurioDetails(curioPath);
-    content = content.replace(curioPath, '');
+    removeText(curioPath);
   };
 
   let diaryNote: DiaryNote;
@@ -195,20 +235,7 @@
   const getDiaryNote = async (notePath: string) => {
     diaryNote = await api.portal.get.diaryNote(formatNotePath(notePath));
     noteDetails = getNoteDetails(notePath);
-    content = content.replace(notePath, '');
-  };
-
-  let shortcodeToPreview: string;
-  let shortcodeItems: Item[];
-  const getShortcodeItem = (shortcode: string) => {
-    if (!getGroup(shortcode) && !getApp(shortcode)) {
-      shortcodeItems = [];
-      return;
-    }
-    shortcodeItems = [getGroup(shortcode), getApp(shortcode)].filter(
-      (i) => !!i
-    );
-    content = content.replace(shortcode, '');
+    removeText(notePath);
   };
 
   $: chatToPreview = getAnyChatMessage(content || '');
@@ -217,182 +244,93 @@
   $: if (curioToPreview) getHeapCurio(curioToPreview);
   $: noteToPreview = getAnyNote(content || '');
   $: if (noteToPreview) getDiaryNote(noteToPreview);
-  $: shortcodeToPreview = getAnyShortcode(content || '');
-  $: if (shortcodeToPreview) getShortcodeItem(shortcodeToPreview);
 </script>
 
 <div
-  class="relative grid grid-cols-12 bg-panels dark:bg-darkgrey border-x border-b py-5 pl-5 pr-3 gap-2 lg:gap-4 {$$props.class}"
-  class:border-error={error}
+  class="flex flex-col w-full h-full sm:h-auto border p-3 gap-4 rounded-xl"
+  class:relative={submitting}
 >
   {#if submitting}
-    <div
-      class="absolute top-0 left-0 w-full h-full bg-white/30 dark:opacity-40 z-10 backdrop-blur-3xl"
-    >
+    <div class="absolute top-0 left-0 w-full h-full bg-white/70 z-10">
       <div class="flex w-full h-full items-center justify-center opacity-100">
-        <LoadingIcon />
+        <div class="w-10 h-10">
+          <LoadingIcon />
+        </div>
       </div>
     </div>
   {/if}
-  <div class="col-span-1">
-    <div class="rounded-md overflow-hidden align-middle">
-      <Sigil patp={me} />
-    </div>
-  </div>
-  <div class="col-span-11 pb-2 flex flex-col gap-2">
-    <TextArea {placeholder} bind:value={content} on:keyboardSubmit={post} />
-    {#if shortcodeItems}
-      {#if shortcodeItems.length > 1}
-        <div class="font-bold">Please select one of the items</div>
-      {/if}
-      {#each shortcodeItems as item}
-        <ItemPreview
-          key={item.keyObj}
-          clickable={false}
-          on:click={() => {
-            // remove the other item from the shortcodeitems list, because we
-            // can only reference one at a time
-            shortcodeItems = [item];
-          }}
-        />
-      {/each}
-    {/if}
-    {#if uploadedImageUrl}
-      <div class="flex">
-        <img src={uploadedImageUrl} class="object-cover" alt="uploaded" />
-      </div>
-    {/if}
-    {#if linkToPreview}
-      <LinkPreview url={linkToPreview} />
-    {/if}
-    {#if chatWrit}
-      <GroupsChatMessage {...chatWrit.memo} />
-    {/if}
-    {#if heapCurio}
-      <GroupsHeapCurio {...heapCurio} />
-    {/if}
-    {#if diaryNote}
-      <GroupsDiaryNote {...diaryNote} />
-    {/if}
-  </div>
-  <div class="col-span-12 col-start-2 flex justify-between">
-    {#if showRecommendButtons}
-      <div class="flex gap-1 items-center">
-        <div class="rounded-full overflow-hidden">
-          <IconButton
-            icon={AppIcon}
-            on:click={() => {
-              appModalOpen = true;
-            }}
-            class="fill-black dark:fill-white hover:fill-grey dark:hover:fill-grey"
-          />
-        </div>
-        <div class="rounded-full overflow-hidden">
-          <IconButton
-            icon={PeopleIcon}
-            on:click={() => {
-              groupModalOpen = true;
-            }}
-            class="fill-white dark:fill-grey hover:fill-grey dark:hover:fill-black"
-          />
-        </div>
-        <input
-          type="file"
-          accept="image/*"
-          class="hidden"
-          bind:this={fileInput}
-          on:change={handleImageSelect}
-        />
-        <div class="rounded-full overflow-hidden">
-          <IconButton
-            icon={ImageIcon}
-            on:click={() => {
-              if (!$state.s3 || !$state.s3.configuration?.currentBucket) {
-                alert(
-                  'For attachment support, configure S3 storage with ~dister-nocsyx-lassul/silo. Otherwise, paste a link to a hosted image.'
-                );
-              } else {
-                fileInput.click();
-              }
-            }}
-            class="stroke-grey fill-grey hover:fill-black dark:hover:fill-grey"
-          />
-        </div>
-      </div>
-    {:else if showRatingStars}
-      <StarRating
-        on:change={handleRate}
-        config={{
-          readOnly: false,
-          countStars: 5,
-          range: { min: 0, max: 5, step: 1 },
-          score: rating,
-        }}
-      />
-    {:else}
-      <div />
-    {/if}
+  <div class="flex justify-between items-center w-full"
+    class:hidden={!$state.isComposing}>
     <button
-      class="bg-black dark:bg-white text-white dark:text-darkgrey hover:bg-grey dark:hover:bg-offwhite hover:duration-500 font-bold rounded-lg px-3 py-1 self-end"
-      on:click={post}>{buttonText}</button
-    >
+      class="px-3 py-2 rounded-lg text-tertiary border border-mute flex items-center gap-2"
+      on:click={() => setIsComposing(false)}>
+      <div class="w-4 h-4">
+        <ArrowBackIcon />
+      </div>
+      Back
+    </button>
+    <button class="py-2 px-3 ml-2 rounded-lg bg-black text-white font-bold"
+      on:click={post}>
+      {#if replyTo}Reply{:else}Post{/if}
+    </button>
   </div>
-  {#if error}
-    <div class="col-span-11 col-start-2 text-error pt-2">{error}</div>
+  <div class="flex items-center gap-2">
+    <InlineShip patp={me} isExpanded noSigil/>
+    <div class="flex w-full justify-end overflow-hidden">
+      <RichTextArea
+        bind:editor
+        bind:content
+        {placeholder}
+        on:keyboardSubmit={post}
+        class="resize-y"
+        style="min-height: 10px; max-height: 500px;"
+      />
+    </div>
+  </div>
+  {#if chatWrit}
+    <GroupsChatMessage {...chatWrit.memo} />
   {/if}
-  <Modal bind:open={appModalOpen}>
-    <div class="flex flex-col gap-4 p-4">
-      <div class="text-2xl font-bold">Recommend an app</div>
-      {#if Object.values(apps).length === 0}
-        <div>
-          You have not installed any apps yet. Install some to recommend them on
-          Portal.
-        </div>
-      {/if}
-      {#each Object.entries(apps) as [path, { title, image, color }]}
-        <button
-          class="grid grid-cols-12 dark:border dark:hover:border-white hover:duration-500 rounded-lg items-center gap-4 p-1 hover:bg-panels-hover dark:hover:bg-transparent"
-          on:click={() => {
-            appModalOpen = false;
-            recommendModalOpen = true;
-            selectedKey = keyStrToObj(`/app/${path}/`);
-          }}
-        >
-          <div class="col-span-1">
-            <ItemImage {image} title={title || path} {color} />
-          </div>
-          <div class="col-span-11 justify-self-start font-bold">
-            {title || path}
-          </div>
-        </button>
-      {/each}
+  {#if heapCurio}
+    <GroupsHeapCurio {...heapCurio} />
+  {/if}
+  {#if diaryNote}
+    <GroupsDiaryNote {...diaryNote} />
+  {/if}
+  {#if linkToPreview}
+    <LinkPreview url={linkToPreview} />
+  {/if}
+  {#if uploadedImageUrl}
+    <div class="flex w-full items-center justify-center">
+      <img
+        src={uploadedImageUrl}
+        alt="attachment"
+        class="w-full h-full object-cover rounded-xl"
+      />
     </div>
-  </Modal>
-  <Modal bind:open={groupModalOpen}>
-    <div class="flex flex-col gap-4 p-4">
-      <div class="text-2xl font-bold">Recommend a group</div>
-      {#if Object.values(groups).length === 0}
-        <div>
-          You are not a member of any groups yet, join some in order to
-          recommend them on Portal.
-        </div>
-      {/if}
-      {#each Object.entries(groups) as [path, { meta: { title, image } }]}
-        <button
-          class="grid grid-cols-12 dark:border dark:hover:border-white hover:duration-500 hover:bg-panels-hover rounded-lg items-center gap-4 p-1 hover:bg-panels dark:hover:bg-transparent"
-          on:click={() => {
-            groupModalOpen = false;
-            recommendModalOpen = true;
-            selectedKey = keyStrToObj(`/group/${path}/`);
-          }}
-        >
-          <div class="col-span-1">
-            <ItemImage {image} {title} />
-          </div>
-          <div class="col-span-11 justify-self-start font-bold">{title}</div>
-        </button>
-      {/each}
+  {/if}
+  <div class="flex justify-between items-center w-full">
+    <div class="flex items-center ml-12">
+      <button
+        class="w-10 p-2 rounded-lg text-black"
+        class:text-tertiary={!$state.s3}
+        on:click={() => fileInput.click()}><CollectionIcon /></button
+      >
+      <button
+        class="w-10 p-2.5 rounded-lg text-black"
+        on:click={() => { editor.chain().insertContent('~').run(); }}><UrbitIcon /></button
+      >
+      <input
+        type="file"
+        class="hidden"
+        accept="image/*"
+        bind:this={fileInput}
+        on:change={handleImageSelect}
+      />
     </div>
-  </Modal>
-  <RecommendModal bind:open={recommendModalOpen} key={selectedKey} />
+    <button class="py-1 px-3 ml-2 rounded-lg bg-black text-white font-bold"
+      class:hidden={$state.isComposing}
+      on:click={post}>
+      {#if replyTo}Reply{:else}Post{/if}
+    </button>
+  </div>
 </div>

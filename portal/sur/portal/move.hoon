@@ -21,10 +21,9 @@
          reach=(unit reach:d)
          bespoke=(unit bespoke:d)
          append-to=(list [struc=%collection =ship =cord time=cord])
-         ::  TODO try $>(%collection key), probably wont work tho
          prepend-to-feed=(list [struc=%feed =ship =cord time=cord])
-         ::  in %portal use case, tag should look like /[ship]/whatever
-         tags-to=(list [=key:d tag-to=path tag-from=path])
+         tags-to=(list [=key:d tag-to=path tag-from=path])  ::  tag should look like /[ship]/whatever
+
       ==
       ::
       $+  edit
@@ -36,7 +35,7 @@
               $%  [%other title=(unit @t) blurb=(unit @t) link=(unit @t) image=(unit @t)]
                   [%app screenshots=(unit (list @t)) blurb=(unit @t) dist-desk=(unit @t) sig=(unit signature:d) treaty=(unit treaty:t:d) eth-price=(unit @t)]
                   [%group data=(unit data:g:d)]
-                  [%collection title=(unit @t) blurb=(unit @t) image=(unit @t) key-list=(unit key-list:d)]  ::does it need link?
+                  [%collection title=(unit @t) blurb=(unit @t) image=(unit @t) key-list=(unit key-list:d)]
                   [%feed feed=(unit feed:d)]
                   [%retweet blurb=(unit @t) ref=(unit key:d)]
                   [%blog title=(unit @t) blurb=(unit @t) uri=(unit @t) path=(unit @t) image=(unit @t)]
@@ -53,6 +52,9 @@
       $+  remove
       [%remove =key-list:d col-key=[struc=%collection =ship =cord time=cord]]
       ::
+      $+  remove-from-feed
+      [%remove-from-feed =key:d feed-key=[struc=%feed =ship =cord time=cord]]
+      ::
       $+  destroy
       [%destroy =key:d]  :: abolishes the item from the atmosphere
       ::
@@ -61,6 +63,7 @@
       $+  sub-to-many
       [%sub-to-many =key-list:d]
       ::
+      [%aggregate ~]
       ::
       $+  prepend-to-feed
       [%prepend-to-feed =feed:d feed-key=[struc=%feed =ship =cord time=cord]]  ::  TODO rename?

@@ -1,8 +1,8 @@
-import path from 'path';
-import { loadEnv, defineConfig } from 'vite';
-import { urbitPlugin } from '@urbit/vite-plugin-urbit';
-import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
+import { urbitPlugin } from '@urbit/vite-plugin-urbit';
+import path from 'path';
+import { defineConfig, loadEnv } from 'vite';
 
 // https://vitejs.dev/config/
 export default ({ mode }) => {

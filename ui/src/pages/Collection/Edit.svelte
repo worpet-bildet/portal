@@ -1,27 +1,26 @@
 <script lang="ts">
-  import { pop } from 'svelte-spa-router';
+  import { CollectionsAddItemForm, ItemPreview } from '@components';
   import {
-    state,
-    getItem,
-    getCurator,
-    getCollectionItems,
-    keyStrToObj,
-    keyStrFromObj,
-  } from '@root/state';
-  import { api } from '@root/api';
-  import { ItemPreview, CollectionsAddItemForm } from '@components';
-  import {
-    TextArea,
-    SortableList,
-    RightSidebar,
+    ArrowBackIcon,
+    IconButton,
     Modal,
     OtherItemForm,
-    IconButton,
-    LeftArrowIcon,
     PlusIcon,
-    CheckIcon,
+    RightSidebar,
     SidebarGroup,
+    SortableList,
+    TextArea,
   } from '@fragments';
+  import { api } from '@root/api';
+  import {
+    getCollectionItems,
+    getCurator,
+    getItem,
+    keyStrFromObj,
+    keyStrToObj,
+    state,
+  } from '@root/state';
+  import { pop } from 'svelte-spa-router';
   export let params;
   let { wild } = params;
   let collectionKey = `/collection/${wild}`;
@@ -137,13 +136,13 @@
           >Add Item</IconButton
         >
         <IconButton
-          icon={CheckIcon}
+          icon={PlusIcon}
           on:click={save}
           class="dark:hover:border-white dark:border hover:bg-panels-hover"
           >Save</IconButton
         >
         <IconButton
-          icon={LeftArrowIcon}
+          icon={ArrowBackIcon}
           on:click={pop}
           class="dark:hover:border-white dark:border hover:bg-panels-hover"
           >Back</IconButton
@@ -165,10 +164,10 @@
       </div>
       <div class="flex justify-between">
         <IconButton
-          icon={LeftArrowIcon}
+          icon={ArrowBackIcon}
           on:click={() => (editModalOpen = false)}>Back</IconButton
         >
-        <IconButton icon={CheckIcon} on:click={saveEdits}>Save</IconButton>
+        <IconButton icon={PlusIcon} on:click={saveEdits}>Save</IconButton>
       </div>
     </div>
   </Modal>
