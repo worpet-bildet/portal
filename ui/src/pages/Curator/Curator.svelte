@@ -51,7 +51,7 @@
 {#if curator}
   {@const { title, nickname, cover, image, description, color } =
     getMeta(curator)}
-  <div class="grid grid-cols-12 gap-4 sm:gap-8">
+  <div class="grid grid-cols-12 gap-4 sm:gap-8 pb-20">
     <div class="col-span-12 w-full sm:h-48">
       {#if cover}
         <img

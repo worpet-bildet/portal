@@ -14,7 +14,6 @@
   import config from '@root/config';
   import {
     getItem,
-    getMoreFromThisShip,
     getReviews,
     getReviewsByTo,
     keyStrFromObj,
@@ -155,12 +154,10 @@
     isReviewedByMe = reviews.find((r) => r.ship === me);
   };
 
-  let sortedRecommendations = [];
   let purchased;
   state.subscribe((s) => {
     if (!s.isLoaded) return;
     loadApp(s);
-    sortedRecommendations = getMoreFromThisShip(ship, cord).slice(0, 4);
     purchased = s?.['bought-apps']?.[`${ship ?? '~zod'}/${desk}`];
   });
 
@@ -250,7 +247,7 @@
 {#if item}
   {@const { cover } = getMeta(item)}
 
-  <div class="grid grid-cols-12 gap-4 sm:gap-8">
+  <div class="grid grid-cols-12 gap-4 sm:gap-8 pb-20">
     <div class="col-span-12 w-full sm:h-48">
       {#if isImage(cover)}
         <img

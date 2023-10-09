@@ -6,7 +6,6 @@
   import {
     getGroup,
     getJoinedGroupDetails,
-    getMoreFromThisShip,
     keyStrToObj,
     state,
   } from '@root/state';
@@ -14,6 +13,7 @@
 
   export let params;
 
+  let group, joinedDetails;
   const loadGroup = () => {
     if (!groupKey) return;
     group = getGroup(groupKey);
@@ -29,14 +29,6 @@
     groupKey = `${host}/${cord}`;
     loadGroup();
   }
-
-  let group, joinedDetails;
-  let sortedRecommendations = [];
-  state.subscribe((s) => {
-    if (!s.isLoaded) return;
-    loadGroup();
-    sortedRecommendations = getMoreFromThisShip(host, cord).slice(0, 4);
-  });
 
   const channelLink = (channelKey) => {
     return `${window.location.origin}/apps/groups/groups/${groupKey}/channels/${channelKey}`;
@@ -124,16 +116,6 @@
         </div>
       {/if}
     </div>
-    <RightSidebar>
-      {#if sortedRecommendations.length > 0}
-        <SidebarGroup>
-          <div class="text-lg mx-1">More from {host}</div>
-          {#each sortedRecommendations as [recommendation]}
-            <ItemPreview key={keyStrToObj(recommendation)} small />
-          {/each}
-        </SidebarGroup>
-      {/if}
-    </RightSidebar>
   </div>
 {:else}
   Loading...
