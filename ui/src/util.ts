@@ -270,6 +270,11 @@ export const getGroupsLink = (item) => {
         item?.bespoke?.channel
       }/curio/${removeDotsFromId(item?.bespoke?.time)}`;
       break;
+    case 'groups-diary-note':
+      suffix = `groups/${item?.bespoke?.group}/channels/diary/${
+        item?.bespoke?.channel
+      }/note/${removeDotsFromId(item?.bespoke?.['time-ref'])}`;
+      break;
   }
   if (suffix) {
     return `${prefix}${suffix}`;
