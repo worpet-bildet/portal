@@ -214,52 +214,17 @@
              !>([dist-desk.bespoke.item.u.wave.msg src.msg our.bowl now.bowl sig.bespoke.item.u.wave.msg item.u.wave.msg])
           ==
       =/  cards
-        ?:  ?&  =('global' time.key.item.u.wave.msg)
+        ?.  ?&  =('global' time.key.item.u.wave.msg)
                 ?=([%feed *] bespoke.item.u.wave.msg)
             ==
-          :~  %-  ~(act cards:p [our.bowl %portal-manager]) 
-              [%sub-to-many (feed-to-key-list:conv:p (scag 20 feed.bespoke.item.u.wave.msg))]
-          ==
-        ?:  ?&  =('~2000.1.1' time.key.item.u.wave.msg)
-                ?=([%feed *] bespoke.item.u.wave.msg)
-            ==
-          :~  %-  ~(act cards:p [our.bowl %portal-manager]) 
-              [%sub-to-many (feed-to-key-list:conv:p (scag 20 feed.bespoke.item.u.wave.msg))]
-          ==
-        ~
+          ~
+        [(~(act cards:p [our.bowl %portal-manager]) [%sub-to-many (feed-to-key-list:conv:p (scag 20 feed.bespoke.item.u.wave.msg))])]~
       :_  this  (welp cards (upd:cards-methods:stor item.u.wave.msg))
       ::
         %prepend-to-feed
-      =;  cards
-        :_  this
-        (welp (upd:cards-methods:stor rock.msg) cards)
-      ::
-      ?:  =(ship.key.rock.msg our.bowl)
-        ~
-      ?:  =('global' time.key.rock.msg)
-        =/  keys  (feed-to-key-list:conv:p feed.u.wave.msg)
-        =/  sub-to
-          %~  tap  in
-          %-  silt
-          %+  welp
-            %+  murn  keys
-            |=  =key:d:m:p
-            ?:  =(ship.key our.bowl)
-              ~
-            `[%feed ship.key '' '~2000.1.1']
-          %+  murn  keys
-          |=  =key:d:m:p
-          ?:  =(ship.key our.bowl)
-            ~
-          `[%collection ship.key '' '~2000.1.1']
-        :~  %-  ~(act cards:p [our.bowl %portal-manager]) 
-            [%sub-to-many (welp keys sub-to)]
-        ==
-      ?:  =('~2000.1.1' time.key.rock.msg)
-        =/  keys    (feed-to-key-list:conv:p feed.u.wave.msg)
-        =/  sub-to  ~(tap in (silt keys))
-        (~(act cards:p [our.bowl %portal-manager]) [%sub-to-many sub-to])^~
-      ~   
+      :_  this
+      %+  welp  (upd:cards-methods:stor rock.msg)
+      [(~(act cards:p [our.bowl %portal-manager]) [%sub-to-many (feed-to-key-list:conv:p feed.u.wave.msg)])]~
     ==
       %sss-fake-on-rock
     =/  msg  !<(from:da-item (fled:sss vase))
@@ -579,7 +544,6 @@
         =/  our  (key-to-node:conv:p key.item)
         =/  their    (key-to-node:conv:p key)
         :_  state.q
-        %+  welp  cards.q
         %+  snoc  (gra:cards-methods portal-store+[%add-tag tag-to our their])
         %-  ~(msg cards:p [ship.key %portal-store])
             [%add-tag-request our.bowl tag-from their our]
