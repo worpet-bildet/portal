@@ -1,5 +1,5 @@
 /-  portal-item, st=portal-states
-/+  default-agent, p=portal, sss, tr=portal-transition, dbug
+/+  default-agent, p=portal, sss, dbug, tr=portal-transition
 /$  items-to-json  %portal-items  %json
 /$  item-to-json  %portal-item  %json
 /$  store-result-to-json  %portal-store-result  %json
@@ -86,7 +86,7 @@
   ::  - init-sequence to create and sub if sth was missed previously
   =^  cards-3  state  init-sequence:stor
   ::  - cleanup past mistakes
-  ::  - publish all items which are unpublished
+  ::  - repub all sss stuff bcs of previous problems
   ::    ->  either to rem scry or sss
   :: =/  item-paths
   ::   .^((list path) %gt /(scot %p our.bowl)/portal-store/(scot %da now.bowl)//item)
@@ -100,28 +100,13 @@
     ?:  =(lens.item %temp)  q                        ::  if %temp, no need
     ?.  ?=(?(%collection %feed %app %blog) struc.key.item)      ::  if not %col or %feed or %app
       q
-      :: ?~  (find [path]~ item-paths)
-        :: :_  state.q
-        :: (welp cards.q (gro:cards-methods item))
-      :: :_  state.q
-      :: (welp cards.q (cul:cards-methods key.item 0))
-    ::?:  (~(has by read:du-item) path)  q   ::  if already published, no need
     =^  cards-1  item-pub.state.q  (kill:du-item ~[path])
-    =^  cards-2  item-pub.state.q  (give:du-item path [%whole item])
+    =/  cards-2  :_  ~
+      :*  %pass  /repub  %agent  [our.bowl %portal-store]  %poke
+          %noun  !>([%pub key.item])
+      ==
     [;:(welp cards.q cards-1 cards-2) state.q]
-  ::  - unsub from all which are not %feed or %col because of rem scry transition
-  =.  state
-    =+  ~(tap in ~(key by read:da-item))
-    %-  tail
-    %^  spin  -  state
-    |=  [p=[=ship =dude:gall =path] q=[state=state-4]]
-    =/  key  (path-to-key:conv:^p +:path.p)
-    =.  state  state.q
-    ?.  ?=(?(%feed %collection %app %blog) struc.key)
-      =.  item-sub.state.q  (quit:da-item ship.key %portal-store path.p)
-      [p state.q]
-    [p state.q]
-  ::  resub to main feed after problem with sss
+  ::  - resub to main feed after problem with sss
   =/  pat  ;;  [%item @ @ @ @ ~]  /item/feed/(scot %p indexer)//global
   =.  item-sub  (quit:da-item indexer %portal-store pat)
   =/  cards-5  :_  ~
@@ -135,6 +120,26 @@
   |=  [=mark =vase]
   ^-  (quip card _this)
   ?+    mark    (on-poke:default mark vase)
+      %noun
+    ?.  =(our.bowl src.bowl)  `this
+    =/  act  !<($%([%unsub =key:d:m:p] [%pub =key:d:m:p] [%unpub =key:d:m:p]) vase)
+    ?-    -.act
+        %unsub  
+      =.  item-sub  
+      (quit:da-item ship.key.act %portal-store [%item (key-to-path:conv:p key.act)])
+      `this
+      ::
+        %pub
+      =^  cards  item-pub  
+        %+  give:du-item  
+        [%item (key-to-path:conv:p key.act)]  [%whole (get-item:stor key.act)]
+      [cards this]
+      ::
+        %unpub
+      =^  cards  item-pub  (kill:du-item [%item (key-to-path:conv:p key.act)]~)
+      [cards this]
+    ==
+    ::
       %portal-action
     ?.  =(our.bowl src.bowl)  `this
     =/  act  !<(action:m:p vase)
@@ -144,6 +149,7 @@
       %prepend-to-feed  =^(cards state (prepend-to-feed:handle-poke:stor act) [cards this])
       %append   =^(cards state (append:handle-poke:stor act) [cards this])
       %remove   =^(cards state (remove:handle-poke:stor act) [cards this])
+      %remove-from-feed   =^(cards state (remove-from-feed:handle-poke:stor act) [cards this])
       %destroy  =^(cards state (destroy:handle-poke:stor act) [cards this])
       %sub      =^(cards state (sub:handle-poke:stor act) [cards this])
       %sub-to-many      =^(cards state (sub-to-many:handle-poke:stor act) [cards this])
@@ -208,17 +214,52 @@
              !>([dist-desk.bespoke.item.u.wave.msg src.msg our.bowl now.bowl sig.bespoke.item.u.wave.msg item.u.wave.msg])
           ==
       =/  cards
-        ?.  ?&  =('global' time.key.item.u.wave.msg)
+        ?:  ?&  =('global' time.key.item.u.wave.msg)
                 ?=([%feed *] bespoke.item.u.wave.msg)
             ==
-          ~
-        [(~(act cards:p [our.bowl %portal-manager]) [%sub-to-many (feed-to-key-list:conv:p (scag 20 feed.bespoke.item.u.wave.msg))])]~
+          :~  %-  ~(act cards:p [our.bowl %portal-manager]) 
+              [%sub-to-many (feed-to-key-list:conv:p (scag 20 feed.bespoke.item.u.wave.msg))]
+          ==
+        ?:  ?&  =('~2000.1.1' time.key.item.u.wave.msg)
+                ?=([%feed *] bespoke.item.u.wave.msg)
+            ==
+          :~  %-  ~(act cards:p [our.bowl %portal-manager]) 
+              [%sub-to-many (feed-to-key-list:conv:p (scag 20 feed.bespoke.item.u.wave.msg))]
+          ==
+        ~
       :_  this  (welp cards (upd:cards-methods:stor item.u.wave.msg))
       ::
         %prepend-to-feed
-      :_  this
-      %+  welp  (upd:cards-methods:stor rock.msg)
-      [(~(act cards:p [our.bowl %portal-manager]) [%sub-to-many (feed-to-key-list:conv:p feed.u.wave.msg)])]~
+      =;  cards
+        :_  this
+        (welp (upd:cards-methods:stor rock.msg) cards)
+      ::
+      ?:  =(ship.key.rock.msg our.bowl)
+        ~
+      ?:  =('global' time.key.rock.msg)
+        =/  keys  (feed-to-key-list:conv:p feed.u.wave.msg)
+        =/  sub-to
+          %~  tap  in
+          %-  silt
+          %+  welp
+            %+  murn  keys
+            |=  =key:d:m:p
+            ?:  =(ship.key our.bowl)
+              ~
+            `[%feed ship.key '' '~2000.1.1']
+          %+  murn  keys
+          |=  =key:d:m:p
+          ?:  =(ship.key our.bowl)
+            ~
+          `[%collection ship.key '' '~2000.1.1']
+        :~  %-  ~(act cards:p [our.bowl %portal-manager]) 
+            [%sub-to-many (welp keys sub-to)]
+        ==
+      ?:  =('~2000.1.1' time.key.rock.msg)
+        =/  keys    (feed-to-key-list:conv:p feed.u.wave.msg)
+        =/  sub-to  ~(tap in (silt keys))
+        (~(act cards:p [our.bowl %portal-manager]) [%sub-to-many sub-to])^~
+      ~   
     ==
       %sss-fake-on-rock
     =/  msg  !<(from:da-item (fled:sss vase))
@@ -322,9 +363,7 @@
     =?  path  =('use_as_empty_path_slot' i.t.t.t.t.path)
       path(t.t.t.t ['' t.t.t.t.t.path])
     =/  key  ;;  key:d:m:p  (to-key:conv:p (path-to-key:conv:p t.path))
-    ?:  (~(has by items) key)
-      %.y
-    (~(has by read:da-item) [ship.key %portal-store [%item t.path]])
+    (item-exists key)
   ==
   ::
 ++  on-fail   on-fail:default
@@ -337,6 +376,13 @@
               (du item-pub bowl -:!>(*result:du))
     da-item   =/  da  (da:sss portal-item ,[%item @ @ @ @ ~])
               (da item-sub bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
+::
+++  item-exists
+  |=  =key:d:m:p
+  ^-  ?
+  ?:  (~(has by items) key)
+    %.y
+  (~(has by read:da-item) [ship.key %portal-store [%item (key-to-path:conv:p key)]])
 ::
 ++  get-item
   |=  =key:d:m:p
@@ -354,7 +400,7 @@
   ?>  |(=(our.bowl ship.key.item) =(lens.item %temp))
   (~(put by items) key.item item)
 ::
-::  whether a ship is allowed to get/sub to an item
+::  whether a ship is allowed to gqet/sub to an item
 ++  ship-in-reach
   |=  [=ship =key:d:m:p]
   ^-  ?
@@ -465,7 +511,11 @@
       ^+  [*(list card) state]
       ?>  ?=([%sub *] act)
       ::  don't subscribe to our item
-      ?:  &(=(ship.key.act our.bowl) =(cord.key.act ''))         `state
+      ?:  &(=(ship.key.act our.bowl) =(cord.key.act ''))
+        ?:  (item-exists key.act)
+          :_  state
+          (upd:cards-methods (get-item key.act))
+        `state
       =/  path  [%item (key-to-path:conv:p key.act)]
       ::  note SSS only for feeds and collections is also temporary fix
       ::  because it is not scalable as well
@@ -529,6 +579,7 @@
         =/  our  (key-to-node:conv:p key.item)
         =/  their    (key-to-node:conv:p key)
         :_  state.q
+        %+  welp  cards.q
         %+  snoc  (gra:cards-methods portal-store+[%add-tag tag-to our their])
         %-  ~(msg cards:p [ship.key %portal-store])
             [%add-tag-request our.bowl tag-from their our]
@@ -583,6 +634,16 @@
       =^  cards  item-pub  (pub-item [%whole col])
       :_  state(items (put-item col))
       (welp cards (upd:cards-methods col))
+    ::
+    ++  remove-from-feed
+      |=  [act=action:m:p]
+      ^+  [*(list card) state]
+      ?>  ?=([%remove-from-feed *] act)
+      =/  path  [%item (key-to-path:conv:p feed-key.act)]
+      =/  feed  (remove-from-feed:itm (get-item feed-key.act) act)
+      =^  cards  item-pub  (pub-item [%whole feed])
+      :_  state(items (put-item feed))
+      (welp cards (upd:cards-methods feed))
     ::
     ++  destroy
       |=  [act=action:m:p]

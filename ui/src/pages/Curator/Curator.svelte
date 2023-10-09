@@ -1,5 +1,5 @@
 <script lang="ts">
-  import gradient from '@assets/gradient.svg';
+  import coverPhoto from '@assets/coverPhoto.jpg';
   import { CollectionsList, Feed, ProfileCard } from '@components';
   import { CollectionIcon, FeedIcon, Tabs } from '@fragments';
   import { api } from '@root/api';
@@ -51,7 +51,7 @@
 {#if curator}
   {@const { title, nickname, cover, image, description, color } =
     getMeta(curator)}
-  <div class="grid grid-cols-12 gap-8">
+  <div class="grid grid-cols-12 gap-4 sm:gap-8">
     <div class="col-span-12 w-full sm:h-48">
       {#if cover}
         <img
@@ -64,13 +64,13 @@
           class="absolute top-0 left-0 w-full h-72 bg-gradient-to-t from-coverDefaultGradientBottom to-coverDefaultGradientTop"
         /> -->
         <img
-          src={gradient}
+          src={coverPhoto}
           alt="default profile banner"
           class="relative sm:absolute sm:top-0 left-0 w-full h-48 sm:h-72 object-cover"
         />
       {/if}
       <div
-        class="hidden sm:absolute sm:top-0 left-0 w-full h-48 sm:h-72 bg-gradient-to-t from-coverPhotoBottom to-coverPhotoTop"
+        class="hidden sm:block sm:absolute sm:top-0 left-0 w-full h-48 sm:h-72 bg-gradient-to-t from-coverPhotoBottom to-coverPhotoTop"
       />
     </div>
 

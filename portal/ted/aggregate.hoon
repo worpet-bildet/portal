@@ -46,7 +46,7 @@
 ::
 =/  [notes-from=@da notes-count=@t notes-exists=? actual-notes-feed=feed:d:mov]
   ?~  notes-exists=+.notes-feed
-    [(sub now ~d40) '1.000' %.n ~]
+    [(sub now ~d365) '1.000' %.n ~]
   =/  notes  ;;(item:d:mov +.notes-feed)
   ?>  ?=([%feed *] bespoke.notes)
   ?~  feed.bespoke.notes
@@ -55,16 +55,16 @@
 ::
 =/  [curios-from=@dr curios-count=@t curios-exists=? actual-curios-feed=feed:d:mov]
   ?~  curios-exists=+.curios-feed
-    [(sub now ~d40) '1.000' %.n ~]
+    [(sub now ~d60) '2.000' %.n ~]
   =/  curios  ;;(item:d:mov +.curios-feed)
   ?>  ?=([%feed *] bespoke.curios)
   ?~  feed.bespoke.curios
-    [(sub now ~h4.m5) '100' %.y ~]
+    [(sub now ~d60) '2.000' %.y ~]
   [(slav %da -:-:feed.bespoke.curios) '100' %.y feed.bespoke.curios]
 ::
 =/  [msgs-from=@dr msgs-count=@t msgs-exists=? actual-msgs-feed=feed:d:mov]
   ?~  msgs-exists=+.msgs-feed
-    [(sub now ~d40) '1.000' %.n ~]
+    [(sub now ~d365) '1.000' %.n ~]
   =/  msgs  ;;(item:d:mov +.msgs-feed)
   ?>  ?=([%feed *] bespoke.msgs)
   ?~  feed.bespoke.msgs
@@ -162,39 +162,39 @@
   $(diary-flags +:diary-flags)
 ::
 ;<  ~  bind:m
-  %-  send-raw-card
-  (create-feed-card 'groups-curios' ~)
-:: ;<  ~  bind:m
-::   |-
-::   ?~  heap-flags
-::     =+  sorted-new=(sort new-curios-feed compare-feed)
-::     ?:  curios-exists  :: if feed item exists
-::       =/  merged-feed  (weld sorted-new actual-curios-feed)
-::       %-  send-raw-cards
-::       :~  (edit-feed-card 'groups-curios' merged-feed)
-::           (sub-to-many-card sorted-new)
-::       ==
-::     %-  send-raw-cards
-::     :~  (create-feed-card 'groups-curios' sorted-new)
-::         (sub-to-many-card sorted-new)
-::     ==
-::   ::
-::   =/  =flag:h  -:heap-flags
-::   ::
-::   =/  m  (strand ,~)
-::   ^-  form:m
-::   ;<  =curios:h  bind:m
-::     %+  scry  curios:h
-::     /gx/heap/heap/(scot %p p.flag)/[q.flag]/curios/newer/(scot %ud curios-from)/[curios-count]/noun
-::   =/  lis=(list [time curio:c:h])  (tap:on:curios:h curios)
-::   =/  fed=feed:d:mov
-::     %+  turn  lis
-::     |=  [=time =curio:c:h]
-::     :+  (scot %da time.curio)  our
-::     [%groups-heap-curio p.flag (to-cord q.flag time.curio) '']
-::   =.  new-curios-feed  (weld fed new-curios-feed)
-::   $(heap-flags +:heap-flags)
-:: ::
+  |-
+  ?~  heap-flags
+    =+  sorted-new=(sort new-curios-feed compare-feed)
+    ?:  curios-exists  :: if feed item exists
+      =/  merged-feed  (weld sorted-new actual-curios-feed)
+      %-  send-raw-cards
+      :~  (edit-feed-card 'groups-curios' merged-feed)
+          (sub-to-many-card sorted-new)
+      ==
+    %-  send-raw-cards
+    :~  (create-feed-card 'groups-curios' sorted-new)
+        (sub-to-many-card sorted-new)
+    ==
+  ::
+  =/  =flag:h  -:heap-flags
+  ::
+  =/  m  (strand ,~)
+  ^-  form:m
+  ;<  =curios:h  bind:m
+    %+  scry  curios:h
+    /gx/heap/heap/(scot %p p.flag)/[q.flag]/curios/newer/(scot %ud curios-from)/[curios-count]/noun
+  =/  lis=(list [time curio:c:h])  (tap:on:curios:h curios)
+  =/  fed=feed:d:mov
+    %+  murn  lis
+    |=  [=time =curio:c:h]
+    ?^  replying.heart.curio
+      ~
+    %-  some
+    :+  (scot %da time.curio)  our
+    [%groups-heap-curio p.flag (to-cord q.flag time.curio) '']
+  =.  new-curios-feed  (weld fed new-curios-feed)
+  $(heap-flags +:heap-flags)
+::
 ;<  ~  bind:m
   |^
   ?~  chat-flags

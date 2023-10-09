@@ -45,42 +45,43 @@
           {description}
         </div>
       </div>
-
-      {#if !joinedDetails}
-        <IconButton
-          icon={PlusIcon}
-          on:click={join}
-          async
-          class="bg-black text-white w-fit">Join Group</IconButton
-        >
-      {:else if joinedDetails.joining}
-        <IconButton loading async class="bg-black text-white w-fit"
-          >Joining...</IconButton
-        >
-      {:else}
-        <div class="flex flex-col gap-1">
-          <div class="font-bold">Members</div>
-          <div class="flex items-center gap-2">
-            <div class="w-5 h-5 mb-1 dark:fill-white">
-              <ProfileIcon />
+      <div class="flex flex-row gap-6">
+        {#if !joinedDetails}
+          <IconButton
+            icon={PlusIcon}
+            on:click={join}
+            async
+            class="bg-black text-white w-fit">Join Group</IconButton
+          >
+        {:else if joinedDetails.joining}
+          <IconButton loading async class="bg-black text-white w-fit"
+            >Joining...</IconButton
+          >
+        {:else}
+          <div class="flex flex-col gap-1">
+            <div class="font-bold">Members</div>
+            <div class="flex items-center gap-2">
+              <div class="w-5 h-5 mb-1 dark:fill-white">
+                <ProfileIcon />
+              </div>
+              {Object.keys(joinedDetails.fleet).length}
             </div>
-            {Object.keys(joinedDetails.fleet).length}
           </div>
-        </div>
-      {/if}
-      <IconButton
-        icon={RepostIcon}
-        on:click={() => (recommendModalOpen = true)}
-        class="bg-panelhover text-secondary w-fit">Recommend</IconButton
-      >
-      {#if joinedDetails}
+        {/if}
         <IconButton
-          icon={CancelIcon}
-          on:click={leave}
-          async
-          class="text-xs text-tertiary bg-panel w-fit">Leave</IconButton
+          icon={RepostIcon}
+          on:click={() => (recommendModalOpen = true)}
+          class="bg-panelhover text-secondary w-fit">Recommend</IconButton
         >
-      {/if}
+        {#if joinedDetails}
+          <IconButton
+            icon={CancelIcon}
+            on:click={leave}
+            async
+            class="text-secondary bg-panel w-fit">Leave</IconButton
+          >
+        {/if}
+      </div>
       <MoreFrom patp={ship} exclude={[group.keyStr]} />
     </div>
   </div>

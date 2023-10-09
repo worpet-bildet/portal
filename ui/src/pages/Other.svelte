@@ -14,7 +14,7 @@
     keyStrToObj,
     state,
   } from '@root/state';
-  import { fromUrbitTime, getMeta } from '@root/util';
+  import { fromUrbitTime, getMeta, collapseNames } from '@root/util';
 
   import { FeedPost, FeedPostForm, ProfileCard } from '@components';
 
@@ -86,16 +86,16 @@
   $: postOfInterest?.scrollIntoView();
 </script>
 
-<div class="grid grid-cols-12 gap-8 mb-4">
-  <div class="flex flex-col gap-8 rounded-t-2xl col-span-12 md:col-span-7">
+<div class="grid grid-cols-12 gap-8 mb-4 pb-20">
+  <div class="flex flex-col gap-4 rounded-t-2xl col-span-12 md:col-span-7">
     <div>
       <button
         on:click={pop}
-        class="flex gap-2 items-center border rounded-lg text-tertiary px-2 py-1"
+        class="flex gap-2 items-center border border-panelicon rounded-lg text-panelicon px-2 py-1"
         ><div class="w-4 h-4">
           <ArrowBackIcon />
         </div>
-        <div>Feed</div></button
+        <div>Back</div></button
       >
     </div>
     {#if !item || (postChain && postChain.length === 0)}
@@ -105,22 +105,22 @@
     {/if}
     {#if postChain}
       {#if postChain.length === 1}
-        <div class="mb-28 sm:mb-6">
-          <FeedPost key={postChain[0]} isReplyFormOpen={true} />
+        <FeedPost key={postChain[0]} isReplyFormOpen={true} />
+        <div class="mt-4">
           <FeedPostForm
             {replyingToNames}
             replyTo={postChain[0]}
-            placeholder={`Respond to ${replyingToNames[0]}`}
+            placeholder={`Respond to ${collapseNames(replyingToNames)}`}
           />
         </div>
         {#each replies as reply}
-          <div class="pb-6">
+          <div>
             <FeedPost key={reply} />
           </div>
         {/each}
       {:else}
         {#each postChain as key, i}
-          <div class="mb-6" bind:this={postOfInterest}>
+          <div bind:this={postOfInterest}>
             <FeedPost
               {key}
               indent={keyStrFromObj(key) !== keyStrFromObj(item.keyObj)}
@@ -128,16 +128,18 @@
                 keyStrFromObj(item.keyObj)}
             />
             {#if i === postChain.length - 1}
-              <FeedPostForm
-                {replyingToNames}
-                replyTo={key}
-                placeholder={`Respond to ${replyingToNames[0]}`}
-              />
+              <div class="mt-4">
+                <FeedPostForm
+                  {replyingToNames}
+                  replyTo={key}
+                  placeholder={`Respond to ${collapseNames(replyingToNames)}`}
+                />
+              </div>
             {/if}
           </div>
         {/each}
         {#each replies as reply}
-          <div class="pb-6">
+          <div>
             <FeedPost key={reply} />
           </div>
         {/each}

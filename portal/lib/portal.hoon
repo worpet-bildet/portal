@@ -475,7 +475,7 @@
     ?>  ?=([%prepend-to-feed *] act)
     ?>  ?=(%feed -.bespoke.feed)
     ?>  =(key.feed feed-key.act)
-    =/  new-feed  %+  oust  [1.000 (lent feed.act)]
+    =/  new-feed  %+  oust  [2.500 (lent feed.act)]
       (weld feed.act feed.bespoke.feed)
     (edit now feed [%edit key.feed ~ ~ `[%feed `new-feed]])
   ::
@@ -510,16 +510,28 @@
     %^  edit  now  col
       [%edit col-key.act ~ ~ `[%collection ~ ~ ~ `new-key-list]]
   ::
+  ++  remove-from-feed
+    |=  [now=time feed=item:d:m act=action:m]
+    ^-  item:d:m
+    ?>  ?=([%remove-from-feed *] act)
+    ?>  ?=(%feed -.bespoke.feed)
+    ?>  =(feed-key.act key.feed)
+    =/  new-feed  %+  skip  feed.bespoke.feed
+      |=([time=cord =ship =key:d:m] =(key key.act))
+    %^  edit  now  feed
+      [%edit feed-key.act ~ ~ `[%feed `new-feed]]
+  ::
   --
 ::
 ++  item-methods  ::  all arms here should output item
   |_  =bowl:gall
-  ++  edit             (cury edit:pure now.bowl)
-  ++  create           (cury create:pure [our now]:bowl)
-  ++  prepend-to-feed  (cury prepend-to-feed:pure now.bowl)
-  ++  append-no-dupe   (cury append-no-dupe:pure now.bowl)
-  ++  append-to-col    (cury append-to-col:pure now.bowl)
-  ++  remove-from-col  (cury remove-from-col:pure now.bowl)
+  ++  edit              (cury edit:pure now.bowl)
+  ++  create            (cury create:pure [our now]:bowl)
+  ++  prepend-to-feed   (cury prepend-to-feed:pure now.bowl)
+  ++  append-no-dupe    (cury append-no-dupe:pure now.bowl)
+  ++  append-to-col     (cury append-to-col:pure now.bowl)
+  ++  remove-from-col   (cury remove-from-col:pure now.bowl)
+  ++  remove-from-feed  (cury remove-from-feed:pure now.bowl)
   --
 ::
 ::

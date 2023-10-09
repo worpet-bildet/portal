@@ -11,7 +11,7 @@
 </script>
 
 {#if feed && feed.length > 0}
-  <div class="flex flex-col gap-12 mb-20">
+  <div class="flex flex-col gap-6 mb-20">
     {#each feed as item (keyStrFromObj(item.key))}
       <div>
         <FeedPost

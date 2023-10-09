@@ -4,25 +4,26 @@
   export let unreadCount: number = 0;
   export let collapsed: boolean = false;
   export let active: boolean = false;
+  export let newFeature: boolean = false;
 
   let hovering: boolean = false;
 </script>
 
 <button
-  class="flex items-center justify-center lg:justify-between py-2 px-3 hover:bg-navitemactive rounded-lg w-full relative"
+  class="flex items-center justify-center lg:justify-between py-2 px-3 hover:bg-panelhover rounded-lg w-full relative"
   on:mouseenter={() => (hovering = true)}
   on:mouseleave={() => (hovering = false)}
   on:click
 >
   <div
     class="flex gap-3 items-center flex-col md:flex-row"
-    class:text-navtext={!active && !hovering}
-    class:text-navtextactive={active || hovering}
+    class:text-navtext={!active}
+    class:text-black={active}
   >
     <div
       class="w-5 h-5 relative"
-      class:text-panelicon={!active && !hovering}
-      class:text-navtextactive={active || hovering}
+      class:text-panelicon={!active}
+      class:text-navtextactive={active}
     >
       <svelte:component this={icon} />
       {#if unreadCount > 0}
@@ -38,6 +39,13 @@
       class="bg-indicator text-navtextactive text-xs px-2 py-1 rounded-md hidden lg:block"
     >
       {unreadCount}
+    </div>
+  {/if}
+  {#if newFeature}
+    <div
+      class="bg-indicator text-navtextactive text-xs px-2 py-1 rounded-md hidden lg:block"
+    >
+      NEW
     </div>
   {/if}
 </button>

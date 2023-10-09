@@ -21,10 +21,9 @@
       <a
         use:link
         href="#/"
-        class="flex items-center justify-center lg:justify-start gap-3 md:p-2 mt-3 mb-3"
-      >
+        class="flex items-center justify-center lg:justify-start gap-3 md:p-2 mt-3 mb-3">
         <img src={logo} class="w-10 h-10" alt="logo" />
-        <div class="hidden lg:block text-l font-bold">Portal</div>
+        <div class="hidden lg:block text-2xl tracking-widest font-sans text-secondary">PORTAL</div>
       </a>
       <div>
         <NavItem
@@ -45,6 +44,7 @@
           icon={ActivityIcon}
           title={'Activity'}
           collapsed={navCollapsed}
+          newFeature
           active={$location === '/activity'}
           on:click={() => push('#/activity')}
         />

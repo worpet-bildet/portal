@@ -171,7 +171,7 @@
           </a>
         {/if}
       </div>
-      <div class="text-xs text-light">{format(createdAt)}</div>
+      <div class="text-xs text-secondary">{format(createdAt)}</div>
     </div>
     <div class="flex w-full gap-4">
       {#if indent}
@@ -179,9 +179,7 @@
       {/if}
       <a
         draggable="false"
-        class="flex flex-col w-full bg-panel text-posttext px-3 py-5 whitespace-pre-wrap break-words gap-5 select-text"
-        class:rounded-t-xl={isReplyFormOpen}
-        class:rounded-xl={!isReplyFormOpen}
+        class="flex flex-col w-full bg-panel text-black px-3 py-5 whitespace-pre-wrap break-words gap-5 select-text rounded-xl"
         class:hover:bg-panelhover={!isReplyFormOpen}
         class:cursor-default={isReplyFormOpen}
         href={getExternalLink() ||
@@ -227,23 +225,23 @@
             href={keyStrFromObj(item.keyObj)}
             class="col-span-1 flex items-center gap-2"
           >
-            <div class="w-5 h-5 text-panelicon"><ChatIcon /></div>
-            <div class="text-light">{replies.length}</div>
+            <div class="w-5 h-5 text-secondary"><ChatIcon /></div>
+            <div class="text-secondary">{replies.length}</div>
           </a>
           <div class="col-span-1 flex items-center gap-2">
             {#if isLikedByMe}
               <div class="w-5 h-5 text-error">
                 <LikeIcon />
               </div>
-              <div class="text-light">{numLikes}</div>
+              <div class="text-error">{numLikes}</div>
             {:else}
               <button
-                class="w-5 h-5 text-transparent stroke-panelicon"
-                on:click|stopPropagation={likePost}
+                class="w-5 h-5 text-transparent stroke-secondary"
+                on:click|stopPropagation|preventDefault={likePost}
               >
                 <LikeIcon />
               </button>
-              <div class="text-light">{numLikes}</div>
+              <div class="text-secondary">{numLikes}</div>
             {/if}
           </div>
         </div>

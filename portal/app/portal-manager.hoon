@@ -1,9 +1,9 @@
 /-  c=portal-config, portal-devs, blog-paths
 /+  default-agent, p=portal, sss, dbug
-:: /$  json-to-action  %json  %portal-action
-:: /$  msg-to-json  %portal-message  %json
-:: /$  dev-map-to-json  %portal-dev-map  %json
-:: /$  portal-manager-result-to-json  %portal-manager-result  %json
+/$  json-to-action  %json  %portal-action
+/$  msg-to-json  %portal-message  %json
+/$  dev-map-to-json  %portal-dev-map  %json
+/$  portal-manager-result-to-json  %portal-manager-result  %json
 |%
 +$  versioned-state
   $+  manager-versioned-state
@@ -278,6 +278,16 @@
           col-key   
         ;;  [%collection =ship =cord time=cord]
         (to-key:conv:p col-key.act)
+      ==
+      ::
+        %remove-from-feed
+      :_  this  :_  ~
+      %-  ~(act cards:p [our.bowl %portal-store])
+      %=    act
+        key  (to-key:conv:p key.act)
+          feed-key   
+        ;;  [%feed =ship =cord time=cord]
+        (to-key:conv:p feed-key.act)
       ==
       ::
         %destroy

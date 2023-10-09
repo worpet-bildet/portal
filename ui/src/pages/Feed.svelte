@@ -8,6 +8,9 @@
   import {
     LoadingIcon,
     ProfileIcon,
+    GitHubIcon,
+    XIcon,
+    UrbitIcon,
     RightSidebar,
     SidebarGroup,
   } from '@fragments';
@@ -126,7 +129,7 @@
       class:hidden={!$state.isComposing}
       class:block={$state.isComposing}
     >
-      <FeedPostForm placeholder="Type '~' to insert a reference" />
+      <FeedPostForm placeholder="Penny for your thoughts? Type '~' to insert a reference" />
     </div>
     {#if !$state.isComposing}
       <div>
@@ -154,7 +157,7 @@
               >
             </div>
             <div class="text-flavour text-xs">
-              Like Twitch without the children
+              Like Twitch, but without the children
             </div>
           </div>
           <div class="flex flex-col gap-4">
@@ -230,5 +233,13 @@
         <div class="flex flex-col gap-4" />
       </SidebarGroup>
     {/if}
+    <div class="flex justify-between items-center gap-2 mx-2 text-secondary text-sm">
+      <div class="text-left">© 2023 Terra Nova Labs Limited</div>
+      <div class="flex gap-2">
+        <a href="https://twitter.com/portal__gm" class="w-4 h-4"><XIcon /></a>
+        <a href="https://github.com/worpet-bildet/portal/" class="w-4 h-4"><GitHubIcon /></a>
+        <a href="https://urbit.org" class="w-4 h-4"><UrbitIcon /></a>
+      </div>
+    </div>
   </RightSidebar>
 </div>
