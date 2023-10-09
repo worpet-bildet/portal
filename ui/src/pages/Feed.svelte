@@ -33,7 +33,6 @@
   let groupsFeed: FeedItem[] = [];
   let promptedFeed: FeedItem[] = [];
   let loading: boolean;
-  let onlyGroupsFeed: boolean = false;
 
   const subToGlobalFeed = (): void => {
     return api.portal.do.subscribe({
@@ -48,8 +47,7 @@
     groupsFeed = getGroupsFeed(me).sort(
       (a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time)
       ).slice(0, 100);
-    onlyGroupsFeed ? groupsFeed : getGlobalFeed().concat(getCuratorFeed(me)).concat(groupsFeed
-    );
+    getGlobalFeed().concat(getCuratorFeed(me)).concat(groupsFeed);
 
   state.subscribe((s) => {
     let { pals } = s;
