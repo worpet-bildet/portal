@@ -2,7 +2,6 @@
   import { api } from '@root/api';
   import { refreshGroups } from '@root/state';
   import { getMeta } from '@root/util';
-  import { push } from 'svelte-spa-router';
 
   import { MoreFrom, RecommendModal } from '@components';
   import {
@@ -36,15 +35,17 @@
         </div>
         <div class="flex flex-col">
           <div class="font-bold text-xl">{nickname ? nickname : title}</div>
-          <div class="text-sm text-grey flex items-center gap-1">
-            <button on:click={() => push(`#/${ship}`)} class="hover:underline">Hosted by {ship}</button>
+          <div class="text-sm text-grey">
+            Hosted by <a use:link href={`/${ship}`} class="hover:underline"
+              >{ship}</a
+            >
           </div>
         </div>
         <div>
           {description}
         </div>
       </div>
-      <div class="flex flex-row gap-4">
+      <div class="flex flex-row gap-6">
         {#if !joinedDetails}
           <IconButton
             icon={PlusIcon}

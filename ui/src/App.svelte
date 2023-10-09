@@ -120,7 +120,7 @@
             <MobileHeader />
           </div>
         {/if}
-        <div class="pt-4 col-span-12 md:col-span-7 md:pr-3 {isSearching ? '' : 'hidden sm:block'}">
+        <div class="pt-4 col-span-12 md:col-span-7 md:pr-3">
           <GlobalSearch isGlassy={isSearchGlassy} {isSearching} />
         </div>
       {/if}

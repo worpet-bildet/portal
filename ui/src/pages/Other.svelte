@@ -106,11 +106,13 @@
     {#if postChain}
       {#if postChain.length === 1}
         <FeedPost key={postChain[0]} isReplyFormOpen={true} />
-        <FeedPostForm
-          {replyingToNames}
-          replyTo={postChain[0]}
-          placeholder={`Respond to ${collapseNames(replyingToNames)}`}
-        />
+        <div class="mt-4">
+          <FeedPostForm
+            {replyingToNames}
+            replyTo={postChain[0]}
+            placeholder={`Respond to ${collapseNames(replyingToNames)}`}
+          />
+        </div>
         {#each replies as reply}
           <div>
             <FeedPost key={reply} />
