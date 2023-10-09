@@ -29,7 +29,7 @@
     // FIXME: stopgap
     isInstalling = true;
     window.open(
-      `${window.location.origin}/apps/grid/search/${installShip}/apps`
+      `${window.location.origin}/apps/landscape/search/${installShip}/apps`
     );
     api.urbit.do.installApp(installShip, desk).then(refreshApps);
   };

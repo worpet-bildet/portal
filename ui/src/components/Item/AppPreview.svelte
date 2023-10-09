@@ -52,7 +52,7 @@
           on:click|stopPropagation={(event) => {
             event.preventDefault();
             window.open(
-              `${window.location.origin}/apps/grid/search/${
+              `${window.location.origin}/apps/landscape/search/${
                 distShip || ship
               }/apps`
             );

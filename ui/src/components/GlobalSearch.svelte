@@ -76,7 +76,6 @@
 
   const reset = () => {
     setIsSearching(false);
-    console.log("reset")
     selectedIndex = -1;
     searchString = '';
     setDefaultResults();
@@ -195,7 +194,7 @@
         </div>
         <input
           on:focus={() => setIsSearching(true)}
-          on:blur={() => {reset; console.log('onblur')}}
+          on:blur={reset}
           bind:value={searchString}
           type="text"
           class="w-full bg-transparent outline-none placeholder-secondary mr-2"
@@ -221,8 +220,7 @@
           class="sm:hidden text-tertiary"
           on:click={() => {
             searchInput.blur();
-            console.log('click');
-            // setIsSearching(false);
+            setIsSearching(false);
           }}
           transition:slide={{ axis: 'x', duration: 200 }}>Cancel</button
         >
@@ -249,8 +247,7 @@
               <button
                 on:mousedown={() => {
                   push(keyStrFromObj(item.keyObj));
-                  searchInput.blur()
-                  // setIsSearching(false);
+                  setIsSearching(false);
                 }}
                 class="flex justify-between items-center px-2 py-1 rounded-md hover:bg-panel"
                 class:bg-panel={selectedIndex === i}
@@ -285,7 +282,7 @@
               <button
                 on:mousedown={() => {
                   push(keyStrFromObj(item.keyObj));
-                  // setIsSearching(false);
+                  setIsSearching(false);
                   searchInput.blur();
                 }}
                 class="flex flex-row gap-2 text-start px-2 py-1 rounded-md hover:bg-panel line-clamp-1"
@@ -313,8 +310,7 @@
               <button
                 on:mousedown={() => {
                   push(`/${item.keyObj.ship}`);
-                  // setIsSearching(false);
-                  searchInput.blur();
+                  setIsSearching(false);
                 }}
                 class="flex flex-row gap-2 text-start px-2 py-1 rounded-md hover:bg-panel line-clamp-1"
                 class:bg-panel={selectedIndex === i}
@@ -345,8 +341,7 @@
               <button
                 on:mousedown={() => {
                   page.action();
-                  // setIsSearching(false);
-                  searchInput.blur();
+                  setIsSearching(false);
                 }}
                 class="flex justify-between items-center px-2 py-1 rounded-md hover:bg-panel"
                 class:bg-panel={selectedIndex === i}
