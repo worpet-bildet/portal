@@ -31,11 +31,11 @@
       title={'Explore'}
       on:click={() => {setIsSearching(true)}}
     />
-    <NavItem
+    <!-- <NavItem
       icon={ActivityIcon}
       title={'Activity'}
       on:click={() => push('#/activity')}
-    />
+    /> -->
     <NavItem
       icon={Sigil}
       title={'Profile'}

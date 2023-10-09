@@ -40,14 +40,14 @@
           on:click={() => {}}
         />
         -->
-        <NavItem
+        <!-- <NavItem
           icon={ActivityIcon}
           title={'Activity'}
           collapsed={navCollapsed}
           newFeature
           active={$location === '/activity'}
           on:click={() => push('#/activity')}
-        />
+        /> -->
         <!--
         <NavItem
           icon={TipIcon}
