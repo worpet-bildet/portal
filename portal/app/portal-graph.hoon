@@ -2,6 +2,7 @@
 /+  default-agent, p=portal, g=social-graph, *mip, *sss
 /$  social-graph-result-to-json  %social-graph-result  %json
 /$  json-to-social-graph-track  %json  %social-graph-track
+/*  indexer  %ship  /desk/ship
 |%
 ::  we are renaming %social-graph to %portal-graph
 ::  because we are using it for a different purpose
@@ -325,6 +326,35 @@
                         ==
                     ==
                 ==
+            ::  if we receive a reply to a groups post
+            ?:  ?&  =(+:tag.u.wave.msg /reply-from)
+                    !=(our.bowl ship:key-from)
+                    ?=  ?(%groups-chat-msg %groups-diary-note %groups-heap-curio) 
+                        struc.key-from
+                ==
+                =;  cards
+                  %+  snoc  cards
+                  ^-  card
+                  :*  %pass  /sub  %agent  [our.bowl %portal-manager]  %poke
+                      %portal-action  !>([%sub key-to])
+                  ==
+                ::  if the groups post is ours, send notif
+                ~&  >  key-from
+                ~&  >  key-to
+                ?:  ?&  =('' time:key-from)
+                        =(indexer ship:key-from)
+                    ==
+                  =/  scry-path
+                      ;:  welp
+                          /(scot %p our.bowl)/portal-store/(scot %p now.bowl)/item
+                          (key-to-path:conv:p key-from)
+                          /noun
+                      ==
+                  ~&  .^(store-result:d:m:p %gx scry-path)
+                  ~&  >  "received comment to item"
+                  *(list card)
+                *(list card)
+                 ::get item from portalstore and see if we are author, if yes, notify
             ::  if we receive a reply to whichever post
             ?:  ?&  =(+:tag.u.wave.msg /reply-from)
                     !=(our.bowl ship:key-from)
@@ -334,17 +364,7 @@
                 :*  %pass  /sub  %agent  [our.bowl %portal-manager]  %poke
                     %portal-action  !>([%sub key-to])
                 ==
-            ::  if we receive a reply to a groups post
-            ?:  ?&  =(+:tag.u.wave.msg /reply-from)
-                    !=(our.bowl ship:key-from)
-                    ?=  ?(%groups-chat-msg %groups-diary-note %groups-heap-curio) 
-                        struc.key-from
-                ==
-                :_  ~
-                :*  %pass  /sub  %agent  [our.bowl %portal-manager]  %poke
-                    %portal-action  !>([%sub key-to])
-                ==
-            ::  if our app is reviewd
+            ::  if our app is reviewed
             ?:  ?&  =(+:tag.u.wave.msg /review-to)
                     =(our.bowl ship:key-to)
                 ==
