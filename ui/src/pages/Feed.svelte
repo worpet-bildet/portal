@@ -30,6 +30,7 @@
   let sortedRecommendations: [string, number][] = [];
   let patpItemCount: { [key: string]: number } = {};
   let feed: FeedItem[] = [];
+  let groupsFeed: FeedItem[] = [];
   let promptedFeed: FeedItem[] = [];
   let loading: boolean;
   let onlyGroupsFeed: boolean = false;
@@ -44,7 +45,11 @@
   };
 
   const globalFeed = (): FeedItem[] =>
-    onlyGroupsFeed ? getGroupsFeed(me) : getGlobalFeed().concat(getCuratorFeed(me)).concat(getGroupsFeed(me));
+    groupsFeed = getGroupsFeed(me).sort(
+      (a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time)
+      ).slice(0, 100);
+    onlyGroupsFeed ? groupsFeed : getGlobalFeed().concat(getCuratorFeed(me)).concat(groupsFeed
+    );
 
   state.subscribe((s) => {
     let { pals } = s;
