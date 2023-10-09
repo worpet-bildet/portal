@@ -1,9 +1,9 @@
 /-  *tests-action, *tests-spec
 /+  default-agent, p=portal  ::, dbug
 ::
-=/  indxr    ~faster-dilryd-mopreg
-=/  usr1     ~faster-dozzod-dilryd-mopreg
-=/  usr2     ~faster-doznec-dilryd-mopreg
+=/  indxr    ~zod
+=/  usr1     ~bus
+=/  usr2     ~nec
 ::  tests are written as if we are usr2, for now
 ::
 |%

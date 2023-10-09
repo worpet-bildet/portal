@@ -301,6 +301,7 @@
             ::  autosubbing to comments within the last 2 days
             =/  key-to    (node-to-key:conv:p to.u.wave.msg)
             =/  key-from  (node-to-key:conv:p from.u.wave.msg)
+            ::  if our post is replied to
             ?:  ?&  =(+:tag.u.wave.msg /reply-to)
                     =(our.bowl ship:key-to)
                     (gte (slav %da time.key-from) (sub now.bowl ~d2))
@@ -324,6 +325,7 @@
                         ==
                     ==
                 ==
+            ::  if we receive a reply to whichever post
             ?:  ?&  =(+:tag.u.wave.msg /reply-from)
                     !=(our.bowl ship:key-from)
                     (gte (slav %da time.key-to) (sub now.bowl ~d2))
@@ -332,6 +334,17 @@
                 :*  %pass  /sub  %agent  [our.bowl %portal-manager]  %poke
                     %portal-action  !>([%sub key-to])
                 ==
+            ::  if we receive a reply to a groups post
+            ?:  ?&  =(+:tag.u.wave.msg /reply-from)
+                    !=(our.bowl ship:key-from)
+                    ?=  ?(%groups-chat-msg %groups-diary-note %groups-heap-curio) 
+                        struc.key-from
+                ==
+                :_  ~
+                :*  %pass  /sub  %agent  [our.bowl %portal-manager]  %poke
+                    %portal-action  !>([%sub key-to])
+                ==
+            ::  if our app is reviewd
             ?:  ?&  =(+:tag.u.wave.msg /review-to)
                     =(our.bowl ship:key-to)
                 ==
@@ -353,6 +366,7 @@
                         ==
                     ==
                 ==
+            ::  if we are mentioned
             ?:  ?&  =(+:tag.u.wave.msg /mention-to)
                     =(our.bowl ship:key-to)
                 ==
