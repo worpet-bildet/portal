@@ -260,6 +260,14 @@ export const getGroupsLink = (item) => {
   }
 };
 
+export const normaliseUrl = (url) => {
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url;
+  } else {
+    return 'https://' + url;
+  }
+};
+
 export const isUrl = (s) => {
   if (
     /^(http[s]*:\/\/.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=,]*)$/g.test(
