@@ -150,8 +150,9 @@
 </script>
 
 {#if item}
-  {@const { blurb, ship, createdAt, ref, image, rating, group } = getMeta(item)}
-  {@const blurbLink = getAnyLink(blurb)}
+  {@const { blurb, groupsBlurb, ship, createdAt, ref, image, group } =
+    getMeta(item)}
+  {@const blurbLink = getAnyLink(blurb || groupsBlurb)}
   <div class="flex flex-col text-left gap-2 w-full" in:fade>
     <div class="flex items-center justify-between px-3">
       <div class="flex items-center gap-1">

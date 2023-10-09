@@ -1,9 +1,11 @@
 <script lang="ts">
+  import { Item } from '$types/portal/item';
+
   import ChatMessage from './ChatMessage.svelte';
   import DiaryNote from './DiaryNote.svelte';
   import HeapCurio from './HeapCurio.svelte';
 
-  export let item;
+  export let item: Item;
   export let headless: boolean = false;
   export let isExpanded: boolean = false;
 </script>
