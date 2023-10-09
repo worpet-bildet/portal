@@ -1,10 +1,11 @@
 /-  portal-item, st=portal-states
-/+  default-agent, p=portal, sss, dbug, tr=portal-transition
+/+  default-agent, p=portal, sss, js=portal-json, dbug, tr=portal-transition
 /$  items-to-json  %portal-items  %json
 /$  item-to-json  %portal-item  %json
 /$  store-result-to-json  %portal-store-result  %json
 /$  portal-update-to-json  %portal-update  %json
 /*  indexer  %ship  /desk/ship
+/*  server  %ship  /server/ship
 |%
 +$  card  $+  gall-card  card:agent:gall
 +$  state-4
@@ -124,7 +125,10 @@
     =/  get  !<(get:m:p vase)
     ?>  ?=(%items -.get)
     :_  this  ::  FE update
-    [%give %fact [/updates]~ %portal-store-result !>(scry-items)]^~
+    =+  scry-items
+    %+  snoc
+      (serve:cards-methods /portal-store-json (enjs-store-result:enjs:js -))
+    [%give %fact [/updates]~ %portal-store-result !>(-)]
     ::
       %noun
     ?.  =(our.bowl src.bowl)  `this
@@ -480,7 +484,22 @@
   ++  upd
     |=  =item:d:m:p
     ^-  (list card)
-    [%give %fact [/updates]~ %portal-update !>(item)]^~  ::  FE update
+    %+  snoc
+      (serve /portal-store-json (enjs-store-result:enjs:js scry-items))
+    [%give %fact [/updates]~ %portal-update !>(item)]  ::  FE update
+  ::
+  ++  serve
+    |=  [=path jon=json]
+    ^-  (list card)
+    ?.  =(our.bowl server)
+      *(list card)
+    :~  [%pass /bind %arvo %e %disconnect `path]  ::maybe no need to disconnect?
+        :*  %pass  /bind  %arvo  %e
+            %set-response  (spat path)
+            ~  %.n  %payload
+            [200 ['Content-Type' 'application/json']~]
+            `(as-octt:mimes:html (trip (en:json:html jon)))
+    ==  ==
   ::
   ::  puts into remote scry namespace
   :: ++  gro
