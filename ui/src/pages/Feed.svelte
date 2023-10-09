@@ -20,6 +20,7 @@
     getCollectedItemLeaderboard,
     getCuratorFeed,
     getGlobalFeed,
+    getGroupsFeed,
     keyStrToObj,
     state,
   } from '@root/state';
@@ -29,6 +30,7 @@
   let sortedRecommendations: [string, number][] = [];
   let patpItemCount: { [key: string]: number } = {};
   let feed: FeedItem[] = [];
+  let groupsFeed: FeedItem[] = [];
   let promptedFeed: FeedItem[] = [];
   let loading: boolean;
 
@@ -41,8 +43,12 @@
     });
   };
 
+  $: groupsFeed = ($state ? getGroupsFeed(me) : []).sort(
+    (a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time)
+    ).slice(0, 100);
+
   const globalFeed = (): FeedItem[] =>
-    getGlobalFeed().concat(getCuratorFeed(me));
+    getGlobalFeed().concat(getCuratorFeed(me)).concat(groupsFeed);
 
   state.subscribe((s) => {
     let { pals } = s;
@@ -200,7 +206,7 @@
         </div></SidebarGroup
       >
     {/if}
-    {#if $state.palsLoaded && !$state.pals}
+    {#if ($state.palsLoaded && !$state.pals) || !$state.radioStations}
       <SidebarGroup>
         <div>
           <div class="text-xl font-bold pb-4 px-2">
@@ -219,7 +225,7 @@
         <div class="flex flex-col gap-2">
           <div class="flex flex-col gap-1 px-2">
             <div class="flex items-start justify-between">
-              <div>Discover Portal</div>
+              <div>Discover More Urbit Content</div>
               <!-- <a use:link href={'#/explore'} class="text-flavour text-xs"
                 >See all</a
               > -->

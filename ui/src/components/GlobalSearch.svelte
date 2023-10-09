@@ -220,6 +220,7 @@
           class="sm:hidden text-tertiary"
           on:click={() => {
             searchInput.blur();
+            setIsSearching(false);
           }}
           transition:slide={{ axis: 'x', duration: 200 }}>Cancel</button
         >
@@ -244,7 +245,10 @@
             {#each searchResults.items as item, i (keyStrFromObj(item.keyObj))}
               {@const { title, image, displayStruc, color } = getMeta(item)}
               <button
-                on:mousedown={() => push(keyStrFromObj(item.keyObj))}
+                on:mousedown={() => {
+                  push(keyStrFromObj(item.keyObj));
+                  setIsSearching(false);
+                }}
                 class="flex justify-between items-center px-2 py-1 rounded-md hover:bg-panel"
                 class:bg-panel={selectedIndex === i}
                 bind:this={buttons[i]}
@@ -276,7 +280,11 @@
               {@const i = _i + searchResults.items.length}
               {@const { blurb, ship } = getMeta(item)}
               <button
-                on:mousedown={() => push(keyStrFromObj(item.keyObj))}
+                on:mousedown={() => {
+                  push(keyStrFromObj(item.keyObj));
+                  setIsSearching(false);
+                  searchInput.blur();
+                }}
                 class="flex flex-row gap-2 text-start px-2 py-1 rounded-md hover:bg-panel line-clamp-1"
                 class:bg-panel={selectedIndex === i}
                 bind:this={buttons[i]}
@@ -300,7 +308,10 @@
               {@const i =
                 _i + searchResults.items.length + searchResults.posts.length}
               <button
-                on:mousedown={() => push(`/${item.keyObj.ship}`)}
+                on:mousedown={() => {
+                  push(`/${item.keyObj.ship}`);
+                  setIsSearching(false);
+                }}
                 class="flex flex-row gap-2 text-start px-2 py-1 rounded-md hover:bg-panel line-clamp-1"
                 class:bg-panel={selectedIndex === i}
                 bind:this={buttons[i]}
@@ -328,7 +339,10 @@
                 searchResults.posts.length +
                 searchResults.ships.length}
               <button
-                on:mousedown={() => page.action()}
+                on:mousedown={() => {
+                  page.action();
+                  setIsSearching(false);
+                }}
                 class="flex justify-between items-center px-2 py-1 rounded-md hover:bg-panel"
                 class:bg-panel={selectedIndex === i}
                 bind:this={buttons[i]}

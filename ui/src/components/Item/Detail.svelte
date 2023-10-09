@@ -151,7 +151,7 @@
                 icon={DownloadIcon}
                 on:click={() => {
                   window.open(
-                    `${window.location.origin}/apps/grid/search/${patp}/apps`
+                    `${window.location.origin}/apps/landscape/search/${patp}/apps`
                   );
                 }}
                 class="bg-panels dark:bg-transparent hover:bg-panels-hover dark:hover:border-white dark:border border"

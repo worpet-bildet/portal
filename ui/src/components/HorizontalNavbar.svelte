@@ -1,6 +1,8 @@
 <script lang="ts">
-  import { ActivityIcon, FeedIcon, NavItem, PlusIcon } from '@fragments';
-  import { setIsComposing, state } from '@root/state';
+  import { ActivityIcon, FeedIcon, NavItem, PlusIcon, ExploreIcon } from '@fragments';
+  import { Sigil } from '@components';
+  import { me } from '@root/api';
+  import { setIsComposing, state, setIsSearching } from '@root/state';
   import { push } from 'svelte-spa-router';
 
   export let isHome: boolean = false;
@@ -24,16 +26,20 @@
         push('#/');
       }}
     />
-    <!-- <NavItem
-    icon={ExploreIcon}
-    title={'Explore'}
-    collapsed={navCollapsed}
-    on:click={() => {}}
-  /> -->
     <NavItem
+      icon={ExploreIcon}
+      title={'Explore'}
+      on:click={() => {setIsSearching(true)}}
+    />
+    <!-- <NavItem
       icon={ActivityIcon}
       title={'Activity'}
       on:click={() => push('#/activity')}
+    /> -->
+    <NavItem
+      icon={Sigil}
+      title={'Profile'}
+      on:click={() => push(`#/${me}`)}
     />
     <!-- <NavItem
     icon={TipIcon}
@@ -46,11 +52,11 @@
 {/if}
 {#if !$state.isComposing && isHome}
   <button
-    class="fixed rounded-full bottom-24 right-4 h-20 w-20 bg-black text-white"
+    class="fixed rounded-full bottom-24 right-4 h-16 w-16 bg-black text-white"
     on:click={handleNewPostClick}
   >
     <div class="flex w-full h-full items-center justify-center">
-      <div class="w-8 h-8">
+      <div class="w-6 h-6">
         <PlusIcon />
       </div>
     </div>
