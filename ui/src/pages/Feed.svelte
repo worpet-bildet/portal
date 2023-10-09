@@ -20,6 +20,7 @@
     getCollectedItemLeaderboard,
     getCuratorFeed,
     getGlobalFeed,
+    getGroupsFeed,
     keyStrToObj,
     state,
   } from '@root/state';
@@ -31,6 +32,7 @@
   let feed: FeedItem[] = [];
   let promptedFeed: FeedItem[] = [];
   let loading: boolean;
+  let onlyGroupsFeed: boolean = false;
 
   const subToGlobalFeed = (): void => {
     return api.portal.do.subscribe({
@@ -42,7 +44,7 @@
   };
 
   const globalFeed = (): FeedItem[] =>
-    getGlobalFeed().concat(getCuratorFeed(me));
+    onlyGroupsFeed ? getGroupsFeed(me) : getGlobalFeed().concat(getCuratorFeed(me)).concat(getGroupsFeed(me));
 
   state.subscribe((s) => {
     let { pals } = s;
@@ -219,7 +221,7 @@
         <div class="flex flex-col gap-2">
           <div class="flex flex-col gap-1 px-2">
             <div class="flex items-start justify-between">
-              <div>Discover Portal</div>
+              <div>Discover More Urbit Content</div>
               <!-- <a use:link href={'#/explore'} class="text-flavour text-xs"
                 >See all</a
               > -->

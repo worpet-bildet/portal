@@ -41,7 +41,8 @@
     loadCurator();
   });
 
-  let activeTab = 'Activity';
+  let activeTab = (!feed || feed.length === 0) ? 'Collections' : 'Activity';
+
   let tabs = [
     { tab: 'Activity', icon: FeedIcon },
     { tab: 'Collections', icon: CollectionIcon },
