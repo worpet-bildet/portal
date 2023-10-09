@@ -1,11 +1,12 @@
 <script lang="ts">
-  import coverPhoto from '@assets/coverPhoto.jpg'; // todo: make this work
+  import coverPhoto from '@assets/coverPhoto.jpg';
   import { GroupCard, ItemPreview } from '@components';
   import { CommentIcon, RightSidebar, SidebarGroup } from '@fragments';
   import { api } from '@root/api';
   import {
     getGroup,
     getJoinedGroupDetails,
+    getMoreFromThisShip,
     keyStrToObj,
     state,
   } from '@root/state';
@@ -13,7 +14,6 @@
 
   export let params;
 
-  let group, joinedDetails;
   const loadGroup = () => {
     if (!groupKey) return;
     group = getGroup(groupKey);
@@ -30,6 +30,14 @@
     loadGroup();
   }
 
+  let group, joinedDetails;
+  let sortedRecommendations = [];
+  state.subscribe((s) => {
+    if (!s.isLoaded) return;
+    loadGroup();
+    sortedRecommendations = getMoreFromThisShip(host, cord).slice(0, 4);
+  });
+
   const channelLink = (channelKey) => {
     return `${window.location.origin}/apps/groups/groups/${groupKey}/channels/${channelKey}`;
   };
@@ -37,7 +45,7 @@
 
 {#if group}
   {@const { cover, image, description, title } = getMeta(group)}
-  <div class="grid grid-cols-12 gap-4 sm:gap-8 pb-20">
+  <div class="grid grid-cols-12 gap-4 sm:gap-8">
     <div class="col-span-12 w-full sm:h-48">
       {#if isImage(cover)}
         <img
@@ -47,13 +55,13 @@
         />
       {:else}
         <img
-          src=https://nyc3.digitaloceanspaces.com/toptyr-bilder/746f3d88a414b8633cbb807a1b6dc4d8%20(1).jpg
+          src={coverPhoto}
           alt="default profile banner"
           class="relative sm:absolute sm:top-0 left-0 w-full h-48 sm:h-72 object-cover"
         />
       {/if}
       <div
-        class="hidden sm:block sm:absolute sm:top-0 left-0 w-full h-48 sm:h-72 bg-gradient-to-t from-coverPhotoBottom to-coverPhotoTop"
+        class="hidden sm:absolute sm:top-0 left-0 w-full h-48 sm:h-72 bg-gradient-to-t from-coverPhotoBottom to-coverPhotoTop"
       />
     </div>
 
@@ -116,6 +124,16 @@
         </div>
       {/if}
     </div>
+    <RightSidebar>
+      {#if sortedRecommendations.length > 0}
+        <SidebarGroup>
+          <div class="text-lg mx-1">More from {host}</div>
+          {#each sortedRecommendations as [recommendation]}
+            <ItemPreview key={keyStrToObj(recommendation)} small />
+          {/each}
+        </SidebarGroup>
+      {/if}
+    </RightSidebar>
   </div>
 {:else}
   Loading...

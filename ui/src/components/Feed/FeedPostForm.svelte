@@ -247,7 +247,7 @@
 </script>
 
 <div
-  class="flex flex-col w-full h-full sm:h-auto border border-mute p-3 gap-4 rounded-xl"
+  class="flex flex-col w-full h-full sm:h-auto border p-3 gap-4 rounded-xl"
   class:relative={submitting}
 >
   {#if submitting}
@@ -275,7 +275,7 @@
     </button>
   </div>
   <div class="flex items-center gap-2">
-    <InlineShip patp={me} isExpanded noName/>
+    <InlineShip patp={me} isExpanded noSigil/>
     <div class="flex w-full justify-end overflow-hidden">
       <RichTextArea
         bind:editor

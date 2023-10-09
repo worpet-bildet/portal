@@ -15,7 +15,7 @@
     <div class="flex flex-col gap-2 pb-12 pt-4">
       <div class="text-xl">Group Activity</div>
       <div class="text-tertiary">
-        Stay in the loop: here are the top posts from your groups.
+        Stay in the loop: view the top posts from groups you're a member of.
       </div>
     </div>
     {#if feed && feed.length > 0}
