@@ -33,7 +33,7 @@
   let groupsFeed: FeedItem[] = [];
   let promptedFeed: FeedItem[] = [];
   let loading: boolean;
-  let maxFeedLength: number = 100;
+  const maxFeedLength: number = 100;
 
   const subToGlobalFeed = (): void => {
     return api.portal.do.subscribe({
