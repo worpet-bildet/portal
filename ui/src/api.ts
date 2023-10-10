@@ -7,15 +7,17 @@ import { Groups } from '$types/landscape/groups';
 import { HeapCurio } from '$types/landscape/heap';
 import { SocialGraph, SocialGraphTrackRequest } from '$types/portal/graph';
 import { Item, ItemKey } from '$types/portal/item';
-import { Create, Edit, PokeData, SocialTagRequest } from '$types/portal/poke';
+import { Edit, PokeData, SocialTagRequest } from '$types/portal/poke';
 
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { toUrbitTime } from '@root/util';
 import Urbit, { Poke, Scry } from '@urbit/http-api';
 import { writable } from 'svelte/store';
+import config from './config';
 
 export const urbit = new Urbit('', '', 'portal');
-urbit.ship = window.ship || "bus";
+
+urbit.ship = window.ship || config.serverShip;
 
 export const poke = (s: Poke<any>): Promise<number> => urbit.poke(s);
 export const scry = (s: Scry): Promise<any> => urbit.scry(s);
@@ -132,28 +134,18 @@ export const api = {
   },
   portal: {
     get: {
-      //  the following 3 pokes work because frontend is 
-      //  already subbed to path /updates
-      getItems: () =>  poke({
-          app:  'portal-store',
-          mark:  'portal-get',
-          json: {items : null}
-        }),
-      getPortalDevs: () =>  poke({
-          app:  'portal-manager',
-          mark:  'portal-get',
-          json: {'portal-devs' : null}
-        }),
-      getGraph: () =>  poke({
-          app:  'portal-graph',
-          mark:  'portal-get',
-          json: {'graph' : null}
-        }),
       items: (): Promise<{ items: Item[] }> =>
         scry({ app: 'portal-store', path: '/items' }),
       appDevs: () => scry({ app: 'portal-manager', path: '/portal-devs' }),
       socialItems: (): Promise<{ app: SocialGraph }> =>
         scry({ app: 'portal-graph', path: '/app/portal-store' }),
+      staticItems: () => fetch('/portal-store-json').then((r) => r.json()),
+      staticAppDevs: () =>
+        fetch('/portal-manager-json').then((r) => {
+          return r.json();
+        }),
+      staticSocialItems: () =>
+        fetch('/portal-graph-json').then((r) => r.json()),
       boughtApps: () => scry({ app: 'portal-manager', path: '/bought-apps' }),
       receivingAddress: (): Promise<string> =>
         scry({ app: 'portal-manager', path: '/receiving-address' }),
@@ -170,6 +162,11 @@ export const api = {
       diaryNote: (path): Promise<DiaryNote> => scry({ app: 'diary', path }),
     },
     do: {
+      // poke({
+      //   app: 'portal-graph',
+      //   mark: 'portal-get',
+      //   json: { graph: null },
+      // }),
       create: (json: Create) => pmPoke({ create: json }),
       edit: (json: Edit) => pmPoke({ edit: json }),
       addTag: (json: SocialTagRequest) => pmPoke({ 'add-tag-request': json }),

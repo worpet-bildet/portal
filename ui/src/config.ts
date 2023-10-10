@@ -5,4 +5,5 @@ export default {
   env: import.meta.env.VITE_ENV,
   openai: import.meta.env.VITE_OPENAI_API_KEY,
   aiEnabled: import.meta.env.VITE_AI_ENABLED,
+  serverShip: import.meta.env.VITE_SERVER_SHIP,
 };
