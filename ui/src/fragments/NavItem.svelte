@@ -25,7 +25,7 @@
     class:dark:text-navtextactive={active}
     class:dark:text-black={!active && prominent}
     class:text-white={!active && prominent} 
-    class:dark:text-white={!(!active && prominent)}
+    class:dark:text-white={!active && !prominent}
   >
     <div
       class="w-5 h-5 relative"
@@ -52,7 +52,7 @@
   {/if}
   {#if newFeature}
     <div
-      class="bg-indicator text-navtextactive text-xs px-2 py-1 rounded-md hidden lg:block"
+      class="bg-indicator text-navtextactive dark:bg-navtextactive dark:text-white text-xs px-2 py-1 rounded-md hidden lg:block"
     >
       NEW
     </div>

@@ -42,17 +42,17 @@
           on:click={() => push('#/')}
         />
         <NavItem
-          icon={ChatIcon}
-          title={'Feedback'}
-          collapsed={navCollapsed}
-          on:click={() => window.open('/apps/talk/dm/~foddur-hodler')}
-        />
-        <NavItem
           icon={ShadowIcon}
           title={$state.darkmode ? "Light Mode" : "Dark Mode"}
           collapsed={navCollapsed}
           newFeature
           on:click={toggleDarkmode}
+        />
+        <NavItem
+          icon={ChatIcon}
+          title={'Feedback'}
+          collapsed={navCollapsed}
+          on:click={() => window.open('/apps/talk/dm/~foddur-hodler')}
         />
         <NavItem
           icon={PostIcon}

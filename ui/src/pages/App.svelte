@@ -285,9 +285,10 @@
             <div class="col-span-9">
               {ship} needs to download %portal to publish screenshots of {title}.
               Please prompt them to follow
-              <button
-                on:click={() => window.open('https://twitter.com/worpet_bildet/status/1668643121813438466?s=20', '_blank')}
-                class="underline">this guide</button
+              <a
+                href="https://twitter.com/worpet_bildet/status/1668643121813438466?s=20"
+                target="_blank"
+                class="underline">this guide</a
               >
             </div>
           {/if}
