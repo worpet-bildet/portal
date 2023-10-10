@@ -13,7 +13,7 @@
   import { getMeta } from '@root/util';
 
   import { GroupPreview, MoreFrom, Sigil } from '@components';
-  import { GroupsIcon, IconButton, ProfileIcon, SendIcon } from '@fragments';
+  import { GroupsIcon, IconButton, AddProfileIcon, RemoveProfileIcon, SendIcon } from '@fragments';
 
   export let patp;
 
@@ -60,7 +60,7 @@
             icon={SendIcon}
             on:click={() =>
               window.open(`${window.location.origin}/apps/talk/dm/${patp}`)}
-            class="bg-black text-white w-fit">Message</IconButton
+            class="bg-black hover:bg-blackhover text-white dark:text-black dark:bg-white dark:hover:bg-whitehover w-fit">Message</IconButton
           >
         {/if}
         {#if me === patp}
@@ -72,17 +72,17 @@
           >
         {:else if isMyPal}
           <IconButton
-            icon={ProfileIcon}
+            icon={RemoveProfileIcon}
             on:click={togglePal}
             async
-            class="text-xs text-tertiary bg-panel w-fit">Remove Pal</IconButton
+            class="text-xs text-black bg-panel w-fit">Remove Pal</IconButton
           >
         {:else}
           <IconButton
-            icon={ProfileIcon}
+            icon={AddProfileIcon}
             on:click={togglePal}
             async
-            class="bg-panelhover text-secondary w-fit">Add Pal</IconButton
+            class="bg-panelhover text-black w-fit">Add Pal</IconButton
           >
         {/if}
       </div>
@@ -91,7 +91,7 @@
         <div class="flex flex-col gap-3">
           <div class="text-lg flex items-center gap-2">
             <div class="w-5 h-5"><GroupsIcon /></div>
-            <div>Favourite Groups</div>
+            <div class="font-bold">Favourite Groups</div>
           </div>
           <div class="flex flex-col gap-2">
             {#each curator.bespoke.groups as group}

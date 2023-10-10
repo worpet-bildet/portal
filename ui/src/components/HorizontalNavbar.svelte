@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Sigil } from '@components';
-  import { ExploreIcon, FeedIcon, NavItem, PlusIcon } from '@fragments';
+  import { ExploreIcon, HomeIcon, NavItem, PlusIcon } from '@fragments';
   import { me } from '@root/api';
   import { setIsComposing, setIsSearching, state } from '@root/state';
   import { push } from 'svelte-spa-router';
@@ -19,7 +19,7 @@
     class="fixed left-0 h-20 bottom-0 flex w-full justify-between bg-white/80 dark:bg-black/80 backdrop-blur-xs"
   >
     <NavItem
-      icon={FeedIcon}
+      icon={HomeIcon}
       title={'Feed'}
       on:click={() => {
         if (isHome) main.scrollTo({ top: 0, behavior: 'smooth' });
@@ -50,7 +50,7 @@
 {/if}
 {#if !$state.isComposing && isHome}
   <button
-    class="fixed rounded-full bottom-24 right-4 h-16 w-16 bg-black text-white"
+    class="fixed rounded-full bottom-24 right-4 h-16 w-16 bg-black dark:bg-white text-white dark:text-black"
     on:click={handleNewPostClick}
   >
     <div class="flex w-full h-full items-center justify-center">

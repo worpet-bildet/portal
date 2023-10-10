@@ -2,12 +2,11 @@
   import logo from '@assets/logo.svg';
   import { Sigil } from '@components';
   import {
-    FeedIcon,
-    FeedbackIcon,
-    MoonIcon,
+    HomeIcon,
+    ChatIcon,
+    ShadowIcon,
     NavItem,
     PostIcon,
-    SunIcon,
   } from '@fragments';
   import { me } from '@root/api';
   import { state, toggleDarkmode } from '@root/state';
@@ -36,19 +35,34 @@
       </a>
       <div>
         <NavItem
-          icon={FeedIcon}
+          icon={HomeIcon}
           title={'Feed'}
           collapsed={navCollapsed}
           active={$location === '/'}
           on:click={() => push('#/')}
         />
-        <!-- <NavItem
-          icon={ExploreIcon}
-          title={'Explore'}
+        <NavItem
+          icon={ChatIcon}
+          title={'Feedback'}
           collapsed={navCollapsed}
-          on:click={() => {}}
+          on:click={() => window.open('/apps/talk/dm/~foddur-hodler')}
         />
-        -->
+        <NavItem
+          icon={ShadowIcon}
+          title={$state.darkmode ? "Light Mode" : "Dark Mode"}
+          collapsed={navCollapsed}
+          newFeature
+          on:click={toggleDarkmode}
+        />
+        <NavItem
+          icon={PostIcon}
+          title={'Post'}
+          collapsed={navCollapsed}
+          prominent
+          on:click={() => {
+            push('/');
+          }}
+        />
         <!-- <NavItem
           icon={ActivityIcon}
           title={'Activity'}
@@ -65,42 +79,14 @@
           collapsed={navCollapsed}
           on:click={() => {}}
         /> -->
-        <NavItem
-          icon={FeedbackIcon}
-          title={'Feedback'}
-          collapsed={navCollapsed}
-          on:click={() => window.open('/apps/talk/dm/~foddur-hodler')}
-        />
       </div>
-    </div>
-    <div class="border dark:border-glass w-full my-2" />
-    <div class="p-2">
-      <button
-        class="flex gap-3 items-center justify-center lg:justify-start py-2 px-3 rounded-lg w-full relative bg-black text-white dark:bg-white dark:text-black"
-        on:click={() => {
-          push('/');
-        }}
-      >
-        <div class="w-5 h-5">
-          <PostIcon />
-        </div>
-        <div class="hidden lg:block">Post</div>
-      </button>
     </div>
   </div>
   <div class="p-2">
-    <button class="p-2 w-10" on:click={toggleDarkmode}>
-      {#if $state.darkmode}
-        <SunIcon />
-      {:else}
-        <MoonIcon />
-      {/if}
-    </button>
-
     <a
       use:link
       href={`/${me}`}
-      class="flex items-center justify-center md:justify-start border gap-3 bg-transparent lg:bg-white w-full py-2 lg:px-3 rounded-lg dark:bg-black dark:text-white dark:border-none"
+      class="flex items-center justify-center md:justify-start border gap-3 bg-transparent lg:bg-white w-full py-2 lg:px-3 rounded-lg dark:bg-black dark:text-white dark:border-grey dark:hover:bg-blackhover"
     >
       <div class="w-6 h-6 rounded-sm overflow-hidden"><Sigil patp={me} /></div>
       <div class="hidden lg:block">{formatPatp(me)}</div>

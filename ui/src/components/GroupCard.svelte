@@ -53,7 +53,7 @@
             icon={PlusIcon}
             on:click={join}
             async
-            class="bg-black text-white w-fit">Join Group</IconButton
+            class="bg-black dark:bg-white text-white dark:text-black w-fit">Join Group</IconButton
           >
         {:else if joinedDetails.joining}
           <IconButton loading async class="bg-black text-white w-fit"
@@ -73,7 +73,7 @@
         <IconButton
           icon={RepostIcon}
           on:click={() => (recommendModalOpen = true)}
-          class="bg-panelhover text-secondary w-fit">Recommend</IconButton
+          class="bg-black dark:bg-white text-white dark:text-black w-fit">Recommend</IconButton
         >
         {#if joinedDetails}
           <IconButton

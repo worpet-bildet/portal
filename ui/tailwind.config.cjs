@@ -46,6 +46,9 @@ module.exports = {
         secondary: '#6D6D6D',
         tertiary: '#909090',
         flavour: '#6D6D6D',
+        blackhover: '#222222',
+        whitehover: '#F4F4F4',
+        tertiaryhover: '#E3E3E3',
 
         navitemactive: '#E5F3FF',
         navtextactive: '#2D9AFF',
@@ -90,6 +93,7 @@ module.exports = {
       mute: '#EFEFEF',
       glass: '#FFFFFF26',
       panelicon: '#B1B1B1',
+      secondary: '#6D6D6D',
     },
     boxShadow: {
       DEFAULT: '0 0 20px 0 #69696920',

@@ -322,12 +322,12 @@
   <div class="flex justify-between items-center w-full">
     <div class="flex items-center ml-12">
       <button
-        class="w-10 p-2 rounded-lg text-black"
+        class="w-10 p-2 rounded-lg text-black dark:text-white"
         class:text-tertiary={!$state.s3}
         on:click={() => fileInput.click()}><CollectionIcon /></button
       >
       <button
-        class="w-10 p-2.5 rounded-lg text-black"
+        class="w-10 p-2.5 rounded-lg text-black dark:text-white"
         on:click={() => {
           editor.chain().insertContent('~').run();
         }}><UrbitIcon /></button
@@ -341,7 +341,7 @@
       />
     </div>
     <button
-      class="py-1 px-3 ml-2 rounded-lg bg-black text-white font-bold"
+      class="py-1 px-3 ml-2 rounded-lg bg-black text-white dark:text-black dark:bg-white hover:bg-blackhover dark:hover:bg-whitehover font-bold"
       class:hidden={$state.isComposing}
       on:click={post}
     >

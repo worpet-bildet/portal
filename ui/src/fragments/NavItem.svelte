@@ -5,25 +5,34 @@
   export let collapsed: boolean = false;
   export let active: boolean = false;
   export let newFeature: boolean = false;
+  export let prominent: boolean = false;
 
   let hovering: boolean = false;
 </script>
 
 <button
-  class="flex items-center justify-center lg:justify-between py-2 px-3 hover:bg-panelhover dark:hover:bg-white/30 rounded-lg w-full relative"
+  class={`flex items-center justify-center lg:justify-between py-2 px-3 rounded-lg w-full relative dark:hover:bg-blackhover
+    ${prominent && !active ? 'bg-black hover:bg-blackhover dark:bg-white dark:hover:bg-whitehover' : 'hover:bg-panelhover'} 
+    ${active ? 'bg-navitemactive hover:bg-navitemactive dark:bg-blackhover' : ''}`}
   on:mouseenter={() => (hovering = true)}
   on:mouseleave={() => (hovering = false)}
   on:click
 >
   <div
-    class="flex gap-3 items-center flex-col md:flex-row dark:text-white"
-    class:text-navtext={!active}
-    class:text-black={active}
+    class="flex gap-3 items-center flex-col md:flex-row"
+    class:text-navtext={!active && !prominent}
+    class:text-navtextactive={active}
+    class:dark:text-navtextactive={active}
+    class:dark:text-black={!active && prominent}
+    class:text-white={!active && prominent} 
+    class:dark:text-white={!(!active && prominent)}
   >
     <div
       class="w-5 h-5 relative"
       class:text-panelicon={!active}
       class:text-navtextactive={active}
+      class:dark:text-black={!active && prominent}
+      class:text-white={!active && prominent}
     >
       <svelte:component this={icon} />
       {#if unreadCount > 0}
