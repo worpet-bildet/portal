@@ -1,5 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
+  import { push } from 'svelte-spa-router';
 
   import { api } from '@root/api';
   import { refreshApps } from '@root/state';
@@ -28,7 +29,7 @@
     // FIXME: stopgap
     isInstalling = true;
     window.open(
-      `${window.location.origin}/apps/grid/search/${installShip}/apps`
+      `${window.location.origin}/apps/landscape/search/${installShip}/apps`
     );
     api.urbit.do.installApp(installShip, desk).then(refreshApps);
   };
@@ -63,8 +64,8 @@
         </div>
         <div class="flex flex-col">
           <div class="font-bold text-xl">{nickname ? nickname : title}</div>
-          <div class="text-sm text-grey flex items-center gap-4">
-            <span>Hosted by {ship}</span>
+          <div class="text-sm text-grey flex items-center gap-1">
+            <button on:click={() => push(`#/${ship}`)} class="hover:underline">Hosted by {ship}</button>
           </div>
         </div>
         <div>
@@ -114,7 +115,7 @@
             icon={CancelIcon}
             on:click={() => uninstall(desk)}
             async
-            class="text-xs text-tertiary bg-panel w-fit">Uninstall</IconButton
+            class="text-tertiary bg-panel w-fit">Uninstall</IconButton
           >
         {/if}
       </div>
