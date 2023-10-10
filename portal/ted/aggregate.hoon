@@ -16,7 +16,7 @@
 =/  msgs-per-replies  100
 ::
 ::  one of these needs to be satisfied for a msg to be aggregated
-=/  min-feels-req  0
+=/  min-feels-req  3
 =/  min-replies-req  200
 ::
 ;<  diarymap=(map flag:d diary:d)  bind:m
