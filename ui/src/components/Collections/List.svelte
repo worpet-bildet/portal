@@ -82,12 +82,14 @@
             <div class="text-tertiary">{blurb}</div>
           </div>
         </div>
-        <div class="bg-strucpill text-tertiary text-xs rounded-full px-2 py-1">
+        <div
+          class="bg-strucpill dark:bg-transparent text-tertiary text-xs rounded-full px-2 py-1"
+        >
           COLLECTION
         </div>
       </a>
       {#if i < collections.length - 1}
-        <div class="border-b w-full" />
+        <div class="border-b dark:border-glass w-full" />
       {/if}
     {/each}
   {/if}

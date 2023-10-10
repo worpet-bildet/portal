@@ -6,13 +6,13 @@
 
   import { Feed, FeedPostForm, ItemPreview, Sigil } from '@components';
   import {
+    GitHubIcon,
     LoadingIcon,
     ProfileIcon,
-    GitHubIcon,
-    XIcon,
-    UrbitIcon,
     RightSidebar,
     SidebarGroup,
+    UrbitIcon,
+    XIcon,
   } from '@fragments';
   import { api, me } from '@root/api';
   import config from '@root/config';
@@ -44,9 +44,9 @@
     });
   };
 
-  $: groupsFeed = ($state ? getGroupsFeed(me) : []).sort(
-    (a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time)
-    ).slice(0, maxFeedLength);
+  $: groupsFeed = ($state ? getGroupsFeed(me) : [])
+    .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time))
+    .slice(0, maxFeedLength);
 
   const globalFeed = (): FeedItem[] =>
     getGlobalFeed().concat(getCuratorFeed(me)).concat(groupsFeed);
@@ -136,7 +136,9 @@
       class:hidden={!$state.isComposing}
       class:block={$state.isComposing}
     >
-      <FeedPostForm placeholder="Penny for your thoughts? Type '~' to insert a reference" />
+      <FeedPostForm
+        placeholder="Penny for your thoughts? Type '~' to insert a reference"
+      />
     </div>
     {#if !$state.isComposing}
       <div>
@@ -176,7 +178,7 @@
                   <div class="rounded-md overflow-hidden w-8">
                     <Sigil patp={location} />
                   </div>
-                  <div class="flex flex-col">
+                  <div class="flex flex-col w-fit">
                     <div class="line-clamp-1">{description}</div>
                     <div
                       class="flex items-center w-full justify-between gap-2 text-xs"
@@ -240,11 +242,15 @@
         <div class="flex flex-col gap-4" />
       </SidebarGroup>
     {/if}
-    <div class="flex justify-between items-center gap-2 mx-2 text-secondary text-sm">
+    <div
+      class="flex justify-between items-center gap-2 mx-2 text-secondary text-sm"
+    >
       <div class="text-left">© 2023 Terra Nova Labs Limited</div>
       <div class="flex gap-2">
         <a href="https://twitter.com/portal__gm" class="w-4 h-4"><XIcon /></a>
-        <a href="https://github.com/worpet-bildet/portal/" class="w-4 h-4"><GitHubIcon /></a>
+        <a href="https://github.com/worpet-bildet/portal/" class="w-4 h-4"
+          ><GitHubIcon /></a
+        >
         <a href="https://urbit.org" class="w-4 h-4"><UrbitIcon /></a>
       </div>
     </div>

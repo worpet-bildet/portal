@@ -10,7 +10,6 @@ import {
   ItemKey,
   ItemStruc,
 } from '$types/portal/item';
-import { HarkNotificationDestination } from '$types/portal/notification';
 import { State } from '$types/state';
 
 import { uniqBy } from 'lodash';
@@ -187,8 +186,8 @@ export const refreshBlogs = (): void => {
   });
 };
 
-export const setReferredTo = (key: HarkNotificationDestination): void => {
-  state.update((s) => ({ ...s, referredTo: key }));
+export const setLastViewedPost = (lastViewedPost: string): void => {
+  state.update((s) => ({ ...s, lastViewedPost }));
 };
 
 export const setIsComposing = (isComposing: boolean): void => {

@@ -57,7 +57,9 @@
   } = getMeta(app)}
 
   <div class="col-span-12 md:col-span-5">
-    <div class="flex flex-col gap-3 p-6 border rounded-xl sticky top-4">
+    <div
+      class="flex flex-col gap-3 p-6 border dark:border-glass rounded-xl sticky top-4"
+    >
       <div class="flex flex-col gap-2">
         <div class="w-24 overflow-hidden rounded-xl">
           <ItemImage {image} {color} {title} />
@@ -65,7 +67,9 @@
         <div class="flex flex-col">
           <div class="font-bold text-xl">{nickname ? nickname : title}</div>
           <div class="text-sm text-grey flex items-center gap-1">
-            <button on:click={() => push(`#/${ship}`)} class="hover:underline">Hosted by {ship}</button>
+            <button on:click={() => push(`#/${ship}`)} class="hover:underline"
+              >Hosted by {ship}</button
+            >
           </div>
         </div>
         <div>
@@ -79,7 +83,7 @@
             icon={AppsIcon}
             on:click={() =>
               window.open(`${window.location.origin}${servedFrom}/`)}
-            class="bg-black text-white w-fit">Open</IconButton
+            class="bg-black dark:bg-white text-white dark:text-black w-fit">Open</IconButton
           >
         {:else if isInstalling}
           <IconButton loading class="bg-black text-white w-fit"
@@ -89,13 +93,13 @@
           <IconButton
             icon={ETHIcon}
             on:click={() => dispatch('purchase')}
-            class="bg-black text-white w-fit">Purchase</IconButton
+            class="bg-black dark:bg-white text-white dark:text-black w-fit">Purchase</IconButton
           >
         {:else}
           <IconButton
             icon={DownloadIcon}
             on:click={() => install(distShip, desk)}
-            class="bg-black text-white w-fit">Install</IconButton
+            class="bg-black dark:bg-white text-white dark:text-black w-fit">Install</IconButton
           >
         {/if}
         {#if link}

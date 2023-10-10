@@ -54,9 +54,9 @@
             event.currentTarget.innerHTML = 'Joining...';
             await api.urbit.do.joinGroup(groupKey).then(refreshGroups);
           }}
-          class="bg-black rounded-md text-xs font-bold px-2 py-1 text-white flex items-center gap-2 min-w-fit"
-          ><div class="w-4 h-4 text-white"><LogOutIcon /></div>
-          <div>Join</div>
+          class="bg-black dark:bg-white rounded-md text-xs font-bold px-2 py-1 text-white flex items-center gap-2 min-w-fit"
+          ><div class="w-4 h-4 text-white dark:text-black"><LogOutIcon /></div>
+          <div class="dark:text-black">Join</div>
         </button>
       {/if}
     </div>

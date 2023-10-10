@@ -24,6 +24,7 @@
     getAnyLink,
     getGroupsLink,
     getMeta,
+    isUrl,
     isValidPatp,
   } from '@root/util';
   import { createEventDispatcher } from 'svelte';
@@ -153,7 +154,7 @@
   {@const { blurb, groupsBlurb, ship, createdAt, ref, image, group } =
     getMeta(item)}
   {@const blurbLink = getAnyLink(blurb || groupsBlurb)}
-  <div class="flex flex-col text-left gap-2 w-full" in:fade>
+  <div class="flex flex-col text-left gap-2 w-full" id={item.keyStr} in:fade>
     <div class="flex items-center justify-between px-3">
       <div class="flex items-center gap-1">
         <InlineShip patp={ship} />
@@ -180,7 +181,7 @@
       {/if}
       <a
         draggable="false"
-        class="flex flex-col w-full bg-panel text-black px-3 py-5 whitespace-pre-wrap break-words gap-5 select-text rounded-xl"
+        class="flex flex-col w-full bg-panel dark:bg-darkpanel text-black dark:text-white px-3 py-5 whitespace-pre-wrap break-words gap-5 select-text rounded-xl"
         class:hover:bg-panelhover={!isReplyFormOpen}
         class:cursor-default={isReplyFormOpen}
         href={getExternalLink() ||
@@ -192,6 +193,10 @@
             {#each blurb.split(/(\s)/) as word}
               {#if getRef(word)}
                 <InlineItem keyStr={getRef(word)} />
+              {:else if isUrl(word)}
+                <a href={word} target="_blank" class="text-navtextactive"
+                  >{word}</a
+                >
               {:else}
                 {word}
               {/if}
@@ -232,7 +237,7 @@
           </a>
           <div class="col-span-1 flex items-center gap-2">
             {#if isLikedByMe}
-              <div class="w-5 h-5 text-error">
+              <div class="w-5 h-5 text-error" in:fade>
                 <LikeIcon />
               </div>
               <div class="text-error">{numLikes}</div>
@@ -251,7 +256,7 @@
     </div>
   </div>
 {:else}
-  <div class="p-5 rounded-xl bg-panel text-grey" in:fade>
+  <div class="p-5 rounded-xl bg-panel dark:bg-darkpanel text-grey" in:fade>
     Contacting {key.ship}...
   </div>
 {/if}

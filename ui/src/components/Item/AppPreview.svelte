@@ -57,9 +57,9 @@
               }/apps`
             );
           }}
-          class="bg-black rounded-md text-xs font-bold px-2 py-1 text-white flex items-center gap-2 min-w-fit"
-          ><div class="w-4 h-4 text-white"><DownloadIcon /></div>
-          <div>Install</div>
+          class="bg-black dark:bg-white rounded-md text-xs font-bold px-2 py-1 text-white flex items-center gap-2 min-w-fit"
+          ><div class="w-4 h-4 text-white dark:text-black"><DownloadIcon /></div>
+          <div class="dark:text-black">Install</div>
         </button>
       {/if}
     </div>

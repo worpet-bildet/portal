@@ -31,7 +31,13 @@
     InlineShip,
     RichTextArea,
   } from '@components';
-  import { UrbitIcon, CollectionIcon, LinkPreview, LoadingIcon, ArrowBackIcon } from '@fragments';
+  import {
+    ArrowBackIcon,
+    CollectionIcon,
+    LinkPreview,
+    LoadingIcon,
+    UrbitIcon,
+  } from '@fragments';
   import { Editor } from '@tiptap/core';
 
   export let replyTo: ItemKey | undefined = undefined;
@@ -247,11 +253,13 @@
 </script>
 
 <div
-  class="flex flex-col w-full h-full sm:h-auto border border-mute p-3 gap-4 rounded-xl"
+  class="flex flex-col w-full h-full sm:h-auto border border-mute dark:border-glass p-3 gap-4 rounded-xl"
   class:relative={submitting}
 >
   {#if submitting}
-    <div class="absolute top-0 left-0 w-full h-full bg-white/70 z-10">
+    <div
+      class="absolute top-0 left-0 w-full h-full bg-white/70 dark:bg-black/70 z-10"
+    >
       <div class="flex w-full h-full items-center justify-center opacity-100">
         <div class="w-10 h-10">
           <LoadingIcon />
@@ -259,31 +267,34 @@
       </div>
     </div>
   {/if}
-  <div class="flex justify-between items-center w-full"
-    class:hidden={!$state.isComposing}>
+  <div
+    class="flex justify-between items-center w-full"
+    class:hidden={!$state.isComposing}
+  >
     <button
       class="px-3 py-2 rounded-lg text-tertiary border border-mute flex items-center gap-2"
-      on:click={() => setIsComposing(false)}>
+      on:click={() => setIsComposing(false)}
+    >
       <div class="w-4 h-4">
         <ArrowBackIcon />
       </div>
       Back
     </button>
-    <button class="py-2 px-3 ml-2 rounded-lg bg-black text-white font-bold"
-      on:click={post}>
+    <button
+      class="py-2 px-3 ml-2 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold"
+      on:click={post}
+    >
       {#if replyTo}Reply{:else}Post{/if}
     </button>
   </div>
   <div class="flex items-center gap-2">
-    <InlineShip patp={me} isExpanded noName/>
+    <InlineShip patp={me} isExpanded noName />
     <div class="flex w-full justify-end overflow-hidden">
       <RichTextArea
         bind:editor
         bind:content
         {placeholder}
         on:keyboardSubmit={post}
-        class="resize-y"
-        style="min-height: 10px; max-height: 500px;"
       />
     </div>
   </div>
@@ -311,13 +322,15 @@
   <div class="flex justify-between items-center w-full">
     <div class="flex items-center ml-12">
       <button
-        class="w-10 p-2 rounded-lg text-black"
+        class="w-10 p-2 rounded-lg text-black dark:text-white"
         class:text-tertiary={!$state.s3}
         on:click={() => fileInput.click()}><CollectionIcon /></button
       >
       <button
-        class="w-10 p-2.5 rounded-lg text-black"
-        on:click={() => { editor.chain().insertContent('~').run(); }}><UrbitIcon /></button
+        class="w-10 p-2.5 rounded-lg text-black dark:text-white"
+        on:click={() => {
+          editor.chain().insertContent('~').run();
+        }}><UrbitIcon /></button
       >
       <input
         type="file"
@@ -327,9 +340,11 @@
         on:change={handleImageSelect}
       />
     </div>
-    <button class="py-1 px-3 ml-2 rounded-lg bg-black text-white font-bold"
+    <button
+      class="py-1 px-3 ml-2 rounded-lg bg-black text-white dark:text-black dark:bg-white hover:bg-blackhover dark:hover:bg-whitehover font-bold"
       class:hidden={$state.isComposing}
-      on:click={post}>
+      on:click={post}
+    >
       {#if replyTo}Reply{:else}Post{/if}
     </button>
   </div>
