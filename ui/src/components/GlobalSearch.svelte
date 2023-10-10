@@ -278,7 +278,6 @@
                 on:mousedown={() => {
                   push(keyStrFromObj(item.keyObj));
                   setIsSearching(false);
-                  searchInput.blur();
                 }}
                 class="flex flex-row gap-2 text-start px-2 py-1 rounded-md hover:bg-panel line-clamp-1"
                 class:bg-panel={selectedIndex === i}
