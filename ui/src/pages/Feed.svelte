@@ -225,13 +225,13 @@
       <SidebarGroup>
         <div class="flex flex-col gap-2">
           <div class="flex flex-col gap-1 px-2">
-            <div class="flex items-start justify-between">
+            <div class="flex items-start justify-between text-xl font-bold">
               <div>Discover More Urbit Content</div>
               <!-- <a use:link href={'#/explore'} class="text-flavour text-xs"
                 >See all</a
               > -->
             </div>
-            <div class="text-flavour text-xs">Apps, Groups & Collections</div>
+            <div class="text-flavour text-sm">Apps, Groups & Collections</div>
           </div>
           {#each sortedRecommendations as item}
             <ItemPreview key={item[0]} keyStr={item[0]} />
