@@ -80,14 +80,14 @@
     if ($state.isLoaded && !item) {
       return api.portal.do.subscribe(key);
     }
-    if (groupsStrucs.includes(item.keyObj.struc)) isGroupsItem = true;
+    if (groupsStrucs.includes(item?.keyObj?.struc)) isGroupsItem = true;
     if (isGroupsItem) clickable = false;
 
-    if (item.keyObj.struc === 'group') {
+    if (item?.keyObj?.struc === 'group') {
       groupKey = `${item.keyObj.ship}/${item.keyObj.cord}`;
       joinedDetails = getJoinedGroupDetails(groupKey);
     }
-    if (item.keyObj.struc === 'app')
+    if (item?.keyObj?.struc === 'app')
       isInstalled = checkIfInstalled(
         $state,
         item?.keyObj?.ship,
