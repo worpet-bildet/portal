@@ -17,15 +17,14 @@
 
   export let patp;
 
-  let isMyPal;
   const togglePal = () => {
     let ship = patp.slice(1);
-    isMyPal = !!$state.pals?.[patp.slice(1)];
     if (isMyPal) return api.pals.do.remove(ship).then(refreshPals);
     api.pals.do.add(ship).then(refreshPals);
   };
 
   $: curator = $state && getCurator(patp);
+  $: isMyPal = $state && !!$state.pals?.[patp.slice(1)];
   $: curator?.keyObj?.ship && patp && !contacts()[patp]
     ? api.urbit.do.meetContact(patp)
     : null;
