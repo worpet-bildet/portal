@@ -1,15 +1,15 @@
 <script lang="ts">
-  import { onMount, onDestroy, createEventDispatcher } from 'svelte';
-  import { Editor, Extension, nodeInputRule } from '@tiptap/core';
-  import StarterKit from '@tiptap/starter-kit';
-  import { Placeholder } from '@tiptap/extension-placeholder';
+  import { Editor, Extension } from '@tiptap/core';
   import { CharacterCount } from '@tiptap/extension-character-count';
+  import { Placeholder } from '@tiptap/extension-placeholder';
+  import StarterKit from '@tiptap/starter-kit';
+  import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 
-  import suggestion from './suggestion';
-  import Commands from './command';
   import CommandList from './CommandList.svelte';
   import InlineItemReference from './InlineItemReference';
-  import { sigVisible, sigItems, sigProps } from './stores';
+  import Commands from './command';
+  import { sigItems, sigProps, sigVisible } from './stores';
+  import suggestion from './suggestion';
 
   const dispatch = createEventDispatcher();
 
@@ -83,7 +83,9 @@
           suggestion,
         }),
         Placeholder.configure({
-          placeholder: placeholder ?? "Penny for your thoughts? Type '~' to insert a reference",
+          placeholder:
+            placeholder ??
+            "Penny for your thoughts? Type '~' to insert a reference",
         }),
       ],
       editorProps: {
@@ -108,7 +110,7 @@
 <div
   bind:this={element}
   on:keydown|capture={handleKeydown}
-  class="py-3 ml-2 px-3 w-full text-lg resize-none leading-tight break-words focus:outline-none caret-black dark:caret-white bg-panel rounded-lg"
+  class="py-3 ml-2 px-3 w-full text-lg resize-none leading-tight break-words focus:outline-none caret-black dark:caret-white bg-panel dark:bg-darkpanel dark:text-white rounded-lg"
 />
 <CommandList {selectedIndex} />
 
@@ -117,7 +119,7 @@
     outline: none;
   }
   :global(.tiptap p.is-editor-empty:first-child::before) {
-    color: #6D6D6D;
+    color: #6d6d6d;
     content: attr(data-placeholder);
     float: left;
     height: 0;

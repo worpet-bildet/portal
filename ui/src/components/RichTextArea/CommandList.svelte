@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { sigVisible, sigItems, sigLocation, sigProps } from './stores';
   import { ItemImage } from '@fragments';
+  import { sigItems, sigLocation, sigProps, sigVisible } from './stores';
 
   export let selectedIndex = 0;
 
@@ -13,14 +13,15 @@
 
 {#if $sigVisible}
   <div
-    class="absolute flex flex-col bg-white drop-shadow-search w-96 max-w-full rounded-lg overflow-y-auto z-20"
+    class="absolute flex flex-col bg-white dark:bg-black drop-shadow-search w-96 max-w-full rounded-lg overflow-y-auto z-20"
     style="left: {$sigLocation.x}px; top: {$sigLocation.y + 30}px;"
   >
     <div class="p-2 text-sm text-slate-500">Items</div>
     {#each $sigItems as { title, struc, image, color, command }, i}
       <button
         class="flex items-center p-3 w-full text-left"
-        class:bg-slate-100={i == selectedIndex}
+        class:bg-slate-100={i === selectedIndex}
+        class:dark:bg-darkpanel={i === selectedIndex}
         on:mouseenter={() => (selectedIndex = i)}
         on:click={() => {
           $sigVisible = false;
@@ -37,7 +38,7 @@
           </div>
         </div>
         <div
-          class="text-xs text-strucpilltext bg-strucpill rounded-full px-3 py-1"
+          class="text-xs text-strucpilltext bg-strucpill dark:bg-transparent rounded-full px-3 py-1"
         >
           {struc.toUpperCase()}
         </div>

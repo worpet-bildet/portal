@@ -34,7 +34,9 @@
   {@const { title, nickname, cover, image, description, color } =
     getMeta(curator)}
   <div class="col-span-12 sm:col-span-5">
-    <div class="flex flex-col gap-3 p-6 border rounded-xl sticky top-4">
+    <div
+      class="flex flex-col gap-3 p-6 border dark:border-glass rounded-xl sticky top-4"
+    >
       <div class="flex flex-col gap-2">
         <div class="w-24 overflow-hidden rounded-xl">
           <Sigil {patp} />
@@ -65,7 +67,7 @@
           <a
             use:link
             href={`/${me}/edit`}
-            class="w-full py-2 border rounded-lg text-center text-tertiary hover:text-black hover:underline"
+            class="w-full py-2 border dark:border-glass rounded-lg text-center text-tertiary hover:text-black hover:underline"
             >Edit Profile</a
           >
         {:else if isMyPal}
@@ -85,7 +87,7 @@
         {/if}
       </div>
       {#if curator?.bespoke?.groups?.length > 0}
-        <div class="border-b w-full" />
+        <div class="border-b dark:border-glass w-full" />
         <div class="flex flex-col gap-3">
           <div class="text-lg flex items-center gap-2">
             <div class="w-5 h-5"><GroupsIcon /></div>

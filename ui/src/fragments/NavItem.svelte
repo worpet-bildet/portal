@@ -10,13 +10,13 @@
 </script>
 
 <button
-  class="flex items-center justify-center lg:justify-between py-2 px-3 hover:bg-panelhover rounded-lg w-full relative"
+  class="flex items-center justify-center lg:justify-between py-2 px-3 hover:bg-panelhover dark:hover:bg-white/30 rounded-lg w-full relative"
   on:mouseenter={() => (hovering = true)}
   on:mouseleave={() => (hovering = false)}
   on:click
 >
   <div
-    class="flex gap-3 items-center flex-col md:flex-row"
+    class="flex gap-3 items-center flex-col md:flex-row dark:text-white"
     class:text-navtext={!active}
     class:text-black={active}
   >

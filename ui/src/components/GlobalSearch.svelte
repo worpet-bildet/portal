@@ -26,7 +26,7 @@
   } from '@root/util';
 
   import { Sigil } from '@components';
-  import { ActivityIcon, FeedIcon, SearchIcon } from '@fragments';
+  import { FeedIcon, SearchIcon } from '@fragments';
   import ItemImage from '@root/fragments/ItemImage.svelte';
 
   export let isGlassy: boolean = false;
@@ -55,9 +55,7 @@
       ships: Object.keys(pals())
         .slice(0, 3)
         .map((patp) => getCurator(`~${patp}`)),
-      pages: [
-        { title: 'Feed', icon: FeedIcon, action: () => push('/') },
-      ],
+      pages: [{ title: 'Feed', icon: FeedIcon, action: () => push('/') }],
     };
   };
 
@@ -173,7 +171,7 @@
   <div class="flex flex-row items-center mb-4 sm:px-0" class:px-3={isSearching}>
     <div
       transition:slide={{ duration: $state.isComposing ? 0 : 150 }}
-      class="flex bg-input w-full justify-between rounded-lg border p-3"
+      class="flex bg-input dark:bg-black dark:border-glass w-full justify-between rounded-lg border p-3"
       class:z-20={isSearching}
       class:sm:bg-input={!glass}
       class:sm:bg-glass={glass}
@@ -200,7 +198,7 @@
         />
       </div>
       <div
-        class="hidden sm:block text-xs px-2 py-1 rounded-md text-secondary"
+        class="hidden sm:block text-xs px-2 py-1 rounded-md text-secondary dark:bg-glass dark:text-white"
         class:bg-panelhover={!glass}
         class:text-panelicon={!glass}
         class:sm:bg-glass={glass}
@@ -225,7 +223,7 @@
   {#if isSearching}
     <div class="relative">
       <div
-        class="flex flex-col border rounded-lg p-3 z-20 absolute bg-white w-full gap-3 drop-shadow-search"
+        class="flex flex-col border dark:border-glass rounded-lg p-3 z-20 absolute bg-white dark:bg-black w-full gap-3 drop-shadow-search"
       >
         {#if numResults === 0}
           <div
@@ -244,8 +242,9 @@
                   push(keyStrFromObj(item.keyObj));
                   setIsSearching(false);
                 }}
-                class="flex justify-between items-center px-2 py-1 rounded-md hover:bg-panel"
+                class="flex justify-between items-center px-2 py-1 rounded-md hover:bg-panel dark:hover:bg-darkpanel"
                 class:bg-panel={selectedIndex === i}
+                class:dark:bg-darkpanel={selectedIndex === i}
                 bind:this={buttons[i]}
               >
                 <div class="flex items-center gap-4 w-full">
@@ -259,7 +258,7 @@
                   </div>
                 </div>
                 <div
-                  class="text-xs text-strucpilltext bg-strucpill rounded-full px-3 py-1"
+                  class="text-xs text-strucpilltext bg-strucpill dark:bg-transparent rounded-full px-3 py-1"
                 >
                   {displayStruc.toUpperCase()}
                 </div>
@@ -279,8 +278,9 @@
                   push(keyStrFromObj(item.keyObj));
                   setIsSearching(false);
                 }}
-                class="flex flex-row gap-2 text-start px-2 py-1 rounded-md hover:bg-panel line-clamp-1"
+                class="flex flex-row gap-2 text-start px-2 py-1 rounded-md hover:bg-panel dark:hover:bg-darkpanel line-clamp-1"
                 class:bg-panel={selectedIndex === i}
+                class:dark:bg-darkpanel={selectedIndex === i}
                 bind:this={buttons[i]}
               >
                 <div class="font-bold whitespace-nowrap">
@@ -306,8 +306,9 @@
                   push(`/${item.keyObj.ship}`);
                   setIsSearching(false);
                 }}
-                class="flex flex-row gap-2 text-start px-2 py-1 rounded-md hover:bg-panel line-clamp-1"
+                class="flex flex-row gap-2 text-start px-2 py-1 rounded-md hover:bg-panel dark:hover:bg-darkpanel line-clamp-1"
                 class:bg-panel={selectedIndex === i}
+                class:dark:bg-darkpanel={selectedIndex === i}
                 bind:this={buttons[i]}
               >
                 <div class="flex items-center gap-2">
@@ -337,8 +338,9 @@
                   page.action();
                   setIsSearching(false);
                 }}
-                class="flex justify-between items-center px-2 py-1 rounded-md hover:bg-panel"
+                class="flex justify-between items-center px-2 py-1 rounded-md hover:bg-panel dark:hover:bg-darkpanel"
                 class:bg-panel={selectedIndex === i}
+                class:dark:bg-darkpanel={selectedIndex === i}
                 bind:this={buttons[i]}
               >
                 <div class="flex items-center gap-4">
@@ -349,7 +351,7 @@
                 </div>
                 {#if page.unreadCount}
                   <div
-                    class="text-xs text-strucpilltext bg-strucpill rounded-full px-3 py-1"
+                    class="text-xs text-strucpilltext bg-strucpill dark:bg-transparent rounded-full px-3 py-1"
                   >
                     {page.unreadCount}
                   </div>

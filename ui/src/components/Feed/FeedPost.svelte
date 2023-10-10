@@ -181,7 +181,7 @@
       {/if}
       <a
         draggable="false"
-        class="flex flex-col w-full bg-panel text-black px-3 py-5 whitespace-pre-wrap break-words gap-5 select-text rounded-xl"
+        class="flex flex-col w-full bg-panel dark:bg-darkpanel text-black dark:text-white px-3 py-5 whitespace-pre-wrap break-words gap-5 select-text rounded-xl"
         class:hover:bg-panelhover={!isReplyFormOpen}
         class:cursor-default={isReplyFormOpen}
         href={getExternalLink() ||
@@ -236,7 +236,7 @@
           </a>
           <div class="col-span-1 flex items-center gap-2">
             {#if isLikedByMe}
-              <div class="w-5 h-5 text-error">
+              <div class="w-5 h-5 text-error" in:fade>
                 <LikeIcon />
               </div>
               <div class="text-error">{numLikes}</div>
@@ -255,7 +255,7 @@
     </div>
   </div>
 {:else}
-  <div class="p-5 rounded-xl bg-panel text-grey" in:fade>
+  <div class="p-5 rounded-xl bg-panel dark:bg-darkpanel text-grey" in:fade>
     Contacting {key.ship}...
   </div>
 {/if}

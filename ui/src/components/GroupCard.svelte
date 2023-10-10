@@ -13,7 +13,6 @@
     ProfileIcon,
     RepostIcon,
   } from '@fragments';
-  import { link } from 'svelte-spa-router';
 
   export let group;
   export let joinedDetails;
@@ -29,7 +28,9 @@
 {#if group}
   {@const { title, nickname, ship, image, description, color } = getMeta(group)}
   <div class="col-span-12 md:col-span-5">
-    <div class="flex flex-col gap-3 p-6 border rounded-xl sticky top-4">
+    <div
+      class="flex flex-col gap-3 p-6 border dark:border-glass rounded-xl sticky top-4"
+    >
       <div class="flex flex-col gap-2">
         <div class="w-24 overflow-hidden rounded-xl">
           <ItemImage {image} {color} {title} />
@@ -37,7 +38,9 @@
         <div class="flex flex-col">
           <div class="font-bold text-xl">{nickname ? nickname : title}</div>
           <div class="text-sm text-grey flex items-center gap-1">
-            <button on:click={() => push(`#/${ship}`)} class="hover:underline">Hosted by {ship}</button>
+            <button on:click={() => push(`#/${ship}`)} class="hover:underline"
+              >Hosted by {ship}</button
+            >
           </div>
         </div>
         <div>

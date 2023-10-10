@@ -26,6 +26,7 @@ module.exports = {
         transparent: '#00000000',
 
         panel: '#FAFAFA',
+        darkpanel: '#FAFAFA25',
         panelhover: '#EFEFEF',
         indicator: '#CFE9FF',
         indicatortext: '#8E8E8E',

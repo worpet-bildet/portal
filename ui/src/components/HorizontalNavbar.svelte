@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { ActivityIcon, FeedIcon, NavItem, PlusIcon, ExploreIcon } from '@fragments';
   import { Sigil } from '@components';
+  import { ExploreIcon, FeedIcon, NavItem, PlusIcon } from '@fragments';
   import { me } from '@root/api';
-  import { setIsComposing, state, setIsSearching } from '@root/state';
+  import { setIsComposing, setIsSearching, state } from '@root/state';
   import { push } from 'svelte-spa-router';
 
   export let isHome: boolean = false;
@@ -16,7 +16,7 @@
 
 {#if !$state.isComposing}
   <div
-    class="fixed left-0 h-20 bottom-0 flex w-full justify-between bg-white/80 backdrop-blur-xs"
+    class="fixed left-0 h-20 bottom-0 flex w-full justify-between bg-white/80 dark:bg-black/80 backdrop-blur-xs"
   >
     <NavItem
       icon={FeedIcon}
@@ -29,18 +29,16 @@
     <NavItem
       icon={ExploreIcon}
       title={'Explore'}
-      on:click={() => {setIsSearching(true)}}
+      on:click={() => {
+        setIsSearching(true);
+      }}
     />
     <!-- <NavItem
       icon={ActivityIcon}
       title={'Activity'}
       on:click={() => push('#/activity')}
     /> -->
-    <NavItem
-      icon={Sigil}
-      title={'Profile'}
-      on:click={() => push(`#/${me}`)}
-    />
+    <NavItem icon={Sigil} title={'Profile'} on:click={() => push(`#/${me}`)} />
     <!-- <NavItem
     icon={TipIcon}
     title={'Tips'}
