@@ -24,6 +24,7 @@
     getAnyLink,
     getGroupsLink,
     getMeta,
+    isUrl,
     isValidPatp,
   } from '@root/util';
   import { createEventDispatcher } from 'svelte';
@@ -192,6 +193,10 @@
             {#each blurb.split(/(\s)/) as word}
               {#if getRef(word)}
                 <InlineItem keyStr={getRef(word)} />
+              {:else if isUrl(word)}
+                <a href={word} target="_blank" class="text-navtextactive"
+                  >{word}</a
+                >
               {:else}
                 {word}
               {/if}
