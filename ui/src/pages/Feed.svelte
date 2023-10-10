@@ -33,6 +33,7 @@
   let groupsFeed: FeedItem[] = [];
   let promptedFeed: FeedItem[] = [];
   let loading: boolean;
+  const maxFeedLength: number = 100;
 
   const subToGlobalFeed = (): void => {
     return api.portal.do.subscribe({
@@ -45,7 +46,7 @@
 
   $: groupsFeed = ($state ? getGroupsFeed(me) : []).sort(
     (a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time)
-    ).slice(0, 100);
+    ).slice(0, maxFeedLength);
 
   const globalFeed = (): FeedItem[] =>
     getGlobalFeed().concat(getCuratorFeed(me)).concat(groupsFeed);
@@ -66,7 +67,7 @@
         (a) => fromUrbitTime(a.time) > Date.now() - 1000 * 60 * 60 * 24 * 14
       )
       .sort((a, b) => fromUrbitTime(b.time) - fromUrbitTime(a.time))
-      .slice(0, 100);
+      .slice(0, maxFeedLength);
 
     // Get the latest post, if it was more than six hours ago, send another sub
     if (
