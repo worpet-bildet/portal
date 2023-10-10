@@ -91,7 +91,7 @@
   };
 
   export const getExternalLink = () => {
-    return getGroupsLink(item);
+    return getGroupsLink(item, isReplyFormOpen);
   };
 
   // TODO: this is quite not good
@@ -159,14 +159,14 @@
         <InlineShip patp={ship} />
         {#if group}
           {@const { title, image, color } = getMeta(getGroup(group))}
-          <span class="text-xs sm:text-base">in</span>
+          <span class="text-xs sm:text-base px-1">in</span>
           <a
             use:link
             href={`/group/${group}/`}
             class="flex items-center gap-1 text-black text-xs sm:text-base"
           >
             <div class="w-5 h-5">
-              <ItemImage {title} {image} {color} />
+              <ItemImage {title} {image} {color} {isReplyFormOpen} />
             </div>
             {title}
           </a>
@@ -214,6 +214,7 @@
             {item}
             headless
             isExpanded={expandPreview}
+            imageClickable={isReplyFormOpen}
             on:expand={previewNavigate}
           />
         {/if}

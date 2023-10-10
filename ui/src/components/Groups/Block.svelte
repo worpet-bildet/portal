@@ -4,6 +4,9 @@
   import { deskKeyToItemKey, groupKeyToItemKey } from '@root/state';
 
   export let block;
+  export let imageClickable: boolean = false;
+  console.log(imageClickable);
+  console.log(block['image']['src']);
 </script>
 
 {#if block['cite']}
@@ -14,13 +17,21 @@
     <ItemPreview key={deskKeyToItemKey(block['cite']['desk']['flag'])} />
   {/if}
 {:else if block['image']}
-  <a href={block['image']['src']} target="_blank">
+  {#if imageClickable}
+    <a href={block['image']['src']} target="_blank">
+      <ImageLoader
+        src={block['image']['src']}
+        alt={block['image']['alt']}
+        class="w-full h-full object-cover rounded-xl my-2"
+      />
+    </a>
+  {:else}
     <ImageLoader
       src={block['image']['src']}
       alt={block['image']['alt']}
       class="w-full h-full object-cover rounded-xl my-2"
     />
-  </a>
+  {/if}
 {:else if block.hasOwnProperty('rule')}
   <hr class="mb-2 p-2" />
 {/if}

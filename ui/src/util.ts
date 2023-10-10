@@ -254,30 +254,34 @@ export const getAllLinks = (string) => {
   return linkify.find(string).map((l) => l.href);
 };
 
-export const getGroupsLink = (item) => {
+export const getGroupsLink = (item, isReplyFormOpen) => {
   // http://localhost/apps/groups/groups/~tommur-dostyn/tlon-studio/channels/chat/~tommur-dostyn/support?msg=170141184506435544337432278891006787584
-  const prefix = `/apps/groups/`;
-  let suffix = '';
+  if (isReplyFormOpen) {
+    const prefix = `/apps/groups/`;
+    let suffix = '';
 
-  switch (item?.keyObj?.struc) {
-    case 'groups-chat-msg':
-      suffix = `groups/${item?.bespoke?.group}/channels/chat/${
-        item?.bespoke?.channel
-      }?msg=${removeDotsFromId(item?.bespoke?.['time-ref'])}`;
-      break;
-    case 'groups-heap-curio':
-      suffix = `groups/${item?.bespoke?.group}/channels/heap/${
-        item?.bespoke?.channel
-      }/curio/${removeDotsFromId(item?.bespoke?.time)}`;
-      break;
-    case 'groups-diary-note':
-      suffix = `groups/${item?.bespoke?.group}/channels/diary/${
-        item?.bespoke?.channel
-      }/note/${removeDotsFromId(item?.bespoke?.['time-ref'])}`;
-      break;
-  }
-  if (suffix) {
-    return `${prefix}${suffix}`;
+    switch (item?.keyObj?.struc) {
+      case 'groups-chat-msg':
+        suffix = `groups/${item?.bespoke?.group}/channels/chat/${
+          item?.bespoke?.channel
+        }?msg=${removeDotsFromId(item?.bespoke?.['time-ref'])}`;
+        break;
+      case 'groups-heap-curio':
+        suffix = `groups/${item?.bespoke?.group}/channels/heap/${
+          item?.bespoke?.channel
+        }/curio/${removeDotsFromId(item?.bespoke?.time)}`;
+        break;
+      case 'groups-diary-note':
+        suffix = `groups/${item?.bespoke?.group}/channels/diary/${
+          item?.bespoke?.channel
+        }/note/${removeDotsFromId(item?.bespoke?.time)}`;
+        break;
+    }
+    if (suffix) {
+      return `${prefix}${suffix}`;
+    }
+  } else {
+    return null;
   }
 };
 

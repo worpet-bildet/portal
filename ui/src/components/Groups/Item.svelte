@@ -8,6 +8,7 @@
   export let item: Item;
   export let headless: boolean = false;
   export let isExpanded: boolean = false;
+  export let imageClickable: boolean = false;
 </script>
 
 {#if item}
@@ -22,7 +23,7 @@
     {@const {
       bespoke: { heart, group },
     } = item}
-    <HeapCurio {heart} {group} {headless} {isExpanded} on:expand />
+    <HeapCurio {heart} {group} {headless} {isExpanded} {imageClickable} on:expand />
   {:else if struc === 'groups-diary-note'}
     {@const {
       bespoke: { essay, group },
