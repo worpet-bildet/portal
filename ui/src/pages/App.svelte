@@ -287,7 +287,8 @@
               Please prompt them to follow
               <a
                 href="https://twitter.com/worpet_bildet/status/1668643121813438466?s=20"
-                target="_blank">this guide</a
+                target="_blank"
+                class="underline">this guide</a
               >
             </div>
           {/if}
@@ -395,7 +396,8 @@
             prompt them to follow
             <a
               href="https://twitter.com/worpet_bildet/status/1668643121813438466?s=20"
-              target="_blank">this guide</a
+              target="_blank"
+              class="underline">this guide</a
             >
           </div>
         {/if}

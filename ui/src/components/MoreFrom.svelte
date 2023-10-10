@@ -26,7 +26,7 @@
   <div class="flex flex-col gap-3 pt-5">
     <div class="text-lg flex items-center gap-2">
       <div class="w-5 h-5"><CollectionIcon /></div>
-      <div>More from {nickname || patp}</div>
+      <div class="font-bold">More from {nickname || patp}</div>
     </div>
     {#each sortedRecommendations as [recommendation]}
       {@const key = keyStrToObj(recommendation)}

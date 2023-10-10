@@ -20,7 +20,6 @@
   class:bg-panels-hover={active}
   class:border-black={active}
   class:dark:border-white={active}
-  class:dark:hover:bg-transparent={!active}
   title={tooltip}
   on:click
   on:click={() => (async && !disabled ? (loading = true) : null)}

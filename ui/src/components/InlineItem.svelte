@@ -27,7 +27,7 @@
   <a
     use:link
     href={keyStr}
-    class="inline-flex px-1 gap-1 items-center border rounded-md hover:border-black"
+    class="inline-flex px-1 gap-1 items-center border dark:border-glass rounded-md hover:border-black"
   >
     <span class="w-4 h-4 overflow-hidden rounded-sm">
       <ItemImage {image} {title} {color} />
