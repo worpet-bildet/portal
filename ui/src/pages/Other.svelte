@@ -12,9 +12,10 @@
     getRepliesByTo,
     keyStrFromObj,
     keyStrToObj,
+    setLastViewedPost,
     state,
   } from '@root/state';
-  import { fromUrbitTime, getMeta, collapseNames } from '@root/util';
+  import { collapseNames, fromUrbitTime, getMeta } from '@root/util';
 
   import { FeedPost, FeedPostForm, ProfileCard } from '@components';
 
@@ -84,6 +85,7 @@
     ?.map(getMeta)
     ?.map((m) => m.nickname || m.ship);
   $: postOfInterest?.scrollIntoView();
+  $: $state && item && setLastViewedPost(item.keyStr);
 </script>
 
 <div class="grid grid-cols-12 gap-8 mb-4 pb-20">

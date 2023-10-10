@@ -13,8 +13,6 @@
   export let isExpanded: boolean = false;
   export let headless: boolean = false;
 
-  console.log(getMeta(getGroup(group)));
-
   let contentContainer: HTMLDivElement;
 
   const handleClickExpand = () => dispatch('expand');

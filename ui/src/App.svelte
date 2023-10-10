@@ -92,6 +92,10 @@
     // isComposing = route === '/compose';
     // isSearching = route === '/search';
     isHome = route === '/';
+
+    if (isHome) {
+      document.getElementById($state.lastViewedPost)?.scrollIntoView();
+    }
   };
 </script>
 
