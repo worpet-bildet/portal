@@ -1,9 +1,10 @@
 /-  c=portal-config, portal-devs, blog-paths
-/+  default-agent, p=portal, sss, dbug
+/+  default-agent, p=portal, sss, js=portal-json, dbug
 /$  json-to-action  %json  %portal-action
 /$  msg-to-json  %portal-message  %json
 /$  dev-map-to-json  %portal-dev-map  %json
 /$  portal-manager-result-to-json  %portal-manager-result  %json
+/*  server  %ship  /server/ship
 |%
 +$  versioned-state
   $+  manager-versioned-state
@@ -165,7 +166,9 @@
     =/  get  !<(get:m:p vase)
     ?>  ?=(%portal-devs -.get)
     :_  this  ::  FE update
-    [%give %fact [/updates]~ %portal-manager-result !>([%portal-devs dev-map])]^~
+    %+  snoc
+      (serve:helper /portal-manager-json (enjs-manager-result:enjs:js [%portal-devs dev-map]))
+    [%give %fact [/updates]~ %portal-manager-result !>([%portal-devs dev-map])]
     ::
       %portal-action
     ?>  =(our.bowl src.bowl)
@@ -918,8 +921,22 @@
 ++  dev-map-upd
   |=  =_dev-map
   ^-  (list card)
-  :~  [%give %fact [/updates]~ %portal-dev-map !>(dev-map)]
-  ==
+  %+  snoc
+    (serve /portal-manager-json (enjs-manager-result:enjs:js [%portal-devs dev-map]))
+  [%give %fact [/updates]~ %portal-dev-map !>(dev-map)]
+::  
+++  serve
+  |=  [=path jon=json]
+  ^-  (list card)
+  ?.  =(our.bowl server)
+    *(list card)
+  :~  [%pass /bind %arvo %e %disconnect `path]  ::maybe no need to disconnect?
+      :*  %pass  /bind  %arvo  %e
+          %set-response  (spat path)
+          ~  %.n  %payload
+          [200 ['Content-Type' 'application/json']~]
+          `(as-octt:mimes:html (trip (en:json:html jon)))
+  ==  ==
 ::
 ::  unidirectional mapping from path to time.key
 ::  if the original path had '0' in it, backwards conversion will fail

@@ -1,7 +1,8 @@
 /-  subgraph
-/+  default-agent, p=portal, g=social-graph, *mip, *sss
+/+  default-agent, p=portal, g=social-graph, *mip, *sss, js=portal-json
 /$  social-graph-result-to-json  %social-graph-result  %json
 /$  json-to-social-graph-track  %json  %social-graph-track
+/*  server  %ship  /server/ship
 |%
 ::  we are renaming %social-graph to %portal-graph
 ::  because we are using it for a different purpose
@@ -91,7 +92,9 @@
     =/  get  !<(get:m:p vase)
     ?>  ?=(%graph -.get)
     :_  this  ::  FE update
-    [%give %fact [/updates]~ %social-graph-result !>((scry-app %portal-store))]^~
+    %+  snoc
+      (serve:hc /portal-graph-json (enjs-graph-result:enjs:js (scry-app:hc %portal-store)))
+    [%give %fact [/updates]~ %social-graph-result !>((scry-app:hc %portal-store))]
     ::
       %social-graph-edit
     ?>  =(our src):bowl
@@ -187,6 +190,9 @@
       :*  %give  %fact  [/updates]~  %social-graph-result
           !>(app+(my [[tag (my [[from.q.edit (sy [to.q.edit]~)]]~)]]~))
       ==
+    =.  cards
+      %+  welp  cards
+      (serve:hc /portal-graph-json (enjs-graph-result:enjs:js (scry-app:hc %portal-store)))
     [cards this]
   ::
       %social-graph-track
@@ -394,7 +400,10 @@
           :-  ~
           (~(nuke-top-level-tag sg:g graph:state) app -.tag)
         ==
-      [cards this]
+      ::
+      :_  this
+      %+  welp  cards
+      (serve:hc /portal-graph-json (enjs-graph-result:enjs:js (scry-app:hc %portal-store)))
     ==
   ==
 ::
@@ -435,6 +444,19 @@
   |=  pat=@
   =/  =app:g  `@tas`pat
   app+(~(get-app sg:g graph.state) app)
+::
+++  serve
+  |=  [=path jon=json]
+  ^-  (list card)
+  ?.  =(our.bowl server)
+    *(list card)
+  :~  [%pass /bind %arvo %e %disconnect `path]  ::maybe no need to disconnect?
+      :*  %pass  /bind  %arvo  %e
+          %set-response  (spat path)
+          ~  %.n  %payload
+          [200 ['Content-Type' 'application/json']~]
+          `(as-octt:mimes:html (trip (en:json:html jon)))
+  ==  ==
 ::
 ++  handle-scry
   ::  /controller/[app]/[tag]  <-  returns @p of who we source a tag from
