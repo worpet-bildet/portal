@@ -1,7 +1,7 @@
 <script lang="ts">
   import { GoogleAnalytics } from '@beyonk/svelte-google-analytics';
   import config from '@root/config';
-  import { setReferredTo, state } from '@root/state';
+  import { state } from '@root/state';
   import Router, { location, push } from 'svelte-spa-router';
 
   import {
@@ -65,7 +65,7 @@
   });
 
   const urlParams = new URLSearchParams(window.location.search);
-  const notificationPath = urlParams.get('grid-note');
+  const notificationPath = urlParams.get('landscape-note');
 
   /**
    * The schema is
@@ -78,9 +78,7 @@
   if (notificationPath) {
     window.history.replaceState({}, document.title, '/apps/portal/#/');
     const parts = notificationPath.split('/');
-    const [_, __, type] = parts.slice(0, 3);
     const key = `/${parts.slice(3).join('/')}`;
-    setReferredTo({ type, key });
     push(`${key}`);
   }
 
@@ -120,7 +118,11 @@
             <MobileHeader />
           </div>
         {/if}
-        <div class="pt-4 col-span-12 md:col-span-7 md:pr-3">
+        <div
+          class="pt-4 col-span-12 md:col-span-7 md:pr-3 {isSearching
+            ? ''
+            : 'hidden sm:block'}"
+        >
           <GlobalSearch isGlassy={isSearchGlassy} {isSearching} />
         </div>
       {/if}

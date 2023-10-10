@@ -21,6 +21,7 @@ export const getMeta = (item) => {
     nickname: getNickname(item) || '',
     description: getDescription(item) || '',
     blurb: getBlurb(item) || '',
+    groupsBlurb: getGroupsBlurb(item) || '',
     image: getImage(item),
     screenshots: getScreenshots(item),
     cover: getCover(item),
@@ -90,6 +91,19 @@ export const getBlurb = (item) => {
       return item?.bespoke?.blurb;
   }
 };
+export const getGroupsBlurb = (item) => {
+  switch (item?.keyObj?.struc) {
+    case 'groups-chat-msg':
+      return joinInline(item?.bespoke?.content?.story?.inline);
+    case 'groups-heap-curio':
+      return joinInline(item?.bespoke?.heart?.content?.inline);
+    case 'groups-diary-note':
+      return item?.bespoke?.essay?.author;
+    default:
+      return '';
+  }
+};
+
 export const getImage = (item) => {
   switch (item?.keyObj?.struc) {
     case 'app':
@@ -232,9 +246,11 @@ export const getGroup = (item) => {
   }
 };
 export const getAnyLink = (string = '') => {
+  if (!string) return;
   return linkify.find(string)?.[0]?.href;
 };
 export const getAllLinks = (string) => {
+  if (!string) return;
   return linkify.find(string).map((l) => l.href);
 };
 
@@ -257,6 +273,35 @@ export const getGroupsLink = (item) => {
   }
   if (suffix) {
     return `${prefix}${suffix}`;
+  }
+};
+
+export const joinInline = (inline) => {
+  // inline could be an array, a string, or an object - we need to ensure that
+  // we return a string
+  let x = inline.reduce((acc, curr) => {
+    if (typeof curr === 'string') {
+      return acc + curr;
+    } else if (typeof curr === 'object') {
+      if (curr.link) {
+        // we don't want to generate link previews for images
+        if (isImage(curr.link.href)) return acc;
+        return acc + curr.link.href;
+      }
+      if (curr.hasOwnProperty('break')) return acc + '\n';
+      return acc + Object.values(curr)[0];
+    } else if (Array.isArray(curr)) {
+      return acc + joinInline(curr);
+    }
+  }, '');
+  return x;
+};
+
+export const normaliseUrl = (url) => {
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url;
+  } else {
+    return 'https://' + url;
   }
 };
 

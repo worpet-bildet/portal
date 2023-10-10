@@ -10,7 +10,7 @@ import { Item, ItemKey } from '$types/portal/item';
 import { Create, Edit, PokeData, SocialTagRequest } from '$types/portal/poke';
 
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import { toUrbitTime } from '@root/util';
+import { normaliseUrl, toUrbitTime } from '@root/util';
 import Urbit, { Poke, Scry } from '@urbit/http-api';
 import { writable } from 'svelte/store';
 
@@ -263,7 +263,7 @@ export const api = {
         };
         let client = new S3Client({
           credentials: s3.credentials,
-          endpoint: s3.credentials.endpoint,
+          endpoint: normaliseUrl(s3.credentials.endpoint),
           region: s3.configuration.region || 'a',
         });
         const command = new PutObjectCommand(params);

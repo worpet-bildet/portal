@@ -13,6 +13,8 @@
   export let isExpanded: boolean = false;
   export let headless: boolean = false;
 
+  console.log(getMeta(getGroup(group)));
+
   let contentContainer: HTMLDivElement;
 
   const handleClickExpand = () => dispatch('expand');
@@ -35,13 +37,15 @@
         >
         {#if group}
           {@const { title, image, color } = getMeta(getGroup(group))}
-          <span>in</span>
-          <a use:link href={`/group/${group}/`} class="flex gap-1 text-black">
-            <div class="w-5 h-5">
-              <ItemImage {title} {image} {color} />
-            </div>
-            {title}
-          </a>
+          {#if title}
+            <span>in</span>
+            <a use:link href={`/group/${group}/`} class="flex gap-1 text-black">
+              <div class="w-5 h-5">
+                <ItemImage {title} {image} {color} />
+              </div>
+              {title}
+            </a>
+          {/if}
         {/if}
       </div>
     {/if}
