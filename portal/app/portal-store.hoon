@@ -122,7 +122,7 @@
   ?+    mark    (on-poke:default mark vase)
       %noun
     ?.  =(our.bowl src.bowl)  `this
-    =/  act  !<($%([%unsub =key:d:m:p] [%pub =key:d:m:p] [%unpub =key:d:m:p]) vase)
+    =/  act  !<($%([%get-graph ~] [%unsub =key:d:m:p] [%pub =key:d:m:p] [%unpub =key:d:m:p]) vase)
     ?-    -.act
         %unsub  
       =.  item-sub  
@@ -138,6 +138,19 @@
         %unpub
       =^  cards  item-pub  (kill:du-item [%item (key-to-path:conv:p key.act)]~)
       [cards this]
+      ::
+        %get-graph
+      =/  nodeset  ;;  (map tag:gr:m:p nodeset:gr:m:p)  =<  +
+        .^(graph-result:gr:m:p %gx /(scot %p our.bowl)/portal-graph/(scot %da now.bowl)/app/portal-store/social-graph-result)
+      
+      `this
+      :: |-  reply-to
+      :: (map tag nodeset)
+      :: /[ship]/reply-to
+      ::  if %other comment to a groups post, 
+        ::  if group public, anyone can see
+        ::  if our in group AND group private, check if requester in group
+
     ==
     ::
       %portal-action
