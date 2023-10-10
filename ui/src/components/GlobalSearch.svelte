@@ -57,11 +57,6 @@
         .map((patp) => getCurator(`~${patp}`)),
       pages: [
         { title: 'Feed', icon: FeedIcon, action: () => push('/') },
-        {
-          title: 'Activity',
-          icon: ActivityIcon,
-          action: () => push('/activity'),
-        },
       ],
     };
   };
