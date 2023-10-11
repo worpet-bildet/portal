@@ -11,15 +11,13 @@ import {
   ItemStruc,
 } from '$types/portal/item';
 import { State } from '$types/state';
-
-import { uniqBy } from 'lodash';
-import { get, writable } from 'svelte/store';
-
 import { scoreItems } from '@root/ai';
 import { api } from '@root/api';
 import config from '@root/config';
 import { load, save } from '@root/storage';
 import { fromUrbitTime } from '@root/util';
+import { uniqBy } from 'lodash';
+import { get, writable } from 'svelte/store';
 
 export const state = writable<State>({ ...load() });
 
