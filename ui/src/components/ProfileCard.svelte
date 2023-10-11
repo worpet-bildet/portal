@@ -24,7 +24,7 @@
   };
 
   $: curator = $state && getCurator(patp);
-  $: isMyPal = $state && !!$state.pals?.[patp.slice(1)];
+  $: isMyPal = $state && !!$state.pals?.[patp?.slice(1)];
   $: curator?.keyObj?.ship && patp && !contacts()[patp]
     ? api.urbit.do.meetContact(patp)
     : null;

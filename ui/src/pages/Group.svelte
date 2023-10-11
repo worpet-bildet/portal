@@ -60,7 +60,7 @@
     <GroupCard {group} {joinedDetails} />
 
     <div
-      class="col-span-12 md:col-span-7 bg-panels dark:bg-darkgrey border p-6 rounded-lg"
+      class="col-span-12 md:col-span-7 bg-panels dark:bg-transparent border border-glass p-6 rounded-lg"
     >
       {#if !joinedDetails}
         <div>Join the group to see more information</div>
