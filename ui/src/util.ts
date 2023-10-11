@@ -22,7 +22,7 @@ export const getMeta = (item) => {
     description: getDescription(item) || '',
     blurb: getBlurb(item) || '',
     groupsBlurb: getGroupsBlurb(item) || '',
-    image: getImage(item),
+    image: normaliseUrl(getImage(item)),
     screenshots: getScreenshots(item),
     cover: getCover(item),
     ship: getShip(item),
@@ -256,8 +256,8 @@ export const getAllLinks = (string) => {
 
 export const getGroupsLink = (item, isReplyFormOpen) => {
   // http://localhost/apps/groups/groups/~tommur-dostyn/tlon-studio/channels/chat/~tommur-dostyn/support?msg=170141184506435544337432278891006787584
-  
-  // clicking the post should only take you to groups if we're already on an 'other' page. 
+
+  // clicking the post should only take you to groups if we're already on an 'other' page.
   // we might even want to specify that we're on the 'other' page of the groups link in question.
   // otherwise, clicking on a comment with a groups reference would take you to groups instead of the comment's 'other' page
 
@@ -312,6 +312,7 @@ export const joinInline = (inline) => {
 };
 
 export const normaliseUrl = (url) => {
+  if (!url) return;
   if (url.startsWith('http://') || url.startsWith('https://')) {
     return url;
   } else {
