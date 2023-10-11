@@ -171,7 +171,7 @@
             class="flex items-center gap-1 text-black text-xs sm:text-base"
           >
             <div class="w-5 h-5">
-              <ItemImage {title} {image} {color} {isReplyFormOpen} />
+              <ItemImage {title} {image} {color} />
             </div>
             {title}
           </a>
