@@ -83,7 +83,7 @@
     <div class="col-span-8 pt-4 pr-4 border-r">
       <div class="grid gap-y-4 rounded-lg">
         {#each items as key}
-          <ItemPreview {key} class="bg-panel" />
+          <ItemPreview {key} class="bg-panel dark:bg-transparent" />
         {/each}
       </div>
     </div>

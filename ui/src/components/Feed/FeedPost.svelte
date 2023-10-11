@@ -40,10 +40,9 @@
   export let isReplyFormOpen = false;
 
   let item: Item;
-  let replies: ItemKey[] = [];
   let numLikes: number;
   let isLikedByMe: boolean;
-  let showReplies = false;
+  let allReplies = new Set();
 
   const isGroupsItem = (struc) => {
     return [
@@ -59,17 +58,22 @@
       return api.portal.do.subscribe(key);
     }
 
-    // This is a little confusing but we're merging the global list of comments
-    // with any comments that we have made ourselves on the post, which should
-    // mean that our comment shows up instantly even if our connection to the
-    // indexer is not good
-    replies = [...(getReplies(key) || []), ...(getRepliesByTo(me, key) || [])]
-      .filter((a, i, arr) => {
-        return (
-          i === arr.findIndex((i) => keyStrFromObj(i) === keyStrFromObj(a))
-        );
-      })
-      .sort((a, b) => fromUrbitTime(a.time) - fromUrbitTime(b.time));
+    // recursively fetch replies so we can display the total number of replies per OP
+    const getNestedReplies = (replies) => {
+      if (Array.isArray(replies) && replies.length > 0) {
+        for (let reply of replies) {
+          if (!allReplies.has(reply)) {
+            allReplies.add(reply);
+            const repliesToReply = getReplies(reply);
+            if (repliesToReply) {
+              getNestedReplies(repliesToReply);
+            }
+          }
+        }
+      }
+    };
+
+    getNestedReplies(getReplies(key));
 
     let likes = [...(getLikes(key.ship, key) || [])];
 
@@ -92,7 +96,7 @@
   };
 
   export const getExternalLink = () => {
-    return getGroupsLink(item);
+    return getGroupsLink(item, isReplyFormOpen);
   };
 
   // TODO: this is quite not good
@@ -160,7 +164,7 @@
         <InlineShip patp={ship} />
         {#if group}
           {@const { title, image, color } = getMeta(getGroup(group))}
-          <span class="text-xs sm:text-base">in</span>
+          <span class="text-xs sm:text-base px-1">in</span>
           <a
             use:link
             href={`/group/${group}/`}
@@ -177,11 +181,11 @@
     </div>
     <div class="flex w-full gap-4">
       {#if indent}
-        <div class="border-2 ml-6 mr-1" />
+        <div class="border-2 dark:border-secondary ml-6 mr-1" />
       {/if}
       <a
         draggable="false"
-        class="flex flex-col w-full bg-panel text-black px-3 py-5 whitespace-pre-wrap break-words gap-5 select-text rounded-xl"
+        class="flex flex-col w-full bg-panel dark:bg-darkpanel text-black dark:text-white px-3 py-5 whitespace-pre-wrap break-words gap-5 select-text rounded-xl"
         class:hover:bg-panelhover={!isReplyFormOpen}
         class:cursor-default={isReplyFormOpen}
         href={getExternalLink() ||
@@ -232,11 +236,11 @@
             class="col-span-1 flex items-center gap-2"
           >
             <div class="w-5 h-5 text-secondary"><ChatIcon /></div>
-            <div class="text-secondary">{replies.length}</div>
+            <div class="text-secondary">{allReplies.size}</div>
           </a>
           <div class="col-span-1 flex items-center gap-2">
             {#if isLikedByMe}
-              <div class="w-5 h-5 text-error">
+              <div class="w-5 h-5 text-error" in:fade>
                 <LikeIcon />
               </div>
               <div class="text-error">{numLikes}</div>
@@ -255,7 +259,7 @@
     </div>
   </div>
 {:else}
-  <div class="p-5 rounded-xl bg-panel text-grey" in:fade>
+  <div class="p-5 rounded-xl bg-panel dark:bg-darkpanel text-grey" in:fade>
     Contacting {key.ship}...
   </div>
 {/if}

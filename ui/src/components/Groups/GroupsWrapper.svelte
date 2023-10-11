@@ -24,9 +24,9 @@
 </script>
 
 <div
-  class="col-span-6 p-1 rounded-lg gap-2 break-words [word-break:break-word] flex h-full"
+  class="col-span-6 p-1 rounded-lg gap-2 break-words [word-break:break-word] flex h-full hover:bg-panelhover"
 >
-  <div class="h-full w-1 border-2 border-black" />
+  <div class="h-full w-1 border-2 border-black dark:border-secondary" />
   <div class="flex flex-col w-full pr-2">
     {#if !headless}
       <div class="flex gap-1 text-grey">
@@ -63,7 +63,7 @@
     {#if isTruncated}
       <div class="pt-4">
         <button
-          class="font-bold text-black text-base hover:underline"
+          class="font-bold text-black dark:text-white text-base hover:underline"
           on:click={handleClickExpand}
         >
           Continue reading ->

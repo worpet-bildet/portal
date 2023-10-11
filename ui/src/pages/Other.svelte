@@ -62,6 +62,11 @@
     if (!$state.social) return;
     item = getItem(keyStr);
     if (!item) return;
+
+    // This is a little confusing but we're merging the global list of comments
+    // with any comments that we have made ourselves on the post, which should
+    // mean that our comment shows up instantly even if our connection to the
+    // indexer is not good
     replies = [
       ...(getReplies(keyObj) || []),
       ...(getRepliesByTo(me, keyObj) || []),
