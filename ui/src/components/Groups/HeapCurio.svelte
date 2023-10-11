@@ -11,7 +11,6 @@
   export let group: string = '';
   export let isExpanded: boolean = false;
   export let headless: boolean = false;
-  export let imageClickable: boolean = false;
 
   let { author, content } = heart;
 
@@ -41,7 +40,7 @@
     {/if}
     {#if content?.block}
       {#each dropTrailingBreaks(content.block) as block}
-        <Block {block} {imageClickable}/>
+        <Block {block} />
       {/each}
     {/if}
   </GroupsWrapper>

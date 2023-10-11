@@ -6,7 +6,6 @@
   export let image = '';
   export let title = '';
   export let color = '#000000';
-  export let isReplyFormOpen = false;
 
   let container;
   const squareImage = () => {
