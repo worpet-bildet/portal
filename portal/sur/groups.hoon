@@ -1,4 +1,21 @@
 |%
++$  groups
+  (map flag group)
++$  group
+  $:  =fleet
+      *
+      *
+      *
+      *
+      *
+      *
+      =cordon
+      secret=?
+      *
+      *
+      *
+      *
+  ==
 +$  preview
   $:  =flag
       meta=data
@@ -31,4 +48,14 @@
         [%open =ban:open]
     ==
   --
+++  fleet
+  =<  fleet
+  |%
+  +$  fleet  (map ship vessel)
+  +$  vessel
+    $:  sects=(set sect)
+        joined=time
+    ==
+  --
++$  sect  term
 --

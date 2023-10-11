@@ -122,7 +122,7 @@
   ?+    mark    (on-poke:default mark vase)
       %noun
     ?.  =(our.bowl src.bowl)  `this
-    =/  act  !<($%([%get-graph ~] [%unsub =key:d:m:p] [%pub =key:d:m:p] [%unpub =key:d:m:p]) vase)
+    =/  act  !<($%([%unsub =key:d:m:p] [%pub =key:d:m:p] [%unpub =key:d:m:p]) vase)
     ?-    -.act
         %unsub  
       =.  item-sub  
@@ -138,19 +138,6 @@
         %unpub
       =^  cards  item-pub  (kill:du-item [%item (key-to-path:conv:p key.act)]~)
       [cards this]
-      ::
-        %get-graph
-      =/  nodeset  ;;  (map tag:gr:m:p nodeset:gr:m:p)  =<  +
-        .^(graph-result:gr:m:p %gx /(scot %p our.bowl)/portal-graph/(scot %da now.bowl)/app/portal-store/social-graph-result)
-      
-      `this
-      :: |-  reply-to
-      :: (map tag nodeset)
-      :: /[ship]/reply-to
-      ::  if %other comment to a groups post, 
-        ::  if group public, anyone can see
-        ::  if our in group AND group private, check if requester in group
-
     ==
     ::
       %portal-action
@@ -173,6 +160,36 @@
     =/  msg  !<(message:m:p vase)
     ?+    -.msg    !!
         %get-item
+      =/  map-tag-nodeset  ;;  (map tag:gr:m:p nodeset:gr:m:p)  =<  +
+        .^(graph-result:gr:m:p %gx /(scot %p our.bowl)/portal-graph/(scot %da now.bowl)/app/portal-store/social-graph-result)
+      =/  key  key.msg
+      =/  groups-struc  $%(%groups-diary-note %groups-heap-curio %groups-chat-msg)
+      ::  access check:
+      ::  recurse graph until top level groups post to see if requester is in group
+      ::  if top level post not groups post, move on to check reach
+      =/  allowed  
+        |-  
+        ?~  nodeset=(~(gut by map-tag-nodeset) /(scot %p ship.key)/reply-to ~)
+          %.y
+        =/  set  ;;  (set node:gr:m:p)
+          (~(gut by `nodeset:gr:m:p`nodeset) `node:gr:m:p`(key-to-node:conv:p key) ~)
+        ?:  =(0 ~(wyt in set))
+          ?:  ?=(groups-struc struc.key)
+            =/  item  (get-item:stor key)
+            ?>  ?=(groups-struc -.bespoke.item)
+            =/  groups  
+              .^  noun  %gx 
+                  /(scot %p our.bowl)/groups/(scot %da now.bowl)/groups/noun
+              ==
+            =+  ;;  groups:g:d:m:p  groups
+            =/  group  (~(gut by -) group.bespoke.item ~)
+            ?~  group  %.n
+            ?:  ?=(%open -.cordon.group)
+              %.y
+            (~(has in ~(key by fleet.group)) src.bowl) 
+          %.y
+        $(key (node-to-key:conv:p (snag 0 ~(tap in set))))
+      ?.  allowed  `this  
       ?:  (ship-in-reach:stor src.bowl key.msg)
         :_  this  :_  ~
         (~(msg cards:p [src.bowl %portal-store]) [%item (~(get by items) key.msg)])
