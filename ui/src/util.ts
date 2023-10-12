@@ -259,10 +259,6 @@ export const getGroupsLink = (item) => {
   const prefix = `/apps/groups/`;
   let suffix = '';
 
-  // clicking the post should only take you to groups if we're already on an 'other' page.
-  // we might even want to specify that we're on the 'other' page of the groups link in question.
-  // otherwise, clicking on a comment with a groups reference would take you to groups instead of the comment's 'other' page
-
   switch (item?.keyObj?.struc) {
     case 'groups-chat-msg':
       suffix = `groups/${item?.bespoke?.group}/channels/chat/${

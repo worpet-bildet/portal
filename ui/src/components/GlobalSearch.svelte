@@ -270,7 +270,7 @@
         {#if searchResults.posts.length > 0}
           <div class="flex flex-col gap-2">
             <div class="text-light">Recent posts</div>
-            {#each searchResults.posts as item, _i (keyStrFromObj(item?.keyObj))}
+            {#each searchResults.posts as item, _i (keyStrFromObj(item.keyObj))}
               {@const i = _i + searchResults.items.length}
               {@const { blurb, ship } = getMeta(item)}
               <button
