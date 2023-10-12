@@ -433,19 +433,13 @@ const byMine = (a: ItemKey, b: ItemKey) => {
 // mean that our comment shows up instantly even if our connection to the
 // indexer is not good
 export const getIndexerAndLocalReplies = (keyObj: ItemKey): ItemKey[] => {
-  return [
-    ...(getReplies(keyObj) || []),
-    ...(getRepliesByTo(me, keyObj) || []),
-  ]
-    .filter((a, i, arr) => {
-      // dedupe
-      return (
-        i === arr.findIndex((i) => keyStrFromObj(i) === keyStrFromObj(a))
-      );
-    })
-    .sort(byTime)
-    .sort(byMine);
-}
+  return uniqBy(
+    [...(getReplies(keyObj) || []), ...(getRepliesByTo(me, keyObj) || [])]
+      .sort(byTime)
+      .sort(byMine),
+    keyStrFromObj
+  );
+};
 
 export const getLikes = (ship: string, key: ItemKey): ItemKey[] => {
   return social()[`/${ship}/like-from`]?.[keyStrFromObj(key)];

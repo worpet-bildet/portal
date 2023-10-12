@@ -12,9 +12,9 @@
   import { api, me } from '@root/api';
   import {
     getGroup,
+    getIndexerAndLocalReplies,
     getItem,
     getLikes,
-    getIndexerAndLocalReplies,
     keyStrFromObj,
     state,
   } from '@root/state';
@@ -76,13 +76,14 @@
         }
       }
     }
+    allReplies = allReplies;
   };
 
   const loadNestedReplies = async () => {
     await getNestedReplies(getIndexerAndLocalReplies(key));
   };
 
-  $: loadNestedReplies();
+  $: $state && loadNestedReplies();
 
   $: $state && loadPost(key);
 
@@ -97,12 +98,14 @@
     });
   };
 
-  // clicking the post should only take you to groups if we're already on the post's 'other' page. 
+  // clicking the post should only take you to groups if we're already on the post's 'other' page.
   export const getExternalLink = () => {
-    let postUrl = `${window.location.origin}/apps/portal/#${keyStrFromObj(item?.keyObj)}`;
-    if ( window.location.href === postUrl ) {
+    let postUrl = `${window.location.origin}/apps/portal/#${keyStrFromObj(
+      item?.keyObj
+    )}`;
+    if (window.location.href === postUrl) {
       return getGroupsLink(item);
-    } else{ 
+    } else {
       return '';
     }
   };
