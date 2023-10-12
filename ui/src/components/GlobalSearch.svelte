@@ -26,7 +26,7 @@
   } from '@root/util';
 
   import { Sigil } from '@components';
-  import { HomeIcon, SearchIcon } from '@fragments';
+  import { ExploreIcon, HomeIcon, SearchIcon } from '@fragments';
   import ItemImage from '@root/fragments/ItemImage.svelte';
 
   export let isGlassy: boolean = false;
@@ -55,7 +55,14 @@
       ships: Object.keys(pals())
         .slice(0, 3)
         .map((patp) => getCurator(`~${patp}`)),
-      pages: [{ title: 'Feed', icon: HomeIcon, action: () => push('/') }],
+      pages: [
+        { title: 'Feed', icon: HomeIcon, action: () => push('/') },
+        {
+          title: 'Explore',
+          icon: ExploreIcon,
+          action: () => push('#/explore'),
+        },
+      ],
     };
   };
 
