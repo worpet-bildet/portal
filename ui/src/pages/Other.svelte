@@ -8,8 +8,7 @@
     getCurator,
     getItem,
     getPostChain,
-    getReplies,
-    getRepliesByTo,
+    getIndexerAndLocalReplies,
     keyStrFromObj,
     keyStrToObj,
     setLastViewedPost,
@@ -31,18 +30,6 @@
   // will scroll the viewport to this element.
   let postOfInterest: HTMLDivElement;
 
-  const byTime = (a: ItemKey, b: ItemKey) =>
-    fromUrbitTime(a.time) - fromUrbitTime(b.time);
-  const byMine = (a: ItemKey, b: ItemKey) => {
-    if (a.ship === me) {
-      return -1;
-    } else if (b.ship === me) {
-      return 1;
-    } else {
-      return 0;
-    }
-  };
-
   const loadItem = (_k) => {
     const keyStr = window.location.hash.includes('/other/')
       ? `/other/${params.wild}`
@@ -63,22 +50,7 @@
     item = getItem(keyStr);
     if (!item) return;
 
-    // This is a little confusing but we're merging the global list of comments
-    // with any comments that we have made ourselves on the post, which should
-    // mean that our comment shows up instantly even if our connection to the
-    // indexer is not good
-    replies = [
-      ...(getReplies(keyObj) || []),
-      ...(getRepliesByTo(me, keyObj) || []),
-    ]
-      .filter((a, i, arr) => {
-        // dedupe
-        return (
-          i === arr.findIndex((i) => keyStrFromObj(i) === keyStrFromObj(a))
-        );
-      })
-      .sort(byTime)
-      .sort(byMine);
+    replies = getIndexerAndLocalReplies(keyObj, me);
   };
 
   $: $state && loadItem(params.wild);
@@ -107,7 +79,7 @@
     </div>
     {#if !item || (postChain && postChain.length === 0)}
       <div class="flex items-center justify-center w-full h-1/2">
-        <div class="w-10 h-10"><LoadingIcon /></div>
+        <div class="w-10 h-10 dark:stroke-white"><LoadingIcon /></div>
       </div>
     {/if}
     {#if postChain}

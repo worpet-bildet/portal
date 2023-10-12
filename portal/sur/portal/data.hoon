@@ -127,7 +127,7 @@
   ==
 ::
 ::
-+$  feed  
++$  feed
   $+  feed
   (list [time=cord =ship =key])
 ::

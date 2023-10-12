@@ -2,11 +2,12 @@
   import logo from '@assets/logo.svg';
   import { Sigil } from '@components';
   import {
-    HomeIcon,
     ChatIcon,
-    ShadowIcon,
+    ExploreIcon,
+    HomeIcon,
     NavItem,
     PostIcon,
+    ShadowIcon,
   } from '@fragments';
   import { me } from '@root/api';
   import { state, toggleDarkmode } from '@root/state';
@@ -43,10 +44,16 @@
         />
         <NavItem
           icon={ShadowIcon}
-          title={$state.darkmode ? "Light Mode" : "Dark Mode"}
+          title={$state.darkmode ? 'Light Mode' : 'Dark Mode'}
           collapsed={navCollapsed}
           newFeature
           on:click={toggleDarkmode}
+        />
+        <NavItem
+          icon={ExploreIcon}
+          title={'Explore'}
+          collapsed={navCollapsed}
+          on:click={() => push('#/explore')}
         />
         <NavItem
           icon={ChatIcon}
