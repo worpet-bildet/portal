@@ -254,39 +254,30 @@ export const getAllLinks = (string) => {
   return linkify.find(string).map((l) => l.href);
 };
 
-export const getGroupsLink = (item, isReplyFormOpen) => {
+export const getGroupsLink = (item) => {
   // http://localhost/apps/groups/groups/~tommur-dostyn/tlon-studio/channels/chat/~tommur-dostyn/support?msg=170141184506435544337432278891006787584
-  
-  // clicking the post should only take you to groups if we're already on an 'other' page. 
-  // we might even want to specify that we're on the 'other' page of the groups link in question.
-  // otherwise, clicking on a comment with a groups reference would take you to groups instead of the comment's 'other' page
+  const prefix = `/apps/groups/`;
+  let suffix = '';
 
-  if (isReplyFormOpen) {
-    const prefix = `/apps/groups/`;
-    let suffix = '';
-
-    switch (item?.keyObj?.struc) {
-      case 'groups-chat-msg':
-        suffix = `groups/${item?.bespoke?.group}/channels/chat/${
-          item?.bespoke?.channel
-        }?msg=${removeDotsFromId(item?.bespoke?.['time-ref'])}`;
-        break;
-      case 'groups-heap-curio':
-        suffix = `groups/${item?.bespoke?.group}/channels/heap/${
-          item?.bespoke?.channel
-        }/curio/${removeDotsFromId(item?.bespoke?.time)}`;
-        break;
-      case 'groups-diary-note':
-        suffix = `groups/${item?.bespoke?.group}/channels/diary/${
-          item?.bespoke?.channel
-        }/note/${removeDotsFromId(item?.bespoke?.time)}`;
-        break;
-    }
-    if (suffix) {
-      return `${prefix}${suffix}`;
-    }
-  } else {
-    return null;
+  switch (item?.keyObj?.struc) {
+    case 'groups-chat-msg':
+      suffix = `groups/${item?.bespoke?.group}/channels/chat/${
+        item?.bespoke?.channel
+      }?msg=${removeDotsFromId(item?.bespoke?.['time-ref'])}`;
+      break;
+    case 'groups-heap-curio':
+      suffix = `groups/${item?.bespoke?.group}/channels/heap/${
+        item?.bespoke?.channel
+      }/curio/${removeDotsFromId(item?.bespoke?.time)}`;
+      break;
+    case 'groups-diary-note':
+      suffix = `groups/${item?.bespoke?.group}/channels/diary/${
+        item?.bespoke?.channel
+      }/note/${removeDotsFromId(item?.bespoke?.time)}`;
+      break;
+  }
+  if (suffix) {
+    return `${prefix}${suffix}`;
   }
 };
 

@@ -14,13 +14,11 @@
     getGroup,
     getItem,
     getLikes,
-    getReplies,
-    getRepliesByTo,
+    getIndexerAndLocalReplies,
     keyStrFromObj,
     state,
   } from '@root/state';
   import {
-    fromUrbitTime,
     getAnyLink,
     getGroupsLink,
     getMeta,
@@ -58,29 +56,33 @@
       return api.portal.do.subscribe(key);
     }
 
-    // recursively fetch replies so we can display the total number of replies per OP
-    const getNestedReplies = (replies) => {
-      if (Array.isArray(replies) && replies.length > 0) {
-        for (let reply of replies) {
-          if (!allReplies.has(reply)) {
-            allReplies.add(reply);
-            const repliesToReply = getReplies(reply);
-            if (repliesToReply) {
-              getNestedReplies(repliesToReply);
-            }
-          }
-        }
-      }
-    };
-
-    getNestedReplies(getReplies(key));
-
     let likes = [...(getLikes(key.ship, key) || [])];
 
     numLikes = likes.length;
     if (isLikedByMe && !likes.find((l) => l.ship === me)) numLikes++;
     isLikedByMe = isLikedByMe || !!likes.find((l) => l.ship === me);
   };
+
+  // recursively fetch replies so we can display the total number of replies per OP
+  const getNestedReplies = async (replies) => {
+    if (Array.isArray(replies) && replies.length > 0) {
+      for (let reply of replies) {
+        if (!allReplies.has(reply)) {
+          allReplies.add(reply);
+          const repliesToReply = getIndexerAndLocalReplies(reply);
+          if (repliesToReply) {
+            await getNestedReplies(repliesToReply);
+          }
+        }
+      }
+    }
+  };
+
+  const loadNestedReplies = async () => {
+    await getNestedReplies(getIndexerAndLocalReplies(key));
+  };
+
+  $: loadNestedReplies();
 
   $: $state && loadPost(key);
 
@@ -95,8 +97,14 @@
     });
   };
 
+  // clicking the post should only take you to groups if we're already on the post's 'other' page. 
   export const getExternalLink = () => {
-    return getGroupsLink(item, isReplyFormOpen);
+    let postUrl = `${window.location.origin}/apps/portal/#${keyStrFromObj(item?.keyObj)}`;
+    if ( window.location.href === postUrl ) {
+      return getGroupsLink(item);
+    } else{ 
+      return '';
+    }
   };
 
   // TODO: this is quite not good

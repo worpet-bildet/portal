@@ -38,7 +38,7 @@
   <div
     class="inline-flex px-1 gap-1 items-center border rounded-md hover:border-black"
   >
-    <span class="w-7 h-7 p-1 overflow-hidden rounded-sm">
+    <span class="w-7 h-7 p-1 overflow-hidden rounded-sm dark:stroke-white">
       <LoadingIcon />
     </span>
     <span class="text-sm">Loading...</span>

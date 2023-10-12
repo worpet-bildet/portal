@@ -178,7 +178,7 @@
       {/if}
     </div>
   {:else}
-    <div class="flex justify-center">
+    <div class="flex justify-center dark:stroke-white">
       <LoadingIcon />
     </div>
   {/if}

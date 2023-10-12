@@ -24,6 +24,6 @@
   <TipModal bind:handleTipRequest />
 {:else}
   <div class="flex justify-center dark:fill-white mt-20">
-    <div class="w-10 h-10"><LoadingIcon /></div>
+    <div class="w-10 h-10 dark:stroke-white"><LoadingIcon /></div>
   </div>
 {/if}

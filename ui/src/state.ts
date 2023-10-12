@@ -16,7 +16,7 @@ import { uniqBy } from 'lodash';
 import { get, writable } from 'svelte/store';
 
 import { scoreItems } from '@root/ai';
-import { api } from '@root/api';
+import { api, me } from '@root/api';
 import config from '@root/config';
 import { load, save } from '@root/storage';
 import { fromUrbitTime } from '@root/util';
@@ -414,6 +414,38 @@ export const getRepliesByTo = (ship: string, key: ItemKey): ItemKey[] => {
     )
     .map(([replyKey, _]) => keyStrToObj(replyKey));
 };
+
+const byTime = (a: ItemKey, b: ItemKey) =>
+  fromUrbitTime(a.time) - fromUrbitTime(b.time);
+
+const byMine = (a: ItemKey, b: ItemKey) => {
+  if (a.ship === me) {
+    return -1;
+  } else if (b.ship === me) {
+    return 1;
+  } else {
+    return 0;
+  }
+};
+
+// This is a little confusing but we're merging the global list of comments
+// with any comments that we have made ourselves on the post, which should
+// mean that our comment shows up instantly even if our connection to the
+// indexer is not good
+export const getIndexerAndLocalReplies = (keyObj: ItemKey): ItemKey[] => {
+  return [
+    ...(getReplies(keyObj) || []),
+    ...(getRepliesByTo(me, keyObj) || []),
+  ]
+    .filter((a, i, arr) => {
+      // dedupe
+      return (
+        i === arr.findIndex((i) => keyStrFromObj(i) === keyStrFromObj(a))
+      );
+    })
+    .sort(byTime)
+    .sort(byMine);
+}
 
 export const getLikes = (ship: string, key: ItemKey): ItemKey[] => {
   return social()[`/${ship}/like-from`]?.[keyStrFromObj(key)];

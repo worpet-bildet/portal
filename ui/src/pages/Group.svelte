@@ -118,5 +118,7 @@
     </div>
   </div>
 {:else}
-  Loading...
+  <div class="w-32 h-32 dark:stroke-white">
+    <LoadingIcon /> Loading...
+  </div>
 {/if}
