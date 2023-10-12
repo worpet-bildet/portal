@@ -56,7 +56,7 @@
             class="bg-black dark:bg-white text-white dark:text-black w-fit">Join Group</IconButton
           >
         {:else if joinedDetails.joining}
-          <IconButton loading async class="bg-black text-white w-fit"
+          <IconButton loading async class="bg-black text-white w-fit dark:stroke-white"
             >Joining...</IconButton
           >
         {:else}

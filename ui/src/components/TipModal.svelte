@@ -67,7 +67,7 @@
       </div>
     {:else if sending}
       <div class="w-full flex justify-center">
-        <div class="w-32 h-32">
+        <div class="w-32 h-32 dark:stroke-white">
           <LoadingIcon />
         </div>
       </div>

@@ -261,7 +261,7 @@
       class="absolute top-0 left-0 w-full h-full bg-white/70 dark:bg-black/70 z-10"
     >
       <div class="flex w-full h-full items-center justify-center opacity-100">
-        <div class="w-10 h-10">
+        <div class="w-10 h-10 dark:stroke-white">
           <LoadingIcon />
         </div>
       </div>
