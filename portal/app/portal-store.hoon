@@ -116,23 +116,28 @@
     ==
   ::  - sub to all items on personal feeds and collections
   =^  cards-6  state
-    =+  ~(tap in ~(key by read:da-item))
+    =+  ~(tap by read:da-item)
     %-  tail
     %^  spin  -  [*(list card) state]
-    |=  [p=[=ship =dude:gall =path] q=[cards=(list card) state=state-4]]
-    =/  key  (path-to-key:conv +:path.p)
+    |=  [p=[[=ship =dude:gall =path] [? ? =item:d:m:p]] q=[cards=(list card) state=state-4]]
+    =/  key  (path-to-key:conv:^p +:path.p)
     =.  state  state.q
-    ?:  ?=(%feed struc.key)
-      =.  item-sub.state.q  (quit:da-item ship.key %portal-store path.p)
-      =/  cards  :_  ~
-        :*  %pass  /resub  %agent  [our.bowl %portal-store]  %poke
+    ?:  &(?=(%feed -.bespoke.item.p) =(time.key '~2000.1.1'))
+      =/  cards  
+        %+  turn  feed.bespoke.item.p
+        |=  [time=cord =ship =key:d:m:^p]
+        :*  %pass  /resub  %agent  [our.bowl %portal-manager]  %poke
             %portal-action  !>([%sub key])
         ==
-      [p (welp cards.q cards) state.q]
-    ?:  &(?=(%collection struc.key) =(time.key '~2000.1.1'))
-      [p q]
-    ?:  ?=(%collection struc.key)
-      [p q]
+      [p [(welp cards.q cards) state.q]]
+    ?:  ?=(%collection -.bespoke.item.p)
+      =/  cards  
+        %+  turn  key-list.bespoke.item.p
+        |=  [=key:d:m:^p]
+        :*  %pass  /resub  %agent  [our.bowl %portal-manager]  %poke
+            %portal-action  !>([%sub key])
+        ==
+      [p [(welp cards.q cards) state.q]]
     [p q]
   :_  this
   ;:(welp cards-1 cards-2 cards-3 cards-4 cards-5 cards-6)
@@ -245,7 +250,7 @@
                 ?=([%feed *] bespoke.item.u.wave.msg)
             ==
           :~  %-  ~(act cards:p [our.bowl %portal-manager]) 
-              [%sub-to-many (feed-to-key-list:conv:p (scag 20 feed.bespoke.item.u.wave.msg))]
+              [%sub-to-many (feed-to-key-list:conv:p feed.bespoke.item.u.wave.msg)]
           ==
         ~
       :_  this  (welp cards (upd:cards-methods:stor item.u.wave.msg))
