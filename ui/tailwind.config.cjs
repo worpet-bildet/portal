@@ -53,6 +53,7 @@ module.exports = {
         navitemactive: '#E5F3FF',
         navtextactive: '#2D9AFF',
 
+        lighten: '#FFFFFF10',
         grey: '#696969',
         dark: '#00000080',
         'dark-background': '#0e0e0e',
@@ -108,6 +109,14 @@ module.exports = {
       addUtilities({
         '.scrollbar-hide::-webkit-scrollbar': {
           display: 'none',
+        },
+      });
+    },
+    function ({ addBase }) {
+      addBase({
+        'h1:hover, h2:hover, h3:hover, h4:hover, h5:hover, h6:hover, a:hover, button:hover, input:hover, div:hover': {
+          transitionProperty: 'all',
+          transitionDuration: '.5s',
         },
       });
     },

@@ -117,7 +117,7 @@
         {#if !isSearching}
           <div
             class="sm:hidden pt-4 col-span-12"
-            transition:slide={{ duration: isComposing ? 0 : 150 }}
+            transition:slide={{ duration: isComposing ? 0 : 10 }}
           >
             <MobileHeader />
           </div>

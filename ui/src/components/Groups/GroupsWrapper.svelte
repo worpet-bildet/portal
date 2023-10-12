@@ -24,7 +24,7 @@
 </script>
 
 <div
-  class="col-span-6 p-1 rounded-lg gap-2 break-words [word-break:break-word] flex h-full hover:bg-panelhover"
+  class="col-span-6 p-1 rounded-lg gap-2 break-words [word-break:break-word] flex h-full hover:bg-panelhover dark:hover:bg-lighten"
 >
   <div class="h-full w-1 border-2 border-black dark:border-secondary" />
   <div class="flex flex-col w-full pr-2">

@@ -187,6 +187,7 @@
         draggable="false"
         class="flex flex-col w-full bg-panel dark:bg-darkpanel text-black dark:text-white px-3 py-5 whitespace-pre-wrap break-words gap-5 select-text rounded-xl"
         class:hover:bg-panelhover={!isReplyFormOpen}
+        class:dark:hover:bg-lighten={!isReplyFormOpen}
         class:cursor-default={isReplyFormOpen}
         href={getExternalLink() ||
           `/apps/portal/#${keyStrFromObj(item?.keyObj)}`}
