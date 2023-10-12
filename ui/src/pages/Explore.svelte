@@ -105,7 +105,7 @@
   }
 </script>
 
-<div class="grid grid-cols-12 gap-8 mb-4 h-full">
+<div class="grid grid-cols-12 gap-8 h-full">
   <div class="flex flex-col gap-8 rounded-t-2xl col-span-12 md:col-span-7">
     <div class="flex flex-col gap-2">
       <div class="text-3xl font-bold">Explore</div>
