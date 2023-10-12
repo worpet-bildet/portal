@@ -1,4 +1,4 @@
-/-  spider, portal-signature, portal-data
+/-  spider, portal-data
 /+  strandio, portal
 =,  strand=strand:spider
 =,  card=card:agent:gall
@@ -18,7 +18,7 @@
         src=@p
         our=@p 
         now=@da 
-        sig=signature:portal-signature
+        sig=signature:portal-data
         =item:portal-data
         ==
       arg
