@@ -1,38 +1,44 @@
 <script lang="ts">
-  import { ItemPreview } from '@components';
+  import { ItemPreview, RadioStations, TopCreators } from '@components';
   import {
     AppsIcon,
     CollectionIcon,
     GroupsIcon,
-    IconButton,
     LoadingIcon,
+    RightSidebar,
     SparkleIcon,
+    Tabs,
   } from '@fragments';
   import { me } from '@root/api';
   import {
     collectionKeyToItemKey,
+    getCollectedItemLeaderboard,
     getCuratorAllCollectionItems,
     getItem,
     groupKeyToItemKey,
     keyStrFromObj,
     state,
   } from '@root/state';
-  import { getMeta } from '@root/util';
+  import { uniqBy } from 'lodash';
 
-  let items, activeItems, myItems, urlQuery, searchString;
+  let items, activeItems, myItems, urlQuery;
+  let activeTab = 'Spotlight';
+
   const refreshItems = () => {
     activeItems = items;
-    if (filters.has('new')) {
-      activeItems = [...items.filter((k) => !myItems.has(keyStrFromObj(k)))];
-    }
-    if (filters.has('apps')) {
-      activeItems = activeItems.filter((k) => k?.struc === 'app');
-    }
-    if (filters.has('groups')) {
-      activeItems = activeItems.filter((k) => k?.struc === 'group');
-    }
-    if (filters.has('collections')) {
-      activeItems = activeItems.filter((k) => k?.struc === 'collection');
+    switch (activeTab) {
+      case 'Spotlight':
+        activeItems = items;
+        break;
+      case 'Apps':
+        activeItems = items.filter((k) => k?.struc === 'app');
+        break;
+      case 'Groups':
+        activeItems = items.filter((k) => k?.struc === 'group');
+        break;
+      case 'Collections':
+        activeItems = items.filter((k) => k?.struc === 'collection');
+        break;
     }
   };
 
@@ -61,7 +67,14 @@
   };
 
   state.subscribe((s) => {
-    items = getCuratorAllCollectionItems(me);
+    items = uniqBy(
+      getCollectedItemLeaderboard()
+        .map(([keyStr]) => getItem(keyStr))
+        .map((i) => i?.keyObj)
+        .concat(getCuratorAllCollectionItems(me))
+        .filter((i) => !!i),
+      keyStrFromObj
+    );
 
     myItems =
       new Set([
@@ -87,79 +100,42 @@
     refreshItems();
   });
 
-  const filterBySearchString = (str) => {
+  $: if (activeTab) {
     refreshItems();
-    if (!activeItems || !str) return [];
-    activeItems = [
-      ...activeItems.filter((i) => {
-        const { title, blurb, ship } = getMeta(getItem(keyStrFromObj(i)));
-        if (
-          (title && title.toLowerCase().indexOf(str.toLowerCase()) !== -1) ||
-          (blurb && blurb.toLowerCase().indexOf(str.toLowerCase()) !== -1) ||
-          (ship && ship.toLowerCase().indexOf(str.toLowerCase()) !== -1)
-        ) {
-          return true;
-        }
-        return false;
-      }),
-    ];
-  };
-
-  $: filterBySearchString(searchString);
+  }
 </script>
 
-<div class="flex flex-col gap-4 mb-4 items-center">
-  <div class="flex gap-1 md:gap-8">
-    <IconButton
-      icon={SparkleIcon}
-      active={filters.has('new')}
-      on:click={() => toggleFilter('new')}
-      class="bg-panels text-xs md:text-lg dark:fill-white dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
-      >New to me
-    </IconButton>
-    <IconButton
-      icon={AppsIcon}
-      active={filters.has('apps')}
-      on:click={() => {
-        toggleFilter('apps');
-      }}
-      class="bg-panels dark:fill-white text-xs md:text-lg dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
-      >Apps</IconButton
-    >
-    <IconButton
-      icon={GroupsIcon}
-      active={filters.has('groups')}
-      on:click={() => {
-        toggleFilter('groups');
-      }}
-      class="bg-panels dark:fill-grey text-xs md:text-lg fill-white dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
-      >Groups</IconButton
-    >
-    <IconButton
-      icon={CollectionIcon}
-      active={filters.has('collections')}
-      on:click={() => {
-        toggleFilter('collections');
-      }}
-      class="bg-panels dark:fill-white text-xs md:text-lg dark:bg-transparent dark:hover:border-white hover:bg-panels-hover border"
-      >Collections</IconButton
-    >
-  </div>
-  <p class="text-grey text-sm text-center">
-    Items you come across on your travels will accrue here, but it's not yet an
-    exhaustive index of all the things on Portal.
-  </p>
-  {#if items}
-    <div
-      class="flex flex-col gap-4 bg-panels dark:bg-darkgrey w-full md:w-2/3 border p-6 rounded-lg"
-    >
-      {#if activeItems.length > 0}
-        {#each activeItems as key}
-          <ItemPreview {key} />
-        {/each}
-      {:else}
-        <div class="p-10 text-xs">
-          <pre>
+<div class="grid grid-cols-12 gap-8 h-full">
+  <div class="flex flex-col gap-8 rounded-t-2xl col-span-12 md:col-span-7">
+    <div class="flex flex-col gap-2">
+      <div class="text-3xl font-bold">Explore</div>
+      <div class="text-secondary">
+        Discover Urbit apps, groups and collections in Portal
+      </div>
+    </div>
+
+    <Tabs
+      bold={false}
+      bind:activeTab
+      tabs={[
+        { tab: 'Spotlight', icon: SparkleIcon },
+        { tab: 'Apps', icon: AppsIcon },
+        { tab: 'Groups', icon: GroupsIcon },
+        { tab: 'Collections', icon: CollectionIcon },
+      ]}
+    />
+    {#if items}
+      <div class="flex flex-col gap-4 w-full rounded-lg">
+        {#if activeItems.length > 0}
+          {#each activeItems as key, i}
+            <div class="flex gap-2">
+              <div class="pt-1">{i + 1}</div>
+              <ItemPreview {key} />
+            </div>
+          {/each}
+        {:else}
+          <div class="p-10 text-xs">
+            <pre>
  _   _  ____ _______ _    _ _____ _   _  _____   _______ ____
 | \ | |/ __ \__   __| |  | |_   _| \ | |/ ____| |__   __/ __ \
 |  \| | |  | | | |  | |__| | | | |  \| | |  __     | | | |  | |
@@ -174,12 +150,35 @@
  ____) | |____| |____  | |  | | |____| | \ \| |____
 |_____/|______|______| |_|  |_|______|_|  \_\______|
         </pre>
+          </div>
+        {/if}
+      </div>
+    {:else}
+      <div class="flex justify-center">
+        <LoadingIcon />
+      </div>
+    {/if}
+  </div>
+  <RightSidebar>
+    <RadioStations />
+    <TopCreators />
+  </RightSidebar>
+  <!-- <RightSidebar>
+    {#if items.length > 0}
+      <SidebarGroup>
+        <div class="flex flex-col gap-2">
+          <div class="flex flex-col gap-1 px-2">
+            <div class="flex items-start justify-between text-xl font-bold">
+              <div>Discover More Urbit Content</div>
+            </div>
+            <div class="text-flavour text-sm">Apps, Groups & Collections</div>
+          </div>
+          {#each items.slice(0, 3) as item}
+            <ItemPreview key={item} />
+          {/each}
         </div>
-      {/if}
-    </div>
-  {:else}
-    <div class="flex justify-center dark:stroke-white">
-      <LoadingIcon />
-    </div>
-  {/if}
+        <div class="flex flex-col gap-4" />
+      </SidebarGroup>
+    {/if}
+  </RightSidebar> -->
 </div>

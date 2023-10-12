@@ -11,15 +11,13 @@ import {
   ItemStruc,
 } from '$types/portal/item';
 import { State } from '$types/state';
-
-import { uniqBy } from 'lodash';
-import { get, writable } from 'svelte/store';
-
 import { scoreItems } from '@root/ai';
 import { api, me } from '@root/api';
 import config from '@root/config';
 import { load, save } from '@root/storage';
 import { fromUrbitTime } from '@root/util';
+import { uniqBy } from 'lodash';
+import { get, writable } from 'svelte/store';
 
 export const state = writable<State>({ ...load() });
 
@@ -366,6 +364,20 @@ export const getMoreFromThisShip = (
         return a;
       }, {})
   ).sort((a, b) => Number(b[1]) - Number(a[1]));
+};
+
+export const getMostActiveUsers = (): ItemKey[] => {
+  const ranks: Record<string, number> = {};
+  (getAllCollectionsAndItems(allCollectionKey(me)) || [])
+    .concat((getGlobalFeed() || []).map((i) => i.key))
+    .forEach((item) => {
+      ranks[item.ship] = (ranks[item.ship] || 0) + 1;
+    });
+  return (
+    Object.entries(ranks)
+      .sort((a, b) => b[1] - a[1])
+      .map(([ship]) => ({ ship, struc: 'ship', cord: '', time: '' })) || []
+  );
 };
 
 export const getAllCollectionsAndItems = (collectionKey: string): ItemKey[] => {
