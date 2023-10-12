@@ -98,8 +98,9 @@
     =/  path  [%item (key-to-path:conv:p key.item)]
     =.  state  state.q
     ?:  =(lens.item %temp)  q                        ::  if %temp, no need
-    ?.  ?=(?(%collection %feed %app %blog) struc.key.item)      ::  if not %col or %feed or %app
+    ?.  ?=(?(%collection %feed %app %blog) struc.key.item)      
       q
+    ::  if %col or %feed or %app
     =^  cards-1  item-pub.state.q  (kill:du-item ~[path])
     =/  cards-2  :_  ~
       :*  %pass  /repub  %agent  [our.bowl %portal-store]  %poke
@@ -113,8 +114,28 @@
     :*  %pass  /resub  %agent  [our.bowl %portal-store]  %poke
         %portal-action  !>([%sub [%feed indexer '' 'global']])
     ==
+  ::  - sub to all items on personal feeds and collections
+  =^  cards-6  state
+    =+  ~(tap in ~(key by read:da-item))
+    %-  tail
+    %^  spin  -  [*(list card) state]
+    |=  [p=[=ship =dude:gall =path] q=[cards=(list card) state=state-4]]
+    =/  key  (path-to-key:conv +:path.p)
+    =.  state  state.q
+    ?:  ?=(%feed struc.key)
+      =.  item-sub.state.q  (quit:da-item ship.key %portal-store path.p)
+      =/  cards  :_  ~
+        :*  %pass  /resub  %agent  [our.bowl %portal-store]  %poke
+            %portal-action  !>([%sub key])
+        ==
+      [p (welp cards.q cards) state.q]
+    ?:  &(?=(%collection struc.key) =(time.key '~2000.1.1'))
+      [p q]
+    ?:  ?=(%collection struc.key)
+      [p q]
+    [p q]
   :_  this
-  ;:(welp cards-1 cards-2 cards-3 cards-4 cards-5)
+  ;:(welp cards-1 cards-2 cards-3 cards-4 cards-5 cards-6)
 ::
 ++  on-poke
   |=  [=mark =vase]
