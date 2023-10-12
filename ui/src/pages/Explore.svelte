@@ -1,10 +1,11 @@
 <script lang="ts">
-  import { ItemPreview } from '@components';
+  import { ItemPreview, RadioStations, TopCreators } from '@components';
   import {
     AppsIcon,
     CollectionIcon,
     GroupsIcon,
     LoadingIcon,
+    RightSidebar,
     SparkleIcon,
     Tabs,
   } from '@fragments';
@@ -158,6 +159,10 @@
       </div>
     {/if}
   </div>
+  <RightSidebar>
+    <RadioStations />
+    <TopCreators />
+  </RightSidebar>
   <!-- <RightSidebar>
     {#if items.length > 0}
       <SidebarGroup>
