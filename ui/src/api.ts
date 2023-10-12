@@ -269,9 +269,13 @@ export const api = {
         const command = new PutObjectCommand(params);
         await client.send(command);
         if (s3.credentials.endpoint.slice(-1) === '/') {
-          return `${s3.credentials.endpoint}${params.Bucket}/${params.Key}`;
+          return normaliseUrl(
+            `${s3.credentials.endpoint}${params.Bucket}/${params.Key}`
+          );
         }
-        return `${s3.credentials.endpoint}/${params.Bucket}/${params.Key}`;
+        return normaliseUrl(
+          `${s3.credentials.endpoint}/${params.Bucket}/${params.Key}`
+        );
       },
     },
   },

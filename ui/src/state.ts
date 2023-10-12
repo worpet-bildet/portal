@@ -242,9 +242,9 @@ export const getCuratorFeed = (patp: string): FeedItem[] => {
 export const getGroupsFeed = (patp: string): FeedItem[] => {
   if (!get(state).isLoaded) return [];
   return [
-    ...items()[chatMessageKey(patp)]?.bespoke?.feed,
-    ...items()[heapCurioKey(patp)]?.bespoke?.feed,
-    ...items()[diaryNoteKey(patp)]?.bespoke?.feed,
+    ...(items()[chatMessageKey(patp)]?.bespoke?.feed || []),
+    ...(items()[heapCurioKey(patp)]?.bespoke?.feed || []),
+    ...(items()[diaryNoteKey(patp)]?.bespoke?.feed || []),
   ];
 };
 
