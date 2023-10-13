@@ -20,12 +20,11 @@
   class:bg-panels-hover={active}
   class:border-black={active}
   class:dark:border-white={active}
-  class:dark:hover:bg-transparent={!active}
   title={tooltip}
   on:click
   on:click={() => (async && !disabled ? (loading = true) : null)}
 >
-  <span class="w-5">
+  <span class="w-5 dark:stroke-white">
     {#if loading}
       <svelte:component this={LoadingIcon} />
     {:else}

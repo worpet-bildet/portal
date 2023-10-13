@@ -913,7 +913,7 @@
   ==
 ::
 ++  aggregate-timer-cards
-  [%pass /portal-aggregate-timer %arvo %b [%wait (add now.bowl ~h4)]]^~
+  [%pass /portal-aggregate-timer %arvo %b [%wait (add now.bowl ~h1)]]^~
 ::
 ++  aggregate-cards
   [%pass /aggregate %arvo %k %fard q.byk.bowl %aggregate noun+!>(~)]^~

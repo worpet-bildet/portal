@@ -99,8 +99,9 @@
     =/  path  [%item (key-to-path:conv:p key.item)]
     =.  state  state.q
     ?:  =(lens.item %temp)  q                        ::  if %temp, no need
-    ?.  ?=(?(%collection %feed %app %blog) struc.key.item)      ::  if not %col or %feed or %app
+    ?.  ?=(?(%collection %feed %app %blog) struc.key.item)      
       q
+    ::  if %col or %feed or %app
     =^  cards-1  item-pub.state.q  (kill:du-item ~[path])
     =/  cards-2  :_  ~
       :*  %pass  /repub  %agent  [our.bowl %portal-store]  %poke
@@ -114,8 +115,33 @@
     :*  %pass  /resub  %agent  [our.bowl %portal-store]  %poke
         %portal-action  !>([%sub [%feed indexer '' 'global']])
     ==
+  ::  - sub to all items on personal feeds and collections
+  =^  cards-6  state
+    =+  ~(tap by read:da-item)
+    %-  tail
+    %^  spin  -  [*(list card) state]
+    |=  [p=[[=ship =dude:gall =path] [? ? =item:d:m:p]] q=[cards=(list card) state=state-4]]
+    =/  key  (path-to-key:conv:^p +:path.p)
+    =.  state  state.q
+    ?:  &(?=(%feed -.bespoke.item.p) =(time.key '~2000.1.1'))
+      =/  cards  
+        %+  turn  feed.bespoke.item.p
+        |=  [time=cord =ship =key:d:m:^p]
+        :*  %pass  /resub  %agent  [our.bowl %portal-manager]  %poke
+            %portal-action  !>([%sub key])
+        ==
+      [p [(welp cards.q cards) state.q]]
+    ?:  ?=(%collection -.bespoke.item.p)
+      =/  cards  
+        %+  turn  key-list.bespoke.item.p
+        |=  [=key:d:m:^p]
+        :*  %pass  /resub  %agent  [our.bowl %portal-manager]  %poke
+            %portal-action  !>([%sub key])
+        ==
+      [p [(welp cards.q cards) state.q]]
+    [p q]
   :_  this
-  ;:(welp cards-1 cards-2 cards-3 cards-4 cards-5)
+  ;:(welp cards-1 cards-2 cards-3 cards-4 cards-5 cards-6)
 ::
 ++  on-poke
   |=  [=mark =vase]
@@ -234,7 +260,7 @@
                 ?=([%feed *] bespoke.item.u.wave.msg)
             ==
           :~  %-  ~(act cards:p [our.bowl %portal-manager]) 
-              [%sub-to-many (feed-to-key-list:conv:p (scag 20 feed.bespoke.item.u.wave.msg))]
+              [%sub-to-many (feed-to-key-list:conv:p feed.bespoke.item.u.wave.msg)]
           ==
         ~
       :_  this  (welp cards (upd:cards-methods:stor item.u.wave.msg))

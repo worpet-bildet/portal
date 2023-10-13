@@ -8,13 +8,13 @@
     getCurator,
     getItem,
     getPostChain,
-    getReplies,
-    getRepliesByTo,
+    getIndexerAndLocalReplies,
     keyStrFromObj,
     keyStrToObj,
+    setLastViewedPost,
     state,
   } from '@root/state';
-  import { fromUrbitTime, getMeta, collapseNames } from '@root/util';
+  import { collapseNames, fromUrbitTime, getMeta } from '@root/util';
 
   import { FeedPost, FeedPostForm, ProfileCard } from '@components';
 
@@ -29,18 +29,6 @@
   // re-bound to the last post in the chain. Once the entire thing is loaded, we
   // will scroll the viewport to this element.
   let postOfInterest: HTMLDivElement;
-
-  const byTime = (a: ItemKey, b: ItemKey) =>
-    fromUrbitTime(a.time) - fromUrbitTime(b.time);
-  const byMine = (a: ItemKey, b: ItemKey) => {
-    if (a.ship === me) {
-      return -1;
-    } else if (b.ship === me) {
-      return 1;
-    } else {
-      return 0;
-    }
-  };
 
   const loadItem = (_k) => {
     const keyStr = window.location.hash.includes('/other/')
@@ -61,18 +49,8 @@
     if (!$state.social) return;
     item = getItem(keyStr);
     if (!item) return;
-    replies = [
-      ...(getReplies(keyObj) || []),
-      ...(getRepliesByTo(me, keyObj) || []),
-    ]
-      .filter((a, i, arr) => {
-        // dedupe
-        return (
-          i === arr.findIndex((i) => keyStrFromObj(i) === keyStrFromObj(a))
-        );
-      })
-      .sort(byTime)
-      .sort(byMine);
+
+    replies = getIndexerAndLocalReplies(keyObj, me);
   };
 
   $: $state && loadItem(params.wild);
@@ -84,6 +62,7 @@
     ?.map(getMeta)
     ?.map((m) => m.nickname || m.ship);
   $: postOfInterest?.scrollIntoView();
+  $: $state && item && setLastViewedPost(item.keyStr);
 </script>
 
 <div class="grid grid-cols-12 gap-8 mb-4 pb-20">
@@ -100,19 +79,17 @@
     </div>
     {#if !item || (postChain && postChain.length === 0)}
       <div class="flex items-center justify-center w-full h-1/2">
-        <div class="w-10 h-10"><LoadingIcon /></div>
+        <div class="w-10 h-10 dark:stroke-white"><LoadingIcon /></div>
       </div>
     {/if}
     {#if postChain}
       {#if postChain.length === 1}
         <FeedPost key={postChain[0]} isReplyFormOpen={true} />
-        <div class="mt-4">
-          <FeedPostForm
-            {replyingToNames}
-            replyTo={postChain[0]}
-            placeholder={`Respond to ${collapseNames(replyingToNames)}`}
-          />
-        </div>
+        <FeedPostForm
+          {replyingToNames}
+          replyTo={postChain[0]}
+          placeholder={`Respond to ${collapseNames(replyingToNames)}`}
+        />
         {#each replies as reply}
           <div>
             <FeedPost key={reply} />

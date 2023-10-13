@@ -2,6 +2,7 @@
   import { api } from '@root/api';
   import { refreshGroups } from '@root/state';
   import { getMeta } from '@root/util';
+  import { push } from 'svelte-spa-router';
 
   import { MoreFrom, RecommendModal } from '@components';
   import {
@@ -12,7 +13,6 @@
     ProfileIcon,
     RepostIcon,
   } from '@fragments';
-  import { link } from 'svelte-spa-router';
 
   export let group;
   export let joinedDetails;
@@ -28,16 +28,18 @@
 {#if group}
   {@const { title, nickname, ship, image, description, color } = getMeta(group)}
   <div class="col-span-12 md:col-span-5">
-    <div class="flex flex-col gap-3 p-6 border rounded-xl sticky top-4">
+    <div
+      class="flex flex-col gap-3 p-6 border dark:border-glass rounded-xl sticky top-4"
+    >
       <div class="flex flex-col gap-2">
         <div class="w-24 overflow-hidden rounded-xl">
           <ItemImage {image} {color} {title} />
         </div>
         <div class="flex flex-col">
           <div class="font-bold text-xl">{nickname ? nickname : title}</div>
-          <div class="text-sm text-grey">
-            Hosted by <a use:link href={`/${ship}`} class="hover:underline"
-              >{ship}</a
+          <div class="text-sm text-grey flex items-center gap-1">
+            <button on:click={() => push(`#/${ship}`)} class="hover:underline"
+              >Hosted by {ship}</button
             >
           </div>
         </div>
@@ -45,16 +47,16 @@
           {description}
         </div>
       </div>
-      <div class="flex flex-row gap-6">
+      <div class="flex flex-row gap-4">
         {#if !joinedDetails}
           <IconButton
             icon={PlusIcon}
             on:click={join}
             async
-            class="bg-black text-white w-fit">Join Group</IconButton
+            class="bg-black dark:bg-white text-white dark:text-black w-fit">Join Group</IconButton
           >
         {:else if joinedDetails.joining}
-          <IconButton loading async class="bg-black text-white w-fit"
+          <IconButton loading async class="bg-black text-white w-fit dark:stroke-white"
             >Joining...</IconButton
           >
         {:else}
@@ -71,7 +73,7 @@
         <IconButton
           icon={RepostIcon}
           on:click={() => (recommendModalOpen = true)}
-          class="bg-panelhover text-secondary w-fit">Recommend</IconButton
+          class="bg-black dark:bg-white text-white dark:text-black w-fit">Recommend</IconButton
         >
         {#if joinedDetails}
           <IconButton

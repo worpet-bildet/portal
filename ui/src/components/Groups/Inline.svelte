@@ -39,7 +39,7 @@
 {:else if inline['bold']}
   <span class="font-bold"><svelte:self inline={inline['bold']} /></span>
 {:else if inline['blockquote']}
-  <div class="border-l-4 p-2 text-offwhite">
+  <div class="border-l-4 dark:border-secondary p-2 text-offwhite">
     <svelte:self inline={inline['blockquote']} />
   </div>
 {/if}

@@ -1,11 +1,11 @@
 <script lang="ts">
   import { Item, ItemKey } from '$types/portal/item';
 
-  import { link } from 'svelte-spa-router';
-  import { state, getItem, keyStrFromObj } from '@root/state';
-  import { api } from '@root/api';
-  import { getMeta, checkIfInstalled } from '@root/util';
   import { DownloadIcon, ItemImage } from '@fragments';
+  import { api } from '@root/api';
+  import { getItem, state } from '@root/state';
+  import { checkIfInstalled, getMeta } from '@root/util';
+  import { link } from 'svelte-spa-router';
 
   export let key: ItemKey;
 
@@ -52,14 +52,16 @@
           on:click|stopPropagation={(event) => {
             event.preventDefault();
             window.open(
-              `${window.location.origin}/apps/grid/search/${
+              `${window.location.origin}/apps/landscape/search/${
                 distShip || ship
               }/apps`
             );
           }}
-          class="bg-black rounded-md text-xs font-bold px-2 py-1 text-white flex items-center gap-2 min-w-fit"
-          ><div class="w-4 h-4 text-white"><DownloadIcon /></div>
-          <div>Install</div>
+          class="bg-black dark:bg-white rounded-md text-xs font-bold px-2 py-1 text-white flex items-center gap-2 min-w-fit"
+          ><div class="w-4 h-4 text-white dark:text-black">
+            <DownloadIcon />
+          </div>
+          <div class="dark:text-black">Install</div>
         </button>
       {/if}
     </div>

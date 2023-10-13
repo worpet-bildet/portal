@@ -10,16 +10,13 @@ import {
   ItemKey,
   ItemStruc,
 } from '$types/portal/item';
-import { HarkNotificationDestination } from '$types/portal/notification';
 import { State } from '$types/state';
-
-import { uniqBy } from 'lodash';
-import { get, writable } from 'svelte/store';
-
-import { api } from '@root/api';
+import { api, me } from '@root/api';
 import config from '@root/config';
 import { load, save } from '@root/storage';
 import { fromUrbitTime } from '@root/util';
+import { uniqBy } from 'lodash';
+import { get, writable } from 'svelte/store';
 
 export const state = writable<State>({ ...load(), items: {}, social: {} });
 
@@ -207,8 +204,8 @@ export const refreshBlogs = (): void => {
   });
 };
 
-export const setReferredTo = (key: HarkNotificationDestination): void => {
-  state.update((s) => ({ ...s, referredTo: key }));
+export const setLastViewedPost = (lastViewedPost: string): void => {
+  state.update((s) => ({ ...s, lastViewedPost }));
 };
 
 export const setIsComposing = (isComposing: boolean): void => {
@@ -263,9 +260,9 @@ export const getCuratorFeed = (patp: string): FeedItem[] => {
 export const getGroupsFeed = (patp: string): FeedItem[] => {
   if (!get(state).isLoaded) return [];
   return [
-    ...items()[chatMessageKey(patp)]?.bespoke?.feed,
-    ...items()[heapCurioKey(patp)]?.bespoke?.feed,
-    ...items()[diaryNoteKey(patp)]?.bespoke?.feed,
+    ...(items()[chatMessageKey(patp)]?.bespoke?.feed || []),
+    ...(items()[heapCurioKey(patp)]?.bespoke?.feed || []),
+    ...(items()[diaryNoteKey(patp)]?.bespoke?.feed || []),
   ];
 };
 
@@ -389,6 +386,20 @@ export const getMoreFromThisShip = (
   ).sort((a, b) => Number(b[1]) - Number(a[1]));
 };
 
+export const getMostActiveUsers = (): ItemKey[] => {
+  const ranks: Record<string, number> = {};
+  (getAllCollectionsAndItems(allCollectionKey(me)) || [])
+    .concat((getGlobalFeed() || []).map((i) => i.key))
+    .forEach((item) => {
+      ranks[item.ship] = (ranks[item.ship] || 0) + 1;
+    });
+  return (
+    Object.entries(ranks)
+      .sort((a, b) => b[1] - a[1])
+      .map(([ship]) => ({ ship, struc: 'ship', cord: '', time: '' })) || []
+  );
+};
+
 export const getAllCollectionsAndItems = (collectionKey: string): ItemKey[] => {
   return items()[collectionKey]?.bespoke?.['key-list'].concat(
     Object.values(
@@ -434,6 +445,32 @@ export const getRepliesByTo = (ship: string, key: ItemKey): ItemKey[] => {
       item.find((i) => keyStrFromObj(i) === keyStrFromObj(key))
     )
     .map(([replyKey, _]) => keyStrToObj(replyKey));
+};
+
+const byTime = (a: ItemKey, b: ItemKey) =>
+  fromUrbitTime(a.time) - fromUrbitTime(b.time);
+
+const byMine = (a: ItemKey, b: ItemKey) => {
+  if (a.ship === me) {
+    return -1;
+  } else if (b.ship === me) {
+    return 1;
+  } else {
+    return 0;
+  }
+};
+
+// This is a little confusing but we're merging the global list of comments
+// with any comments that we have made ourselves on the post, which should
+// mean that our comment shows up instantly even if our connection to the
+// indexer is not good
+export const getIndexerAndLocalReplies = (keyObj: ItemKey): ItemKey[] => {
+  return uniqBy(
+    [...(getReplies(keyObj) || []), ...(getRepliesByTo(me, keyObj) || [])]
+      .sort(byTime)
+      .sort(byMine),
+    keyStrFromObj
+  );
 };
 
 export const getLikes = (ship: string, key: ItemKey): ItemKey[] => {

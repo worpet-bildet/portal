@@ -77,17 +77,17 @@
     } else {
       item = getItem(keyStrFromObj(key));
     }
-    if ($state.isLoaded && !item) {
+    if (groupsStrucs.includes(key.struc)) isGroupsItem = true;
+    if (isGroupsItem) clickable = false;
+    if ($state.isLoaded && !item && !isGroupsItem) {
       return api.portal.do.subscribe(key);
     }
-    if (groupsStrucs.includes(item.keyObj.struc)) isGroupsItem = true;
-    if (isGroupsItem) clickable = false;
 
-    if (item.keyObj.struc === 'group') {
+    if (item?.keyObj?.struc === 'group') {
       groupKey = `${item.keyObj.ship}/${item.keyObj.cord}`;
       joinedDetails = getJoinedGroupDetails(groupKey);
     }
-    if (item.keyObj.struc === 'app')
+    if (item?.keyObj?.struc === 'app')
       isInstalled = checkIfInstalled(
         $state,
         item?.keyObj?.ship,
@@ -119,15 +119,11 @@
         push(`/${ship}`);
       } else if ((struc === 'other' || struc === 'blog') && link) {
         window.open(link);
+      } else if (struc === 'collection') {
+        push(item.keyStr);
       }
-      // } else if (struc === 'retweet') {
-      // window.location.href = `#${createdAt}`;
-      // } else {
-      // push(item.keyStr);
-      // }
     }}
     class={`flex w-full items-start gap-2 p-2 dark:hover:bg-transparent hover:duration-500 rounded-lg text-sm text-left hover:bg-white ${$$props.class}`}
-    class:cursor-default={!clickable}
     class:hover:bg-panels-hover={clickable}
     class:dark:hover:border-white={clickable}
     class:bg-dark={selected}
@@ -142,43 +138,41 @@
     {:else if struc === 'group'}
       <GroupPreview key={item.keyObj} />
     {:else}
-      <div class="flex justify-between items-center w-full">
-        <div class="flex items-center gap-4">
-          <div class="w-12 h-12 overflow-hidden rounded-md self-center">
-            {#if (struc === 'ship' || struc === 'retweet') && !image}
-              <Sigil patp={ship} />
-            {:else if struc === 'collection' && !image}
-              <CollectionsSquarePreview {key} withTitle={false} />
-            {:else if !image && link}
-              {#await api.link.get.metadata(link)}
-                <ItemImage {image} {title} {color} />
-              {:then data}
-                {#if !data}
-                  <ItemImage {image} {title} {color} />
-                {:else}
-                  <ItemImage image={data.image} title={data.title} />
-                {/if}
-              {/await}
-            {:else}
+      <div class="grid grid-cols-6 gap-2 items-center w-full">
+        <div class="col-span-1 overflow-hidden rounded-md self-center">
+          {#if (struc === 'ship' || struc === 'retweet') && !image}
+            <Sigil patp={ship} />
+          {:else if struc === 'collection' && !image}
+            <CollectionsSquarePreview {key} withTitle={false} />
+          {:else if !image && link}
+            {#await api.link.get.metadata(link)}
               <ItemImage {image} {title} {color} />
+            {:then data}
+              {#if !data}
+                <ItemImage {image} {title} {color} />
+              {:else}
+                <ItemImage image={data.image} title={data.title} />
+              {/if}
+            {/await}
+          {:else}
+            <ItemImage {image} {title} {color} />
+          {/if}
+        </div>
+        <div
+          class="col-span-5 flex flex-col grow break-words [word-break:break-word] w-fit"
+        >
+          <div class="flex items-center gap-2">
+            <div class="font-bold line-clamp-1 w-fit">
+              {title || ship}
+            </div>
+            {#if (struc === 'other' && link) || struc === 'blog'}
+              <div class="w-5">
+                <LinkIcon />
+              </div>
             {/if}
           </div>
-          <div
-            class="flex flex-col grow break-words [word-break:break-word] w-fit"
-          >
-            <div class="flex items-center gap-2">
-              <div class="font-bold line-clamp-1 w-fit">
-                {title || ship}
-              </div>
-              {#if (struc === 'other' && link) || struc === 'blog'}
-                <div class="w-5">
-                  <LinkIcon />
-                </div>
-              {/if}
-            </div>
-            <div class="line-clamp-2">
-              {blurb || description || ''}
-            </div>
+          <div class="line-clamp-2">
+            {blurb || description || ''}
           </div>
         </div>
       </div>

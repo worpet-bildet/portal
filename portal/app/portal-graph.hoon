@@ -1,8 +1,9 @@
 /-  subgraph
-/+  default-agent, p=portal, g=social-graph, *mip, *sss, js=portal-json
+/+  default-agent, p=portal, g=social-graph, *mip, *sss, js=portal-json, dbug
 /$  social-graph-result-to-json  %social-graph-result  %json
 /$  json-to-social-graph-track  %json  %social-graph-track
 /*  server  %ship  /server/ship
+/*  indexer  %ship  /desk/ship
 |%
 ::  we are renaming %social-graph to %portal-graph
 ::  because we are using it for a different purpose
@@ -47,7 +48,7 @@
 ::
 ^-  agent:gall
 ::  %+  verb  &
-:: %-  agent:dbug
+%-  agent:dbug
 ::  SSS declarations
 =/  subgraph-sub  (mk-subs subgraph ,[%track @ @ ~])
 =/  subgraph-pub  (mk-pubs subgraph ,[%track @ @ ~])
@@ -153,7 +154,7 @@
     =^  cards  subgraph-pub
       ?.  ?=(%only-tagged (~(gut by perms.state) [app i.tag^~] %private))
         `subgraph-pub
-      ?.  ?=(?(%add-tag %del-tag) -.q.edit)  
+      ?.  ?=(?(%add-tag %del-tag) -.q.edit)
         `subgraph-pub
       =/  new=(set @p)
         ?:  &(?=(%ship -.from.q.edit) ?=(%ship -.to.q.edit))
@@ -184,7 +185,7 @@
     ::  hand out update to subscribers on this app and (top-level) tag
     =^  cards  subgraph-pub
       (give:du-pub [%track app i.tag ~] wave)
-    =?  cards  
+    =?  cards
         ?=([%add-tag *] q.edit)
       %+  snoc  cards
       :*  %give  %fact  [/updates]~  %social-graph-result
@@ -313,6 +314,7 @@
             ::  autosubbing to comments within the last 2 days
             =/  key-to    (node-to-key:conv:p to.u.wave.msg)
             =/  key-from  (node-to-key:conv:p from.u.wave.msg)
+            ::  if our post is replied to
             ?:  ?&  =(+:tag.u.wave.msg /reply-to)
                     =(our.bowl ship:key-to)
                     (gte (slav %da time.key-from) (sub now.bowl ~d2))
@@ -336,6 +338,53 @@
                         ==
                     ==
                 ==
+            ::  if we receive a reply to a groups post
+            ?:  ?&  =(+:tag.u.wave.msg /reply-from)
+                    !=(our.bowl ship:key-from)
+                    ?=  ?(%groups-chat-msg %groups-diary-note %groups-heap-curio)
+                        struc.key-from
+                ==
+                =;  cards
+                  %+  snoc  cards
+                  ^-  card
+                  :*  %pass  /sub  %agent  [our.bowl %portal-manager]  %poke
+                      %portal-action  !>([%sub key-to])
+                  ==
+                ::  if the groups post is ours, send notif
+                ?.  ?&  =('' time:key-from)
+                        =(server ship:key-from)
+                    ==
+                  *(list card)
+                ::get item from portal-store and see if we are author, if yes, notify
+                =/  scry-path
+                    ;:  welp
+                        /(scot %p our.bowl)/portal-store/(scot %da now.bowl)/item
+                        ;;  path  (key-to-path:conv:p key-from)
+                        /noun
+                    ==
+                =/  item  ;;  item:d:m:p  =<  +
+                  .^(store-result:d:m:p %gx scry-path)
+                ?:  ?+  -.bespoke.item  !!
+                      %groups-diary-note  =(our.bowl author.essay.bespoke.item)
+                      %groups-chat-msg    =(our.bowl p.id.bespoke.item)
+                      %groups-heap-curio  =(our.bowl author.heart.bespoke.item)
+                    ==
+                    :_  ~
+                    :*  %pass  /hark  %agent  [our.bowl %hark]  %poke
+                        %hark-action  !>
+                        :*  %add-yarn  &  &
+                            (end 7 (shas %portal-notif eny.bowl))
+                            :^  ~  ~  q.byk.bowl
+                                ;:  welp  /portal  /reply
+                                    (key-to-path:conv:p key-from)
+                                ==
+                            now.bowl
+                            [ship+ship:key-to ' commented on your Groups post in Portal.' ~]
+                            (welp /portal/reply (key-to-path:conv:p key-from))
+                            ~
+                    ==  ==
+                *(list card)
+            ::  if we receive a reply to whichever post
             ?:  ?&  =(+:tag.u.wave.msg /reply-from)
                     !=(our.bowl ship:key-from)
                     (gte (slav %da time.key-to) (sub now.bowl ~d2))
@@ -344,6 +393,7 @@
                 :*  %pass  /sub  %agent  [our.bowl %portal-manager]  %poke
                     %portal-action  !>([%sub key-to])
                 ==
+            ::  if our app is reviewed
             ?:  ?&  =(+:tag.u.wave.msg /review-to)
                     =(our.bowl ship:key-to)
                 ==
@@ -365,6 +415,7 @@
                         ==
                     ==
                 ==
+            ::  if we are mentioned
             ?:  ?&  =(+:tag.u.wave.msg /mention-to)
                     =(our.bowl ship:key-to)
                 ==
@@ -556,7 +607,7 @@
       ==
     =-  tags+?~(- ~ (~(get ju u.-) app))
     (~(get-edge sg:g graph.state) n1 n2)
-  ::     
+  ::
       [%tags @ %entity @ @ ?(%ship %address) @ ~]
     =/  =app:g  `@tas`i.t.path
     =/  n1=node:g

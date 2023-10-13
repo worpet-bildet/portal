@@ -7,10 +7,10 @@ import { Groups } from '$types/landscape/groups';
 import { HeapCurio } from '$types/landscape/heap';
 import { SocialGraph, SocialGraphTrackRequest } from '$types/portal/graph';
 import { Item, ItemKey } from '$types/portal/item';
-import { Edit, PokeData, SocialTagRequest } from '$types/portal/poke';
+import { Create, Edit, PokeData, SocialTagRequest } from '$types/portal/poke';
 
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import { toUrbitTime } from '@root/util';
+import { normaliseUrl, toUrbitTime } from '@root/util';
 import Urbit, { Poke, Scry } from '@urbit/http-api';
 import { writable } from 'svelte/store';
 import config from './config';
@@ -277,15 +277,19 @@ export const api = {
         };
         let client = new S3Client({
           credentials: s3.credentials,
-          endpoint: s3.credentials.endpoint,
+          endpoint: normaliseUrl(s3.credentials.endpoint),
           region: s3.configuration.region || 'a',
         });
         const command = new PutObjectCommand(params);
         await client.send(command);
         if (s3.credentials.endpoint.slice(-1) === '/') {
-          return `${s3.credentials.endpoint}${params.Bucket}/${params.Key}`;
+          return normaliseUrl(
+            `${s3.credentials.endpoint}${params.Bucket}/${params.Key}`
+          );
         }
-        return `${s3.credentials.endpoint}/${params.Bucket}/${params.Key}`;
+        return normaliseUrl(
+          `${s3.credentials.endpoint}/${params.Bucket}/${params.Key}`
+        );
       },
     },
   },
