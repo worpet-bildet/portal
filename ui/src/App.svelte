@@ -150,7 +150,7 @@
         </div>
       {/if}
       <div
-        class="col-span-12 min-h-screen sm:block"
+        class="col-span-12 min-h-screen h-full sm:block"
         class:mb-24={!isComposing && !isSearching}
         class:pb-8={!isComposing}
         class:mb-0={isSearching || isComposing}

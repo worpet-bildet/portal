@@ -24,7 +24,7 @@
   on:click
   on:click={() => (async && !disabled ? (loading = true) : null)}
 >
-  <span class="w-5">
+  <span class="w-5 dark:stroke-white">
     {#if loading}
       <svelte:component this={LoadingIcon} />
     {:else}

@@ -86,7 +86,7 @@
             class="bg-black dark:bg-white text-white dark:text-black w-fit">Open</IconButton
           >
         {:else if isInstalling}
-          <IconButton loading class="bg-black text-white w-fit"
+          <IconButton loading class="bg-black text-white w-fit dark:stroke-white"
             >Installing...</IconButton
           >
         {:else if ethPrice && !purchased}

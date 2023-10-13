@@ -3,6 +3,7 @@
   import { Sigil } from '@components';
   import {
     ChatIcon,
+    ExploreIcon,
     HomeIcon,
     NavItem,
     PostIcon,
@@ -47,6 +48,12 @@
           collapsed={navCollapsed}
           newFeature
           on:click={toggleDarkmode}
+        />
+        <NavItem
+          icon={ExploreIcon}
+          title={'Explore'}
+          collapsed={navCollapsed}
+          on:click={() => push('#/explore')}
         />
         <NavItem
           icon={ChatIcon}
