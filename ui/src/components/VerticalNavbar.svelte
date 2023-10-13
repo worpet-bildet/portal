@@ -4,11 +4,9 @@
   import {
     ChatIcon,
     HomeIcon,
-    IconButton,
     NavItem,
     PostIcon,
     ShadowIcon,
-    SparkleIcon,
   } from '@fragments';
   import { me } from '@root/api';
   import { state, toggleDarkmode } from '@root/state';
@@ -16,18 +14,6 @@
   import { link, location, push } from 'svelte-spa-router';
 
   export let navCollapsed: boolean = false;
-
-  let isNotifying = false;
-  const getNotificationPermission = () => {
-    Notification.requestPermission().then((result) => {
-      if (result === 'granted') {
-        isNotifying = true;
-      }
-    });
-  };
-  const toggleNotifications = () => {
-    getNotificationPermission();
-  };
 </script>
 
 <div
@@ -77,9 +63,6 @@
             push('/');
           }}
         />
-        <IconButton icon={SparkleIcon} on:click={toggleNotifications}
-          >Notifications {isNotifying ? 'On' : 'Off'}</IconButton
-        >
         <!-- <NavItem
           icon={ActivityIcon}
           title={'Activity'}
