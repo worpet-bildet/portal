@@ -64,23 +64,21 @@
   };
 
   // recursively fetch replies so we can display the total number of replies per OP
-  const getNestedReplies = async (replies) => {
+  const getNestedReplies = (replies) => {
     if (Array.isArray(replies) && replies.length > 0) {
       for (let reply of replies) {
-        if (!allReplies.has(reply)) {
-          allReplies.add(reply);
-          const repliesToReply = getIndexerAndLocalReplies(reply);
-          if (repliesToReply) {
-            await getNestedReplies(repliesToReply);
-          }
+        allReplies.add(keyStrFromObj(reply));
+        const repliesToReply = getIndexerAndLocalReplies(reply);
+        if (repliesToReply) {
+          getNestedReplies(repliesToReply);
         }
       }
     }
     allReplies = allReplies;
   };
 
-  const loadNestedReplies = async () => {
-    await getNestedReplies(getIndexerAndLocalReplies(key));
+  const loadNestedReplies = () => {
+    getNestedReplies(getIndexerAndLocalReplies(key));
   };
 
   $: $state && loadNestedReplies();
