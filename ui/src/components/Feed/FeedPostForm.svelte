@@ -155,6 +155,7 @@
       });
       submitting = false;
     } catch (e) {
+      console.error(e);
       alert(
         'Posting might have failed. Please save your work, then refresh the page and try again.'
       );

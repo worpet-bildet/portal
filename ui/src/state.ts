@@ -216,8 +216,13 @@ export const setIsSearching = (isSearching: boolean): void => {
   state.update((s) => ({ ...s, isSearching }));
 };
 
+export const setIsOnboarding = (isOnboarding: boolean): void => {
+  state.update((s) => ({ ...s, isOnboarding }));
+};
+
 export const itemInState = (item: ItemKey): Promise<void> => {
   return new Promise((resolve, reject) => {
+    if (get(state).isOnboarding) return resolve();
     const unsubscribe = state.subscribe((s) => {
       if (s.items[keyStrFromObj(item)]) {
         unsubscribe();

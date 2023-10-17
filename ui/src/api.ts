@@ -10,6 +10,7 @@ import { Item, ItemKey } from '$types/portal/item';
 import { Create, Edit, PokeData, SocialTagRequest } from '$types/portal/poke';
 
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { setIsOnboarding } from '@root/state';
 import { normaliseUrl, toUrbitTime } from '@root/util';
 import Urbit, { Poke, Scry } from '@urbit/http-api';
 import { writable } from 'svelte/store';
@@ -25,12 +26,31 @@ export const scry = (s: Scry): Promise<any> => urbit.scry(s);
 export const me = `~${urbit.ship}`;
 
 // we use this a lot
-export const pmPoke = (json: PokeData) =>
-  poke({
+export const pmPoke = (json: PokeData) => {
+  console.log({ me: urbit.ship, config });
+  if (urbit.ship === config.serverShip) {
+    // here we're trying to poke portal even though we're running from the web2
+    // context. what we need to do instead is pop a modal and send the user to
+    // somewhere that they can get a ship instead. this is a temporary
+    // workaround until we eventually have our own hosting and can send the user
+    // through the isOnboarding flow for it specifically. note that this is the
+    // one paradigm-breaking place in this file, since we're going to set a flag
+    // in state.
+
+    // it's not an ideal way to solve the problem because there are actions
+    // other than pokes to portal manager that a user can make (such as add a
+    // pal) that we're not accounting for here. it should be possible to do that
+    // but not all pokes are created equal, so a one-size-fits-all solution for
+    // all the app's pokes would not work.
+    return setIsOnboarding(true);
+  }
+
+  return poke({
     app: 'portal-manager',
     mark: 'portal-action',
     json,
   });
+};
 
 let subqueue = writable<ItemKey[]>([]);
 let subscribingTo = {};
@@ -252,7 +272,6 @@ export const api = {
             time,
           },
         }),
-
       trackSocialGraph: (json: SocialGraphTrackRequest) =>
         poke({
           app: 'portal-graph',
