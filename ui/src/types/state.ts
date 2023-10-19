@@ -27,4 +27,5 @@ export type State = {
   appDevs: any; // TODO
   isComposing: boolean;
   isSearching: boolean;
+  isOnboarding: boolean;
 };

@@ -77,11 +77,11 @@
     } else {
       item = getItem(keyStrFromObj(key));
     }
-    if ($state.isLoaded && !item) {
+    if (groupsStrucs.includes(key.struc)) isGroupsItem = true;
+    if (isGroupsItem) clickable = false;
+    if ($state.isLoaded && !item && !isGroupsItem) {
       return api.portal.do.subscribe(key);
     }
-    if (groupsStrucs.includes(item?.keyObj?.struc)) isGroupsItem = true;
-    if (isGroupsItem) clickable = false;
 
     if (item?.keyObj?.struc === 'group') {
       groupKey = `${item.keyObj.ship}/${item.keyObj.cord}`;

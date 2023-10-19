@@ -1,7 +1,8 @@
 /-  subgraph
-/+  default-agent, p=portal, g=social-graph, *mip, *sss, dbug
+/+  default-agent, p=portal, g=social-graph, *mip, *sss, js=portal-json, dbug
 /$  social-graph-result-to-json  %social-graph-result  %json
 /$  json-to-social-graph-track  %json  %social-graph-track
+/*  server  %ship  /server/ship
 /*  indexer  %ship  /desk/ship
 |%
 ::  we are renaming %social-graph to %portal-graph
@@ -88,6 +89,14 @@
   |=  [=mark =vase]
   ^-  (quip card _this)
   ?+    mark  (on-poke:def mark vase)
+      %portal-get
+    =/  get  !<(get:m:p vase)
+    ?>  ?=(%graph -.get)
+    :_  this  ::  FE update
+    %+  snoc
+      (serve:hc /portal-graph-json (enjs-graph-result:enjs:js (scry-app:hc %portal-store)))
+    [%give %fact [/updates]~ %social-graph-result !>((scry-app:hc %portal-store))]
+    ::
       %social-graph-edit
     ?>  =(our src):bowl
     =/  =edit:g  !<(edit:g vase)
@@ -145,7 +154,7 @@
     =^  cards  subgraph-pub
       ?.  ?=(%only-tagged (~(gut by perms.state) [app i.tag^~] %private))
         `subgraph-pub
-      ?.  ?=(?(%add-tag %del-tag) -.q.edit)  
+      ?.  ?=(?(%add-tag %del-tag) -.q.edit)
         `subgraph-pub
       =/  new=(set @p)
         ?:  &(?=(%ship -.from.q.edit) ?=(%ship -.to.q.edit))
@@ -176,12 +185,15 @@
     ::  hand out update to subscribers on this app and (top-level) tag
     =^  cards  subgraph-pub
       (give:du-pub [%track app i.tag ~] wave)
-    =?  cards  
+    =?  cards
         ?=([%add-tag *] q.edit)
       %+  snoc  cards
       :*  %give  %fact  [/updates]~  %social-graph-result
           !>(app+(my [[tag (my [[from.q.edit (sy [to.q.edit]~)]]~)]]~))
       ==
+    =.  cards
+      %+  welp  cards
+      (serve:hc /portal-graph-json (enjs-graph-result:enjs:js (scry-app:hc %portal-store)))
     [cards this]
   ::
       %social-graph-track
@@ -329,7 +341,7 @@
             ::  if we receive a reply to a groups post
             ?:  ?&  =(+:tag.u.wave.msg /reply-from)
                     !=(our.bowl ship:key-from)
-                    ?=  ?(%groups-chat-msg %groups-diary-note %groups-heap-curio) 
+                    ?=  ?(%groups-chat-msg %groups-diary-note %groups-heap-curio)
                         struc.key-from
                 ==
                 =;  cards
@@ -340,7 +352,7 @@
                   ==
                 ::  if the groups post is ours, send notif
                 ?.  ?&  =('' time:key-from)
-                        =(indexer ship:key-from)
+                        =(server ship:key-from)
                     ==
                   *(list card)
                 ::get item from portal-store and see if we are author, if yes, notify
@@ -350,7 +362,7 @@
                         ;;  path  (key-to-path:conv:p key-from)
                         /noun
                     ==
-                =/  item  ;;  item:d:m:p  =<  +  
+                =/  item  ;;  item:d:m:p  =<  +
                   .^(store-result:d:m:p %gx scry-path)
                 ?:  ?+  -.bespoke.item  !!
                       %groups-diary-note  =(our.bowl author.essay.bespoke.item)
@@ -439,7 +451,10 @@
           :-  ~
           (~(nuke-top-level-tag sg:g graph:state) app -.tag)
         ==
-      [cards this]
+      ::
+      :_  this
+      %+  welp  cards
+      (serve:hc /portal-graph-json (enjs-graph-result:enjs:js (scry-app:hc %portal-store)))
     ==
   ==
 ::
@@ -476,6 +491,24 @@
 --
 ::  start helper core
 |_  =bowl:gall
+++  scry-app
+  |=  pat=@
+  =/  =app:g  `@tas`pat
+  app+(~(get-app sg:g graph.state) app)
+::
+++  serve
+  |=  [=path jon=json]
+  ^-  (list card)
+  ?.  =(our.bowl server)
+    *(list card)
+  :~  [%pass /bind %arvo %e %disconnect `path]  ::maybe no need to disconnect?
+      :*  %pass  /bind  %arvo  %e
+          %set-response  (spat path)
+          ~  %.n  %payload
+          [200 ['Content-Type' 'application/json']~]
+          `(as-octt:mimes:html (trip (en:json:html jon)))
+  ==  ==
+::
 ++  handle-scry
   ::  /controller/[app]/[tag]  <-  returns @p of who we source a tag from
   ::  /nodes/[app]/[from-node]/[tag]  <-  returns (set node)
@@ -574,7 +607,7 @@
       ==
     =-  tags+?~(- ~ (~(get ju u.-) app))
     (~(get-edge sg:g graph.state) n1 n2)
-  ::     
+  ::
       [%tags @ %entity @ @ ?(%ship %address) @ ~]
     =/  =app:g  `@tas`i.t.path
     =/  n1=node:g
@@ -608,8 +641,7 @@
   ::  returns full mapping of all information held in given app
   ::
       [%app @ ~]
-    =/  =app:g  `@tas`i.t.path
-    app+(~(get-app sg:g graph.state) app)
+    (scry-app i.t.path)
   ::
   ::  /has-tag/[app]/[from-node]/[to-node]/[tag]
   ::  returns true if tag exists on given edge, false otherwise

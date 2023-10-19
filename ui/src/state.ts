@@ -11,7 +11,6 @@ import {
   ItemStruc,
 } from '$types/portal/item';
 import { State } from '$types/state';
-import { scoreItems } from '@root/ai';
 import { api, me } from '@root/api';
 import config from '@root/config';
 import { load, save } from '@root/storage';
@@ -19,7 +18,7 @@ import { fromUrbitTime } from '@root/util';
 import { uniqBy } from 'lodash';
 import { get, writable } from 'svelte/store';
 
-export const state = writable<State>({ ...load() });
+export const state = writable<State>({ ...load(), items: {}, social: {} });
 
 export const items = (): ItemCollection => get(state).items || {};
 export const social = (): SocialGraph => get(state).social || {};
@@ -59,30 +58,31 @@ export const reScoreItems = (
   positivePrompt: string,
   negativePrompt: string
 ): Promise<void> => {
-  return new Promise<void>((resolve) => {
-    api.portal.get.items().then(({ items }) => {
-      const feed = (getGlobalFeed() || []).slice(0, 200);
-      // only score items which are in the feed
-      items = items.filter((i) =>
-        feed.find((f) => keyStrFromObj(f.key) === keyStrFromObj(i.keyObj))
-      );
-      scoreItems(items, positivePrompt, negativePrompt, pals()).then(
-        (items) => {
-          state.update((s) => {
-            items.forEach((i) => {
-              s.items[i.keyStr] = i;
-            });
-            return s;
-          });
-          resolve();
-        }
-      );
-    });
-  });
+  return;
+  // return new Promise<void>((resolve) => {
+  //   api.portal.do.getItems().then(({ items }) => {
+  //     const feed = (getGlobalFeed() || []).slice(0, 200);
+  //     // only score items which are in the feed
+  //     items = items.filter((i) =>
+  //       feed.find((f) => keyStrFromObj(f.key) === keyStrFromObj(i.keyObj))
+  //     );
+  //     scoreItems(items, positivePrompt, negativePrompt, pals()).then(
+  //       (items) => {
+  //         state.update((s) => {
+  //           items.forEach((i) => {
+  //             s.items[i.keyStr] = i;
+  //           });
+  //           return s;
+  //         });
+  //         resolve();
+  //       }
+  //     );
+  //   });
+  // });
 };
 
 export const refreshPortalItems = (): void => {
-  api.portal.get.items().then(({ items }) => {
+  const populateState = (items) => {
     state.update((s) => {
       if (!s.items) s.items = {} as ItemCollection;
       items.forEach((i) => {
@@ -91,19 +91,39 @@ export const refreshPortalItems = (): void => {
       s.isLoaded = true;
       return s;
     });
+  };
+
+  // the only negative of having both statements here is that we'll get two
+  // state updates, which is maybe not what we want but it shouldn't hurt
+  api.portal.get.items().then(({ items }) => {
+    populateState(items);
+  });
+  api.portal.get.staticItems().then(({ items }) => {
+    populateState(items);
   });
 };
 
 export const refreshPortalAppDevs = (): void => {
-  api.portal.get.appDevs().then((appDevs) => {
+  const populateState = (appDevs) => {
     state.update((s) => ({ ...s, appDevs: appDevs?.['portal-devs'] }));
+  };
+
+  api.portal.get.appDevs().then((appDevs) => {
+    console.log({ appDevs });
+    populateState(appDevs);
+  });
+  api.portal.get.staticAppDevs().then((appDevs) => {
+    console.log({ appDevs });
+    populateState(appDevs);
   });
 };
 
 export const refreshSocialItems = (): void => {
-  api.portal.get.socialItems().then((items) => {
+  const populateState = (items) => {
     state.update((s) => ({ ...s, social: items.app }));
-  });
+  };
+  api.portal.get.socialItems().then(populateState);
+  api.portal.get.staticSocialItems().then(populateState);
 };
 
 export const refreshBoughtApps = (): void => {
@@ -196,8 +216,13 @@ export const setIsSearching = (isSearching: boolean): void => {
   state.update((s) => ({ ...s, isSearching }));
 };
 
+export const setIsOnboarding = (isOnboarding: boolean): void => {
+  state.update((s) => ({ ...s, isOnboarding }));
+};
+
 export const itemInState = (item: ItemKey): Promise<void> => {
   return new Promise((resolve, reject) => {
+    if (get(state).isOnboarding) return resolve();
     const unsubscribe = state.subscribe((s) => {
       if (s.items[keyStrFromObj(item)]) {
         unsubscribe();
@@ -506,6 +531,17 @@ export const getNotifications = (ship: string): [ItemKey, ItemKey][] => {
 export const handleSubscriptionEvent = (event, type: string) => {
   console.log({ ...event, type });
   switch (type) {
+    case 'portal-store-result':
+      const items = event.items.reduce((acc, item) => {
+        acc[item.keyStr] = item;
+        return acc;
+      }, {});
+      state.update((s) => ({
+        ...s,
+        items: { ...s.items, ...items },
+        isLoaded: true,
+      }));
+      break;
     case 'portal-update':
       state.update((s) => ({
         ...s,
@@ -638,12 +674,12 @@ export const refreshAll = (): void => {
   refreshPortalItems();
   refreshPortalAppDevs();
   refreshSocialItems();
-  refreshBoughtApps();
-  refreshContacts();
-  refreshApps();
-  refreshGroups();
-  refreshPals();
-  refreshRadioChannels();
-  refreshBlogs();
+  // refreshBoughtApps();
+  // refreshContacts();
+  // refreshApps();
+  // refreshGroups();
+  // refreshPals();
+  // refreshRadioChannels();
+  // refreshBlogs();
 };
 refreshAll();

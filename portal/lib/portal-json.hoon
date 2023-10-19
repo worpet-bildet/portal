@@ -849,6 +849,17 @@
       edit+edit(- (need -.edit))
     ==
   ::
+  ++  dejs-get
+    |=  jon=json
+    ;;  get:m
+    =,  dejs-soft
+    %.  jon
+    %-  of:dejs
+    :~  [%items ul:dejs]
+        [%portal-devs ul:dejs]
+        [%graph ul:dejs]
+    ==
+  ::
   ++  dejs-tagging-list
     |=  jon=json
     ^-  (list [=key:dat tag-to=path tag-from=path])

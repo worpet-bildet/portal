@@ -1,10 +1,11 @@
 /-  portal-item, st=portal-states
-/+  default-agent, p=portal, sss, dbug, tr=portal-transition
+/+  default-agent, p=portal, sss, js=portal-json, dbug, tr=portal-transition
 /$  items-to-json  %portal-items  %json
 /$  item-to-json  %portal-item  %json
 /$  store-result-to-json  %portal-store-result  %json
 /$  portal-update-to-json  %portal-update  %json
 /*  indexer  %ship  /desk/ship
+/*  server  %ship  /server/ship
 |%
 +$  card  $+  gall-card  card:agent:gall
 +$  state-4
@@ -146,6 +147,15 @@
   |=  [=mark =vase]
   ^-  (quip card _this)
   ?+    mark    (on-poke:default mark vase)
+      %portal-get
+    =/  get  !<(get:m:p vase)
+    ?>  ?=(%items -.get)
+    :_  this  ::  FE update
+    =+  scry-items
+    %+  snoc
+      (serve:cards-methods /portal-store-json (enjs-store-result:enjs:js -))
+    [%give %fact [/updates]~ %portal-store-result !>(-)]
+    ::
       %noun
     ?.  =(our.bowl src.bowl)  `this
     =/  act  !<($%([%unsub =key:d:m:p] [%pub =key:d:m:p] [%unpub =key:d:m:p]) vase)
@@ -350,17 +360,9 @@
   =/  path  t.path
   ?+    path    ~|("unexpected scry into {<dap.bowl>} on path {<path>}" !!)
     ::
-    [%items ~]
-    =+  ~(tap by read:da-item)
-    =+  %-  malt  %+  turn  -
-      |=  [k=[=ship =dude:gall p=^^path] v=[? ? =rock:portal-item]]
-      `[key:d:m:p item:d:m:p]`[(path-to-key:conv:p +.p.k) rock.v]
-    =+  (~(uni by items) -)
-    ::  take feedpoasts from last 14 days (%other and %retweet type)
-    ::  don't take %ship items
-    items+(filter-items:stor - ~d14)
+      [%items ~]  scry-items
     ::
-    [%keys ~]
+      [%keys ~]
     =+  ~(tap by read:da-item)
     =+  %-  silt  %+  turn  -
       |=  [k=[=ship =dude:gall p=^^path] v=[? ? =rock:portal-item]]
@@ -426,7 +428,18 @@
   ?>  |(=(our.bowl ship.key.item) =(lens.item %temp))
   (~(put by items) key.item item)
 ::
-::  whether a ship is allowed to gqet/sub to an item
+++  scry-items
+  ^-  store-result:d:m:p
+  =+  ~(tap by read:da-item)
+  =+  %-  malt  %+  turn  -
+    |=  [k=[=ship =dude:gall p=path] v=[? ? =rock:portal-item]]
+    `[key:d:m:p item:d:m:p]`[(path-to-key:conv:p +.p.k) rock.v]
+  =+  (~(uni by items) -)
+  ::  take feedpoasts from last 14 days (%other and %retweet type)
+  ::  don't take %ship items
+  items+(filter-items - ~d14)
+::
+::  whether a ship is allowed to get/sub to an item
 ++  ship-in-reach
   |=  [=ship =key:d:m:p]
   ^-  ?
@@ -497,7 +510,22 @@
   ++  upd
     |=  =item:d:m:p
     ^-  (list card)
-    [%give %fact [/updates]~ %portal-update !>(item)]^~  ::  FE update
+    %+  snoc
+      (serve /portal-store-json (enjs-store-result:enjs:js scry-items))
+    [%give %fact [/updates]~ %portal-update !>(item)]  ::  FE update
+  ::
+  ++  serve
+    |=  [=path jon=json]
+    ^-  (list card)
+    ?.  =(our.bowl server)
+      *(list card)
+    :~  [%pass /bind %arvo %e %disconnect `path]  ::maybe no need to disconnect?
+        :*  %pass  /bind  %arvo  %e
+            %set-response  (spat path)
+            ~  %.n  %payload
+            [200 ['Content-Type' 'application/json']~]
+            `(as-octt:mimes:html (trip (en:json:html jon)))
+    ==  ==
   ::
   ::  puts into remote scry namespace
   :: ++  gro

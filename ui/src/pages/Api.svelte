@@ -1,11 +1,11 @@
 <script lang="ts">
   import { api, mockData } from '@root/api';
   console.log(api.portal.get);
-  console.log(api.portal.newDo);
+  // console.log(api.portal.newDo);
   let scries = Object.entries(api.portal.get);
-  let pokes = Object.entries(api.portal.newDo);
-  let calls = [...pokes, ...scries];
-  // let calls = [...scries];
+  // let pokes = Object.entries(api.portal.newDo);
+  // let calls = [...pokes, ...scries];
+  let calls = [...scries];
 </script>
 
 <div class="flex flex-col gap-8">

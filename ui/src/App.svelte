@@ -10,6 +10,7 @@
     MobileHeader,
     VerticalNavbar,
   } from '@components';
+  import { Modal } from '@fragments';
   import { slide } from 'svelte/transition';
   import {
     Activity,
@@ -55,9 +56,10 @@
 
   let isComposing: boolean = false;
   let isSearching: boolean = false;
+  let isOnboarding: boolean = false;
   state.subscribe((s) => {
     console.log({ state: s });
-    ({ isSearching, isComposing } = s);
+    ({ isSearching, isComposing, isOnboarding } = s);
   });
 
   location.subscribe(() => {
@@ -96,6 +98,10 @@
     if (isHome) {
       document.getElementById($state.lastViewedPost)?.scrollIntoView();
     }
+  };
+
+  const handleOnboard = () => {
+    window.open('https://tlon.network/lure/~worpet-bildet/portal', '_blank');
   };
 </script>
 
@@ -144,4 +150,21 @@
       </div>
     </div>
   </div>
+  <Modal open={isOnboarding}>
+    <div class="flex flex-col gap-4 p-4">
+      <div class="text-xl">Join Portal!</div>
+      <div>
+        Portal is a vibrant community. In order to participate, you require an
+        Urbit. They're free, and you can get one here:
+      </div>
+      <div class="flex justify-center">
+        <button
+          class="px-3 py-2 rounded-lg bg-black text-white dark:bg-white text-black font-bold border dark:border-glass w-fit"
+          on:click={handleOnboard}
+        >
+          Get your Urbit!
+        </button>
+      </div>
+    </div>
+  </Modal>
 </main>
