@@ -352,7 +352,7 @@
                   ==
                 ::  if the groups post is ours, send notif
                 ?.  ?&  =('' time:key-from)
-                        =(server ship:key-from)
+                        =(indexer ship:key-from)
                     ==
                   *(list card)
                 ::get item from portal-store and see if we are author, if yes, notify
