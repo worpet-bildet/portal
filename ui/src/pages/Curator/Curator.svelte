@@ -1,7 +1,7 @@
 <script lang="ts">
   import coverPhoto from '@assets/coverPhoto.jpg'; // todo: make this work
   import { CollectionsList, Feed, ProfileCard } from '@components';
-  import { CollectionIcon, HomeIcon, Tabs } from '@fragments';
+  import { CollectionIcon, ChatIcon, Tabs } from '@fragments';
   import { api } from '@root/api';
   import { getCurator, getCuratorFeed, state } from '@root/state';
   import { getMeta } from '@root/util';
@@ -44,7 +44,7 @@
   let activeTab = ((!feed || feed.length === 0) && curator) ? 'Collections' : 'Activity';
 
   let tabs = [
-    { tab: 'Activity', icon: HomeIcon },
+    { tab: 'Activity', icon: ChatIcon },
     { tab: 'Collections', icon: CollectionIcon },
   ];
 </script>
